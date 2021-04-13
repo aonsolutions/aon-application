@@ -198,7 +198,7 @@ public class AonRandom {
 	}
 	
 	public static EnterpriseActivity getRandomActivity(AONContext ctx) {
-		boolean mainActivity = gt(85);
+		boolean mainActivity =  gt(85);
 		return CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), null)
 			.filter(act -> act.isPrincipal() == mainActivity)
 			.findFirst()

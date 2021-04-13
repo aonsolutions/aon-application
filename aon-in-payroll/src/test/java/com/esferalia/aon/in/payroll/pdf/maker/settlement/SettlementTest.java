@@ -5,6 +5,7 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.StringToolkit.lorem;
 import static com.esferalia.aon.in.payroll.pdf.maker.PdfMaker.printSettlement;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -65,7 +66,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -84,7 +85,7 @@ public class SettlementTest {
 			OutputStream out = new ByteArrayOutputStream();
 
 			Settlement settle = null;
-			printSettlement(out, settle, new Locale("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -100,7 +101,7 @@ public class SettlementTest {
 		try
 		{
 			Settlement settle = null;
-			printSettlement(null, settle, new Locale("Es"));
+			printSettlement(null, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (CanNotCreatePdfException e)
 		{
 			String msg = e.getMessage();
@@ -127,7 +128,7 @@ public class SettlementTest {
 			OutputStream out = new ByteArrayOutputStream();
 
 			Settlement settle = null;
-			printSettlement(out, settle, null);
+			printSettlement(out, new SettlePrintConfiguration(settle, new ByteArrayInputStream(new byte[0]), null));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -167,7 +168,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -205,7 +206,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -250,7 +251,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -265,8 +266,8 @@ public class SettlementTest {
 	public void extraLargeTextsTest() {
 		try
 		{
-			//OutputStream out = new FileOutputStream("./ExtraLargeTextsSettlement.pdf");
-			OutputStream out = new ByteArrayOutputStream();
+			OutputStream out = new FileOutputStream("./ExtraLargeTextsSettlement.pdf");
+			//OutputStream out = new ByteArrayOutputStream();
 
 			SettlementBuilder builder = new SettlementBuilder();
 			Faker			  f		  = new Faker();
@@ -299,7 +300,7 @@ public class SettlementTest {
 					.setLocation("Vitoria-gasteiz").setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -314,8 +315,8 @@ public class SettlementTest {
 	public void MillionaireTest() {
 		try
 		{
-			//OutputStream out = new FileOutputStream("./MillonaireSettlement.pdf");
-			OutputStream out = new ByteArrayOutputStream();
+			OutputStream out = new FileOutputStream("./MillonaireSettlement.pdf");
+			//OutputStream out = new ByteArrayOutputStream();
 
 			SettlementBuilder builder = new SettlementBuilder();
 			Faker			  f		  = new Faker();
@@ -378,7 +379,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -457,8 +458,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement,
-					Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -539,7 +539,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -587,7 +587,7 @@ public class SettlementTest {
 					.setDate(null).setLocation(null).setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -671,7 +671,7 @@ public class SettlementTest {
 					.setDate(null).setLocation(null).setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -750,7 +750,7 @@ public class SettlementTest {
 					.setTotal(accrualTotal - deductionTotal);
 
 			Settlement settlement = builder.build();
-			printSettlement(out, settlement, Locale.forLanguageTag("Es"));
+			printSettlement(out, new SettlePrintConfiguration(settlement, new ByteArrayInputStream(new byte[0]), new Locale("Es")));
 		} catch (Exception e)
 		{
 			e.printStackTrace();

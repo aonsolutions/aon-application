@@ -140,6 +140,14 @@ public class PdfText extends PdfComponent {
 			this.lines = new ArrayList<>();
 		}
 	}
+	
+	/**
+	 * Get last line index
+	 * @return [int] last line index
+	 */
+	public boolean islastLine() {
+		return currentLine >= (lines.size() - 1);
+	}
 
 	/**
 	 * <p>
@@ -152,57 +160,6 @@ public class PdfText extends PdfComponent {
 	@Override
 	public void draw() {
 		drawLine();
-	}
-
-	/**
-	 * Draw to many lines (DONT USE, TO BUGGY)
-	 * 
-	 * @param limit - y limit
-	 * @return [int] last line
-	 * @deprecated
-	 */
-	public int drawMultiple(float limit) {
-		try
-		{
-			float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * fontSize;
-			for (int i = 0; i < lines.size(); i++)
-			{
-				if (y() - (fh + lineSpacing) <= limit)
-					return i;
-				String line = lines.get(i);
-				if (i != 0)
-					line = " " + line;
-				switch (horizontalAlignment)
-				{
-				case CENTER:
-					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginY());
-					break;
-				case RIGHT:
-					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginX(), marginY());
-					break;
-				case JUSTIFY:
-					if (i < lines.size() - 1)
-						drawTextJustified(line, width(), fontSize, font, x(), y(), stream());
-					else
-						drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font,
-								fontSize, 0, 0);
-					break;
-				default:
-					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginX(), marginY());
-					break;
-				}
-
-				down(fh + lineSpacing);
-				height(height() + fh + lineSpacing);
-			}
-			height(height() + fh + lineSpacing);
-		} catch (IOException ignored)
-		{
-		}
-		return -1;
 	}
 
 	/**
@@ -234,36 +191,45 @@ public class PdfText extends PdfComponent {
 				return null;
 
 			float  fh	= (font.getFontDescriptor().getCapHeight()) / 1000 * fontSize;
-			String line	= lines.get(currentLine);
-
+			String line	= lines.get(currentLine);			
 			line = line.trim();
 
 			if (lines.size() > 1 && currentLine == lines.size() - 1)
 			{
-				drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-						marginX(), marginY());
+				switch (horizontalAlignment)
+				{
+				case CENTER:
+					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,	marginY());
+					break;
+				case RIGHT:
+					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				case JUSTIFY:
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(),0);
+					break;
+				default:
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				}
+				
 			} else
 			{
 				switch (horizontalAlignment)
 				{
 				case CENTER:
-					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginY());
+					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,	marginY());
 					break;
 				case RIGHT:
-					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginX(), marginY());
+					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
 					break;
 				case JUSTIFY:
 					drawTextJustified(line, width(), fontSize, font, x(), y(), stream());
 					break;
 				default:
-					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,
-							marginX(), marginY());
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
 					break;
 				}
 			}
-
 			down(fh + lineSpacing);
 		} catch (IOException ignored)
 		{

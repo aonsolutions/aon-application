@@ -49,6 +49,13 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language)
 			throws CanNotCreatePdfException {
 
+		/*
+		 * TODO - THINGS TO FIX
+		 * 
+		 * 	1. This PDF file is in production without strong test bundle 0-0
+		 * 	2. Error logo is a bit too long 
+		 */
+		
 		EnterprisePayrollTemplate template = null;
 		try
 		{

@@ -6,8 +6,8 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Optional;
 
+import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetPrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.Budget;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -16,8 +16,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 public class PdfMaker {
@@ -100,8 +100,8 @@ public class PdfMaker {
 	 * @param budget
 	 * @throws CanNotCreatePdfException
 	 */
-	public static void printBudget(OutputStream out, Budget budget) throws CanNotCreatePdfException {
-		BudgetTemplate.print(out, budget, Optional.of(new Locale("Es")));
+	public static void printBudget(OutputStream out, BudgetPrintConfiguration config) throws CanNotCreatePdfException {
+		BudgetTemplate.print(out, config);
 	}
 
 	/**
@@ -111,9 +111,9 @@ public class PdfMaker {
 	 * @param settlement
 	 * @throws CanNotCreatePdfException
 	 */
-	public static void printSettlement(OutputStream out, Settlement settlement, Locale locale)
+	public static void printSettlement(OutputStream out,SettlePrintConfiguration config)
 			throws CanNotCreatePdfException {
-		SettlementTemplate.print(out, settlement, locale);
+		SettlementTemplate.print(out, config);
 	}
 
 }

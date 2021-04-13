@@ -50,12 +50,13 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.Settle
 public class SettlementTemplate extends PdfFile {
 
 	private Settlement settlement;
-	private Byte[] logo;
+	private Byte[]	   logo;
 
 	public SettlementTemplate(
-			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out, float limitY, float startPointY
+			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out,
+			float limitY, float startPointY
 	) {
-		super(x, y, doc, words, out,limitY,startPointY);
+		super(x, y, doc, words, out, limitY, startPointY);
 		this.settlement = settlement;
 	}
 
@@ -67,7 +68,9 @@ public class SettlementTemplate extends PdfFile {
 	 * @param locale
 	 * @throws CanNotCreatePdfException
 	 */
-	public static void print(OutputStream out, Settlement settlement, Locale locale) throws CanNotCreatePdfException {
+	public static void print(OutputStream out, SettlePrintConfiguration config) throws CanNotCreatePdfException {
+
+		Settlement settlement = config.getSettlement();
 
 		if (out == null)
 			throw new CanNotCreatePdfException("No output Stream given.");
@@ -79,12 +82,12 @@ public class SettlementTemplate extends PdfFile {
 		{
 			ResourceBundle words = ResourceBundle.getBundle(
 					"com.esferalia.aon.in.payroll.pdf.maker.settlement.bundles.SettlementBundle",
-					(Locale) safeValue(locale, new Locale("Es")));
+					(Locale) safeValue(config.getLanguage(), new Locale("Es")));
 
-			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out,0,800);
+			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out, 0, 800);
 			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
 
-			template.lang	= locale;
+			template.lang	= (Locale) safeValue(config.getLanguage(), new Locale("Es"));
 			template.limitY	= 200;
 
 			template.newPage(VERTICAL);
@@ -102,8 +105,7 @@ public class SettlementTemplate extends PdfFile {
 			template.print();
 			template.close();
 
-		} 
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			if (template != null)
 				try
@@ -116,7 +118,6 @@ public class SettlementTemplate extends PdfFile {
 		}
 	}
 
-	/** Draw the text in the upper */
 	private void drawUpperTexts() {
 
 		drawTitle();
@@ -127,7 +128,6 @@ public class SettlementTemplate extends PdfFile {
 
 	}
 
-	/** Draw the title */
 	private void drawTitle() {
 		final String   titleTxt	= text("TITLE");
 		PdfTextBuilder builder	= new PdfTextBuilder();
@@ -141,7 +141,6 @@ public class SettlementTemplate extends PdfFile {
 		right(55);
 	}
 
-	/** Draw the enterprise text */
 	private void drawEnterprise() {
 
 		String[] variables = { "enterpriseName", "enterpriseNif", "enterpriseAddress" };
@@ -160,13 +159,11 @@ public class SettlementTemplate extends PdfFile {
 		down(15);
 	}
 
-	/** Draw the employee text */
 	private void drawEmployee() {
 
 		final String dateFormat = text("DATE FORMAT");
 
-		String[] variables = new String[] { "employeeName", "employeeNif", "employeeCategory",
-				"employeeAntiquity" };
+		String[] variables = new String[] { "employeeName", "employeeNif", "employeeCategory", "employeeAntiquity" };
 		String[] values	   = new String[] { safeString(settlement.getEmployeeName()),
 				safeString(settlement.employeeNIF()), safeString(settlement.employeeCategory()),
 				safeString(formatDate(settlement.getEmployeeAntiquity(), dateFormat)) };
@@ -183,7 +180,6 @@ public class SettlementTemplate extends PdfFile {
 		down(15);
 	}
 
-	/** Draw declare text */
 	private void drawDeclare() {
 		final String declareTxt = text("DECLARE");
 
@@ -196,7 +192,6 @@ public class SettlementTemplate extends PdfFile {
 		down(20);
 	}
 
-	/** Draw the declaration text */
 	private void drawDeclaration() {
 
 		final String dateFormat = text("DATE FORMAT");
@@ -213,18 +208,11 @@ public class SettlementTemplate extends PdfFile {
 				.lineSpacing(6f).content(declarationTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
-		
-		PdfText text = builder.build();		
+		PdfText text = builder.build();
 		drawTextLines(text);
 		down(10);
 	}
 
-	/**
-	 * Draw accruals
-	 * 
-	 * @param template
-	 * @throws IOException
-	 */
 	private void drawPayments() throws IOException, UnknownCraException {
 
 		String titleTxt			 = text("ACCRUALS").toUpperCase();
@@ -279,10 +267,9 @@ public class SettlementTemplate extends PdfFile {
 							if (n != null)
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("CURRENCY");
-								String entryTxt   = " por " + safeString(n.getDescription());
+								String entryTxt	  = " por " + safeString(n.getDescription());
 
-								new PdfText(x(), y(), 60, 15, contents, entryValue, BLACK, HELVETICA, 9f, RIGHT)
-										.draw();
+								new PdfText(x(), y(), 60, 15, contents, entryValue, BLACK, HELVETICA, 9f, RIGHT).draw();
 								new PdfText(x() + 64, y(), 250, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
 										.draw();
 
@@ -291,7 +278,9 @@ public class SettlementTemplate extends PdfFile {
 						});
 					}
 				}
-			} catch (IOException | UnknownCraException ignored){}
+			} catch (IOException | UnknownCraException ignored)
+			{
+			}
 			down(5);
 		});
 		down(5);
@@ -302,12 +291,6 @@ public class SettlementTemplate extends PdfFile {
 				5, 5);
 	}
 
-	/**
-	 * Draw deductions
-	 * 
-	 * @param template
-	 * @throws IOException
-	 */
 	private void drawDeductions() throws IOException {
 
 		String title			   = text("DEDUCTIONS");
@@ -396,12 +379,6 @@ public class SettlementTemplate extends PdfFile {
 		down(15);
 	}
 
-	/**
-	 * Draw compulsory legal stuff
-	 * 
-	 * @param template
-	 * @throws IOException
-	 */
 	private void drawLegalText() throws IOException {
 		down(10);
 		String legalTxt				 = text("LEGAL DATA");
@@ -426,7 +403,7 @@ public class SettlementTemplate extends PdfFile {
 		PdfText legalAdviceText = builder.build();
 		drawTextLines(legalAdviceText);
 		down(15);
-		
+
 		builder.stream(contents).y(200).content(dateTxt);
 		PdfText dateText = builder.build();
 		drawTextLinesFree(dateText);
@@ -445,7 +422,7 @@ public class SettlementTemplate extends PdfFile {
 
 		PdfText employeeSign = builder.build();
 		drawTextLinesFree(employeeSign);
-		
+
 		right(width + margin);
 		builder.stream(contents).width(width).x(x()).content(enterpriseSignTxt);
 
@@ -460,15 +437,7 @@ public class SettlementTemplate extends PdfFile {
 
 	}
 
-	/**
-	 * Replace variables in the bundle
-	 * 
-	 * @param words
-	 * @param values
-	 * @param text
-	 * @return
-	 */
-	public static String replaceVariables(String[] words, String[] values, String text) {
+	private static String replaceVariables(String[] words, String[] values, String text) {
 		for (int i = 0; i < words.length; i++)
 			text = text.replace("$" + words[i], values[i]);
 		return text;

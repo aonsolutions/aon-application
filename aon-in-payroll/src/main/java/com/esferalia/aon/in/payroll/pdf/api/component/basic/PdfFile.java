@@ -181,8 +181,16 @@ public class PdfFile {
 		PdfPage page = new PdfPage(type);
 		doc.addPage(page.getPage());
 		contents = new PDPageContentStream(this.doc, page.getPage());
+		drawHeader();
 		this.page++;
 	}
+	
+	/**
+	 * <p>
+	 * <b>Description:</b> <i>Creates a header to the file. </i>
+	 * </p>
+	 */
+	public void drawHeader() {}
 
 	/**
 	 * <p>
@@ -248,7 +256,7 @@ public class PdfFile {
 	 * <b>Description:</b> <i>Draws all lines of a text. </i>
 	 * </p>
 	 */
-	public void drawTextLines(PdfText text) {
+	public float drawTextLines(PdfText text) {
 		boolean next = true;
 		while (next && willNotJump(text.simulateDrawLine()))
 		{
@@ -262,16 +270,23 @@ public class PdfFile {
 				next = false;
 			}
 		}
-		if (jump())
+		if (willJump(text.simulateDrawLine()))
 		{
 			try
 			{
 				newPage(PAGE_TYPE.VERTICAL);
+				y(startPointY);
+				System.out.println("St pt: " + startPointY);
+				text.stream(this.contents);
+				text.y(this.y());
+				
+				drawTextLines(text);
 			} catch (IOException ignored)
 			{
 			}
 			y(startPointY);
 		}
+		return text.y();
 	}
 	
 	/**

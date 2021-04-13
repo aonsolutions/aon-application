@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -29,13 +27,27 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.Budget;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.BudgetItem;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.ClientData;
-import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.Term;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.ClientData.ClientDataBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-
+/**
+ * Class to print budget PDF files
+ * @author akrck02
+ * @version 0.1
+ */
 public class BudgetTemplate extends PdfFile {
 
 	private Budget budget;
 
+	/*
+	 * TODO - THINGS TO FIX
+	 * 
+	 * 	1. Box have literally no margin :(
+	 *  2. Text with overflow --> use drawTextLines(text); instead , is a PDFFile  Object native method :)
+	 * 	3. Strong test bundle might be created before releasing 
+	 * 
+	 */
+	
+	
 	public BudgetTemplate(
 			float x, float y, PDDocument doc, ResourceBundle words, OutputStream out, Budget budget, float limitY
 	) {
@@ -43,13 +55,17 @@ public class BudgetTemplate extends PdfFile {
 		this.budget = budget;
 	}
 
-	public static void print(OutputStream out, Budget bg, Optional<Locale> language) throws CanNotCreatePdfException {
+	public static void print(OutputStream out, BudgetPrintConfiguration config) throws CanNotCreatePdfException {
 		BudgetTemplate template = null;
 		try
 		{
-			ResourceBundle words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.maker.budget.bundle.BudgetBundle",language.orElse(new Locale("Es")));
+
+			Budget		   bg	 = config.getBudget();
+			ResourceBundle words = ResourceBundle.getBundle(
+					"com.esferalia.aon.in.payroll.pdf.maker.budget.bundle.BudgetBundle", config.getLanguage());
 			template = new BudgetTemplate(10, 810, new PDDocument(), words, out, bg, 30);
 			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
+			template.limitY = 20;
 
 			drawClientInfo(template);
 			drawProducts(template);
@@ -58,7 +74,7 @@ public class BudgetTemplate extends PdfFile {
 			PdfTextBuilder builder = new PdfTextBuilder();
 
 			builder.x(560).y(10).width(10).height(15).stream(template.contents).content(template.page + "").color(GRAY)
-			.font(HELVETICA).fontSize(template.fontsize).horizontalAlignment(RIGHT);
+					.font(HELVETICA).fontSize(template.fontsize).horizontalAlignment(RIGHT);
 
 			PdfText page = builder.build();
 			page.draw();
@@ -70,7 +86,9 @@ public class BudgetTemplate extends PdfFile {
 				try
 				{
 					template.close();
-				} catch (IOException ignored){}
+				} catch (IOException ignored)
+				{
+				}
 			throw new CanNotCreatePdfException(e);
 		}
 	}
@@ -78,40 +96,38 @@ public class BudgetTemplate extends PdfFile {
 	private static void drawClientInfo(BudgetTemplate template) throws IOException {
 
 		template.newPage(VERTICAL);
-		ClientData client = template.budget.getClient()
-				.orElse(new ClientData(null, null, null, null, null, null, null, null, null, null));
+		ClientData client = template.budget.getClient(new ClientDataBuilder().build());
 
-		String numberTitleTxt			= template.text("NUMBER") + ":";
-		String numberTxt				= template.budget.getBudgetNumber().orElse("");
-		String dateTitleTxt			 	= template.text("DATE") + ":";
-		String dateTxt					= PdfFormats.formatDate(new Date(), template.text("DATE FORMAT")).orElse("");
-		String clientDataTitleTxt	 	= template.text("CLIENT DATA").toUpperCase();
-		String enterpriseNameTitleTxt 	= template.text("ENTERPRISE NAME") + ":";
-		String enterpriseNameTxt		= client.getBusinessName().orElse("");
-		String nifTitleTxt			 	= template.text("NIF") + ":";
-		String nifTxt					= client.getNif().orElse("");
-		String addressTitleTxt		 	= template.text("ADDRESS") + ":";
-		String addressTxt				= client.getAddress().orElse("");
-		String cityTitleTxt			 	= template.text("CITY") + ":";
-		String cityTxt					= client.getCity().orElse("");
-		String postalCodeTitleTxt	 	= template.text("POSTAL CODE") + ":";
-		String postalCodeTxt			= client.getPostalCode().orElse("");
-		String provinceTitleTxt		 	= template.text("PROVINCE") + ":";
-		String provinceTxt				= client.getProvince().orElse("");
-		String phoneTitleTxt			= template.text("PHONE") + ":";
-		String phoneTxt				 	= client.getPhone().orElse("");
-		String mobileTitleTxt			= template.text("MOBILE") + ":";
-		String mobileTxt				= client.getMobile().orElse("");
-		String emailTitleTxt			= template.text("EMAIL") + ":";
-		String emailTxt				 	= client.getEmail().orElse("");
-		String contactTitleTxt		 	= template.text("CONTACT") + ":";
-		String contactTxt				= client.getContact().orElse("");
+		String numberTitleTxt		  = template.text("NUMBER") + ":";
+		String numberTxt			  = template.budget.getBudgetNumber("");
+		String dateTitleTxt			  = template.text("DATE") + ":";
+		String dateTxt				  = PdfFormats.formatDate(new Date(), template.text("DATE FORMAT")).orElse("");
+		String clientDataTitleTxt	  = template.text("CLIENT DATA").toUpperCase();
+		String enterpriseNameTitleTxt = template.text("ENTERPRISE NAME") + ":";
+		String enterpriseNameTxt	  = client.getEnterpriseName("");
+		String nifTitleTxt			  = template.text("NIF") + ":";
+		String nifTxt				  = client.getNif("");
+		String addressTitleTxt		  = template.text("ADDRESS") + ":";
+		String addressTxt			  = client.getAddress("");
+		String cityTitleTxt			  = template.text("CITY") + ":";
+		String cityTxt				  = client.getCity("");
+		String postalCodeTitleTxt	  = template.text("POSTAL CODE") + ":";
+		String postalCodeTxt		  = client.getPostalCode("");
+		String provinceTitleTxt		  = template.text("PROVINCE") + ":";
+		String provinceTxt			  = client.getProvince("");
+		String phoneTitleTxt		  = template.text("PHONE") + ":";
+		String phoneTxt				  = client.getPhone("");
+		String mobileTitleTxt		  = template.text("MOBILE") + ":";
+		String mobileTxt			  = client.getMobile("");
+		String emailTitleTxt		  = template.text("EMAIL") + ":";
+		String emailTxt				  = client.getEmail("");
+		String contactTitleTxt		  = template.text("CONTACT") + ":";
+		String contactTxt			  = client.getContact("");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 
-		builder.x(template.x()).y(template.y()).width(100).height(15).stream(template.contents)
-				.content(numberTitleTxt).color(BLACK).font(HELVETICA_BOLD).fontSize(template.fontsize)
-				.horizontalAlignment(LEFT);
+		builder.x(template.x()).y(template.y()).width(100).height(15).stream(template.contents).content(numberTitleTxt)
+				.color(BLACK).font(HELVETICA_BOLD).fontSize(template.fontsize).horizontalAlignment(LEFT);
 		PdfText numberTitle = builder.build();
 
 		builder.x(template.x() + 100).content(numberTxt).font(HELVETICA);
@@ -120,7 +136,7 @@ public class BudgetTemplate extends PdfFile {
 
 		builder.x(template.x()).y(template.y()).content(dateTitleTxt).font(HELVETICA_BOLD);
 		PdfText dateTitle = builder.build();
-		
+
 		builder.x(template.x() + 100).content(dateTxt).font(HELVETICA);
 		PdfText date = builder.build();
 		template.down(25);
@@ -240,15 +256,17 @@ public class BudgetTemplate extends PdfFile {
 		String currency = " \u20AC";
 		template.down(10);
 
-		String productDescriptionTitleTxt	 = template.text("PRODUCT DESCRIPTION").toUpperCase();
-		String productServiceTitleTxt		 = template.text("PRODUCT/SERVICE");
-		String amountTitleTxt				 = template.text("AMOUNT");
-		String taxBaseTitleTxt				 = template.text("TAX BASE") + ":";
-		String taxBaseTxt					 = template.budget.getTaxBase().orElse(0.00) + currency;
-		String taxTitleTxt				 	 = template.budget.getTaxPercent().orElse(0.00) + template.text("TAX") + template.budget.getTaxAdd().orElse(0.00);
-		String taxTxt						 = template.budget.getTaxTotal().orElse(0.00) + currency;
-		String totalAmountTitleTxt		 	 = template.text("TOTAL AMOUNT") + ":";
-		String totalAmountTxt				 = template.budget.getBudgetTotal().orElse(0.00) + currency;
+		String productDescriptionTitleTxt = template.text("PRODUCT DESCRIPTION").toUpperCase();
+		String productServiceTitleTxt	  = template.text("PRODUCT/SERVICE");
+		String amountTitleTxt			  = template.text("AMOUNT");
+		String taxBaseTitleTxt			  = template.text("TAX BASE") + ":";
+		String taxBaseTxt				  = template.budget.getTaxBase(0.00) + currency;
+		String taxTitleTxt				  = template.budget.getTaxPercent(0.00) + template.text("TAX")
+				+ template.budget.getTaxAdd(0.00);
+
+		String taxTxt			   = template.budget.getTaxTotal(0.00) + currency;
+		String totalAmountTitleTxt = template.text("TOTAL AMOUNT") + ":";
+		String totalAmountTxt	   = template.budget.getBudgetTotal(0.00) + currency;
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 
@@ -259,10 +277,12 @@ public class BudgetTemplate extends PdfFile {
 		PdfText productDescriptionTitle = builder.build();
 		template.down(20);
 
-		builder.x(template.x()).y(template.y()).width(200).stream(template.contents).content(productServiceTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).width(200).stream(template.contents).content(productServiceTitleTxt)
+				.font(HELVETICA_BOLD);
 		PdfText productServiceTitle = builder.build();
 
-		builder.x(template.x() + 370).y(template.y()).stream(template.contents).content(amountTitleTxt).font(HELVETICA_BOLD).horizontalAlignment(RIGHT);
+		builder.x(template.x() + 370).y(template.y()).stream(template.contents).content(amountTitleTxt)
+				.font(HELVETICA_BOLD).horizontalAlignment(RIGHT);
 		PdfText amountTitle = builder.build();
 		template.down(8);
 
@@ -272,7 +292,7 @@ public class BudgetTemplate extends PdfFile {
 		productServiceTitle.draw();
 		amountTitle.draw();
 
-		ArrayList<BudgetItem> products = template.budget.getProducts().orElse(new ArrayList<BudgetItem>());
+		ArrayList<BudgetItem> products = template.budget.getProducts();
 		products.forEach(p ->
 		{
 			template.down(12);
@@ -341,7 +361,6 @@ public class BudgetTemplate extends PdfFile {
 		String conditionsTitleTxt = "CONDICIONES ECONÓMICAS";
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-
 		builder.x(template.x()).y(template.y()).width(575).height(15).stream(template.contents)
 				.content(conditionsTitleTxt).color(BLACK).font(HELVETICA).fontSize(template.fontsize)
 				.horizontalAlignment(LEFT);
@@ -351,31 +370,34 @@ public class BudgetTemplate extends PdfFile {
 		conditionsTitle.draw();
 		template.down(20);
 
-		template.budget.getTerms().orElse(new ArrayList<Term>()).stream().forEach(term ->
+		template.budget.getTerms().stream().forEach(term ->
 		{
 
 			if (template.jump())
 				newPage(template);
+			
 			String termTxt = term.getTitle() + " : " + term.getDescription();
-
 			builder.x(template.x()).y(template.y()).width(570).height(15).stream(template.contents).content(termTxt)
-					.color(BLACK).font(HELVETICA).lineSpacing(5f).fontSize(template.fontsize - 2)
+					.color(BLACK).font(HELVETICA).lineSpacing(4f).fontSize(template.fontsize - 2)
 					.horizontalAlignment(JUSTIFY);
 
-			PdfText	text		 = builder.build();
-			int		jumpingLine = text.drawMultiple(template.limitY);
-
-			if (jumpingLine != -1)
-			{
-				newPage(template);
-				text.restart(template.contents, jumpingLine, template.y()).drawMultiple(template.limitY);
-			}
-			template.y(text.y() - 10);
+			PdfText	text		= builder.build();
+			float y = template.drawTextLines(text);		
+			template.y(y - 10);
 
 		});
 
 	}
 	
+	
+
+	@Override
+	public void drawHeader() {
+		super.drawHeader();
+		
+		System.out.println("Header bro :V");
+	}
+
 	public static void newPage(BudgetTemplate template) {
 		try
 		{
@@ -388,9 +410,8 @@ public class BudgetTemplate extends PdfFile {
 			template.newPage(VERTICAL);
 			template.y(790);
 
-		} catch (Exception e)
+		} catch (Exception ignored)
 		{
-			e.printStackTrace();
 		}
 	}
 }
