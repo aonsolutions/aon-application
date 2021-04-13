@@ -13,6 +13,7 @@ import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
+import { AON_MSG_DATE, AON_MSG_DURATION } from "../../../../environments/msg.js";
 
 
 
@@ -160,8 +161,8 @@ export class AonEventList extends AonElement {
         iconBack = "arrow_back";
       }
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn("Fecha", "date", "dateParse", "40%");
-      aonTable.addColumn("Duración", "", "duration", "30%");
+      aonTable.addColumn(AON_MSG_DATE, "date", "dateParse", "40%");
+      aonTable.addColumn(AON_MSG_DURATION, "", "duration", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

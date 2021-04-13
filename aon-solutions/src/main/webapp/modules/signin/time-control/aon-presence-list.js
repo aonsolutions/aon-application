@@ -1,11 +1,13 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
-import { PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
+import { handleError, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
+import { AON_MSG_DURATION, AON_MSG_LAST_LOCATION, AON_MSG_LAST_STATUS, AON_MSG_NAME } from "../../../environments/msg.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -120,10 +122,10 @@ export class AonPresenceList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Nombre", "string", "name", "34%");
-      aonTable.addColumn("Último estado", "", "lastStatus", "35%");
-      aonTable.addColumn("Duración", "", "duration", "5%");
-      aonTable.addColumn("Última ubicación", "string", "nameLocation", "20%");
+      aonTable.addColumn(AON_MSG_NAME, "string", "name", "34%");
+      aonTable.addColumn(AON_MSG_LAST_STATUS, "", "lastStatus", "35%");
+      aonTable.addColumn(AON_MSG_DURATION, "", "duration", "5%");
+      aonTable.addColumn(AON_MSG_LAST_LOCATION, "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -180,12 +182,12 @@ export class AonPresenceList extends AonElement {
               const newStatus = status.toLowerCase();
               const lettersName = StringTwoLetters(name);
               const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-              let nameLocation = "";
               const textStatus = await getStatus(newStatus);
+              let nameLocation = "";
               if (last_location && last_location.name) {
                 nameLocation = last_location.name;
               } else if(!isEmptyObject(coordinates)) {
-                nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+                nameLocation = `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
               }
               const obj = {
                 lettersHtml,
@@ -218,18 +220,16 @@ export class AonPresenceList extends AonElement {
 			if(startDate) {startYear = new Date(startDate).getFullYear();} 
       startDate = startYear+"-01-01"; 
       const endDate = startYear+"-12-31"; 
-
 			await getTimeControlExcel({startDate, endDate}); 
 		} catch (error) {
-			console.log(error);
-			this.applicationEl.getToast().start({ message: error, type: 'error' });
+      this.applicationEl.getToast().start(handleError(error));
 		}
 		this.applicationEl.stopLoading();
 	}
 
   aonEvent({ target }, data) {
     const parent = this.applicationParenEl;
-    if ("add_location" === target.textContent) {
+    if (iconAddLocation === target.textContent) {
       parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
     } else {
       parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data, true);

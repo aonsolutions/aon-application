@@ -10,13 +10,14 @@ import {
   getPeriod,
   getTimeControlDetail,
 } from "../../../../services/service.js";
-import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { dateCustomDayHour } from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
+import { AON_MSG_DATE, AON_MSG_STATUS, AON_MSG_LOCATION } from "../../../../environments/msg.js";
 
 
 export class AonEventDetailList extends AonElement {
@@ -171,9 +172,9 @@ export class AonEventDetailList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn("Estado", "string", "textStatus", "10%");
-      aonTable.addColumn("Fecha", "date", "dateParse", "20%");
-      aonTable.addColumn("Ubicación", "string", "nameLocation", "30%");
+      aonTable.addColumn(AON_MSG_STATUS, "string", "textStatus", "10%");
+      aonTable.addColumn(AON_MSG_DATE, "date", "dateParse", "20%");
+      aonTable.addColumn(AON_MSG_LOCATION, "string", "nameLocation", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -235,7 +236,7 @@ export class AonEventDetailList extends AonElement {
           if (resp.location && resp.location.name) {
             nameLocation = resp.location.name;
           } else if (resp.coordinates) {
-            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+            nameLocation = `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
           }
           const obj = {
             ...resp,
@@ -284,7 +285,7 @@ export class AonEventDetailList extends AonElement {
   }
 
   aonEvent(el, data) {
-    if (el && "add_location" === el.target.textContent) {
+    if (el && iconAddLocation === el.target.textContent) {
       this.applicationParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, {coordinates:data.coordinates});
     } else {
       this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, data);

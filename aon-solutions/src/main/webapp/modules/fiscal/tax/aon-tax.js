@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
-import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl } from "../../../services/utils.js";
+import { formatNumber, handleError, isEmptyObject, serializeForm, setValueName, waitEl, sortBy } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
 import { TAX_ENUMS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -295,7 +295,7 @@ export class AonTax extends AonElement {
     try {
       const datos = await getModelsFiscal();
       if (datos) {
-        datos.map((resp) => {
+        sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
           let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
           let color = "";
           if("PENDING"===resp.status) {
@@ -406,9 +406,7 @@ export class AonTax extends AonElement {
       this.applicationEl.getToast().start({message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS});
       dialog.close();
     } catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
     }
     this.applicationEl.stopLoading();
   }

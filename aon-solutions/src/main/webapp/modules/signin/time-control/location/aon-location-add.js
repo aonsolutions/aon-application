@@ -1,18 +1,18 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
+import { setValueName, serializeForm, waitEl, handleError } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
 import { API_KEY_MAP } from "../../../../environments/constants.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
+import { AON_MSG_DELETE, AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA, AON_MSG_DELETE_CONFIRM, AON_MSG_RADIO } from "../../../../environments/msg.js";
+import { CONSTANT_SUCCESS } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
-import { AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA } from "../../../../environments/msg.js";
 
 export class AonLocationAdd extends AonElement {
-  TOAST;
   NAME;
   static get observedAttributes() {
     return ["data", "add"];
@@ -49,7 +49,6 @@ export class AonLocationAdd extends AonElement {
     this.NAME = "Ubicación";
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
-    this.TOAST = this.applicationEl.getToast();
   }
 
   connectedCallback() {
@@ -93,7 +92,7 @@ export class AonLocationAdd extends AonElement {
               <aon-input name="description" id="description" description="Nombre" type="text"></aon-input>
             </div>
             <div class="aonCol-xs-2">
-              <aon-number name="radio" id="radio" description="Radio" type="text"></aon-number>
+              <aon-number name="radio" id="radio" description="${AON_MSG_RADIO}" type="text"></aon-number>
             </div>
             <div class="aonCol-xs-12">
              <div id="${this.id}Map" title="Mapa"></div>
@@ -218,25 +217,25 @@ export class AonLocationAdd extends AonElement {
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
-        this.TOAST.start({ message: AON_MSG_SAVED_DATA, type: "success" });
+        this.applicationEl.getToast().start({ message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS });
         if (id) { setValueName("id", id); }
       } catch (error) {
-        this.TOAST.start({ message: error, type: "error"});
+        this.applicationEl.getToast().start(handleError(error));
       }
       this.applicationEl.stopLoading();
     }
   }
 
   async delete() {
-    this.applicationEl.confirmDialog("Eliminar", `Estas seguro de eliminar ${this.NAME}?`, async()=>{
+    this.applicationEl.confirmDialog(AON_MSG_DELETE, `${AON_MSG_DELETE_CONFIRM} ${this.NAME}?`, async()=>{
       this.applicationEl.startLoading();
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
-        this.TOAST.start({ message: AON_MSG_DELETED_DATA });
+        this.applicationEl.getToast().start({ message: AON_MSG_DELETED_DATA });
         this.back();
       } catch (error) {
-        this.TOAST.start({ message: error, type: "error"});
+        this.applicationEl.getToast().start(handleError(error));
       }
       this.applicationEl.stopLoading();
     });

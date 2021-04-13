@@ -90,3 +90,5 @@ export const SIGNIN_VIEWS = {
   AON_LOCATION_LIST:"aonLocationList",
   AON_LOCATION_ADD:"aonLocationAdd",
 };
+
+export const iconAddLocation = "add_location";

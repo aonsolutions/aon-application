@@ -211,7 +211,19 @@ export const AON_MSG_MODEL_190 = MSG.AON_MSG_MODEL_190;
 export const AON_MSG_MODEL_190_DESCRIPTION = MSG.AON_MSG_MODEL_190_DESCRIPTION;
 
 
+//-----------------------------------------------
 export const AON_MSG_DELETED_DATA= "Datos eliminados!";
 export const AON_MSG_SAVED_DATA  = "Datos guardados!";
 export const AON_MSG_PROCESSED_MOVEMENT = "Alta procesada!";
 export const AON_MSG_UPDATED_CONTRACT = "Contrato modificado!";
+export const AON_MSG_BLOCKED_POPUP = "Ventana bloqueada!";
+export const AON_MSG_LAST_STATUS = "Último estado";
+export const AON_MSG_STATUS = "Estado";
+export const AON_MSG_LAST_LOCATION = "Última ubicación";
+export const AON_MSG_LOCATION = "Ubicación";
+export const AON_MSG_DURATION = "Duración";
+export const AON_MSG_RADIO = "Radio";
+export const AON_MSG_DELETE_CONFIRM = "Estas seguro de eliminar";
+export const AON_MSG_FILTERS = "Filtros";
+export const AON_MSG_RESUME_COSTS = "Resumen de costes";
+export const AON_MSG_VIEW_PAYROLL = "Ver nóminas";

@@ -1,3 +1,4 @@
+import { AON_MSG_BLOCKED_POPUP } from "../environments/msg.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
@@ -9,25 +10,24 @@ const formatParams = (params) => {
   );
 };
 
+export const getToken = () => localStorage.getItem("aon_session_id");
+
+export const domainId = () =>  localStorage.getItem("aon_domain_id") ? localStorage.getItem("aon_domain_id") : localStorage.getItem("company") 
+? JSON.parse(localStorage.getItem("company")).id: "";
+
+export const domainName = () => localStorage.getItem("aon_domain_name") ? localStorage.getItem("aon_domain_name") : localStorage.getItem("company") 
+? JSON.parse(localStorage.getItem("company")).domain : "";
+
+export const domainLogin = () => localStorage.getItem("aon_domain_login") || "";
+
 const xmlHttpRequestAon = (method, url, token, sendData) =>{
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
   xhr.open(method, url);
   xhr.setRequestHeader("session_id", token);
-  const domainId = localStorage.getItem("aon_domain_id")
-    ? localStorage.getItem("aon_domain_id")
-    : localStorage.getItem("company")
-    ? JSON.parse(localStorage.getItem("company")).id
-    : "";
-  xhr.setRequestHeader("domain_id", domainId);
-  const domainName = localStorage.getItem("aon_domain_name")
-    ? localStorage.getItem("aon_domain_name")
-    : localStorage.getItem("company")
-    ? JSON.parse(localStorage.getItem("company")).domain
-    : "";
-  xhr.setRequestHeader("domain_name", domainName);
-  const domainLogin = localStorage.getItem("aon_domain_login") || "";
-  xhr.setRequestHeader("domain_login", domainLogin);
+  xhr.setRequestHeader("domain_id", domainId());
+  xhr.setRequestHeader("domain_name", domainName());
+  xhr.setRequestHeader("domain_login", domainLogin());
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   return xhr;
@@ -148,8 +148,6 @@ export const remove = (url, data) => {
   });
 };
 
-export const getToken = () => localStorage.getItem("aon_session_id");
-
 const blobToBase64 = blob => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.readAsDataURL(blob);
@@ -191,9 +189,13 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
         await actionRequestMobile(obj);
       } else {
         // ------------IS DESKTOP---------------
-        const newUrl = URL.createObjectURL(blob);
-        openFileDesktop(newUrl);
-        setTimeout(()=>{ URL.revokeObjectURL(url);},50);
+        try {
+          const newUrl = URL.createObjectURL(blob);
+          openFileDesktop(newUrl);
+          setTimeout(()=>{ URL.revokeObjectURL(url);},50);
+        } catch (e) {
+          reject(e);
+        }
       }
       resolve(true);
     }
@@ -201,9 +203,11 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
 });
 
 export const openFileDesktop = (url) => {
-  const openWindow =  window.open('', '_blank');
-  openWindow.document.write = "Loading...";
-  openWindow.location.href  =  url;
+  try {
+      const openWindow =  window.open(url, '_blank');
+      if(openWindow) return openWindow;
+  } catch (error) {}
+  throw new  Error(AON_MSG_BLOCKED_POPUP);
 }
 
 //if true is mobile APP

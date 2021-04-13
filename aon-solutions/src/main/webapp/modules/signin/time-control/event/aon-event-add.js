@@ -6,6 +6,7 @@ import {
   formatDateOrigin,
   isEmptyObject,
   waitEl,
+  handleError,
 } from "../../../../services/utils.js";
 import {
   deleteTimeControl,
@@ -251,7 +252,7 @@ export class AonEventAdd extends AonElement {
         delay: 3000,
       });
     } catch (error) {
-      this.applicationEl.getToast().start({ message: error, type: "error" });
+      this.applicationEl.getToast().start(handleError(error));
     }
     this.applicationEl.stopLoading();
   }
@@ -265,7 +266,7 @@ export class AonEventAdd extends AonElement {
         this.applicationEl.getToast().start({ message: AON_MSG_DELETED_DATA });
         this.back();
       } catch (error) {
-        this.applicationEl.getToast().start({ message: error, type: "error" });
+        this.applicationEl.getToast().start(handleError(error));
       }
       this.applicationEl.stopLoader();
     });

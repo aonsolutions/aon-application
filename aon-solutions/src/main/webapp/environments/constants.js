@@ -43,3 +43,4 @@ export const MAX = 'max';
 
 export const CONSTANT_SUCCESS = "success";
 export const CONSTANT_PRIMARY = "primary";
+export const CONSTANT_ERROR = "error";

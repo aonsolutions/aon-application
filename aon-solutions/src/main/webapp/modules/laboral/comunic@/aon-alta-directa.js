@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT_SUCCESS, INPUTS_ALL } from '../../../environments/constants.js';
-import { setValueName, serializeForm, formatDateOrigin } from '../../../services/utils.js';
+import { setValueName, serializeForm, formatDateOrigin, handleError } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
 import { AON_MSG_PROCESSED_MOVEMENT, AON_MSG_UPDATED_CONTRACT } from '../../../environments/msg.js';
 import { CONSTANT_PRIMARY } from '../../../environments/constants.js';
@@ -13,12 +13,12 @@ import '../../../components/aon-suggestion.js';
 import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
+import { PAYROLL_VIEWS } from '../PayrollEnums.js';
 
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
     ACTION;
-    TOAST;
     static get observedAttributes() {
         return ['data'];
     }
@@ -42,13 +42,12 @@ export class AonAltaDirecta extends AonElement {
     constructor() {
         super();
         this.ACTION = 'CREATE';
-        this.id = this.id || 'aonAltaDirecta';
+        this.id = this.id || PAYROLL_VIEWS.AON_ALTA_DIRECTA;
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
         this.applicationElToolbar = this.getElement(this.applicationEl.TOOLBAR);
         this.applicationElToolbar.setAttribute('option', 'Comunicar contrato');
-        this.TOAST = this.applicationEl.getToast();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -57,7 +56,7 @@ export class AonAltaDirecta extends AonElement {
             this.applicationElToolbar.setAttribute('option', textEdit);
             const toolbarEl = this.getElement(this.TOOLBAR);
             if(toolbarEl){
-                toolbarEl.title = textEdit
+                toolbarEl.title = textEdit;
             }
             this.edit(this.data);
         }
@@ -636,13 +635,11 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
-            this.TOAST.start({ message: AON_MSG_PROCESSED_MOVEMENT, type: CONSTANT_SUCCESS, delay: 3000 });
+            this.applicationEl.getToast().start({ message: AON_MSG_PROCESSED_MOVEMENT, type: CONSTANT_SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
-            if(typeof error ==="string") error = JSON.parse(error);
-            const {message, type} = error;
-            this.TOAST.start({ message, type});
+            this.applicationEl.getToast().start(handleError(error));
         }
         this.applicationEl.stopLoading();
     }
@@ -658,19 +655,17 @@ export class AonAltaDirecta extends AonElement {
         }
         try {
             await postUpdateCto(cto_new);
-            this.TOAST.start({ message: AON_MSG_UPDATED_CONTRACT, type: CONSTANT_PRIMARY, delay: 3000 });
+            this.applicationEl.getToast().start({ message: AON_MSG_UPDATED_CONTRACT, type: CONSTANT_PRIMARY, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
-            if(typeof error ==="string") error = JSON.parse(error);
-            const {message, type} = error;
-            this.TOAST.start({ message, type});
+            this.applicationEl.getToast().start(handleError(error));
         }
         this.applicationEl.stopLoading();
     }
 
     back() {
-        this.applicationParentEl.showView("aonMovements");
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
     }
 
     async getNaf() {
@@ -688,9 +683,7 @@ export class AonAltaDirecta extends AonElement {
                     this.disabledCardTrabajor(true);
                 }
             } catch (error) {
-                if(typeof error ==="string") error = JSON.parse(error);
-                const {message, type} = error;
-                this.TOAST.getToast().start({ message, type});
+                this.applicationEl.getToast().start(handleError(error));
             }
             nss_sugges.loading(false);
         }

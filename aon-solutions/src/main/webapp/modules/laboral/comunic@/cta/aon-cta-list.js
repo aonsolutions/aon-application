@@ -6,6 +6,8 @@ import {
   getReportAffiliateInAlta,
   getReportAffiliateInMovPrev,
 } from "../../../../services/service.js";
+import { handleError } from "../../../../services/utils.js";
+import { PAYROLL_VIEWS } from "../../PayrollEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 
@@ -30,7 +32,7 @@ export class AonCtaList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonCtaList";
+    this.id = this.id || PAYROLL_VIEWS.AON_CTA_LIST;
     this.applicationEl = this.getApplication();
     this.TABLE_ID = this.id + "Table";
   }
@@ -158,8 +160,8 @@ export class AonCtaList extends AonElement {
     try {
       const { ccc, cccRegimeCode: regimen } = data;
       await getCertCorriente({ ccc, regimen }); // open pdf
-    } catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+    } catch (error) {
+      this.applicationEl.getToast().start(handleError(error));
 		}
     this.applicationEl.stopLoading();
   }
@@ -169,8 +171,8 @@ export class AonCtaList extends AonElement {
     try {
       const { ccc, cccRegimeCode: regimen } = data;
       await getReportAffiliateInAlta({ ccc, regimen }); // open pdf
-    } catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+    } catch (error) {
+      this.applicationEl.getToast().start(handleError(error));
 		}
     this.applicationEl.stopLoading();
   }
@@ -180,8 +182,8 @@ export class AonCtaList extends AonElement {
     try {
       const { ccc, cccRegimeCode: regimen } = data;
       await getReportAffiliateInMovPrev({ ccc, regimen }); // open pdf
-    } catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+    } catch (error) {
+      this.applicationEl.getToast().start(handleError(error));
 		}
     this.applicationEl.stopLoading();
   }

@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { getAuth, getDomainUserRoles, getPeriod, getTaskHolders, getWeekDayObj } from "../../services/service.js";
+import { domainId, getAuth, getDomainUserRoles, getPeriod, getTaskHolders, getWeekDayObj } from "../../services/service.js";
 import { formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -217,9 +217,8 @@ export class AonSignin extends AonElement {
   
   async getTaskHolder(){
     if(isEmptyObject(this.TASK_HOLDER)){
-      const domainId = parseInt(localStorage.getItem("aon_domain_id"));
       const result = await getTaskHolders({reload:true});
-      this.TASK_HOLDER = result.find(({domain_id})=> domain_id === domainId);
+      this.TASK_HOLDER = result.find(({domain_id})=> domain_id === parseInt(domainId()));
     }
     return this.TASK_HOLDER;
   }

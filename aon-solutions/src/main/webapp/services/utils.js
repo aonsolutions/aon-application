@@ -1,4 +1,4 @@
-import { INPUTS_ALL } from '../environments/constants.js';
+import { CONSTANT_PRIMARY, INPUTS_ALL } from '../environments/constants.js';
 
 const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
@@ -194,4 +194,12 @@ export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, local
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   if(simbolo){ options.style = 'currency'; options.currency = simbolo};
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
+}
+
+
+export const handleError = (error)=>{
+  if(typeof error === "string") error = JSON.parse(error);
+  let {message, type} = error;
+  type = type || CONSTANT_PRIMARY;
+  return {message, type};
 }

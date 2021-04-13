@@ -23,7 +23,7 @@ export const getCompanies = () => {
       request(
         "GET",
         `${API_URL}/company`,
-        localStorage.getItem("aon_session_id"),
+        getToken(),
         undefined,
         (r, error) => {
           if (error) {
@@ -102,7 +102,7 @@ export const getDomainApps = (domain) => {
       request(
         "GET",
         `${API_URL}/company/app`,
-        localStorage.getItem("aon_session_id"),
+        getToken(),
         undefined,
         (result, error) => {
           if (!d) {

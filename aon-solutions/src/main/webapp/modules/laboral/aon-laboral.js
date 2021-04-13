@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { addDays, setValueName } from "../../services/utils.js";
+import { addDays, handleError, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -111,11 +111,8 @@ class AonLaboral extends AonElement {
     try {
       await getSalaryPdf(data);
     } catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
     }
-
 		this.applicationEl.stopLoading();
   }
 
@@ -178,9 +175,7 @@ class AonLaboral extends AonElement {
       const { document: ipf, startDate: fecha } = data;
       await getContratoPdf({ ipf, fecha });
     } catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));;
 		}
     this.applicationEl.stopLoading();
   }
@@ -191,9 +186,7 @@ class AonLaboral extends AonElement {
 			const { regime, ctaCti, nss, fra } = data;
 			await getTA({ regime, ctaCti, nss, fra }); // open pdf
 		} catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
 		}
 		this.applicationEl.stopLoading();
 	}
@@ -211,9 +204,7 @@ class AonLaboral extends AonElement {
 			const { regime, ctaCti, nss, fra } = data;
 			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
 		} catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
 		}
     this.applicationEl.stopLoading();
   }
@@ -227,9 +218,7 @@ class AonLaboral extends AonElement {
           if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
           this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
         } catch (error) {
-          if(typeof error ==="string") error = JSON.parse(error);
-          const {message, type} = error;
-          this.applicationEl.getToast().start({ message, type});
+          this.applicationEl.getToast().start(handleError(error));
         }
       this.applicationEl.stopLoading();
     });

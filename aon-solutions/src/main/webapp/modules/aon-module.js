@@ -2,13 +2,13 @@ import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 import {setPosition} from '../services/maps.js';
 import { FirebaseService } from '../services/firebaseService.js';
+import { getToken, saveAuthDevice } from '../services/service.js';
+import { AonDialog } from '../components/aon-dialog.js';
 import './login/aon-login.js';
 import './register/aon-register.js';
 import './aon-home.js';
 import './company/aon-parent.js';
 import './company/aon-mobile-desktop.js';
-import { saveAuthDevice } from '../services/service.js';
-import { AonDialog } from '../components/aon-dialog.js';
 
 export class AonModule extends AonElement {
 	AON_LOGIN;
@@ -58,7 +58,7 @@ export class AonModule extends AonElement {
 
 	load() {
 
-		if(localStorage.getItem('aon_session_id')){
+		if(getToken()){
 			document.getElementById("aonLogin").style.display = 'none';
 			document.getElementById("aonHome").style.display = 'block';
 			localStorage.removeItem('aon_domain_id');

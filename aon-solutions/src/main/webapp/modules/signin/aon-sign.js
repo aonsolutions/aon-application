@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser, setDateTimestampDay } from '../../services/utils.js';
+import { timePaser, setDateTimestampDay, handleError } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 
@@ -164,9 +164,7 @@ export class AonSign extends AonElement {
         await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
     } catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
     }
     this.disabledButton(false);
   }

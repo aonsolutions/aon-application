@@ -1,6 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation } from "../../../../services/service.js";
 import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
+import { AON_MSG_NAME, AON_MSG_RADIO } from "../../../../environments/msg.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 
@@ -93,8 +94,8 @@ export class AonLocationList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Nombre", "string", "description", "70%");
-      aonTable.addColumn("Radio", "number", "radio", "30%");
+      aonTable.addColumn(AON_MSG_NAME, "string", "description", "70%");
+      aonTable.addColumn(AON_MSG_RADIO, "number", "radio", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -118,7 +119,7 @@ export class AonLocationList extends AonElement {
           let options = {
             icon: 'location_on',
             title: `${res.description}`,
-            subtitle: `Radio (${res.radio})`,
+            subtitle: `${AON_MSG_RADIO} (${res.radio})`,
           };
           aonTable.addLi(options, idx, (el) => this.add(el, res));
         });

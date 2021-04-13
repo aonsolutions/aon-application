@@ -8,7 +8,6 @@ export const getTotal = (dataArray) => {
 const customLenged = (data, total) => {
      for (let i = 0; i < data.length; i++) {
       let format = formatNumber(data[i][1],2);
-      // let format = data[i][1];
       data[i][0] = `${data[i][0]} ${format} (${ ((data[i][1] / total) * 100).toFixed(1)}%)`;
     }
 }

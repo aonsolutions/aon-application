@@ -1,8 +1,10 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { setDate } from "../../../services/utils.js";
+import { handleError, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
+import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
+
 
 export class AonMovementsList extends AonElement {
   TABLE_ID;
@@ -24,7 +26,7 @@ export class AonMovementsList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonMovementsList";
+    this.id = this.id || PAYROLL_VIEWS.AON_MOVEMENTS_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
@@ -98,20 +100,17 @@ export class AonMovementsList extends AonElement {
   }
 
   async aonMovement({ target: el }, { regime, ctaCti, nss, prev, situation }) {
-    let id = "aonAltaDirecta";
     this.applicationEl.startLoader();
-    this.applicationEl.setContentHTML(
-      `<aon-alta-directa id="${id}"></aon-alta-directa>`
-    );
+    const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA);
+    console.log(aonAltaDirecta, aonAltaDirecta.id);
     try {
       let resp = await getEmployee({ regime, ctaCti, nss });
       if (resp) {
         resp = { ...resp, prev, situation };
-        const aonAltaDirecta = this.getElement(id);
         if (aonAltaDirecta) {
           //DISABLED FORMS
-          aonAltaDirecta.disabledForm(`${id}EmpresaCard`);
-          aonAltaDirecta.disabledForm(`${id}TrabajadorCard`, "aon-switch");
+          aonAltaDirecta.disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
+          aonAltaDirecta.disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, "aon-switch");
           //parseData
           aonAltaDirecta.data = resp;
         }
@@ -155,9 +154,7 @@ export class AonMovementsList extends AonElement {
       });
       this.applicationParentEl._movements = data;
     } catch (error) {
-      if(typeof error ==="string") error = JSON.parse(error);
-      const {message, type} = error;
-      this.applicationEl.getToast().start({ message, type});
+      this.applicationEl.getToast().start(handleError(error));
     }
     return data;
   }
