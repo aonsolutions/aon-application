@@ -7,27 +7,25 @@ export class AonExample extends AonElement {
 
 	constructor () {
 		super();
-		this.AON_EXAMPLE = 'aonExample';
 	}
 
 	connectedCallback () {
-		this.innerHTML = `
-			<aon-application id="${this.AON_EXAMPLE}" title="Example"></aon-application>
-		`;
-    this.build();
+		this.initialize();
+    	this.build();
  	}
 
+	initialize(){
+		this.AON_EXAMPLE = 'aonExample';
+	}
+
  	build() {
-		let aonExample = this.getElement(this.AON_EXAMPLE);
+		this.paintView();
+		this.applicationEl = this.getApplication();
+		this.applicationParentEl = this.getApplicationParent();
+	}
 
-		aonExample.addToolbarOption('Add', 'add', () => {alert('Add Example')});
-
-		let options = [{
-			name: 'Prueba',
-			icon: 'accessibility',
-			fn: () => alert('PRUEBA!!')
-		}];
-		aonExample.addSidenavOptions('OPCIONES', options);
+	paintView(){
+		this.innerHTML = /*html*/`<aon-application id="${this.AON_EXAMPLE}" title="Example"></aon-application>`;
 	}
 }
 window.customElements.define('aon-example', AonExample);

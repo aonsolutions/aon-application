@@ -102,7 +102,6 @@ export class AonMovementsList extends AonElement {
   async aonMovement({ target: el }, { regime, ctaCti, nss, prev, situation }) {
     this.applicationEl.startLoader();
     const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA);
-    console.log(aonAltaDirecta, aonAltaDirecta.id);
     try {
       let resp = await getEmployee({ regime, ctaCti, nss });
       if (resp) {

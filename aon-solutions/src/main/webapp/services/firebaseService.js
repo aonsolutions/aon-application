@@ -66,14 +66,15 @@ export class FirebaseService {
       const options = {
         ...payload.notification,
         title: payload.notification.title,
+        body: payload.notification.body,
       };
+      window.dispatchEvent( new CustomEvent('receivedNotification', {detail:options}));
       if (payload.data && payload.data.click_action_web) {
         options["click_action"] = payload.data.click_action_web;
       }
       const notify = new Notification(options.title, options);
       notify.onclick = (ev) => {
-        ev.preventDefault(); // Previene al buscador de mover el foco a la pestaña del Notification
-        console.log("onClick test", payload.data);
+        ev.preventDefault();
       };
     } else {
       console.log("notification without permission");

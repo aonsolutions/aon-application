@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { AonNotification } from "./aon-notification.js";
+import { AonNotificationManual } from "./aon-notification-manual.js";
 import "../../components/aon-application.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -62,8 +62,8 @@ export class AonConfiguration extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("company" === name || "user" === name) {
-    }
+    // if ("company" === name || "user" === name) {
+    // }
   }
 
   constructor() {
@@ -241,7 +241,7 @@ export class AonConfiguration extends AonElement {
   buildNotification() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
-    aonConfiguration.setContent(new AonNotification());
+    aonConfiguration.setContent(new AonNotificationManual());
   }
 
   buildCreateUser(share) {

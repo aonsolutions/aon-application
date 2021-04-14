@@ -6,7 +6,6 @@ import {rootPanel} from '../services/gwtLoader.js';
 import '../components/aon-dialog-menu.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-search-box.js';
-
 import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
 import './invoice/aon-invoice.js';
@@ -15,6 +14,7 @@ import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './user/aon-user.js';
 import './messenger/aon-messenger.js';
+import './notification/aon-notification-icon.js';
 
 export class AonHeader extends AonElement {
 
@@ -52,7 +52,7 @@ export class AonHeader extends AonElement {
 	}
 
 	build() {
-		this.innerHTML = `
+		this.innerHTML = /*html*/`
 			<div id="aonHeaderWeb" class="aonHeader" >
 				<span>
 					<img id="aonLogo" class="aonLogo" width="230px" />
@@ -66,19 +66,23 @@ export class AonHeader extends AonElement {
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
 				</span>
 
-				<span id="aonHeaderHelp" class="aonRight60 aonHeaderButton">
+				<span id="aonHeaderNotiication" class="aonRight60 aonHeaderButton">
+					<aon-notification-icon></aon-notification-icon>
+				</span>
+
+				<span id="aonHeaderHelp" class="aonRight100 aonHeaderButton">
 					<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
 				</span>
 
-				<span id="aonHeaderCompanyList" class="aonRight100 aonHeaderButton" style="display:none;">
+				<span id="aonHeaderCompanyList" class="aonRight140 aonHeaderButton" style="display:none;">
 					<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
 				</span>
 
-				<span id="aonHeaderHome" class="aonRight140 aonHeaderButton" style="display:none;">
+				<span id="aonHeaderHome" class="aonRight180 aonHeaderButton" style="display:none;">
 					<aon-icon-button id="aonHeaderHomeButton" icon="home" outlined="true"></aon-icon-button>
 				</span>
 
-				<span id="aonHeaderCompany" class="aonRight180 aonHeaderButton" style="display:none;top:25px;">
+				<span id="aonHeaderCompany" class="aonHeaderButton" style="display:none;top:25px;right: 220px;">
 					<span id="aonHeaderCompanyName"> </span>
 				</span>
 			</div>

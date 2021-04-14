@@ -655,12 +655,16 @@ button:disabled, button[disabled]{
   font-size: 18px;
   color: #5f6368;
   font-weight: bold;
+  
 }
 
 .aonCardTitleSection {
-  display: inline-flex;
+  /* display: inline-flex; */
   flex: 1 1 auto;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .aonCardTitleSectionEnd {

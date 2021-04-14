@@ -404,10 +404,10 @@ export class AonTax extends AonElement {
       await setModelStatus(form);
       await this.getTable(); //reload
       this.applicationEl.getToast().start({message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS});
-      dialog.close();
     } catch (error) {
       this.applicationEl.getToast().start(handleError(error));
     }
+    dialog.close();
     this.applicationEl.stopLoading();
   }
 

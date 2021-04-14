@@ -1,9 +1,7 @@
 import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 import {setPosition} from '../services/maps.js';
-import { FirebaseService } from '../services/firebaseService.js';
 import { getToken, saveAuthDevice } from '../services/service.js';
-import { AonDialog } from '../components/aon-dialog.js';
 import './login/aon-login.js';
 import './register/aon-register.js';
 import './aon-home.js';
@@ -27,7 +25,6 @@ export class AonModule extends AonElement {
 	}
 
 	connectedCallback () {
-		this.observerListener();
 		this.setWindowApp();
 
 		let loginDiv= this.createElement('div');
@@ -48,12 +45,6 @@ export class AonModule extends AonElement {
 		this.appendChild(registerDiv);
 		registerDiv.innerHTML = '<aon-register></aon-register>';
 		this.load();
-	}
-
-	observerListener(){
-		window.addEventListener('userAuth', ()=>{
-			this.initializeFB();
-		});
 	}
 
 	load() {
@@ -88,40 +79,9 @@ export class AonModule extends AonElement {
 		} 
 
 		window.setNotificationAction = (data) =>  {
-			console.log("data Notification1>", typeof data, data);
-			const id = 'aonDialogNotify';
-			const dialog = this.getElement(id) || new AonDialog();
-			dialog.id = id;
-			if(dialog){ this.appendChild(dialog);}
-			dialog.clear();
-			dialog.setContentHTML(data.body);
-			if (!this.isMobile()) dialog.width = '400px';
-			dialog.setTitle(data.title);
-			dialog.open();
-			dialog.addAcceptAction(() => {
-				console.log("aceptar");
-			});
+			window.dispatchEvent( new CustomEvent('receivedNotification', {detail:data}));
 		}
 	}
-
-	async initializeFB()  {
-		try{
-			let token = undefined;
-			if(!this.isMobile()) { // initialize observer message firebase desk
-				const firebaseSrv = new FirebaseService();
-				token = await firebaseSrv.getTokenFB();
-				if (token) {
-					window.tokenFCM = token;
-					const messaging = firebaseSrv.getMessagingObject();
-					messaging.onMessage(
-						(payload) => firebaseSrv.pushNotification(payload),
-						(err) => console.log(err)
-					);
-					this.saveTokenFcm(token);
-				}
-			} 
-		} catch(e){}
-  	}
 
 	saveTokenFcm(tokenFCM){
 		console.log("TOKEN FCM", tokenFCM);

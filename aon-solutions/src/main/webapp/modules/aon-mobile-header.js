@@ -3,12 +3,11 @@ import {closeSession, getTimeControl, saveTimeControl} from  '../services/servic
 import {getPosition} from '../services/maps.js';
 
 import {rootPanel} from '../services/gwtLoader.js';
-
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
-
 import './configuration/aon-configuration.js';
 import './company/aon-mobile-desktop.js';
+import './notification/aon-notification-icon.js';
 
 export class AonMobileHeader extends AonElement {
 
@@ -46,10 +45,13 @@ export class AonMobileHeader extends AonElement {
 	}
 
 	build() {
-		this.innerHTML = `
+		this.innerHTML = /*html*/`
 			<div id="aonHeaderWeb" class="aonMobileHeader" >
 				<span>
 					<img id="aonMobileLogo" class="aonLogo" width="230px" />
+				</span>
+				<span id="aonHeaderNotification" class="aonMobileHeaderButton" style="right: 15%;">
+					<aon-notification-icon></aon-notification-icon>
 				</span>
 				<span id="aonHeaderUser" class="aonRight20 aonMobileHeaderButton">
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>

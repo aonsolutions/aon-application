@@ -173,8 +173,9 @@ export const setFullDate = (d) => {
 }
 
 export const setTime = (date)=> {
-  let hour =  addZero(date.getHours(), 2);
-  let min  =  addZero(date.getMinutes(), 2);
+  const newDate = new Date(date);
+  const hour =  addZero(newDate.getHours(), 2);
+  const min  =  addZero(newDate.getMinutes(), 2);
   return hour+":"+min;
 }
 

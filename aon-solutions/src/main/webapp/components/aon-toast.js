@@ -26,15 +26,20 @@ export class AonToast extends AonElement {
 
 	start(options) {
 		let toast = this.getElement(this.DIV);
-		let { message, delay, type } = options;
+		let { message, delay, type} = options;
 		let color = '#333';
 
 		if (!delay) delay = 3000;
 		if (type === 'error') color = '#f44336';
 		else if (type === 'success') color = '#4CAF6E';
 		else if (type === 'primary') color = '#2196f3';
-
+		// if(position && "top" === position){
+		// 	toast.style.top = "10%";
+		// } else {
+		// 	toast.style.bottom = "10%";
+		// }
 		toast.classList.add("aonToastShow");
+
 		toast.innerHTML = message;
 		toast.style.background = color;
 

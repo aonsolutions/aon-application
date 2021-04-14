@@ -77,7 +77,10 @@ class AonLaboral extends AonElement {
       laboralOptions.push(companyCosts);
 
       let sepa = PayrollOptions.SEPA_FILES;
-      sepa.fn = () => this.showView(PAYROLL_VIEWS.AON_SEPA_FILES_LIST);
+      sepa.fn = () => {
+        this.removeToolbarOptions();
+        this.showView(PAYROLL_VIEWS.AON_SEPA_FILES_LIST);
+      }
       laboralOptions.push(sepa);
     }
 
@@ -95,7 +98,10 @@ class AonLaboral extends AonElement {
       conf.push(aon_cta_list);
       if(!this.isMobile()){
         let aon_cert = PayrollOptions.AON_CERT;
-        aon_cert.fn = () => this.showView(PAYROLL_VIEWS.AON_CERT);
+        aon_cert.fn = () => {
+          this.applicationEl.removeToolbarOptions();
+          this.showView(PAYROLL_VIEWS.AON_CERT);
+        }
         conf.push(aon_cert);
       }
       this.applicationEl.addSidenavOptions('CONFIGURACIÓN', conf);
@@ -132,15 +138,10 @@ class AonLaboral extends AonElement {
     } catch (error) {}
   }
 
-
-  aonDocumentalList(){
-    this.showView(PAYROLL_VIEWS.AON_SEPA_FILES_LIST);
-  }
-
   removeToolbarOptions() {
     let application = this.getApplication();
     let toolbar = this.getElement(application.TOOLBAR);
-    toolbar.removeButtons();
+    if(toolbar)toolbar.removeButtons();
   }
 
   getOptions(res) {
@@ -256,12 +257,10 @@ class AonLaboral extends AonElement {
             aonView = new AonPayrollList();
             break;
           case PAYROLL_VIEWS.AON_SEPA_FILES_LIST:
-            this.removeToolbarOptions();
             aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonDocumentalList();
             aonView.setFilter({type: 'system'});
             break;
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
-            this.applicationEl.removeToolbarOptions();
             if(this.isMobile()){
               aonView = new AonContractList();
             }else {
@@ -272,11 +271,9 @@ class AonLaboral extends AonElement {
             aonView = new AonMovements();
             break;
           case PAYROLL_VIEWS.AON_CERT:
-            this.applicationEl.removeToolbarOptions();
             startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.applicationEl.CONTENT);
             break;
           case PAYROLL_VIEWS.AON_CTA_LIST:
-            this.applicationEl.removeToolbarOptions();
             aonView = new AonCtaList();
             break;
           case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:

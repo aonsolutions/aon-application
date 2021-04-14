@@ -8,7 +8,7 @@ import '../../components/aon-input.js';
 import '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
 
-export class AonNotification extends AonElement {
+export class AonNotificationManual extends AonElement {
 
     set id(id) {
         this.setAttribute('id', id);
@@ -20,7 +20,7 @@ export class AonNotification extends AonElement {
 
     constructor() {
         super();
-        this.id = this.id || "aonNotification";
+        this.id = this.id || "aonNotificationManual";
         this.TOOLBAR = this.id + "Toolbar";
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
@@ -172,4 +172,4 @@ export class AonNotification extends AonElement {
     }
 
 }
-window.customElements.define('aon-notification', AonNotification);
+window.customElements.define('aon-notification-manual', AonNotificationManual);

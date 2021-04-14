@@ -111,6 +111,7 @@ export class AonEventList extends AonElement {
     const filterEl =  this.getElement(`${this.id}Filter`);
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
+  
   buildToolbarMobile(){
     this.applicationEl.removeToolbarOptions();
     let toolbarEl = this.getElement(this.TOOLBAR);

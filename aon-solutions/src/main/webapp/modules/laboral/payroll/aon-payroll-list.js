@@ -4,10 +4,13 @@ import { firstLetters } from "../../signin/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
 import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
+import { AonToolbar } from "../../../components/aon-toolbar.js";
+import { ToolbarType } from "../../../models/enums.js";
+import { UserAction } from "../../user/userEnums.js";
+import { AON_MSG_PAYROLL } from "../../../environments/msg.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
@@ -79,6 +82,7 @@ export class AonPayrollList extends AonElement {
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );
+    if(this.isMobile())this.buildToolbarMobile();
   }
 
 
@@ -126,6 +130,19 @@ export class AonPayrollList extends AonElement {
     this.applicationEl.stopLoader();
   }
 
+
+  buildToolbarMobile(){
+    let parentEl = this.applicationParentEl;
+    if(!parentEl.isEmployee()){
+      const toolbarEl = new AonToolbar(); 
+      const filterEl = this.getElement(`${this.id}Filter`);
+      toolbarEl.type = ToolbarType.SECONDARY;
+      this.insertBefore(toolbarEl, filterEl);
+      toolbarEl.removeButtons();
+      toolbarEl.addButton2(UserAction.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
+      toolbarEl.title = AON_MSG_PAYROLL;
+    } 
+  }
 
 
   async getTableDesk() {

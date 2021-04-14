@@ -96,4 +96,9 @@ export class AonElement extends HTMLElement{
     return this.getApplication().getParent();
   }
 
+	isBeta(){
+    const href = window.location.href;
+		return href.includes('aonsolutions.org') || 'localhost';
+	}
+
 }

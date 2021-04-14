@@ -227,3 +227,4 @@ export const AON_MSG_DELETE_CONFIRM = "Estas seguro de eliminar";
 export const AON_MSG_FILTERS = "Filtros";
 export const AON_MSG_RESUME_COSTS = "Resumen de costes";
 export const AON_MSG_VIEW_PAYROLL = "Ver nóminas";
+export const AON_MSG_PAYROLL = "Nóminas";

@@ -43,6 +43,7 @@ export class AonContractList extends AonElement {
   }
 
   async build() {
+    this.applicationEl.removeToolbarOptions();
     this.applicationToolbarEl.setAttribute("option", "Contratos");
     this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();

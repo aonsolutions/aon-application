@@ -10,7 +10,7 @@ export class AonCard extends AonElement {
 	CONTENT;
 
 	static get observedAttributes() {
-		return ['visible', 'flex'];
+		return ['id','visible', 'flex'];
 	}
 
 	get id() {
@@ -52,20 +52,26 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
+		} else if('flex' === name){
+
 		} 
 	}
 
 	constructor () {
 		super();
-		this.CARD = this.id + 'Card';
-	  this.TITLE = this.id + 'Title';
-    this.TITLE_SECTION1 = this.TITLE + 'Section1';
-    this.TITLE_SECTION2 = this.TITLE + 'Section2';
-		this.CONTENT = this.id + 'Content';
 	}
 
 	connectedCallback () {
+		this.initialize();
 		this.build();
+	}
+
+	initialize(){
+		this.CARD = this.id + 'Card';
+		this.TITLE = this.id + 'Title';
+		this.TITLE_SECTION1 = this.TITLE + 'Section1';
+		this.TITLE_SECTION2 = this.TITLE + 'Section2';
+		this.CONTENT = this.id + 'Content';
 	}
 
 	build() {
@@ -138,7 +144,14 @@ export class AonCard extends AonElement {
 	}
 
 	setBackground(color) {
-		this.getElement(this.CARD).style.backgroundColor = color;
+		this.getElement(this.CARD).style.background = color;
+	}
+
+	getCard(){
+		return this.getElement(this.CARD);
+	}
+	getCardTitle(){
+		return this.getElement(this.TITLE);
 	}
 }
 if(!window.customElements.get('aon-card')){
