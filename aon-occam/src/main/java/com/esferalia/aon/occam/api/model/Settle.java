@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import java.util.List;
+
 public class Settle extends Salary {
 
 	private String representativeName;
@@ -49,6 +51,15 @@ public class Settle extends Salary {
 				payment.getQuote(),
 				payment.getPaymentType()
 			);
+		}
+		
+		for (String key : salary.getContextData().keySet())
+		{
+			List<ContextData> dataList = salary.getContextData().get(key);
+			for (ContextData data : dataList)
+			{
+				this.addContextData(key, data.getExpression(), data.getStartDate(), data.getEndDate());
+			}			
 		}
 		
 		this.setId(salary.getId());

@@ -52,8 +52,8 @@ public class PDFToolkit {
 	 * @see PdfPage
 	 */
 	public static PDPage createHorizontalPage() {
-		final float POINTS_PER_INCH = 72;
-		final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
+		final float	POINTS_PER_INCH	= 72;
+		final float	POINTS_PER_MM	= 1 / (10 * 2.54f) * POINTS_PER_INCH;
 		return new PDPage(new PDRectangle(297 * POINTS_PER_MM, 210 * POINTS_PER_MM));
 	}
 
@@ -69,8 +69,8 @@ public class PDFToolkit {
 	 * @see PdfPage
 	 */
 	public static PDPage createVerticalPage() {
-		final float POINTS_PER_INCH = 72;
-		final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
+		final float	POINTS_PER_INCH	= 72;
+		final float	POINTS_PER_MM	= 1 / (10 * 2.54f) * POINTS_PER_INCH;
 		return new PDPage(new PDRectangle(210 * POINTS_PER_MM, 297 * POINTS_PER_MM));
 	}
 
@@ -85,8 +85,9 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawText(PDPageContentStream contents, String content, Float x, Float y, Color color,
-			PDFont font, float fontSize) throws IOException {
+	public static void drawText(
+			PDPageContentStream contents, String content, Float x, Float y, Color color, PDFont font, float fontSize
+	) throws IOException {
 		contents.setNonStrokingColor(color);
 		contents.beginText();
 		contents.setFont(font, fontSize);
@@ -106,8 +107,10 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawTextJustified(ArrayList<String> lines, float max, float fontSize, PDFont font, float x,
-			float y, Color color, PDPageContentStream stream) throws IOException {
+	public static void drawTextJustified(
+			ArrayList<String> lines, float max, float fontSize, PDFont font, float x, float y, Color color,
+			PDPageContentStream stream
+	) throws IOException {
 		for (int i = 0; i < lines.size() - 1; i++, y -= 10)
 			drawTextJustified(lines.get(i), max, fontSize, font, x, y, stream);
 	}
@@ -123,12 +126,14 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawTextJustified(String line, float max, float fontSize, PDFont font, float x, float y,
-			PDPageContentStream stream) throws IOException {
+	public static void drawTextJustified(
+			String line, float max, float fontSize, PDFont font, float x, float y, PDPageContentStream stream
+	) throws IOException {
 
 		stream.beginText();
 		float charSpacing = 0;
-		if (line.length() > 1) {
+		if (line.length() > 1)
+		{
 			float size = fontSize * font.getStringWidth(line) / 1000;
 			float free = max - size;
 			if (free > 0)
@@ -180,13 +185,15 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawTextRight(PDPageContentStream contents, PDRectangle box, String content, Color color,
-			PDFont font, float fontSize, float marginX, float marginY) throws IOException {
-		float w = box.getWidth();
+	public static void drawTextRight(
+			PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginX, float marginY
+	) throws IOException {
+		float w	 = box.getWidth();
 		float fw = (font.getStringWidth(content) / 1000.0f) * fontSize;
 
-		float x = box.getLowerLeftX() + w - fw - marginX;
-		float y = marginY + box.getLowerLeftY();
+		float x	= box.getLowerLeftX() + w - fw - marginX;
+		float y	= marginY + box.getLowerLeftY();
 
 		contents.setNonStrokingColor(color);
 		contents.beginText();
@@ -207,10 +214,12 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawTextLeft(PDPageContentStream contents, PDRectangle box, String content, Color color,
-			PDFont font, float fontSize, float marginX, float marginY) throws IOException {
-		float x = box.getLowerLeftX() + marginX;
-		float y = marginY + box.getLowerLeftY();
+	public static void drawTextLeft(
+			PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginX, float marginY
+	) throws IOException {
+		float x	= box.getLowerLeftX() + marginX;
+		float y	= marginY + box.getLowerLeftY();
 
 		contents.setNonStrokingColor(color);
 		contents.beginText();
@@ -231,13 +240,15 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfText
 	 */
-	public static void drawTextCenter(PDPageContentStream contents, PDRectangle box, String content, Color color,
-			PDFont font, float fontSize, float marginY) throws IOException {
-		float w = box.getWidth();
+	public static void drawTextCenter(
+			PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginY
+	) throws IOException {
+		float w	 = box.getWidth();
 		float fw = (font.getStringWidth(content) / 1000.0f) * fontSize;
 
-		float x = box.getLowerLeftX() + (w - fw) / 2;
-		float y = marginY + box.getLowerLeftY();
+		float x	= box.getLowerLeftX() + (w - fw) / 2;
+		float y	= marginY + box.getLowerLeftY();
 
 		contents.setNonStrokingColor(color);
 		contents.beginText();
@@ -274,9 +285,11 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfImage
 	 */
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y,
-			float width, float height) throws IOException {
-		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y, width, height);
+	public static void drawImage(
+			PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y, float width, float height
+	) throws IOException {
+
+		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, ""), x, y, width, height);
 	}
 
 	/**
@@ -308,16 +321,18 @@ public class PDFToolkit {
 	 * @return void
 	 * @see PdfBox
 	 */
-	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height,
-			Color color) throws IOException {
+	public static void drawBorderedBox(
+			PDPageContentStream contents, float x, float y, float width, float height, Color color
+	) throws IOException {
 		contents.setStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.setLineWidth(2);
 		contents.stroke();
 	}
 
-	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height,
-			Color color, float size) throws IOException {
+	public static void drawBorderedBox(
+			PDPageContentStream contents, float x, float y, float width, float height, Color color, float size
+	) throws IOException {
 		contents.setStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.setLineWidth(size);
@@ -334,8 +349,8 @@ public class PDFToolkit {
 	 */
 	@Deprecated
 	public static List<PDField> getFormFields(PDDocument doc) {
-		PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
-		PDAcroForm pdAcroForm = pdCatalog.getAcroForm();
+		PDDocumentCatalog pdCatalog	 = doc.getDocumentCatalog();
+		PDAcroForm		  pdAcroForm = pdCatalog.getAcroForm();
 		return pdAcroForm.getFields();
 	}
 
@@ -383,9 +398,11 @@ public class PDFToolkit {
 	 * @return PDPageContentStream (the pdf file stream)
 	 */
 	public static PDPageContentStream openInAppendMode(PDDocument doc, PDPage page) {
-		try {
+		try
+		{
 			return new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			return null;
 		}
 	}
@@ -420,17 +437,20 @@ public class PDFToolkit {
 	 */
 	public static List<String> getLines(String text, float max, PDFont font, float fontSize) throws IOException {
 
-		ArrayList<String> lines = new ArrayList<>();
-		ArrayList<String> words = (ArrayList<String>) StringToolkit.toWords(text);
-		String line = "";
+		ArrayList<String> lines	= new ArrayList<>();
+		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWords(text);
+		String			  line	= "";
 
-		for (int i = 0; i < words.size(); i++) {
+		for (int i = 0; i < words.size(); i++)
+		{
 			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
-			if (fw < max) {
+			if (fw < max)
+			{
 				line += " " + words.get(i);
 				if (i == words.size() - 1)
 					lines.add(line);
-			} else {
+			} else
+			{
 				lines.add(line);
 				line = "" + words.get(i);
 			}
@@ -454,10 +474,11 @@ public class PDFToolkit {
 			return text;
 
 		String txt = text;
-		float fw = (font.getStringWidth(text) / 1000.0f) * fontSize;
-		while (fw > width) {
+		float  fw  = (font.getStringWidth(text) / 1000.0f) * fontSize;
+		while (fw > width)
+		{
 			text = text.substring(0, text.length() - 1);
-			fw = (font.getStringWidth(text + "...") / 1000.0f) * fontSize;
+			fw	 = (font.getStringWidth(text + "...") / 1000.0f) * fontSize;
 		}
 
 		return (txt.equals(text)) ? text : text + "...";
@@ -483,7 +504,8 @@ public class PDFToolkit {
 
 		float rel = width / height;
 
-		while (width > maxWidth || height > maxHeight) {
+		while (width > maxWidth || height > maxHeight)
+		{
 			width--;
 			height = width / rel;
 		}
@@ -501,9 +523,12 @@ public class PDFToolkit {
 	 */
 	public static BufferedImage imageFromBytes(byte[] imageData) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
-		try {
-			return ImageIO.read(bais);
-		} catch (IOException e) {
+		try
+		{
+			BufferedImage data = ImageIO.read(bais);
+			return data;
+		} catch (IOException e)
+		{
 		}
 		return null;
 	}

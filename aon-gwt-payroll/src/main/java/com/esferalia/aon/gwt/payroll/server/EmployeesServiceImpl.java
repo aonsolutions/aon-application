@@ -167,16 +167,19 @@ import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqSettleBuilder;
+import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -1744,12 +1747,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 
 		try {
-
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
 			Settle settle = getSettle(domain, draft);			
 			
 			try {
-				JooqSettleBuilder.printSettle(settle, reportOut, new Locale("Es"));
+				JooqSettleBuilder.printSettle(settle, reportOut, new Locale("Es"),Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
 			} catch (CanNotCreatePdfException ignored) {}
 			
 
@@ -4281,11 +4283,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		.setTotalPayment(salary.getTotalPayment())
 		.setTotalEnterprise(salary.getTotalEnterprise())
 		.setTotalIrpf(salary.getTotalIrpf())
-		.setTotalLiquid(salary.getTotalLiquid());
+		.setTotalLiquid(salary.getTotalLiquid())
+		.setStartDate(salary.getStartDate());
+		
+		
+		AONContext ctx = AONContext.getAONContext(domain, "");
+		LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx, ctx.getDomainId());
+		
+		if(dirStaff.size() > 0) {
+			String staffDocument = dirStaff.get(0).getDocument();
+			String staffName = dirStaff.get(0).getName();
+			
+			settle.setRepresentativeDocument(staffDocument);
+			settle.setRepresentativeName(staffName);
+		}
 		
 		try {
-		    for (IDeduction deduction : salary.getDeductionS()) 
-			    settle.addDeduction((byte) deduction.getType().ordinal(), deduction.getDescription(), deduction.getAmount(), (byte) deduction.getType().ordinal());
+		    for (IDeduction deduction : salary.getDeductionS()) {
+		    	
+		    	byte type = (byte) deduction.getType().ordinal();
+		    	String description = deduction.getDescription(); 
+		    	settle.addDeduction(type, description, deduction.getAmount(), type);
+		    }
 		} catch (SalaryException e) {}
 		
 		try {

@@ -34,11 +34,13 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText.PdfTextBuilder;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.VERTICAL_ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
@@ -50,7 +52,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.Settle
 public class SettlementTemplate extends PdfFile {
 
 	private Settlement settlement;
-	private Byte[]	   logo;
+	private byte[]	   logo;
 
 	public SettlementTemplate(
 			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out,
@@ -89,6 +91,7 @@ public class SettlementTemplate extends PdfFile {
 
 			template.lang	= (Locale) safeValue(config.getLanguage(), new Locale("Es"));
 			template.limitY	= 200;
+			template.logo = config.getLogo();
 
 			template.newPage(VERTICAL);
 
@@ -107,6 +110,7 @@ public class SettlementTemplate extends PdfFile {
 
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 			if (template != null)
 				try
 				{
@@ -395,7 +399,7 @@ public class SettlementTemplate extends PdfFile {
 		builder.stream(contents).x(x()).width(480).y(y()).font(HELVETICA).fontSize(9f).content(legalTxt).lineSpacing(6f)
 				.horizontalAlignment(ALIGNMENT.JUSTIFY);
 
-		PdfText legalText = builder.horizontalAlignment(ALIGNMENT.LEFT).build();
+		PdfText legalText = builder.horizontalAlignment(ALIGNMENT.JUSTIFY).build();
 		drawTextLines(legalText);
 		down(15);
 
@@ -404,7 +408,7 @@ public class SettlementTemplate extends PdfFile {
 		drawTextLines(legalAdviceText);
 		down(15);
 
-		builder.stream(contents).y(200).content(dateTxt);
+		builder.stream(contents).y(150).content(dateTxt);
 		PdfText dateText = builder.build();
 		drawTextLinesFree(dateText);
 
@@ -417,17 +421,21 @@ public class SettlementTemplate extends PdfFile {
 			width  = 470 / 3 - margin / 2;
 		}
 
-		builder.stream(contents).width(width).height(40).y(40).content(employeeSignTxt).color(GRAY)
+		builder.stream(contents).width(width).height(40).y(40).content(enterpriseSignTxt).color(GRAY)
 				.horizontalAlignment(ALIGNMENT.CENTER);
 
-		PdfText employeeSign = builder.build();
-		drawTextLinesFree(employeeSign);
-
-		right(width + margin);
-		builder.stream(contents).width(width).x(x()).content(enterpriseSignTxt);
-
+		PdfImage logo_img = new PdfImage(x(), 80, width, 50, ALIGNMENT.CENTER, contents, doc, logo);
+		logo_img.draw();
+	
+		
 		PdfText enterpriseSign = builder.build();
 		drawTextLinesFree(enterpriseSign);
+
+		right(width + margin);
+		builder.stream(contents).width(width).x(x()).content(employeeSignTxt);
+
+		PdfText  employeeSign = builder.build();
+		drawTextLinesFree(employeeSign);
 
 		right(width + margin);
 		builder.stream(contents).width(width).x(x()).content(representativeSignTxt);

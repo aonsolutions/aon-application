@@ -90,8 +90,12 @@ public class PdfImage extends PdfComponent{
 	 */
 	@Override
 	public void draw() {
-		try {PDFToolkit.drawImage(doc, stream(), img, x(), y(),width(),height());} 
-		catch (IOException e) {e.printStackTrace();}
+		try {
+			if(img.length < 1)
+				return;
+			PDFToolkit.drawImage(doc, stream(), img, x(), y(),width(),height());
+		} 
+		catch (IOException e) {}
 	}
 	
 	/**
@@ -99,6 +103,10 @@ public class PdfImage extends PdfComponent{
 	 */
 	public PdfImage scale(float maxWidth, float maxHeight, ALIGNMENT align) {
 		BufferedImage buff = imageFromBytes(img);	
+		
+		if(buff == null)
+			return this;
+		
 		float[] sizes = reescale(buff.getWidth(), buff.getHeight(), maxWidth, maxHeight);		
 		
 		this.width(sizes[0]);

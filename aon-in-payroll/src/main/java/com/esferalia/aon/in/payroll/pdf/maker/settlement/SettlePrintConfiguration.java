@@ -1,9 +1,12 @@
 package com.esferalia.aon.in.payroll.pdf.maker.settlement;
 
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.ReadAllBytesSafely;
+
 import java.io.InputStream;
 import java.util.Locale;
 
 import com.esferalia.aon.in.payroll.pdf.api.bean.PrintConfiguration;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 
 public class SettlePrintConfiguration extends PrintConfiguration {
@@ -15,14 +18,7 @@ public class SettlePrintConfiguration extends PrintConfiguration {
 
 		super(language);
 		this.settlement	= settlement;
-
-		try
-		{
-			this.logo = logo.readAllBytes();
-		} catch (Exception e)
-		{
-			this.logo = new byte[0];
-		}
+		this.logo = ReadAllBytesSafely(logo);
 	}
 
 	public Settlement getSettlement() {

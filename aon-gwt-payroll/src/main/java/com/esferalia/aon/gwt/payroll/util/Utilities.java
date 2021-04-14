@@ -149,12 +149,69 @@ public class Utilities {
 	}
 	
 	/**
+	 * Method to get the deduction type int of the DefaultPayroll given the int
+	 * @param dt The original int
+	 * @return the int of the type for DefaultPayroll
+	 */
+	public static int chooseType (int dt) {
+		switch (dt) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return 1;
+		case 6:
+			return 2;
+		case 7:
+			return  3;
+		case 8:
+			return 4;
+		default:
+			return 5;
+		}
+	}
+	
+	/**
 	 * Method to get a suitable description for the given DeductionType
 	 * @param dt The DeductionType enum object
 	 * @return a String containing a suitable description
 	 */
 	public static String chooseDescription (DeductionType dt) {
 		switch (dt.ordinal()) {
+		case 0:
+			return "Contingencias comunes";
+		case 1:
+			return "Contingencias profesionales";
+		case 2:
+			return "Desempleo";
+		case 3:
+			return "Formación profesional";
+		case 4:
+			return "Horas extraordinarias (Estruc.)";
+		case 5:
+			return "Horas extraordinarias (No Estruc.)";
+		case 6:
+			return "Retribuciones dinerarias";
+		case 7:
+			return "Anticipo";
+		case 8:
+			return "En especie";
+		case 10:
+			return "Embargo";
+		default:
+			return "Otras deducciones";
+		}
+	}
+	
+	/**
+	 * Method to get a suitable description for the given int
+	 * @param dt 
+	 * @return a String containing a suitable description
+	 */
+	public static String chooseDescription (int dt) {
+		switch (dt) {
 		case 0:
 			return "Contingencias comunes";
 		case 1:

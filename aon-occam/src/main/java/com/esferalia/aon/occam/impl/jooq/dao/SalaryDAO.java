@@ -430,6 +430,18 @@ public class SalaryDAO {
 		.orderBy(SALARY.ID)
 		.fetchLazy();
 		//@formatter:on
+		
+		//@formatter:off
+		Cursor<Record> dataCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_DATA)
+		.onKey(FK_SALARY_DATA_SALARY)
+		.where(conditions)
+		.orderBy(SALARY.ID)
+		.fetchLazy();
+		//@formatter:on
 
 		//@formatter:off
 		Cursor<Record> deductionCursor = 
@@ -468,6 +480,7 @@ public class SalaryDAO {
 		BackIterator<Record> paymentIter = new BackIterator<>(paymentCursor.iterator());
 		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
 		BackIterator<Record> embargoIter = new BackIterator<>(embargoCursor.iterator());
+		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
 
 		//@formatter:off
 		return Seq.seq(rootCursor)
@@ -506,7 +519,22 @@ public class SalaryDAO {
 				;
 				
 				int salaryId = rootRecord.get(SALARY.ID);
-		
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(dataIter), 
+				r -> r.get(SALARY_DATA.SALARY) >= salaryId ),
+				r -> r.get(SALARY_DATA.SALARY) == salaryId )
+				.forEachOrdered(dataRecord->
+					salary.setContextData(
+					dataRecord.get(SALARY_DATA.NAME), 
+					dataRecord.get(SALARY_DATA.EXPRESSION),
+					dataRecord.get(SALARY_DATA.START_DATE),
+					dataRecord.get(SALARY_DATA.END_DATE))
+				);
+				
+				dataIter.back();
+				
+				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(paymentIter), 
 				r -> r.get(SALARY_PAYMENT.SALARY) >= salaryId ),

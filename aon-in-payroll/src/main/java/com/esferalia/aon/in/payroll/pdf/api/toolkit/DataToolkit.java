@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.api.toolkit;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -177,4 +178,17 @@ public class DataToolkit {
 		return false;
 	}
 
+	/**
+	 * Read all bytes of an InputStream without exceptions or null
+	 * @param input 
+	 * @return The content or empty byte array;
+	 */
+	public static byte[] ReadAllBytesSafely(InputStream input) {
+		try {
+			return input.readAllBytes();
+		}catch(Exception e) {
+			return new byte[0];
+		}
+	}
+	
 }
