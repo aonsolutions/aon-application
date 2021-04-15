@@ -1,138 +1,87 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'>
-
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainContrataIT.MyStyle">
-		/*UI Style*/
 		
-		.panelGridSearch{
-			margin-top: 0px !important;
-		}
-		
-		.suggestBox{
-			width: 100%;
-			margin: 3px;
-			margin-left: 11px;
-		}
-		
-		/*XML Style*/
-	    
-	    .tableStylePanel{
-			/*margin: auto;*/
-			height: 100%;
-		    width: 100%;
-		}
+		/* UI XML Styles */
 		
 		.widthAll{
 			width: 100%
 		}
 		
-		.pl20{
-			padding-left: 20px;
+		.mt-50{
+			margin-top: 50px;
 		}
 		
-		.ml12{
-			margin-left: 12px;
-		}
-
-		.ml8{
-			margin-left: 8px;
-		}
-		
-		.hide{
-			display: none;
-		}
-		
-		/*New Styles*/
-		.pt9{
-			padding-top: 9px;
-		}
-		
-		.pt4{
-			padding-top: 4px;
-		}
-		
-		.ml9{
-			margin-left: 9px;
+		.tableStylePanel{
+			height: 100%;
+		    width: 100%;
 		}
 		
 		.p5{
 			padding: 5px;
 		}
 		
-		.styleBorder{
-			border-style: solid;
-			border-width: 1px; 
-			margin: 15px 2px 15px 0px;
-			width: 99%;
+		.timelinePanel{
+			padding: 10px;
 		}
 		
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			margin-top: 54px;
+			padding: 10px;
 		}
 		
-		.paddingTable{
-			padding: 0px 0px 0px 10px;
+		.leyendTitle{
+			width: 100%;
+			font-size: 13px;
+			font-weight: bold;
+			border-bottom: 1px solid #b7b7b7;
+			margin-bottom: 5px;
 		}
 		
-		.mr10{
-			margin-right: 10px;	
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 2px 5px;
 		}
 		
-		.ml20{
-			margin-left: 20px;	
+		.box {
+			width: 13px;
+			height: 13px;
 		}
 		
-		.ml4{
-			margin-left: 4px;	
+		.active {
+			background-color: #A0C3FF;
 		}
 		
-		.w600{
-			width: 600px;
+		.common{
+			background-color: #FFA500;
 		}
 		
-		.mb0{
-			margin-top: 5px !important;
-			margin-bottom: 0 !important;
+		.professional{
+			background-color: #AA0033;
 		}
 		
-		.mt10{
-			margin: 5px 1em;
+		.maternity{
+			background-color: #FF66CC;
 		}
 		
-		.pt2{
-			padding-top: 2px;
+		.paternity{
+			background-color: #36C;
 		}
 		
-		.mr16{
-			margin-right: 16px;
+		.commonProfessional {
+			background-color: #E3DC14;
 		}
 		
-		.sb{
-			background-color: white; /* #f6f5e3; */
-			border: 1px solid #868686;
-			padding: 3px;
-			cursor: pointer;
-		}
-		
-		.pointer{
-			cursor: pointer;
-		}
-		
-		.ml5{
-			margin-left: 5px;
-		}
-		
-		.filterPanel{
+		/* MainContrataIT Styles */
+	    
+	    .filterPanel{
 			display: flex;
 			justify-content: space-between;
 			margin: auto 15px;
@@ -142,44 +91,68 @@
 			display: flex;
 			align-items: center;
 		}
-		
-		.bold{
-			font-weight: bold;
-		}
-		
-		.widthAll{
-			width: 100%;
-		}
-		
-		.heightAll{
-			height: 100%;
-		}
-		
-		.contractaEmployeeScPanel{
-			margin: 0 0 10px;
-		}
-		
-		.mt-50{
-			margin-top: 50px;
+
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
 		}
 		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:HTMLPanel ui:field="mainITContainer" styleName="{style.widthAll} {style.mt-50}">
-				<g:ScrollPanel height="100%" styleName="{style.p5}">
-					<g:VerticalPanel styleName="{style.tableStylePanel}">
-					
-						<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
-					
-					 	<g:HTMLPanel ui:field="mainITTablePanel" styleName="{style.mt10}">
-					 		<c:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></c:DataGrid>
-					 	</g:HTMLPanel>
-				 		
-					</g:VerticalPanel>
-				</g:ScrollPanel>
-			</g:HTMLPanel>
+			<g:DockLayoutPanel ui:field="mainContainerDockLPanel">
+				<g:center>
+					<g:HTMLPanel ui:field="mainITContainer" styleName="{style.widthAll} {style.mt-50}">
+						<g:ScrollPanel height="100%" styleName="{style.p5}" ui:field="scrollPanelTimeline">
+							<g:VerticalPanel styleName="{style.tableStylePanel}">
+							
+								<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
+							
+							 	<g:HTMLPanel ui:field='timelinePanel' styleName="{style.timelinePanel}"/>
+						 		
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+					</g:HTMLPanel>
+				</g:center>
+				<g:south size="0">
+					<g:HTMLPanel ui:field="leyendPanel" styleName="{style.flexColumn}">
+						<g:HTMLPanel styleName="{style.flex} {style.leyendTitle}">
+							<g:Label>Leyenda</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Periodo Activo del Empleado" styleName="{style.box} {style.active}"></g:HTMLPanel>
+							<g:Label>Activo</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Enfermedad Com&uacute;n, Accidente no Laboral" styleName="{style.box} {style.common}"></g:HTMLPanel>
+							<g:Label>Enfermedad Com&uacute;n</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Enfermedad Profesional" styleName="{style.box} {style.professional}"></g:HTMLPanel>
+							<g:Label>Enfermedad Profesional</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Maternidad, Lactancia, Riesgo Durante el Embarazo" styleName="{style.box} {style.maternity}"></g:HTMLPanel>
+							<g:Label>Maternidad</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Baja por Paternidad" styleName="{style.box} {style.paternity}"></g:HTMLPanel>
+							<g:Label>Paternidad</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Enfermedad Com&uacute;n, Periodo de Carencia" styleName="{style.box} {style.common}"></g:HTMLPanel>
+							<g:Label>Enfermedad Com&uacute;n, Periodo de Carencia</g:Label>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:HTMLPanel title="Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)" styleName="{style.box} {style.commonProfessional}"></g:HTMLPanel>
+							<g:Label>Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:south>
+			</g:DockLayoutPanel>	
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

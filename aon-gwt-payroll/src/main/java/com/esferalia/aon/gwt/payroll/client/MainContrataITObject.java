@@ -2,10 +2,9 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -14,34 +13,31 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataITObject {
 	
-	//Starting Service
+	// --------------------------------------------------- Variables
+	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
-	
 	private List<ITEmployee> employeesList;
-	private List<IT> allITsList;
 	private List<IT> itsList;
 	
-	private Map<String, Integer> itsFilterMap;
-	
 	private DomainUserRoles userRoles;
+	
+	// --------------------------------------------------- Constructor
 	
 	public MainContrataITObject() {
 		super();
 		this.employeesList = new ArrayList<ITEmployee>();
-		this.allITsList = new ArrayList<IT>();
 		this.itsList = new ArrayList<IT>();
-		this.itsFilterMap = new HashMap<String, Integer>();
 		this.userRoles = new DomainUserRoles();
 	}
+	
+	// --------------------------------------------------- DataBase Methods
 	
 	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure){
 		
@@ -73,36 +69,6 @@ public class MainContrataITObject {
 		
 	}
 	
-	public void getEmployeesInfo(Integer itIds [], Consumer<List<ITEmployee>> success, Consumer<Throwable> failure){
-		
-		impl.getEmployeesITInfo(itIds, new AsyncCallback<List<ITEmployee>>() {
-			
-			@Override
-			public void onSuccess(List<ITEmployee> employeesInfoList) {
-				initEmployeeList(employeesInfoList);
-				initITList(employeesInfoList);
-				success.accept(employeesInfoList);	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) { }
-		});
-		
-	}
-
-	public void deleteIT(IT it, Consumer<String> success, Consumer<Throwable> failure) {
-		impl.deleteIT(it.getId(), new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String message) {	
-				success.accept(message);	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) { }
-		});
-	}
-	
 	public void createUpdateITEmployee(ITEmployee employeeITInfo, Consumer<String> success, Consumer<Throwable> failure) {
 		impl.createUpdateITEmployee(employeeITInfo, new AsyncCallback<String>() {
 			
@@ -116,19 +82,65 @@ public class MainContrataITObject {
 		});
 	}
 	
-	public void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
-		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-					
-					@Override
-					public void onSuccess(EmployeeSegSocial result) {
-						success.accept(result);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
+	public void deleteIT(IT it, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.deleteIT(it.getId(), new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String message) {	
+				success.accept(message);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
 	}
+	
+	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+		deleteIT(it, s -> {
+			if(isUserComunica() && it.isComunicate())
+				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+							
+							@Override
+							public void onSuccess(EmployeeSegSocial result) {
+								String naf = result.getNss();
+								String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+								String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+								
+								impl.removeIT(
+										regime, 
+										ccc, 
+										naf, 
+										"ALTA", 
+										it.getStartDate(), 
+										it.getStartDate(), 
+										new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										success.accept(result);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										failure.accept(caught);
+									}
+								});
+								
+							}
+	
+							@Override
+							public void onFailure(Throwable caught) {
+							
+							}
+						});
+			else
+				success.accept(null);
+		}, f -> {});
+		
+	}
+	
+	// --------------------------------------------------- DataBase Comunic@ Methods
 	
 	public void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Boolean> success, Consumer<Throwable> failure) {
 		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
@@ -315,51 +327,6 @@ public class MainContrataITObject {
 				});
 	}
 	
-	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		deleteIT(it, s -> {
-			if(isUserComunica() && it.isComunicate())
-				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-							
-							@Override
-							public void onSuccess(EmployeeSegSocial result) {
-								String naf = result.getNss();
-								String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-								String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-								
-								impl.removeIT(
-										regime, 
-										ccc, 
-										naf, 
-										"ALTA", 
-										it.getStartDate(), 
-										it.getStartDate(), 
-										new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										success.accept(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										failure.accept(caught);
-									}
-								});
-								
-							}
-	
-							@Override
-							public void onFailure(Throwable caught) {
-							
-							}
-						});
-			else
-				success.accept(null);
-		}, f -> {});
-		
-	}
-	
 	public void deleteComunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
 				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
@@ -385,6 +352,32 @@ public class MainContrataITObject {
 							public void onSuccess(Void result) {
 								success.accept(result);
 							}});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	// --------------------------------------------------- DataBase Auxiliar Methods
+	
+	public boolean isUserComunica() {
+		boolean isComunica = false;
+		try {
+			isComunica = this.userRoles.isComunica();
+			return isComunica;
+		} catch (NullPointerException e) {
+			return isComunica;
+		}
+	}
+	
+	public void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
+		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						success.accept(result);
 					}
 					
 					@Override
@@ -421,150 +414,6 @@ public class MainContrataITObject {
 			return "Adopci" + String.valueOf("\u00F3") + "n/Tutela/Acogimiento";
 		}
 	}
-
-	public void setEmployeesInfo(List<ITEmployee> employeesInfoList, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
-		initEmployeeList(employeesInfoList);
-		initITList(employeesInfoList);
-		success.accept(employeesInfoList);	
-	}
-	
-	private void initEmployeeList(List<ITEmployee> employeesInfoList) {
-		employeesList.clear();
-		employeesList.addAll(employeesInfoList);
-	}
-	
-	private void initITList(List<ITEmployee> employeesInfoList) {
-		allITsList.clear();
-		itsList.clear();
-		
-		Date currentDate = new Date();
-		
-		itsFilterMap.clear();
-		// Init map
-		for(ITEmployee employee : employeesList) {
-			String fullName = employee.getEmployeeInfo().getFullName();
-			for(IT it : employee.getIts()) {
-				it.setFullName(fullName);
-				
-				allITsList.add(it);
-				if(it.getEndDate() == null || it.getEndDate().after(currentDate)) {
-					itsList.add(it);
-					String description = fullName + (AonStringUtils.isBlank(it.getDescription()) ? "" : " " + it.getDescription())
-							+ " " + parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" ;
-					itsFilterMap.put(description, it.getId());
-				}
-			}
-		}
-	}
-	
-	public List<ITEmployee> getEmployeesList(){
-		return employeesList;
-	}
-	
-	public List<IT> getITsList(){
-		return itsList;
-	}
-	
-	public Map<String, Integer> getITsMap(){
-		return itsFilterMap;
-	}
-
-	public void resetITsList() {
-		this.itsList.clear();
-		
-		// Init map
-		for(IT it : this.allITsList) {
-			this.itsList.add(it);
-		}
-	}
-	
-	public List<Integer> getITsContractIds(String value) {
-		List<Integer> itIds = new ArrayList<Integer>();
-		
-		for(Entry<String, Integer> entry : itsFilterMap.entrySet()) {
-			if(AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
-					AonStringUtils.contains(entry.getKey(), value) ||
-					AonStringUtils.equals(entry.getKey(), value) ||
-					AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
-				
-				itIds.add(entry.getValue());
-			}
-		}
-		
-		return itIds;
-	}
-
-	public void filterITsList(List<Integer> itsContractIds) {
-		itsList.clear();
-		
-		for(IT it : allITsList) {
-			if(itsContractIds.contains(it.getId()))
-				itsList.add(it);
-		}
-	}
-
-	public ITEmployee getEmployeeITInfo(Integer itId) {
-		for(ITEmployee itEmployee : this.employeesList) {
-			for(IT it : itEmployee.getIts())
-				if(it.getId() == itId || it.getId().equals(itId))
-					return itEmployee;
-		}
-		
-		return null;
-	}
-
-	public void setITsList(Boolean allITs) {
-		this.itsList.clear();
-		
-		if(allITs) {
-			// Init map
-			for(ITEmployee employee : employeesList) {
-				for(IT it : employee.getIts()) {
-					itsList.add(it);
-					allITsList.add(it);
-				}
-			}
-		} else {
-			Date currentDate = new Date();
-			
-			// Init map
-			for(ITEmployee employee : employeesList) {
-				for(IT it : employee.getIts()) {
-					if(it.getEndDate() == null || it.getEndDate().after(currentDate)) {
-						itsList.add(it);
-						allITsList.add(it);
-					}
-					
-				}
-			}
-		}
-		
-	}
-	
-	private String parseShortLowCauseByte(Byte typeLowPart) {
-		switch (typeLowPart) {
-			case (byte)0:
-				return "ECC";
-			case (byte)1:
-				return "ATT";
-			case (byte)2:
-				return "MAT";
-			case (byte)3:
-				return "PAT";
-			case (byte)4:
-				return "REM";
-			case (byte)5:
-				return "RLA";
-			case (byte)6:
-				return "ANL";
-			case (byte)7:
-				return "ECC";
-			case (byte)8:
-				return "COV";
-			default:
-				return "-";
-		}
-	}
 	
 	public String checkIPFType(String ipf) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
@@ -574,8 +423,6 @@ public class MainContrataITObject {
 		else
 			return "NIE";
 	}
-	
-
 	
 	private String getContractType(String contractType) {
 		Integer contractTypeInt = Integer.parseInt(contractType);
@@ -660,14 +507,70 @@ public class MainContrataITObject {
 		}
 	}
 	
-	public boolean isUserComunica() {
-		boolean isComunica = false;
-		try {
-			isComunica = this.userRoles.isComunica();
-			return isComunica;
-		} catch (NullPointerException e) {
-			return isComunica;
+	// --------------------------------------------------- FromJS Methods (msjFIEFormPanel)
+
+	public void setEmployeesInfo(List<ITEmployee> employeesInfoList, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
+		initEmployeeList(employeesInfoList);
+		initITList(employeesInfoList);
+		success.accept(employeesInfoList);	
+	}
+	
+	// --------------------------------------------------- MainContrataITObject.Methods
+	
+	private void initEmployeeList(List<ITEmployee> employeesInfoList) {
+		employeesList.clear();
+		employeesList.addAll(employeesInfoList);
+	}
+	
+	private void initITList(List<ITEmployee> employeesInfoList) {
+		itsList.clear();
+
+		for(ITEmployee employee : employeesList)
+			for(IT it : employee.getIts())
+				itsList.add(it);
+	}
+	
+	public List<ITEmployee> getEmployeesList(){
+		return employeesList;
+	}
+	
+	public List<IT> getITsList(){
+		return itsList;
+	}
+
+	public SortedSet<Integer> getAviableYears() {
+		SortedSet<Integer> years = new TreeSet<Integer>();
+		
+		for(ITEmployee itEmployee : this.employeesList)
+			years.add(DateUtils.getYear(itEmployee.getContractInfo().getStartDate()));
+		
+		// Iterator year
+		Integer iteratorYear = years.first();
+		// Current year
+		int currentYear = DateUtils.getYear();
+		
+		while(currentYear >= iteratorYear) {
+			years.add(iteratorYear);
+			iteratorYear++;
 		}
+		
+		return years;
+	}
+
+	public IT getITs(int itId) {
+		for(IT it : itsList)
+			if(AonNumberUtils.equals(it.getId(), itId))
+				return it;
+			
+		return null;
+	}
+
+	public ITEmployee getITEmployee(int contractId) {
+		for(ITEmployee itEmployee : employeesList)
+			if(AonNumberUtils.equals(itEmployee.getContractInfo().getContractId(), contractId))
+				return itEmployee;
+		
+		return null;
 	}
 		
 }
