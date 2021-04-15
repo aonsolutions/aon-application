@@ -839,7 +839,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			Date startDate = calendar.getTime();
 			
-			calendar.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+			calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			
 			Date endDate = calendar.getTime();
 			
