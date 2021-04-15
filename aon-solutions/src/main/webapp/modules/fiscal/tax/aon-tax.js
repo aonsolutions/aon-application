@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
-import { formatNumber, handleError, isEmptyObject, serializeForm, setValueName, waitEl, sortBy } from "../../../services/utils.js";
+import { formatNumber, handleError, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
 import { TAX_ENUMS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -173,9 +173,11 @@ export class AonTax extends AonElement {
 
     dialog.setContent(this.getDialogHtml(resp));
 
-    if("CUSTOMER_CHECK"===resp.status){
+    // if("CUSTOMER_CHECK"===resp.status){
       this.createFooterDialog(resp, dialog);
-    } 
+    // } else {
+    //   disabledForm(`${this.id}Form`, 'aon-switch');
+    // }
     dialog.open();
     this.visibleFields(resp);
     this.eventData(resp);
@@ -227,7 +229,7 @@ export class AonTax extends AonElement {
     div.appendChild(form);
 
     const aonSelect = new AonSelect();
-    aonSelect.name = "rbank";
+    aonSelect.name = "iban";
     aonSelect.id = "iban";
     aonSelect.title = "IBAN";
     aonSelect.hidden = true;
@@ -270,11 +272,11 @@ export class AonTax extends AonElement {
   }
 
   createFooterDialog(resp, dialog){
-    let buttonAccept = dialog.addSendAction(() => this.save(resp,dialog));
-    let divAction = this.getElement(dialog.ACTION);
-    let div = this.createElement("div");
-    let checkBox = new AonCheckbox();
-    let span = this.createElement('span');
+    const buttonAccept = dialog.addSendAction(() => this.save(resp,dialog));
+    const divAction = this.getElement(dialog.ACTION);
+    const div = this.createElement("div");
+    const checkBox = new AonCheckbox();
+    const span = this.createElement('span');
     span.style.color = "grey";
     span.style.fontSize= "12px";
     span.style.fontWeight= 500;
@@ -337,16 +339,28 @@ export class AonTax extends AonElement {
       if(result){
         let options = result.map(r=> ({
           name: `${r.bankAccount} - ${r.alias}`,
-          value: `${r.id}`
+          value: `${this.replaceAllPoint(r.bankAccount)}`
         }));
         iban.options = JSON.stringify(options);
+        if(resp.iban) iban.value = resp.iban;
       }
     })
   }
 
+  replaceAllPoint(str){
+    return String(str).replaceAll(".","");
+  }
+
   getFormValues() {
-      const form = this.getElement(`${this.id}Form`);
-      return serializeForm(form);
+      let formObj = serializeForm(this.getElement(`${this.id}Form`));
+      if(!isEmptyObject(this.BANKS) && formObj.iban){
+        const bankObj = this.BANKS.find(bank =>  this.replaceAllPoint(bank.bankAccount) === formObj.iban);
+        if(bankObj){
+          formObj["bankAlias"] = bankObj.alias;
+          formObj["bankBic"] = bankObj.bic;
+        }
+      }
+      return formObj;
   }
 
   async getBanks(){

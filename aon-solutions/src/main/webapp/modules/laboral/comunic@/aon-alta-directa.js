@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { CONSTANT_SUCCESS, INPUTS_ALL } from '../../../environments/constants.js';
-import { setValueName, serializeForm, formatDateOrigin, handleError } from '../../../services/utils.js';
+import { CONSTANT_SUCCESS } from '../../../environments/constants.js';
+import { setValueName, serializeForm, formatDateOrigin, handleError, disabledForm } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
 import { AON_MSG_PROCESSED_MOVEMENT, AON_MSG_UPDATED_CONTRACT } from '../../../environments/msg.js';
 import { CONSTANT_PRIMARY } from '../../../environments/constants.js';
@@ -384,7 +384,7 @@ export class AonAltaDirecta extends AonElement {
 
         //disabled tipo de contrato
         this.getElement('type_cto').disabled = true;
-        this.disabledForm('type_cto');
+        disabledForm('type_cto');
     }
 
     addSpanDecimal() {
@@ -704,14 +704,6 @@ export class AonAltaDirecta extends AonElement {
             this.getElement(`${this.id}Dni`).disabled = true;
             this.getElement(`nombre`).disabled = true;
         }
-    }
-
-    disabledForm(form, elems) {
-        let elems_disabled = INPUTS_ALL;
-        if (elems) elems_disabled = elems + ', ' + INPUTS_ALL;
-        [...this.getElement(form).querySelectorAll(elems_disabled)].map(el => {
-            el.disabled = true;
-        })
     }
 }
 
