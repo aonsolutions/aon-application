@@ -1321,6 +1321,18 @@ public interface Properties {
 		Property<String> getDeviceTokenProperty();
 	}
 	
+	public interface NotificationProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getTitleProperty();
+		Property<String> getBodyProperty();
+		Property<Byte> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
+		Property<byte[]> getSenderProperty();
+		Property<Byte> getPriorityProperty();
+		Property<Timestamp> getDateProperty();
+	}
+	
 	public interface RawdocProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
