@@ -8433,6 +8433,45 @@ CREATE TABLE `training_center` (
   CONSTRAINT `FK_TRAINING_CENTER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros Formativos acreditados';
 
+
+#
+# Structure for the `notification_receiver` table :
+#
+
+CREATE TABLE `notification` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+  `domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',
+  `title` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Titulo de la notificacion',
+  `body` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mensaje de la notificacion',
+  `source` tinyint(2) DEFAULT NULL COMMENT 'Tipo de proceso',
+  `source_id` int(4) DEFAULT NULL COMMENT 'ID del proceso',
+  `sender` binary(16) NOT NULL COMMENT 'ID de AUTH',
+  `priority` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Prioridad de la notificacion',
+  `date` datetime NOT NULL COMMENT 'Fecha de la notificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NOTIFICATION_DOMAIN` (`domain`),
+  KEY `IDX_NOTIFICATION_AUTH` (`sender`),
+  CONSTRAINT `FK_NOTIFICATION_AUTH` FOREIGN KEY (`sender`) REFERENCES `auth` (`id`),
+  CONSTRAINT `FK_NOTIFICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification';
+
+#
+# Structure for the `notification_receiver` table :
+#
+
+CREATE TABLE `notification_receiver` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+  `notification` int(4) NOT NULL COMMENT 'ID unico de notification',
+  `auth` binary(16) NOT NULL COMMENT 'ID de AUTH',
+  `status` tinyint(2) NOT NULL COMMENT 'Estado de la notificacion',
+  PRIMARY KEY (`id`),
+  KEY `FK_NOTIFICATION_RECEIVER` (`notification`),
+  KEY `IDX_NOTIFICATION_RECEIVER_AUTH` (`auth`),
+  CONSTRAINT `FK_NOTIFICATION_RECEIVER` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`),
+  CONSTRAINT `FK_NOTIFICATION_RECEIVER_AUTH` FOREIGN KEY (`auth`) REFERENCES `auth` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification receiver';
+
+
 #
 # Structure for the `training_course` table : 
 #
