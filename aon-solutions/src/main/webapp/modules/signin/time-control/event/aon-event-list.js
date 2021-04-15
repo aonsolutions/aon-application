@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin, formatDate } from "../../../../services/utils.js";
+import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -190,10 +190,7 @@ export class AonEventList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
-          const group = res.group;
-          if(group && "DAY"!==group) res.dateParse = formatDate(res.start_date)+" - "+ formatDate(res.end_date);
-          else res.dateParse = firstLetters(setDateTpDay(res.start_date));
-          
+          res.dateParse = firstLetters(setDateTpDay(res.start_date));
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
@@ -215,7 +212,6 @@ export class AonEventList extends AonElement {
       try {filter = {...this.applicationParentEl._filter};} catch (error) {}
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
-        datos = datos.filter(dt => new Date(dt.start_date) <= new Date());
         await sortBy(datos, 'start_date', 'asc').map(
           async (r) => {
             const newStatus = r.status.toLowerCase();

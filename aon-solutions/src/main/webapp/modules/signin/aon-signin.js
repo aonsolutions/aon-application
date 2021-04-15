@@ -169,6 +169,11 @@ export class AonSignin extends AonElement {
             break;
           case SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST:
               aonView = new AonEventDetailList();
+              if(data){
+                // const startDate = data.startDate;
+                // let endDate = data.endDate || startDate;
+                // aonView.DATE_TASK = {startDate, endDate};
+              }
             break;
           case SIGNIN_VIEWS.AON_EVENT_ADD:
             aonView = new AonEventAdd();

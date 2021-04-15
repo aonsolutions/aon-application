@@ -1,5 +1,4 @@
 import { AON_MSG_BLOCKED_POPUP } from "../environments/msg.js";
-import { CONSTANT_ERROR } from "../environments/constants.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
@@ -195,7 +194,7 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
           openFileDesktop(newUrl);
           setTimeout(()=>{ URL.revokeObjectURL(url);},50);
         } catch (e) {
-          reject({message:e.message, type:CONSTANT_ERROR});
+          reject(e);
         }
       }
       resolve(true);

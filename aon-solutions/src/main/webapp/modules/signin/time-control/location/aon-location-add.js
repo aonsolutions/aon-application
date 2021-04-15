@@ -2,11 +2,11 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl, handleError } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
-import { URL_MAP } from "../../../../environments/constants.js";
+import { API_KEY_MAP } from "../../../../environments/constants.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import { AON_MSG_DELETE, AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA, AON_MSG_DELETE_CONFIRM, AON_MSG_RADIO, AON_MSG_LOCATION, AON_MSG_NAME } from "../../../../environments/msg.js";
+import { AON_MSG_DELETE, AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA, AON_MSG_DELETE_CONFIRM, AON_MSG_RADIO } from "../../../../environments/msg.js";
 import { CONSTANT_SUCCESS } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
@@ -46,7 +46,7 @@ export class AonLocationAdd extends AonElement {
   constructor() {
     super();
     this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
-    this.NAME =  AON_MSG_LOCATION;
+    this.NAME = "Ubicación";
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
   }
@@ -89,7 +89,7 @@ export class AonLocationAdd extends AonElement {
     let aonCard = this.getElement(`${this.id}Card`);
     aonCard.setContentHTML(`
             <div class="aonCol-xs-10">
-              <aon-input name="description" id="description" description="${AON_MSG_NAME}" type="text"></aon-input>
+              <aon-input name="description" id="description" description="Nombre" type="text"></aon-input>
             </div>
             <div class="aonCol-xs-2">
               <aon-number name="radio" id="radio" description="${AON_MSG_RADIO}" type="text"></aon-number>
@@ -175,7 +175,7 @@ export class AonLocationAdd extends AonElement {
 
         let script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = URL_MAP;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
         iframe.contentDocument
           .getElementsByTagName("head")[0]
           .appendChild(script);

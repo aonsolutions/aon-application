@@ -147,9 +147,11 @@ export const setDateTimestamp = (d) => {
   return formatDate(date) + " " + setTime(date);
 }
 
-export const dayStr = (date) => {
+export const setDateTpDay = (d)=>{
+  const date = new Date(d);
   const now = new Date();
   let day = days[date.getDay()];
+
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
     if(date.getDay() === now.getDay()){
       day = "hoy";
@@ -157,12 +159,7 @@ export const dayStr = (date) => {
       day = "ayer";
     }
   }
-  return day;
-}
 
-export const setDateTpDay = (d)=>{
-  const date = new Date(d);
-  const day = dayStr(date);
   return day+", "+formatDate(date);
 }
 
@@ -170,8 +167,8 @@ export const setDateTimestampDay = (d)=> setDateTpDay(new Date(d)) +" " + setTim
 
 export const setFullDate = (d) => {
   const date = new Date(d);
-  const dayText = dayStr(date);
-  const monthText = months[date.getMonth()];
+  let dayText = days[date.getDay()];
+  let monthText = months[date.getMonth()];
   return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
 }
 
@@ -184,7 +181,7 @@ export const setTime = (date)=> {
 
 export const getDayMonth = (date) => {
   const d = new Date(date);
-  const day = addZero(d.getDate(), 2);
+  let day = addZero(d.getDate(), 2);
   const month = months[d.getMonth()];
   return day + '-' + month;
 }
@@ -196,7 +193,7 @@ export const geMonthYear = (date) => {
 
 export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, locale = "de-DE") => {
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
-  if(simbolo) { options.style = 'currency'; options.currency = simbolo;  }
+  if(simbolo){ options.style = 'currency'; options.currency = simbolo};
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
 }
 
@@ -206,12 +203,4 @@ export const handleError = (error)=>{
   let {message, type} = error;
   type = type || CONSTANT_PRIMARY;
   return {message, type};
-}
-
-export const disabledForm = (formId, elems) => {
-  let elems_disabled = INPUTS_ALL;
-  if (elems) elems_disabled = elems + ', ' + INPUTS_ALL;
-  [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => {
-      el.disabled = true;
-  })
 }

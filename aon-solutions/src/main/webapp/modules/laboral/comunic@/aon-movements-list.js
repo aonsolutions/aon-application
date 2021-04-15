@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, handleError, setDate } from "../../../services/utils.js";
+import { handleError, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
 import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
@@ -107,8 +107,10 @@ export class AonMovementsList extends AonElement {
       if (resp) {
         resp = { ...resp, prev, situation };
         if (aonAltaDirecta) {
-          disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
-          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, "aon-switch")
+          //DISABLED FORMS
+          aonAltaDirecta.disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
+          aonAltaDirecta.disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, "aon-switch");
+          //parseData
           aonAltaDirecta.data = resp;
         }
       }
