@@ -87,6 +87,7 @@ public class JooqIT {
 			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
 					.where(CONTRACT.DOMAIN.eq(domainId))
 					.and(CONTRACT.ID.gt(0))
+					.orderBy(CONTRACT.PERSON)
 					.fetch(CONTRACT.ID);
 		} else {
 			// ------------------------------------------------ Get active contracts from domainId or ends in the last two months
@@ -99,6 +100,7 @@ public class JooqIT {
 					.where(CONTRACT.DOMAIN.eq(domainId))
 					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(contract_endDate)))
 					.and(CONTRACT.ID.gt(0))
+					.orderBy(CONTRACT.PERSON)
 					.fetch(CONTRACT.ID);
 		}
 		

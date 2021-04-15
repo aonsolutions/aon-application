@@ -550,7 +550,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		employeeSB.getValueBox().addChangeHandler(e -> {
 			String selectionStr = employeeSB.getValue();
-			String contractIdStr = AonStringUtils.split(AonStringUtils.split(selectionStr, '(')[1], ')')[0];
+			String contractIdStr = AonStringUtils.split(selectionStr, '(')[1];
+			contractIdStr = AonStringUtils.split(contractIdStr, ')')[0];
 			Integer contractId = Integer.parseInt(contractIdStr);
 			if(itDialogObject == null) {
 				ITEmployee itEmployeeAux = getITEmployee(contractId);
