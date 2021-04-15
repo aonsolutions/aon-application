@@ -732,8 +732,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryDataIter), 
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
@@ -745,8 +745,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(contractDataIter), 
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(contractDataRecord->
 						salary.addContextData(
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
@@ -759,8 +759,8 @@ public class SalaryDAO {
 
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryImlicitDataIter), 
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
-					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equalsIgnoreCase(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(salaryRecord-> {
 						Optional.ofNullable(salaryRecord.get(SALARY.TOTAL_PAYMENT))
 						.ifPresent( d ->  {
