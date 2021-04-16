@@ -131,7 +131,7 @@ public class AbstractOccamTest {
 		return connection;
 	}
 	
-	private static void createDomain() {
+	protected static void createDomain() {
 		AONContext context = null;
 		try {
 			context = new AONContext(connect());

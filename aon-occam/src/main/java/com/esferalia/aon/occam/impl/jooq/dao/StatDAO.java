@@ -68,8 +68,8 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO.ElaborationPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IncomePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
@@ -108,20 +108,20 @@ public class StatDAO {
 					.setLabel(type.getDescription())
 					.setType(StatFilterType.INVOICE_TYPE));
 		}
-		for (ProductCategory pc : ProductDAO.getProductCategories(ctx)) {
+		for (ProductCategory pc : ProductOldDAO.getProductCategories(ctx)) {
 			params.getFilterItems().add(
 					new StatFilterItem().setId(AonNumberUtils.toString(pc.getId()))
 					.setLabel(pc.getName())
 					.setType(StatFilterType.PRODUCT_CATEGORY));
 		}
 		
-		ProductDAO.getBrandStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
+		ProductOldDAO.getBrandStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
 			.forEach(brand -> params.getFilterItems().add(
 				new StatFilterItem().setId(AonNumberUtils.toString(brand.getId()))
 				.setLabel(brand.getName())
 				.setType(StatFilterType.PRODUCT_BRAND)));
 		
-		ProductDAO.getTags(ctx).forEach( tag -> 
+		ProductOldDAO.getTags(ctx).forEach( tag -> 
 		 	params.getFilterItems().add(new StatFilterItem()
 		 			.setId(AonNumberUtils.toString(tag.getId()))
 					.setLabel(tag.getName())

@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -344,6 +346,41 @@ public class Asserts {
 		assertEquals("Purchase",expected.isPurchase(), actual.isPurchase());
 		assertEquals("Discount",expected.getDiscount(), actual.getDiscount(), DELTA);
 		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+	
+	public static void assertEqualsProduct(Product expected, Product actual) {
+		assertEqualsNulls( "Product", expected, actual);
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain().getId(), actual.getDomain().getId());
+		assertEquals("Code",expected.getCode(), actual.getCode());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("Brand", expected.getBrand().getId(), actual.getBrand().getId());
+		assertEquals("Category", expected.getCategory().getId(), actual.getCategory().getId());
+		assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
+		assertEquals("Type", expected.getType().value(), actual.getType().value());
+		assertEquals("Kind", expected.getKind().value(), actual.getKind().value());
+		assertEquals("Vat", expected.getVat().getId(), actual.getVat().getId());
+		assertEquals("Retention", expected.getRetention().getId(), actual.getRetention().getId());
+		assertEquals("Inventoriable", expected.isInventoriable(), actual.isInventoriable());
+		assertEquals("Serializable", expected.isSerializable(), actual.isSerializable());
+		assertEquals("Lotable", expected.isLotable(), actual.isLotable());
+		assertEquals("Manufactured", expected.isManufactured(), actual.isManufactured());
+		assertEquals("Composition", expected.isComposition(), actual.isComposition());
+		assertEquals("CompositionPrice", expected.isCompositionPrice(), actual.isCompositionPrice());
+		assertEquals("packaged", expected.isPackaged(), actual.isPackaged());
+		assertEquals("salesAccount", expected.getSalesAccount().getId(), actual.getSalesAccount().getId());
+		assertEquals("purchaseAccount", expected.getPurchaseAccount().getId(), actual.getPurchaseAccount().getId());		
+		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+	
+	public static void assertEqualsProductCategory(ProductCategory expected, ProductCategory actual) {
+		assertEqualsNulls( "ProductCategory", expected, actual);
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("Detail",expected.getDetail(), actual.getDetail());
+		assertEquals("Detail2",expected.getDetail2(), actual.getDetail2());
+		assertEquals("Detail3",expected.getDetail3(), actual.getDetail3());
 	}
 	
 	public static void assertEqualsPayMethod(PayMethod expected, PayMethod actual) {

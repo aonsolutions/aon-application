@@ -6,6 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 
 public class Product implements Serializable{
 
@@ -47,6 +48,8 @@ public class Product implements Serializable{
 	}
 	
 	public Domain getDomain() {
+		if(domain == null) 
+			domain = new Domain();
 		return domain;
 	}
 	
@@ -74,6 +77,8 @@ public class Product implements Serializable{
 	}
 	
 	public Brand getBrand() {
+		if(brand == null) 
+			brand = new Brand();
 		return brand;
 	}
 	
@@ -83,6 +88,8 @@ public class Product implements Serializable{
 	}
 
 	public ProductCategory getCategory() {
+		if(category == null) 
+			category = new ProductCategory();
 		return category;
 	}
 
@@ -96,6 +103,8 @@ public class Product implements Serializable{
 	}
 
 	public ProductStatus getStatus() {
+		if(status == null) 
+			status = ProductStatus.ACTIVE;
 		return status;
 	}
 
@@ -105,6 +114,8 @@ public class Product implements Serializable{
 	}
 
 	public ProductType getType() {
+		if(type == null) 
+			type = ProductType.COMMERCIAL_PRODUCT;
 		return type;
 	}
 
@@ -114,6 +125,8 @@ public class Product implements Serializable{
 	}
 
 	public ProductKind getKind() {
+		if(kind == null) 
+			kind = ProductKind.SALE_PURCHASE;
 		return kind;
 	}
 
@@ -123,6 +136,8 @@ public class Product implements Serializable{
 	}
 
 	public Tax getVat() {
+		if(vat == null) 
+			vat = new Tax().setType(TaxType.VAT);
 		return vat;
 	}
 
@@ -132,6 +147,8 @@ public class Product implements Serializable{
 	}
 
 	public Tax getRetention() {
+		if(retention == null)
+			retention = new Tax().setType(TaxType.RETENTION);
 		return retention;
 	}
 
@@ -141,10 +158,12 @@ public class Product implements Serializable{
 	}
 
 	public Boolean isInventoriable() {
-		return inventoriable;
+		return getInventoriable();
 	}
 	
 	public Boolean getInventoriable() {
+		if(inventoriable == null) 
+			inventoriable = false; 
 		return inventoriable;
 	}
 
@@ -153,11 +172,13 @@ public class Product implements Serializable{
 		return this;
 	}
 
-	public Boolean isSerializable() {
-		return inventoriable;
+	public Boolean isSerializable() { 
+		return getSerializable();
 	}
 	
 	public Boolean getSerializable() {
+		if(serializable == null) 
+			serializable = false; 
 		return serializable;
 	}
 
@@ -167,10 +188,12 @@ public class Product implements Serializable{
 	}
 
 	public Boolean isLotable() {
-		return lotable;
+		return getLotable();
 	}
 	
 	public Boolean getLotable() {
+		if(lotable == null) 
+			lotable = false;
 		return lotable;
 	}
 
@@ -180,10 +203,12 @@ public class Product implements Serializable{
 	}
 
 	public Boolean isManufactured() {
-		return manufactured;
+		return getManufactured();
 	}
 	
 	public Boolean getManufactured() {
+		if(manufactured == null) 
+			manufactured = false;
 		return manufactured;
 	}
 
@@ -193,10 +218,12 @@ public class Product implements Serializable{
 	}
 
 	public Boolean isComposition() {
-		return composition;
+		return getComposition();
 	}
 	
 	public Boolean getComposition() {
+		if(composition == null) 
+			composition = false;
 		return composition;
 	}
 
@@ -205,11 +232,14 @@ public class Product implements Serializable{
 		return this;
 	}
 
+
 	public Boolean isCompositionPrice() {
-		return compositionPrice;
+		return getCompositionPrice();
 	}
 	
 	public Boolean getCompositionPrice() {
+		if(compositionPrice == null) 
+			compositionPrice = false;
 		return compositionPrice;
 	}
 
@@ -219,10 +249,12 @@ public class Product implements Serializable{
 	}
 
 	public Boolean isPackaged() {
-		return packaged;
+		return getPackaged();
 	}
 	
 	public Boolean getPackaged() {
+		if(packaged == null)
+			packaged = false;
 		return packaged;
 	}
 
@@ -232,6 +264,8 @@ public class Product implements Serializable{
 	}
 
 	public Account getSalesAccount() {
+		if(salesAccount == null)
+			salesAccount = new Account();
 		return salesAccount;
 	}
 
@@ -241,6 +275,8 @@ public class Product implements Serializable{
 	}
 
 	public Account getPurchaseAccount() {
+		if(purchaseAccount == null)
+			purchaseAccount = new Account();
 		return purchaseAccount;
 	}
 

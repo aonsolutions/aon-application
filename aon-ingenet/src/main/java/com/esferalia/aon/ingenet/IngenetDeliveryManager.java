@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
@@ -232,7 +232,7 @@ public class IngenetDeliveryManager {
 			newItem.setActive(false);
 			newItem.setStatus(Integer.valueOf(
 					ProductStatus.DISCONTINUED.ordinal()).byteValue());
-			ProductDAO.insert(ctx, newItem);
+			ProductOldDAO.insert(ctx, newItem);
 			return AON.getItem(
 					ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(),
 					o -> o.getDomainProperty()
@@ -285,7 +285,7 @@ public class IngenetDeliveryManager {
 			Integer currentDomainId, String productCode) {
 		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
 				user);
-		OldProduct product = ProductDAO
+		OldProduct product = ProductOldDAO
 				.getProductStream(
 						ctx,
 						o -> o.getCodeProperty().eq(productCode)

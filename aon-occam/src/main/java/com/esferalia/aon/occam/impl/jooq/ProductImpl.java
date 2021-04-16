@@ -11,13 +11,15 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 
 public class ProductImpl implements IProduct{
 	
@@ -26,27 +28,27 @@ public class ProductImpl implements IProduct{
 	@Override
 	public Stream<OldProduct> getProductStream(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
-			ProductDAO.getProductStream(ctx, filter));
+			ProductOldDAO.getProductStream(ctx, filter));
 	}
 	
 	
 	@Override
 	public void insert(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insert(ctx, p);
+			ProductOldDAO.insert(ctx, p);
 		} );
 	}
 
 	@Override
 	public OldProduct insertProduct(AONContext ctx, OldProduct p) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.insertProduct(ctx, p));
+			ProductOldDAO.insertProduct(ctx, p));
 	}
 
 	@Override
 	public void insertWithId(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertWithId(ctx, p);
+			ProductOldDAO.insertWithId(ctx, p);
 		} );
 		
 	}
@@ -54,34 +56,34 @@ public class ProductImpl implements IProduct{
 	@Override
 	public LinkedList<OldProduct> insert(AONContext ctx, Stream<OldProduct> ps) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.insert(ctx, ps));		
+			ProductOldDAO.insert(ctx, ps));		
 	}
 
 	@Override
 	public void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertWithId(ctx, ps);
+			ProductOldDAO.insertWithId(ctx, ps);
 		} );		
 	}
 	
 	@Override
 	public void update(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.update(ctx, p);
+			ProductOldDAO.update(ctx, p);
 		} );		
 	}
 
 	@Override
 	public void delete(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.delete(ctx, p);
+			ProductOldDAO.delete(ctx, p);
 		} );
 	}
 
 	@Override
 	public void delete(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.delete(ctx, ps);
+			ProductOldDAO.delete(ctx, ps);
 		} );		
 	}
 
@@ -90,35 +92,35 @@ public class ProductImpl implements IProduct{
 	@Override
 	public void insertProductTag(AONContext ctx, ProductTag pt) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertProductTag(ctx, pt);
+			ProductOldDAO.insertProductTag(ctx, pt);
 		} );		
 	}
 
 	@Override
 	public void insertProductTag(AONContext ctx, Stream<ProductTag> pts) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertProductTag(ctx, pts);
+			ProductOldDAO.insertProductTag(ctx, pts);
 		} );		
 	}
 
 	@Override
 	public void updateProductTag(AONContext ctx, ProductTag pt) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.updateProductTag(ctx, pt);
+			ProductOldDAO.updateProductTag(ctx, pt);
 		} );		
 	}
 
 	@Override
 	public void deleteProductTag(AONContext ctx, ProductTag pt) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.deleteProductTag(ctx, pt);
+			ProductOldDAO.deleteProductTag(ctx, pt);
 		} );		
 	}
 
 	@Override
 	public void deleteProductTag(AONContext ctx, Stream<ProductTag> pts) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.deleteProductTag(ctx, pts);
+			ProductOldDAO.deleteProductTag(ctx, pts);
 		} );		
 	}
 
@@ -127,87 +129,93 @@ public class ProductImpl implements IProduct{
 	@Override
 	public Stream<OldItem> getItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-				ProductDAO.getItemStream(ctx, filter));			
+				ProductOldDAO.getItemStream(ctx, filter));			
 	}
 	
 	@Override
 	public Stream<OldItem> getFullItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-				ProductDAO.getFullItemStream(ctx, filter));			
+				ProductOldDAO.getFullItemStream(ctx, filter));			
 	}
 	
 	@Override
 	public OldItem insertItem(AONContext ctx, OldItem i) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.insertItemResult(ctx, i));
+			ProductOldDAO.insertItemResult(ctx, i));
 	}
 
 	@Override
 	public void insertItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertItem(ctx, is);
+			ProductOldDAO.insertItem(ctx, is);
 		} );
 	}
 
 	@Override
 	public void updateItem(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.updateItem(ctx, i);
+			ProductOldDAO.updateItem(ctx, i);
 		} );
 	}
 
 	@Override
 	public void deleteItem(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.deleteItem(ctx, i);
+			ProductOldDAO.deleteItem(ctx, i);
 		} );
 	}
 
 	@Override
 	public void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.deleteItem(ctx, is);
+			ProductOldDAO.deleteItem(ctx, is);
 		} );
 	}
 
 	@Override
 	public void insertItemWithId(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertItemWithId(ctx, i);
+			ProductOldDAO.insertItemWithId(ctx, i);
 		} );
 	}
 
 	@Override
 	public void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertItemWithId(ctx, is);
+			ProductOldDAO.insertItemWithId(ctx, is);
 		} );
 	}
 	
 	@Override
 	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.getItemComposition(ctx, itemId));
+			ProductOldDAO.getItemComposition(ctx, itemId));
 	}
+	
+//	@Override
+//	public Item save(AONContext ctx, Item item) {
+//		return ctx.getDslContext().transactionResult(configuration -> 
+//			ItemDAO.save(ctx, item));
+//	}
 	
 	// ------------------------------------- BRAND
 	
 	@Override
 	public Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.getBrandStream(ctx, filter));
+			ProductOldDAO.getBrandStream(ctx, filter));
 	}
 	
 	@Override
 	public Brand getBrand(AONContext ctx, BrandFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.getBrand(ctx, filter));
+			ProductOldDAO.getBrand(ctx, filter));
 	}
 	
 	@Override
 	public Brand insertBrand(AONContext ctx, Brand brand){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductDAO.insertBrand(ctx, brand));
+			ProductOldDAO.insertBrand(ctx, brand));
 	}
 
 	// ------------------------------------- PRODUCT CATEGORY
@@ -215,13 +223,13 @@ public class ProductImpl implements IProduct{
 	@Override
 	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductDAO.getProductCategoryStream(ctx, filter));
+			ProductOldDAO.getProductCategoryStream(ctx, filter));
 	}
 	
 	@Override
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductDAO.insertProductCategory(ctx, productCategory));
+			ProductOldDAO.insertProductCategory(ctx, productCategory));
 	}
 
 	// ------------------------------------- ITEM ADD INFO
@@ -229,20 +237,20 @@ public class ProductImpl implements IProduct{
 	@Override
 	public Stream<ItemAddInfo> getItemAddInfoStream(AONContext ctx, ItemAddInfoFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductDAO.getItemAddInfoStream(ctx, filter));
+			ProductOldDAO.getItemAddInfoStream(ctx, filter));
 	}
 
 	@Override
 	public void insertItemAddInfo(AONContext ctx, ItemAddInfo i) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.insertItemAddInfo(ctx, i);
+			ProductOldDAO.insertItemAddInfo(ctx, i);
 		} );		
 	}
 	
 	@Override
 	public void updateItemAddInfo(AONContext ctx, ItemAddInfo i) {
 		ctx.getDslContext().transaction(configuration -> {
-			ProductDAO.updateItemAddInfo(ctx, i);
+			ProductOldDAO.updateItemAddInfo(ctx, i);
 		} );		
 	}
 

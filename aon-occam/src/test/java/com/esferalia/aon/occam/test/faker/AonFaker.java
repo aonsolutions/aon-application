@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -332,7 +334,22 @@ public class AonFaker {
 			}
 		}
 		return report;
-		
+	}
+	
+	public static Product getProduct( AONContext ctx ) {
+		return  new Product()
+			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setName(faker.commerce().productName())
+			.setCode(AonRandom.string(0, 1, 14));
+	}
+	
+	public static ProductCategory getProductCategory( AONContext ctx ) {
+		return  new ProductCategory()
+			.setDomain(ctx.getDomainId())
+			.setName(faker.pokemon().name())
+			.setDetail(AonRandom.string(50, 10))
+			.setDetail2(AonRandom.string(50, 10))
+			.setDetail3(AonRandom.string(50, 10));
 	}
 }
 

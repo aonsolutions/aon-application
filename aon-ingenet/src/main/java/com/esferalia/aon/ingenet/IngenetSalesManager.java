@@ -26,11 +26,11 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
-import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @Deprecated
@@ -135,7 +135,7 @@ public class IngenetSalesManager {
 					if(item!=null && item.getId()!=null){
 						Product product = item.getProduct();
 						if(product!=null && product.getId()!=null){
-							Integer productId = ProductDAO.getProduct(ctx, product.getCode()).getId();
+							Integer productId = ProductOldDAO.getProduct(ctx, product.getCode()).getId();
 							if(productId == null){
 								createProduct(ctx, domainId, product);
 								productId = product.getId();
@@ -263,7 +263,7 @@ public class IngenetSalesManager {
 		newProduct.setKind((byte) product.getKind().ordinal());
 		newProduct.setCreationUser(ctx.getUser());
 		newProduct.setCreationDate(new Date());
-		ProductDAO.insertWithId(ctx, newProduct);
+		ProductOldDAO.insertWithId(ctx, newProduct);
 	}
 
 	private void updateProduct(AONContext ctx, int domainId, Product product) {
@@ -284,7 +284,7 @@ public class IngenetSalesManager {
 		newProduct.setKind((byte) product.getKind().ordinal());
 		newProduct.setModificationUser(ctx.getUser());
 		newProduct.setModificationDate(new Date());
-		ProductDAO.update(ctx, newProduct);
+		ProductOldDAO.update(ctx, newProduct);
 	}
 
 	private void createItem(AONContext ctx, int domainId, Integer productId, Item item) {
@@ -311,8 +311,8 @@ public class IngenetSalesManager {
 		newItem.setCreationUser(ctx.getUser());
 		newItem.setCreationDate(new Timestamp(new Date().getTime()));
 		try {
-			ProductValidation.validateItem(ctx, newItem);
-			ProductDAO.insertItem(ctx, newItem);
+			ProductOldValidation.validateItem(ctx, newItem);
+			ProductOldDAO.insertItem(ctx, newItem);
 		} catch (AonCoreException e) {
 			// no es valido, no se guarda
 			LOGGER.error(e.getMessage());
@@ -344,8 +344,7 @@ public class IngenetSalesManager {
 		newItem.setModificationUser(ctx.getUser());
 		newItem.setModificationDate(new Timestamp(new Date().getTime()));
 		try {
-//			ProductValidation.validateItem(ctx, i);
-			ProductDAO.updateItem(ctx, newItem);
+			ProductOldDAO.updateItem(ctx, newItem);
 		} catch (AonCoreException e) {
 			// no es valido, no se guarda
 			LOGGER.error(e.getMessage());
@@ -364,7 +363,7 @@ public class IngenetSalesManager {
 			itemComposition.setDescription(ic.getDescription());
 			itemComposition.setQuantity(ic.getQuantity());
 			itemComposition.setDiscountExpression(ic.getDiscountExpression().getDiscountExpr());
-			ProductDAO.insertItemComposition(ctx, itemComposition);
+			ProductOldDAO.insertItemComposition(ctx, itemComposition);
 		});
 	}
 	

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
 import com.esferalia.aon.occam.test.json.JsonTestSuite;
+import com.esferalia.aon.occam.test.product.ProductTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 import com.esferalia.aon.occam.test.registry.address.RegistryAddressTestSuite;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
 @SuiteClasses({
 	AccountTestSuite.class,
 	TariffTestSuite.class,
+	ProductTestSuite.class,
 	RegistryTestSuite.class,
 	RegistryAddressTestSuite.class,
 	RegistryMediaTestSuite.class,

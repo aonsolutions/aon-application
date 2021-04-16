@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -62,7 +62,7 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateProduct(){
-		OldProduct product = ProductDAO.getProduct(ctx, 1);
+		OldProduct product = ProductOldDAO.getProduct(ctx, 1);
 		if(product != null){
 			product = new OldProduct();
 			product.setDomain(ctx.getDomainId());
@@ -94,7 +94,7 @@ public class ProductTest {
 	// @Test
 	@Ignore
 	public void testDeleteProduct() {
-		OldProduct product = ProductDAO.getProduct(ctx, 1);
+		OldProduct product = ProductOldDAO.getProduct(ctx, 1);
 		if(product != null){
 			AON.delete(ctx,product);
 		}
@@ -150,7 +150,7 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateProductTag(){
-		ProductTag productTag = ProductDAO.getProductTag(ctx, 1);
+		ProductTag productTag = ProductOldDAO.getProductTag(ctx, 1);
 		if(productTag != null){
 			productTag = new ProductTag();
 			productTag.setDomain(ctx.getDomainId());
@@ -164,7 +164,7 @@ public class ProductTest {
 	// @Test
 	@Ignore
 	public void testDeleteProductTag() {
-		ProductTag productTag = ProductDAO.getProductTag(ctx, 1);
+		ProductTag productTag = ProductOldDAO.getProductTag(ctx, 1);
 		if(productTag != null){
 			AON.deleteProductTag(ctx,productTag);
 		}

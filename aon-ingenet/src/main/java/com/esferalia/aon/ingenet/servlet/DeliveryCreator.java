@@ -82,7 +82,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -694,7 +694,7 @@ public class DeliveryCreator implements Serializable {
 	 * 
 	 */
 	private OldItem obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
-		OldProduct product = ProductDAO
+		OldProduct product = ProductOldDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -716,7 +716,7 @@ public class DeliveryCreator implements Serializable {
 	}
 	
 	private OldItem createItem(AONContext ctx, PRODUCTOTYPE producto, boolean test) throws AonException {
-		OldProduct product = ProductDAO
+		OldProduct product = ProductOldDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -788,7 +788,7 @@ public class DeliveryCreator implements Serializable {
 		item.setStatus((byte)1);
 		item.setCreationUser(ctx.getUser());
 		item.setCreationDate(new Timestamp(new Date().getTime()));
-		ProductDAO.insertItem(ctx, item);
+		ProductOldDAO.insertItem(ctx, item);
 	}
 	
 	private RegistryItem obtainCustomerItem(Integer productId, Integer customerId) {
@@ -827,7 +827,7 @@ public class DeliveryCreator implements Serializable {
 	 * 
 	 */
 	private OldItem createPackage(AONContext ctx, PRODUCTOTYPE productotype, boolean test) throws AonException {
-		OldProduct product = ProductDAO
+		OldProduct product = ProductOldDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -850,8 +850,8 @@ public class DeliveryCreator implements Serializable {
 			product.setVat(obtainDefaultVat(ctx));
 			product.setCreationUser(ctx.getUser());
 			product.setCreationDate(new Date());
-			ProductDAO.insertProduct(ctx, product);
-			product = ProductDAO
+			ProductOldDAO.insertProduct(ctx, product);
+			product = ProductOldDAO
 					.getProductStream(
 							ctx,
 							f -> f.getDomainProperty()

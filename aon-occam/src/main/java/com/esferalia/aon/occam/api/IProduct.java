@@ -9,9 +9,9 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -46,6 +46,7 @@ public interface IProduct {
 	public void updateItem(AONContext ctx, OldItem i);
 	public void deleteItem(AONContext ctx, OldItem i);
 	public void deleteItem(AONContext ctx, Stream<OldItem> is);
+//	public Item save(AONContext ctx, Item item);
 	
 	// ITEM COMPOSITION
 	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId);

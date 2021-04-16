@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -30,7 +30,7 @@ public class ProductTagTest {
 	
 	// @Test
 	public void test1() throws IOException {
-		LinkedHashMap<Integer, String[]> map = ProductDAO.getProductTagMap(ctx);
+		LinkedHashMap<Integer, String[]> map = ProductOldDAO.getProductTagMap(ctx);
 		for (Integer i : map.keySet() ) {
 			System.out.print( i + " -- ");
 			for ( String tag : map.get(i)) {

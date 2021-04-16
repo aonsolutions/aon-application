@@ -50,9 +50,16 @@ public class AonRandom {
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) > threshold;
 	}
+
+    public static String string( int nullThreshold, int minLength, int maxLength ) {
+    	return ( gt(nullThreshold) )
+        		?faker.lorem().characters(minLength, maxLength)
+        		: null;
+    }
+    
     public static String string( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?faker.lorem().characters(0, 20)
+        		?faker.lorem().characters(0, maxLength)
         		:null;
     }
     public static Integer integer( int nullThreshold,  int maxLength ) {

@@ -74,13 +74,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.FullWarehouseFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO.RegistryFiller;
-import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -395,7 +395,7 @@ public class WarehouseDAO {
 	
 	public static Optional<Stock> insertStock(AONContext ctx, Stock stock){
 		ctx.checkWrite();
-		ProductValidation.validateStocking(ctx, stock.getItem());
+		ProductOldValidation.validateStocking(ctx, stock.getItem());
 		return ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE)
 				.values(stock.getDomain(), stock.getItem(), stock.getQuantity(), stock.getWarehouse())
 				.returning().fetch().stream().map(new FullStockFiller()).findFirst();

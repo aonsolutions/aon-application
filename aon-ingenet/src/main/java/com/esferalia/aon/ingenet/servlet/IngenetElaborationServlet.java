@@ -58,7 +58,7 @@ import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
@@ -290,7 +290,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 			try {
 				OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 						elaboration.getItem().getId());
-				OldProduct product = ProductDAO.getProduct(ctx, item.getProduct().getId());
+				OldProduct product = ProductOldDAO.getProduct(ctx, item.getProduct().getId());
 				SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
 				Customer customer = null;
 				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){

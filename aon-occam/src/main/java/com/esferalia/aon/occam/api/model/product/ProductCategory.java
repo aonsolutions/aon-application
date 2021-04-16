@@ -66,5 +66,9 @@ public class ProductCategory implements Serializable {
 		return this;
 	}
 	
+	public Boolean isEmpty() {
+		return getId() == null && getDomain() == null && getName() == null
+			&& getDetail() == null && getDetail2() == null && getDetail3() == null;
+	}
 	
 }

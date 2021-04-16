@@ -1,16 +1,18 @@
 package com.esferalia.aon.occam.api.model.product;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Item extends Product implements Serializable {
+public class Item implements Serializable {
 
 	private static final long serialVersionUID = 817004609996847321L;
 	
 	private Integer id;
+	private Domain domain;
 	private String detail;
 	private String detail2;
 	private String detail3;
@@ -19,8 +21,9 @@ public class Item extends Product implements Serializable {
 	private Date serialDate;
 	private String barcode;
 	
-	private ProductStatus itemStatus; // TODO
-
+	private ProductStatus status; // TODO
+	private Product product;
+	
 	private double price;
 	private double expensesPercent;
 	private double expensesFixed;
@@ -29,7 +32,7 @@ public class Item extends Product implements Serializable {
 	private boolean internet;
 	
 	private Tag packFormatTag;
-	private Double packUnits;
+	private Integer packUnits;
 	private Tag packUnitsTag;
  	private Double packMeasurement;
 	private Tag packMeasurementTag;
@@ -46,6 +49,15 @@ public class Item extends Product implements Serializable {
 	
 	public Item setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Domain getDomain() {
+		return domain;
+	}
+	
+	public Item setDomain(Domain domain) {
+		this.domain = domain;
 		return this;
 	}
 	
@@ -112,16 +124,16 @@ public class Item extends Product implements Serializable {
 		return this;
 	}
 	
-	public Boolean isItemActive() {
-		return ProductStatus.ACTIVE.equals(getItemStatus());
+	public Boolean isActive() {
+		return ProductStatus.ACTIVE.equals(getStatus());
 	}
 	
-	public ProductStatus getItemStatus() {
-		return itemStatus;
+	public ProductStatus getStatus() {
+		return status;
 	}
 	
-	public Item setItemStatus(ProductStatus itemStatus) {
-		this.itemStatus = itemStatus;
+	public Item setStatus(ProductStatus status) {
+		this.status = status;
 		return this;
 	}
 
@@ -188,11 +200,11 @@ public class Item extends Product implements Serializable {
 		return this;
 	}
 
-	public Double getPackUnits() {
+	public Integer getPackUnits() {
 		return packUnits;
 	}
 	
-	public Item setPackUnits(Double packUnits) {
+	public Item setPackUnits(Integer packUnits) {
 		this.packUnits = packUnits;
 		return this;
 	}
@@ -233,6 +245,15 @@ public class Item extends Product implements Serializable {
 		return this;
 	}
 
+	public Product getProduct() {
+		return product;
+	}
+	
+	public Item setProduct(Product product) {
+		this.product = product;
+		return this;
+	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -282,7 +303,7 @@ public class Item extends Product implements Serializable {
 	
 	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getName());
+		sb.append(getProduct().getName());
 		if (AonStringUtils.isNotEmpty(getDetail()) || AonStringUtils.isNotEmpty(getDetail2()) || AonStringUtils.isNotEmpty(getDetail3())) {
 			sb.append(' ');
 			sb.append('[');

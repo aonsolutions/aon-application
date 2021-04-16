@@ -79,8 +79,8 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -145,6 +145,7 @@ public class FillerDAO {
 					.setDomainType(DomainType.values()[r.getValue(DOMAIN.TYPE)])
 					.setEnableHeredity(r.getValue(DOMAIN.ENABLEHEREDITY) == 1)
 					.setId(r.getValue(DOMAIN.ID))
+					.setOwner(r.getValue(DOMAIN.OWNER))
 					.setName(r.getValue(DOMAIN.NAME))
 					.setParentId(r.getValue(DOMAIN.PARENT))
 					.setDomainManagement(r.getValue(DOMAIN.DOMAINMANAGEMENT) == 1);	
