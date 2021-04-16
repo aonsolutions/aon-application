@@ -10,10 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
-
-import net.aonsolutions.aon.api.json.AonRegistryJSON;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "GlobalRegistryServlet", urlPatterns = {"/ms/api/global/registry/*"})
@@ -38,7 +37,7 @@ public class GlobalRegistryServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		AON.getAonRegistryStream(DOMAIN_NAME, DOMAIN_ID, USER, f -> registryFilter(f, req))
 		.forEach(r -> {
-			array.put(AonRegistryJSON.toJSON(r));
+			array.put(RegistryJSON.toJSON(r));
 		});
 		return array;
 	}

@@ -133,6 +133,8 @@ export const AON_MSG_FOOTER = 'Peu';
 export const AON_MSG_BACKGROUND_ADJUST = 'Ajustar Fons';
 export const AON_MSG_DETAILED = 'Detallat';
 export const AON_MSG_ADDITIONAL_INFORMATION = 'Informació Addicional';
+export const AON_MSG_GENERAL_INFORMATION = 'Informació General';
+
 export const AON_MSG_PERMISSIONS = 'Permisos';
 export const AON_MSG_DELETE = 'Esborrar';
 export const AON_MSG_SAVE = 'Guardar';
@@ -180,3 +182,22 @@ export const AON_MSG_MODEL_111 = 'Model 111';
 export const AON_MSG_MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
 export const AON_MSG_MODEL_190 = 'Model 190';
 export const AON_MSG_MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;
+
+export const AON_MSG_ADDRESS = 'Dirección';
+export const AON_MSG_POSTAL_CODE = 'Código Postal';
+export const AON_MSG_CITY = 'Ciudad';
+export const AON_MSG_PROVINCE = 'Provincia';
+export const AON_MSG_COUNTRY = 'País';
+export const AON_MSG_PHONE = 'Teléfono';
+export const AON_MSG_FAX = 'Fax';
+export const AON_MSG_WEB = 'Web';
+export const AON_MSG_EMAIL = 'Email';
+
+export const AON_MSG_DELETED_DATA= "Los datos se han eliminado correctamente";
+export const AON_MSG_SAVED_DATA  = "Los datos se han guardado correctamente";
+export const AON_MSG_PROCESSED_MOVEMENT = "El alta se ha procesado procesado correctamente";
+export const AON_MSG_UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
+
+export const AON_MSG_COMPANY = 'Empresa';
+export const AON_MSG_COMPANIES = 'Empreses';
+export const AON_MSG_NEW_COMPANY = 'Nova Empresa';

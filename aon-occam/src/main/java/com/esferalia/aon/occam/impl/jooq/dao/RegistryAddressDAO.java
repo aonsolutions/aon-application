@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
@@ -14,11 +15,14 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO.GeoZoneFiller;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -62,6 +66,8 @@ public class RegistryAddressDAO {
 
 		@Override
 		public RegistryAddress apply(Record r) {
+			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
+			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
 			return new RegistryAddress()
 					.setId(r.getValue(RADDRESS.ID))
 					.setDomain(r.getValue(RADDRESS.DOMAIN))
@@ -76,8 +82,12 @@ public class RegistryAddressDAO {
 					.setZip(r.getValue(RADDRESS.ZIP))
 					.setCity(r.getValue(RADDRESS.CITY))
 					.setGeozone(r.getValue(RADDRESS.GEOZONE))
-					.setGeozoneCode(r.getValue(GEOZONE.CODE))
-					.setGeozoneName(r.getValue(GEOZONE.NAME))
+					.setGeozoneCode(r.getValue(child.CODE))
+					.setGeozoneName(r.getValue(child.NAME))
+	
+					.setChild(GeoZoneFiller.build(r, child))
+					.setParent(GeoZoneFiller.build(r, parent))
+					
 					.setAlias(r.getValue(RADDRESS.ALIAS))
 					.setMunicipalityCode(r.getValue(RADDRESS.MUNICIPALITY_CODE))
 					.setDirty(false)
@@ -117,8 +127,31 @@ public class RegistryAddressDAO {
 			}
 		};
 		
+		public static BiConsumer<AONContext, RegistryAddress> COMPLETE_GEOZONE = (ctx, address) -> {
+			if(address.getGeozone() == null) {
+				GeoZone geozone = new GeoZone();
+				if(Country.ES.equals(address.getCountry()) && address.getZip() != null
+						&& address.getZip().length() > 1) {
+					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getZip().substring(0, 2)));
+				}
+				
+				if(geozone.isEmpty() && address.getProvince() != null) {
+					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
+				}
+				
+				if((geozone == null || geozone.isEmpty()) && address.getCountry() != null) {
+					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getCountry().getIso2()));
+				}
+				
+				if(geozone != null && !geozone.isEmpty()) {
+					address.setGeozone(geozone.getId());
+				}
+			}
+		};
+		
 		public static void autoComplete(AONContext ctx, RegistryAddress registryAddress) throws AonCoreException {
 			COMPLETE_MAIN_TYPE
+				.andThen(COMPLETE_GEOZONE)
 				.accept(ctx,registryAddress);
 		}
 		
@@ -160,18 +193,29 @@ public class RegistryAddressDAO {
 	}
 
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistryAddressFilter filter) {
+		com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
+		com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
+
 		return ctx.getDslContext().select()
 				.from(RADDRESS)
-				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(child).on(child.ID.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
 				.where(RADDRESS_PROPERTIES.getConditions(filter));
 	}
 
+	public static RegistryAddress get(AONContext ctx, RegistryAddressFilter filter){
+		return select(ctx,filter).limit(1)
+				.fetch().stream().map(new RegistryAddressFiller())
+				.findFirst().orElse(new RegistryAddress());
+	}
+	
 	public static RegistryAddress get(AONContext ctx, Integer id){
 		return RegistryAddressDAO.getStream(ctx, f -> f.getIdProperty().eq(id))
 				.findFirst()
 				.orElse(null);
 	}
-
+	
 	public static RegistryAddress getMain(AONContext ctx, Integer registry){
 		return RegistryAddressDAO.getStream(ctx, f -> f.getRegistryProperty().eq(registry)
 				.and(f.getTypeProperty().eq( MAIN_ADDRESS )))

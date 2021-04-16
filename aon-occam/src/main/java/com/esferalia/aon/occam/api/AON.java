@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilt
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
@@ -113,6 +114,7 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Person;
@@ -152,6 +154,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -165,9 +168,10 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -188,6 +192,7 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -1328,6 +1333,12 @@ public class AON {
 		}
 	}
 	
+//	public static Item save(String domainName, Integer domainId, String login, Item item) {
+//		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login);){
+//			return getProduct().save(ctx, item);
+//		}
+//	}
+
 	public static void deleteItem(String domainName, Integer domainId, String login, OldItem item) {
 		AONContext ctx = null;
 		try {
@@ -2452,6 +2463,10 @@ public class AON {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getAonRegistryStream(ctx, filter);
 		}
+	}
+	
+	public static Registry getRegistry(Domain domain, User user, RegistryFilter filter) {
+		return getRegistry(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
 	public static Registry getRegistry(String domainName, Integer domainId, String login, RegistryFilter filter){
@@ -4469,6 +4484,13 @@ public class AON {
 	
 	// ------------------------------------- RMEDIA
 	
+	
+	// REGISTRY MEDIA - GET STREAM
+	
+	/**
+	 * @deprecated  Replaced by AON.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<RegistryMedia> getRMediaStream(String domainName, Integer domainId, String login,
 			RegistryMediaFilter filter) {
 		AONContext ctx = null;
@@ -4480,52 +4502,98 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<RegistryMedia> getStream(Domain domain, User user, RegistryMediaFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<RegistryMedia> getStream(Domain domain, String login, RegistryMediaFilter filter) {
+		return getStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<RegistryMedia> getStream(String domainName, Integer domainId, String login, RegistryMediaFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getStream(ctx, filter);
+		}
+	}
+	
+	// REGISTRY MEDIA - GET
 		
+	/**
+	 * @deprecated  Replaced by AON.get
+	 */
+	@Deprecated(forRemoval = true )
 	public static RegistryMedia getRMedia(String domainName, Integer domainId, String login,
 			RegistryMediaFilter filter) {
 		return getRMediaStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new RegistryMedia());
 	}
-		
+	
+	/**
+	 * @deprecated  Replaced by AON.get
+	 */
+	@Deprecated(forRemoval = true )
 	public static LinkedList<RegistryMedia> getRMediaList(String domainName, Integer domainId, String login,
 			RegistryMediaFilter filter) {
 		return getRMediaStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static RegistryMedia insertRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRMedia(ctx, rmedia);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static RegistryMedia get(Domain domain, User user, RegistryMediaFilter filter) {
+		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
 	}
 	
-	public static RegistryMedia updateRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().updateRMedia(ctx, rmedia);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static RegistryMedia get(Domain domain, String login, RegistryMediaFilter filter) {
+		return get(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static RegistryMedia get(String domainName, Integer domainId, String login, RegistryMediaFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().get(ctx, filter);
 		}
 	}
+
+	
+	// REGISTRY MEDIA - SAVE
+
+	/**
+	 * @deprecated  Replaced by AON.save
+	 */
+	@Deprecated(forRemoval = true )
+	public static RegistryMedia insertRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
+		return save(domainName, domainId, login, rmedia);
+	}
+	
+	/**
+	 * @deprecated  Replaced by AON.save
+	 */
+	@Deprecated(forRemoval = true )
+	public static RegistryMedia updateRMedia(String domainName, Integer domainId, String login, RegistryMedia rmedia) {
+		return save(domainName, domainId, login, rmedia);
+	}
+	
+	public static RegistryMedia save(Domain domain, User user, RegistryMedia media) {
+		return save(domain.getName(), domain.getId(), user.getLogin(), media);
+	}
+	
+	public static RegistryMedia save(Domain domain, String login, RegistryMedia media) {
+		return save(domain.getName(), domain.getId(), login, media);
+	}
+	
+	public static RegistryMedia save(String domainName, Integer domainId, String login, RegistryMedia media) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, media);
+		}
+	}
+
+	// REGISTRY MEDIA - DELETE
 	
 	public static RegistryMedia deleteRMedia(String domainName, Integer domainId, String login, Integer registry) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().deleteRMedia(ctx, registry);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
-		
+	
 	// ------------------------------------- RNOTE
 	
 	public static Stream<RegistryNote> getRNoteStream(String domainName, Integer domainId, String login,
@@ -4628,15 +4696,12 @@ public class AON {
 		}		
 	}
 	
+	// ------------------- REGISTRY ADDRESS
+	
 	public static Stream<RAddress> getRAddressStream(String domainName, Integer domainId, String login, RegistryAddressFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getRAddressStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}		
+		} 	
 	}
 
 	public static RAddress getRAddress(String domainName, Integer domainId, String login, RegistryAddressFilter filter){
@@ -4651,14 +4716,67 @@ public class AON {
 	}
 	
 	public static RAddress insertRAddress(String domainName, Integer domainId, String login, RAddress raddress) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().insertRAddress(ctx, raddress);
-		} finally {
-			if(ctx != null) ctx.close();
 		}
  	}
+
+	public static RegistryAddress get(Domain domain, User user, RegistryAddressFilter filter) {
+		return get(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static RegistryAddress get(Domain domain, String login, RegistryAddressFilter filter) {
+		return get(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static RegistryAddress get(String domainName, Integer domainId, String login, RegistryAddressFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().get(ctx, filter);
+		}
+	}
+	
+	public static RegistryAddress getMain(Domain domain, User user, Integer registry) {
+		return getMain(domain.getName(), domain.getId(), user.getLogin(), registry);
+	}
+	
+	public static RegistryAddress getMain(Domain domain, String login, Integer registry) {
+		return getMain(domain.getName(), domain.getId(), login, registry);
+	}
+	
+	public static RegistryAddress getMain(String domainName, Integer domainId, String login, Integer registry) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getMain(ctx, registry);
+		}
+	}
+	
+	public static Stream<RegistryAddress> getStream(Domain domain, User user, RegistryAddressFilter filter) {
+		return getStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<RegistryAddress> getStream(Domain domain, String login, RegistryAddressFilter filter) {
+		return getStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<RegistryAddress> getStream(String domainName, Integer domainId, String login, RegistryAddressFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryAddress save(Domain domain, User user, RegistryAddress address) {
+		return save(domain.getName(), domain.getId(), user.getLogin(), address);
+	}
+	
+	public static RegistryAddress save(Domain domain, String login, RegistryAddress address) {
+		return save(domain.getName(), domain.getId(), login, address);
+	}
+	
+	public static RegistryAddress save(String domainName, Integer domainId, String login, RegistryAddress address) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, address);
+		}
+	}
+	
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
@@ -6359,4 +6477,45 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// PRINT INVOICE CONFIGURATION
+	
+	public static PrintInvoiceConfiguration get(Domain domain, User user) {
+		return get(domain.getName(), domain.getId(), user.getLogin());
+	}
+	
+	public static PrintInvoiceConfiguration get(Domain domain, String login) {
+		return get(domain.getName(), domain.getId(), login);
+	}
+	
+	public static PrintInvoiceConfiguration get(String domainName, Integer domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			// TODO get print invoice configuration
+			return new PrintInvoiceConfiguration();
+		}
+	}
+	
+	public static PrintInvoiceConfiguration save(Domain domain, User user, PrintInvoiceConfiguration config) {
+		return save(domain.getName(), domain.getId(), user.getLogin(), config);
+	}
+	
+	public static PrintInvoiceConfiguration save(Domain domain, String login, PrintInvoiceConfiguration config) {
+		return save(domain.getName(), domain.getId(), login, config);
+	}
+	
+	public static PrintInvoiceConfiguration save(String domainName, Integer domainId, String login, PrintInvoiceConfiguration config) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			// TODO save print invoice configuration
+			return new PrintInvoiceConfiguration();
+		}
+	}
+	
+	// GEOZONE
+	
+	public static GeoZone get(String domainName, Integer domainId, String login, GeoZoneFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().get(ctx, filter);
+		}
+	}
+		
 }

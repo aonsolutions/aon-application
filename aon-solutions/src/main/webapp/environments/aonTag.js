@@ -36,3 +36,8 @@ export const AON_TABLE = 'aon-table';
 export const AON_TOAST = 'aon-toast';
 export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
+
+// MODULES - COMPANY
+
+export const AON_COMPANY = 'aon-company';
+export const AON_COMPANY_LIST = 'aon-company-list';

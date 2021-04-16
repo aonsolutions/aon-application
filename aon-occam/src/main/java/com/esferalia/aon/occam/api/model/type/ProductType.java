@@ -25,4 +25,23 @@ public enum ProductType implements Serializable {
 	public byte value(){
 		return (byte) this.ordinal();
 	}
+	
+	public static ProductType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static ProductType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= ProductType.values().length) return null;
+		return ProductType.values()[i];
+	}
+	
+	public static ProductType safeValueOf( String i ) {
+		for (ProductType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getName()))
+				return rs;
+		}
+		return null;
+	}
 }

@@ -20,6 +20,14 @@ public class Company extends Registry implements Serializable {
 	private boolean eInvoice;
 	
 	private Scope scope;
+	
+	public Company() {
+	
+	}
+	
+	public Company copy(Registry registry) {
+		return super.copy( registry, this);
+	}
 
 	public Integer getId() {
 		return id;

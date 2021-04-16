@@ -59,6 +59,7 @@ export class AonAddress extends AonElement {
             country: "ES",
             address: "",
             zip: "",
+            postal_code: "",
             city: "",
             province: "",
           };
@@ -96,6 +97,7 @@ export class AonAddress extends AonElement {
           country: "ES",
           address: "",
           zip: "",
+          postal_code: "",
           city: "",
           province: "",
         };
@@ -137,6 +139,7 @@ export class AonAddress extends AonElement {
       country: val.country || "ES",
       address: val.address || "",
       zip: val.zip || "",
+      postal_code: val.zip || "",
       city: val.city || "",
       province: val.provice ||  ""
     }
@@ -192,6 +195,7 @@ export class AonAddress extends AonElement {
       let zip = this.getElement(this.ZIP);
       let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
       value.zip = zip.value;
+      value.postal_code = zip.value;
       this.value = JSON.stringify(value);
     }
   }

@@ -57,6 +57,11 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		initialize(req, resp);
+	}
+	
+	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		initialize(req, resp);
 	}

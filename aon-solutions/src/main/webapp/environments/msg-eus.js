@@ -133,6 +133,8 @@ export const AON_MSG_FOOTER = 'Oina';
 export const AON_MSG_BACKGROUND_ADJUST = 'Atzealdea Estutu';
 export const AON_MSG_DETAILED = 'Xehatua';
 export const AON_MSG_ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
+export const AON_MSG_GENERAL_INFORMATION = 'Informazio Generala';
+
 export const AON_MSG_PERMISSIONS = 'Baimenak';
 export const AON_MSG_DELETE = 'Ezabatu';
 export const AON_MSG_SAVE = 'Gorde';
@@ -180,3 +182,22 @@ export const AON_MSG_MODEL_111 = '111 Eredua';
 export const AON_MSG_MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const AON_MSG_MODEL_190 = '190 Eredua';
 export const AON_MSG_MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+
+export const AON_MSG_ADDRESS = 'Helbidea';
+export const AON_MSG_POSTAL_CODE = 'Posta-kodea';
+export const AON_MSG_CITY = 'Hiria';
+export const AON_MSG_PROVINCE = 'Probintzia';
+export const AON_MSG_COUNTRY = 'Herrialde';
+export const AON_MSG_PHONE = 'Telefono';
+export const AON_MSG_FAX = 'Fax';
+export const AON_MSG_WEB = 'Web';
+export const AON_MSG_EMAIL = 'Email';
+
+export const AON_MSG_DELETED_DATA= "Datuak zuzen ezabatu dira";
+export const AON_MSG_SAVED_DATA  = "Datuak zuzen gorde dira";
+export const AON_MSG_PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
+export const AON_MSG_UPDATED_CONTRACT = "Kontratua zuzen aldatu da";
+
+export const AON_MSG_COMPANY = 'Enpresa';
+export const AON_MSG_COMPANIES = 'Enpresak';
+export const AON_MSG_NEW_COMPANY = 'Enpresa Berria';

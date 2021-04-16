@@ -32,10 +32,19 @@ public enum DocumentType implements Serializable {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static DocumentType safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= DocumentType.values().length) return null;
 		return DocumentType.values()[i];
+	}
+	
+	public static DocumentType safeValueOf( String i ) {
+		for (DocumentType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
 	}
 	
 }

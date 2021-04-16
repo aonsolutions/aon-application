@@ -136,6 +136,16 @@ public class RegistryMediaDAO {
 	}
 
 	
+	public static RegistryMedia get(AONContext ctx, RegistryMediaFilter filter){
+		return select(ctx,filter)
+			.limit(1)
+			.fetch()
+			.stream()
+			.map(new RegistryMediaFiller())
+			.findFirst()
+			.orElse(new RegistryMedia());
+	}
+	
 	public static RegistryMedia get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()

@@ -65,13 +65,6 @@
 		</dependency>
 		
 		<dependency>
-      		<groupId>com.code.aon</groupId>
-      		<artifactId>aon.google.apis</artifactId>
-      		<version>${project.version}</version>
-    		<scope>compile</scope>
-	  	</dependency>
-		
-		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.google.apis.v2</artifactId>
 			<version>${project.version}</version>

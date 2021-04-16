@@ -203,10 +203,14 @@ public class AON_SOLUTIONS {
 	
 	public static Domain insertDomain(String schema, Domain domain, Registry registry) throws Exception { 
 		String domainName = AONContext.getSchemaFirstDomain(schema);
-		return insertDomain(domainName, 0, domain,  registry);
+		return insertDomain(domainName, 0, "", domain, registry);
 	}
 
-	public static Domain insertDomain(String domainName, Integer domainId, Domain domain, Registry registry) throws Exception{ 
+	public static Domain insertDomain(Domain domain, User user, Domain newDomain, Registry registry) throws Exception { 
+		return insertDomain(domain.getName(), domain.getId(), user.getLogin(), newDomain, registry);
+	}
+	
+	public static Domain insertDomain(String domainName, Integer domainId, String login, Domain domain, Registry registry) throws Exception{ 
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getCommon().insertDomain(ctx, domain, registry);
 		}

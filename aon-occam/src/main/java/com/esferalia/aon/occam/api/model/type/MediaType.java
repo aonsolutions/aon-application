@@ -34,15 +34,24 @@ public enum MediaType implements Serializable {
 	public abstract void visit( IMediaTypeVisitor visitor );
 	
 	public static MediaType safeValueOf( Byte i ) {
-		if (i == null) return null;
+		if (i == null) return UNKNOWN;
 		return safeValueOf( i.intValue() ); 
 	}
 	
 	public static MediaType safeValueOf( Integer i ) {
-		if (i == null) return null;
-		if (i < 0 || i >= DocumentType.values().length) return null;
+		if (i == null) return UNKNOWN;
+		if (i < 0 || i >= DocumentType.values().length) return UNKNOWN;
 		return MediaType.values()[i];
 	}
+	
+	public static MediaType safeValueOf( String i ) {
+		for (MediaType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
+				return rs;
+		}
+		return UNKNOWN;
+	}
+	
 	
 	public static interface IMediaTypeVisitor {
 		void visitUnknown();

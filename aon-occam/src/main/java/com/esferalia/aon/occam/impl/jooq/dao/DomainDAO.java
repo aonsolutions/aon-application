@@ -97,6 +97,7 @@ public class DomainDAO {
 						.setDescription(rec.getValue(DOMAIN.DESCRIPTION))
 						.setDomainType(DomainType.values()[rec.getValue(DOMAIN.TYPE)])
 						.setName(rec.getValue(DOMAIN.NAME))
+						.setOwner(rec.getValue(DOMAIN.OWNER))
 						.setScope(rec.getValue(DOMAIN.SCOPE))
 						.setParentId(rec.getValue(DOMAIN.PARENT))
 						.setEnableHeredity(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.ENABLEHEREDITY)))

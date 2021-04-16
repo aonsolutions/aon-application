@@ -7,7 +7,7 @@ public class GeoZone implements Serializable {
 	private static final long serialVersionUID = -1293760694660980945L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private String name;
 	private String code;
 	private boolean system;
@@ -57,4 +57,8 @@ public class GeoZone implements Serializable {
 		return this;
 	}
 	
+	public Boolean isEmpty() {
+		return id == null && domain == null && name == null
+			&& code == null;
+	}
 }

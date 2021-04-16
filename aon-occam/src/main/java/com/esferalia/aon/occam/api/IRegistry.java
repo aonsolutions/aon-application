@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -68,7 +69,6 @@ public interface IRegistry {
 	public Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter);
 	public Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter);
 	
-	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter);
 	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter);
 
 	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId);
@@ -76,18 +76,29 @@ public interface IRegistry {
 
 	public Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter registryId);
 
-	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter);
-	public RAddress insertRAddress(AONContext ctx, RAddress raddress);
+	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
+	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question);
 
+	
+	// ------------------- REGISTRY
 	public Registry save(AONContext ctx, Registry registry);
 	public void deleteRegistry(AONContext ctx, Integer registry);
 	
-	public RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia);
-	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia);
+	// ------------------- REGISTRY ADDRESS
+	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter);
+	public RAddress insertRAddress(AONContext ctx, RAddress raddress);
+
+	public RegistryAddress get(AONContext ctx, RegistryAddressFilter filter);
+	public RegistryAddress getMain(AONContext ctx, Integer registry);
+	public Stream<RegistryAddress> getStream(AONContext ctx, RegistryAddressFilter filter);
+	public RegistryAddress save(AONContext ctx, RegistryAddress registryAddress);
+
+	// ------------------- REGISTRY MEDIA
+	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter);
+	public Stream<RegistryMedia> getStream(AONContext ctx, RegistryMediaFilter filter);
+	public RegistryMedia get(AONContext ctx, RegistryMediaFilter filter);
+	public RegistryMedia save(AONContext ctx, RegistryMedia media);
 	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry);
-	
-	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry);
-	public Stream<RegistryProfile> getRegistryProfileStream(AONContext ctx, Integer registry, Integer question);
 
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);

@@ -1,4 +1,4 @@
-import { request, post, get, getToken} from "./request.js";
+import { request, post, put, get, getToken} from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 let companies;
@@ -14,6 +14,8 @@ export const clearCompanyService = () => {
 export const clearCompanies = () => companies = undefined;
 export const clearCompany = () => companies = undefined;
 export const clearDurum = () => durum = undefined;
+
+export const getDomainCompanies = (filter) => get(`${API_URL}/company`, filter);
 
 export const getCompanies = () => {
   return new Promise((resolve, reject) => {
@@ -65,6 +67,8 @@ export const getCompanyMedia = (data) => get(`${API_URL}/company/media`, data);
 export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, data);
 
 export const getCompanyBanks = (data) => get(`${API_URL}/company/banks`, data);
+
+export const saveCompany = (data) => put(`${API_URL}/company`, data)
 
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
 

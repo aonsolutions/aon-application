@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -28,8 +30,17 @@ public class RegistryAddress implements Serializable {
 	private String alias;	
 	private String municipalityCode;
 
+	private GeoZone child;
+	private GeoZone parent;
+	private String province;
+	private Country country;
+	
 	private boolean dirty;
 	private boolean removed;
+	
+	public RegistryAddress() {
+
+	}
 
 	public Integer getId() {
 		return id;
@@ -184,6 +195,42 @@ public class RegistryAddress implements Serializable {
 		return this;
 	}
 	
+	public GeoZone getChild() {
+		return child;
+	}
+
+	public RegistryAddress setChild(GeoZone child) {
+		this.child = child;
+		return this;
+	}
+
+	public GeoZone getParent() {
+		return parent;
+	}
+
+	public RegistryAddress setParent(GeoZone parent) {
+		this.parent = parent;
+		return this;
+	}
+	
+	public String getProvince() {
+		return province;
+	}
+	
+	public RegistryAddress setProvince(String province) {
+		this.province = province;
+		return this;
+	}
+	
+	public Country getCountry() {
+		return country;
+	}
+	
+	public RegistryAddress setCountry(Country country) {
+		this.country = country;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -221,4 +268,9 @@ public class RegistryAddress implements Serializable {
     	return buf.toString();
     }
 
+	public Boolean isEmpty() {
+		return id == null && domain == null && registry == null
+			&& recipient == null && streetType == null && address == null
+			&& zip == null && city == null && geozone == null;
+	}
 }

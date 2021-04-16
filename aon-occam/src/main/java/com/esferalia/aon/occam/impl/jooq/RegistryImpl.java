@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -56,7 +57,9 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -141,14 +144,38 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryOldDAO.getAonRegistryStream(ctx, filter));
 	}
 	
-	// ------------------------------------- RMEDIA
+	// ------------------------------------- REGISTRY MEDIA (RMEDIA)
 
 	@Override
 	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRMediaStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<RegistryMedia> getStream(AONContext ctx, RegistryMediaFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryMediaDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public RegistryMedia get(AONContext ctx, RegistryMediaFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryMediaDAO.get(ctx, filter));
+	}
 
+	@Override
+	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.deleteRMedia(ctx, registry));
+	}
+	
+	@Override
+	public RegistryMedia save(AONContext ctx, RegistryMedia rmedia) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryMediaDAO.save(ctx, rmedia));
+	}
+	
 	// ------------------------------------- RNOTE
 	
 	@Override
@@ -176,18 +203,6 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
-	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getRAddressStream(ctx, filter));
-	}
-	
-	@Override
-	public RAddress insertRAddress(AONContext ctx, RAddress raddress) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertRAddress(ctx, raddress));
-	}
-
-	@Override
 	public Registry save(AONContext ctx, Registry registry) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.save(ctx, registry));
@@ -199,24 +214,6 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.delete(ctx, registry));
 	}
 
-	@Override
-	public RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertRMedia(ctx, rmedia));
-	}
-
-	@Override
-	public RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.updateRMedia(ctx, rmedia));
-	}
-
-	@Override
-	public RegistryMedia deleteRMedia(AONContext ctx, Integer registry) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.deleteRMedia(ctx, registry));
-
-	}
 
 	@Override
 	public Stream<Question> getRegistryQuestionStream(AONContext ctx, Integer registry) {
@@ -498,4 +495,46 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistrySuggestionDAO.getSuggestionRegistries(ctx, list, filter));
 	}
+	
+	
+	// **************************************************
+	// **************************** [REGISTRY ADDRESS]
+	// **************************************************
+	
+	@Override
+	public Stream<RAddress> getRAddressStream(AONContext ctx, RegistryAddressFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getRAddressStream(ctx, filter));
+	}
+	
+	@Override
+	public RAddress insertRAddress(AONContext ctx, RAddress raddress) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.insertRAddress(ctx, raddress));
+	}
+
+	@Override
+	public RegistryAddress get(AONContext ctx, RegistryAddressFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryAddressDAO.get(ctx, filter));
+	}
+
+	@Override
+	public RegistryAddress getMain(AONContext ctx, Integer registry) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryAddressDAO.getMain(ctx, registry));
+	}
+
+	@Override
+	public Stream<RegistryAddress> getStream(AONContext ctx, RegistryAddressFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryAddressDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public RegistryAddress save(AONContext ctx, RegistryAddress registryAddress) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryAddressDAO.save(ctx, registryAddress));
+	}
+
 }

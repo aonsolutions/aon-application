@@ -52,10 +52,8 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
-		} else if('flex' === name){
-
-		} 
-	}
+    }
+  }
 
 	constructor () {
 		super();
@@ -75,7 +73,7 @@ export class AonCard extends AonElement {
 	}
 
 	build() {
-	
+
 		let div = this.createElement('div');
 		div.id = this.CARD;
     	div.className = 'aonCard';

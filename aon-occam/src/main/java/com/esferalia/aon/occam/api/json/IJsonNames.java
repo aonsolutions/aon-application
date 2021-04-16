@@ -22,6 +22,7 @@ public interface IJsonNames {
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
 	String ADMINISTRATION = "administration";
+	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
 	// ---------------------------------------------------------------------------------------------	[B] 
@@ -48,6 +49,7 @@ public interface IJsonNames {
 	String CODE = "code";
 	String COMMENT = "comment";
 	String COMMENTS = "comments";
+	String COMMERCIAL = "commercial";
 	String COMPANY = "company";
 	String COMPLEMENTARY = "complementary";
 	String CONCEPT = "concept";
@@ -82,6 +84,7 @@ public interface IJsonNames {
 	String DOMAINS = "domains";
 	String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
+	String E_INVOICE = "eInvoice";
 	String EMAIL = "email";
 	String EMPTY = "";
 	String ENABLE_HEREDITY = "enableHeredity";
@@ -90,6 +93,7 @@ public interface IJsonNames {
 	String EXPENSES = "expenses";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	String FARMER_REGIME = "farmerRegime";
+	String FAX = "fax";
 	String FILE_DATA = "fileData";
 	String FILE = "file";
 	String FILE_NAME = "fileName";
@@ -136,15 +140,19 @@ public interface IJsonNames {
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
+	String LEGAL_PERSON = "legalPerson";
 	String LEVEL = "level";
 	String LIMIT = "limit";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
+	String MAIN = "main";
 	String MAX_DEFINED_USERS = "maxDefinedUsers";
+	String MEDIA = "media";
 	String MESSAGE = "message";
 	String MODEL = "model";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	String NAME = "name";
+	String NATIONALITY = "nationality";
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String NULL = "null";
@@ -180,6 +188,7 @@ public interface IJsonNames {
 	String PERCENT = "percent";
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String PERIOD = "period";
+	String PHONE = "phone";
 	String PLAN = "plan";
 	String POSTAL_CODE = "postal_code";
 	String PREPAYMENT = "prepayment";
@@ -230,6 +239,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[T] 
 	String TAXES = "taxes";
 	String TAX = "tax";
+	String TECHNICAL = "technical";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
 	String TO_DATE = "toDate";
@@ -243,10 +253,13 @@ public interface IJsonNames {
 	String USER = "user";
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
+	String VALUE = "value";
+	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
 	// ---------------------------------------------------------------------------------------------	[W] 
+	String WEB = "web";
 	String WITHHOLDING = "withholding";
 	String WORKPLACE_IDS = "workplaceIds";
 	// ---------------------------------------------------------------------------------------------	[Y]

@@ -9,8 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-
-import net.aonsolutions.aon.api.json.AonRegistryJSON;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiCustomeServlet", urlPatterns = {"/ms/api/customer/*"})
@@ -57,9 +56,8 @@ public class CustomerServlet extends AonApiHttpServlet {
 	private JSONArray getCustomers() {
 		JSONArray array = new JSONArray();
 		AON.getCustomerStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), 
-			f -> f.getDomainProperty().eq(getDomain().getId())).forEach(c -> {
-				array.put(AonRegistryJSON.toJSON(c));
-			});
+			f -> f.getDomainProperty().eq(getDomain().getId()))
+		.forEach(c -> array.put(RegistryJSON.toJSON(c)));
 		return array;
 	}
 	

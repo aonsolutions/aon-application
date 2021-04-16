@@ -10,12 +10,16 @@ import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
 import "../user/aon-user.js";
 import "../company/aon-company-list.js";
-import "../company/aon-company.js";
 
+import { AonCompanyList } from "../company/aon-company-list.js";
+import { AonCompany } from "../company/aon-company.js";
+
+import * as AON_TAG from "../../environments/aonTag.js";
+import * as CSS from "../../environments/css.js";
+import * as EVENT from "../../environments/aonEvent.js";
 // import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 // import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -120,7 +124,7 @@ export class AonConfiguration extends AonElement {
         companyOptions.push({
           name: "Gestión de Empresas",
           icon: "business",
-          fn: () => this.buildCompany(),
+          fn: () => this.buildCompanyList(),
         });
       }
       if (!this.isMobile()) {
@@ -218,24 +222,23 @@ export class AonConfiguration extends AonElement {
     aonConfiguration.setContentHTML("<aon-user-list> </aon-user-list>");
   }
 
-  buildCompany() {
-    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+  buildCompanyList() {
+    let aonConfiguration = this.getApplication();
     aonConfiguration.removeToolbarOptions();
-    aonConfiguration.addToolbarOption("CompanyAdd", "share", () => {});
 
-    let companyId = JSON.parse(this.getAttribute("company")).id;
-    let filter = JSON.stringify({ id: companyId });
-    aonConfiguration.setContentHTML(
-      `<aon-company-list id="${this.COMPANY_LIST}" filter="${filter}"> </aon-company-list>`
-    );
+    aonConfiguration.addToolbarOption("UserAdd", "add", () => this.buildCompany());
 
-    let companyList = this.getElement(this.COMPANY_LIST);
-    companyList.addEventListener("select", (event) => {
-      aonConfiguration.setContentHTML(
-        `<aon-company id="${this.COMPANY}"> </aon-company>`
-      );
-      this.getElement(this.COMPANY).company = event.company;
-    });
+    let aonCompanyList = new AonCompanyList();
+    aonCompanyList.id = this.COMPANY_LIST;
+    aonCompanyList.filter = {parent: true};
+    aonConfiguration.setContent(aonCompanyList);
+  }
+
+  buildCompany(company) {
+    let aonCompany = new AonCompany();
+    aonCompany.id = this.getApplication().id + 'Company';
+    aonCompany.company = company;
+    this.getApplication().setContent(aonCompany);
   }
 
   buildNotification() {

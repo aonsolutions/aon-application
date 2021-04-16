@@ -134,6 +134,7 @@ export const AON_MSG_FOOTER = 'Footer';
 export const AON_MSG_BACKGROUND_ADJUST = 'Background Adjust';
 export const AON_MSG_DETAILED = 'Detailed';
 export const AON_MSG_ADDITIONAL_INFORMATION = 'Additional Information';
+export const AON_MSG_GENERAL_INFORMATION = 'General Information';
 export const AON_MSG_PERMISSIONS = 'Permissions';
 export const AON_MSG_DELETE = 'Delete';
 export const AON_MSG_SAVE = 'Save';
@@ -181,3 +182,22 @@ export const AON_MSG_MODEL_111 = 'Form 111';
 export const AON_MSG_MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const AON_MSG_MODEL_190 = 'Form 190';
 export const AON_MSG_MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
+
+export const AON_MSG_ADDRESS = 'Address';
+export const AON_MSG_POSTAL_CODE = 'Postal Code';
+export const AON_MSG_CITY = 'City';
+export const AON_MSG_PROVINCE = 'Province';
+export const AON_MSG_COUNTRY = 'Country';
+export const AON_MSG_PHONE = 'Phone';
+export const AON_MSG_FAX = 'Fax';
+export const AON_MSG_WEB = 'Web';
+export const AON_MSG_EMAIL = 'Email';
+
+export const AON_MSG_DELETED_DATA = "The data has been deleted successfully";
+export const AON_MSG_SAVED_DATA  = "The data has been saved successfully";
+export const AON_MSG_PROCESSED_MOVEMENT = "The discharge has been processed successfully";
+export const AON_MSG_UPDATED_CONTRACT = "The contract has been modified successfully";
+
+export const AON_MSG_COMPANY = 'Company';
+export const AON_MSG_COMPANIES = 'Companies';
+export const AON_MSG_NEW_COMPANY = 'New Company';

@@ -127,4 +127,9 @@ public class RegistryMedia implements Serializable {
 		this.removed = removed;
 		return this;
 	}
+	
+	public Boolean isEmpty() {
+		return id == null && domain == null && registry == null
+			&& media == null && value == null && comment == null;
+	}
 }

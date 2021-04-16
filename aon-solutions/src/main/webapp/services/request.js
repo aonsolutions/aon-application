@@ -13,10 +13,10 @@ const formatParams = (params) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const domainId = () =>  localStorage.getItem("aon_domain_id") ? localStorage.getItem("aon_domain_id") : localStorage.getItem("company") 
+export const domainId = () =>  localStorage.getItem("aon_domain_id") ? localStorage.getItem("aon_domain_id") : localStorage.getItem("company")
 ? JSON.parse(localStorage.getItem("company")).id: "";
 
-export const domainName = () => localStorage.getItem("aon_domain_name") ? localStorage.getItem("aon_domain_name") : localStorage.getItem("company") 
+export const domainName = () => localStorage.getItem("aon_domain_name") ? localStorage.getItem("aon_domain_name") : localStorage.getItem("company")
 ? JSON.parse(localStorage.getItem("company")).domain : "";
 
 export const domainLogin = () => localStorage.getItem("aon_domain_login") || "";
@@ -138,6 +138,17 @@ export const post = (url, data) => {
   });
 };
 
+export const put = (url, data) => {
+  return new Promise((resolve, reject) => {
+    request("PUT", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const remove = (url, data) => {
   return new Promise((resolve, reject) => {
     request("DELETE", url, getToken(), data, (result, error) => {
@@ -157,9 +168,9 @@ const blobToBase64 = blob => new Promise((resolve, reject) => {
 });
 
 /**
- * 
- * @param {String} base64Data 
- * @param {String} fileName 
+ *
+ * @param {String} base64Data
+ * @param {String} fileName
  * @returns {Object} Object {fileBase64, fileName, contentType, action}
  */
 const objFileMobile = (base64Data, fileName = undefined) => {
