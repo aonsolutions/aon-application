@@ -57,6 +57,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -112,6 +114,9 @@ public class MainContrataIT extends MainEntryPoint {
 	HTMLPanel mainITContainer;
 	
 	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
 	HTMLPanel timelinePanel;
 	
 	@UiField
@@ -125,6 +130,7 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	private SuggestBox employeeSB;
 	private ListBox dateListBox;
+	private CheckBox allContracts;
 	
 	// --------------------------------------------------- TimeLineChart.Variables
 	
@@ -339,8 +345,8 @@ public class MainContrataIT extends MainEntryPoint {
 		private void onDelete(IT it, ITEmployee itEmployee) {
 			mainContrataITObject.removeIT(itEmployee, it,
 					s -> {
-						AonConfirmDialog dialog = new AonConfirmDialog();
-						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//						AonConfirmDialog dialog = new AonConfirmDialog();
+//						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 						
 						if(it.isComunicate() && mainContrataITObject.isUserComunica())
 							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
@@ -356,8 +362,8 @@ public class MainContrataIT extends MainEntryPoint {
 		private void onDeletePaternity(IT it, ITEmployee itEmployee) {
 			mainContrataITObject.deleteIT(it,
 					s -> {
-						AonConfirmDialog dialog = new AonConfirmDialog();
-						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//						AonConfirmDialog dialog = new AonConfirmDialog();
+//						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 						
 						if(it.isComunicate() && mainContrataITObject.isUserComunica())
 							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
@@ -383,62 +389,11 @@ public class MainContrataIT extends MainEntryPoint {
 		this.tooltip = new Tooltip();
 		
 		this.mainContrataITObject.getEmployeesInfo(true, s -> {
+			getFilterITListPanel();
 			initDateListBox();
 			initSuggestBox();
-			getFilterITListPanel();
 			printTimelineChart();
 		}, f -> {});
-	}
-	
-	private void initDateListBox() {
-		dateListBox = new ListBox();
-
-		for (Integer year : mainContrataITObject.getAviableYears())
-			dateListBox.addItem(String.valueOf(year));
-
-		dateListBox.setSelectedIndex(dateListBox.getItemCount() - 1);
-		
-		selectedYear = Integer.parseInt(dateListBox.getItemText(dateListBox.getSelectedIndex()));
-
-		startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-		endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
-		
-		dateListBox.addChangeHandler(e -> {
-			selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox.getSelectedIndex()));
-
-			startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0,selectedYear));
-			endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
-			
-			initSuggestBox();
-			reloadTimeline();
-		});
-	}
-
-	private final void initSuggestBox() {
-		employeeSB = new SuggestBox(names);
-		names.clear();
-		
-		centineels = new LinkedHashMap<Integer, ITEmployee>();
-		
-		Date startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-		Date endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
-		
-		for (ITEmployee itEmployee : mainContrataITObject.getEmployeesList()) {
-
-			int contractId = itEmployee.getContractInfo().getContractId();
-
-			if ((DateUtils.compare(itEmployee.getContractInfo().getStartDate(), endYear) <= 0) && 
-				(DateUtils.compare(itEmployee.getContractInfo().getEndDate(), startYear) >= 0)) {
-				
-				names.add(itEmployee.getEmployeeInfo().getFullName());
-				centineels.put(contractId, itEmployee);
-			}
-		}
-		
-		employeeSB.addValueChangeHandler(e -> {
-			expressionCallback.cancel();
-			expressionCallback.schedule(1500);
-		});
 	}
 	
 	private void getFilterITListPanel() {
@@ -459,6 +414,7 @@ public class MainContrataIT extends MainEntryPoint {
 		itL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		itL.getElement().getStyle().setMarginRight(10, Unit.PX);
 		itPanel.add(itL);
+		employeeSB = new SuggestBox(names);
 		employeeSB.setWidth("300px");
 		itPanel.add(employeeSB);
 		
@@ -468,12 +424,92 @@ public class MainContrataIT extends MainEntryPoint {
 		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
 		showPanel.add(showL);
+		dateListBox = new ListBox();
+		dateListBox.getElement().getStyle().setMarginRight(5, Unit.PX);
 		showPanel.add(dateListBox);
+		
+		Label allContractsL = new Label("Todos los contratos");
+		allContractsL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		allContracts = new CheckBox();
+		allContracts.addValueChangeHandler(e -> {
+			initSuggestBox();
+			reloadTimeline();
+		});
+		showPanel.add(allContractsL);
+		showPanel.add(allContracts);
 		
 		filterPanel.add(itPanel);
 		filterPanel.add(showPanel);
 		
 		filterITListPanel.add(filterPanel);
+	}
+	
+	private void initDateListBox() {
+		dateListBox.clear();
+
+		for (Integer year : mainContrataITObject.getAviableYears())
+			dateListBox.addItem(String.valueOf(year));
+
+		dateListBox.setSelectedIndex(0);
+		
+		selectedYear = Integer.parseInt(dateListBox.getItemText(dateListBox.getSelectedIndex()));
+
+		startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
+		// Check if selected year is current year
+		int actualYear = DateUtils.getYear();
+		if(AonNumberUtils.equals(selectedYear, actualYear)) {
+			Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
+			endYear = DateUtils.getLastDayOfMonth(nextMonth);
+		} else
+			endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		
+		dateListBox.addChangeHandler(e -> {
+			selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox.getSelectedIndex()));
+
+			startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0,selectedYear));
+			
+			// Check if selected year is current year
+			int currentYear = DateUtils.getYear();
+			if(AonNumberUtils.equals(selectedYear, currentYear)) {
+				Date nextMonth = DateUtils.addMonths2Date(new Date(), 1);
+				endYear = DateUtils.getLastDayOfMonth(nextMonth);
+			} else
+				endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+			
+			initSuggestBox();
+			reloadTimeline();
+		});
+	}
+
+	private final void initSuggestBox() {
+		names.clear();
+		
+		centineels = new LinkedHashMap<Integer, ITEmployee>();
+		
+		Date startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
+		Date endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		
+		for (ITEmployee itEmployee : mainContrataITObject.getEmployeesList(allContracts.getValue(), startYear, endYear)) {
+
+			int contractId = itEmployee.getContractInfo().getContractId();
+
+			if ((DateUtils.compare(itEmployee.getContractInfo().getStartDate(), endYear) <= 0) && 
+				(DateUtils.compare(itEmployee.getContractInfo().getEndDate(), startYear) >= 0)) {
+				
+				names.add(itEmployee.getEmployeeInfo().getFullName());
+				centineels.put(contractId, itEmployee);
+			}
+		}
+		
+		if(centineels.isEmpty())
+			showMessage();
+		else
+			showTimeLine();
+		
+		employeeSB.addValueChangeHandler(e -> {
+			expressionCallback.cancel();
+			expressionCallback.schedule(1500);
+		});
 	}
 
 	private final void printTimelineChart() {		
@@ -1082,6 +1118,16 @@ public class MainContrataIT extends MainEntryPoint {
 		return eval(javascript);
 	}-*/;
 	
+	// --------------------------------------------------- DeckPanel.Methos
+	
+	private void showTimeLine() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showMessage() {
+		deckPanel.showWidget(1);
+	}
+	
 	// --------------------------------------------------- Toolbar
 
 	private AonToolbar getToolbarPanel() {
@@ -1188,21 +1234,20 @@ public class MainContrataIT extends MainEntryPoint {
 	// --------------------------------------------------- ITDialog.Methods
 	
 	private void openNewITDialog(int contractId) {
-    	ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
-    	String suggestionStr = itEmployee.getEmployeeInfo().getFullName() + " (" + itEmployee.getContractInfo().getContractId() + ")";
+		ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
     	ITDialog itDialog = newITDialog();
-    	itDialog.fireSelectionEmployee(suggestionStr);
+    	itDialog.setITEmployee(itEmployee);
 	}
 
 	private ITDialog newITDialog() {
-		ITDialog itDialog = new ITDialog(null) {
+		ITDialog itDialog = new ITDialog() {
 
     		@Override
 			protected void onAccept() {
 				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 							
 							loadMainContrataIT();
 						},
@@ -1213,8 +1258,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onAcceptIT(IT it) {
 				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 							
 							if(mainContrataITObject.isUserComunica()) {
 								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
@@ -1251,8 +1296,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onAcceptPaternityIT(IT it) {
 				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 							
 							if(mainContrataITObject.isUserComunica()) {
 								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
@@ -1287,8 +1332,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onDelete(IT it) {
 				mainContrataITObject.removeIT(getITEmployee(), it,
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 							
 							if(it.isComunicate() && mainContrataITObject.isUserComunica())
 								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
@@ -1304,8 +1349,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onDeletePaternity(IT it) {
 				mainContrataITObject.deleteIT(it,
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 							
 							if(it.isComunicate() && mainContrataITObject.isUserComunica())
 								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
@@ -1324,7 +1369,7 @@ public class MainContrataIT extends MainEntryPoint {
     		
     	};
     	
-    	itDialog.setEmployeesList(mainContrataITObject.getEmployeesList());
+    	itDialog.setEmployeesList(mainContrataITObject.getActiveEmployeesList());
     	itDialog.initConfirmationsTable();
 		itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
@@ -1335,19 +1380,17 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	private void openITDialog(int contractId, int itId) {
-    	IT itInfo = mainContrataITObject.getITs(itId);
+		IT itInfo = mainContrataITObject.getITs(itId);
     	ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
 
-    	String suggestionStr = itEmployee.getEmployeeInfo().getFullName() + " (" + itEmployee.getContractInfo().getContractId() + ")";
-    	
-    	ITDialog itDialog = new ITDialog(suggestionStr) {
+    	ITDialog itDialog = new ITDialog() {
     		
     		@Override
 			protected void onAccept() {
 				mainContrataITObject.createUpdateITEmployee(itEmployee,
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 							
 							loadMainContrataIT();
 						},
@@ -1364,8 +1407,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onDelete(IT it) {
 				mainContrataITObject.removeIT(itEmployee, it,
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 							
 							if(it.isComunicate() && mainContrataITObject.isUserComunica())
 								mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
@@ -1381,8 +1424,8 @@ public class MainContrataIT extends MainEntryPoint {
 			protected void onDeletePaternity(IT it) {
 				mainContrataITObject.deleteIT(it,
 						s -> {
-							AonConfirmDialog dialog = new AonConfirmDialog();
-							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+//							AonConfirmDialog dialog = new AonConfirmDialog();
+//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 							
 							if(it.isComunicate() && mainContrataITObject.isUserComunica())
 								mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {

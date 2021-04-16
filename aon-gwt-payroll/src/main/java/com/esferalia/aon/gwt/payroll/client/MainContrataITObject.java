@@ -169,9 +169,7 @@ public class MainContrataITObject {
 						impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
 
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-							}
+							public void onFailure(Throwable caught) {}
 
 							@Override
 							public void onSuccess(Boolean result) {
@@ -343,10 +341,7 @@ public class MainContrataITObject {
 						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
 
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-								
-							}
+							public void onFailure(Throwable caught) {}
 
 							@Override
 							public void onSuccess(Void result) {
@@ -530,16 +525,45 @@ public class MainContrataITObject {
 				itsList.add(it);
 	}
 	
-	public List<ITEmployee> getEmployeesList(){
-		return employeesList;
+	public List<ITEmployee> getEmployeesList(boolean allContracts, Date startDate, Date endDate){
+		if(allContracts) return employeesList;
+		
+		List<ITEmployee> employeeWithITList = new ArrayList<ITEmployee>();
+		
+		for(ITEmployee itEmployee : employeesList)
+			for (IT it : itEmployee.getIts()) {
+				if(employeeWithITList.contains(itEmployee))
+					continue;
+				if(null == it.getEndDate() || isBetween(it.getStartDate(), startDate, endDate) || isBetween(it.getEndDate(), startDate, endDate))
+					employeeWithITList.add(itEmployee);
+			}
+		
+		return employeeWithITList;
 	}
 	
+	private boolean isBetween(Date date, Date start, Date end) {
+		return DateUtils.isAfterOrEquals(date, start) && DateUtils.isBeforeOrEquals(date, end);
+	}
+
 	public List<IT> getITsList(){
 		return itsList;
 	}
+	
+	public List<ITEmployee> getActiveEmployeesList(){
+		List<ITEmployee> activeEmployeeList = new ArrayList<ITEmployee>();
+		Date today = new Date();
+		
+		for(ITEmployee itEmployee : employeesList) {
+			Date contractEndDate = itEmployee.getContractInfo().getEndDate();
+			if(null == contractEndDate || DateUtils.isAfterOrEquals(contractEndDate, today))
+				activeEmployeeList.add(itEmployee);
+		}
+		
+		return activeEmployeeList;
+	}
 
 	public SortedSet<Integer> getAviableYears() {
-		SortedSet<Integer> years = new TreeSet<Integer>();
+		SortedSet<Integer> years = new TreeSet<Integer>().descendingSet();
 		
 		for(ITEmployee itEmployee : this.employeesList)
 			years.add(DateUtils.getYear(itEmployee.getContractInfo().getStartDate()));

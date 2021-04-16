@@ -24,8 +24,19 @@
 			padding: 5px;
 		}
 		
-		.timelinePanel{
+		.deckPanel{
 			padding: 10px;
+		}
+		
+		.messagePanel{
+			width: 100%;
+			display: flex;
+			justify-content: center;
+		}
+		
+		.message{
+			text-transform: uppercase;
+			font-weight: bold;
 		}
 		
 		.flexColumn{
@@ -111,8 +122,13 @@
 							
 								<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
 							
-							 	<g:HTMLPanel ui:field='timelinePanel' styleName="{style.timelinePanel}"/>
-						 		
+								<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
+									<g:HTMLPanel ui:field='timelinePanel'/>
+									<g:HTMLPanel ui:field='messagePanel' styleName="{style.messagePanel}">
+										<g:Label styleName="{style.message}">No existen partes it para para este periodo</g:Label>
+									</g:HTMLPanel>
+								</g:DeckPanel>
+							 	
 							</g:VerticalPanel>
 						</g:ScrollPanel>
 					</g:HTMLPanel>

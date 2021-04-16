@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
@@ -178,6 +177,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private List<ITEmployee> itEmployeeList = Collections.emptyList();
 	
 	private SuggestBox employeeSB;
+	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
 	
 	// --------------------------------------------------- Variables.Toolbar
 	
@@ -312,21 +312,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- Constructor
 	
-	public ITDialog(String suggestionStr) {	
+	public ITDialog() {	
 		String caption = "Parte IT";
 		onModuleLoad(caption);
 		
 		createITToolbar();
 		createFooterButtons();
-		
-		if(AonStringUtils.isNotBlank(suggestionStr)) {
-			// Caption
-			String name = AonStringUtils.split(suggestionStr, '(')[0];
-			caption += caption + " : " + name;
-			
-			// Init employeePanel
-			createEmployeePanel(name);
-		}
 	}
 	
 	private void createEmployeePanel(String name) {
@@ -527,35 +518,25 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- setEmployeesList (on new it)
 	
 	public void setEmployeesList(List<ITEmployee> itEmployeeListIn) {
-		itEmployeeList  = Collections.emptyList();
+		itEmployeeList = Collections.emptyList();
 		itEmployeeList = itEmployeeListIn;
 		
-		employeeSB = new SuggestBox();
+		employeeSB = new SuggestBox(names);
 		employeeSB.setStyleName("aon-inputText");
 		employeeSB.getElement().getStyle().setWidth(99, Unit.PCT);
-		
-		List<String> employees = new ArrayList<>();
-		for(ITEmployee itEmployee : this.itEmployeeList) {
-			String suggestStr = itEmployee.getEmployeeInfo().getFullName() + " (" + itEmployee.getContractInfo().getContractId() + ")";
-			employees.add(suggestStr);
-		}
-		
-		List<String> employeesSuggest = new ArrayList<String>();
-		for(String employee : employees)
-			employeesSuggest.add(employee+"");
-		
-		MultiWordSuggestOracle orclEmployees = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
-		orclEmployees.addAll(employeesSuggest);
 		employeeSB.setAutoSelectEnabled(true);
 		
-		employeeSB.getValueBox().addChangeHandler(e -> {
-			String selectionStr = employeeSB.getValue();
-			String contractIdStr = AonStringUtils.split(selectionStr, '(')[1];
-			contractIdStr = AonStringUtils.split(contractIdStr, ')')[0];
-			Integer contractId = Integer.parseInt(contractIdStr);
+		names.clear();
+		
+		for(ITEmployee itEmployee : this.itEmployeeList) {
+			String suggestStr = itEmployee.getEmployeeInfo().getFullName();
+			names.add(suggestStr);
+		}
+		
+		employeeSB.addSelectionHandler(e -> {
+			String employeeName = employeeSB.getValue();
 			if(itDialogObject == null) {
-				ITEmployee itEmployeeAux = getITEmployee(contractId);
-				itEmployee = itEmployeeAux;
+				itEmployee = getITEmployee(employeeName);
 				ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
 				setITDialogObject(itDialogObject);
 				showListOption();
@@ -566,15 +547,18 @@ public abstract class ITDialog extends AonCustomDialog {
 		employeePanel.add(employeeSB);
 	}
 	
-	public void fireSelectionEmployee(String suggest) {
-		employeeSB.setValue(suggest);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employeeSB.getValueBox());
+	public void setITEmployee(ITEmployee itEmployee) {
+		this.itEmployee = itEmployee;
+		ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+		setITDialogObject(itDialogObject);
+		createEmployeePanel(itEmployee.getEmployeeInfo().getFullName());
 	}
 	
-	private ITEmployee getITEmployee(Integer contractId) {
-		for(ITEmployee itEmployee : itEmployeeList)
-			if(AonNumberUtils.equals(itEmployee.getContractInfo().getContractId(), contractId)) 
+	private ITEmployee getITEmployee(String employeeName) {
+		for(ITEmployee itEmployee : this.itEmployeeList) {
+			if(AonStringUtils.equalsIgnoreCase(itEmployee.getEmployeeInfo().getFullName(), employeeName))
 				return itEmployee;
+		}
 		return null;
 	}
 	
