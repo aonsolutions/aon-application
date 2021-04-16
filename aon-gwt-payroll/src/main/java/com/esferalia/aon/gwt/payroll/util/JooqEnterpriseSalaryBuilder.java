@@ -203,11 +203,12 @@ public class JooqEnterpriseSalaryBuilder {
 						dedBonuses.add(s.get(SALARY_DEDUCTION.AMOUNT));
 					
 					if (deductions.get(s.get(SALARY.ID)) != null) {
-						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE).intValue(),
+						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE) != null ? s.get(SALARY_DEDUCTION.TYPE).intValue() : null,
 								s.get(SALARY_DEDUCTION.AMOUNT));
 					} else {
 						Map<Integer, Double> map = new HashMap<Integer, Double>();
-						map.put(s.get(SALARY_DEDUCTION.TYPE).intValue(), s.get(SALARY_DEDUCTION.AMOUNT));
+						map.put(s.get(SALARY_DEDUCTION.TYPE) != null ? s.get(SALARY_DEDUCTION.TYPE).intValue() : null
+								, s.get(SALARY_DEDUCTION.AMOUNT));
 						deductions.put(s.get(SALARY.ID), map);
 
 					}
