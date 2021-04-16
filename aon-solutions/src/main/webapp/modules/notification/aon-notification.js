@@ -32,6 +32,7 @@ export class AonNotification extends AonElement {
 
 	initialize(){
 		this.AON_NOTIFICATION = 'aonNotification';
+        this.aonNotifyIconEl = document.querySelector('aon-notification-icon');
 	}
 
  	build() {
@@ -44,17 +45,13 @@ export class AonNotification extends AonElement {
         const datos = this.data;
         if(datos.length > 0){
             datos.map((data,idx)=>{
-                let aonCard = this.createCard(data);
+                const aonCard = this.createCard(data);
                 aonCard.flex = "true";
                 aonCard.addEventListener("click",(ev)=>{
                     this.goInfo(data);
                 });
-                // aonCard.addEventListener("dragend", (event) => {
-                //     event.preventDefault();
-                //     console.log("dragover");
-                // });
-            
-                let spanContent = this.createElement('span');
+ 
+                const spanContent = this.createElement('span');
                 spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
                 spanContent.innerHTML = `${data.body}`;
                 aonCard.setContent(spanContent);
@@ -64,12 +61,9 @@ export class AonNotification extends AonElement {
                 divFooter.style.fontWeight ="800";
                 divFooter.style.fontSize = "10px";
                 const div1 = this.createElement("div");
-                div1.innerHTML =  firstLetters(setFullDate(data.date));
-                const div2 = this.createElement("div");
-                div2.innerHTML = setTime(data.date);
-                div2.style.marginLeft = "auto";
+                div1.innerHTML = firstLetters(setFullDate(data.date))+" "+setTime(data.date);
+                div1.style.marginLeft = "auto";
                 divFooter.appendChild(div1);
-                divFooter.appendChild(div2);
                 aonCard.setContent(divFooter);
             });
         } else {
@@ -94,33 +88,46 @@ export class AonNotification extends AonElement {
         const aonCard = new AonCard();
         aonCard.id = this.AON_NOTIFICATION+"Card"+data.id;
         aonCard.style.cursor="pointer";
-        let title = data.title;
-        if(!data.read) title = /*html*/`<span style="color:red;" class="material-icons">report</span>${data.title}` ;
+        let title = `<span class="aonColorPrimary">${data.title}</span>`;
+        if(!data.read) title = /*html*/`<span style="color:red;" class="material-icons">error</span>${title}` ;
         aonCard.title = title;
         aonNotificationEl.appendChild(aonCard);
         if(!data.read) aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
         const label = this.createElement('label');
         label.textContent = "×";
         label.style = 'float: right;margin-top: -23px;margin-right: -19px;cursor: pointer;padding: 10px;';
-        label.addEventListener('click',(ev)=> this.removeFadeOut(aonCard, 1000))
+        label.addEventListener('click',(ev)=> this.removeFadeOut(aonCard, 600))
         aonCard.getCardTitle().appendChild(label);
         aonCard.getCard().classList.add('aonCardFlex');
         return aonCard;
     }
 
      removeFadeOut( el, speed ) {
-        let seconds = speed/1000;
-        let divCard = el.getCard();
-        divCard.style.transition = "opacity "+seconds+"s ease";
-        divCard.style.opacity = 0;
-        setTimeout(()=> {
-            el.parentNode.removeChild(el);
-            this.changeBadge(-1)
-        }, speed);
+        if(el){
+            const seconds = speed/1000;
+            const divCard = el.getCard();
+            divCard.style.transition = "opacity "+seconds+"s ease";
+            divCard.style.opacity = 0;
+            setTimeout(()=> {
+                el.parentNode.removeChild(el);
+                this.changeBadge(-1)
+            }, speed);
+        }
+    }
+
+    deleteAll(){
+        let aonNotify = this.aonNotifyIconEl;
+        if(aonNotify){
+            aonNotify.NOTIFICATIONS.map(notification=>{
+                let el = this.getElement(this.AON_NOTIFICATION+"Card"+notification.id);
+                this.removeFadeOut(el, 600);
+            });
+        }
+
     }
 
     changeBadge(number){
-        let aonNotify = document.querySelector('aon-notification-icon');
+        let aonNotify = this.aonNotifyIconEl;
         if(aonNotify){
             aonNotify.badge = aonNotify.badge +number;
         }

@@ -29,7 +29,7 @@ export class AonNotificationIcon extends AonElement {
 	constructor () {
 		super();
 		this.AON_NOTIFICATION_ICON = 'aonNotificationIcon';
-        this.BADGE = this.AON_NOTIFICATION+ "Badge";
+        this.BADGE = this.AON_NOTIFICATION_ICON+ "Badge";
         this.NOTIFICATIONS = [];
 	}
 
@@ -58,8 +58,8 @@ export class AonNotificationIcon extends AonElement {
 
     async changeBadge(){
         const badge = this.getElement(this.BADGE)  || this.createElement("span");
+        const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
         if(this.badge && this.badge > 0){
-            const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
             badge.textContent = this.badge;
             badge.id = this.BADGE;
             badge.style = /**/`position: absolute; top: -1px;right: 3px;padding: 1px 4px;border-radius: 50%;background: red;color: white;font-size: 10px;font-weight: 800;`;

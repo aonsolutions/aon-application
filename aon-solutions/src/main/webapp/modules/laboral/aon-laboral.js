@@ -263,7 +263,7 @@ class AonLaboral extends AonElement {
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
             if(this.isMobile()){
               aonView = new AonContractList();
-            }else {
+            } else {
               startModule('aon_gwt_payroll', 'MainContrata', this.applicationEl.CONTENT);
             }
             break;
