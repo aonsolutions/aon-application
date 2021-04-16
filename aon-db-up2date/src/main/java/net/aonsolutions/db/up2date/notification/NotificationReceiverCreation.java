@@ -18,16 +18,16 @@ public class NotificationReceiverCreation implements Update {
 //
 //	CREATE TABLE `notification_receiver` (
 //	  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+//	  `domain` int(4) NOT NULL COMMENT 'Dominio',
 //	  `notification` int(4) NOT NULL COMMENT 'ID unico de notification',
-//	  `auth` binary(16) NOT NULL COMMENT 'ID de AUTH',
-//	  `status` tinyint(2) NOT NULL COMMENT 'Estado de la notificacion',
+//	  `auth` binary(16) DEFAULT NULL COMMENT 'ID de AUTH',
+//	  `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la notificacion',
 //	  PRIMARY KEY (`id`),
-//	  KEY `FK_NOTIFICATION_RECEIVER` (`notification`),
-//	  KEY `IDX_NOTIFICATION_RECEIVER_AUTH` (`auth`),
-//	  CONSTRAINT `FK_NOTIFICATION_RECEIVER` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`),
-//	  CONSTRAINT `FK_NOTIFICATION_RECEIVER_AUTH` FOREIGN KEY (`auth`) REFERENCES `auth` (`id`)
+//	  KEY `IDX_NOTIFICATION_RECEIVER_NOTIFICATION` (`notification`),
+//	  KEY `IDX_NOTIFICATION_RECEIVER_DOMAIN` (`domain`),
+//	  CONSTRAINT `FK_NOTIFICATION_RECEIVER_NOTIFICATION` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`),
+//	  CONSTRAINT `FK_NOTIFICATION_RECEIVER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 //	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification receiver';
-
 
 	public static NotificationReceiverCreation NOTIFICATION_RECEIVER_CREATION = new NotificationReceiverCreation();
 
@@ -46,17 +46,18 @@ public class NotificationReceiverCreation implements Update {
 		System.out.println("[START]");
 		System.out.println( "Creacion table `notification_receiver`" );
 
-		String SQL = "CREATE TABLE `notification_receiver` (\n" + 
-				"				`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',\n" + 
-				"				`notification` int(4) NOT NULL COMMENT 'ID unico de notification',\n" + 
-				"				`auth` BINARY(16) NOT NULL COMMENT 'ID de AUTH',\n" + 
-				"				`status` tinyint(2) NOT NULL COMMENT 'Estado de la notificacion',\n" + 
-				"				PRIMARY KEY (`id`),\n" + 
-				"				KEY `FK_NOTIFICATION_RECEIVER` (`notification`),\n" + 
-				"		        KEY `IDX_NOTIFICATION_RECEIVER_AUTH` (`auth`),\n" + 
-				"				CONSTRAINT `FK_NOTIFICATION_RECEIVER` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`),\n" + 
-				"			    CONSTRAINT `FK_NOTIFICATION_RECEIVER_AUTH` FOREIGN KEY (`auth`) REFERENCES `auth` (`id`)\n" + 
-				"			) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification receiver';";
+		String SQL = "CREATE TABLE IF NOT EXISTS `notification_receiver` (" + 
+				"`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo'," + 
+				"`domain` int(4) NOT NULL COMMENT 'Dominio'," +
+				"`notification` int(4) NOT NULL COMMENT 'ID unico de notification'," + 
+				"`auth` BINARY(16) DEFAULT NULL COMMENT 'ID de AUTH'," + 
+				"`status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la notificacion'," + 
+				"PRIMARY KEY (`id`)," + 
+				"KEY `IDX_NOTIFICATION_RECEIVER_NOTIFICATION` (`notification`)," + 
+				"KEY `IDX_NOTIFICATION_RECEIVER_DOMAIN` (`domain`)," +
+				"CONSTRAINT `FK_NOTIFICATION_RECEIVER` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`)," + 
+				"CONSTRAINT `FK_NOTIFICATION_RECEIVER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)" +
+				") ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification receiver';";
 
 		try {
 			dslContext.execute(SQL);

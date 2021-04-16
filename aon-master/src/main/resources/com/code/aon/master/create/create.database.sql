@@ -6646,6 +6646,43 @@ CREATE TABLE `note` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
 
 #
+# Structure for the `notification` table :
+#
+
+CREATE TABLE `notification` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+  `domain` int(4) NOT NULL COMMENT 'Dominio',
+  `date` datetime DEFAULT NULL COMMENT 'Fecha de la notificacion',
+  `title` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Titulo de la notificacion',
+  `body` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mensaje de la notificacion',
+  `source` tinyint(2) DEFAULT NULL COMMENT 'Tipo de proceso',
+  `source_id` int(4) DEFAULT NULL COMMENT 'ID del proceso',
+  `sender` binary(16) DEFAULT NULL COMMENT 'ID de AUTH',
+  `priority` tinyint(2) DEFAULT '0' COMMENT 'Prioridad de la notificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NOTIFICATION_DOMAIN` (`domain`),
+  CONSTRAINT `FK_NOTIFICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification';
+	
+#
+# Structure for the `notification_receiver` table :
+#
+
+CREATE TABLE `notification_receiver` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+  `domain` int(4) NOT NULL COMMENT 'Dominio',
+  `notification` int(4) NOT NULL COMMENT 'ID unico de notification',
+  `auth` binary(16) DEFAULT NULL COMMENT 'ID de AUTH',
+  `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la notificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_NOTIFICATION_RECEIVER_NOTIFICATION` (`notification`),
+  KEY `IDX_NOTIFICATION_RECEIVER_DOMAIN` (`domain`),
+  CONSTRAINT `FK_NOTIFICATION_RECEIVER_NOTIFICATION` FOREIGN KEY (`notification`) REFERENCES `notification` (`id`),
+  CONSTRAINT `FK_NOTIFICATION_RECEIVER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notification receiver';
+
+
+#
 # Structure for the `notice` table : 
 #
 

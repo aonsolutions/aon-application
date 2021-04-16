@@ -50,7 +50,8 @@
 	
 	<table-filter match-name="carrier_packing" exclude="true" />
 	<table-filter match-name="location" exclude="true" />
-
+	<table-filter match-name="notification" exclude="true" />
+	<table-filter match-name="notification_receiver" exclude="true" />
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
