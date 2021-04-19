@@ -1,0 +1,70 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+
+		.flexColumn{
+			width: 370px;
+			display: flex;
+			flex-direction: column;
+			padding: 10px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.fullName{
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+		
+		.bold{
+			font-weight: bold;
+		}
+		
+		.box{
+			width: 13px;
+			height: 13px;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel ui:field="itTooltip" styleName="{style.flexColumn}">
+	
+		<g:Label ui:field="fullNameL" styleName="{style.fullName}"/>
+		
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.bold}">Doc:</g:Label>
+			<g:Label ui:field="documentL"/>
+			<g:Label styleName="{style.bold}">Naf:</g:Label>
+			<g:Label ui:field="nafL"/>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:HTMLPanel ui:field="itTypeLeyend" styleName="{style.box}"/>
+			<g:Label ui:field="itTypeL"/>
+			<g:Label ui:field="totalDaysL"/>
+		</g:HTMLPanel>
+		
+		<g:Label ui:field="comunicateStatusL"/>
+		
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.bold}">Baja:</g:Label>
+			<g:Label ui:field="lowDateL"/>
+			<g:Label styleName="{style.bold}">Motivo:</g:Label>
+			<g:Label ui:field="lowTypeL"/>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.bold}">Alta:</g:Label>
+			<g:Label ui:field="highDateL"/>
+			<g:Label styleName="{style.bold}">Motivo:</g:Label>
+			<g:Label ui:field="highTypeL"/>
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+</ui:UiBinder> 
