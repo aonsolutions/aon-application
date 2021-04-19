@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -49,6 +51,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONObject;
@@ -63,6 +67,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -119,9 +124,6 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiField
 	HTMLPanel timelinePanel;
 	
-	@UiField
-	HTMLPanel leyendPanel;
-	
 	// --------------------------------------------------- Variables
 	
 	private MainContrataITObject mainContrataITObject;
@@ -152,7 +154,7 @@ public class MainContrataIT extends MainEntryPoint {
 
 	private static TimeLineChart timelineChart;
 
-	private Tooltip tooltip;
+	private ITTooltip tooltip;
 	private DataTableWrapper data;
 	private Options options;
 	
@@ -160,6 +162,7 @@ public class MainContrataIT extends MainEntryPoint {
 	private int posColumn; // uR
 	
 	private ExpressionCallback expressionCallback;
+	private TooltipCallBack tooltipCallback;
 
 	private String cadenaTooltip;
 
@@ -170,7 +173,6 @@ public class MainContrataIT extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private AonToolbarButton addIT;
 	private AonToolbarButton leyend;
-	private boolean isLeyendShow = false;
 	
 	private AonToolbarButton msjFIE;
 	private FormPanel msjFIEFormPanel;
@@ -193,13 +195,52 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	// --------------------------------------------------- TimeLineChart.MouseEventsHandlers
 	    
-    private class MouseEventsHandlers extends DecoratedPopupPanel implements ContextMenuHandler, ClickHandler {
+    private class MouseEventsHandlers extends DecoratedPopupPanel implements MouseOverHandler, ContextMenuHandler, ClickHandler {
 
-		public MouseEventsHandlers(TimeLineChart timelineChart) {			
+		public MouseEventsHandlers(TimeLineChart timelineChart) {
+			timelineChart.addMouseOverHandler(this);
 			timelineChart.addContextMenuHandler(this);
 			timelineChart.addClickHandler(this);
 		}
 
+		@Override
+		public void onMouseOver(MouseOverEvent event) {
+			Element element = Element.as(event.getNativeEvent().getEventTarget());				
+			int mouseClientX = event.getClientX();
+			int mouseClientY = event.getClientY();								
+			cadenaTooltip = getLogicalName(element, mouseClientX, mouseClientY);
+			
+			if(AonStringUtils.isBlank(cadenaTooltip))
+				return;
+				
+			try {	
+				
+				if (cadenaTooltip.contains("{\"type\":\"bar\"")) {
+					
+					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
+					
+					int contractId = data.getContractId(posColumn, posCell);
+					int leaveId = data.getContractLeaveId(posColumn, posCell);
+					
+					if(AonNumberUtils.equals(contractId, leaveId)) {
+						checkTooltipCB();
+					} else {
+						tooltipCallback.setProperties(mouseClientX, mouseClientY);
+						evalTooltip();
+					}
+				} else {
+					checkTooltipCB();
+				}
+
+			} catch (Throwable ex) {
+
+			} finally {
+				event.preventDefault();
+				event.stopPropagation();
+				event.getNativeEvent();
+			}
+		}
+		
 		@Override
 		public void onContextMenu(ContextMenuEvent event) {
 			
@@ -214,12 +255,19 @@ public class MainContrataIT extends MainEntryPoint {
 			try {					
 				if (isLeaveEmployee(cadenaTooltip)) {	
 					
+					checkTooltipCB();
+					
 					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
 					
-					popupPanel = new PopupPanel(true);					
-					new LeaveContextMenu();					
-					popupPanel.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());					
-					popupPanel.show();					
+					int leaveId = data.getContractLeaveId(posColumn, posCell);
+					IT it = mainContrataITObject.getITs(leaveId);
+					
+					if(!mainContrataITObject.isUserComunica() && itIsNotComunicate(it)){
+						popupPanel = new PopupPanel(true);					
+						new ITContextMenu();					
+						popupPanel.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());					
+						popupPanel.show();							
+					}
 					
 				}
 				
@@ -245,6 +293,8 @@ public class MainContrataIT extends MainEntryPoint {
 				
 			try {	
 				
+				checkTooltipCB();
+				
 				if (cadenaTooltip.contains("{\"type\":\"bar\"")) {
 					
 					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
@@ -266,7 +316,17 @@ public class MainContrataIT extends MainEntryPoint {
 				event.getNativeEvent();
 			}
 		}
-	
+		
+		private boolean itIsNotComunicate(IT it) {
+			return null == it.isComunicate() || !it.isComunicate();
+		}
+		
+		private void checkTooltipCB() {
+			if (tooltipCallback.isRunning())
+				tooltipCallback.cancel();
+			tooltip.hide();
+		}
+		
 	}
     
     // --------------------------------------------------- ExpressionCallback
@@ -283,21 +343,73 @@ public class MainContrataIT extends MainEntryPoint {
 		}
 	}
     
+    // --------------------------------------------------- TooltipCallback
+    
+    class TooltipCallBack extends Timer {
+		
+		private int mouseClientX;
+		private int mouseClientY;
+		
+		public TooltipCallBack() {}
+		
+		public void setProperties(int ClientX, int ClientY) {
+			this.mouseClientX = ClientX;
+			this.mouseClientY = ClientY;
+		}
+	
+		@Override
+		public void run() {
+			int contractId = data.getContractId(posColumn, posCell);
+			int itId = data.getContractLeaveId(posColumn, posCell);
+			
+			IT itInfo = mainContrataITObject.getITs(itId);
+	    	ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
+	    	
+	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
+	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
+	    	tooltip.setNaf(itEmployee.getEmployeeInfo().getSsNumber());
+	    	tooltip.setComunicationStatus(itInfo.isComunicate());
+	    	tooltip.setITType(itInfo.getTypeLowPart());
+	    	tooltip.setLowType(itInfo.getTypeLowPart());
+	    	tooltip.setHighType(itInfo.getTypeHighPart());
+	    	tooltip.setStartDate(itInfo.getStartDate());
+	    	tooltip.setEndDate(itInfo.getEndDate());
+			
+			tooltip.showTooltip(mouseClientX, mouseClientY);
+		}
+
+	}
+    
+    private void evalTooltip() {
+		tooltipCallback.cancel();
+		tooltipCallback.schedule(750);
+	}
+    
     // --------------------------------------------------- ContextMenu
 	
-	class LeaveContextMenu extends ContextMenu {
+	class ITContextMenu extends ContextMenu {
 		
 		DeleteContractCommand deleteContract;
+		ComunicateITCommand comunicateIT;
 		
-		public LeaveContextMenu() {
+		public ITContextMenu() {
 			MenuBar popupMenuBar = new MenuBar(true);
 			
-			MenuItem add = addItem(
+			MenuItem deleteMenuItem = addItem(
 					"Eliminar Baja",
 					deleteContract = new DeleteContractCommand(),
 					AON.CSS.aonIconDelete(), style.cmd_btn());
 			
-			popupMenuBar.addItem(add);
+			// TODO : to add delete option
+			// popupMenuBar.addItem(deleteMenuItem);
+			
+			MenuItem comunicateMenuItem = addItem(
+					"Comunicar IT",
+					comunicateIT = new ComunicateITCommand(),
+					AON.CSS.aonIconSend(), style.cmd_btn());
+			
+			popupMenuBar.addItem(comunicateMenuItem);
+			
 			popupMenuBar.setVisible(true);
 			popupPanel.add(popupMenuBar);
 		}
@@ -320,60 +432,31 @@ public class MainContrataIT extends MainEntryPoint {
 				
 			} catch (Exception ex) {}
 		}
-
-		private void deleteLeave(ITEmployee itEmployee, IT it) {
-			AonConfirmDialog confirmDialog = new AonConfirmDialog();
-			confirmDialog.confirm(
-					"BORRADO", 
-					String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT?",
-					new AonConfirmDialogCallback() {
-
-						@Override
-						public void onAccept() {
-							if(ITDialog.isPartenityPart(it))
-								onDeletePaternity(it, itEmployee);
-							else
-								onDelete(it, itEmployee);
-						}
-
-						@Override
-						public void onCancel() {}
-					}
-			);
-		}
 		
-		private void onDelete(IT it, ITEmployee itEmployee) {
-			mainContrataITObject.removeIT(itEmployee, it,
-					s -> {
-//						AonConfirmDialog dialog = new AonConfirmDialog();
-//						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-						
-						if(it.isComunicate() && mainContrataITObject.isUserComunica())
-							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-								loadMainContrataIT();
-							}, d -> {});
-						else
-							loadMainContrataIT();
-					},
-					f -> {});
-			
+	}
+	
+	class ComunicateITCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			try {
+				popupPanel.hide();	
+				
+				int contractId = data.getContractId(posColumn, posCell);				
+				int leaveId = data.getContractLeaveId(posColumn, posCell);
+				
+				IT it = mainContrataITObject.getITs(leaveId);
+				ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
+				
+				// Paternidad / Maternidad
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
+					comunicatePaternity(itEmployee, it);
+				else
+					cominicateIT(itEmployee, it);
+				
+			} catch (Exception ex) {}
 		}
 
-		private void onDeletePaternity(IT it, ITEmployee itEmployee) {
-			mainContrataITObject.deleteIT(it,
-					s -> {
-//						AonConfirmDialog dialog = new AonConfirmDialog();
-//						dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-						
-						if(it.isComunicate() && mainContrataITObject.isUserComunica())
-							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-								loadMainContrataIT();
-							}, d -> {});
-						else
-							loadMainContrataIT();
-					},
-					f -> {});
-		}
 	}
 	
 	// --------------------------------------------------- OnModuleLoad
@@ -385,8 +468,9 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	private void loadMainContrataIT() {
 		this.expressionCallback = new ExpressionCallback();
+		this.tooltipCallback = new TooltipCallBack();
 		this.popupPanel = new PopupPanel(true);
-		this.tooltip = new Tooltip();
+		this.tooltip = new ITTooltip();
 		
 		this.mainContrataITObject.getEmployeesInfo(true, s -> {
 			getFilterITListPanel();
@@ -416,7 +500,13 @@ public class MainContrataIT extends MainEntryPoint {
 		itPanel.add(itL);
 		employeeSB = new SuggestBox(names);
 		employeeSB.setWidth("300px");
+		employeeSB.getElement().getStyle().setMarginRight(10, Unit.PX);
 		itPanel.add(employeeSB);
+		AonTableButton cleanSB = new AonTableButton("Limpiar", AON.CSS.aonIconClear());
+		cleanSB.addClickHandler(e -> {
+			employeeSB.setValue("", true);
+		});
+		itPanel.add(cleanSB);
 		
 		HTMLPanel showPanel = new HTMLPanel("");
 		showPanel.addStyleName(style.flexPanel());
@@ -428,9 +518,10 @@ public class MainContrataIT extends MainEntryPoint {
 		dateListBox.getElement().getStyle().setMarginRight(5, Unit.PX);
 		showPanel.add(dateListBox);
 		
-		Label allContractsL = new Label("Todos los contratos");
+		Label allContractsL = new Label("Contratos con IT");
 		allContractsL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		allContracts = new CheckBox();
+		allContracts.setValue(true);
 		allContracts.addValueChangeHandler(e -> {
 			initSuggestBox();
 			reloadTimeline();
@@ -1118,7 +1209,7 @@ public class MainContrataIT extends MainEntryPoint {
 		return eval(javascript);
 	}-*/;
 	
-	// --------------------------------------------------- DeckPanel.Methos
+	// --------------------------------------------------- DeckPanel.Methods
 	
 	private void showTimeLine() {
 		deckPanel.showWidget(0);
@@ -1126,6 +1217,52 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	private void showMessage() {
 		deckPanel.showWidget(1);
+	}
+	
+	// --------------------------------------------------- Leyend.Methods
+	
+	public void openLeyend() {
+		String leyend = "<div style=\"display: flex; flex-direction: column; width: 390px;\">";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #A0C3FF;\" title=\"Periodo Activo del Empleado\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Activo</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FFA500;\" title=\"Enfermedad Com&uacute;n, Accidente no Laboral\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Accidente no Laboral</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #AA0033;\" title=\"Enfermedad Profesional\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Profesional</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FF66CC;\" title=\"Maternidad, Lactancia, Riesgo Durante el Embarazo\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Maternidad</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #36C;\" title=\"Baja por Paternidad\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Paternidad</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FFA500;\" title=\"Enfermedad Com&uacute;n, Periodo de Carencia\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Periodo de Carencia</a>";
+		leyend += "</div>";
+		
+		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #E3DC14;\" title=\"Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</a>";
+		leyend += "</div>";
+		
+		leyend += "</div>";
+		
+		AonDialog leyendDialog = new AonDialog("Leyenda", new HTML(leyend));
+		leyendDialog.info();
 	}
 	
 	// --------------------------------------------------- Toolbar
@@ -1221,14 +1358,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	private void onLeyend(ClickEvent event) {
-		if(isLeyendShow) {
-			mainContainerDockLPanel.setWidgetSize(leyendPanel, 0);
-			mainContainerDockLPanel.animate(500);
-		} else {
-			mainContainerDockLPanel.setWidgetSize(leyendPanel, 240);
-			mainContainerDockLPanel.animate(500);
-		}
-		isLeyendShow = !isLeyendShow;
+		openLeyend();
 	}
 	
 	// --------------------------------------------------- ITDialog.Methods
@@ -1240,132 +1370,25 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	private ITDialog newITDialog() {
-		ITDialog itDialog = new ITDialog() {
+		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
 
     		@Override
 			protected void onAccept() {
-				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-							
-							loadMainContrataIT();
-						},
-						f -> {});
-			}
-
-			@Override
-			protected void onAcceptIT(IT it) {
-				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-							
-							if(mainContrataITObject.isUserComunica()) {
-								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-								comunicateDialog.confirm(
-										"COMUNIC" + String.valueOf("\u0040"), 
-										String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-										new AonConfirmDialogCallback() {
-					
-											@Override
-											public void onAccept() {
-												mainContrataITObject.comunicateITBaja(getITEmployee(), it, t -> {
-													AonConfirmDialog dialog = new AonConfirmDialog();
-													dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-													
-													getITCertificatePDF(getITEmployee(), it);
-													
-													loadMainContrataIT();
-													
-												}, d -> {});
-											}
-
-											@Override
-											public void onCancel() {
-												loadMainContrataIT();
-											}});
-							} else {
-								loadMainContrataIT();
-							}},
-							f -> {});
-							
-			}
-    		
-    		@Override
-			protected void onAcceptPaternityIT(IT it) {
-				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-							
-							if(mainContrataITObject.isUserComunica()) {
-								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-								comunicateDialog.confirm(
-										"COMUNIC" + String.valueOf("\u0040"), 
-										String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-										new AonConfirmDialogCallback() {
-					
-											@Override
-											public void onAccept() {
-												mainContrataITObject.comunicatePaternityIT(getITEmployee(), it, t -> {
-													AonConfirmDialog dialog = new AonConfirmDialog();
-													dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-													
-													getITCertificatePDF(getITEmployee(), it);
-													
-													loadMainContrataIT();
-												}, d -> {});
-											}
-					
-											@Override
-											public void onCancel() {
-												loadMainContrataIT();
-											}});
-							} else {
-								loadMainContrataIT();
-							}},
-						f -> {});
+    			accept(getITEmployee());
 			}
     		
     		@Override
 			protected void onDelete(IT it) {
-				mainContrataITObject.removeIT(getITEmployee(), it,
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-							
-							if(it.isComunicate() && mainContrataITObject.isUserComunica())
-								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
-									loadMainContrataIT();
-								}, d -> {});
-							else
-								loadMainContrataIT();
-						},
-						f -> {});
-			}
-    		
-			@Override
-			protected void onDeletePaternity(IT it) {
-				mainContrataITObject.deleteIT(it,
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-							
-							if(it.isComunicate() && mainContrataITObject.isUserComunica())
-								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
-									loadMainContrataIT();
-								}, d -> {});
-							else
-								loadMainContrataIT();
-						},
-						f -> {});
+    			deleteLeave(getITEmployee(), it);
 			}
 			
 			@Override
 			protected void onShowCertitificateIT(IT it) {
 				getITCertificatePDF(getITEmployee(), it);
 			}
+
+			@Override
+			protected void onComunicateIT(IT it) {}
     		
     	};
     	
@@ -1383,75 +1406,129 @@ public class MainContrataIT extends MainEntryPoint {
 		IT itInfo = mainContrataITObject.getITs(itId);
     	ITEmployee itEmployee = mainContrataITObject.getITEmployee(contractId);
 
-    	ITDialog itDialog = new ITDialog() {
+    	ITDialog itDialog = new ITDialog("Edici\u00F3n") {
     		
     		@Override
 			protected void onAccept() {
-				mainContrataITObject.createUpdateITEmployee(itEmployee,
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-							
-							loadMainContrataIT();
-						},
-						f -> {});
+				accept(itEmployee);
 			}
-    		
-    		@Override
-			protected void onAcceptIT(IT it) {}
-
-			@Override
-			protected void onAcceptPaternityIT(IT it) {}
 			
 			@Override
 			protected void onDelete(IT it) {
-				mainContrataITObject.removeIT(itEmployee, it,
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-							
-							if(it.isComunicate() && mainContrataITObject.isUserComunica())
-								mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-									loadMainContrataIT();
-								}, d -> {});
-							else
-								loadMainContrataIT();
-						},
-						f -> {});
-			}
-
-			@Override
-			protected void onDeletePaternity(IT it) {
-				mainContrataITObject.deleteIT(it,
-						s -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-							
-							if(it.isComunicate() && mainContrataITObject.isUserComunica())
-								mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-									loadMainContrataIT();
-								}, d -> {});
-							else
-								loadMainContrataIT();
-						},
-						f -> {});
+				deleteLeave(itEmployee, it);
 			}
 			
 			@Override
 			protected void onShowCertitificateIT(IT it) {
 				getITCertificatePDF(itEmployee, it);
 			}
+
+			@Override
+			protected void onComunicateIT(IT it) {
+				// Paternity / Maternity
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
+					comunicatePaternity(itEmployee, it);
+				else
+					cominicateIT(itEmployee, it);
+			}
 			
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
     	itDialog.setITDialogObject(itDialogObject, itInfo, true);
+    	itDialog.setIsUserComunica(mainContrataITObject.isUserComunica());
     	
     	itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
     	itDialog.show();
     	itDialog.center();
 	}	
+	
+	private void accept(ITEmployee itEmployee) {
+		mainContrataITObject.createUpdateITEmployee(itEmployee,
+				s -> {
+					loadMainContrataIT();
+				},
+				f -> {});
+	}
+	
+	private void deleteLeave(ITEmployee itEmployee, IT it) {
+		if(ITDialog.isPartenityPart(it))
+			deletePaternity(it, itEmployee);
+		else
+			delete(it, itEmployee);
+	}
+	
+	private void delete(IT it, ITEmployee itEmployee) {
+		mainContrataITObject.removeIT(itEmployee, it,
+				s -> {
+					if(it.isComunicate() && mainContrataITObject.isUserComunica())
+						mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
+							loadMainContrataIT();
+						}, d -> {});
+					else
+						loadMainContrataIT();
+				},
+				f -> {});
+		
+	}
+
+	private void deletePaternity(IT it, ITEmployee itEmployee) {
+		mainContrataITObject.deleteIT(it,
+				s -> {
+					if(it.isComunicate() && mainContrataITObject.isUserComunica())
+						mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
+							loadMainContrataIT();
+						}, d -> {});
+					else
+						loadMainContrataIT();
+				},
+				f -> {});
+	}
+	
+	private void cominicateIT(ITEmployee itEmployee, IT it) {
+		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+		comunicateDialog.confirm(
+				"COMUNIC" + String.valueOf("\u0040"), 
+				String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+				new AonConfirmDialogCallback() {
+					@Override
+					public void onAccept() {
+						mainContrataITObject.comunicateITBaja(itEmployee, it, t -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+							
+							getITCertificatePDF(itEmployee, it);
+						}, d -> {});
+					}
+
+					@Override
+					public void onCancel() {}
+				}
+		);
+	}
+
+	private void comunicatePaternity(ITEmployee itEmployee, IT it) {
+		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+		comunicateDialog.confirm(
+				"COMUNIC" + String.valueOf("\u0040"), 
+				String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+				new AonConfirmDialogCallback() {
+					@Override
+					public void onAccept() {
+						mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+							
+							getITCertificatePDF(itEmployee, it);
+						}, d -> {});
+					}
+
+					@Override
+					public void onCancel() {}
+				}
+		);
+	}
 	
 	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
 		mainContrataITObject.getNafxIpf(itEmployee, s -> {

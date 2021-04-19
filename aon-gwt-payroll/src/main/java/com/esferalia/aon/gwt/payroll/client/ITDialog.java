@@ -174,6 +174,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	private IT it;
 	private ITEmployee itEmployee;
 	
+	private boolean userComunica = false;
+	
 	private List<ITEmployee> itEmployeeList = Collections.emptyList();
 	
 	private SuggestBox employeeSB;
@@ -186,6 +188,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private AonToolbarButton listIT;
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
+	private AonToolbarButton comunicateIT;
 	private AonToolbarButton showCertificate;
 	
 	// --------------------------------------------------- Variables.Footer
@@ -312,8 +315,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- Constructor
 	
-	public ITDialog() {	
-		String caption = "Parte IT";
+	public ITDialog(String typeCaption) {	
+		String caption = "Parte IT / " + typeCaption;
 		onModuleLoad(caption);
 		
 		createITToolbar();
@@ -416,8 +419,18 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check type of part
 		showAdvancedOpts(!showAll);
+		
+		createEmployeePanel(itDialogObject.getEmployeeName());
+		
+		// Check Comunicate
+		checkComunicateIT();
 	}
 	
+	private void checkComunicateIT() {
+		if(userComunica && (null == this.it.isComunicate() || !this.it.isComunicate()))
+			comunicateIT.setVisible(true);
+	}
+
 	// --------------------------------------------------- setITDialogObject.Methods
 	
 	private void initRaggedListBox(){
@@ -1222,6 +1235,10 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
 	
+	public void setIsUserComunica(boolean userComunica) {
+		this.userComunica = userComunica;
+	}
+	
 	private boolean notSelectedId(Integer itId) {
 		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
 	}
@@ -1380,6 +1397,16 @@ public abstract class ITDialog extends AonCustomDialog {
 		toolbar.add(showCertificate);
 		showCertificate.setVisible(false);
 		
+		comunicateIT = new AonToolbarButton( "Comunicar IT", AON.CSS.aonIconSend());
+		comunicateIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onComunicateIT(event);
+			}
+		});
+		toolbar.add(comunicateIT);
+		comunicateIT.setVisible(false);
+		
 		backListIT.setVisible(false);
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
@@ -1404,11 +1431,7 @@ public abstract class ITDialog extends AonCustomDialog {
 
 							@Override
 							public void onAccept() {
-								if(isPartenityPart(it))
-									onDeletePaternity(it);
-								else
-									onDelete(it);
-								
+								onDelete(it);
 								hide();
 								ITDialog.this.hide();
 							}
@@ -1424,6 +1447,14 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void onShowCertitificateIT(ClickEvent event) {
 		if(null != this.it.getId())
 			onShowCertitificateIT(it);
+		
+		hide();
+	}
+	
+	private void onComunicateIT(ClickEvent event) {
+		if( null != this.it.getId() && 
+			(null == this.it.isComunicate() || !this.it.isComunicate()))
+			onComunicateIT(it);
 		
 		hide();
 	}
@@ -1562,14 +1593,9 @@ public abstract class ITDialog extends AonCustomDialog {
 			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
 			
-			if((null == this.it.getId() || -1 == this.it.getId()) && (this.it.getTypeLowPart() == (byte)2 || (this.it.getTypeLowPart() == (byte)3)))
-					comunicatePaternityIT(it);
-			else if(null == this.it.getId() || -1 == this.it.getId()){
-				comunicateIT(it);
-			} else {
-				onAccept();
-				hide();
-			}
+			onAccept();
+			hide();
+			
 		} else {
 			AonConfirmDialog dialog = new AonConfirmDialog();
 			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");
@@ -1583,16 +1609,6 @@ public abstract class ITDialog extends AonCustomDialog {
 			return true;
 		
 		return false;
-	}
-	
-	private void comunicatePaternityIT(IT it) {
-		onAcceptPaternityIT(it);
-		hide();
-	}
-	
-	private void comunicateIT(IT it) {
-		onAcceptIT(it);
-		hide();
 	}
 	
 	public static boolean isPartenityPart(IT it) {
@@ -1610,10 +1626,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- Abstract Methods
 	
 	protected abstract void onShowCertitificateIT(IT it);
+	protected abstract void onComunicateIT(IT it);
 	protected abstract void onDelete(IT it);
-	protected abstract void onDeletePaternity(IT it);
 	protected abstract void onAccept();
-	protected abstract void onAcceptIT(IT it);
-	protected abstract void onAcceptPaternityIT(IT it2);
 	
 }

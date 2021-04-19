@@ -39,57 +39,6 @@
 			font-weight: bold;
 		}
 		
-		.flexColumn{
-			display: flex;
-			flex-direction: column;
-			margin-top: 54px;
-			padding: 10px;
-		}
-		
-		.leyendTitle{
-			width: 100%;
-			font-size: 13px;
-			font-weight: bold;
-			border-bottom: 1px solid #b7b7b7;
-			margin-bottom: 5px;
-		}
-		
-		.flex{
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			padding: 2px 5px;
-		}
-		
-		.box {
-			width: 13px;
-			height: 13px;
-		}
-		
-		.active {
-			background-color: #A0C3FF;
-		}
-		
-		.common{
-			background-color: #FFA500;
-		}
-		
-		.professional{
-			background-color: #AA0033;
-		}
-		
-		.maternity{
-			background-color: #FF66CC;
-		}
-		
-		.paternity{
-			background-color: #36C;
-		}
-		
-		.commonProfessional {
-			background-color: #E3DC14;
-		}
-		
 		/* MainContrataIT Styles */
 	    
 	    .filterPanel{
@@ -133,41 +82,6 @@
 						</g:ScrollPanel>
 					</g:HTMLPanel>
 				</g:center>
-				<g:south size="0">
-					<g:HTMLPanel ui:field="leyendPanel" styleName="{style.flexColumn}">
-						<g:HTMLPanel styleName="{style.flex} {style.leyendTitle}">
-							<g:Label>Leyenda</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Periodo Activo del Empleado" styleName="{style.box} {style.active}"></g:HTMLPanel>
-							<g:Label>Activo</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Enfermedad Com&uacute;n, Accidente no Laboral" styleName="{style.box} {style.common}"></g:HTMLPanel>
-							<g:Label>Enfermedad Com&uacute;n</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Enfermedad Profesional" styleName="{style.box} {style.professional}"></g:HTMLPanel>
-							<g:Label>Enfermedad Profesional</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Maternidad, Lactancia, Riesgo Durante el Embarazo" styleName="{style.box} {style.maternity}"></g:HTMLPanel>
-							<g:Label>Maternidad</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Baja por Paternidad" styleName="{style.box} {style.paternity}"></g:HTMLPanel>
-							<g:Label>Paternidad</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Enfermedad Com&uacute;n, Periodo de Carencia" styleName="{style.box} {style.common}"></g:HTMLPanel>
-							<g:Label>Enfermedad Com&uacute;n, Periodo de Carencia</g:Label>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:HTMLPanel title="Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)" styleName="{style.box} {style.commonProfessional}"></g:HTMLPanel>
-							<g:Label>Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:south>
 			</g:DockLayoutPanel>	
 		</g:center>
 	</g:DockLayoutPanel>

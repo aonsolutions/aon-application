@@ -525,8 +525,8 @@ public class MainContrataITObject {
 				itsList.add(it);
 	}
 	
-	public List<ITEmployee> getEmployeesList(boolean allContracts, Date startDate, Date endDate){
-		if(allContracts) return employeesList;
+	public List<ITEmployee> getEmployeesList(boolean contractsWithIT, Date startDate, Date endDate){
+		if(!contractsWithIT) return employeesList;
 		
 		List<ITEmployee> employeeWithITList = new ArrayList<ITEmployee>();
 		
