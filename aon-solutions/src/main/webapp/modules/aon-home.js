@@ -1,52 +1,111 @@
-import {AonElement} from '../components/AonElement.js';
+import { AonElement } from '../components/AonElement.js';
 
-import '../components/aon-icon-button.js';
-import './aon-header.js';
-import './aon-menu.js';
-import './aon-mobile-header.js';
-import './aon-mobile-menu.js';
+import { AonIconButton } from '../components/aon-icon-button.js';
+import { AonHeader } from './aon-header.js';
+import { AonMenu } from './aon-menu.js';
+import { AonMobileHeader } from './aon-mobile-header.js';
+import { AonMobileMenu } from './aon-mobile-menu.js';
+
+import * as AON_TAG from "../../environments/aonTag.js";
+import * as CSS from "../../environments/css.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonHome extends AonElement {
+
+	AON_HEADER;
+	ROOT_PANEL;
+	AON_MENU;
+	AON_MOBILE_MENU;
+	AON_SHOW_MENU;
+	AON_SHOW_MENU_BUTTON;
+
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
-		this.build();
+		this.clear();
+		this.initialize();
+
+		if(this.isMobile())
+			this.buildMobile();
+		else this.build();
+	}
+
+	initialize() {
+		this.AON_HEADER = 'aonHeader';
+		this.ROOT_PANEL = 'rootPanel';
+		this.AON_MENU = 'aonMenu';
+		this.AON_MOBILE_MENU = 'aonMobileMenu';
+		this.AON_SHOW_MENU = 'aonShowMenu';
+		this.AON_SHOW_MENU_BUTTON = 'aonShowMenuButton';
 	}
 
 	build(){
-		this.innerHTML = this.isMobile()
-		?  `
-			<aon-mobile-header id="aonHeader"></aon-mobile-header>
-			<div id="rootPanel" class="aonMobileRootPanel"></div>
-			<aon-mobile-menu id="aonMobileMenu"></aon-mobile-menu>
-		`
-		: `
-			<span id="aonShowMenu" style="position:absolute; z-index:2;display:none; top:60px;opacity:0.7;background-color:#f1f1f1; border-radius: 100px 0 0 100px;right: 0;">
-				<aon-icon-button id="aonShowMenuButton" icon="keyboard_arrow_left" noHover="true"></aon-icon-button>
-			</span>
-			<aon-header id="aonHeader"></aon-header>
-			<aon-menu id="aonMenu" class="aonMenu"></aon-menu>
-			<div id="rootPanel" class="rootPanel"></div>
-		`;
+		let aonShowMenu = this.createElement(AON_TAG.SPAN);
+		aonShowMenu.id = this.AON_SHOW_MENU;
+		aonShowMenu.className = CSS.AON_SHOW_MENU;
+		aonShowMenu.addEventListener('mouseover', () => {
+			if(localStorage.getItem('aon_domain_id')){
+				let aonMenuSidenav = document.getElementById('aonMenuSidenav');
+				aonMenuSidenav.style.transitionDuration = '0ms';
+				aonMenuSidenav.style.width = '150px';
+				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+					item.style.display = 'inline-block';
+					item.style.fontSize = '12px';
+					item.style.fontFamily = 'Roboto,sans-serif';
+					item.style.color = 'black';
+				});
+			}
+		});
 
-		if(!this.isMobile()) {
-			let aonShowMenu = document.getElementById('aonShowMenu');
-			aonShowMenu.addEventListener('mouseover', () => {
-				if(localStorage.getItem('aon_domain_id')){
-					let aonMenuSidenav = document.getElementById('aonMenuSidenav');
-					aonMenuSidenav.style.transitionDuration = '0ms';
-					aonMenuSidenav.style.width = '150px';
-					document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-						item.style.display = 'inline-block';
-						item.style.fontSize = '12px';
-						item.style.fontFamily = 'Roboto,sans-serif';
-						item.style.color = 'black';
-					});
-				}
-			});
+		let aonShowMenuButton = new AonIconButton();
+		aonShowMenuButton.id = this.AON_SHOW_MENU_BUTTON
+		aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+		aonShowMenuButton.noHover = true;
+		aonShowMenu.appendChild(aonShowMenuButton);
+		this.appendChild(aonShowMenu);
+
+		let aonHeader = new AonHeader();
+		aonHeader.id = this.AON_HEADER;
+		this.appendChild(aonHeader);
+
+		let aonMenu = new AonMenu();
+		aonMenu.id = this.AON_MENU;
+		aonMenu.className = CSS.AON_MENU;
+		this.appendChild(aonMenu);
+
+		let rootPanel = this.createElement(AON_TAG.DIV);
+		rootPanel.id = this.ROOT_PANEL;
+		this.appendChild(rootPanel);
+	}
+
+	buildMobile() {
+		let aonMobileHeader = new AonMobileHeader();
+		aonMobileHeader.id = this.AON_HEADER;
+		this.appendChild(aonMobileHeader);
+
+		let rootPanel = this.createElement(AON_TAG.DIV);
+		rootPanel.id = this.ROOT_PANEL;
+		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
+		this.appendChild(rootPanel);
+
+		let aonMobileMenu = new AonMobileMenu();
+		aonMobileMenu.id = this.AON_MOBILE_MENU;
+		this.appendChild(aonMobileMenu);
+	}
+
+	showMenu(bool) {
+		if(this.isMobile()) {
+			let rootPanel = this.getElement(this.ROOT_PANEL);
+			rootPanel.style.bottom = bool ? '60px' : '0px';
+			let aonMobileMenu = this.getElement(this.AON_MOBILE_MENU);
+			aonMobileMenu.style.height = bool ? '60px' : '0px';
+		} else {
+			let aonShowMenu = this.getElement(this.AON_SHOW_MENU);
+			aonShowMenu.style.display = bool ? 'block' : 'none';
 		}
 	}
+
 }
 window.customElements.define('aon-home', AonHome);

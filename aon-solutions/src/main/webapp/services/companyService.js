@@ -123,3 +123,5 @@ export const getDomainApps = (domain) => {
       );
     });
   };
+
+  export const getCompanyHeaderInfo = (data) => get(`${API_URL}/company/header`, data);

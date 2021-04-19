@@ -1,5 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 
+import {getCompanyHeaderInfo} from  '../../services/service.js';
+
+import * as AON_TAG from "../../environments/aonTag.js";
+import * as CSS from "../../environments/css.js";
+
 export class AonStat extends AonElement {
 
   constructor () {
@@ -7,44 +12,46 @@ export class AonStat extends AonElement {
   }
 
   connectedCallback () {
-    this.buildSlide();
+    getCompanyHeaderInfo().then((pi) =>{
+
+      this.build(pi);
+    });
   }
 
-  buildSlide() {
-    let div = document.createElement('div');
-    div.appendChild(this.buildSlideContent())
+  build(pi) {
+    let div = this.createElement(AON_TAG.DIV);
+    div.style.display = 'flex';
     this.appendChild(div);
-    this.appendChild(this.buildSlideDot(1));
-  }
 
-  buildSlideContent() {
-    let div = document.createElement('div');
-    div.className = 'aonNone aonDesktopSlideFade';
-    div.style.display = 'block';
-    div.style.marginTop = '10px';
+    let div1 = this.createElement(AON_TAG.DIV);
+    div1.className = CSS.AON_COMPANY_LOGO;
+    div.appendChild(div1);
 
-    let bannerImg = document.createElement('img');
-    bannerImg.src = 'assets/img/atp_img_publi.jpg';
-    bannerImg.style.width = '100%';
+    let span = this.createElement(AON_TAG.SPAN);
+    span.className = CSS.AON_COMPANY_LOGO_SPAN;
+    span.style.top = '30px';
+    span.innerHTML = pi.name || 'ATENCIÓN AL CLIENTE';
+    div1.appendChild(span);
 
-    div.appendChild(bannerImg);
+    let span2 = this.createElement(AON_TAG.SPAN);
+    span2.className = CSS.AON_COMPANY_LOGO_SPAN;
+    span2.style.top = '50px';
+    span2.style.fontWeight = '400';
+    span2.innerHTML = pi.fixed_phone || '902 121 009 · 945 121 010';
+    div1.appendChild(span2);
 
-    return div;
-  }
+    let span3 = this.createElement(AON_TAG.SPAN);
+    span3.className = CSS.AON_COMPANY_LOGO_SPAN;
+    span3.style.top = '70px';
+    span3.style.fontWeight = '400';
+    span3.innerHTML =  pi.email ||  'soporte@aonSolutions.es';
+    div1.appendChild(span3);
 
-  buildSlideDot(index) {
-    let div = document.createElement('div');
-    div.style.marginTop = '10px';
-    div.style.textAlign = 'center';
-    for(let i = 0; i < index; i++ ) {
-      let span = document.createElement('span');
-      span.className = 'aonDot';
-      // span.addEventListener('click' => {
-      //
-      // });
-      div.appendChild(span);
-    }
-    return div;
+    let div2 = this.createElement(AON_TAG.DIV);
+    div2.className = CSS.AON_COMPANY_LOGO_IMG;
+    div.appendChild(div2);
+    let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo' //https://mac.aonsolutions.net/aonDocuments/company.logo';
+    div2.innerHTML = `<img style="position: relative;max-width: 201px;" src="${url}" width="200">`;
   }
 }
 if(!window.customElements.get('aon-stat')){

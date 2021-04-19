@@ -155,7 +155,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
 		
 		TaskHolder taskHolder = taskHolders.stream().filter(th -> th.getId().equals(taskHolderId)).findFirst()
-				.orElse(taskHolders.getFirst());
+				.orElse(taskHolders.size() > 0 ? taskHolders.getFirst(): new TaskHolder());
 		
 		if(taskHolder == null || taskHolder.getId() == null) {
 			taskHolder = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 

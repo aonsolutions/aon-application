@@ -19,6 +19,8 @@ import "./invoice/aon-invoice-panel.js";
 import "./laboral/aon-laboral.js";
 import "./fiscal/aon-fiscal.js";
 
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
 export class AonMobileMenu extends AonElement {
 
   TYPE_IMG;
@@ -50,7 +52,6 @@ export class AonMobileMenu extends AonElement {
 
   constructor() {
     super();
-    this.eventListener();
   }
 
   eventListener(){
@@ -64,6 +65,11 @@ export class AonMobileMenu extends AonElement {
   }
 
   connectedCallback() {
+    this.initialize();
+    this.eventListener();
+  }
+
+  initialize() {
     this.id = this.id || 'aonMobileMenu';
   }
 
@@ -234,7 +240,7 @@ export class AonMobileMenu extends AonElement {
     if(DOCUMENTAL.app === app.app)
       return {
         name: app.title,
-        icon: "snippet_folder",
+        icon: MATERIAL_ICONS.FOLDER,
         fn: () => rootPanel("<aon-documental></aon-documental>")
       };
     else if(PAYROLL.app === app.app)

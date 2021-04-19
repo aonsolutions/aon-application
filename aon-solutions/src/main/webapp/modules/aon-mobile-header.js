@@ -193,6 +193,10 @@ export class AonMobileHeader extends AonElement {
 			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 		});
 	}
+
+	showCompanyOption(company) {
+
+	}
 }
 
 window.customElements.define('aon-mobile-header', AonMobileHeader);

@@ -302,18 +302,21 @@ button:disabled, button[disabled]{
 
 .aonLiSpan {
   height: 36px;
-    line-height: 20px;
-    display: block;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    order: 0;
-    -webkit-flex-grow: 2;
-    -ms-flex-positive: 2;
-    flex-grow: 2;
-    text-decoration: none;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
+  line-height: 20px;
+  display: block;
+  -webkit-order: 0;
+  -ms-flex-order: 0;
+  order: 0;
+  -webkit-flex-grow: 2;
+  -ms-flex-positive: 2;
+  flex-grow: 2;
+  text-decoration: none;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .aonLiSpanSubtitle {
@@ -655,7 +658,7 @@ button:disabled, button[disabled]{
   font-size: 18px;
   color: #5f6368;
   font-weight: bold;
-  
+
 }
 
 .aonCardTitleSection {
@@ -1075,3 +1078,38 @@ button:disabled, button[disabled]{
 .aonFontWeight-600{font-weight: 600;}
 .aonFontWeight-700{font-weight: 700;}
 .aonFontWeight-800{font-weight: 800;}
+
+.aonShowMenu {
+  position:absolute;
+  z-index:2;
+  display:none;
+  top:60px;
+  opacity:0.7;
+  background-color:#f1f1f1;
+  border-radius: 100px 0 0 100px;
+  right: 0;
+}
+
+.aonCompanyLogo {
+  height: 0;
+  margin-top: 10px;
+  width: 70%;
+  border-top: 100px solid #002469;
+  border-left: 0px solid transparent;
+  border-right: 45px solid transparent;
+  padding: 0 8px 0 0;
+}
+
+.aonCompanyLogoSpan {
+  position: absolute;
+  margin-left: 20px;
+  color: white;
+  font-weight: bold;
+}
+
+.aonCompanyLogoImg {
+  width: 30%;
+  margin: 25px;
+  text-align: center;
+  vertical-align: middle;
+}

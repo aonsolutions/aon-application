@@ -78,6 +78,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			case "/banks":
 				response(req, resp, getBanks());
 				break;	
+			case "/header":
+				response(req, resp, getHeaderInfo());
+				break;	
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -475,6 +478,28 @@ public class CompanyServlet extends AonApiHttpServlet{
 		});
 		
 		return array;
+	}
+	
+	private JSONObject getHeaderInfo() {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(getDomain(), getUser().getLogin(), getUser().getId());
+		JSONObject json = new JSONObject();
+		if(dur.isEmployee()) {
+			Company company = AON.getCompany(getDomain().getName(),getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+			RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(company.getId());
+			AON.getStream(getDomain(), getUser(), filter)
+				.forEach(media -> json.put(media.getMedia().name().toLowerCase(), media.getValue())); 
+			json.put("name", company.getName());
+			json.put("url", "http://" + company.getDomain().getName() + ":8080/aon-aio/aonDocuments/company.logo");
+		} else if(getDomain().getParentId() != null) {
+			Company company = AON.getCompany(getDomain().getName(),getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getParentId()));
+			RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(company.getId());
+			AON.getStream(getDomain(), getUser(), filter)
+				.forEach(media -> json.put(media.getMedia().name().toLowerCase(), media.getValue())); 
+			json.put("name", company.getName());
+			json.put("logo", "http://" + company.getDomain().getName() + ":8080/aon-aio/aonDocuments/company.logo");
+		}
+		return json;
+		
 	}
 	
 }

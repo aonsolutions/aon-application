@@ -49,6 +49,23 @@ export class AonHeader extends AonElement {
 
 	initialize() {
 		this.BASE_ID = 'aonHeader';
+		this.AON_HEADER_WEB = this.BASE_ID + 'Web';
+		this.AON_LOGO = 'aonLogo';
+		this.AON_HEADER_SEARCH = this.BASE_ID + 'Search';
+		this.AON_HEADER_SEARCH_BOX = this.AON_HEADER_SEARCH + 'Box';
+		this.AON_HEADER_USER = this.BASE_ID + 'User';
+		this.AON_HEADER_USER_BUTTON = this.AON_HEADER_USER + 'Button';
+		this.AON_HEADER_NOTIFICATION = this.BASE_ID + 'Notification';
+		this.AON_HEADER_HELP = this.BASE_ID + 'Help';
+		this.AON_HEADER_HELP_BUTTON = this.AON_HEADER_HELP + 'Button';
+		this.AON_HEADER_COMPANY_LIST = this.BASE_ID + 'CompanyList';
+		this.AON_HEADER_COMPANY_LIST_BUTTON = this.AON_HEADER_COMPANY_LIST + 'Button';
+		this.AON_HEADER_HOME = this.BASE_ID + 'Home';
+		this.AON_HEADER_HOME_BUTTON = this.AON_HEADER_HOME + 'Button';
+		this.AON_HEADER_COMPANY = this.BASE_ID + 'Company';
+		this.AON_HEADER_COMPANY_NAME = this.AON_HEADER_COMPANY + 'Name';
+		this.AON_HEADER_DIALOG_HELP_OPTION = this.BASE_ID + 'DialogHelpOption';
+		this.AON_HEADER_DIALOG_USER_OPTION = this.BASE_ID + 'DialogUserOption';
 	}
 
 	build() {
@@ -282,6 +299,26 @@ export class AonHeader extends AonElement {
 		if(this.getAttribute('user')){
 			aonConfiguration.setAttribute('user', this.getAttribute('user'));
 		}
+	}
+
+	showCompanyOption(company) {
+		let aonHeaderCompanyList = this.getElement(this.AON_HEADER_COMPANY_LIST);
+		aonHeaderCompanyList.style.display = company ? 'block' : 'none';
+
+		let aonHeaderHelp = this.getElement(this.AON_HEADER_HELP);
+		aonHeaderHelp.style.display = company ? 'block' : 'none';
+
+		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
+		aonHeaderSearch.style.display = company ? 'none' : 'block';
+
+		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
+		aonHeaderHome.style.display = company ? 'block' : 'none';
+
+		let aonHeaderCompany = this.getElement(this.AON_HEADER_COMPANY);
+		aonHeaderCompany.style.display = company ? 'block' : 'none';
+
+		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
+		aonHeaderCompanyName.innerHTML = company ? company.name : '';
 	}
 }
 

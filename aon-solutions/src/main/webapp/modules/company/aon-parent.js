@@ -3,9 +3,7 @@ import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getT
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-application.js';
-
 import '../signin/aon-sign.js';
-
 import './aon-desktop.js';
 
 import * as MSG from "../../environments/msg.js";
@@ -155,7 +153,7 @@ export class AonParent extends AonElement {
 		}
 
 		if(q && q.shared) {
-			value = f.shared;
+			value = f.shared;getParentInfo
 		}
 
 		if(q && q.entorno) {

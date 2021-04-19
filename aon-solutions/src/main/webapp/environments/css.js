@@ -89,6 +89,10 @@ export const AON_DOT = 'aonDot';
 export const ACTIVE = 'active';
 export const AON_DESKTOP_SLIDE_FADE = 'aonDesktopSlideFade';
 export const AON_FLEX = 'aonFlex';
+export const AON_SHOW_MENU = 'aonShowMenu';
+export const AON_COMPANY_LOGO = 'aonCompanyLogo';
+export const AON_COMPANY_LOGO_SPAN = 'aonCompanyLogoSpan';
+export const AON_COMPANY_LOGO_IMG = 'aonCompanyLogoImg';
 
 // aon-toast.css
 
