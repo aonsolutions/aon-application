@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -62,7 +63,6 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuil
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class TrabajadoresTramos {
-	
 	
 	
 
@@ -238,15 +238,12 @@ public class TrabajadoresTramos {
 			String tipo) {
 		
 		
-		Set<Date> mesesLiquidativos = new HashSet<Date>();
-		
-		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
-		
 		Date startDate = getFirstDayOf(mes, anho);
-		Date endDate = AonStringUtils.equalsIgnoreCase("L13", tipo) ? 
-				getLastDayOf(mes, anho + 2) : getLastDayOf(mes, anho);
+		//Date endDate = AonStringUtils.equalsIgnoreCase("L13", tipo) ? 
+		//		getLastDayOf(mes, anho + 2) : getLastDayOf(mes, anho);
+		Date endDate = getLastDayOf(mes, anho);
 		
-
+		Stream<Salary> salaryData = 
 		AON.getSalaryData(aonContext, 
 				props -> 
 				props.getCCCProperty().eq(ccc)
@@ -255,9 +252,27 @@ public class TrabajadoresTramos {
 				.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
 				.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
 				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
-				)
-		.forEach(
+				);
+		
+		for ( int i = 0; salaryData != null  ; i++) {
+			Date firstDayOfMonth = AonDateUtils.add(startDate, Calendar.MONTH, i);
+			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(firstDayOfMonth);
+			List<Salary> more = liquidacionMes(trabajadoresTramosBuilder, tipo, firstDayOfMonth, lastDayOfMonth, salaryData);
+			if ( more.isEmpty() )
+				break;
+			salaryData = more.stream();
+		} 
+	}
+
+	private static List<Salary> liquidacionMes(TrabajadoresTramosBuilder trabajadoresTramosBuilder, String tipo, Date startDate, Date endDate, Stream<Salary> salaryData) {
+		
+		List<Salary> nexts = new LinkedList<Salary>();
+		
+		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
+		
+		salaryData.forEach(
 				salary -> {
+					
 					TrabajadorBuilder trabajadorBuilder  = new TrabajadorBuilder();
 					trabajadorBuilder.setNaf(salary.getEmployeeSSNumber());
 					//trabajadorBuilder.setFullName(salary.getEmployeeName());
@@ -299,7 +314,7 @@ public class TrabajadoresTramos {
 						}
 						
 					});
-
+					
 					for ( ContextData cgcData: salary.getContextData().getOrDefault(contextVariable.getName(), Collections.emptyList()) ) {
 						cgcBasePeriods.add( new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					}
@@ -317,11 +332,14 @@ public class TrabajadoresTramos {
 					
 					
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
+					
 					for ( Period p: periods ) {
 						
 						if ( p.getStart().after(endDate) )
 							continue;
 						if ( p.getEnd().before(startDate) )
+							continue;
+						if ( p.getEnd().after(endDate) )
 							continue;
 						
 						TramoBuilder tramoBuilder  = new TramoBuilder();
@@ -333,7 +351,6 @@ public class TrabajadoresTramos {
 						tramoBuilder.setAnhoDesde(start.get(Calendar.YEAR));
 						
 						start.set(Calendar.DAY_OF_MONTH, 1);
-						mesesLiquidativos.add(start.getTime());
 
 						Calendar end = Calendar.getInstance();
 						end.setTime(p.getEnd());
@@ -343,7 +360,6 @@ public class TrabajadoresTramos {
 						tramoBuilder.setAnhoHasta(end.get(Calendar.YEAR));
 
 						end.set(Calendar.DAY_OF_MONTH, 1);
-						mesesLiquidativos.add(end.getTime());
 
 						int diasCotizados = getQuoteDays(salary, p);
 						
@@ -891,22 +907,29 @@ public class TrabajadoresTramos {
 					
 					
 					Trabajador trabajador = trabajadorBuilder.create();
-					liquidacionMesBuilder.add(trabajador);
+					if ( trabajador.getTramos().getTramo().size() > 0 ) 
+						liquidacionMesBuilder.add(trabajador); // Only if <Trabajador> has any <Tramo>
+
+					if ( salary.getEndDate().after(endDate) )
+						nexts.add(salary);
+
 				}
-		)
-		;
+		);
 		
-		if ( mesesLiquidativos.size() == 1 ) {
-			Date mesLiquidativo = mesesLiquidativos.iterator().next();
-			anho = AonDateUtils.get(mesLiquidativo, Calendar.YEAR);
-			mes = Month.values()[AonDateUtils.get(mesLiquidativo, Calendar.MONTH)];
-		}
+		int anho = AonDateUtils.get(startDate, Calendar.YEAR);
+		Month mes = Month.values()[AonDateUtils.get(startDate, Calendar.MONTH)];
 		liquidacionMesBuilder.setMes(mes);
 		liquidacionMesBuilder.setAnho(anho);
 		
 		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
-		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
+		
+		if ( liquidacionMes.getTrabajadores() != null && 
+			liquidacionMes.getTrabajadores().getTrabajador().size() > 0 )
+			trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes); // Only if <LiquidacionMes> has any <Trabajador>
+		
+		return nexts;
 	}
+	
 
 	private static List<Period> insert(List<Period> periods, Period period) {
 		List<Period> insert = new ArrayList<Period>();

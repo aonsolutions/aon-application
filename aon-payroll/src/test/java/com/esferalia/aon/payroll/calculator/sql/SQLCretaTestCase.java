@@ -59,6 +59,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -5355,7 +5356,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacion.getPeriodoHasta().getAnho()));
 		org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(liquidacion.getPeriodoHasta().getMes()));
 		
-		org.junit.Assert.assertEquals(1,liquidacion.getLiquidacionMes().size());
+		org.junit.Assert.assertEquals(2,liquidacion.getLiquidacionMes().size());
 		
 		LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
 		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
@@ -5363,31 +5364,41 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		Trabajadores trabajadores = liquidacionMes.getTrabajadores();
 		Trabajador trabajador = trabajadores.getTrabajador().get(0);
-		org.junit.Assert.assertEquals(2,  trabajador.getTramos().getTramo().size());
+		org.junit.Assert.assertEquals(1,  trabajador.getTramos().getTramo().size());
 		
 		Tramo tramo0 = trabajador.getTramos().getTramo().get(0);
 		org.junit.Assert.assertEquals(Integer.parseInt(mes), Integer.parseInt(tramo0.getFechaDesde().getMes()));
 		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
 		
-		Tramo tramo1 = trabajador.getTramos().getTramo().get(1);
 		calendar.setTime(add(firstDayOfMonth, Calendar.MONTH,1));
-		org.junit.Assert.assertEquals(calendar.get(Calendar.MONTH)+1, Integer.parseInt(tramo1.getFechaDesde().getMes()));
-		org.junit.Assert.assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo1.getFechaDesde().getAnho()));
+		String mes1 = Integer.toString(calendar.get(Calendar.MONTH)+1);
+		String anho1 = Integer.toString(calendar.get(Calendar.YEAR));
+
+		liquidacionMes = liquidacion.getLiquidacionMes().get(1);
+		org.junit.Assert.assertEquals(Integer.parseInt(anho1), Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
+		org.junit.Assert.assertEquals(Integer.parseInt(mes1), Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
+		
+		trabajadores = liquidacionMes.getTrabajadores();
+		trabajador = trabajadores.getTrabajador().get(0);
+		org.junit.Assert.assertEquals(1,  trabajador.getTramos().getTramo().size());
+
+		tramo0 = trabajador.getTramos().getTramo().get(0);
+		org.junit.Assert.assertEquals(calendar.get(Calendar.MONTH)+1, Integer.parseInt(tramo0.getFechaDesde().getMes()));
+		org.junit.Assert.assertEquals(calendar.get(Calendar.YEAR), Integer.parseInt(tramo0.getFechaDesde().getAnho()));
 		
 		
-		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
+		net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes liquidacionMes1 = getLiquidacion(connection, trabajadoresTramos).getLiquidacionMes().get(1);
 		
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo bases1 = bases.get(0);
-		
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo bases2 = bases.get(1);
-		assertDato(bases2.getDatosTramo().getDato(), "C", "500", "190000");
-		assertDato(bases2.getDatosTramo().getDato(), "C", "601", "190000");
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo10 = liquidacionMes1.getTrabajadores().getTrabajador().get(0).getTramos().getTramo().get(0);
+		assertDato(tramo10.getDatosTramo().getDato(), "C", "500", "190000");
+		assertDato(tramo10.getDatosTramo().getDato(), "C", "601", "190000");
 		
 		
 	}
 	
 	
 	@Test
+	@Ignore("Not real")
 	public void testCretaL13I()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
@@ -5506,6 +5517,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		trabajadoresTramosIs.close();
 		
+		Utils.marshal(trabajadoresTramos, System.out);
 		
 		Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 		org.junit.Assert.assertEquals(Integer.parseInt(anho), Integer.parseInt(liquidacion.getPeriodoDesde().getAnho()));
@@ -6492,7 +6504,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	private List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> getBases (Connection connection, net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	private net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion getLiquidacion (Connection connection, net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		
 		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
 		
@@ -6540,6 +6552,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		return bases
 				.getLiquidacion()
 				.get(0)
+				;
+	}
+
+	private List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> getBases (Connection connection, net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		
+		return getLiquidacion(connection, trabajadoresTramos)
 				.getLiquidacionMes()
 				.get(0)
 				.getTrabajadores()
