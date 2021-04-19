@@ -321,6 +321,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_download")
 	String aonIconDownload();
 	
+	@ClassName("aon_icon_upload")
+	String aonIconUpload();
+
 	@ClassName("aon_icon_wizard")
 	String aonIconWizard();
 
@@ -338,6 +341,12 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_bizkaia")
 	String aonIconBizkaia();
+
+	@ClassName("aon_icon_gipuzkoa")
+	String aonIconGipuzkoa();
+
+	@ClassName("aon_icon_navarra")
+	String aonIconNavarra();
 
 	/* BASICS */
 	@ClassName("aon_selector")

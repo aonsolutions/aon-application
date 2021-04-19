@@ -213,6 +213,8 @@
 .aon_icon_left { background-image: iconLeft;}
 @url iconDownload aonIconDownload;
 .aon_icon_download { background-image: iconDownload;}
+@url iconUpload aonIconUpload;
+.aon_icon_upload { background-image: iconUpload;}
 @url iconWizard aonIconWizard;
 .aon_icon_wizard { background-image: iconWizard;}
 @url iconMinus aonIconMinus;
@@ -225,6 +227,10 @@
 .aon_icon_araba { background-image: iconAraba;}
 @url iconBizkaia aonIconBizkaia;
 .aon_icon_bizkaia { background-image: iconBizkaia;}
+@url iconGipuzkoa aonIconGipuzkoa;
+.aon_icon_gipuzkoa { background-image: iconGipuzkoa;}
+@url iconNavarra aonIconNavarra;
+.aon_icon_navarra { background-image: iconNavarra;}
 
 /* BASICS */
 .aon_selector {

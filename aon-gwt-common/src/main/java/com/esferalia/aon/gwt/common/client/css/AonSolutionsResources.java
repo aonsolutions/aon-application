@@ -429,6 +429,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconDownload();
 
+	@Source("icons/aon-icon-upload.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconUpload();
+
 	@Source("icons/aon-icon-wizard.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconWizard();
@@ -449,5 +453,12 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaia();
 
+	@Source("icons/aon-icon-gipuzkoa.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoa();
+
+	@Source("icons/aon-icon-navarra.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNavarra();
 }
 

@@ -360,6 +360,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar seleccionados")
 	String deleteSelected();
 
+	@DefaultMessage("Borrar de la selecci\u00F3n")
+	String deleteFromSelection();
+
+	@DefaultMessage("Borrar todos de la selecci\u00F3n")
+	String deleteAllFromSelection();
+
 	@DefaultMessage("Volver")
 	String backAction();
 
@@ -3998,6 +4004,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Alejar")
 	String zoomOut();
+	
+	@DefaultMessage("Presentaci\u00F3n telm\u00E1tica")
+	String telematicSubmission();
 
 }
 
