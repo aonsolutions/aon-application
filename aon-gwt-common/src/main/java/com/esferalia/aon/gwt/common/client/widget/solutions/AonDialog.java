@@ -71,7 +71,7 @@ public class AonDialog extends AonCustomDialog {
 	private void getBtnPanel() {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
-    	okButton.setText( AON.MSG.closed() );
+    	okButton.setText( AON.MSG.cancelAction() );
     	
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
