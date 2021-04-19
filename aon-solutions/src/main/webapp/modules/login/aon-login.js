@@ -1,9 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import {
-  login,
-  getManifest,
-  rememberPassword,
-} from "../../services/service.js";
+import { login, getManifest, rememberPassword, getCompanies } from "../../services/service.js";
 import { rootPanel } from "../../services/gwtLoader.js";
 
 import "../../components/aon-input.js";
@@ -197,17 +193,23 @@ export class AonLogin extends AonElement {
     login(data)
       .then(() => {
         loader.stop();
-        localStorage.removeItem("aon_domain_id");
-        localStorage.removeItem("aon_domain_name");
-        localStorage.removeItem("aon_domain_login");
-
+        localStorage.removeItem('aon_domain_id');
+        localStorage.removeItem('aon_domain_name');
+        localStorage.removeItem('aon_domain_login');
+        getCompanies().then(companies => {
+          this.getElement(this.AON_LOGIN).style.display = 'none';
+          let homeDiv = this.getElement(this.AON_HOME_DIV);
+          homeDiv.style.display = 'block';
+          if(companies.length === 1){
+            this.companySelection(companies[0]);
+          } else {
+            this.getElement("aonHome").showMenu(false);
+            rootPanel(this.isMobile()
+              ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
+              : '<aon-parent id="aonParent"></aon-parent>');
+          }
+        });
         window.dispatchEvent( new Event('userAuth') );
-
-        rootPanel(
-          this.isMobile()
-            ? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
-            : '<aon-parent id="aonParent"></aon-parent>'
-        );
       })
       .catch((e) => {
         loader.stop();
@@ -222,6 +224,40 @@ export class AonLogin extends AonElement {
         let toast = this.getElement('aonLoginToast');
         toast.start(error);
       });
+  }
+
+  companySelection(company) {
+    localStorage.setItem('company', JSON.stringify(company));
+    localStorage.setItem("aon_domain_id", company.id);
+    localStorage.setItem("aon_domain_name", company.domain);
+
+    let home = this.getElement('aonHome');
+    home.showMenu(true);
+
+    let aonHeader = this.getElement(home.AON_HEADER);
+    aonHeader.showCompanyOption(company);
+
+    if(!this.isMobile()){
+      let aonMenu = this.getElement('aonMenu');
+      aonMenu.clear();
+      aonMenu.init();
+    }
+
+    getUser().then(user => {
+      localStorage.setItem('aon_domain_login', user.login);
+      getUserAppRole().then(user => {
+        if(!this.isMobile()){
+          aonHeader.setAttribute('company', JSON.stringify(company));
+          aonHeader.setAttribute('user', JSON.stringify(user));
+        }
+        rootPanel(this.isMobile()
+          ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+          : '<aon-desktop id="aonDesktop"></aon-desktop>');
+        let aonDesktop = document.getElementById('aonDesktop');
+        aonDesktop.setAttribute('company', JSON.stringify(company));
+        aonDesktop.setAttribute('user', JSON.stringify(user));
+      });
+    });
   }
 
   onEnter(event) {
