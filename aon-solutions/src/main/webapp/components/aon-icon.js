@@ -46,7 +46,7 @@ export class AonIcon extends AonElement {
         svg.style.width = newValue;
         svg.style.height = newValue;
       }
-    } if('color' === name){
+    } else if('color' === name){
       let path = this.querySelector('path');
       if(path) {
         path.style.fill = newValue;

@@ -51,7 +51,7 @@ export class AonNotificationIcon extends AonElement {
         const aonIconButton = new AonIconButton();
         // aonIconButton.noHover = "true";
         aonIconButton.id = "aonHeaderNotificationButton";
-        aonIconButton.icon = "notifications";
+        aonIconButton.icon = "markunread_mailbox";
         notificationSpan.appendChild(aonIconButton);
         return notificationSpan;
     }
@@ -62,7 +62,7 @@ export class AonNotificationIcon extends AonElement {
         if(this.badge && this.badge > 0){
             badge.textContent = this.badge;
             badge.id = this.BADGE;
-            badge.style = /**/`position: absolute; top: -1px;right: 3px;padding: 1px 4px;border-radius: 50%;background: red;color: white;font-size: 10px;font-weight: 800;`;
+            badge.style = /**/`position: absolute; top: 22px;right: 3px;padding: 1px 4px;border-radius: 50%;background: red;color: white;font-size: 10px;font-weight: 800;`;
             notificationSpan.appendChild(badge);   
         } else {
             badge.remove();

@@ -2,6 +2,8 @@ import {AonElement} from '../../components/AonElement.js';
 import { AonCard } from '../../components/aon-card.js';
 import { setFullDate, setTime } from '../../services/utils.js';
 import { firstLetters } from '../signin/time-control/utils.js';
+import { AonTabs } from '../../components/aon-tabs.js';
+import { AonSwitch } from '../../components/aon-switch.js';
 
 export class AonNotification extends AonElement {
 
@@ -35,13 +37,91 @@ export class AonNotification extends AonElement {
         this.aonNotifyIconEl = document.querySelector('aon-notification-icon');
 	}
 
- 	build() {
-        this.innerHTML = /*html*/`<div id ="${this.AON_NOTIFICATION}"></div>`;
-        this.paintView();
+ 	async build() {
+        if(this.isMobile()){
+            this.paintMobile();
+        } else {
+            this.paintDesk();
+        }
+        this.notificationView();
 	}
 
-	async paintView(){
-        this.getElement(this.AON_NOTIFICATION).style = "margin: auto;width: 80%;";
+    paintDesk(){
+        this.appendChild(this.createContentDiv());
+    }
+
+    async paintMobile(){
+        const aonTabs = new AonTabs();
+        aonTabs.addEventListener('change', ({detail})=>{
+            if(detail){
+                console.log("position", detail.position);
+            }
+        })
+        aonTabs.setButtons([
+            {
+                name:"Notificationes",
+                id:"notification",
+                icon: "notifications",
+            },
+            {
+               name:"Solicitudes",
+               id:"solicitudes",
+               icon: "assignment",
+            },
+            // {
+            //     name:"Facturas",
+            //     id:"invoice",
+            //     icon: "report",
+            //  }
+        ]);
+
+        this.appendChild(aonTabs);
+
+        this.appendChild(this.createContentDiv())
+
+        aonTabs.updateBadge([
+           {
+               id:"notification",
+               badge: 2,
+           },
+           {
+              id:"solicitudes",
+              badge: 1,
+           }
+       ]);
+
+    //    this.createSwitchButton(aonTabs);
+    }
+
+    createContentDiv(){
+        const div = this.getElement(this.AON_NOTIFICATION) || this.createElement("div");
+        div.id = this.AON_NOTIFICATION;
+        div.style.margin = "auto";
+        div.style.marginTop = "21px";
+        div.style.width = "80%";
+        return div;
+    }
+
+
+    async createSwitchButton(aonTabs){
+        const tabsMenu = await aonTabs.getContent();
+        const div = this.createElement('div');
+        div.style.marginTop = "15px";
+        div.style.color = "grey !important";
+        div.style.fontSize = "12px";
+        div.style.fontWeight= "500";
+        const aonSwitch = new AonSwitch();
+        aonSwitch.addEventListener("change", ({target})=>{
+            console.log(target.checked);
+        });
+        aonSwitch.title = "Todas";
+        div.appendChild(aonSwitch);
+        tabsMenu.appendChild(div);
+        const titleSwitch = this.getElement(aonSwitch.TITLE);
+        if(titleSwitch)titleSwitch.style.color = "grey";
+    }
+
+	async notificationView(){
         const datos = this.data;
         if(datos.length > 0){
             datos.map((data,idx)=>{
@@ -50,7 +130,6 @@ export class AonNotification extends AonElement {
                 aonCard.addEventListener("click",(ev)=>{
                     this.goInfo(data);
                 });
- 
                 const spanContent = this.createElement('span');
                 spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
                 spanContent.innerHTML = `${data.body}`;

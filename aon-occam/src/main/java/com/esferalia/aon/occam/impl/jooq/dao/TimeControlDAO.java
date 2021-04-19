@@ -258,6 +258,7 @@ public class TimeControlDAO {
 			.update(TIMECONTROL)
 			.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
 			.set(TIMECONTROL.COMMENTS, tcd.getComments())
+			.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 			.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
 			.where(TIMECONTROL.ID.eq(tcd.getId()))
 			.execute();		

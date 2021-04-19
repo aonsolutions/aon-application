@@ -1,0 +1,154 @@
+:root {
+    --tab-color: #F1F1F1;
+    --accent-color: #002469;
+    --grey-700-color: #423f3f;
+    --base-spacing: 8px;
+    --font-m: 12px;
+    --shadow-small: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+  }
+  
+  .tabs-box {
+    display: flex;
+    justify-content: center;
+    height: 61px;
+    width: 100%;
+    background-color: var(--tab-color);
+    box-shadow: var(--shadow-small);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+  
+  .tabs-menu {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: space-between;
+  }
+  
+  .tab-button {
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+    font-size: var(--font-m);
+    color: grey;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+    white-space: normal;
+    background-color: transparent;
+    padding: var(--base-spacing) calc(var(--base-spacing) * 2);
+    cursor: pointer;
+    transition: color 250ms ease-in;
+    top: 3px;
+  }
+
+  .tab-button > div > .badge {
+    position: absolute; 
+    /* left: 58%;
+    top: 5px; */
+    /* margin: -6px 19px; */
+    margin-left: 21px;
+    padding: 1px 4px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .tab-button > .material-icons {
+    padding-bottom: 1px;
+    /* background-color:"#f1f1f1";
+    color: "black"; */
+  }
+  
+  .tab-button .active {
+    color: var(--grey-700);
+  }
+
+  .active, .aonDot:hover {
+    background-color: #fff;
+  }
+  
+  .tab-button__content {
+    display: block;
+    pointer-events: none;
+    margin: 5 0;
+  }
+  
+  .tab-button:hover,
+  .tab-button:focus {
+    outline: none;
+    color: var(--grey-700)
+  }
+  
+  .tab-indicator {
+    background-color: var(--accent-color);
+    height: 3px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transition: left 250ms ease-in-out, width 650ms ease-in-out;
+  }
+  
+  .tab-button__ripple {
+    position: absolute;
+    background-color: black;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    animation: ripple 1000ms linear infinite;
+    pointer-events: none;
+  }
+  
+  .focus::after {
+    content: '';
+    position: absolute;
+    background-color: black;
+    opacity: .2;
+    border-radius: 50%;
+    width: 80%;
+    height: auto;
+    padding-top: 80%;
+    background: black;
+    transition: transform 300ms ease-in-out;
+    transform: scale(0);
+    animation: focusRipple 300ms linear infinite, focusPulse 1700ms linear 300ms infinite;
+  }
+  
+  @keyframes ripple {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: .4;
+    }
+  
+    100% {
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }
+  
+  @keyframes focusRipple {
+    0% {
+      transform: scale(0);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes focusPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
