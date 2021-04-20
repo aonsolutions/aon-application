@@ -197,9 +197,6 @@ export class AonLogin extends AonElement {
         localStorage.removeItem('aon_domain_name');
         localStorage.removeItem('aon_domain_login');
         getCompanies().then(companies => {
-          this.getElement(this.AON_LOGIN).style.display = 'none';
-          let homeDiv = this.getElement(this.AON_HOME_DIV);
-          homeDiv.style.display = 'block';
           if(companies.length === 1){
             this.companySelection(companies[0]);
           } else {
@@ -208,6 +205,9 @@ export class AonLogin extends AonElement {
               ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
               : '<aon-parent id="aonParent"></aon-parent>');
           }
+          this.getElement("aonLogin").style.display = 'none';
+          let homeDiv = this.getElement("aonHomeDiv");
+          homeDiv.style.display = 'block';
         });
         window.dispatchEvent( new Event('userAuth') );
       })

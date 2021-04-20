@@ -64,10 +64,12 @@ export class AonModule extends AonElement {
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
 			localStorage.removeItem('aon_domain_login');
+
+			this.clearElementById('rootPanel');
+			this.getElement(this.AON_LOGIN).style.display = 'none';
+			let homeDiv = this.getElement(this.AON_HOME_DIV);
+			homeDiv.style.display = 'block';
 			getCompanies().then(companies => {
-				this.getElement(this.AON_LOGIN).style.display = 'none';
-				let homeDiv = this.getElement(this.AON_HOME_DIV);
-				homeDiv.style.display = 'block';
 				if(companies.length === 1){
 					this.companySelection(companies[0]);
 				} else {
@@ -77,13 +79,7 @@ export class AonModule extends AonElement {
 					 	: '<aon-parent id="aonParent"></aon-parent>');
 				}
 			});
-
-			rootPanel(this.isMobile()
-			 	? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-			 	: '<aon-parent id="aonParent"></aon-parent>');
-
 			window.dispatchEvent( new Event('userAuth') );
-
 		} else {
 			this.getElement(this.AON_LOGIN).style.display = 'block';
 			this.getElement(this.AON_HOME).style.display = 'none';
