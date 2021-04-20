@@ -5,6 +5,8 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ITTooltip extends DecoratedPopupPanel {
+public abstract class ITTooltip extends DecoratedPopupPanel {
 	
 	// --------------------------------------------------- Binder
 
@@ -51,6 +53,9 @@ public class ITTooltip extends DecoratedPopupPanel {
 	private Date startDate;
 	private Date endDate;
 	
+	private Integer contractId;
+	private Integer itId;
+	
 	// --------------------------------------------------- Constructor
 
 	public ITTooltip() {
@@ -58,8 +63,9 @@ public class ITTooltip extends DecoratedPopupPanel {
 		setStyleName(AON.AON_TOOLTIP);
 		add(uiBinder.createAndBindUi(this));
 		setAutoHideEnabled(true);
+		addClickHandler();
 	}
-	
+
 	// --------------------------------------------------- Show Tooltip
 
 	public void showTooltip(final int clientX, final int clientY) {
@@ -160,6 +166,14 @@ public class ITTooltip extends DecoratedPopupPanel {
 		this.endDate = endDate;
 	}
 	
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}
+	
+	public void setITId(Integer itId) {
+		this.itId = itId;
+	}
+	
 	// --------------------------------------------------- Fill Tooltip.Methods
 	
 	private String parseLowCause(Byte typeLowPart) {
@@ -246,7 +260,26 @@ public class ITTooltip extends DecoratedPopupPanel {
 		if(null == this.startDate || null == this.endDate)
 			return "";
 		
-		return DateUtils.getDaysBetween(this.startDate, this.endDate) + " d\u00EDas de baja";
+		return "( " + DateUtils.getDaysBetween(this.startDate, this.endDate) + " d\u00EDas de baja )";
 	}
+	
+	// --------------------------------------------------- ClickHandler
+	
+	private void addClickHandler() {
+		ClickHandler clickHandler = new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+				onTooltipClick(contractId, itId);
+			}
+		};
+		
+		this.addDomHandler(clickHandler, ClickEvent.getType());
+	}
+	
+	// --------------------------------------------------- Abstract Methods
+	
+		protected abstract void onTooltipClick(Integer contractId, Integer itId);
 	
 }
