@@ -14,8 +14,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-
-import net.aonsolutions.aon.api.notification.Notification;
+import net.aonsolutions.aon.api.notification.NotificationRequest;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonNotificationServlet", urlPatterns = {"/ms/api/notification/*"})
@@ -88,7 +87,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 		} 
 		
 		if(auths.size()>0) {
-	    	Notification notification = new Notification();
+	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(getData().optString("title"));
 	    	notification.setBody(getData().optString("body"));
 	    	notification.setDeviceTokens(auths.stream().map(ad -> ad.getDeviceToken()).toArray(String[]::new));
@@ -100,11 +99,12 @@ public class NotificationServlet extends AonApiHttpServlet{
 
 
 	private JSONObject notificationTest() {
-		Boolean success = new Notification().setTitle("TITULO DE PRUEBA").setBody("CUERPO DE PRUEBA")
-		.setDeviceTokens(new String[] {getParams().optString("tokenFCM")}).send();
-		 JSONObject json = new JSONObject();
-		 json.put("success", success);
-		 return json;
+		NotificationRequest notification = new NotificationRequest();
+		notification.setTitle("TITULO DE PRUEBA");
+    	notification.setBody("CUERPO DE PRUEBA");
+    	notification.setDeviceTokens(new String[] {getParams().optString("tokenFCM")});
+    	Boolean success = notification.send();
+		return new JSONObject().put("success", success);
 	}
 	
 }

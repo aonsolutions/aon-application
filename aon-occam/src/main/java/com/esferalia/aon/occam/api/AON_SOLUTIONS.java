@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
@@ -62,6 +63,10 @@ public class AON_SOLUTIONS {
 	
 	private static ITimeControl getTimeControl() {
 		return new TimeControlImpl();
+	}
+	
+	private static INotification getNotification() {
+		return new NotificationImpl();
 	}
 
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 

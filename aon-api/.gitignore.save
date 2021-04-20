@@ -1,0 +1,10 @@
+/target/
+/.settings/
+/gwt-unitCache/
+/war/
+/bin/
+/.classpath
+/.project
+/src/mai
+n/generated-sources/
+/.~lock.*

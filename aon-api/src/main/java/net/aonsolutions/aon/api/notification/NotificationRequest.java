@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.notification;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -10,28 +11,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-public class Notification {
+public class NotificationRequest extends Notification {
 
-	private Integer id;
-	private String title;
-	private String body;
 	private String path_image;
 	private String url;
 	private String[] device_tokens;
 	private JSONObject data;
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getTitle() {
-		return title;
-	}
-
-	public String getBody() {
-		return body;
-	}
 
 	public String getUrl() {
 		return url;
@@ -48,28 +33,20 @@ public class Notification {
 		return path_image;
 	}
 	
-	public Notification setPathImage(String path_image) {
+	public NotificationRequest setPathImage(String path_image) {
 		this.path_image = path_image;
 		return this;
 	}
 	
-	public Notification setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-	public Notification setBody(String body) {
-		this.body = body;
-		return this;
-	}
-	public Notification setDeviceTokens(String[] device_tokens) {
+	public NotificationRequest setDeviceTokens(String[] device_tokens) {
 		this.device_tokens = device_tokens;
 		return this;
 	}
-	public Notification setUrl(String url) {
+	public NotificationRequest setUrl(String url) {
 		this.url = url;
 		return this;
 	}
-	public Notification setData(JSONObject data) {
+	public NotificationRequest setData(JSONObject data) {
 		this.data = data;
 		return this;
 	}

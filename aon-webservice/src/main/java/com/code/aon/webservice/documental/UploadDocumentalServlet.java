@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.api.notification.Notification;
+import net.aonsolutions.aon.api.notification.NotificationRequest;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "UploadDocumentalServlet", urlPatterns = { "/ms/api/attachment_upload/*",
@@ -121,7 +121,7 @@ public class UploadDocumentalServlet extends HttpServlet{
     		}
     	});
 
-    	Notification notification= new Notification();
+    	NotificationRequest notification= new NotificationRequest();
     	notification.setTitle("Nuevo Documento");
     	notification.setBody("Se ha subido un nuevo documento a la empresa " + domain.getDescription());
 	    String str = "domain="+ attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";

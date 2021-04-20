@@ -31,6 +31,8 @@ import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
+import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
@@ -97,6 +99,7 @@ import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
+import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -150,6 +153,7 @@ import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
+import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
@@ -1635,6 +1639,34 @@ public class PropertiesDAO {
 		@Override public Property<Double> getLatitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LATITUDE);}
 		@Override public Property<Double> getLongitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LONGITUDE);}
 	}
+	
+	protected static class NotificationPropertiesDAO implements NotificationProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, NotificationFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+
+		protected Condition[] getConditions(NotificationFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.DOMAIN);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(NOTIFICATION.DATE);}
+		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.TITLE);}
+		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.BODY);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.SOURCE_ID);}
+		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION.SENDER);}
+		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.PRIORITY);}
+		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION_RECEIVER.AUTH);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION_RECEIVER.STATUS);}
+	}
+	
 	
 	protected static class AuthDevicePropertiesDAO implements AuthDeviceProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, AuthDeviceFilter filter) {

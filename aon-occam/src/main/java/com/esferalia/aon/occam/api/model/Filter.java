@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
+import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
@@ -569,6 +570,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface LocationFilter{
 		Filter filter(LocationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface NotificationFilter{
+		Filter filter(NotificationProperties properties);
 	}
 	
 	@FunctionalInterface
