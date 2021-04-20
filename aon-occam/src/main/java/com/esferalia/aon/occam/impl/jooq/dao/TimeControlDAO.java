@@ -267,7 +267,6 @@ public class TimeControlDAO {
 	
 	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, Date endDate, TimeControlGroup group) {
 		TimeControl tc = new TimeControl().setTime(0L);
-		
 		details.forEach(r -> {
 			if(tc.getStatus() == null) {
 				tc.setInDate(AonDateUtils.getDateWithoutTime(r.getDate()));
@@ -289,7 +288,27 @@ public class TimeControlDAO {
 		
 		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getTaskHolderProperty().eq(taskHolderId)));
-
+		
+		if(tc.getDetail().size() == 0 && TimeControlStatus.IN.equals(tcd.getStatus())  
+			&& AonDateUtils.isSameDay(AonDateUtils.addDays(new Date(), -1), tcd.getDate())) {
+			tc.setInDate(AonDateUtils.getDateWithoutTime(new Date()));
+			tc.setStatus(TimeControlStatus.IN);
+			tc.getDetail().add(new TimeControlDetail()
+					.setDate(AonDateUtils.getDateWithoutTime(new Date()))
+					.setStatus(TimeControlStatus.IN)
+					.setDomain(tcd.getDomain()));
+		} else if(TimeControlStatus.IN.equals(tcd.getStatus()) 
+			&& tcd.getDate().compareTo(AonDateUtils.getDateWithoutTime(new Date())) < 0) {
+			Date date = AonDateUtils.addSeconds(AonDateUtils.getDateWithoutTime(new Date()), -1);
+			tc.setTime(tc.getTime() + date.getTime() - tc.getInDate().getTime());
+			tc.setInDate(null);
+			tc.setStatus(TimeControlStatus.OUT);
+			tc.getDetail().add(new TimeControlDetail()
+					.setDate(date)
+					.setStatus(TimeControlStatus.OUT)
+					.setDomain(tcd.getDomain()));
+		}
+		
 		tc.setLastCoordinates(tcd.getCoordinates());
 		tc.setLastDate(tcd.getDate());
 		tc.setLastLocation(tcd.getLocation());
