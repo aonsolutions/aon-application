@@ -3964,7 +3964,7 @@ public class SalaryDraft extends ResizeComposite
 			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
 		}
 		
-		payment.setType(Payment.Type.CRA_0000);
+		//payment.setType(Payment.Type.CRA_0000);
 		
 		Button expandButton = new Button();
 		expandButton.setEnabled(false);
