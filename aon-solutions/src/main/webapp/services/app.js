@@ -241,7 +241,7 @@ export const OUTSOURCING = {
 
 export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, TOOLS};
 
-export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, PAYROLL, INVOICE, COMUNICA, MESSENGER, FISCAL];
+export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, PAYROLL, INVOICE, COMUNICA, MESSENGER, FISCAL, ACCOUNTING];
 
 export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger', 'invoice'];
 export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio'];

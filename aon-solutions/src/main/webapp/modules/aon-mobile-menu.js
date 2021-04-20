@@ -10,8 +10,7 @@ import {
 } from "../services/service.js";
 
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
-   PAYROLL,
-   FISCAL} from "../services/app.js"
+   PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
 
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
@@ -136,7 +135,7 @@ export class AonMobileMenu extends AonElement {
           let top = target.getBoundingClientRect().top;
           const left = target.getBoundingClientRect().left;
           const height = window.innerHeight;
-          if (height - top < height / 2) top = top - 80;
+          if (height - top < height / 2) top = top - (options.length * 35);
           let d = this.getElement(this.id + 'dialogMenu');
           d.setMenuOptions(options, top, left);
           d.open();
@@ -231,6 +230,9 @@ export class AonMobileMenu extends AonElement {
         case FISCAL.app:
           permission = dur.isFiscal();
           break;
+        case ACCOUNTING.app:
+          permission = dur.isAccounting();
+          break;
       }
     }
     return permission;
@@ -272,6 +274,12 @@ export class AonMobileMenu extends AonElement {
         name: "Fiscal",
         icon: "receipt",
         fn: () =>  rootPanel('<aon-fiscal></aon-fiscal>')
+      };
+    else if(ACCOUNTING.app === app.app)
+      return {
+        name: "Contabilidad",
+        icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+        fn: () =>  rootPanel('<aon-accounting></aon-accounting>')
       };
     return undefined;
   }
