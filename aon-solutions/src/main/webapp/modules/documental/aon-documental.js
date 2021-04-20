@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {DocumentalAction, DocumentalSidenav, ASESOR_TYPE_OPTION,
+import { DocumentalSidenav, ASESOR_TYPE_OPTION,
   ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 import {getCategories, getTags, createTag, createCategory, editCategory,
     deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
@@ -18,9 +18,8 @@ import './aon-mobile-document.js';
 import '../../components/aon-application.js';
 import '../../components/aon-input.js';
 
-
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+import * as ACTION from '../actions.js';
 
 export class AonDocumental extends AonElement {
 
@@ -85,10 +84,10 @@ export class AonDocumental extends AonElement {
   		});
       if(this.isMobile()) {
         if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
-          aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+          aonDocumental.addFloatOption(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
       } else {
         if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){
-          aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+          aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
         }
         aonDocumental.addSearchOption();
         aonDocumental.addEventListener('search', (event) => this.search(event.detail));

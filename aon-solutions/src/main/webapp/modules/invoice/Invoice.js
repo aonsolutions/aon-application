@@ -20,6 +20,7 @@ export class Invoice {
   suplidos;
   comments;
   selfconta;
+  insight;
 
   constructor(type) {
     this.type = type || 'emitida';
@@ -167,4 +168,32 @@ export class Invoice {
       return 'purchase';
     } else return 'ticket';
   }
+}
+
+export class InvoiceTax {
+  type; // IVA / IRPF
+  base;
+  percentage;
+  quota;
+  surcharge;
+  surcharge_quota;
+}
+
+export class InvoiceDetail {
+  id;
+  description; // descripción
+  product; // product item id
+  quantity; // cantidad
+	price; // precio
+  discount; // descuento
+	amount;// base;
+  prepayment; // suplidos 
+  percentage; // vat percentage
+  quota; // tax quota
+  surcharge; // surcharge percentage
+  surcharge_quota; // surcharge quota
+}
+
+export class InvoiceFinance {
+
 }

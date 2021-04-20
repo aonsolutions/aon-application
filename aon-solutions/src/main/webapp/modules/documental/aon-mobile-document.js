@@ -1,5 +1,4 @@
 import {AonDocument} from './aon-document.js';
-import {DocumentalAction} from './DocumentalEnums.js';
 import {getDomainUserRoles} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {ToolbarType} from '../../models/enums.js';
@@ -7,9 +6,9 @@ import {ToolbarType} from '../../models/enums.js';
 import '../../components/aon-card.js';
 import '../../components/aon-viewer.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from '../../environments/environments.js';
+
+import * as ACTION from '../actions.js';
 
 export class AonMobileDocument extends AonDocument {
 
@@ -56,13 +55,13 @@ export class AonMobileDocument extends AonDocument {
 
       let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
-      let send = DocumentalAction.SEND;
+      let send = ACTION.SEND_FILE;
       send.fn = () => this.send();
 
-      let download = DocumentalAction.DOWNLOAD;
+      let download = ACTION.DOWNLOAD_FILE;
       download.fn = () => this.download();
 
-      let remove = DocumentalAction.DELETE;
+      let remove = ACTION.DELETE_FILE;
       remove.fn = () => this.remove();
 
       let actions = [send, download];

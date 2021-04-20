@@ -1,6 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-import {CompanyAction} from './companyEnums.js';
 
 import { getCompanyOne, getCompanyMedia, saveCompany } from "../../services/service.js";
 
@@ -12,11 +11,9 @@ import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 import {AonCompanyList} from "./aon-company-list.js";
 
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as CSS from "../../environments/css.js";
-import * as MSG from "../../environments/msg.js";
-import * as EVENT from "../../environments/aonEvent.js";
+import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js'; 
+
+import * as ACTION from '../actions.js';
 
 export class AonCompany extends AonElement {
 
@@ -56,10 +53,10 @@ export class AonCompany extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.company.id ? this.company.name : MSG.AON_MSG_NEW_COMPANY;
 		this.appendChild(toolbar);
-		toolbar.addButton2(CompanyAction.SAVE, () => this.save());
-		toolbar.addButton2(CompanyAction.BACK, () => this.back());
+		toolbar.addButton2(ACTION.SAVE, () => this.save());
+		toolbar.addButton2(ACTION.BACK, () => this.back());
 
-		let div = this.createElement(AON_TAG.DIV);
+		let div = this.createElement(TAG.DIV);
 		div.style.display = "flex";
 		div.style.width = "100%";
 		this.appendChild(div);
@@ -225,6 +222,6 @@ export class AonCompany extends AonElement {
 
 }
 
-if(!window.customElements.get(AON_TAG.AON_COMPANY)){
-	window.customElements.define(AON_TAG.AON_COMPANY, AonCompany);
+if(!window.customElements.get(TAG.AON_COMPANY)){
+	window.customElements.define(TAG.AON_COMPANY, AonCompany);
 }

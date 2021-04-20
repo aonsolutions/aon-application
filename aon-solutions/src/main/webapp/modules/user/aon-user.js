@@ -3,7 +3,6 @@ import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteU
 	 changePassword, getAuth, getDomainUserRoles} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {ToolbarType} from '../../models/enums.js';
-import {UserAction} from './userEnums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
@@ -13,9 +12,9 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+
+import * as ACTION from '../actions.js';
 
 export class AonUser extends AonElement {
 
@@ -273,10 +272,10 @@ export class AonUser extends AonElement {
 		userToolbar.removeButtons();
 
 		if(!this.isAutosave())
-			userToolbar.addButton2(UserAction.SAVE, () => this.save());
+			userToolbar.addButton2(ACTION.SAVE, () => this.save());
 		if(this._user.id)
-			userToolbar.addButton2(UserAction.DELETE, () => this.delete());
-		userToolbar.addButton2(UserAction.BACK, () => this.back());
+			userToolbar.addButton2(ACTION.DELETE, () => this.delete());
+		userToolbar.addButton2(ACTION.BACK, () => this.back());
 	}
 
 	build() {

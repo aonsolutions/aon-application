@@ -1,14 +1,12 @@
-import {AonInvoice} from './aon-invoice.js';
-import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries, getInvoiceAccounts} from '../../services/service.js';
-import {Transactions} from '../../services/transaction.js';
-import {Paymethods} from '../../services/paymethod.js';
-import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
-import {isNumber, round} from '../../services/utils.js';
-import {Invoice} from './Invoice.js';
+import { AonInvoice } from './aon-invoice.js';
+import { getUserAppRole, getGlobalRegistries, getInvoiceAccounts} from '../../services/service.js';
+import { Transactions } from '../../services/transaction.js';
+import { Paymethods } from '../../services/paymethod.js';
+import { TaxType, TaxIVAPercentage } from './invoiceEnums.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from '../../environments/environments.js';
+
+import * as ACTION from '../actions.js';
 
 export class AonMobileInvoice extends AonInvoice {
 
@@ -77,31 +75,31 @@ export class AonMobileInvoice extends AonInvoice {
 
       let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 
-      let record = InvoiceAction.RECORD;
+      let record = ACTION.RECORD_INVOICE;
       record.fn = () => this.recordInvoice();
 
-      let reject = InvoiceAction.REJECT;
+      let reject = ACTION.REJECT_INVOICE;
       reject.fn = () => this.rejectInvoice();
 
-      let restore = InvoiceAction.RESTORE;
+      let restore = ACTION.RESTORE_INVOICE;
       restore.fn = () => this.restoreInvoice();
 
-      let addComment = InvoiceAction.COMMENT;
+      let addComment = ACTION.COMMENT;
       addComment.fn = () => this.addInvoiceComment();
 
-      let deleteInvoice = InvoiceAction.DELETE;
+      let deleteInvoice = ACTION.DELETE_TO_TRASH;
       deleteInvoice.fn = () => this.trashInvoice();
 
-      let deleteForever = InvoiceAction.DELETE_FOREVER;
+      let deleteForever = ACTION.DELETE_FOREVER;
       deleteForever.fn = () => this.removeInvoice();
 
-      let rectify = InvoiceAction.RECTIFY;
+      let rectify = ACTION.RECTIFY_INVOICE;
       rectify.fn = () => this.rectifyInvoice();
 
-      let duplicate = InvoiceAction.DUPLICATE;
+      let duplicate = ACTION.DUPLICATE_INVOICE;
       duplicate.fn = () => this.duplicateInvoice();
 
-      let addFile = InvoiceAction.ADD_FILE;
+      let addFile = ACTION.ADD_FILE;
       addFile.fn = () => this.addInvoiceFile();
 
       let actions = [];

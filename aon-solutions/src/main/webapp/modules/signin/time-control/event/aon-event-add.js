@@ -15,7 +15,6 @@ import {
   saveTimeControlDetail,
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { UserAction } from "../../../user/userEnums.js";
 import { INPUTS_ALL } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
@@ -24,6 +23,7 @@ import "../../../../components/aon-select.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA } from "../../../../environments/msg.js";
 
+import * as ACTION from '../../../actions.js';
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -159,16 +159,16 @@ export class AonEventAdd extends AonElement {
     toolbarEl.removeButtons();
     if (this.data && this.data.id) {
       if(!this.applicationParentEl.isEmployee()){
-        toolbarEl.addButton2(UserAction.DELETE, () => this.delete());
+        toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
       }
       toolbarEl.title = "Edición";
     } else {
       toolbarEl.title = "Registro";
     }
     if(!this.applicationParentEl.isEmployee()){
-      toolbarEl.addButton2(UserAction.SAVE, () => this.save());
+      toolbarEl.addButton2(ACTION.SAVE, () => this.save());
     }
-    toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    toolbarEl.addButton2(ACTION.BACK, () => this.back());
   }
 
   getFormValues() {

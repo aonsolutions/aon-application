@@ -1,3 +1,10 @@
+export const DUPLICATE = 'Duplicar';
+export const EDIT = 'Editar';
+export const RECTIFY = 'Rectificar';
+export const RESTORE = 'Restaurar';
+export const SEND = 'Enviar';
+export const UPLOAD = 'Subir';
+
 export const AON_MSG_INVOICE = 'Factura';
 export const AON_MSG_INVOICES = 'Facturas';
 export const AON_MSG_RESTORE_INVOICE = 'Restaurar Factura';

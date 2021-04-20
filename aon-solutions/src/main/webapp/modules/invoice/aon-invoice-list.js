@@ -1,8 +1,8 @@
-import {AonElement} from '../../components/AonElement.js';
-import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail, downloadInvoices, getUserAppRole} from '../../services/service.js';
-import {InvoiceAction} from './invoiceEnums.js';
-import {Invoice} from './Invoice.js';
+import { AonElement } from '../../components/AonElement.js';
+import { Paymethods } from '../../services/paymethod.js';
+import { getInvoices, getInvoice, insertInvoice, deleteInvoices,
+	 sendInvoiceMail, downloadInvoices, getUserAppRole } from '../../services/service.js';
+import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
@@ -10,6 +10,7 @@ import '../../components/aon-table.js';
 
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
+import * as ACTION from '../actions.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -137,20 +138,20 @@ export class AonInvoiceList extends AonElement {
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.addSeparator();
 		if(this.getFilter().status === 'inbox') {
-			aonInvoice.addToolbarOption2(InvoiceAction.DELETE, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(InvoiceAction.REJECT, () => this.rejectInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
-			aonInvoice.addToolbarOption2(InvoiceAction.DOWNLOAD, () => this.downloadInvoices());
-			aonInvoice.addToolbarOption2(InvoiceAction.SEND, () => this.sendInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
+			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		} else if(this.getFilter().status === 'refused' || this.getFilter().status === 'rejected'){
-			aonInvoice.addToolbarOption2(InvoiceAction.DELETE, () => this.deleteInvoices());
-			aonInvoice.addToolbarOption2(InvoiceAction.RESTORE, () => this.restoreInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'trash' || this.getFilter().status === 'draft'){
-			aonInvoice.addToolbarOption2(InvoiceAction.DELETE_FOREVER, () => this.deleteForeverInvoices());
-			aonInvoice.addToolbarOption2(InvoiceAction.RESTORE, () => this.restoreInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'accounting'){
-			aonInvoice.addToolbarOption2(InvoiceAction.DOWNLOAD, () => this.downloadInvoices());
-			aonInvoice.addToolbarOption2(InvoiceAction.SEND, () => this.sendInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
+			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
 		}
 	}
 
@@ -245,12 +246,12 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoice = this.getElement('aonInvoice');
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.removeSeparators();
-		aonInvoice.removeToolbarOption(InvoiceAction.DELETE);
-		aonInvoice.removeToolbarOption(InvoiceAction.REJECT);
-		aonInvoice.removeToolbarOption(InvoiceAction.RESTORE);
-		aonInvoice.removeToolbarOption(InvoiceAction.DELETE_FOREVER);
-		aonInvoice.removeToolbarOption(InvoiceAction.DOWNLOAD);
-		aonInvoice.removeToolbarOption(InvoiceAction.SEND);
+		aonInvoice.removeToolbarOption(ACTION.DELETE_TO_TRASH);
+		aonInvoice.removeToolbarOption(ACTION.REJECT_INVOICE);
+		aonInvoice.removeToolbarOption(ACTION.RESTORE_INVOICE);
+		aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
+		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
+		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
 	}
 
 	getPaymethod(paymethod) {
@@ -283,66 +284,66 @@ export class AonInvoiceList extends AonElement {
 
 		e.preventDefault();
 		let rect = e.target.getBoundingClientRect();
-    let x = e.clientX - rect.left;
+    	let x = e.clientX - rect.left;
 		let y = e.clientY - rect.top;
 
-	  const top  = rect.top + y;
-	  const left = rect.left + x;
+		const top  = rect.top + y;
+	  	const left = rect.left + x;
 
-    let aonInvoice = this.getElement('aonInvoice');
-    let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+    	let aonInvoice = this.getElement('aonInvoice');
+   		let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 
-		let send = InvoiceAction.SEND;
+		let send = ACTION.SEND_INVOICE;
 		send.fn = () => {}; //this.recordInvoice();
 
-		let download = InvoiceAction.DOWNLOAD;
-    download.fn = () => {}; //this.recordInvoice();
+		let download = ACTION.DOWNLOAD_INVOICE;
+	    download.fn = () => {}; //this.recordInvoice();
 
-    let record = InvoiceAction.RECORD;
-    record.fn = () => {}; //this.recordInvoice();
+    	let record = ACTION.RECORD_INVOICE;
+    	record.fn = () => {}; //this.recordInvoice();
 
-    let reject = InvoiceAction.REJECT;
-    reject.fn = () => {}; //this.rejectInvoice();
+    	let reject = ACTION.REJECT_INVOICE;
+    	reject.fn = () => {}; //this.rejectInvoice();
 
-    let restore = InvoiceAction.RESTORE;
-    restore.fn = () => {}; //this.restoreInvoice();
+    	let restore = ACTION.RESTORE_INVOICE;
+    	restore.fn = () => {}; //this.restoreInvoice();
 
-    let addComment = InvoiceAction.COMMENT;
-    addComment.fn = () => {}; //this.addInvoiceComment();
+    	let addComment = ACTION.COMMENT;
+   		addComment.fn = () => {}; //this.addInvoiceComment();
 
-  	let deleteInvoice = InvoiceAction.DELETE;
-	  deleteInvoice.fn = () => {}; //this.trashInvoice();
+  		let deleteInvoice = ACTION.DELETE_TO_TRASH;
+	  	deleteInvoice.fn = () => {}; //this.trashInvoice();
 
-	  let deleteForever = InvoiceAction.DELETE_FOREVER;
-	  deleteForever.fn = () => {}; //this.removeInvoice();
+	  	let deleteForever = ACTION.DELETE_FOREVER;
+	  	deleteForever.fn = () => {}; //this.removeInvoice();
 
-	  let rectify = InvoiceAction.RECTIFY;
-	  rectify.fn = () => {}; //this.rectifyInvoice();
+	  	let rectify = ACTION.RECTIFY_INVOICE;
+	  	rectify.fn = () => {}; //this.rectifyInvoice();
 
-	  let duplicate = InvoiceAction.DUPLICATE;
-	  duplicate.fn = () => {}; //this.duplicateInvoice();
+	  	let duplicate = ACTION.DUPLICATE_INVOICE;
+	  	duplicate.fn = () => {}; //this.duplicateInvoice();
 
-    let addFile = InvoiceAction.ADD_FILE;
-  	addFile.fn = () => {}; //this.addInvoiceFile();
+    	let addFile = ACTION.ADD_FILE;
+  		addFile.fn = () => {}; //this.addInvoiceFile();
 
-	  let actions = [];
-	  if(inv.isRejected()) {
-	  	actions = [restore, deleteInvoice];
-	  } else if(inv.isDraft()) {
-	    actions = [restore, deleteForever];
-	  }  else if(inv.isInbox()){
-	  	if(this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER')){
-	    	actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
-	  	} else {
-	      actions = [send, download, addComment, deleteInvoice, rectify, duplicate];
-	    }
+	  	let actions = [];
+	  	if(inv.isRejected()) {
+	  		actions = [restore, deleteInvoice];
+	  	} else if(inv.isDraft()) {
+	  		actions = [restore, deleteForever];
+	  	}  else if(inv.isInbox()){
+	  		if(this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER')){
+	    		actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+	  		} else {
+	    	  actions = [send, download, addComment, deleteInvoice, rectify, duplicate];
+	    	}
 		}
-	  if(!inv.file && !inv.isEmitida()){
-	  	actions.push(addFile);
-	  }
+	  	if(!inv.file && !inv.isEmitida()){
+	  		actions.push(addFile);
+	  	}
 
-	  d.setMenuOptions(actions, top, left);
-	  d.open();
+	  	d.setMenuOptions(actions, top, left);
+	  	d.open();
 	}
 
 	getFilter() {

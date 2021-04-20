@@ -7,7 +7,6 @@ import {
   getTaskHolderTimeControl,
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { UserAction } from "../../../user/userEnums.js";
 import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
@@ -15,7 +14,7 @@ import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
 import { AON_MSG_DATE, AON_MSG_DURATION } from "../../../../environments/msg.js";
 
-
+import * as ACTION from '../../../actions.js';
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -118,7 +117,7 @@ export class AonEventList extends AonElement {
     const filterEl =  this.getElement(`${this.id}Filter`);
     toolbarEl.removeButtons();
     if(!this.applicationParentEl.isEmployee()){
-		  toolbarEl.addButton2(UserAction.BACK, () => this.back());
+		  toolbarEl.addButton2(ACTION.BACK, () => this.back());
     }
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }

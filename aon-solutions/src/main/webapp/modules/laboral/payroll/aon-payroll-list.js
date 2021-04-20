@@ -6,11 +6,12 @@ import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { UserAction } from "../../user/userEnums.js";
 import { AON_MSG_PAYROLL } from "../../../environments/msg.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+
+import * as ACTION from '../../actions.js';
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
@@ -139,7 +140,7 @@ export class AonPayrollList extends AonElement {
       toolbarEl.type = ToolbarType.SECONDARY;
       this.insertBefore(toolbarEl, filterEl);
       toolbarEl.removeButtons();
-      toolbarEl.addButton2(UserAction.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
+      toolbarEl.addButton2(ACTION.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
       toolbarEl.title = AON_MSG_PAYROLL;
     } 
   }

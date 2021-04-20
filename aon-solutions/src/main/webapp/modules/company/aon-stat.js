@@ -51,7 +51,17 @@ export class AonStat extends AonElement {
     div2.className = CSS.AON_COMPANY_LOGO_IMG;
     div.appendChild(div2);
     let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo' //https://mac.aonsolutions.net/aonDocuments/company.logo';
-    div2.innerHTML = `<img style="position: relative;max-width: 201px;" src="${url}" width="200">`;
+    let img = this.createElement(AON_TAG.IMG);
+    img.style.position = 'relative';
+    img.style.width = '200px';
+    img.src = url;
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      div1.style.width = '100%';
+      div2.style.display = 'none';
+    });
+    div2.appendChild(img);
+    //   div2.innerHTML = `<img style="position: relative;max-width: 201px;" src="${url}" width="200">`;
   }
 }
 if(!window.customElements.get('aon-stat')){

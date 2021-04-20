@@ -26,6 +26,15 @@ if(EN === language) {
   MSG = MSG_ES;
 }
 
+export const ACCEPT = MSG.AON_MSG_ACCEPT;
+export const DUPLICATE = MSG.DUPLICATE;
+export const EDIT = MSG.EDIT;
+export const RECTIFY = MSG.RECTIFY;
+export const RESTORE = MSG.RESTORE;
+export const SEND = MSG.SEND;
+export const UPLOAD = MSG.UPLOAD;
+
+
 export const AON_MSG_INVOICE = MSG.AON_MSG_INVOICE;
 export const AON_MSG_INVOICES = MSG.AON_MSG_INVOICES;
 export const AON_MSG_RESTORE_INVOICE = MSG.AON_MSG_RESTORE_INVOICE;

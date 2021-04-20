@@ -1,3 +1,10 @@
+export const DUPLICATE = 'Bikoiztu';
+export const EDIT = 'Editatu';
+export const RECTIFY = 'Zuzendu';
+export const RESTORE = 'Berreskuratu';
+export const SEND = 'Bidali';
+export const UPLOAD = 'Igo';
+
 export const AON_MSG_INVOICE = 'Faktura';
 export const AON_MSG_INVOICES = 'Fakturak';
 export const AON_MSG_RESTORE_INVOICE = 'Faktura Berreskuratu';

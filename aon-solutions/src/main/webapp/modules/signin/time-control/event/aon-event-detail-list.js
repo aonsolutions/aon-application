@@ -12,13 +12,13 @@ import {
 } from "../../../../services/service.js";
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { UserAction } from "../../../user/userEnums.js";
 import { dateCustomDayHour } from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
 import { AON_MSG_DATE, AON_MSG_STATUS, AON_MSG_LOCATION } from "../../../../environments/msg.js";
 
+import * as ACTION from '../../../actions.js';
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -124,7 +124,7 @@ export class AonEventDetailList extends AonElement {
     if(!this.applicationParentEl.isEmployee()){
       this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.aonEvent() );
     }
-    toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    toolbarEl.addButton2(ACTION.BACK, () => this.back());
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );

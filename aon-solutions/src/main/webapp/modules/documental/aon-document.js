@@ -1,12 +1,12 @@
-import {AonElement} from '../../components/AonElement.js';
-import {ToolbarType} from '../../models/enums.js';
-import {DocumentalAction, ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
+import { AonElement } from '../../components/AonElement.js';
+import { ToolbarType } from '../../models/enums.js';
+import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import {deleteFile, getCategories, getScopes, getTags, updateFile,
-  getDomainUserRoles, openFileUrl} from '../../services/service.js';
-import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+import { deleteFile, getCategories, getScopes, getTags, updateFile,
+  getDomainUserRoles, openFileUrl } from '../../services/service.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
-import {AonSelect} from '../../components/aon-select.js';
+import { AonSelect } from '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
 import '../../components/aon-date.js';
 import '../../components/aon-input.js';
@@ -14,9 +14,8 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from '../../environments/environments.js';
+import * as ACTION from '../actions.js';
 
 export class AonDocument extends AonElement {
 
@@ -294,17 +293,17 @@ export class AonDocument extends AonElement {
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
-      documentToolbar.addButton2(DocumentalAction.NEXT, () => this.next());
-      documentToolbar.addButton2(DocumentalAction.PREVIOUS, () => this.previous());
+      documentToolbar.addButton2(ACTION.NEXT, () => this.next());
+      documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 
       documentToolbar.addSeparator();
       if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-        documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
+        documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
       }
-      //  documentToolbar.addButton2(DocumentalAction.SEND, () => this.send());
-      documentToolbar.addButton2(DocumentalAction.DOWNLOAD, () => this.download());
+      //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
+      documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
     }
-    documentToolbar.addButton2(DocumentalAction.BACK, () => this.back());
+    documentToolbar.addButton2(ACTION.BACK, () => this.back());
   }
 
 

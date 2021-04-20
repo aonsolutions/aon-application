@@ -3,7 +3,6 @@ import { setValueName, serializeForm, waitEl, handleError } from "../../../../se
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
 import { URL_MAP } from "../../../../environments/constants.js";
-import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { AON_MSG_DELETE, AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA, AON_MSG_DELETE_CONFIRM, AON_MSG_RADIO, AON_MSG_LOCATION, AON_MSG_NAME } from "../../../../environments/msg.js";
@@ -11,6 +10,8 @@ import { CONSTANT_SUCCESS } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
+
+import * as ACTION from '../../../actions.js';
 
 export class AonLocationAdd extends AonElement {
   NAME;
@@ -107,13 +108,13 @@ export class AonLocationAdd extends AonElement {
     const toolbarEl = this.getElement(this.TOOLBAR);
     toolbarEl.removeButtons();
     if(this.data && this.data.id){
-      toolbarEl.addButton2(UserAction.DELETE, () =>this.delete());
+      toolbarEl.addButton2(ACTION.DELETE, () =>this.delete());
       toolbarEl.title = "Edición";
     } else {
       toolbarEl.title = "Registro";
     }
-    toolbarEl.addButton2(UserAction.SAVE, () => this.save());
-    toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    toolbarEl.addButton2(ACTION.SAVE, () => this.save());
+    toolbarEl.addButton2(ACTION.BACK, () => this.back());
   }
 
   async paintViewMap(data) {

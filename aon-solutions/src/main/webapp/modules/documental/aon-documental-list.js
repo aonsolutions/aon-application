@@ -1,13 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
-import {DocumentalAction} from './DocumentalEnums.js';
 import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles,
 	getDomainUserRoles} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-table.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
+import { CONSTANT, MSG } from '../../environments/environments.js';
+import * as ACTION from '../actions.js';
 
 export class AonDocumentalList extends AonElement {
 
@@ -171,18 +170,18 @@ export class AonDocumentalList extends AonElement {
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
 		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())
-			aonDocumental.addToolbarOption2(DocumentalAction.EDIT, () => this.editFiles());
-		aonDocumental.addToolbarOption2(DocumentalAction.DOWNLOAD, () => this.downloadFiles());
-		aonDocumental.addToolbarOption2(DocumentalAction.SEND, () => this.sendFiles());
+			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
+		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
+		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
 	removeDocumentalActions() {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.removeSeparators();
-		aonDocumental.removeToolbarOption(DocumentalAction.EDIT);
-		aonDocumental.removeToolbarOption(DocumentalAction.DOWNLOAD);
-		aonDocumental.removeToolbarOption(DocumentalAction.SEND);
+		aonDocumental.removeToolbarOption(ACTION.EDIT_FILE);
+		aonDocumental.removeToolbarOption(ACTION.DOWNLOAD_FILE);
+		aonDocumental.removeToolbarOption(ACTION.SEND_FILE);
 	}
 
 	aonDocumentContextMenu(e, doc, i) {
@@ -197,13 +196,13 @@ export class AonDocumentalList extends AonElement {
     let aonDocumental = this.getElement('aonDocumental');
 		let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
-		let send = DocumentalAction.SEND;
+		let send = ACTION.SEND_FILE;
 		send.fn = () => {}; //this.send();
 
-		let download = DocumentalAction.DOWNLOAD;
+		let download = ACTION.DOWNLOAD_FILE;
 		download.fn = () => {}; //this.download();
 
-		let remove = DocumentalAction.DELETE;
+		let remove = ACTION.DELETE_FILE;
 		remove.fn = () => {}; //this.remove();
 
 		let actions = [send, download];
