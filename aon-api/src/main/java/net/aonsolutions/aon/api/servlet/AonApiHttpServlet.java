@@ -67,6 +67,10 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private void initialize(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("SESSION_ID -> " + req.getHeader(IConstants.SESSION_ID));
+		LOGGER.info("DOMAIN_NAME -> " + req.getHeader(IConstants.DOMAIN_NAME));
+		LOGGER.info("DOMAIN_ID -> " + req.getHeader(IConstants.DOMAIN_ID));
+		
 		setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
