@@ -103,17 +103,15 @@ export class AonTabs extends AonElement {
         if(div){
             const idBadge = id+"Badge";
             const spanBadge = this.getElement(idBadge) || this.createElement('span');
+            spanBadge.id = idBadge;
             if(badge > 0){
                 spanBadge.classList.add("badge");
-                spanBadge.id = idBadge;
                 spanBadge.textContent = badge;
                 const spanExist = div.querySelector("span");
-                const top  = spanExist.getBoundingClientRect().top;
-                const left = spanExist.getBoundingClientRect().left;   
+                // const top  = spanExist.getBoundingClientRect().top;
+                // const left = spanExist.getBoundingClientRect().left;   
                 div.insertBefore(spanBadge, spanExist);
-                // spanBadge.style.left =`calc(${left} * 0.80)`; //left > (spanBadge.offsetWidth / 2) ? left - 180 : left;
-                spanBadge.style.top = top - 67;
-                console.log(left, top, spanBadge.offsetWidth); // left: 68.5938px;
+                spanBadge.style.top = .7;
             } else {
                 spanBadge.remove();
             }
@@ -135,7 +133,7 @@ export class AonTabs extends AonElement {
       current.className = current.className.replace(` ${this.ACTIVE_CLASS}`, "");
     }
 
-    e.target.className += ` ${this.ACTIVE_CLASS}`;
+    e.currentTarget.className += ` ${this.ACTIVE_CLASS}`;
   }
 
   moveTabIndicator(e) {
@@ -182,7 +180,7 @@ export class AonTabs extends AonElement {
     const leftArrowKey = e.which === 37;
     const rightArrowKey = e.which === 39;
 
-    let index = this.getTabIndex(ev);
+    let index = this.getTabIndex(e);
     let newIndex;
 
     const decrementIndex = () => {

@@ -202,19 +202,23 @@ export class AonApplication extends AonElement {
   }
 
   startLoader() {
-    this.getElement(this.LOADER).start();
+    let el = this.getElement(this.LOADER);
+    if(el) el.start();
   }
 
   stopLoader() {
-    this.getElement(this.LOADER).stop();
+    let el = this.getElement(this.LOADER);
+    if(el) el.stop();
   }
 
   startLoading() {
-    this.getElement(this.LOADER).startLoading();
+    let el = this.getElement(this.LOADER);
+    if(el) el.startLoading();
   }
 
   stopLoading() {
-    this.getElement(this.LOADER).stopLoading();
+    let el = this.getElement(this.LOADER);
+    if(el) el.stopLoading();
   }
 
   toogleSidenav() {

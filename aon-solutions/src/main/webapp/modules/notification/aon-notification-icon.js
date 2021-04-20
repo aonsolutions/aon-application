@@ -2,7 +2,7 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import {AonElement} from '../../components/AonElement.js';
 import { FirebaseService } from '../../services/firebaseService.js';
-import { getNotification } from '../../services/notificationService.js';
+import { getPending } from '../../services/notificationService.js';
 import { waitEl } from '../../services/utils.js';
 import { AonNotification } from './aon-notification.js';
 
@@ -10,27 +10,22 @@ export class AonNotificationIcon extends AonElement {
 
     AON_NOTIFICATION_ICON;
     BADGE;
-    NOTIFICATIONS;
+    COUNT;
     static get observedAttributes() {
         return ["badge"];
     }
-    
-	get badge() {
-		return this.getAttribute('badge') ? parseInt(this.getAttribute('badge')) : 0;
-	}
-
-	set badge(badge) {
-		this.setAttribute('badge', badge);
-	}
+ 
     attributeChangedCallback(name, oldValue, newValue) {
-        if ("badge" === name) this.changeBadge();
     }
 
 	constructor () {
 		super();
+        this.COUNT = {
+            notification: 0,
+            messenger: 0
+        }
 		this.AON_NOTIFICATION_ICON = 'aonNotificationIcon';
         this.BADGE = this.AON_NOTIFICATION_ICON+ "Badge";
-        this.NOTIFICATIONS = [];
 	}
 
 	connectedCallback () {
@@ -41,7 +36,7 @@ export class AonNotificationIcon extends AonElement {
 
     build(){
         this.append(this.getView());
-        this.getNotifications();
+        this.getPending();
     }
 
 
@@ -51,17 +46,18 @@ export class AonNotificationIcon extends AonElement {
         const aonIconButton = new AonIconButton();
         // aonIconButton.noHover = "true";
         aonIconButton.id = "aonHeaderNotificationButton";
-        aonIconButton.icon = "markunread_mailbox";
+        aonIconButton.icon = "notifications";
         notificationSpan.appendChild(aonIconButton);
         return notificationSpan;
     }
 
     async changeBadge(){
-        const badge = this.getElement(this.BADGE)  || this.createElement("span");
         const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
-        if(this.badge && this.badge > 0){
-            badge.textContent = this.badge;
-            badge.id = this.BADGE;
+        const total = this.getTotalCount();
+        const badge = this.getElement(this.BADGE)  || this.createElement("span");
+        badge.id = this.BADGE;
+        if(total && total > 0){
+            badge.textContent = total;
             badge.style = /**/`position: absolute; top: 22px;right: 3px;padding: 1px 4px;border-radius: 50%;background: red;color: white;font-size: 10px;font-weight: 800;`;
             notificationSpan.appendChild(badge);   
         } else {
@@ -75,7 +71,7 @@ export class AonNotificationIcon extends AonElement {
 		});
 
         window.addEventListener('receivedNotification', ({detail})=>{
-			this.getNotifications();
+			this.getPending();
             this.showNotificationTest(detail);
 		});
 
@@ -108,21 +104,22 @@ export class AonNotificationIcon extends AonElement {
         const aonNotification = new AonNotification();
         let data = [];
         try {
-            const datos = await this.getNotifications();
-            if(datos)aonNotification.data = JSON.stringify(datos);
-            this.rootPanel(aonNotification)
+            this.rootPanel(aonNotification);
         } catch(e){
-            console.log(e);getNotifications
+            console.log(e);
         }
         return data;
     }
 
-    async getNotifications(){
+    async getPending(){
         if(this.isBeta()){
-            this.NOTIFICATIONS = await getNotification();
-            this.badge = this.NOTIFICATIONS.length;
+            this.COUNT = await getPending();
+            this.changeBadge();
         }
-        return this.NOTIFICATIONS;
+    }
+
+    getTotalCount(){
+        return Object.keys(this.COUNT).reduce((acc, value) => acc + this.COUNT[value], 0);
     }
 
 

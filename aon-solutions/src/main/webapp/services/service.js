@@ -36,6 +36,7 @@ export * from './request.js';
 export * from './laboralService.js';
 
 export * from './notificationService.js';
+export * from './messengerService.js';
 
 export * from './fiscalService.js';
 

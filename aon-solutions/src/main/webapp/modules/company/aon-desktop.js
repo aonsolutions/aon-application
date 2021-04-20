@@ -13,6 +13,7 @@ import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../documental/aon-documental.js';
 import '../laboral/aon-laboral.js';
+import '../messenger/aon-messenger.js';
 import '../fiscal/aon-fiscal.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
@@ -315,6 +316,9 @@ export class AonDesktop extends AonElement {
 				break;
 			case Apps.TIMECONTROL.app:
 				rootPanel('<aon-signin></aon-signin>');
+				break;
+			case Apps.MESSENGER.app:
+				this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud');
 				break;
 		}
 	}

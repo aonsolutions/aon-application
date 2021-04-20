@@ -1,55 +1,67 @@
 import {AonElement} from '../../components/AonElement.js';
+import { MessengerOptions, MESSENGER_VIEWS } from './MessengerEnums.js';
+import { AonMessengerList } from './aon-messenger-list.js';
 import '../../components/aon-application.js';
 
 class AonMessenger extends AonElement {
-    constructor () {
-        super();
-    }
+    AON_MESSENGER;
+	constructor () {
+		super();
+	}
 
-    connectedCallback () {
-        this.innerHTML = `<aon-application id="aonMessenger" title="SOLICITUDES"></aon-application>`;
-        this.build();
-    }
+	connectedCallback () {
+		this.initialize();
+    	this.build();
+ 	}
 
-    build() {
-        let aonMessenger = document.getElementById('aonMessenger');
+	initialize(){
+		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
+	}
 
-        aonMessenger.addToolbarOption('Add', 'add', () => {this.loadCreate()});
+ 	build() {
+		this.paintView();
+		this.applicationEl = this.getApplication();
+		this.applicationParentEl = this.getApplicationParent();
+		this.buildToolbar();
+		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+	}
 
-        let options = [
-            {
-                name: 'Consultas',
-                icon: 'inbox',
-                fn: () => this.loadIndex()
-            },
-            {
-                name: 'Trámites',
-                icon: 'inbox',
-                fn: () => this.loadIndex()
-            },
-            {
-                name: 'Nueva solicitud',
-                icon: 'add',
-                fn: () => this.loadCreate()
+	paintView(){
+		this.innerHTML = /*html*/`<aon-application id="${this.AON_MESSENGER}" title="Solicitudes"></aon-application>`;
+	}
+
+	buildToolbar(){
+        let messengerOpts = [];
+
+		let list = MessengerOptions.AON_MESSENGER_LIST;
+		list.fn = () => this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		messengerOpts.push(list);
+
+		let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
+		listClose.fn = () => this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST_CLOSE);
+		messengerOpts.push(listClose);
+		
+		this.applicationEl.addSidenavOptions('Solicitudes', messengerOpts);
+	}
+
+	showView(view, data, filter = undefined){
+        return new Promise(async(resolve)=>{
+          let aonView = undefined;
+          if(!this.getElement(view)){
+            switch(view){
+              case MESSENGER_VIEWS.AON_MESSENGER_LIST:
+                aonView = new AonMessengerList();
+                break;
             }
-        ];
-        aonMessenger.addSidenavOptions('OPCIONES', options);
-        this.loadIndex();
-    }
+            if(aonView){
+              aonView.id = view;
+              if(filter) aonView.filter = filter;
+              this.applicationEl.setContent(aonView);
+            }
+          }
+          resolve(aonView);
+        });
+      }
 
-    loadIndex() {
-        let aonMessenger = document.getElementById('aonMessenger');
-        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/index.html" style="width:100%;height:100%;border:none;"></iframe>');
-    }
-
-    loadCreate() {
-        let aonMessenger = document.getElementById('aonMessenger');
-        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/create.html" style="width:100%;height:100%;border:none;"></iframe>');
-    }
-
-    loadShow() {
-        let aonMessenger = document.getElementById('aonMessenger');
-        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/show.html" style="width:100%;height:100%;border:none;"></iframe>');
-    }
 }
 window.customElements.define('aon-messenger', AonMessenger);

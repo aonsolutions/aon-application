@@ -72,7 +72,7 @@
   }
 
   .active, .aonDot:hover {
-    background-color: #fff;
+    background-color: none;
   }
   
   .tab-button__content {

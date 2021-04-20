@@ -142,7 +142,11 @@ export class AonCard extends AonElement {
 	}
 
 	setBackground(color) {
-		this.getElement(this.CARD).style.background = color;
+		let el = this.getElement(this.CARD);
+		if(el){
+			el.style.transition ="background-color 0.8s ease";
+			el.style.backgroundColor = color;
+		}
 	}
 
 	getCard(){

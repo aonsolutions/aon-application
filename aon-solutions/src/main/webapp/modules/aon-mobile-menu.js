@@ -17,6 +17,7 @@ import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import "./laboral/aon-laboral.js";
 import "./fiscal/aon-fiscal.js";
+import "./messenger/aon-messenger.js";
 
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
@@ -267,13 +268,13 @@ export class AonMobileMenu extends AonElement {
       return {
         name: "Solicitudes",
         icon: "message",
-        fn: () => alert('en desarrollo')
+        fn: () => this.isBeta() ? rootPanel(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
       };
     else if(FISCAL.app === app.app)
       return {
         name: "Fiscal",
         icon: "receipt",
-        fn: () =>  rootPanel('<aon-fiscal></aon-fiscal>')
+        fn: () => rootPanel('<aon-fiscal></aon-fiscal>')
       };
     else if(ACCOUNTING.app === app.app)
       return {
