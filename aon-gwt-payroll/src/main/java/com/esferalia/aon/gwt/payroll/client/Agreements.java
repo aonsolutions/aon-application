@@ -170,11 +170,25 @@ public class Agreements extends ResizeComposite implements
 	}
 	
 	public void addNewItemTree(Agreement agreement) {
-		addAgreementItem(newAgreement());
-		//Select the Last One
-		agreementsTree.getTree().setSelectedItem(
-				agreementsTree.getTree().getItem(
-						agreementsTree.getTree().getItemCount() - 1));
+		getAgreementsTree().getEnterpriseService().getServiAgreement("a0000001", 
+				new AsyncCallback<Integer>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Integer importedAgreementId) {
+				getAgreementsAndSelectImported(importedAgreementId);
+			}
+		});
+				
+//		addAgreementItem(newAgreement());
+//		//Select the Last One
+//		agreementsTree.getTree().setSelectedItem(
+//				agreementsTree.getTree().getItem(
+//						agreementsTree.getTree().getItemCount() - 1));
 	}
 
 	// -------------------------------------------------------- Private methods

@@ -617,29 +617,26 @@ public class AgreementDraftObject {
 		
 		agreementDraft.setDatesWithChanges(getDatesWithChanges());
 		
-		String message = checkIfExistLevelAndCategory();
-		if(AonStringUtils.isNotBlank(message))
-			callback.onCalculateFailure(new Exception(message));
-		else
-			agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
-					new AsyncCallback<AgreementDraft>() {
-	
-						@Override
-						public void onSuccess(AgreementDraft savedAgreementDraft) {
-							oldAgreementDraft = agreementDraft;
-							agreementDraft = savedAgreementDraft;
-							undoManager.discardAll();
-							agreementDraft.clearDrafts();
-	
-							calculate(callback);
-	
-						}
-	
-						@Override
-						public void onFailure(Throwable caught) {
-							callback.onCalculateFailure(caught);
-						}
-					});
+		checkFixLevelCategories();
+		agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
+				new AsyncCallback<AgreementDraft>() {
+
+					@Override
+					public void onSuccess(AgreementDraft savedAgreementDraft) {
+						oldAgreementDraft = agreementDraft;
+						agreementDraft = savedAgreementDraft;
+						undoManager.discardAll();
+						agreementDraft.clearDrafts();
+
+						calculate(callback);
+
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);
+					}
+				});
 	}
 
 	public void calculate(final CalculateCallback callback) {
@@ -1186,45 +1183,27 @@ public class AgreementDraftObject {
 		agreementDraft.getDraftSalaryTable().clear();
 	}
 	
-	private String checkIfExistLevelAndCategory() {
-		String message = null;
-		
+	private void checkFixLevelCategories() {
 		Set<Level> levels = agreementDraft.getLevels();
 		Set<Level> draftLevels = agreementDraft.getDraftLevels();
 		levels.removeAll(draftLevels);
 		Map<Integer, Set<String>> categories = agreementDraft.getCategoriesMap();
 		Map<Integer, Set<String>> draftCategories = agreementDraft.getDraftCategories();
 		
-		if(	(null != levels && levels.isEmpty()) && 
-			(null != draftLevels && draftLevels.isEmpty())) {
-			message = "Debe existir al menos un nivel";
-		} else if(categories.isEmpty() &&  draftCategories.isEmpty()){
-			message = "Debe existir al menos una categor\u00EDa para el nivel existente";
-		} else {
-			for(Level level : levels) {
-				Integer levelId = level.getId();
-				Set<String> levelCategories = null != categories.get(levelId) ? categories.get(levelId) : draftCategories.get(levelId);
-				if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription())) {
-					if(AonStringUtils.isBlank(message))
-						message = "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
-					else
-						message += "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
-				}
-			}
-			
-			for(Level level : draftLevels) {
-				Integer levelId = level.getId();
-				Set<String> levelCategories = null != draftCategories.get(levelId) ? draftCategories.get(levelId) : categories.get(levelId);
-				if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription())) {
-					if(AonStringUtils.isBlank(message))
-						message = "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
-					else
-						message += "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
-				}
-			}
+		for(Level level : levels) {
+			Integer levelId = level.getId();
+			Set<String> levelCategories = null != categories.get(levelId) ? categories.get(levelId) : draftCategories.get(levelId);
+			if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription()))
+				addDraftCategories(level, "Cat " + level.getDescription());
 		}
 		
-		return message;
+		for(Level level : draftLevels) {
+			Integer levelId = level.getId();
+			Set<String> levelCategories = null != draftCategories.get(levelId) ? draftCategories.get(levelId) : categories.get(levelId);
+			if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription()))
+				addDraftCategories(level, "Cat " + level.getDescription());
+		}
+		
 	}
 
 }
