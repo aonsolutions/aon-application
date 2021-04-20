@@ -1359,4 +1359,19 @@ public interface Properties {
 		
 	}
 	
+	public interface FiscalModelProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getYearProperty();
+		Property<String> getModelProperty();
+		Property<Byte> getPeriodProperty();
+		Property<Byte> getAdministrationProperty();
+		Property<Byte> getStatusProperty();
+		Property<Byte> getConfidentialProperty();
+		Property<Byte> getComplementaryProperty();
+		Property<Byte> getReplacementProperty();
+		Property<String> getDocumentProperty();
+		Property<String> getNameProperty();
+		Property<String> getSurnameProperty();
+	}
 }

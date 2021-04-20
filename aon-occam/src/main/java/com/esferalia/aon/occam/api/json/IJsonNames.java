@@ -30,6 +30,7 @@ public interface IJsonNames {
 	String BALANCE = "balance";
 	String BALANCES = "balances";
 	String BALANCING_ACCOUNT = "balancingAccount";
+	String BANK_ALIAS = "bankAlias";
 	String BASE = "base";
 	String BATCHED = "batched";
 	String BEFORE_PERIOD_DEBIT = "beforePeriodDebit";
@@ -150,6 +151,7 @@ public interface IJsonNames {
 	String MEDIA = "media";
 	String MESSAGE = "message";
 	String MODEL = "model";
+	String MODELS = "models";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	String NAME = "name";
 	String NATIONALITY = "nationality";

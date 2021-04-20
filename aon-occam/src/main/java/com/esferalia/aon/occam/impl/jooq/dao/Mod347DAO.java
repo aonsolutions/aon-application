@@ -57,6 +57,22 @@ public class Mod347DAO {
 	
 	// -------------------- MOD347 --------------------
 	
+	public static Stream<Mod347> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(FS_MOD347.fields())
+			.from(FS_MOD347)
+			.join(DOMAIN).on(FS_MOD347.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MOD347.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MOD347.YEAR.desc()
+					,FS_MOD347.NAME.asc()
+					,FS_MOD347.COMPLEMENTARY.asc()
+					,FS_MOD347.REPLACEMENT.asc())
+			.fetch()
+			.stream()
+			.map(new Mod347Filler());
+	}
+
 	public static LinkedList<Mod347> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();
 		return  ctx.getDslContext()

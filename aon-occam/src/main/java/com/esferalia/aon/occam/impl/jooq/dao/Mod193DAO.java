@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record;
@@ -40,6 +41,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod193DAO {
 
 	private static byte ZERO_BYTE = 0;
+
+	public static Stream<Mod193> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(FS_MODEL193.fields())
+			.from(FS_MODEL193)
+			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL193.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MODEL193.YEAR.desc()
+					,FS_MODEL193.NAME.asc()
+					,FS_MODEL193.REPLACEMENT.asc())
+			.fetch()
+			.stream()
+			.map(new Mod193Filler());
+	}
 
 	public static LinkedList<Mod193> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();

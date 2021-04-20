@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
+import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
@@ -593,5 +594,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface PayMethodFilter{
 		Filter filter(PayMethodProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface FiscalModelFilter{
+		Filter filter(FiscalModelProperties properties);
 	}
 }

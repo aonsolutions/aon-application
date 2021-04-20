@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.BatchBindStep;
 import org.jooq.Field;
@@ -510,6 +511,22 @@ public class Mod190DAO {
 	private static void deleteDetail(AONContext ctx, Mod190Detail detail) {
 		ctx.getDslContext().delete(FS_MODEL190_DETAIL)
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
+	}
+
+	public static Stream<Mod190> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+				.select(FS_MODEL190.fields())
+				.from(FS_MODEL190)
+				.join(DOMAIN)
+				.on(FS_MODEL190.DOMAIN.equal(DOMAIN.ID))
+				.where(FS_MODEL190.DOMAIN.equal(domain).or(
+						DOMAIN.PARENT.equal(domain)))
+				.orderBy(FS_MODEL190.YEAR.desc(), FS_MODEL190.NAME.asc(),
+						FS_MODEL190.REPLACEMENT.asc())
+				.fetch()
+				.stream()
+				.map(new Mod190Filler());
 	}
 
 	public static LinkedList<Mod190> getByDomain(AONContext ctx, int domain) {

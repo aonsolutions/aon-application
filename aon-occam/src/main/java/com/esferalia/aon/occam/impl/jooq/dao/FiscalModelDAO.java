@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.exception.DataAccessException;
@@ -23,7 +24,10 @@ import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -52,6 +56,30 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModelDAO {
 	
+	private static final FiscalModelPropertiesDAO FS_MODEL_PROPERTIES = new FiscalModelPropertiesDAO();
+	private static class FiscalModelPropertiesDAO implements FiscalModelProperties {
+		private Condition[] getConditions(FiscalModelFilter filter) {
+			if (filter==null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.DOMAIN);}
+		@Override public Property<Integer> getYearProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.YEAR);}
+		@Override public Property<String> getModelProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.MODEL);}
+		@Override public Property<Byte> getPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.PERIOD);}
+		@Override public Property<Byte> getAdministrationProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.ADMINISTRATION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.STATUS);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.SECURITY_LEVEL);}
+		@Override public Property<Byte> getComplementaryProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.COMPLEMENTARY);}
+		@Override public Property<Byte> getReplacementProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.REPLACEMENT);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.DOCUMENT);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.NAME);}
+		@Override public Property<String> getSurnameProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.SURNAME);}
+		
+	}
+
 	public static Record getModelRecord(final AONContext ctx,int id) {
 		ctx.checkRead();
 		return ctx.getDslContext()
@@ -177,6 +205,23 @@ public class FiscalModelDAO {
 			.peek( model -> getModelDetails(ctx,model)
 								.forEach( detail -> model.put( detail) )
 				);
+	}
+
+	public static Stream<Record> getModelRecords(AONContext ctx,int domain, FiscalModelType model, FiscalModelFilter filter)  {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.where(FS_MODEL_PROPERTIES.getConditions(filter))
+				.and(FS_MODEL.DOMAIN.eq(domain))
+				.and(FS_MODEL.MODEL.eq(model.getValue()))
+				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+				.fetch()
+				.stream();
 	}
 
 	public static Stream<Record> getModelRecords(AONContext ctx,int domain, FiscalModelType model) {

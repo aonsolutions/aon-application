@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model.finance;
 
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
-
 public class EnumVisitors {
 
 	public static interface IInvoiceTransactionTypeVisitor {
@@ -42,4 +40,22 @@ public class EnumVisitors {
 		void visitClosed();
 	}
 	
+	public static interface IFiscalModelTypeVisitor {
+		void visitM111();
+		void visitM115();
+		void visitM123();
+		void visitM130();
+		void visitM131();
+		void visitM347();
+		void visitM349();
+		void visitM390();
+		void visitM390HF();
+		void visitM180();
+		void visitM184();
+		void visitM190();
+		void visitM193();
+		void visitM200();
+		void visitM202();
+		void visitM303();
+	}
 }

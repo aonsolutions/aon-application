@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public interface IFiscalModel extends Serializable {
@@ -27,6 +29,13 @@ public interface IFiscalModel extends Serializable {
 	String getName();
 	String getSurname();
 	String getFullName();
+	
+	public default Finance getFinance() {
+		return null;
+	}
+	public default FiscalModelDeclarationType getDeclarationType() {
+		return null;
+	}
 	
 	public default boolean isFirstPeriod() {
 		return getPeriod() != null && getPeriod().isFirstPeriod();

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
@@ -22,6 +23,35 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Mod390DAO {
+
+	public static Stream<Mod390> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select(
+				 FS_MODEL390.ID
+				,FS_MODEL390.DOMAIN
+				,FS_MODEL390.ENTERPRISE
+				,FS_MODEL390.YEAR
+				,FS_MODEL390.ADMINISTRATION
+				,FS_MODEL390.STATUS
+				,FS_MODEL390.SECURITY_LEVEL
+				,FS_MODEL390.DOCUMENT
+				,FS_MODEL390.NAME
+				,FS_MODEL390.COMPLEMENTARY
+				,FS_MODEL390.REPLACEMENT
+				,FS_MODEL390.COMMENTS
+				,FS_MODEL390.RECEIPT
+				,FS_MODEL390.REPLACED_RECEIPT
+				,FS_MODEL390.RESPONSE
+			)
+			.from(FS_MODEL390)
+			.join(DOMAIN).on(FS_MODEL390.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL390.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MODEL390.YEAR.desc(), FS_MODEL390.NAME.asc(),FS_MODEL390.REPLACEMENT.asc())
+			.fetch()
+			.stream()
+			.map( new Mod390Filler() );
+	}
 
 	public static LinkedList<Mod390> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();

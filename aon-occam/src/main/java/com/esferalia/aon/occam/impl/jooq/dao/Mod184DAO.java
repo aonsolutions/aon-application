@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
@@ -30,6 +31,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod184DAO {
 	private static byte ZERO_BYTE = 0;
+
+	public static Stream<Mod184> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(FS_MODEL184.fields())
+			.from(FS_MODEL184)
+			.join(DOMAIN).on(FS_MODEL184.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL184.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MODEL184.YEAR.desc()
+					,FS_MODEL184.NAME.asc()
+					,FS_MODEL184.REPLACEMENT.asc())
+			.fetch()
+			.stream()
+			.map(new Mod184Filler());
+	}
 
 	public static LinkedList<Mod184> getByDomain(AONContext ctx, int domain) {
 		ctx.checkRead();

@@ -14,6 +14,7 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -321,6 +322,12 @@ public class Mod202DAO extends FiscalModelDAO {
 		}
 	}
 
+	public static Stream<Mod202> getMod202s(AONContext ctx,int domain, FiscalModelFilter filter) {
+		return getModelRecords(ctx, domain,FiscalModelType.M202,filter)
+				.map( record -> map202(new Mod202(),record))
+				.peek(fm -> getModelDetails(ctx,fm).forEach( detail -> fm.put( detail)))
+				;
+	}
 	public static Stream<Mod202> getMod202s(AONContext ctx,int domain) {
 		return getModelRecords(ctx, domain,FiscalModelType.M202)
 				.map( record -> map202(new Mod202(),record))
