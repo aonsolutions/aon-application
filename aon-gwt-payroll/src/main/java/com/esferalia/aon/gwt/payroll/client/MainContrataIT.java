@@ -372,10 +372,22 @@ public class MainContrataIT extends MainEntryPoint {
 	    	tooltip.setITType(itInfo.getTypeLowPart());
 	    	tooltip.setLowType(itInfo.getTypeLowPart());
 	    	tooltip.setHighType(itInfo.getTypeHighPart());
-	    	tooltip.setStartDate(itInfo.getStartDate());
+	    	tooltip.setStartDate(getRealStartDate(itInfo));
 	    	tooltip.setEndDate(itInfo.getEndDate());
+	    	
+	    	tooltip.setContractId(contractId);
+	    	tooltip.setITId(itId);
 			
 			tooltip.showTooltip(mouseClientX, mouseClientY);
+		}
+
+		private Date getRealStartDate(IT it) {
+			if( (byte) 1 == it.getTypeLowPart() || (byte) 8 == it.getTypeLowPart()) {
+				Date realStartDate = DateUtils.copyDateOnly(it.getStartDate());
+				return DateUtils.addDays2Date(realStartDate, -1);
+			}
+			
+			return it.getStartDate();
 		}
 
 	}
@@ -470,7 +482,13 @@ public class MainContrataIT extends MainEntryPoint {
 		this.expressionCallback = new ExpressionCallback();
 		this.tooltipCallback = new TooltipCallBack();
 		this.popupPanel = new PopupPanel(true);
-		this.tooltip = new ITTooltip();
+		this.tooltip = new ITTooltip() {
+			
+			@Override
+			protected void onTooltipClick(Integer contractId, Integer itId) {
+				openITDialog(contractId, itId);
+			}
+		};
 		
 		this.mainContrataITObject.getEmployeesInfo(true, s -> {
 			getFilterITListPanel();

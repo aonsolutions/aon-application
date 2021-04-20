@@ -473,6 +473,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void paintSelectedIT(IT it, boolean showAll) {
+		normalizeITToPaint(it);
 		itStartDate.setValue(it.getStartDate());
 		setSelectedValueLB(causeLowPart, it.getTypeLowPart().toString());
 		
@@ -1026,7 +1027,8 @@ public abstract class ITDialog extends AonCustomDialog {
 				return;
 			} else {
 			
-				if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
+				if( (byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue()) ||
+					(byte) 8 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 					date = DateUtils.addDays2Date(date, 1);
 					realStartDate.setText(formatFullDate.format(date));
 				} else
@@ -1550,6 +1552,35 @@ public abstract class ITDialog extends AonCustomDialog {
 		return (byte) newConfirmOrder;
 	}
 	
+
+	
+	// --------------------------------------------------- NormalizeIT.Methods
+	
+	private void normalizeITToSave() {
+		if( (byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue()) || (byte) 8 == Byte.parseByte(causeLowPart.getSelectedValue())) {
+				Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
+				this.it.setStartDate(DateUtils.addDays2Date(realStartDate, 1));
+				
+				ITPart lowPart = getLowPart(this.it);
+				lowPart.setDate(realStartDate);
+		}
+	}
+	
+	private void normalizeITToPaint(IT it) {
+		if( (byte) 1 == it.getTypeLowPart() || (byte) 8 == it.getTypeLowPart()) {
+			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
+			it.setStartDate(DateUtils.addDays2Date(realStartDate, -1));
+		}
+	}
+	
+	private ITPart getLowPart(IT it) {
+		for(ITPart itPart : it.getITParts())
+			if(itPart.getType() == (byte)0)
+				return itPart;
+		return null;
+	}
+
+	
 	// --------------------------------------------------- Footer
 	
 	private void createFooterButtons() {
@@ -1585,6 +1616,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void onCloseDialog(ClickEvent event) {
+		normalizeITToSave();
 		hide();
 	}
 	
@@ -1592,6 +1624,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(checkIfSaveIsPossible()) {
 			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
+			
+			normalizeITToSave();
 			
 			onAccept();
 			hide();
@@ -1601,7 +1635,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");
 		}
 	}
-	
+
 	// --------------------------------------------------- Footer.Methods
 	
 	private boolean checkIfSaveIsPossible() {
