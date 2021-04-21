@@ -15,6 +15,7 @@ import '../documental/aon-documental.js';
 import '../laboral/aon-laboral.js';
 import '../messenger/aon-messenger.js';
 import '../fiscal/aon-fiscal.js';
+import '../accounting/aon-accounting.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
 
@@ -302,8 +303,7 @@ export class AonDesktop extends AonElement {
 				rootPanel('<aon-documental></aon-documental>')
 				break;
 			case Apps.ACCOUNTING.app:
-				this.development('Panel Contable');
-				//rootPanel('<aon-contable></aon-contable>');
+				rootPanel('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
 				rootPanel('<aon-fiscal></aon-fiscal>');
