@@ -27,9 +27,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.ForbiddenException;
@@ -74,7 +77,7 @@ public class SistemaREDEmployee {
 	}
 
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
-	private static Employee employeeFullInfo(String nss, WebClient webClient)
+	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
 
 		HtmlPage page = webClient
@@ -86,6 +89,12 @@ public class SistemaREDEmployee {
 		formParts.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 		formParts.getInputByName("btn_Sub2207601004").focus();
 		page = formParts.getInputByName("btn_Sub2207601004").click();
+		
+		HtmlLabel cccLabel =  page.getFirstByXPath("//label[contains(text(),'"+ccc.substring(2)+"')]");
+		if ( cccLabel != null ) {
+			cccLabel.focus();
+			page = cccLabel.dblClick();
+		}
 		manageStatusCode(page);
 
 		String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
@@ -302,7 +311,7 @@ public class SistemaREDEmployee {
 		checkCertificate(certificateInputStream);
 
 		try {
-			return getEmployeeImpl(certificateInputStream, certificatePassword, certificateType, nss);
+			return getEmployeeImpl(certificateInputStream, certificatePassword, certificateType, ccc, nss);
 		} catch (FailingHttpStatusCodeException e) {
 			switch (e.getStatusCode()) {
 			case 403:
@@ -319,10 +328,10 @@ public class SistemaREDEmployee {
 
 	// RETURNS AN EMPLOYEE
 	private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String nss) throws IOException, InterruptedException, SegSocialException {
+			String certificateType, String ccc, String nss) throws IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			webClient.getOptions().setJavaScriptEnabled(false);
-			return employeeFullInfo(nss, webClient);
+			//webClient.getOptions().setJavaScriptEnabled(false);
+			return employeeFullInfo(ccc, nss, webClient);
 		}
 	}
 
