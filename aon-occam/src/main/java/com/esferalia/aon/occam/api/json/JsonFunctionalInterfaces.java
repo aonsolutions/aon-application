@@ -3,11 +3,15 @@ package com.esferalia.aon.occam.api.json;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 
 public class JsonFunctionalInterfaces {
 
@@ -70,6 +74,50 @@ public class JsonFunctionalInterfaces {
 	@FunctionalInterface
 	public static interface IAonAccountTrialBalanceReportToJSON {
 		JSONObject to(AccountTrialBalanceReport t, JSONObject json);
+	}
+	
+	// ------------------------- [ACCOUNT OPERATING INTERVAL]
+	@FunctionalInterface
+	public static interface IAonDateIntervalFromJSON {
+		DateInterval from(DateInterval t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface IAonDateIntervalToJSON {
+		JSONObject to(DateInterval t, JSONObject json);
+	}
+	
+	// ------------------------- [ACCOUNT OPERATING ACCOUNT]
+	@FunctionalInterface
+	public static interface IAonAccountOperatingAccountFromJSON {
+		AccountOperatingAccount from(AccountOperatingAccount t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface IAonAccountOperatingAccountToJSON {
+		JSONObject to(AccountOperatingAccount t, JSONObject json);
+	}
+	
+	// ------------------------- [ACCOUNT OPERATING STATEMENT]
+	@FunctionalInterface
+	public static interface IAonAccountOperatingStatementFromJSON {
+		AccountOperatingStatement from(AccountOperatingStatement t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface IAonAccountOperatingStatementToJSON {
+		JSONObject to(AccountOperatingStatement t, JSONObject json);
+	}
+	
+	// ------------------------- [ACCOUNT OPERATING ACTIVITY]
+	@FunctionalInterface
+	public static interface IAonEnterpriseActivityFromJSON {
+		EnterpriseActivity from (EnterpriseActivity t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface IAonEnterpriseActivityToJSON {
+		JSONObject to(EnterpriseActivity t, JSONObject json);
 	}
 	
 	

@@ -22,8 +22,10 @@ public class JsonAccountTest extends AbstractOccamTest {
 		Account actual = AccountJSON.fromJSON(json);
 		Asserts.assertEqualsAccount(expected, actual);
 		
-		actual = AccountJSON.fromString(json.toString());
-		Asserts.assertEqualsAccount(expected, actual);
+		if (json != null) {
+			actual = AccountJSON.fromString(json.toString());
+			Asserts.assertEqualsAccount(expected, actual);
+		}
 	}
 	
 }

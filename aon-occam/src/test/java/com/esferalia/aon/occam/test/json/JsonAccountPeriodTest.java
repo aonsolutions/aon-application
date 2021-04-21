@@ -21,9 +21,10 @@ public class JsonAccountPeriodTest extends AbstractOccamTest {
 		JSONObject json = AccountPeriodJSON.toJSON(expected);
 		AccountPeriod actual = AccountPeriodJSON.fromJSON(json);
 		Asserts.assertEqualsAccountPeriod(expected, actual);
-		
-		actual = AccountPeriodJSON.fromString(json.toString());
-		Asserts.assertEqualsAccountPeriod(expected, actual);
+		if (json != null) {
+			actual = AccountPeriodJSON.fromString(json.toString());
+			Asserts.assertEqualsAccountPeriod(expected, actual);
+		}
 	}
 	
 }

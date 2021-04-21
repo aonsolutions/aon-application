@@ -575,6 +575,9 @@ public class AccountOperatingReport implements Serializable {
 	public TreeSet<DateInterval> getIntervals() {
 		return intervals;
 	}
+	public void setIntervals(TreeSet<DateInterval> intervals) {
+		this.intervals = intervals ;
+	}
 	public boolean showRatios() {
 		return getParams() != null && getParams().isPercentsEnabled() && getParams().showRatios();
 	}

@@ -8,6 +8,7 @@ public interface IJsonNames {
 	String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 	String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
 	String ACCOUNT = "account";
+	String ACCOUNTS = "accounts";
 	String ACCOUNT_ACTIVE = "accountActive";
 	String ACCOUNT_ALIAS = "accountAlias";
 	String ACCOUNT_CODE = "accountCode";
@@ -47,6 +48,9 @@ public interface IJsonNames {
 	String CITY = "city";
 	String CLASS_NAME = "class_name";
 	String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
+	String CNAE = "cnae";
+	String CNAE_CODE = "cnaeCode";
+	String CNAE_DESCRIPTION = "cnaeDescription";
 	String CODE = "code";
 	String COMMENT = "comment";
 	String COMMENTS = "comments";
@@ -90,8 +94,10 @@ public interface IJsonNames {
 	String EMPTY = "";
 	String ENABLE_HEREDITY = "enableHeredity";
 	String ENTRY_ENABLED = "entryEnabled";
+	String EPIGRAPH = "epigraph";
 	String ERROR = "error";
 	String EXPENSES = "expenses";
+	String EXPENSES_RATIO = "expensesRatio";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	String FARMER_REGIME = "farmerRegime";
 	String FAX = "fax";
@@ -115,6 +121,7 @@ public interface IJsonNames {
 	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	String HIDE_FILTER = "hideFilter";
 	// ---------------------------------------------------------------------------------------------	[I] 
+	String IAE = "iae";
 	String IBAN = "iban";
 	String ID = "id";
 	String IN_PERIOD_BEFORE_CREDIT = "inPeriodBeforeCredit";
@@ -124,7 +131,10 @@ public interface IJsonNames {
 	String IN_PERIOD_OPENING_DEBIT = "inPeriodOpeningDebit";
 	String IN_PERIOD_OPENING_CREDIT = "inPeriodOpeningCredit"; 
 	String INACTIVE = "inactive";
+	String INCREASE_PERCENT = "increasePercent";
 	String INITIATION_DATE = "initiationDate";
+	String INTERVAL = "interval";
+	String INTERVALS = "intervals";
 	String INVESTMENT = "investment";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
@@ -152,6 +162,7 @@ public interface IJsonNames {
 	String MESSAGE = "message";
 	String MODEL = "model";
 	String MODELS = "models";
+	String MONTH = "month";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	String NAME = "name";
 	String NATIONALITY = "nationality";
@@ -196,9 +207,11 @@ public interface IJsonNames {
 	String PREPAYMENT = "prepayment";
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRICE = "price";
+	String PRINCIPAL = "principal";
 	String PRODUCT_ID = "productId";
 	String PROMO = "promo";
 	String PROVINCE = "province";
+	String PURCHASES_RATIO = "purchasesRatio";
 	// ---------------------------------------------------------------------------------------------	[O]
 	String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[Q] 
@@ -221,9 +234,11 @@ public interface IJsonNames {
 	String RNAME = "rname";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
+	String SALES_RATIO = "salesRatio";
 	String SCOPE = "scope";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECTED_ACCOUNT = "selectedAccount";
+	String SELECTED_ACTIVITY = "selectedActivity";
 	String SELECTED_PERIOD = "selectedPeriod";
 	String SELLER_IDS = "sellerIds";
 	String SENDER = "sender";
@@ -233,6 +248,8 @@ public interface IJsonNames {
 	String SETTLED = "settled";
 	String SHOW_COVER = "showCover";
 	String SOURCE = "source";
+	String STATEMENT = "statement";
+	String STATEMENTS = "statements";
 	String STATUS = "status";
 	String SUBJECT = "subject";
 	String SURCHARGE_QUOTA = "surcharge_quota";

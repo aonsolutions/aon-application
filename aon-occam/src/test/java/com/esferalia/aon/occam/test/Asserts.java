@@ -6,15 +6,21 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -31,6 +37,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Asserts {
 	
@@ -404,7 +412,7 @@ public class Asserts {
 		assertEquals("InPeriodDebit",expected.getInPeriodDebit(), actual.getInPeriodDebit(), DELTA);
 		assertEquals("InPeriodCredit",expected.getInPeriodCredit(), actual.getInPeriodCredit(), DELTA);
 	}
-	public static void assertEqualsAccountTrialBalanceReport(AccountTrialBalanceReport expected, AccountTrialBalanceReport actual) {
+	public static void assertEqualsAccountTrialBalanceReport (AccountTrialBalanceReport expected, AccountTrialBalanceReport actual) {
 		assertEqualsNulls( "AccountTrialBalanceReport", expected, actual);
 		if (expected != null) {
 			assertEqualsAccountingReportParams(expected.getParams(), actual.getParams());
@@ -416,6 +424,64 @@ public class Asserts {
 			if ( expected.getBalances() != null) {
 				for ( String key : expected.getBalances().keySet()) {
 					assertEqualsAccountTrialBalance(expected.getBalances().get(key),actual.getBalances().get(key));
+				}
+			}
+		}
+	}
+	
+	public static void assertEqualsAccountOperatingAccount (AccountOperatingAccount expected, AccountOperatingAccount actual) {
+		assertEqualsNulls("AccountOperatingAccount", expected, actual);
+		if (expected != null) {
+			assertEquals("Code", expected.getCode(), actual.getCode());
+			assertEquals("Description", expected.getDescription(), actual.getDescription());
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Type", expected.getType(), actual.getType());
+		}
+	}
+	public static void assertEqualsAccountOperatingStatement (AccountOperatingStatement expected, AccountOperatingStatement actual) {
+		assertEqualsNulls("AccountOperatingStatement", expected, actual);
+		if (expected != null) {
+			assertEqualsAccountOperatingAccount(expected.getAccount(), actual.getAccount());
+			assertEquals("Credit", expected.getCredit(), actual.getCredit(), DELTA);
+			assertEquals("Debit", expected.getDebit(), actual.getDebit(), DELTA);
+			assertEquals("DebitBalance", expected.getDebitBalance(), actual.getDebitBalance(), DELTA);
+			assertEquals("ExpensesRatio", expected.getExpensesRatio(), actual.getExpensesRatio(), DELTA);
+			assertEquals("IncreasePercent", expected.getIncreasePercent(), actual.getIncreasePercent(), DELTA);
+			assertEquals("Month", expected.getMonth(), actual.getMonth());
+			assertEquals("PurchasesRatio", expected.getPurchasesRatio(), actual.getPurchasesRatio(), DELTA);
+			assertEquals("SalesRatio", expected.getSalesRatio(), actual.getSalesRatio(), DELTA);
+			assertEquals("UnpaidBalance", expected.getUnpaidBalance(), actual.getUnpaidBalance(), DELTA);
+		}
+	}
+	public static void assertEqualsAccountOperatingReport (AccountOperatingReport expected, AccountOperatingReport actual) {
+		assertEqualsNulls("AccountOperatingReport", expected, actual);
+		if (expected != null ) {
+			assertEqualsCollection("AccountOperatingAccounts", expected.getAccounts(), actual.getAccounts());
+			assertEqualsCollection("AccountOperatingIntervals", expected.getIntervals(), actual.getIntervals());
+			for (DateInterval expectedInterval : expected.getIntervals()) {
+				Date start = expectedInterval.getStart();
+				Date end = expectedInterval.getEnd();
+				String name = expectedInterval.getName();
+				
+				
+				DateInterval actualInterval = actual.getIntervals().stream()
+						.filter(inter ->{
+							SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+							if (name != null && !name.equals(inter.getName()))
+								return false;
+							if(start != null) {
+								if(!df.format(start).equals(df.format(inter.getStart())))
+									return false;
+							}
+							if(start != null) {
+								if(!df.format(end).equals(df.format(inter.getEnd())))
+									return false;
+							}
+							return true;
+						})
+						.findFirst().orElse(null);
+				for (AccountOperatingAccount account : expected.getAccounts()) {
+					assertEqualsAccountOperatingStatement(expected.get(account.getCode(), expectedInterval), actual.get(account.getCode(), actualInterval));
 				}
 			}
 		}

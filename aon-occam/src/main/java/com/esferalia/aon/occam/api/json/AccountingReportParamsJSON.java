@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 public enum AccountingReportParamsJSON {
 
 	DOMAIN(
-		(params, json) -> params.setDomain( JsonUtils.getInteger(json,IJsonNames.DOMAIN)),
+		(params, json) -> params.setDomain( JsonUtils.getInt(json,IJsonNames.DOMAIN)),
 		(params, json) -> json.put(IJsonNames.DOMAIN, params.getDomain())
 	),
 	DOMAIN_NAME(
@@ -73,7 +73,7 @@ public enum AccountingReportParamsJSON {
 		(params, json) -> json.put(IJsonNames.DOCUMENT_NUMBER, params.getDocumentNumber())
 	),
 	PREVIOUS_PERIODS(
-		(params, json) -> params.setPreviousPeriods(JsonUtils.getInteger(json,IJsonNames.PREVIOUS_PERIODS)),
+		(params, json) -> params.setPreviousPeriods(JsonUtils.getInt(json,IJsonNames.PREVIOUS_PERIODS)),
 		(params, json) -> json.put(IJsonNames.PREVIOUS_PERIODS, params.getPreviousPeriods())
 	),
 	BALANCE_TYPE(
@@ -89,7 +89,7 @@ public enum AccountingReportParamsJSON {
 		(params, json) -> json.putOpt(IJsonNames.SELECTED_PERIOD, AccountPeriodJSON.toJSON(  params.getSelectedPeriod()))
 	),
 	LEVEL(
-		(params, json) -> params.setLevel(JsonUtils.getInteger(json,IJsonNames.LEVEL)),
+		(params, json) -> params.setLevel(JsonUtils.getInt(json,IJsonNames.LEVEL)),
 		(params, json) -> json.put(IJsonNames.LEVEL, params.getLevel())
 	),
 	PERCENTS_ENABLED(
@@ -145,7 +145,7 @@ public enum AccountingReportParamsJSON {
 		(params, json) -> json.put(IJsonNames.SHOW_COVER, params.isShowCover())
 	),
 	PAGE_OFFSET(
-		(params, json) -> params.setPageOffset(JsonUtils.getInteger(json,IJsonNames.PAGE_OFFSET)),
+		(params, json) -> params.setPageOffset(JsonUtils.getInt(json,IJsonNames.PAGE_OFFSET)),
 		(params, json) -> json.put(IJsonNames.PAGE_OFFSET, params.getPageOffset())
 	),
 	PAGE_OFFSET_TEXT(
@@ -173,11 +173,11 @@ public enum AccountingReportParamsJSON {
 		(params, json) -> json.put(IJsonNames.LEDGER_ACCOUNT, params.getLedgerAccount())
 	),
 	LEDGER_DEBIT_BALANCE(
-		(params, json) -> params.setLedgerDebitBalance(JsonUtils.getDouble(json,IJsonNames.LEDGER_DEBIT_BALANCE)),
+		(params, json) -> params.setLedgerDebitBalance(JsonUtils.getdouble(json,IJsonNames.LEDGER_DEBIT_BALANCE)),
 		(params, json) -> json.put(IJsonNames.LEDGER_DEBIT_BALANCE, params.getLedgerDebitBalance())
 	),
 	LEDGER_UNPAID_BALANCE(
-		(params, json) -> params.setLedgerUnpaidBalance(JsonUtils.getDouble(json,IJsonNames.LEDGER_UNPAID_BALANCE)),
+		(params, json) -> params.setLedgerUnpaidBalance(JsonUtils.getdouble(json,IJsonNames.LEDGER_UNPAID_BALANCE)),
 		(params, json) -> json.put(IJsonNames.LEDGER_UNPAID_BALANCE, params.getLedgerUnpaidBalance())
 	),
 	REGISTRY(
@@ -246,6 +246,10 @@ public enum AccountingReportParamsJSON {
 			return json;
 		}
 	),
+	SELECTED_ACTIVITY(
+		(params, json) -> params.setSelectedActivity( EnterpriseActivityJSON.fromJSON( json.optJSONObject(IJsonNames.SELECTED_ACTIVITY))),
+		(params, json) -> json.putOpt(IJsonNames.SELECTED_ACTIVITY, EnterpriseActivityJSON.toJSON(  params.getSelectedActivity()))
+	)
 	;
 	
 	private IAonAccountingReportParamsFromJSON fromJSON;
@@ -262,7 +266,7 @@ public enum AccountingReportParamsJSON {
 			p.toJSON.to(params, json);
 		}
 		return json;
-	}
+	}	
 	
 	public static AccountingReportParams fromString(String text) {
 		JSONObject json = new JSONObject(text);

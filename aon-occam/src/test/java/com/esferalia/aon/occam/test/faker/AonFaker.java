@@ -2,17 +2,25 @@ package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
+import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatementType;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
@@ -351,5 +359,59 @@ public class AonFaker {
 			.setDetail2(AonRandom.string(50, 10))
 			.setDetail3(AonRandom.string(50, 10));
 	}
+	
+	public static AccountOperatingReport getAccountOperatingReport (AONContext ctx) {
+		AccountOperatingReport report = new AccountOperatingReport();
+		report.setParams(getAccountingReportParams(ctx));
+		
+		TreeSet<AccountOperatingAccount> accounts = new TreeSet<AccountOperatingAccount>();
+		for (int i=0; i<AonRandom.getInt(1, 20); i++) {
+			AccountOperatingAccount account = new AccountOperatingAccount()
+				.setCode(String.valueOf(AonRandom.getInt(0, 999999999)))
+				.setDescription(AonRandom.lorem(25, 9))
+				.setId(AonRandom.getInt(0, 5));
+			AccountOperatingStatementType[] types = AccountOperatingStatementType.values();
+			account.setType(types[AonRandom.getInt(0, types.length-1)]);
+			accounts.add(account);
+		}
+		
+		report.setAccounts(accounts);
+		
+		TreeSet<DateInterval> intervals = new TreeSet<DateInterval>();
+		for (int i=0; i<AonRandom.getInt(1, 12); i++) {
+			DateInterval interval = new DateInterval();
+			interval.setName(AonRandom.name(25, 10));
+			Date sDate = AonRandom.getPastDate(0);
+			sDate = sDate != null ? sDate : new Date(0);
+			interval.setStart(sDate);
+			long startTime = interval.getStart()!=null?interval.getStart().getTime():0;
+			long endTime = startTime + AonRandom.getInt(0, 1000000000);
+			interval.setEnd(new Date(endTime));
+			intervals.add(interval);
+			for (int j=0; j<AonRandom.getInt(1, 10); j++) {
+				AccountOperatingStatement statement = new AccountOperatingStatement()
+				.setAccount(accounts.stream().findAny().orElseGet(null))
+				.setCredit(AonRandom.getDouble(0, 10000))
+				.setDebit(AonRandom.getDouble(0, 10000))
+				.setExpensesRatio(AonRandom.getDouble(0, 100))
+				.setIncreasePercent(AonRandom.getDouble(0, 100))
+				.setMonth(AonRandom.string(80, 10))
+				.setPurchasesRatio(AonRandom.getDouble(0, 100))
+				.setSalesRatio(AonRandom.getDouble(0, 100));
+				report.put(interval, statement);
+			}
+		}
+		report.setIntervals(intervals);
+		return report;
+	}
+	
+	public static Collection<AccountPeriod> getAccountPeriods(AONContext ctx) {
+		Collection<AccountPeriod> periods = new LinkedList<AccountPeriod>();
+		for (int i=0; i<AonRandom.getInt(0, 10); i++) {
+			periods.add(AonRandom.getAccountPeriod(ctx, 80));
+		}
+		return periods;
+	}
+	
 }
 

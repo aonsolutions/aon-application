@@ -42,5 +42,7 @@ public class DateInterval implements Serializable, Comparable<DateInterval> {
 		if (getStart() == null) return 1;
 		return getStart().compareTo(other.getStart());
 	}
+	
+	
 
 }

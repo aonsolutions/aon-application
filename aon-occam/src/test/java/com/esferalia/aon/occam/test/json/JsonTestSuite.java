@@ -12,6 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	JsonAccountingReportParamsTest.class,
 	JsonAccountTrialBalanceTest.class,
 	JsonAccountTrialBalanceReportTest.class,
+	JsonAccountOperatingReportParams.class,
+	JsonAccountPeriodsTest.class
 })
 public class JsonTestSuite {
 

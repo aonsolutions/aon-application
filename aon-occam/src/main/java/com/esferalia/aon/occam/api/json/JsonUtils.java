@@ -36,15 +36,34 @@ public class JsonUtils {
 		}
 		return null;
 	}
+	
+	public static Boolean getboolean(JSONObject json, String key ) {
+		String value = json.optString(key,null);
+		if (AonStringUtils.isNotBlank(value)) {
+			Boolean ret = Boolean.valueOf( json.optBoolean(key));
+			return ret != null ? ret : false; 
+		}
+		return false;
+	}
 
 	public static Double getDouble(JSONObject json, String key ) {
 		return AonNumberUtils.toDouble(  json.optNumber(key, null)); 
+	}
+	
+	public static Double getdouble(JSONObject json, String key ) {
+		Number n = AonNumberUtils.toDouble(json.optNumber(key, null));
+		return n==null?0:n.doubleValue();
 	}
 	
 	public static Integer getInteger(JSONObject json, String key ) {
 		return AonNumberUtils.toInteger(  json.optNumber(key, null)); 
 	}
 	
+	public static Integer getInt(JSONObject json, String key ) {
+		Number n = AonNumberUtils.toInteger(  json.optNumber(key, null)); 
+		return n==null?0:n.intValue();
+	}
+
 	public static Date getDate(JSONObject json, String key ) {
 		try {
 			String date = json.optString(key, null);
