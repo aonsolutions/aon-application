@@ -139,7 +139,7 @@ public class SalaryDraftBuilder
 		
 		if (itemStart.equals(itemEnd)) {
 			String format = "dd/MM " + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
-			String formatted = description.append(" ").append(formatDate(itemStart, format)).toString();
+			String formatted = description.append(" ").append(formatDate(itemStart, format).orElse("")).toString();
 			return formatted;
 		}
 
