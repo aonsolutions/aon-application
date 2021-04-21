@@ -1,15 +1,16 @@
-import {AonElement} from '../../components/AonElement.js';
-import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
+import {AonElement, AonIconButton} from '../../components/components.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../../components/aon-suggestion.js';
 
 import '../signin/aon-sign.js';
 import '../invoice/aon-invoice-panel.js';
+import './aon-mobile-parent.js';
 
-import * as MSG from "../../environments/msg.js";
+import {MSG, TAG, MATERIAL_ICONS} from '../../environments/environments.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -77,18 +78,52 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	buildNotifications(notice) {
-		let searchDiv = document.createElement('div');
-		searchDiv.id = 'aonHeaderCompany';
-		this.appendChild(searchDiv)
-		searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
+		//let searchDiv = document.createElement('div');
+		//searchDiv.id = 'aonHeaderCompany';
+		//this.appendChild(searchDiv)
+		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
+		let company = JSON.parse(localStorage.getItem('company'));
+		let cDiv = this.createElement(TAG.DIV);
+		cDiv.className = 'aonMobileDesktopCompany';
+
+
+		let cSpan = this.createElement(TAG.SPAN);
+		cSpan.innerHTML = company.name;
+		cSpan.className = 'aonMobileDesktopCompanyName';
+
+		cDiv.appendChild(cSpan);
+		let button = new AonIconButton();
+		button.icon = MATERIAL_ICONS.BUSINESS;
+		button.addEventListener('click', () => {
+			rootPanel('<aon-mobile-parent id="aonParent"></aon-mobile-parent>')
+		});
+		cDiv.appendChild(button);
+		this.appendChild(cDiv);
+
+		let companyDiv = this.createElement(TAG.DIV);
+		companyDiv.style.margin = '10px';
+		companyDiv.style.marginLeft = '50px';
+		companyDiv.style.marginRight = '50px';
+		this.appendChild(companyDiv);
+
+		getCompanyHeaderInfo().then((pi) =>{
+			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
+			let img = this.createElement('img');
+			img.style.width = '100%';
+			img.style.position = 'relative';
+			img.src = url;
+			img.onerror = () =>companyDiv.style.display = 'none';
+			companyDiv.appendChild(img);
+			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
+		});
 
 		let searchSuggestion = this.getElement(this.SUGGESTION);
 
 		if(localStorage.getItem('company')) {
 			let company = JSON.parse(localStorage.getItem('company'));
-			searchSuggestion.title = 'Empresa Seleccionada';
-			searchSuggestion.value = company.name;
-			searchSuggestion.readonly = true;
+			// searchSuggestion.title = 'Empresa Seleccionada';
+			// searchSuggestion.value = company.name;
+			// searchSuggestion.readonly = true;
 			let menu = document.querySelector('aon-mobile-menu');
 			menu.reload();
 		} else {
@@ -102,9 +137,9 @@ export class AonMobileDesktop extends AonElement {
 					getUser().then(user => {
 						localStorage.setItem('aon_domain_login', user.login);
 					});
-					searchSuggestion.title = 'Empresa Seleccionada';
-					searchSuggestion.value = company.name;
-					searchSuggestion.readonly = true;
+					// searchSuggestion.title = 'Empresa Seleccionada';
+					// searchSuggestion.value = company.name;
+					// searchSuggestion.readonly = true;
 					let menu = document.querySelector('aon-mobile-menu');
 					menu.reload();
 				}
@@ -125,36 +160,36 @@ export class AonMobileDesktop extends AonElement {
 			}
 		});
 
-		searchSuggestion.addIconButton('search', () => {
-			searchSuggestion.title = 'Búsqueda Empresas';
-			searchSuggestion.readonly = false;
-			searchSuggestion.value = '';
-			this.getElement(searchSuggestion.INPUT).focus();
-		});
-		searchSuggestion.addEventListener('keyup', () => {
-			if(searchSuggestion.value.length > 2) {
-				getCompanies().then( companies => searchSuggestion
-					.buildOptions(companies.filter(f => this.companyFilter(f, {value: searchSuggestion.value})))
-				);
-			} else {
-				searchSuggestion.closeOptions();
-			}
-		});
-
-		searchSuggestion.addEventListener('select', (event) => {
-				searchSuggestion.title = 'Empresa Seleccionada';
-			let company = event.detail;
-			searchSuggestion.setAttribute('readonly', true);
-			localStorage.setItem('company', JSON.stringify(company));
-			localStorage.setItem("aon_domain_id", company.id);
-			localStorage.setItem("aon_domain_name", company.domain);
-			getUser().then(user => {
-				localStorage.setItem('aon_domain_login', user.login);
-			});
-			this.build();
-			let menu = document.querySelector('aon-mobile-menu');
-			menu.reload();
-		});
+		// searchSuggestion.addIconButton('search', () => {
+		// 	searchSuggestion.title = 'Búsqueda Empresas';
+		// 	searchSuggestion.readonly = false;
+		// 	searchSuggestion.value = '';
+		// 	this.getElement(searchSuggestion.INPUT).focus();
+		// });
+		// searchSuggestion.addEventListener('keyup', () => {
+		// 	if(searchSuggestion.value.length > 2) {
+		// 		getCompanies().then( companies => searchSuggestion
+		// 			.buildOptions(companies.filter(f => this.companyFilter(f, {value: searchSuggestion.value})))
+		// 		);
+		// 	} else {
+		// 		searchSuggestion.closeOptions();
+		// 	}
+		// });
+		//
+		// searchSuggestion.addEventListener('select', (event) => {
+		// 		searchSuggestion.title = 'Empresa Seleccionada';
+		// 	let company = event.detail;
+		// 	searchSuggestion.setAttribute('readonly', true);
+		// 	localStorage.setItem('company', JSON.stringify(company));
+		// 	localStorage.setItem("aon_domain_id", company.id);
+		// 	localStorage.setItem("aon_domain_name", company.domain);
+		// 	getUser().then(user => {
+		// 		localStorage.setItem('aon_domain_login', user.login);
+		// 	});
+		// 	this.build();
+		// 	let menu = document.querySelector('aon-mobile-menu');
+		// 	menu.reload();
+		// });
 
 		let div = document.createElement('div');
 		div.style.paddingBottom = '25px';

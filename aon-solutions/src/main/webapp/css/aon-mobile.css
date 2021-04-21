@@ -74,3 +74,18 @@
   border-top: 1px solid #ddd;
   background: #fff;
 }
+
+
+.aonMobileDesktopCompany {
+  display: flex;
+  margin: 15px;
+}
+
+.aonMobileDesktopCompanyName {
+  width: 80%;
+  font-size: 20px;
+  margin: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
