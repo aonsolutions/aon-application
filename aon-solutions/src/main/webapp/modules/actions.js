@@ -1,5 +1,5 @@
 import {CONSTANT, MSG, MATERIAL_ICONS} from '../environments/environments.js';
- 
+
 export const ACCEPT = {
     id: CONSTANT.ACCEPT.initCap(),
     name: MSG.ACCEPT,
@@ -189,5 +189,11 @@ export const SHOW_FILE = {
 export const UPLOAD = {
     id: CONSTANT.UPLOAD.initCap(),
     name: MSG.AON_MSG_UPLOAD,
+    icon: MATERIAL_ICONS.FILE_UPLOAD
+};
+
+export const UPLOAD_FILE = {
+    id: CONSTANT.UPLOAD_FILE.initCap(),
+    name: MSG.AON_MSG_UPLOAD_FILE,
     icon: MATERIAL_ICONS.FILE_UPLOAD
 };
