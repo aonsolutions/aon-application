@@ -1251,6 +1251,80 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcplnssIXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssIX.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.APRIL);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01042021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,30);
+			Date _30042021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_01042021, b.getStartDate());
+				assertEquals(b.getDescription(),_30042021, b.getEndDate());
+			});
+
+			Salary salary = calculate(ssBonuses, Collections.emptyList());	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),1, salaryData.length);
+
+				assertEquals(var.getName(),_01042021, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_30042021, salaryData[0].getEndDate());
+
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			double totalCgcE = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				if ( cost.getType() != DeductionType.COMMON_CONTINGENCY )
+					continue;
+				totalCgcE += cost.getAmount();
+				System.out.println( cost.getDescription() + ": " + cost.getAmount() );
+			}
+					
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCgcE , totalBonus, DELTA);
+
+//			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
 	private static class PEC {
 		private String pec;
 		private Date startDate;

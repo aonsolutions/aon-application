@@ -47,7 +47,7 @@ class BonusListener  implements IdcListener {
 			//put("02", "BONIFICACIÓN HACIENDA EMBARCACIONES ZONA ESPECIAL DE CANARIAS");
 			//put("07", "EXONERACIÓN");
 			//put("10", "DECREMENTO DE CUOTAS");
-			//put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
+			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
 			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
 			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
 			//put("19", "BONIFICACIÓN SPEE CON CARGO A HACIENDA");
@@ -67,6 +67,7 @@ class BonusListener  implements IdcListener {
 	static final Map<String, String> PEC_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
+			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("16",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
