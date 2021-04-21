@@ -489,7 +489,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 			AON.getStream(getDomain(), getUser(), filter)
 				.forEach(media -> json.put(media.getMedia().name().toLowerCase(), media.getValue())); 
 			json.put("name", company.getName());
-			json.put("url", "https://" + company.getDomain().getName() + "/aonDocuments/company.logo");
+			json.put("logo", "https://" + company.getDomain().getName() + "/aonDocuments/company.logo");
 		} else if(getDomain().getParentId() != null) {
 			Company company = AON.getCompany(getDomain().getName(),getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getParentId()));
 			RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(company.getId());

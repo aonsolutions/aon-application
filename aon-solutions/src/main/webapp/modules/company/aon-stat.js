@@ -53,7 +53,6 @@ export class AonStat extends AonElement {
     let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo' //https://mac.aonsolutions.net/aonDocuments/company.logo';
     let img = this.createElement(AON_TAG.IMG);
     img.style.position = 'relative';
-    img.style.width = '200px';
     img.style.maxHeight = '70px';
     img.style.maxWidth = '200px';
     img.src = url;
