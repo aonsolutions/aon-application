@@ -40,28 +40,41 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 /**
  * Class containing method/s to print settles from database data
  */
-public class JooqSettleBuilder {
+public class SettleBuilder {
 
 	/**
 	 * Print the settle PDF file
 	 * 
-	 * @param settle - The Settle itself
-	 * @param out    - Stream to write
-	 * @param lang   - Printing language
-	 * @throws CanNotCreatePdfException The pdf cannot print for some reason.
+	 * @param settle - The Settle itself  
+	 * @param out    - Stream to write    
+	 * @param lang   - Printing language  
+	 * @throws CanNotCreatePdfException The PDF cannot print for some reason.
 	 */
 	public static void printSettle(Settle settle, OutputStream out, Locale lang, InputStream logo)
 			throws CanNotCreatePdfException {
 		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptToPDFObject(settle), logo, lang));
 	}
+	
+	/**
+	 * Print the settle PDF draft
+	 * 
+	 * @param settle - The Settle itself
+	 * @param out    - Stream to write
+	 * @param lang   - Printing language
+	 * @throws CanNotCreatePdfException The PDF cannot print for some reason.
+	 */
+	public static void printDraftSettle(Settle settle, OutputStream out, Locale lang, InputStream logo)
+			throws CanNotCreatePdfException {
+		PdfMaker.printSettlement(out, new SettlePrintConfiguration(adaptDraftToPDFObject(settle), logo, lang));
+	}
 
 	/**
-	 * Adapts Settle object to Settlement
+	 * Adapts draft Settle object to Settlement
 	 * 
 	 * @param settle - The settle itself
 	 * @return [Settlement] Filled Settlement.
 	 */
-	private static Settlement adaptToPDFObject(Settle settle) {
+	private static Settlement adaptDraftToPDFObject(Settle settle) {
 		SettlementBuilder builder = new SettlementBuilder();
 
 		builder.setEmployeeName(settle.getEmployeeName()).setEmployeeCategory(settle.getEmployeeCategory())
@@ -76,7 +89,7 @@ public class JooqSettleBuilder {
 		// PAYMENTS
 		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
 		Collection<Payment>						payments   = settle.getPayments();
-		payments.stream().filter(JooqSettleBuilder::filter).sorted(Comparator.comparing(p ->
+		payments.stream().filter(SettleBuilder::filter).sorted(Comparator.comparing(p ->
 		{
 			return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz";
 		})).forEach(p ->
@@ -87,9 +100,7 @@ public class JooqSettleBuilder {
 				try
 				{
 					description = croppedString(description, 260, PdfFonts.HELVETICA, 9f);
-				} catch (IOException e)
-				{
-				}
+				} catch (IOException ignored){}
 			}
 
 			PDFPayment accrual = new PDFPayment(p.getAmount(), description);
@@ -128,9 +139,7 @@ public class JooqSettleBuilder {
 					percent	= Double.parseDouble(desc);
 				}
 
-			} catch (NumberFormatException e)
-			{
-			}
+			} catch (NumberFormatException ignored){}
 
 			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
 			String desc	= getDeductionTypeDescription(d.getDeductionType().ordinal());
@@ -173,6 +182,110 @@ public class JooqSettleBuilder {
 		builder.setDeductions(deductionsMap);
 		return builder.build();
 	}
+	
+	/**
+	 * Adapts Settle object to Settlement
+	 * 
+	 * @param settle - The settle itself
+	 * @return [Settlement] Filled Settlement.
+	 */
+	private static Settlement adaptToPDFObject(Settle settle) {
+		SettlementBuilder builder = new SettlementBuilder();
+
+		builder.setEmployeeName(settle.getEmployeeName()).setEmployeeCategory(settle.getEmployeeCategory())
+				.setEmployeeAntiquity(settle.getStartDate()).setEmployeeNIF(settle.getEmployeeDocument())
+				.setEnterpriseAddress(settle.getEnterpriseAddress()).setEnterpriseName(settle.getEnterpriseName())
+				.setEnterpriseNIF(settle.getEnterpriseDocument()).setTotal(settle.getTotalLiquid())
+				.setAccrualTotal(settle.getTotalPayment()).setDeductionTotal(settle.getTotalDeduction())
+				.setDate(settle.getEndDate()).setLocation(settle.getLocation())
+				.setEmployeeAntiquity(settle.getStartDate()).setEndCause(settle.getCause())
+				.setEndDate(settle.getIssueDate()).setExistRepresentative(settle.getRepresentativeDocument() != null);
+
+		// PAYMENTS
+		HashMap<Integer, ArrayList<PDFPayment>>	paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
+		Collection<Payment>						payments   = settle.getPayments();
+		payments.stream().filter(SettleBuilder::filter).sorted(Comparator.comparing(p ->
+		{
+			return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz";
+		})).forEach(p ->
+		{
+			String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
+			
+			if (description.length() > 50)
+			{
+				try
+				{
+					description = croppedString(description, 260, PdfFonts.HELVETICA, 9f);
+				} catch (IOException ignored){}
+			}
+
+			PDFPayment accrual = new PDFPayment(p.getAmount(), description);
+			if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
+				paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
+
+			if (
+				paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
+						acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))
+			)
+			{
+				PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+				repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
+			} else
+				paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
+		});
+		builder.setPayments(paymentMap);
+
+		// DEDUCTIONS
+		ArrayList<String> inserted = new ArrayList<String>();
+
+		Collection<com.esferalia.aon.occam.api.model.Salary.Deduction> deductions	 = settle.getDeductions();
+		HashMap<Integer, ArrayList<PDFDeduction>>					   deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
+
+		deductions.stream().forEach(d ->
+		{
+			Double percent = null;
+			String desc = d.getDescription();
+			
+			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
+			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
+
+			if (!deductionsMap.containsKey(type))
+				deductionsMap.put(type, new ArrayList<PDFDeduction>());
+
+			if (
+				deductionsMap.get(type).stream()
+						.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(),
+								deduction.getDescription().get()))
+			)
+			{
+				PDFDeduction ded = deductionsMap
+						.get(type).stream().filter(p -> AonStringUtils
+								.equalsIgnoreCase(deduction.getDescription().get(), p.getDescription().get()))
+						.findFirst().get();
+				ded.setAmount(ded.getAmount().get() + deduction.getAmount().get());
+			} else
+				deductionsMap.get(type).add(deduction);
+			inserted.add(Utilities.getDeductionType(d.getDeductionType().ordinal()));
+		});
+
+		if (deductionsMap.get(1) == null)
+			deductionsMap.put(1, new ArrayList<PDFDeduction>());
+		if (deductionsMap.get(2) == null)
+			deductionsMap.put(2, new ArrayList<PDFDeduction>());
+
+		if (!inserted.contains("CGC"))
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
+		if (!inserted.contains("DESMPL"))
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
+		if (!inserted.contains("FP"))
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
+		if (!inserted.contains("IRPF"))
+			deductionsMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
+
+		builder.setDeductions(deductionsMap);
+		return builder.build();
+	}
+
 
 	/**
 	 * Get settles from database by id

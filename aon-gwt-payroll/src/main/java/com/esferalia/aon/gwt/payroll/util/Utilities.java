@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -236,4 +238,19 @@ public class Utilities {
 			return "Otras deducciones";
 		}
 	}
+	
+	/**
+	 * <p>
+	 * <b>Description:</b> <i>Format a date with specific format. </i>
+	 * </p>
+	 * 
+	 * @return formatted date String (Optional)
+	 */
+	public static Optional<String> formatDate(Date date, String format) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		Optional<String> formattedDate;
+		formattedDate = Optional.of(dateFormatter.format(date));
+		return formattedDate;
+	}
+
 }

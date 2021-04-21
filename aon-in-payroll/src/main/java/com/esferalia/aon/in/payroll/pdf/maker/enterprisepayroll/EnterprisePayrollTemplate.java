@@ -66,6 +66,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			template.setDefaults(HELVETICA, 10f, BLACK, GRAY);
 			template.newPage(HORIZONTAL);
 			PdfTable table = calculateColums(template);
+			template.limitY = 80;
 
 			template.logoB = template.payroll.getLogo().map(l ->
 			{
@@ -88,6 +89,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			new PdfText(720, 20, 100, 20, template.contents, template.text("PAGE") + " " + template.page, GRAY,
 					HELVETICA, template.fontsize, RIGHT).draw();
 			template.print();
+			template.close();
 		} catch (Exception e)
 		{
 			if (template != null)
@@ -100,13 +102,13 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	}
 
 	private static void drawError(EnterprisePayrollTemplate t) {
-		PdfText msg = new PdfText(t.x() + 15, t.y() - 200, 800, 50, t.contents, "No hay datos disponibles", BLACK, HELVETICA, 32f, CENTER);
+		PdfText msg = new PdfText(t.x() + 15, t.y() - 215, 800, 50, t.contents, "No hay datos disponibles", BLACK, HELVETICA, 24f, CENTER);
 		msg.draw();
 
 		byte[] b = getErrLogo();
 
-		PdfImage image = new PdfImage(t.x() + 150, t.y() - 225, 0, 0, ALIGNMENT.CENTER, t.contents, t.doc, b);
-		image.scale(75, 75, CENTER).draw();
+		PdfImage image = new PdfImage(t.x() + 200, t.y() - 215, 0, 0, ALIGNMENT.CENTER, t.contents, t.doc, b);
+		image.scale(55, 55, CENTER).draw();
 
 	}
 
@@ -131,13 +133,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			BufferedImage img	 = imageFromBytes(template.logoB);
 			float[]		  scales = reescale(img.getWidth(), img.getHeight(), 150, 50);
 			drawImage(template.doc, template.contents, template.logoB, 670 + 150 - scales[0], template.y() + 50 - scales[1] / 2, scales[0], scales[1]);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		} catch (NullPointerException e)
-		{
-			System.err.println("Null logo");
-		}
+		} catch (IOException e){}
+		catch (NullPointerException e){}
 		template.down(30);
 
 		header.draw();
@@ -258,6 +255,10 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			categoryTitle.draw();
 			monthTitle.draw();
 			table.jump(15);
+			try
+			{
+				check(t, table);
+			} catch (IOException e){}
 
 			category.getValue().entrySet().stream().forEach(entry ->
 			{
@@ -270,10 +271,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			try
 			{
 				drawSubtotal(t, table);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+				check(t, table);
+			} catch (IOException ignored){}
 			table.jump(10f);
 			t.mg.addToTotal();
 		});
@@ -411,7 +410,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		Double deducciones = e.getDeducciones().orElse(null);
 		Double liquido	   = e.getLiquido().orElse(null);
 		Double ssEmpresa   = e.getSsEmpr().orElse(null);
-		;
+		
 		Double bonificaciones = e.getBonificaciones().orElse(null);
 		Double costeTotal	  = e.getCosteTotal().orElse(null);
 		Double ssTotal		  = e.getSsTotal().orElse(null);
@@ -500,7 +499,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 
 	private static void drawTotals(EnterprisePayrollTemplate t, PdfTable table) throws IOException {
 		table.clearRow();
-		t.limitY += 50;
+	
 		check(t, table);
 
 		table.headerColor = BLACK;

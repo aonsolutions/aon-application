@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -44,6 +45,7 @@ import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -638,6 +640,16 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public void download(String mime, AsyncCallback<String> callback) {
 		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
 				callback);
+	}
+	
+	public void traceType(Payment p) {
+		
+		if(p instanceof CompositePayment) {
+			((CompositePayment) p).getChilds().forEach(this::traceType);
+		}else {
+			Window.alert(p.getDescription() + " / " + p.getType());
+		}
+		
 	}
 	
 	public void downloadLetter(String mime, AsyncCallback<String> callback) {

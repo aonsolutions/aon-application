@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -378,6 +379,17 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 	public Long getEndDateTime() {
 		return endDate.getTime();
 	}
+
+	@Override
+	public String toString() {
+		return "Payment [irpf=" + irpf + ", quote=" + quote + ", irpfExpression=" + irpfExpression
+				+ ", quoteExpression=" + quoteExpression + ", type=" + type + ", id=" + id + ", month=" + month
+				+ ", scope=" + scope + ", startDate=" + startDate + ", endDate=" + endDate + ", amount=" + amount
+				+ ", name=" + name + ", expression=" + expression + ", description=" + description + ", salaryType="
+				+ salaryType + ", dbAmount=" + dbAmount + ", conceptId=" + conceptId + ", descriptionTemplate="
+				+ descriptionTemplate + ", domain=" + domain + ", defined=" + Arrays.toString(defined) + "]";
+	}
 	
 
+	
 }

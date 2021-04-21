@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.util;
 
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION.DEFAULT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -48,8 +50,6 @@ public class DraftPayrollBuilder {
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		
-		
 		
 			//ENTERPRISE RELATED DATA
 			{
@@ -78,11 +78,7 @@ public class DraftPayrollBuilder {
 						} else {
 							dpb.setAddress(salary.getEnterpriseAddress());
 						}
-					}
-					
-					
-					
-					
+					}					
 				}
 			}
 			//EMPLOYEE RELATED DATA
@@ -103,6 +99,7 @@ public class DraftPayrollBuilder {
 				dpb.setLiquidPeriodStart(salary.getStartDate());
 				dpb.setLiquidPeriodEnd(salary.getEndDate());
 				dpb.setTotalDays(salary.getTimeUnits());
+				dpb.setImpressionType(IMPRESION.DRAFT);
 				if (salary.getType().ordinal() == SalaryType.SALARY.ordinal())
 					dpb.setPayrollType(PayrollTypes.Type.SALARY);
 				else if (salary.getType().ordinal() == SalaryType.EXTRA.ordinal())
@@ -127,11 +124,11 @@ public class DraftPayrollBuilder {
 					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 					if (description.length() > 50) {
 						try {
-							description = PDFToolkit.croppedString(description, 260, PdfFonts.HELVETICA, 9f);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}	
+							description = PDFToolkit.croppedString(description, 999, PdfFonts.HELVETICA, 9f);
+							
+						} catch (IOException ignored) {}	
 					}
+					
 					
 					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 					if (!paymentMap.containsKey(p.getType().ordinal()))
@@ -153,7 +150,7 @@ public class DraftPayrollBuilder {
 				
 				Collection<IDeduction> deductions = salary.getDeductionS();
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
-				deductions.stream().sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
+				deductions.stream().filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
 					
 					try {

@@ -239,6 +239,67 @@ public class PdfText extends PdfComponent {
 		return y();
 	}
 
+	public Float drawCroppableLine() {
+		try
+		{
+			if (currentLine > 1)
+				return null;
+
+			float  fh	= (font.getFontDescriptor().getCapHeight()) / 1000 * fontSize;
+			String line	= lines.get(currentLine);			
+			line = line.trim();
+			System.out.println(line);
+			
+			if(lines.size() > 1) line += " ...";
+		
+
+			if (lines.size() > 1 && currentLine == lines.size() - 1)
+			{
+				switch (horizontalAlignment)
+				{
+				case CENTER:
+					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,	marginY());
+					break;
+				case RIGHT:
+					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				case JUSTIFY:
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(),0);
+					break;
+				default:
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				}
+				
+			} else
+			{
+				switch (horizontalAlignment)
+				{
+				case CENTER:
+					drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize,	marginY());
+					break;
+				case RIGHT:
+					drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				case JUSTIFY:
+					drawTextJustified(line, width(), fontSize, font, x(), y(), stream());
+					break;
+				default:
+					drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, fontSize, marginX(), marginY());
+					break;
+				}
+			}
+			down(fh + lineSpacing);
+		} catch (IOException ignored)
+		{
+		}
+
+		currentLine++;
+		return y();
+	}
+
+	
+	
 	/**
 	 * Simulate drawing a line to calculate the corresponding y.
 	 * 

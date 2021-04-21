@@ -54,12 +54,13 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 
 /**
  * Class to print Payroll PDF file with PDFbox
  * 
  * @author akrck02
- * @version 0.40-AK
+ * @version 0.5-AK
  */
 public class PayrollTemplate {
 
@@ -162,7 +163,7 @@ public class PayrollTemplate {
 
 			if (jump)
 			{
-				template.drawAccruals();
+				template.drawPayments();
 				drawBorderedBox(template.contents, 10, 10, 575, 695, LIGHT_GRAY);
 				template.contents.close();
 
@@ -179,7 +180,7 @@ public class PayrollTemplate {
 			} else
 			{
 				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
-				template.drawAccruals();
+				template.drawPayments();
 				template.drawDeductions();
 				template.drawFooter();
 			}
@@ -279,14 +280,14 @@ public class PayrollTemplate {
 	}
 
 	// DRAW ACCRUALS
-	private void drawAccruals() throws IOException {
+	private void drawPayments() throws IOException {
 		x = 25;
 		y = 675;
 
 		String title			 = text("DEVENGOS").toUpperCase();
 		String totals			 = text("TOTALES").toUpperCase();
-		String accrualTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase() + ":";
-		String accrualTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00)) + " " + text("MONEDA");
+		String paymentTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase() + ":";
+		String paymentTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00)) + " " + text("MONEDA");
 
 		drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, fontSize + 3);
 		drawBox(contents, x + 470, y - 7, 80, 20, LIGHT_GRAY);
@@ -304,11 +305,11 @@ public class PayrollTemplate {
 								.mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
 						if (localTotal != 0)
 						{
-							String accrualTxt = m.getKey() + ". " + getType(m.getKey(), lang);
-							String accrualTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
+							String paymentTxt = m.getKey() + ". " + getType(m.getKey(), lang);
+							String paymentTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
 
-							drawText(contents, accrualTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
-							drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrualTotalTxt, BLACK,
+							drawText(contents, paymentTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), paymentTotalTxt, BLACK,
 									HELVETICA, fontSize, 5, 5);
 							drawBox(contents, x, y - 2, 455, .2f, BLACK);
 							y -= 15;
@@ -322,9 +323,9 @@ public class PayrollTemplate {
 										fontSize, RIGHT);
 								text.draw();
 
-								PdfText t2 = new PdfText(x + 64, y, 300, 15, contents, entryTxt, BLACK, HELVETICA,
+								PdfText t2 = new PdfText(x + 64, y, 350, 15, contents, entryTxt, PdfColors.BLACK, HELVETICA,
 										fontSize, LEFT);
-								t2.draw();
+								t2.drawCroppableLine();
 
 								y -= 10.5f;
 							});
@@ -336,8 +337,8 @@ public class PayrollTemplate {
 				});
 		y -= 5;
 
-		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), accrualTotal, BLACK, HELVETICA, fontSize, 7, 5);
-		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), accrualTotalTitle, BLACK, HELVETICA, fontSize, 5,
+		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), paymentTotal, BLACK, HELVETICA, fontSize, 7, 5);
+		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), paymentTotalTitle, BLACK, HELVETICA, fontSize, 5,
 				5);
 	}
 
@@ -395,7 +396,7 @@ public class PayrollTemplate {
 
 									PdfText t2 = new PdfText(x + 64, y, 270, 15, contents, entryTxt, BLACK, HELVETICA,
 											fontSize, LEFT);
-									t2.draw();
+									t2.drawCroppableLine();
 
 									PdfText t3 = new PdfText(x + 64 + 270, y, 60, 15, contents, entryValue, BLACK,
 											HELVETICA, fontSize, RIGHT);
@@ -474,7 +475,9 @@ public class PayrollTemplate {
 			final ContingencyBases conts				   = contigencies.get();
 
 			final String totalCostsTitle  = text("TOTAL COSTES");
-			final String totalCostsAmount = "" + toLatinNumber(p.getPaymentsTotal().orElse(0d) + conts.getTotal().orElse(0d)) +  " " + text("MONEDA");
+			final String totalCostsAmount = ""
+					+ toLatinNumber(p.getPaymentsTotal().orElse(0d) + conts.getTotal().orElse(0d)) + " "
+					+ text("MONEDA");
 
 			final String monthlyAmmount	= toLatinNumber(safeDouble(conts.getMonthlyAmount())) + " " + text("MONEDA");
 			final String commContBase	= toLatinNumber(safeDouble(conts.getCommonContBase())) + " " + text("MONEDA");
@@ -642,10 +645,15 @@ public class PayrollTemplate {
 			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK,
 					HELVETICA_BOLD, 6.5f, 3, 5);
 
-			drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK, HELVETICA_BOLD,
-					6.5f, 5, 5);
-			drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK, HELVETICA_BOLD,
-					6.5f, 3, 5);
+			if (p.getImpressionType() == IMPRESION.DRAFT)
+			{
+				drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK,
+						HELVETICA_BOLD,
+
+						6.5f, 5, 5);
+				drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK,
+						HELVETICA_BOLD, 6.5f, 3, 5);
+			}
 
 		}
 

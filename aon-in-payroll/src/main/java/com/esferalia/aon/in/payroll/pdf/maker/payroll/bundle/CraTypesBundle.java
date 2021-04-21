@@ -4,6 +4,7 @@ import java.util.ListResourceBundle;
 
 public class CraTypesBundle   extends ListResourceBundle{
 	  private Object[][] contents = {
+		{"0","Otras percepciones"},
 	  	{"1","Percepciones salariales"},
 		{"2","Horas extraordinarias"},
 		{"3","Horas extraordinarias de fuerza mayor"},

@@ -32,6 +32,7 @@ public class CompositePayment extends Payment {
 
 	public void addChild(Payment child) {
 		childs.add(child);
+		System.out.println(child.getDescription() + " / " + child.getType());
 	}
 
 	public Collection<Payment> getChilds() {

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.util.Utilities.formatDate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.BonusEvent;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
@@ -45,6 +48,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
+import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -79,6 +83,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -112,6 +117,54 @@ public class SalaryDraftBuilder
 	public void clearDb() {
 		salaryDraft.clearDb();
 	}
+	
+	private static String formatItemDescription(Item<?> item, Date draftStart, Date draftEnd) {
+
+		Date itemStart = item.getStartDate();
+		Date itemEnd = item.getEndDate();
+		
+		StringBuffer description = new StringBuffer(); 
+		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
+		
+		
+		
+		if ( itemStart == null  || itemEnd == null ) {
+			return description.toString();
+		}
+
+		if ( itemStart.equals(draftStart)
+				&&  itemEnd.equals(draftEnd) ) {
+			return description.toString();
+		}
+		
+		if (itemStart.equals(itemEnd)) {
+			String format = "dd/MM " + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
+			String formatted = description.append(" ").append(formatDate(itemStart, format)).toString();
+			return formatted;
+		}
+
+		if (itemStart.getMonth() == itemEnd.getMonth()) {
+			String format = "dd";
+			String formatted = 
+					description.append(" ")
+					.append(formatDate(itemStart, format).orElse(""))
+					.append(" - ")
+					.append(formatDate(itemEnd, format).orElse(""))
+					.append(" de " + formatDate(itemStart, "MMMM").orElse(""))
+					.toString();
+			
+			return formatted;
+		}
+
+		String format = "dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
+		String formatted = 	description.append(" ")
+							.append(formatDate(itemStart, format).orElse(""))
+							.append(" - ")
+							.append(formatDate(itemEnd, format).orElse(""))
+							.toString();
+		
+		return formatted;
+	}
 
 	public void setDbSalary(ISalary dbSalary) throws SalaryException {
 
@@ -132,7 +185,7 @@ public class SalaryDraftBuilder
 		salaryDraft.setDbTotalDeduction(dbSalary.getTotalDeduction());
 
 		// match up draft payments & db payments
-		//
+		
 		List<IPayment> dbPayments;
 		dbPayments = new ArrayList<IPayment>(dbSalary.getPaymentS());
 		for (Payment payment : salaryDraft.getPayments()) {
@@ -506,6 +559,7 @@ public class SalaryDraftBuilder
 		Bonus myBonus = newBonus(contractBonus);
 		myBonus.setAmount(amount);
 		myBonus.setDescription(description);
+		myBonus.setDescription(formatItemDescription(myBonus, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 		myBonus.setDescriptionTemplate(myBonus.getDescription());
 		myBonus.setStartDate(startDate);
 		myBonus.setEndDate(endDate);
@@ -529,7 +583,8 @@ public class SalaryDraftBuilder
 		embargo.setDescription(description);
 		embargo.setType(Deduction.Type.EMBARGO);
 		embargo.setDescription(embargo.getDescription());
-
+		embargo.setDescription(formatItemDescription(embargo, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		
 		salaryDraft.addEmbargo(embargo);
 	}
 
@@ -547,6 +602,7 @@ public class SalaryDraftBuilder
 		draftCost.setEndDate(endDate);
 		draftCost.setStartDate(startDate);
 		draftCost.setDescription(description);
+		draftCost.setDescription(formatItemDescription(draftCost, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 
 		CompositeDeduction compositeCost = getCost(contractCost.getId());
 
@@ -568,9 +624,11 @@ public class SalaryDraftBuilder
 		draftPayment.setAmount(amount);
 		draftPayment.setIrpf(tax);
 		draftPayment.setQuote(quote);
-		draftPayment.setDescription(description);
+		draftPayment.setDescription(description );
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
+		draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()) );
+		
 
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
 		
@@ -606,6 +664,7 @@ public class SalaryDraftBuilder
 		deduction.setStartDate(start);
 		deduction.setEndDate(end);
 		deduction.setDescription(description);
+		deduction.setDescription(formatItemDescription(deduction, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
 
@@ -1134,7 +1193,6 @@ public class SalaryDraftBuilder
 				composite.setExpression(payment.getExpression());
 				composite.setIrpfExpression(payment.getIrpfExpression());
 				composite.setQuoteExpression(payment.getQuoteExpression());
-
 				composite.addChild(payment);
 				payments.set(i, composite);
 				return composite;

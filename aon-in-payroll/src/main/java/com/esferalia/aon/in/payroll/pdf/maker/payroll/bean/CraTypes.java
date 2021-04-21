@@ -9,6 +9,7 @@ public class CraTypes {
 		ResourceBundle words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.CraTypesBundle",language);
 		
 		switch (type) {
+			case 0:  return words.getString("0");
 			case 1:  return words.getString("1");
 			case 2:  return words.getString("2");
 			case 3:  return words.getString("3");

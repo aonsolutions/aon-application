@@ -118,6 +118,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -166,7 +167,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
-import com.esferalia.aon.gwt.payroll.util.JooqSettleBuilder;
+import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
@@ -241,6 +242,8 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -1700,17 +1703,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 
 		try {
-
-			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
 			
-			ISalary salary = getSalary(domain, draft);
+			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			ISalary salary = getSalary(draft);
 			
 			
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
-			} catch (SalaryException | CanNotCreatePdfException e) {
-				e.printStackTrace();
-			}
+			} catch (SalaryException | CanNotCreatePdfException e) {}
 			
 
 			byte reportByteArray[] = reportOut.toByteArray();
@@ -1751,9 +1751,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Settle settle = getSettle(domain, draft);			
 			
 			try {
-				JooqSettleBuilder.printSettle(settle, reportOut, new Locale("Es"),Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
+				SettleBuilder.printDraftSettle(settle, reportOut, new Locale("Es"),Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
 			} catch (CanNotCreatePdfException ignored) {}
-			
 
 			byte reportByteArray[] = reportOut.toByteArray();
 			ByteArrayInputStream reportInput = new ByteArrayInputStream(reportByteArray);
@@ -4160,6 +4159,375 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static ISalary getSalary(SalaryDraft draft) {
+		return new ISalary() {
+			
+			@Override
+			public boolean isFullTime() {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public SalaryType getType() {
+				return SalaryType.values()[draft.getType().ordinal()];
+			}
+			
+			@Override
+			public Double getTotalPayment() {
+				return draft.getTotalPayment();
+			}
+			
+			@Override
+			public Double getTotalLiquid() {
+				return draft.getTotalLiquid();
+			}
+			
+			@Override
+			public Double getTotalIrpf() {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public Double getTotalEnterprise() {
+				return draft.getTotalEnterprise();
+			}
+			
+			@Override
+			public Double getTotalDeduction() {
+				return draft.getTotalDeduction();
+			}
+			
+			@Override
+			public Integer getTimeUnits() {
+				return draft.getTimeUnits();
+			}
+			
+			@Override
+			public Date getStartDate() {
+				return draft.getStartDate();
+			}
+			
+			@Override
+			public String getSocialSecurityNumber() {
+				return "";
+			}
+			
+			@Override
+			public Double getSocialSecurityContributions() {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public Date getSeniorityDate() {
+				return draft.getEmployeeSeniorityDate();
+			}
+			
+			@Override
+			public Double getRemuneration() {
+				return draft.getRemuneration();
+			}
+			
+			@Override
+			public Integer getRegistration() {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public Double getRawCommonBase() {
+				return draft.getRawCgcBase();
+			}
+			
+			@Override
+			public String getQuoteGroup() {
+				return draft.getEmployeeQuoteGroup();
+			}
+			
+			@Override
+			public Double getProfessionalBase() {
+				return draft.getDbGgpBase();
+			}
+			
+			@Override
+			public Payments getPayments() throws SalaryException {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public <T extends IPayment> Collection<T> getPaymentS() throws SalaryException {
+				ArrayList<T> payments = new ArrayList<>();
+				
+				for (Payment payment : draft.getPayments())
+				{
+					addPaymentToList(payments,payment);
+				}
+				return payments;
+			}
+			
+			public void addPaymentToList(ArrayList list,Payment payment) {
+				
+				if(payment instanceof CompositePayment) {
+		
+					CompositePayment compositePayment = (CompositePayment) payment;
+					for (Payment child : compositePayment.getChilds())
+					{
+						addPaymentToList(list, child);
+					}
+				}else {
+					try {
+						IPayment pm = new IPayment() {
+							
+							@Override
+							public PaymentType getType() {
+								return PaymentType.values()[payment.getType().ordinal()];
+							}
+							
+							@Override
+							public String getName() {
+								return payment.getName();
+							}
+							
+							@Override
+							public String getDescription() {
+								return payment.getDescription();
+							}
+							
+							@Override
+							public double getAmount() {
+								return payment.getAmount();
+							}
+							
+							@Override
+							public String getExpression() {
+								return payment.getExpression();
+							}
+						};
+						list.add(pm);
+						
+					}catch(Exception ignored) {}	
+				}
+			}
+			
+			
+			@Override
+			public Double getOvertimeBase() {
+				return draft.gethExtraBase();
+			}
+			
+			@Override
+			public Double getNonEstructuralOvertimeBase() {
+				return draft.getNonHExtraBase();
+			}
+			
+			@Override
+			public Date getIssueDate() {
+				return draft.getIssueDate();
+			}
+			
+			@Override
+			public Double getIrpfBase() {
+				return draft.getIrpfBase();
+			}
+			
+			@Override
+			public Double getInKindIrpfBase() {
+				return draft.getInkindIrpfBase();
+			}
+			
+			@Override
+			public Integer getId() {
+				return draft.getId();
+			}
+			
+			@Override
+			public Double getExtraPayProration() {
+				return draft.getProrationBase();
+			}
+			
+			@Override
+			public String getEnterpriseName() {
+				return draft.getEnterpriseName();
+			}
+			
+			@Override
+			public String getEnterpriseDocument() {
+			return draft.getEnterpriseDocument();
+			}
+			
+			@Override
+			public Costs getEnterpriseCosts() throws SalaryException {
+				throw new NoSuchMethodError();
+			}
+			
+			@Override
+			public String getEnterpriseAddress() {
+				return draft.getEnterpriseAddress();
+			}
+			
+			@Override
+			public Date getEndDate() {
+				return draft.getEndDate();
+			}
+			
+			@Override
+			public String getEmployeeName() {
+				return draft.getEmployeeName();
+			}
+			
+			@Override
+			public String getEmployeeDocument() {
+				return draft.getEmployeeDocument();
+			}
+			
+			@Override
+			public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+				ArrayList<T> embargos = new ArrayList<>();
+				
+				for (Deduction e : draft.getEmbargos())
+				{
+					@SuppressWarnings("unchecked")
+					T embargo = (T) new IDeduction() {
+						
+						@Override
+						public DeductionType getType() {
+							return DeductionType.values()[e.getType().ordinal()];
+						}
+						
+						@Override
+						public String getName() {
+							return e.getName();
+						}
+						
+						@Override
+						public String getDescription() {
+							return e.getDescription();
+						}
+						
+						@Override
+						public double getAmount() {
+							return e.getAmount();
+						}
+						
+						@Override
+						public String getExpression() {
+							return e.getExpression();
+						}
+					};
+					
+				}
+				
+				return embargos;
+			}
+			
+			@Override
+			public Deductions getDeductions() throws SalaryException {
+				return null;
+			}
+			
+			@Override
+			public <T extends IDeduction> Collection<T> getDeductionS() throws SalaryException {
+				List<T> deductions = new ArrayList<>(); 
+				List<Deduction> draftDeductions = draft.getDeductions();
+				
+				for (Deduction draftDeduction : draftDeductions)
+				{
+					@SuppressWarnings("unchecked")
+					T deduction = (T) new IDeduction() {
+						
+						@Override
+						public DeductionType getType() {
+							return DeductionType.values()[draftDeduction.getType().ordinal()];
+						}
+						
+						@Override
+						public String getName() {
+							return draftDeduction.getName();
+						}
+						
+						@Override
+						public String getDescription() {
+							return draftDeduction.getDescription();
+						}
+						
+						@Override
+						public double getAmount() {
+							return draftDeduction.getAmount();
+						}
+						
+						@Override
+						public String getExpression() {
+							return draftDeduction.getExpression();
+						}
+					};
+					
+					deductions.add(deduction);
+				}
+				
+				
+				return deductions;
+			}
+			
+			@Override
+			public <T extends IDeduction> Collection<T> getCostS() throws SalaryException {
+				List<T> costs = new ArrayList<>(); 
+				
+				for (T cost : costs)
+				{
+					@SuppressWarnings("unchecked")
+					T deduction = (T) new IDeduction() {
+						
+						@Override
+						public DeductionType getType() {
+							return DeductionType.values()[cost.getType().ordinal()];
+						}
+						
+						@Override
+						public String getName() {
+							return cost.getName();
+						}
+						
+						@Override
+						public String getDescription() {
+							return cost.getDescription();
+						}
+						
+						@Override
+						public double getAmount() {
+							return cost.getAmount();
+						}
+						
+						@Override
+						public String getExpression() {
+							return cost.getExpression();
+						}
+					};
+				}
+				
+				
+				return costs;
+			}
+			
+			@Override
+			public Double getCommonBase() {
+				return draft.getCgcBase();
+			}
+			
+			@Override
+			public Date getChargeDate() {
+				return draft.getChargeDate();
+			}
+			
+			@Override
+			public String getCcc() {
+				return draft.getEnterpriseCCC();
+			}
+			
+			@Override
+			public String getCategory() {
+				return draft.getEmployeeAgreementCategory();
+			}
+		};
+	}
+	
 	private static ISalary getSalary(String domain, SalaryDraft draft) {
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder() {
@@ -4284,7 +4652,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		.setTotalEnterprise(salary.getTotalEnterprise())
 		.setTotalIrpf(salary.getTotalIrpf())
 		.setTotalLiquid(salary.getTotalLiquid())
-		.setStartDate(salary.getStartDate());
+		.setStartDate(salary.getStartDate())
+		;
+		
+		settle.setCause(	""); 
 		
 		
 		AONContext ctx = AONContext.getAONContext(domain, "");

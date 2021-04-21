@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
-import com.esferalia.aon.gwt.payroll.util.JooqSettleBuilder;
+import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.PdfPrintResponses;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 
@@ -47,7 +47,7 @@ public class SettlePrintServlet extends HttpServlet {
 		try
 		{
 			resp.setContentType(MimeType.MIME_PDF.getName());
-			JooqSettleBuilder.printSettles(domain, enterprise, ids, out, req.getLocale());
+			SettleBuilder.printSettles(domain, enterprise, ids, out, req.getLocale());
 		} catch (CanNotCreatePdfException e)
 		{
 			error(resp, out);

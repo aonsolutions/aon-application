@@ -1,5 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.maker.payroll.bean;
 
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION.DEFAULT;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,33 +10,38 @@ import java.util.Optional;
 
 /**
  * Payroll class for PDF print
+ * 
  * @author akrck02
  *
  */
 public class DefaultPayroll {
+	public static enum IMPRESION {
+		DRAFT, DEFAULT
+	}
 
-	private Optional<String>							 enterprise;
-	private Optional<String>							 address;
-	private Optional<String>							 address2;
-	private Optional<String>							 cif;
-	private Optional<String>							 ccc;
-	private Optional<String>							 employee;
-	private Optional<String>							 nif;
-	private Optional<String>							 nss;
-	private Optional<String>							 professionalGroup;
-	private Optional<String>							 quotationGroup;
-	private Optional<Date>								 antiquity;
-	private Optional<Date>								 liquidPeriodStart;
-	private Optional<Date>								 liquidPeriodEnd;
-	private Optional<Integer>							 totalDays;
-	private Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals;
-	private Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions;
-	private Optional<Double>							 accrualTotal;
-	private Optional<Double>							 deductionTotal;
-	private Optional<Double>							 payrollTotal;
-	private Optional<ContingencyBases>					 contingencies;
-	private Optional<PayrollTypes.Type>					 payrollType;
-	
+	private Optional<String>								enterprise;
+	private Optional<String>								address;
+	private Optional<String>								address2;
+	private Optional<String>								cif;
+	private Optional<String>								ccc;
+	private Optional<String>								employee;
+	private Optional<String>								nif;
+	private Optional<String>								nss;
+	private Optional<String>								professionalGroup;
+	private Optional<String>								quotationGroup;
+	private Optional<Date>									antiquity;
+	private Optional<Date>									liquidPeriodStart;
+	private Optional<Date>									liquidPeriodEnd;
+	private Optional<Integer>								totalDays;
+	private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
+	private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
+	private Optional<Double>								accrualTotal;
+	private Optional<Double>								deductionTotal;
+	private Optional<Double>								payrollTotal;
+	private Optional<ContingencyBases>						contingencies;
+	private Optional<PayrollTypes.Type>						payrollType;
+	private IMPRESION										impressionType;
+
 	private DefaultPayroll() {
 	}
 
@@ -121,30 +128,37 @@ public class DefaultPayroll {
 	public Optional<PayrollTypes.Type> getPayrollType() {
 		return payrollType;
 	}
+	
+	
+
+	public IMPRESION getImpressionType() {
+		return impressionType;
+	}
 
 	// BUILDER
 	public static class DefaultPayrollBuilder {
 
-		private Optional<String>							 enterprise;
-		private Optional<String>							 address;
-		private Optional<String>							 address2;
-		private Optional<String>							 cif;
-		private Optional<String>							 ccc;
-		private Optional<String>							 employee;
-		private Optional<String>							 nif;
-		private Optional<String>							 nss;
-		private Optional<String>							 professionalGroup;
-		private Optional<String>							 quotationGroup;
-		private Optional<Date>								 antiquity;
-		private Optional<Date>								 liquidPeriodStart;
-		private Optional<Date>								 liquidPeriodEnd;
-		private Optional<Integer>							 totalDays;
-		private Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals;
-		private Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions;
-		private Optional<Double>							 accrualTotal;
-		private Optional<Double>							 deductionTotal;
-		private Optional<Double>							 payrollTotal;
-		private Optional<PayrollTypes.Type>					 payrollType;
+		private Optional<String>								enterprise;
+		private Optional<String>								address;
+		private Optional<String>								address2;
+		private Optional<String>								cif;
+		private Optional<String>								ccc;
+		private Optional<String>								employee;
+		private Optional<String>								nif;
+		private Optional<String>								nss;
+		private Optional<String>								professionalGroup;
+		private Optional<String>								quotationGroup;
+		private Optional<Date>									antiquity;
+		private Optional<Date>									liquidPeriodStart;
+		private Optional<Date>									liquidPeriodEnd;
+		private Optional<Integer>								totalDays;
+		private Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals;
+		private Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions;
+		private Optional<Double>								accrualTotal;
+		private Optional<Double>								deductionTotal;
+		private Optional<Double>								payrollTotal;
+		private Optional<PayrollTypes.Type>						payrollType;
+		private IMPRESION										impressionType;
 
 		private Optional<ContingencyBases> contingencies;
 
@@ -170,6 +184,12 @@ public class DefaultPayroll {
 			payrollTotal	  = Optional.empty();
 			payrollType		  = Optional.empty();
 			contingencies	  = Optional.empty();
+			impressionType	  = DEFAULT;
+		}
+		
+		public DefaultPayrollBuilder setImpressionType(IMPRESION impressionType) {
+			this.impressionType = impressionType;
+			return this;
 		}
 
 		public DefaultPayrollBuilder setEnterprise(String enterprise) {
@@ -387,6 +407,7 @@ public class DefaultPayroll {
 
 			DefaultPayroll p = new DefaultPayroll();
 
+			p.impressionType 	= this.impressionType;
 			p.enterprise		= this.enterprise;
 			p.address			= this.address;
 			p.address2			= this.address2;

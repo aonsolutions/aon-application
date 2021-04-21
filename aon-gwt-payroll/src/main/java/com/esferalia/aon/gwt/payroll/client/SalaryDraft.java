@@ -3845,7 +3845,7 @@ public class SalaryDraft extends ResizeComposite
 				for (Deduction child : ((CompositeDeduction) deduction).getChilds()) {
 
 					dumpSystemItem(child,
-							"  " + description + " " + formatChildDescriptionSuffix(child, salaryDraftObject),
+							"  " + description,
 							row, null, null);
 
 					paymentsTable.getRowFormatter().getElement(row++).getStyle().setDisplay(Display.NONE);
@@ -3862,7 +3862,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private int dumpSystemBonus(int row, Bonus bonus ) {
 		
-		String description = formatItemDescription(bonus, salaryDraftObject);
+		String description = bonus.getDescription();
 
 		if (bonus.getAmount() != null) {
 			Double percent = getPercent(bonus, salaryDraftObject);
@@ -3873,13 +3873,13 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void dumpBonus(int row, Bonus bonus) {
-		String description = formatItemDescription(bonus, salaryDraftObject);
+		String description = bonus.getDescription();
 		info("Dump Bonus '"+ description + "' " + DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(bonus.getStartDate()));
 		dumpItem(bonus, row, description, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true, null, null, true);
 	}
 
 	private void dumpBonus(int row, Bonus bonus, String iconStyleName ) {
-		String description = formatItemDescription(bonus, salaryDraftObject);
+		String description = bonus.getDescription();
 		dumpItem(bonus, row, description, iconStyleName, new BonusChangeHandler<TextBox>(bonus), true, null, null, true);
 	}
 
@@ -3941,7 +3941,7 @@ public class SalaryDraft extends ResizeComposite
 				paymentsTable.getRowFormatter().getElement(row).getStyle().setDisplay(Display.NONE);
 			}
 		} else {
-			String description = formatItemDescription(payment, salaryDraftObject);			
+			String description = payment.getDescription();			
 			dumpItem(payment, row, description, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
 		}
 		
@@ -3965,6 +3965,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 		//payment.setType(Payment.Type.CRA_0000);
+		consoleLog(payment.getDescription() + " / " + payment.getType());
 		
 		Button expandButton = new Button();
 		expandButton.setEnabled(false);
@@ -3977,6 +3978,12 @@ public class SalaryDraft extends ResizeComposite
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 	}
+	
+	
+	public native void consoleLog(String msg) /*-{
+		console.log(msg);
+	}-*/;
+	
 
 
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
@@ -5127,10 +5134,7 @@ public class SalaryDraft extends ResizeComposite
 			if (cost instanceof CompositeDeduction) {
 				for (Deduction child : ((CompositeDeduction) cost).getChilds()) {
 					paymentsTable.insertRow(beforeRow );
-					dumpSystemItem(child,
-							"  " + description 
-							+ " " + formatChildDescriptionSuffix(child, salaryDraftObject)
-							,beforeRow, null, null);
+					dumpSystemItem(child,"  " + description ,beforeRow, null, null);
 
 					paymentsTable.getRowFormatter().getElement(beforeRow++).getStyle().setDisplay(Display.NONE);
 				}
@@ -6341,88 +6345,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private static String formatChildDescription(Item<?> child, SalaryDraftObject salaryDraftObject) {
 
-		return child.getDescription() + " " + formatChildDescriptionSuffix(child, salaryDraftObject);
+		return child.getDescription() + " ";
 
 	}
 
-	private static String formatChildDescriptionSuffix(Item<?> child, SalaryDraftObject salaryDraftObject) {
-
-		Date childStart = child.getStartDate();
-		Date childEnd = child.getEndDate();
-
-		Date draftStart = salaryDraftObject.getStartDate();
-		Date draftEnd = salaryDraftObject.getEndDate();
-
-		if (childStart.equals(childEnd))
-			return DateTimeFormat
-					.getFormat("EEEE dd 'de' MMMM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-					.format(childStart);
-
-		if (childStart.getMonth() == childEnd.getMonth())
-			return DateTimeFormat.getFormat("dd").format(childStart) + " - "
-					+ DateTimeFormat
-							.getFormat("dd 'de' MMMM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-							.format(childEnd);
-
-		return DateTimeFormat.getFormat("dd 'de' MMMM").format(childStart) + " - "
-				+ DateTimeFormat.getFormat("dd 'de' MMMM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-						.format(childEnd);
-
-	}
-
-	private static String formatItemDescription(Item<?> item, SalaryDraftObject salaryDraftObject) {
-
-		Date itemStart = item.getStartDate();
-		Date itemEnd = item.getEndDate();
-		
-		Date draftStart = salaryDraftObject.getStartDate();
-		Date draftEnd = salaryDraftObject.getEndDate();
-		
-		StringBuffer description = new StringBuffer(); 
-		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
-		
-		if ( itemStart == null  || itemEnd == null ) {
-			return description.toString();
-		}
-
-		if ( itemStart.equals(draftStart)
-				&&  itemEnd.equals(draftEnd) ) {
-			return description.toString();
-		}
-		
-		
-		
-		if (itemStart.equals(itemEnd))
-			return 
-					description
-					.append(" ")
-					.append(
-					DateTimeFormat
-					.getFormat("dd" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-					.format(itemStart)
-					).toString();
-
-		if (itemStart.getMonth() == itemEnd.getMonth())
-			return 
-					description
-					.append(" ")
-					.append(
-					DateTimeFormat.getFormat("dd").format(itemStart) + " - "
-					+ DateTimeFormat
-							.getFormat("dd" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-							.format(itemEnd)
-					).toString();
-
-		return 
-				description
-				.append(" ")
-				.append(
-				DateTimeFormat.getFormat("dd/MM").format(itemStart) + " - "
-				+ DateTimeFormat.getFormat("dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
-						.format(itemEnd)
-					).toString();
-
-	}
 
 	private static void setWarnStyles(Widget cgcBaseLabel, boolean warn, String title) {
 		cgcBaseLabel.setTitle(warn ? title : "");

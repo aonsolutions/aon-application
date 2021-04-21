@@ -166,6 +166,41 @@ public class ContingencyBases {
 		private Optional<Double> irpfEsp;
 		private Optional<Double> irpfRetribDiner;
 		private Optional<Double> total;
+		
+		public ContingencyBasesBuilder() {
+			monthlyAmount = Optional.empty();
+			extraProrationAmount = Optional.empty();
+			
+			commonContBase = Optional.empty();
+			commonContType = Optional.empty();
+			commonContApEnterprise = Optional.empty();
+			
+			professionalContBase = Optional.empty();
+			
+			atEpType = Optional.empty();
+			atEpApEnterprise = Optional.empty();
+			
+			unemploymentType = Optional.empty();
+			unemploymentApEnterprise = Optional.empty();
+			
+			profesFormType = Optional.empty();
+			profesFormApEnterprise = Optional.empty();
+			
+			fogasaType = Optional.empty();
+			fogasaApEnterprise = Optional.empty();
+			
+			forceMajeureType = Optional.empty();
+			forceMajeureBase = Optional.empty();
+			forceMajeureApEnterprise = Optional.empty();
+			
+			noStructBase = Optional.empty();
+			noStructType = Optional.empty();
+			noStructApEnterprise = Optional.empty();
+			
+			irpfEsp = Optional.empty();
+			irpfRetribDiner = Optional.empty();
+			total = Optional.empty();
+		}
 
 		public ContingencyBasesBuilder setMonthlyAmount(Optional<Double> monthly_amount) {
 			this.monthlyAmount = monthly_amount;
