@@ -2,12 +2,7 @@ import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
 import './aon-icon-button.js';
 
-import * as EVENT from "../../environments/aonEvent.js";
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-import * as CSS from "../../environments/css.js";
+import { CONSTANT, CSS } from '../environments/environments.js';
 
 export class AonNumber extends AonElement {
 

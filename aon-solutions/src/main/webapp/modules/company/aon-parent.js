@@ -6,7 +6,7 @@ import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
 import './aon-desktop.js';
 
-import * as MSG from "../../environments/msg.js";
+import { MSG } from '../../environments/environments.js';
 
 export class AonParent extends AonElement {
 

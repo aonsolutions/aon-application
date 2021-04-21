@@ -4,7 +4,7 @@ import { Transactions } from '../../services/transaction.js';
 import { Paymethods } from '../../services/paymethod.js';
 import { TaxType, TaxIVAPercentage } from './invoiceEnums.js';
 
-import { MSG } from '../../environments/environments.js';
+import { MSG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
 

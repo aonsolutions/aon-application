@@ -5,8 +5,7 @@ import {Invoice} from './Invoice.js';
 
 import {setInvoices, setIndex} from './InvoiceCache.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
+import { CONSTANT, MSG } from '../../environments/environments.js'; 
 
 export class AonMobileInvoiceList extends AonElement {
   static get observedAttributes() {

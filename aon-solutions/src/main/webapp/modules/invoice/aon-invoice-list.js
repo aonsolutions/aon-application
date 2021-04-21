@@ -8,8 +8,8 @@ import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
 import '../../components/aon-table.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
+import { CONSTANT, MSG } from '../../environments/environments.js';
+
 import * as ACTION from '../actions.js';
 
 export class AonInvoiceList extends AonElement {

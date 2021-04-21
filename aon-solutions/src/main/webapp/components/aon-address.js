@@ -1,12 +1,7 @@
 import { AonElement } from './AonElement.js';
 import { Countries } from "../services/country.js";
 
-import * as EVENT from "../../environments/aonEvent.js";
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-import * as CSS from "../../environments/css.js";
+import { CONSTANT, EVENT, TAG, MATERIAL_ICONS } from '../environments/environments.js';
 
 export class AonAddress extends AonElement {
 
@@ -118,7 +113,7 @@ export class AonAddress extends AonElement {
   }
 
   buildAddress() {
-    let div = this.createElement(AON_TAG.DIV);
+    let div = this.createElement(TAG.DIV);
     div.id = this.EDIT;
     div.style.width = "100%";
     div.style.display = "none";
@@ -229,6 +224,6 @@ export class AonAddress extends AonElement {
 
 }
 
-if(!window.customElements.get(AON_TAG.AON_ADDRESS)){
-	window.customElements.define(AON_TAG.AON_ADDRESS, AonAddress);
+if(!window.customElements.get(TAG.AON_ADDRESS)){
+	window.customElements.define(TAG.AON_ADDRESS, AonAddress);
 }

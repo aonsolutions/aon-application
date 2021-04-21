@@ -4,9 +4,7 @@ import {AonApplication} from '../../components/aon-application.js';
 import {AonMarketplace} from './aon-marketplace.js';
 
 // CONSTANTS
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { CONSTANT, MSG } from '../../environments/environments.js'; 
 
 export class AonMarketplacePanel extends AonElement {
 

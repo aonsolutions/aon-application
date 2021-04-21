@@ -2,11 +2,7 @@ import { AonElement } from "./AonElement.js";
 
 import "./aon-icon-button.js";
 
-import * as EVENT from "../../environments/aonEvent.js";
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-import * as CSS from "../../environments/css.js";
+import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS} from '../environments/environments.js'
 
 export class AonInput extends AonElement {
   SPAN;
@@ -212,19 +208,19 @@ export class AonInput extends AonElement {
   }
 
   build() {
-    let div = this.createElement(AON_TAG.DIV);
+    let div = this.createElement(TAG.DIV);
     div.id = this.DIV;
     div.className = CSS.AON_INPUT_GROUP;
     div.style.width = "100%";
     this.appendChild(div);
 
-    let label = this.createElement(AON_TAG.LABEL);
+    let label = this.createElement(TAG.LABEL);
     label.id = this.LABEL;
     label.className = this.isFilled() ? CSS.AON_INPUT_FILLED : CSS.AON_INPUT_UNDERLINED;
     label.style.marginBottom = "0px";
     label.style.width = "100%";
 
-    let input = this.createElement(AON_TAG.INPUT);
+    let input = this.createElement(TAG.INPUT);
     if(this.autocomplete) input.autocomplete =this.autocomplete;
     input.required = true;
     input.id = this.INPUT;
@@ -252,7 +248,7 @@ export class AonInput extends AonElement {
 
     label.appendChild(input);
 
-    let span = this.createElement(AON_TAG.SPAN);
+    let span = this.createElement(TAG.SPAN);
     span.id = this.DESCRIPTION;
     span.className = CSS.AON_INPUT_LABEL;;
     span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
@@ -284,7 +280,7 @@ export class AonInput extends AonElement {
     if (this.isTypeList()) {
       this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN);
 
-      let span = this.createElement(AON_TAG.SPAN);
+      let span = this.createElement(TAG.SPAN);
       span.id = this.SPAN;
       span.style.width = "100%";
       div.appendChild(span);
@@ -295,7 +291,7 @@ export class AonInput extends AonElement {
     let div = this.getElement(this.DIV);
     let iconLabel = this.getElement(this.ICON);
     if (!iconLabel) {
-      iconLabel = this.createElement(AON_TAG.LABEL);
+      iconLabel = this.createElement(TAG.LABEL);
       div.appendChild(iconLabel);
     }
     iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
@@ -325,18 +321,18 @@ export class AonInput extends AonElement {
 
     let options = this.hasAttribute(CONSTANT.OPTIONS)
       ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-    let div = document.createElement(AON_TAG.DIV);
+    let div = document.createElement(TAG.DIV);
     div.id = this.OPTIONS;
     div.className = CSS.AON_INPUT_LIST_OPTIONS;
     span.appendChild(div);
 
     if (options.length === 0) return div;
 
-    let ul = document.createElement(AON_TAG.UL);
+    let ul = document.createElement(TAG.UL);
     ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
     ul.setAttribute("for", this.ICON);
     for (let i = 0; i < options.length; i++) {
-      let li = document.createElement(AON_TAG.LI);
+      let li = document.createElement(TAG.LI);
       li.className = CSS.AON_INPUT_LIST_OPTIONS_ITEM;
       li.innerHTML = options[i].name;
       li.addEventListener(EVENT.CLICK, (e) => {
@@ -414,16 +410,16 @@ export class AonInput extends AonElement {
     let id = this.LOADING;
     let div_load = this.getElement(id);
     if (valor && !div_load) {
-      div_load = this.createElement(AON_TAG.DIV);
+      div_load = this.createElement(TAG.DIV);
       div_load.id = id;
       div_load.classList.add(CSS.AON_ICON_CONTAINER);
-      let load_i = this.createElement(AON_TAG.I);
+      let load_i = this.createElement(TAG.I);
       load_i.classList.add(CSS.AON_LOADER);
       div_load.appendChild(load_i);
       label.appendChild(div_load);
     } else if (!valor && div_load) div_load.remove();
   }
 }
-if(!window.customElements.get(AON_TAG.AON_INPUT)){
-  window.customElements.define(AON_TAG.AON_INPUT, AonInput);
+if(!window.customElements.get(TAG.AON_INPUT)){
+  window.customElements.define(TAG.AON_INPUT, AonInput);
 }

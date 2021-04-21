@@ -5,11 +5,7 @@ import '../../components/aon-table.js';
 
 import { AonCompany } from "../company/aon-company.js";
 
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as CSS from "../../environments/css.js";
-import * as EVENT from "../../environments/aonEvent.js";
-import * as MSG from "../../environments/msg.js";
+import { CONSTANT, MSG, TAG} from '../../environments/environments.js';
 
 export class AonCompanyList extends AonElement {
 
@@ -79,6 +75,6 @@ export class AonCompanyList extends AonElement {
 	}
 }
 
-if(!window.customElements.get(AON_TAG.AON_COMPANY_LIST)) {
-	window.customElements.define(AON_TAG.AON_COMPANY_LIST, AonCompanyList);
+if(!window.customElements.get(TAG.AON_COMPANY_LIST)) {
+	window.customElements.define(TAG.AON_COMPANY_LIST, AonCompanyList);
 }

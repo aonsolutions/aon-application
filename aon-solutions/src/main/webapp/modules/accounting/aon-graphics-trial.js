@@ -1,5 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
-import * as AON_TAG from "../../environments/aonTag.js";
+import { TAG } from "../../environments/environments.js";
+
 import {
   formatDate,
   isEmptyObject,
@@ -152,7 +153,7 @@ export class AonGraphicsTrial extends AonElement {
     const result = await this.getData();
     console.log(result);
     if (result) {
-      let div = this.getElement(id) || this.createElement(AON_TAG.DIV);
+      let div = this.getElement(id) || this.createElement(TAG.DIV);
       div.innerHTML = "";
       div.id = id;
       div.style.textAlign = "center";

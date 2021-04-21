@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
-import * as CONSTANT from "../environments/constants.js";
+import { CONSTANT } from '../environments/environments.js';
+
 
 export class AonSwitch extends AonElement {
 

@@ -42,7 +42,7 @@ export const SHOW_FILE = 'showFile';
 export const TITLE = 'title';
 export const TRASH = 'trash';
 export const UPLOAD = 'upload';
-export const UPLOAD_FILE = 'uploadInvoice';
+export const UPLOAD_FILE = 'uploadFile';
 export const VALUE = 'value';
 
 

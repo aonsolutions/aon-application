@@ -7,9 +7,7 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from "../../environments/environments.js";
 
 export class AonInvoicePrint extends AonElement {
 

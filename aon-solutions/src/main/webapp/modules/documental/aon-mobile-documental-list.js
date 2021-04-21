@@ -1,9 +1,6 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
 import {getDocuments} from '../../services/service.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-
 export class AonMobileDocumentalList extends AonMobileList {
 
   more;

@@ -2,7 +2,7 @@ import { AonElement } from './AonElement.js';
 
 import './aon-icon.js';
 
-import * as MSG from "../environments/msg.js";
+import { MSG } from '../environments/environments.js';
 
 export class AonDialog extends AonElement {
 

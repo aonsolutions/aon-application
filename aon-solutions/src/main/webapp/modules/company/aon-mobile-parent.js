@@ -4,10 +4,8 @@ import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
-import * as MSG from "../../environments/msg.js";
-import * as EVENT from "../../environments/aonEvent.js";
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CSS from "../../environments/css.js";
+
+import { CSS, EVENT, TAG } from '../../environments/environments.js';
 
 export class AonMobileParent extends AonElement {
 
@@ -78,8 +76,8 @@ export class AonMobileParent extends AonElement {
   	}
 
    	build(companies) {
-  		let content = this.createElement(AON_TAG.DIV);
-  		let div = this.createElement(AON_TAG.DIV);
+  		let content = this.createElement(TAG.DIV);
+  		let div = this.createElement(TAG.DIV);
   		div.style.borderBottom = '1px solid #5f6368';
   		div.style.marginTop = '15px';
   		div.style.marginLeft = '20px';
@@ -89,7 +87,7 @@ export class AonMobileParent extends AonElement {
   		div.innerHTML = 'EMPRESAS';
   		content.appendChild(div);
 
-  		let ul = this.createElement(AON_TAG.UL);
+  		let ul = this.createElement(TAG.UL);
   		ul.className = 'list-group';
   		ul.style.marginLeft= '20px';
   		ul.style.marginRight= '20px';
@@ -102,25 +100,25 @@ export class AonMobileParent extends AonElement {
   	}
 
   	buildLi(company, color) {
-  		let li = this.createElement(AON_TAG.LI);
+  		let li = this.createElement(TAG.LI);
   		li.className = CSS.AON_LI;
   		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
   		li.addEventListener(EVENT.CLICK, () => this.companySelection(company));
 
-  		let span = this.createElement(AON_TAG.SPAN);
+  		let span = this.createElement(TAG.SPAN);
   		span.className = 'aonLiSpan';
 
-  		let i = this.createElement(AON_TAG.I);
+  		let i = this.createElement(TAG.I);
   		i.className = 'material-icons aonAvatar';
 
   		if(company.parent) i.innerHTML = 'apartment';
   		else if(company.shared) i.innerHTML = 'share';
   		else if(!company.active) i.innerHTML = 'domain_disabled';
   		else i.innerHTML = 'business';
-  		let span2 = this.createElement(AON_TAG.SPAN);
+  		let span2 = this.createElement(TAG.SPAN);
   		span2.innerHTML = company.name;
 
-  		let span3 = this.createElement(AON_TAG.SPAN);
+  		let span3 = this.createElement(TAG.SPAN);
   		span3.className = 'aonLiSpanSubtitle';
   		span3.innerHTML = company.document;
 

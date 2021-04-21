@@ -4,8 +4,7 @@ import "./aon-icon.js";
 import "./aon-icon-button.js";
 import "./aon-dialog-menu.js";
 
-import * as CONSTANT from "../environments/constants.js";
-import * as MSG from "../environments/msg.js";
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonMobileList extends AonElement {
   UL;

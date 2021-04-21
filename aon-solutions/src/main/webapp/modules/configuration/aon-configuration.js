@@ -2,7 +2,6 @@ import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { AonNotificationManual } from "./aon-notification-manual.js";
-import "../../components/aon-application.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
 import "../../components/aon-address.js";
@@ -13,13 +12,9 @@ import "../company/aon-company-list.js";
 
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
+import { AonApplication } from '../../components/aon-application.js';
 
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CSS from "../../environments/css.js";
-import * as EVENT from "../../environments/aonEvent.js";
-// import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-// import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from '../../environments/environments.js';
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -75,18 +70,19 @@ export class AonConfiguration extends AonElement {
   }
 
   connectedCallback() {
-    this.AON_CONFIGURATION = "aonConfiguration";
-    this.COMPANY = this.AON_CONFIGURATION + "Company";
-    this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
-
-    this.innerHTML = `
-			<aon-application id="${this.AON_CONFIGURATION}" title="${MSG.AON_MSG_SETTING}"></aon-application>
-		`;
+    this.initialize();
+    this.createApplication(this.AON_CONFIGURATION, MSG.AON_MSG_SETTING, new AonApplication());
 
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
       this.build();
     }).catch(() => this.build());
+  }
+
+  initialize() {
+    this.AON_CONFIGURATION = "aonConfiguration";
+    this.COMPANY = this.AON_CONFIGURATION + "Company";
+    this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
   }
 
   build() {

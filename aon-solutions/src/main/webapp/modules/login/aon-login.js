@@ -10,7 +10,8 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
-import * as MSG from "../../environments/msg.js";
+import { MSG } from '../../environments/environments.js'; 
+
 import { webkitRequestMobile } from "../../services/request.js";
 
 export class AonLogin extends AonElement {

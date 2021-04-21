@@ -1,10 +1,6 @@
 import {AonElement} from './AonElement.js';
 
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CONSTANT from "../../environments/constants.js";
-import * as CSS from "../../environments/css.js";
-import * as EVENT from "../../environments/aonEvent.js";
-
+import { CONSTANT, CSS, EVENT, TAG} from '../environments/environments.js';
 
 export class AonSlider extends AonElement {
 
@@ -79,6 +75,6 @@ export class AonSlider extends AonElement {
 	}
 }
 
-if(!window.customElements.get(AON_TAG.AON_SLIDER)){
-	window.customElements.define(AON_TAG.AON_SLIDER,  AonSlider);
+if(!window.customElements.get(TAG.AON_SLIDER)){
+	window.customElements.define(TAG.AON_SLIDER,  AonSlider);
 }

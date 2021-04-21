@@ -1,4 +1,4 @@
-import * as MSG from "../../environments/msg.js";
+import { MSG } from '../environments/environments.js';
 
 export const GWT_FISCAL = 'aon_gwt_fiscal';
 export const GWT_AIO = 'aon_gwt_aio';

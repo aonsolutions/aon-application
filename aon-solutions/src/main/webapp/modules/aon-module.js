@@ -10,8 +10,7 @@ import './company/aon-mobile-parent.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-desktop.js';
 
-import * as EVENT from "../../environments/aonEvent.js";
-import * as AON_TAG from "../../environments/aonTag.js";
+import { EVENT, TAG } from '../../environments/environments.js'; 
 
 export class AonModule extends AonElement {
 
@@ -139,6 +138,6 @@ export class AonModule extends AonElement {
 	}
 
 }
-if(!window.customElements.get(AON_TAG.AON_MODULE)){
-	window.customElements.define(AON_TAG.AON_MODULE, AonModule);
+if(!window.customElements.get(TAG.AON_MODULE)){
+	window.customElements.define(TAG.AON_MODULE, AonModule);
 }

@@ -23,9 +23,8 @@ import '../../components/aon-dialog.js';
 import '../../components/aon-dialog-menu.js';
 import '../../components/aon-viewer.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { CONSTANT, MSG } from '../../environments/environments.js'; 
+
 import * as ACTION from '../actions.js';
 
 export class AonInvoice extends AonElement {

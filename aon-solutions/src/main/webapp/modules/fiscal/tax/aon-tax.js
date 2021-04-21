@@ -8,7 +8,7 @@ import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import * as AON_TAG from "../../../environments/aonTag.js";
+import { TAG } from "../../../environments/environments.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
@@ -184,29 +184,29 @@ export class AonTax extends AonElement {
   }
 
   getDialogHtml(resp){
-    const div = this.createElement(AON_TAG.DIV);
-    const divImg = this.createElement(AON_TAG.DIV);
+    const div = this.createElement(TAG.DIV);
+    const divImg = this.createElement(TAG.DIV);
     divImg.style.fontSize= 18;
-    const imgAeat = this.createElement(AON_TAG.IMG);
+    const imgAeat = this.createElement(TAG.IMG);
     imgAeat.id = "imgAeat";
     imgAeat.src = this.getPathImg(resp.administration);
     divImg.appendChild(imgAeat);
 
-    const spanTextImg =  this.createElement(AON_TAG.SPAN);
+    const spanTextImg =  this.createElement(TAG.SPAN);
     spanTextImg.style.marginLeft = 3;
     spanTextImg.textContent = `Modelo ${resp.newModel} (${resp.modelText})`;
     divImg.appendChild(spanTextImg);
     div.appendChild(divImg);
 
-    const divOne = this.createElement(AON_TAG.DIV);
+    const divOne = this.createElement(TAG.DIV);
     divOne.className = "aonFlexBetween colorGrey aonFontWeight-700";
     divOne.style.margin= "10px 0";
 
-    const divTextOne =  this.createElement(AON_TAG.DIV);
+    const divTextOne =  this.createElement(TAG.DIV);
     divTextOne.textContent = `${resp.periodText} - ${resp.year}`;
     divOne.appendChild(divTextOne);
 
-    const divTextTwo =  this.createElement(AON_TAG.DIV);
+    const divTextTwo =  this.createElement(TAG.DIV);
     divTextTwo.style.textAlign="end";
     divTextTwo.style.color="black";
     divTextTwo.textContent = resp.resultFormat;
@@ -214,17 +214,17 @@ export class AonTax extends AonElement {
     div.appendChild(divOne);
 
     if(resp.typeText){
-      const divK =  this.createElement(AON_TAG.DIV);
+      const divK =  this.createElement(TAG.DIV);
       divK.className = "aonFlexBetween colorGrey aonFontWeight-700";
       divK.style.margin = "20px 0";
-      const divT =  this.createElement(AON_TAG.DIV);
+      const divT =  this.createElement(TAG.DIV);
       divT.innerHTML = `Tipo: <span style="color:black;"> ${resp.typeText}</span>`;
       divK.appendChild(divT);
       div.appendChild(divK);
     }
 
     //---FORM------
-    const form =  this.createElement(AON_TAG.FORM);
+    const form =  this.createElement(TAG.FORM);
     form.id = `${this.id}Form`;
     div.appendChild(form);
 
@@ -243,7 +243,7 @@ export class AonTax extends AonElement {
     aonInputId.visible = false;
     form.appendChild(aonInputId);
 
-    const divNrc =  this.createElement(AON_TAG.DIV);
+    const divNrc =  this.createElement(TAG.DIV);
     divNrc.hidden = true;
     divNrc.className= "aon-margin-0";
     divNrc.id= "divNrc";

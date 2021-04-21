@@ -5,7 +5,6 @@ import {Invoice} from './Invoice.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 // import {AonNewInvoice} from './aon-new-invoice.js';
-import { startModule } from "../../services/gwtLoader.js";
 
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
@@ -16,13 +15,11 @@ import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
-import * as ACTION from '../actions.js';
-import * as GWT from "../../gwt/gwt.js";
+import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
-
+import * as ACTION from '../actions.js';
+import * as GWT from "../../gwt/gwt.js";
 
 export class AonInvoicePanel extends AonElement {
 

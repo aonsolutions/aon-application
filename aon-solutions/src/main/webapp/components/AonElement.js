@@ -1,6 +1,5 @@
 import {webkitRequestMobile} from '../services/service.js';
-
-import * as AON_TAG from "../../environments/aonTag.js";
+import { TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
@@ -55,6 +54,12 @@ export class AonElement extends HTMLElement{
     return document.createElement(tag);
   }
 
+  createAonElement(elem, id, title){
+    elem.id = id || '';
+    elem.title = title || '';
+    return elem;
+  }
+
   clear() {
     this.clearElement(this);
   }
@@ -89,9 +94,13 @@ export class AonElement extends HTMLElement{
   }
 
   getApplication() {
-    return document.querySelector(AON_TAG.AON_APPLICATION);
+    return document.querySelector(TAG.AON_APPLICATION);
   }
-  
+
+  createApplication(id, title, application) {
+    this.appendChild(this.createAonElement(application, id, title));
+  }
+
   getApplicationParent(){
     return this.getApplication().getParent();
   }

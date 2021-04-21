@@ -6,9 +6,7 @@ import { AonMenu } from './aon-menu.js';
 import { AonMobileHeader } from './aon-mobile-header.js';
 import { AonMobileMenu } from './aon-mobile-menu.js';
 
-import * as AON_TAG from "../../environments/aonTag.js";
-import * as CSS from "../../environments/css.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { CSS, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
 export class AonHome extends AonElement {
 
@@ -42,7 +40,7 @@ export class AonHome extends AonElement {
 	}
 
 	build(){
-		let aonShowMenu = this.createElement(AON_TAG.SPAN);
+		let aonShowMenu = this.createElement(TAG.SPAN);
 		aonShowMenu.id = this.AON_SHOW_MENU;
 		aonShowMenu.className = CSS.AON_SHOW_MENU;
 		aonShowMenu.addEventListener('mouseover', () => {
@@ -75,7 +73,7 @@ export class AonHome extends AonElement {
 		aonMenu.className = CSS.AON_MENU;
 		this.appendChild(aonMenu);
 
-		let rootPanel = this.createElement(AON_TAG.DIV);
+		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		this.appendChild(rootPanel);
 	}
@@ -85,7 +83,7 @@ export class AonHome extends AonElement {
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
 
-		let rootPanel = this.createElement(AON_TAG.DIV);
+		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
 		this.appendChild(rootPanel);

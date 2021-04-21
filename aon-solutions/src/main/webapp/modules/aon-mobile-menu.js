@@ -19,7 +19,7 @@ import "./laboral/aon-laboral.js";
 import "./fiscal/aon-fiscal.js";
 import "./messenger/aon-messenger.js";
 
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MATERIAL_ICONS } from '../environments/environments.js';
 
 export class AonMobileMenu extends AonElement {
 

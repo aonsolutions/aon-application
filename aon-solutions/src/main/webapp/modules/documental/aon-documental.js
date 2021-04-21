@@ -22,7 +22,6 @@ import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 
 export class AonDocumental extends AonElement {
-
     _filter;
     _tags;
     _categories;
@@ -115,15 +114,6 @@ export class AonDocumental extends AonElement {
             this.aonDocumentalList();
           }
         }
-        // ,{
-        //   name: MSG.AON_MSG_SYSTEM_MESSAGES,
-        //   icon: 'settings',
-        //   fn: () => {
-        //     this._filter.category = undefined;
-        //     this._filter.tag = undefined;
-        //     this._filter.type = 'system';
-        //     this.aonDocumentalList();
-        //   }
       ];
       aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }
