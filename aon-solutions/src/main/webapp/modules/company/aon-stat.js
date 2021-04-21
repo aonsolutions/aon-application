@@ -54,6 +54,8 @@ export class AonStat extends AonElement {
     let img = this.createElement(AON_TAG.IMG);
     img.style.position = 'relative';
     img.style.width = '200px';
+    img.style.maxHeight = '70px';
+    img.style.maxWidth = '200px';
     img.src = url;
     img.addEventListener('error', () => {
       img.style.display = 'none';

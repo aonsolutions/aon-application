@@ -104,12 +104,14 @@ export class AonMobileDesktop extends AonElement {
 		companyDiv.style.margin = '10px';
 		companyDiv.style.marginLeft = '50px';
 		companyDiv.style.marginRight = '50px';
+		companyDiv.style.textAlign = 'center';
 		this.appendChild(companyDiv);
 
 		getCompanyHeaderInfo().then((pi) =>{
 			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
 			let img = this.createElement('img');
-			img.style.width = '100%';
+			img.style.maxWidth = '200px';
+			img.style.maxHeight = '70px';
 			img.style.position = 'relative';
 			img.src = url;
 			img.onerror = () =>companyDiv.style.display = 'none';
