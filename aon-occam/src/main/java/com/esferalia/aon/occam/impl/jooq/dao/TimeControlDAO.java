@@ -297,9 +297,10 @@ public class TimeControlDAO {
 					.setDate(AonDateUtils.getDateWithoutTime(new Date()))
 					.setStatus(TimeControlStatus.IN)
 					.setDomain(tcd.getDomain()));
-		} else if(TimeControlStatus.IN.equals(tcd.getStatus()) 
-			&& tcd.getDate().compareTo(AonDateUtils.getDateWithoutTime(new Date())) < 0) {
-			Date date = AonDateUtils.addSeconds(AonDateUtils.getDateWithoutTime(new Date()), -1);
+		} else if(TimeControlStatus.IN.equals(tc.getStatus()) 
+			&& tc.getInDate().compareTo(AonDateUtils.getDateWithoutTime(new Date())) < 0) {
+			Date d = AonDateUtils.addDays(tc.getInDate(), 1);
+			Date date = AonDateUtils.addSeconds(AonDateUtils.getDateWithoutTime(d), -1);
 			tc.setTime(tc.getTime() + date.getTime() - tc.getInDate().getTime());
 			tc.setInDate(null);
 			tc.setStatus(TimeControlStatus.OUT);
@@ -340,8 +341,7 @@ public class TimeControlDAO {
 					.setTaskHolder(TaskHolderFiller.build(record, null))
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
-					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));
-					
+					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));	
 		}
 		
 	}
