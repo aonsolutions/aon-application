@@ -478,7 +478,7 @@
 			<g:center>
 				<g:ScrollPanel styleName="{style.editor}">
 					<g:VerticalPanel styleName="{style.document}">
-						<p:Viewer styleName="reset" ui:field='printPreviewViewer' />
+						<p:Viewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
 						<!--  g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'wordWrap='true' / -->
 					</g:VerticalPanel>
 				</g:ScrollPanel>

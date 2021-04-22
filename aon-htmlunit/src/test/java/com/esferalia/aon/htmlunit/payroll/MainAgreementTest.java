@@ -293,11 +293,11 @@ public class MainAgreementTest {
 		getElementById("printPreviewButton").click();
 
 
-		wait4Id("printPreviewHTML");
+		wait4Id("printPreviewViewer");
 
-		HtmlElement printPreviewHTML = getElementById("printPreviewHTML");
+		HtmlElement printPreviewViewer = getElementById("printPreviewViewer");
 
-		wait4(htmlPage, htmlPage -> printPreviewHTML.getElementsByTagName(HtmlTable.TAG_NAME).size() > 0);
+		wait4(htmlPage, htmlPage -> printPreviewViewer.getElementsByTagName(HtmlTable.TAG_NAME).size() > 0);
 
 	}
 
