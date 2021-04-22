@@ -4289,8 +4289,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			
 			@Override
-			public <T extends IPayment> Collection<T> getPaymentS() throws SalaryException {
-				ArrayList<T> payments = new ArrayList<>();
+			public Collection<IPayment> getPaymentS() throws SalaryException {
+				ArrayList<IPayment> payments = new ArrayList<IPayment>();
 				
 				for (Payment payment : draft.getPayments())
 				{
@@ -4299,7 +4299,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return payments;
 			}
 			
-			public void addPaymentToList(ArrayList list,Payment payment) {
+			public void addPaymentToList(List<IPayment> list,Payment payment) {
 				
 				if(payment instanceof CompositePayment) {
 		
@@ -4308,7 +4308,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					{
 						addPaymentToList(list, child);
 					}
-				}else {
+				} else {
 					try {
 						IPayment pm = new IPayment() {
 							
@@ -4329,7 +4329,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							
 							@Override
 							public double getAmount() {
-								return payment.getAmount();
+								return Optional.ofNullable(payment.getAmount()).orElse(0.00);
 							}
 							
 							@Override
