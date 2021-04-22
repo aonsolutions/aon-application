@@ -34,6 +34,9 @@ public interface AgreementService extends RemoteService{
 
 	ContextDescriptor getContext(String domain, AgreementDraft agreementDraft, int levelId) throws IllegalArgumentException;
 
+	String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, String mime)
+			throws IllegalArgumentException;
+
 	String getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, int zoom)
 			throws IllegalArgumentException;
 

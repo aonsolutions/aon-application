@@ -82,6 +82,16 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 	}
 
 	@Override
+	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft,
+			int levelId, Salary.Type type, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		agreementServiceAsync
+				.getAgreementDraftReceipt(domain, agreementDraft, levelId, type,
+						mime, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
 	public void getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft,
 			int levelId, Salary.Type type, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {

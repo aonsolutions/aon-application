@@ -1734,6 +1734,42 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type,
+			String mime) throws IllegalArgumentException {
+
+		try {
+			
+			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			ISalary salary = getSalary(domain, agreementDraft, levelId);
+			
+			
+			try {
+				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
+			} catch (SalaryException | CanNotCreatePdfException e) {}
+			
+
+			byte reportByteArray[] = reportOut.toByteArray();
+
+			ByteArrayInputStream reportInput = new ByteArrayInputStream(
+					reportByteArray);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent(mime, reportInput, stringWriter);
+
+			reportOut.close();
+			reportInput.close();
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 	/**
 	 * Settle draft
 	 * @param domain 

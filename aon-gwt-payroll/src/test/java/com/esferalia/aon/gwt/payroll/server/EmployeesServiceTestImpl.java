@@ -407,6 +407,15 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public String getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type,
+			String mime) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+
+	@Override
 	public String getIrpfDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub

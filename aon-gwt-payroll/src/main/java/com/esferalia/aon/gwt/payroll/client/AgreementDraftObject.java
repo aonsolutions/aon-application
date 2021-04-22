@@ -669,8 +669,8 @@ public class AgreementDraftObject {
 	public void preview(int levelId,
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom,
 			AsyncCallback<String> callback) {
-		agreementsServiceAsync.getAgreementDraftReceiptHTML(draftDomainName, 
-				agreementDraft,levelId, type, zoom, callback);
+		agreementsServiceAsync.getAgreementDraftReceipt(draftDomainName, 
+				agreementDraft,levelId, type, "application/pdf", callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {

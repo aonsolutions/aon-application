@@ -324,6 +324,13 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
+	public void getAgreementDraftReceipt(String domain, AgreementDraft agreementDraft, int levelId, Type type, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		failure(callback);
+	}
+
+
+	@Override
 	public void getSalaryDraftReceiptHTML(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		failure(callback);

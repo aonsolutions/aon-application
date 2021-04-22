@@ -142,6 +142,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
+
 public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
 	private static final Date TODAY = new Date();
@@ -1295,7 +1297,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	DockLayoutPanel printPreviewPanel;
 	@UiField
-	HTML printPreviewHTML;
+	Viewer printPreviewViewer;
 	@UiField
 	ListBox typeListBox;
 	@UiField
@@ -4315,13 +4317,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			@Override
 			public void onSuccess(String html) {
-				printPreviewHTML.setHTML(html);
+				printPreviewViewer.setDocument(html, zoom / 100.00);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Almost auto-generated method stub
-				printPreviewHTML.setText(caught.getMessage());
+				//printPreviewHTML.setText(caught.getMessage());
 
 			}
 		});

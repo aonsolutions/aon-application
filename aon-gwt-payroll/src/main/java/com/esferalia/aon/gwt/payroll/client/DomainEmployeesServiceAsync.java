@@ -149,6 +149,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.deletePropertyHoliday(getCurrentDomainName(), id, date, callback);
 	}
 
+	public void getAgreementDraftReceipt(AgreementDraft agreementDraft, int levelId, Type type,
+			String mime, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getAgreementDraftReceipt(getCurrentDomainName(), agreementDraft, levelId, type, mime, callback);
+	}
+
 	public void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft, int levelId, Type type,
 			int zoom, AsyncCallback<String> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getAgreementDraftReceiptHTML(getCurrentDomainName(), agreementDraft, levelId, type, zoom, callback);

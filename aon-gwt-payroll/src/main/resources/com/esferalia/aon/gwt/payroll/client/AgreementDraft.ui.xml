@@ -2,7 +2,9 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"	
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+>
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
@@ -476,8 +478,8 @@
 			<g:center>
 				<g:ScrollPanel styleName="{style.editor}">
 					<g:VerticalPanel styleName="{style.document}">
-						<g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'
-							wordWrap='true' />
+						<p:Viewer styleName="reset" ui:field='printPreviewViewer' />
+						<!--  g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'wordWrap='true' / -->
 					</g:VerticalPanel>
 				</g:ScrollPanel>
 			</g:center>
