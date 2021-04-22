@@ -1559,10 +1559,11 @@ public abstract class ITDialog extends AonCustomDialog {
 	private void normalizeITToSave() {
 		if( (byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue()) || (byte) 8 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 				Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
-				this.it.setStartDate(DateUtils.addDays2Date(realStartDate, 1));
 				
 				ITPart lowPart = getLowPart(this.it);
-				lowPart.setDate(realStartDate);
+				lowPart.setDate(DateUtils.copyDateOnly(realStartDate));
+				
+				this.it.setStartDate(DateUtils.addDays2Date(realStartDate, 1));
 		}
 	}
 	
