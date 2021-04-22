@@ -283,5 +283,7 @@ public interface EnterprisesService extends RemoteService {
 	boolean hasCertificateSEPE(String currentDomainName, String currentUser);
 
 	String getDeleteCCCMessage(String currentDomainName, ArrayList<Integer> cccIds);
+
+	List<ITEmployee> getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId);
 	
 }

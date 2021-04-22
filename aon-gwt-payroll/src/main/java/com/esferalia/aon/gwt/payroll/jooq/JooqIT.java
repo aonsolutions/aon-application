@@ -65,6 +65,10 @@ public class JooqIT {
 		return getEmployeesITInfoDB(DSL.using(conn, getDefaultSettings()), domainId, allEmployees);
 	}
 	
+	public static List<ITEmployee> getWorkplaceEmployeeITInfo(Connection conn, Integer workplaceId, Boolean allEmployees) {
+		return getWorkplaceEmployeeITInfoDB(DSL.using(conn, getDefaultSettings()), workplaceId, allEmployees);
+	}
+	
 	public static String deleteIT(Connection conn, Integer domainId, Integer itId) {
 		return deleteITDB(DSL.using(conn, getDefaultSettings()), domainId, itId);
 	}
@@ -98,6 +102,176 @@ public class JooqIT {
 			
 			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
 					.where(CONTRACT.DOMAIN.eq(domainId))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(contract_endDate)))
+					.and(CONTRACT.ID.gt(0))
+					.orderBy(CONTRACT.PERSON)
+					.fetch(CONTRACT.ID);
+		}
+		
+		for(Integer contractId : allContractIds) {
+			
+			// --------------------------------------------- Init
+			
+			ITEmployee itEmployee = new ITEmployee();
+			setEmployeeInfo(itEmployee, contractId, dslContext);
+			
+			Result<Record> contractLeaveRecords = dslContext.select().from(CONTRACT_LEAVE)
+					.where(CONTRACT_LEAVE.CONTRACT.eq(contractId))
+					.orderBy(CONTRACT_LEAVE.START_DATE.asc())
+					.fetch();
+			
+			if(contractLeaveRecords.isEmpty())
+				itEmployee.setStatus((byte)0);
+			else {
+				for(Record contractLeaveRecord : contractLeaveRecords) {
+					IT it = new IT();
+					
+					Integer contractLeaveId = contractLeaveRecord.get(CONTRACT_LEAVE.ID);
+					
+					it.setId(contractLeaveId);
+					it.setDomain(contractLeaveRecord.get(CONTRACT_LEAVE.DOMAIN));
+					it.setTypeLowPart(contractLeaveRecord.get(CONTRACT_LEAVE.TYPE));
+					it.setContract(contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT));
+					it.setDescription(contractLeaveRecord.get(CONTRACT_LEAVE.DESCRIPTION));
+					it.setStartDate(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE));
+					it.setEndDate(contractLeaveRecord.get(CONTRACT_LEAVE.END_DATE));
+					it.setDailyCGCBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_CGC_BASE));
+					it.setDailyCGPBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_CGP_BASE));
+					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
+					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
+					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					
+					List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
+							.where(
+									CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetch();
+					
+					if(!contractDataDatePayRecords.isEmpty()) {
+						java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+						it.setDirectPayDate(directDayPay);
+					}
+					
+					// Matenity
+					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
+						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+							.where(
+									CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+								.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+								.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetch();
+						
+						for(Record record : contractDataMaternityRecords) {
+							if(record.get(CONTRACT_DATA.NAME) == "TIPO_SOLICITANTE_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("TIPO_SOLICITANTE_MAT_PAT"))
+								it.setMaternityType(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
+								it.setMaternityReason(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_PATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_MATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_MATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						}
+							
+					}
+					
+					// Is parent?
+					Result<Record> contractLeaveParentRecords = dslContext.select().from(CONTRACT_LEAVE)
+							.where(CONTRACT_LEAVE.PARENT.eq(contractLeaveId))
+							.fetch();
+					
+					if(contractLeaveParentRecords.isEmpty())
+						it.setIsParent(false);
+					else
+						it.setIsParent(true);
+					
+					Result<Record> contractLeaveDetailRecords = dslContext.select().from(CONTRACT_LEAVE_DETAIL)
+							.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveId))
+							.orderBy(CONTRACT_LEAVE_DETAIL.DATE.desc())
+							.fetch();
+					
+					for(Record contractLeaveDetailRecord : contractLeaveDetailRecords) {
+						ITPart itPart = new ITPart();
+						
+						Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
+						Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
+						
+						itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
+						itPart.setType(typePart);
+						itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
+						itPart.setCollegeNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER));
+						itPart.setConfirmOrderNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER));
+						itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
+						itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
+						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+						
+						it.addITPart(itPart);
+						
+						if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
+							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(
+									dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+										.from(LEAVE_BATCH_DETAIL)
+										.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
+										.fetch(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+							)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
+							
+							if(null != leaveBatchRecord) {
+								it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
+								it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
+							} else
+								it.setIsComunicate(false);
+							
+//							it.setIsComunicate(false);
+						}
+						
+					}
+					
+					// Check status
+					if(null == contractLeaveRecord.get(CONTRACT_LEAVE.END_DATE))
+						itEmployee.setStatus((byte)1);
+					else
+						itEmployee.setStatus((byte)0);
+					
+					itEmployee.addIT(it);
+					
+				}
+				
+			}
+			
+			itEmployees.add(itEmployee);
+
+		}
+		
+		return itEmployees;
+	}
+	
+	private static List<ITEmployee> getWorkplaceEmployeeITInfoDB(DSLContext dslContext, Integer workplaceId, Boolean allEmployees) {
+		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>();
+		
+		List<Integer> allContractIds = null;
+		
+		if(allEmployees) {
+			// ------------------------------------------------ Get all contracts from domainId
+			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.WORKPLACE.eq(workplaceId))
+					.and(CONTRACT.ID.gt(0))
+					.orderBy(CONTRACT.PERSON)
+					.fetch(CONTRACT.ID);
+		} else {
+			// ------------------------------------------------ Get active contracts from domainId or ends in the last two months
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			
+			Date contract_endDate = new Date(cal.getTimeInMillis());
+			
+			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(contract_endDate)))
 					.and(CONTRACT.ID.gt(0))
 					.orderBy(CONTRACT.PERSON)

@@ -306,6 +306,10 @@ public class DomainEnterprisesServiceAsync {
 	public void getEmployeesITInfo(Boolean allEmployees, AsyncCallback<List<ITEmployee>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), allEmployees, asyncCallback);
 	}
+	
+	public void getWorkplaceEmployeeITInfo(Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback) {
+		enterprisesServiceAsync.getWorkplaceEmployeeITInfo(getCurrentDomainName(), allEmployees, workplaceId, asyncCallback);
+	}
 
 	public void getEmployeesITInfo(Integer ids [], AsyncCallback<List<ITEmployee>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), ids, asyncCallback);

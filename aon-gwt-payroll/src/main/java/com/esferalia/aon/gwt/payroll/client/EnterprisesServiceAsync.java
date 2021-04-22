@@ -184,6 +184,7 @@ public interface EnterprisesServiceAsync {
 	void getServiAgreements(String currentDomainName, String currentUser, AsyncCallback<Map<String, String>> asyncCallback);
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	void hasCertificateSEPE(String currentDomainName, String currentUser, AsyncCallback<Boolean> asyncCallback);
+	void getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	
 	
 }
