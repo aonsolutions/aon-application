@@ -72,6 +72,15 @@ export class AonApplication extends AonElement {
 
   constructor() {
     super();
+  }
+
+  connectedCallback() {
+    this.initialize();
+    this.build();
+    this.getObserverContent();
+  }
+
+  initialize() {
     this.SIDENAV = this.id + "Sidenav";
     this.TOOLBAR = this.id + "Toolbar";
     this.LOADER = this.id + "Loader";
@@ -80,11 +89,7 @@ export class AonApplication extends AonElement {
     this.DIALOG = this.id + "Dialog";
     this.TOAST = this.id + "Toast";
     this.VIEWS = [];
-  }
 
-  connectedCallback() {
-    this.build();
-    this.getObserverContent();
   }
 
   getObserverContent() {
@@ -542,6 +547,10 @@ export class AonApplication extends AonElement {
     let el = this.getElement(this.CONTENT);
     if (el) el = el.firstChild;
     return el;
+  }
+
+  getContent() {
+    return this.getElement(this.CONTENT);
   }
 
   getToast(){

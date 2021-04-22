@@ -244,7 +244,7 @@ export class AonConfiguration extends AonElement {
   }
 
   buildCreateUser(share) {
-    let content = document.getElementById("aonConfigurationContent");
+    let content =  this.getApplication().getContent();
     content.innerHTML =
       '<aon-user id="aonUserCreate" showApps="true" showToolbar="true" ><aon-user>';
     let aonUser = document.getElementById("aonUserCreate");
