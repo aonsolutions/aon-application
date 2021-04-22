@@ -82,12 +82,12 @@ public class MainContrataITObject {
 		});
 	}
 	
-	public void deleteIT(IT it, Consumer<String> success, Consumer<Throwable> failure) {
+	public void deleteIT(IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 		impl.deleteIT(it.getId(), new AsyncCallback<String>() {
 			
 			@Override
 			public void onSuccess(String message) {	
-				success.accept(message);	
+				success.accept(null);	
 			}
 
 			@Override
@@ -142,7 +142,7 @@ public class MainContrataITObject {
 	
 	// --------------------------------------------------- DataBase Comunic@ Methods
 	
-	public void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Boolean> success, Consumer<Throwable> failure) {
+	public void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
 				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
 					
@@ -180,7 +180,7 @@ public class MainContrataITObject {
 
 									@Override
 									public void onSuccess(Void res) {
-										success.accept(result);
+										success.accept(null);
 									}
 									
 								});
