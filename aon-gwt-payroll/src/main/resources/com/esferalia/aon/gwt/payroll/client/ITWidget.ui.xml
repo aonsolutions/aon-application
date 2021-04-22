@@ -1,0 +1,94 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.ITWidget.MyStyle">
+
+		/* UI XML Styles */
+		
+		.widthAll{
+			width: 100%
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.mt-50{
+			margin-top: 50px;
+		}
+		
+		.tableStylePanel{
+			height: 100%;
+		    width: 100%;
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.deckPanel{
+			padding: 10px;
+		}
+		
+		.messagePanel{
+			width: 100%;
+			display: flex;
+			justify-content: center;
+		}
+		
+		.message{
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+		
+		/* MainContrataIT Styles */
+	    
+	    .filterPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: auto 15px;
+		}
+		
+		.flexPanel{
+			display: flex;
+			align-items: center;
+		}
+
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
+	</ui:style>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:center>
+			<g:DockLayoutPanel ui:field="mainContainerDockLPanel">
+				<g:center>
+					<g:HTMLPanel ui:field="mainITContainer" styleName="{style.widthAll} {style.mt-50}">
+						<g:ScrollPanel height="100%" styleName="{style.p5}" ui:field="scrollPanelTimeline">
+							<g:VerticalPanel styleName="{style.tableStylePanel}">
+							
+								<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
+							
+								<g:DeckPanel ui:field='deckPanel' styleName="{style.deckPanel}">
+									<g:HTMLPanel ui:field='timelinePanel'/>
+									<g:HTMLPanel ui:field='messagePanel' styleName="{style.messagePanel}">
+										<g:Label styleName="{style.message}">No existen partes it para para este periodo</g:Label>
+									</g:HTMLPanel>
+								</g:DeckPanel>
+							 	
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+					</g:HTMLPanel>
+				</g:center>
+			</g:DockLayoutPanel>	
+		</g:center>
+	</g:DockLayoutPanel>
+			
+</ui:UiBinder> 
+
