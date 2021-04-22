@@ -54,7 +54,7 @@ export class AonGraphicsTrial extends AonElement {
 
   async build() {
     this.innerHTML = `
-    <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Perdidas y Ganancias"> </aon-toolbar>
+    <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Pérdidas y Ganancias"> </aon-toolbar>
     <aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
     this.PERIODS = await getPeriods(this.params).catch((error) => null);
 

@@ -3,44 +3,46 @@ import { getTotal } from "../laboral/company/pieChar.js";
 import { getRandomColor } from "./accounting-utils.js";
 
 let selectedElement,
-chartData,
-accounts,
-arrIncome,
-income,
-arrPurchases,
-purchases,
-arrOutgoings,
-outgoings,
-raw,
-arrAmortizations,
-amortizations,
-liquid,
-data1,
-data2,
-chart,
-options,
-selAccounts,
-position = null;
+  chartData,
+  accounts,
+  arrIncome,
+  income,
+  arrPurchases,
+  purchases,
+  arrOutgoings,
+  outgoings,
+  raw,
+  arrAmortizations,
+  amortizations,
+  liquid,
+  data1,
+  data2,
+  chart,
+  options,
+  selAccounts,
+  position = null;
 
 function getDateFromString(strDate) {
-
-  if (typeof(strDate) == "string") {
+  if (typeof strDate == "string") {
     let splittedDate = strDate.split("/");
-    
-    if (splittedDate.length != 3)
-      return null;
-    
-    return new Date(`${splittedDate[1]}/${splittedDate[0]}/${splittedDate[2]}`);
-  } else
-    return null;
 
+    if (splittedDate.length != 3) return null;
+
+    return new Date(`${splittedDate[1]}/${splittedDate[0]}/${splittedDate[2]}`);
+  } else return null;
 }
 
 function formatNumber(number) {
   if (number && !Number.isNaN(number)) {
-    let nmbr = Math.round(number*100) / 100;
+    let nmbr = Math.round(number * 100) / 100;
 
-    return nmbr.toLocaleString("es-ES", { minimumFractionDigits: 2 });
+    let formatted = nmbr.toLocaleString("es-ES", { minimumFractionDigits: 2 });
+
+    if (formatted && formatted.length == 7) { 
+      formatted = formatted.charAt(0) + "." + formatted.substring(1);
+    }
+
+    return formatted;
   }
   return null;
 }
@@ -90,92 +92,205 @@ function getTotalByColumn(selectedColumn) {
   }
 }
 
+function getPeriodName (dateFromStr, dateToStr) {
+
+  let spaMonths = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+  if (typeof dateFromStr == "string" && typeof dateToStr == "string") {
+    let splittedFrom = dateFromStr.split("/");
+    let splittedTo = dateToStr.split("/");
+    if (splittedFrom.length == 3 && splittedTo.length == 3) {
+      if (splittedFrom[1] == splittedTo[1]) {
+        let monthNmbr = Number.parseInt(splittedFrom[1]);
+        return (monthNmbr && !Number.isNaN(monthNmbr) && monthNmbr > 0 && monthNmbr < 13) ?
+          `${spaMonths[monthNmbr - 1]} de ${splittedFrom[2]}`:
+          `del ${dateFromStr} al ${dateToStr}`;
+      } else if (/0?1\/0?1\/d*/.test(dateFromStr) && /31\/0?3\/d*/.test(dateToStr)){
+        return `T1 ${splittedFrom[2]}`
+      } else if (/0?1\/0?4\/d*/.test(dateFromStr) && /30\/0?6\/d*/.test(dateToStr)){
+        return `T2 ${splittedFrom[2]}`
+      } else if (/0?1\/0?7\/d*/.test(dateFromStr) && /30\/0?9\/d*/.test(dateToStr)){
+        return `T3 ${splittedFrom[2]}`
+      } else if (/0?1\/10\/d*/.test(dateFromStr) && /31\/12\/d*/.test(dateToStr)){
+        return `T4 ${splittedFrom[2]}`
+      } else {
+        return `del ${dateFromStr} al ${dateToStr}`;
+      }
+    }
+  }
+  return "";
+}
+
+function getMobileLegend() {
+  let mobileLegend = document.createElement("table");
+  mobileLegend.style.margin = "auto";
+
+  const colorSize = 15;
+
+  //INCOME
+
+  let trIncome = document.createElement("tr");
+  let tdIncomeColor = document.createElement("td");
+  tdIncomeColor.style.width = colorSize * 2.5 + "px";
+
+  let divIncomeColor = document.createElement("div");
+  divIncomeColor.style.width = "100%";
+  divIncomeColor.style.height = colorSize + "px";
+  divIncomeColor.style.borderRadius = "1px";
+  divIncomeColor.style.background = "#3366cc";
+
+  tdIncomeColor.appendChild(divIncomeColor);
+  trIncome.appendChild(tdIncomeColor);
+
+  let tdIncomeDesc = document.createElement("td");
+  tdIncomeDesc.innerHTML = "Ingresos";
+  tdIncomeDesc.style.textIndent = "1em";
+
+  trIncome.appendChild(tdIncomeDesc);
+
+  mobileLegend.appendChild(trIncome);
+
+  //OUTGOING
+
+  let trOutgoing = document.createElement("tr");
+  let tdOutgoingColor = document.createElement("td");
+  tdOutgoingColor.style.width = colorSize * 2.5 + "px";
+
+  let divOutgoingColor = document.createElement("div");
+  divOutgoingColor.style.width = "100%";
+  divOutgoingColor.style.height = colorSize + "px";
+  divOutgoingColor.style.borderRadius = "1px";
+  divOutgoingColor.style.background = "#dc3912";
+
+  tdOutgoingColor.appendChild(divOutgoingColor);
+  trOutgoing.appendChild(tdOutgoingColor);
+
+  let tdOutgoingDesc = document.createElement("td");
+  tdOutgoingDesc.innerHTML = "Gastos";
+  tdOutgoingDesc.style.textIndent = "1em";
+
+  trOutgoing.appendChild(tdOutgoingDesc);
+
+  mobileLegend.appendChild(trOutgoing);
+
+  //BENEFIT
+
+  let trBenefit = document.createElement("tr");
+  let tdBenefitColor = document.createElement("td");
+  tdBenefitColor.style.width = colorSize * 2.5 + "px";
+
+  let divBenefitColor = document.createElement("div");
+  divBenefitColor.style.width = "100%";
+  divBenefitColor.style.height = colorSize / 3 + "px";
+  divBenefitColor.style.borderRadius = "1px";
+  divBenefitColor.style.background = "#ff9900";
+
+  tdBenefitColor.appendChild(divBenefitColor);
+  trBenefit.appendChild(tdBenefitColor);
+
+  let tdBenefitDesc = document.createElement("td");
+  tdBenefitDesc.innerHTML = "Beneficios";
+  tdBenefitDesc.style.textIndent = "1em";
+
+  trBenefit.appendChild(tdBenefitDesc);
+
+  mobileLegend.appendChild(trBenefit);
+
+  return mobileLegend;
+}
+
 export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
-  
   return new Promise((resolve) => {
     // let arr7 = ["SALES", "STOCK", "WORK", "OTHER_INCOMES"];
     // let arr6 = ["PURCHASES", "SALARIES", "OPERATING_EXPENSES", "TAXES", "AMORTIZATION"];
     // let arrUndef = ["EXTRA_INCOME_EXPENSES", "FINANCIAL_INCOME_EXPENSES", "PROVISION"];
 
-
     //PARA EL TRIMESTRAL
 
-
-    /*if (filter && filter.show === "quarterly") {
+    if (data.intervals && filter && filter.show === "quarterly") {
       console.log("QUARTER");
       console.log(selectedPeriod);
       console.log(accounts);
       // accounts = data.intervals;
       let dteFrom = getDateFromString(selectedPeriod.initiationDate);
-      accounts = [
-      ];
-      for (let i=1; i<=4; i++) {
+      accounts = [];
+      for (let i = 1; i <= 4; i++) {
         let dteTo = new Date(dteFrom.getTime());
-        dteTo.setMonth(dteTo.getMonth()+3);
+        dteTo.setMonth(dteTo.getMonth() + 3);
         dteTo.setDate(0);
 
-
-
-        let stmnts = [];
-        for (let j=0; j<data.intervals.length; j++) {
-          let interFrom = getDateFromString(data.intervals[j].interval.fromDate);
+        let stmnts = [
+          {
+            debit: 0,
+            credit: 0,
+            account: {
+              code: "RESULT",
+              description: "RESULTADO",
+              type: "RESULT",
+            },
+          },
+        ];
+        for (let j = 0; j < data.intervals.length; j++) {
+          let interFrom = getDateFromString(
+            data.intervals[j].interval.fromDate
+          );
           let interTo = getDateFromString(data.intervals[j].interval.toDate);
 
-          if((interFrom != interTo) && (dteFrom <= interFrom && dteTo >= interTo)) {
-            let repeatedAccount = stmnts.filter( st => JSON.stringify(st.account) == JSON.stringify(data.intervals[j].account));
-            if (repeatedAccount.length > 0) {
-              repeatedAccount[0].debit = repeatedAccount[0].debit + data.intervals[j].debit;
-              repeatedAccount[0].credit = repeatedAccount[0].credit + data.intervals[j].credit;
-            } else {
-              let statement = {
-                account: data.intervals[j].account,
-                credit: data.intervals[j].credit,
-                debit: data.intervals[j].debit
-              };
-              stmnts.push(statement);
-            }
-
-          } else break;
-
+          if (
+            interFrom.getTime() != interTo.getTime() &&
+            dteFrom <= interFrom &&
+            dteTo >= interTo
+          ) {
+            data.intervals[j].statements.forEach((stm) => {
+              let repeatedAccount = stmnts.filter(
+                (st) =>
+                  JSON.stringify(st.account) == JSON.stringify(stm.account)
+              );
+              if (repeatedAccount.length > 0) {
+                repeatedAccount[0].debit = repeatedAccount[0].debit + stm.debit;
+                repeatedAccount[0].credit =
+                  repeatedAccount[0].credit + stm.credit;
+              } else {
+                let statement = {
+                  account: stm.account,
+                  credit: stm.credit,
+                  debit: stm.debit,
+                };
+                stmnts.push(statement);
+              }
+            });
+          }
         }
 
-
-
-
-
-        let quarter =
-          {
-            interval: {
-              fromDate: formatDate(dteFrom),
-              toDate: formatDate(dteTo),
-              name: `T${i}`
-            },
-            statements: stmnts
-          };
-          accounts.push(quarter);
-          dteFrom.setMonth(dteFrom.getMonth()+3);
-          dteFrom.setDate(1);
+        let quarter = {
+          interval: {
+            fromDate: formatDate(dteFrom),
+            toDate: formatDate(dteTo),
+            name: `${i}T`
+          },
+          statements: stmnts,
+        };
+        accounts.push(quarter);
+        dteFrom.setMonth(dteFrom.getMonth() + 3);
+        dteFrom.setDate(1);
       }
       console.log("weas");
       console.log(accounts);
     } else {
       accounts = data.intervals || [];
-    }*/
-    accounts = data.intervals || [];
+    }
+    // accounts = data.intervals || [];
 
     const drawChart = () => {
-
-
       if (accounts.length > 1) {
-        chartData = [["Month", "Ingresos", "Gastos", "Beneficio"]];
-
-      
+        chartData = [["Month", "Vtas./Ing.", "Cpas./Gtos./Amort.", "Resultado"]];
 
         if (accounts != null) {
           let elements = accounts.filter(
             (acc) => acc.interval.fromDate != acc.interval.toDate
           );
-  
+
           if (elements != null) {
             elements.forEach((element) => {
               let result = element.statements.filter(
@@ -192,70 +307,82 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
             });
           }
         }
-  
+
         let table = google.visualization.arrayToDataTable(chartData);
-        position = isMobile ? "none" : "right"; 
+        position = isMobile ? "none" : "right";
         let options = {
-          title: `Gráfico de resultados ${selectedPeriod.name}`,
+          title: `Resultados ${selectedPeriod.name}`,
           vAxis: { title: "Cantidad (€)" },
           hAxis: { title: "Mes" },
           seriesType: "bars",
           series: { 2: { type: "line" } },
           height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
           legend: {
-                    position: position,
-                    alignment:'center'
-                  }
+            position: position,
+            alignment: "center",
+          },
         };
-  
+
         chart = new google.visualization.ComboChart(div);
-  
+
         google.visualization.events.addListener(chart, "select", callbackYear);
-  
-        document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton").style.display = "none";
-  
+
+        document.getElementById(
+          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+        ).style.display = "none";
+
         chart.draw(table, options);
 
+        if (isMobile) {
+          let mobileLegend = getMobileLegend();
+          div.appendChild(mobileLegend);
+
+          div.querySelector(":nth-child(1)").style.marginLeft = "15%";
+          div.style.overflow = "hidden";
+        }
       } else {
         let divMessage = document.createElement("div");
         divMessage.style.display = "flex";
         divMessage.style.justifyContent = "center";
         divMessage.style.alignItems = "center";
         divMessage.style.paddingTop = "1.5em";
+        divMessage.style.maxWidth = "90%";
 
-
-        let message = document.createElement("h4");
+        let message = isMobile ? document.createElement("p") : document.createElement("h4");
+        if (isMobile)
+          message.style.fontWeight = "bold";
         message.style.textAlign = "center";
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
-        message.style.margin = "0";
-        
+        message.style.margin = "10%";
+
         let infoSpan = document.createElement("span");
         infoSpan.classList.add("material-icons-outlined");
-        infoSpan.style.fontSize = "3.5em";
+        infoSpan.style.fontSize = isMobile ? "2em" : "3.5em";
+
+        infoSpan.style.display = isMobile ? "block" : "";
+
         infoSpan.style.marginRight = "10px";
 
-
         infoSpan.innerHTML = "info";
-
 
         divMessage.appendChild(infoSpan);
         divMessage.appendChild(message);
 
         div.appendChild(divMessage);
 
-        document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton")
-        .addEventListener("click", () => {
-          drawChart();
-          document.querySelector("#aonAccountingSidenavOPCIONESList li:nth-child(1)").click();
-
-          
-        });
-
+        document
+          .getElementById(
+            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+          )
+          .addEventListener("click", () => {
+            drawChart();
+            document
+              .querySelector(
+                "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
+              )
+              .click();
+          });
       }
-
-
-
-    
     };
 
     google.charts.load("current", { packages: ["corechart"] });
@@ -286,7 +413,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         let sDteStr = selectedElement.interval.fromDate;
         let eDteStr = selectedElement.interval.toDate;
 
-        let title = getTitle(selectedColumn) + ` del ${sDteStr} al ${eDteStr}`;
+        let title = `${getTitle(selectedColumn)} ${getPeriodName(sDteStr, eDteStr)}`;
 
         if (arr != null) {
           data2 = new google.visualization.DataTable();
@@ -313,26 +440,26 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
           let opt = {
             // title: title,
-            height: window.innerHeight / 100 * 80,
+            height: (window.innerHeight / 100) * 80,
             // width: (window.innerWidth / 2),
             isStacked: true,
             colors: colors,
             legend: { position: "none" },
           };
 
-          document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton")
-          .addEventListener("click", () => {
-            drawPeriodChart(selectedElement);
-          });
-
-
-          
+          document
+            .getElementById(
+              "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+            )
+            .addEventListener("click", () => {
+              drawPeriodChart(selectedElement);
+            });
 
           let pieDiv = document.createElement("div");
           pieDiv.id = "pieDiv";
 
           console.log(isMobile);
-          pieDiv.style.width =  isMobile ? "100%" : "60%";
+          pieDiv.style.width = isMobile ? "100%" : "60%";
 
           var chart2 = new google.visualization.PieChart(pieDiv);
 
@@ -343,7 +470,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           legend.style.marginBottom = "auto";
 
           for (let i = 0; i < arr.length; i++) {
-            let amount = selectedColumn != 1 ? arr[i].debit - arr[i].credit : arr[i].credit - arr[i].debit;
+            let amount =
+              selectedColumn != 1
+                ? arr[i].debit - arr[i].credit
+                : arr[i].credit - arr[i].debit;
 
             let legendTr = document.createElement("tr");
             let colorTd = document.createElement("td");
@@ -366,18 +496,14 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
             let percentTd = document.createElement("td");
             percentTd.id = "percentTd";
-            let percent = amount / getTotalByColumn(selectedColumn) * 100;
+            let percent = (amount / getTotalByColumn(selectedColumn)) * 100;
             percentTd.innerHTML = formatNumber(percent) + "%";
             percentTd.style.textAlign = "right";
             percentTd.style.width = "4em";
             legendTr.appendChild(percentTd);
 
-
-
-
             let descTd = document.createElement("td");
             descTd.style.maxWidth = "10em";
-            
 
             // descTd.style.fontSize = ".8em";
             descTd.style.whiteSpace = "nowrap";
@@ -406,20 +532,19 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
                 colorTd.style.alignItems = "";
                 colorDiv.style.marginTop = "";
                 percentTd.style.verticalAlign = "";
-                percentTd.style.marginTop = ""
+                percentTd.style.marginTop = "";
               }
             });
 
-
             legendTr.appendChild(descTd);
-            
+
             let amountTd = document.createElement("td");
             amountTd.style.textAlign = "right";
             amountTd.style.width = "15em";
-            amountTd.innerText = formatNumber(amount)+ "€";
+            amountTd.innerText = formatNumber(amount) + " €";
             legendTr.appendChild(amountTd);
             legend.appendChild(legendTr);
-            legend.style.width = isMobile ? "95%": "38%";
+            legend.style.width = isMobile ? "95%" : "38%";
           }
 
           let head = document.createElement("h1");
@@ -429,65 +554,87 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           div.innerHTML = "";
           div.appendChild(pieDiv);
           div.appendChild(legend);
-          div.style.marginTop = "3em"
-          div.style.marginBottom = "3em"
+          div.style.marginTop = "3em";
+          div.style.marginBottom = "3em";
           chart2.draw(data2, opt);
+
+          if (isMobile) {
+            document.querySelector(
+              "#pieDiv > div:first-of-type"
+            ).style.overflow = "hidden";
+            document.querySelector(
+              "#pieDiv > div:first-of-type > div:first-of-type"
+            ).style.marginTop = "-35%";
+            document.querySelector(
+              "#pieDiv > div:first-of-type > div:first-of-type"
+            ).style.marginBottom = "-35%";
+
+          }
+
           pieDiv.prepend(head);
         }
       }
     }
 
-
     function drawPeriodChart(selectedElement) {
       div.innerHTML = "";
 
-
-
-      document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton")
-      .addEventListener("click", () => {
-        drawChart();
-        document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton").style.display = "none";
-      });
-
+      document
+        .getElementById(
+          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+        )
+        .addEventListener("click", () => {
+          drawChart();
+          document.getElementById(
+            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+          ).style.display = "none";
+        });
 
       selAccounts = selectedElement.statements;
 
-      arrIncome = selAccounts.filter(
-        (a) =>
-          a.account.code != null &&
-          a.account.code.length > 2 &&
-          ((a.account.code.substring(0, 1) == "7" && a.credit - a.debit > 0) ||
-            (a.account.code.substring(0, 1) == "6" && a.debit - a.credit < 0))
-      ).sort((a, b) => (b.credit-b.debit)-(a.credit-a.debit));
+      arrIncome = selAccounts
+        .filter(
+          (a) =>
+            a.account.code != null &&
+            a.account.code.length > 2 &&
+            ((a.account.code.substring(0, 1) == "7" &&
+              a.credit - a.debit > 0) ||
+              (a.account.code.substring(0, 1) == "6" && a.debit - a.credit < 0))
+        )
+        .sort((a, b) => b.credit - b.debit - (a.credit - a.debit));
 
       income =
         arrIncome.length != 0
           ? arrIncome.map((a) => a.credit - a.debit).reduce((a, b) => a + b)
           : 0;
 
-      arrPurchases = selAccounts.filter(
-        (a) =>
-          a.account.code != null &&
-          a.account.code.length > 2 &&
-          Number.parseInt(a.account.code.substring(0, 2)) >= 60 &&
-          Number.parseInt(a.account.code.substring(0, 2)) <= 61 &&
-          a.debit - a.credit > 0
-      ).sort((a, b) => (b.debit-b.credit)-(a.debit-a.credit));
+      arrPurchases = selAccounts
+        .filter(
+          (a) =>
+            a.account.code != null &&
+            a.account.code.length > 2 &&
+            Number.parseInt(a.account.code.substring(0, 2)) >= 60 &&
+            Number.parseInt(a.account.code.substring(0, 2)) <= 61 &&
+            a.debit - a.credit > 0
+        )
+        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
       purchases =
         arrPurchases.length != 0
           ? arrPurchases.map((a) => a.debit - a.credit).reduce((a, b) => a + b)
           : 0;
 
-      arrOutgoings = selAccounts.filter(
-        (a) =>
-          a.account.code != null &&
-          a.account.code.length > 2 &&
-          ((Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
-            Number.parseInt(a.account.code.substring(0, 2)) <= 67 &&
-            a.debit - a.credit > 0) ||
-            (a.account.code.substring(0, 1) == "7" && a.credit - a.debit < 0))
-      ).sort((a, b) => (b.debit-b.credit)-(a.debit-a.credit));
+      arrOutgoings = selAccounts
+        .filter(
+          (a) =>
+            a.account.code != null &&
+            a.account.code.length > 2 &&
+            ((Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
+              Number.parseInt(a.account.code.substring(0, 2)) <= 67 &&
+              a.debit - a.credit > 0) ||
+              (a.account.code.substring(0, 1) == "7" && a.credit - a.debit < 0))
+        )
+        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
       outgoings =
         arrOutgoings.length != 0
@@ -496,13 +643,15 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
       raw = income - purchases - outgoings;
 
-      arrAmortizations = selAccounts.filter(
-        (a) =>
-          a.account.code != null &&
-          a.account.code.length > 2 &&
-          a.account.code.substring(0, 2) == "68" &&
-          a.debit - a.credit > 0
-      ).sort((a, b) => (b.debit-b.credit)-(a.debit-a.credit));
+      arrAmortizations = selAccounts
+        .filter(
+          (a) =>
+            a.account.code != null &&
+            a.account.code.length > 2 &&
+            a.account.code.substring(0, 2) == "68" &&
+            a.debit - a.credit > 0
+        )
+        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
       amortizations =
         arrAmortizations.length != 0
@@ -519,7 +668,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     function drawBarChart() {
       // Create the data table.
 
-      document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton").style.display = "";
+      document.getElementById(
+        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+      ).style.display = "";
 
       data1 = new google.visualization.DataTable();
       data1.addColumn("string", "Concepto");
@@ -583,7 +734,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       let eDteStr = selectedElement.interval.toDate;
       // Set chart options
       options = {
-        title: `Gráfico de resultados del ${sDteStr} al ${eDteStr}`,
+        title: `Resultados ${getPeriodName(sDteStr, eDteStr)}`,
         vAxis: { title: "Cantidad (€)" },
         height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
         isStacked: true,
@@ -597,6 +748,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         document.getElementById("chart_div")
       );
       chart.draw(data1, options);
+
+      if (isMobile) {
+
+        div.querySelector(":nth-child(1)").style.marginLeft = "15%";
+        div.style.overflow = "hidden";
+      }
 
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);

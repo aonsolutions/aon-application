@@ -40,7 +40,7 @@ export class AonAccounting extends AonElement {
 		this.aonGraphicsTrialView();
 
 		let options = [{
-			name: 'Perdidas y Ganancias',
+			name: 'Pérdidas y Ganancias',
 			icon: 'accessibility',
 			fn: () => this.aonGraphicsTrialView ()
 		}];

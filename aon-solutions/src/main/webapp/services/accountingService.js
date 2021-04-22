@@ -33,10 +33,10 @@ export const getPeriodAccounting = (data) => {
       name: "Mensual",
       value: "monthly",
     },
-    /*{
+    {
       name: "Trimestral",
       value: "quarterly",
-    }*/
+    }
   ];
   return jsonValues;
 };
