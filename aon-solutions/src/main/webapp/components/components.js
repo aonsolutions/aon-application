@@ -1,5 +1,6 @@
 export * from './aon-address.js';
 export * from './aon-application.js';
+export * from './aon-basic-table.js';
 export * from './aon-card.js';
 export * from './aon-checkbox.js';
 export * from './aon-date.js';

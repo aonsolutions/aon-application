@@ -17,6 +17,7 @@ export const AON_ICON_BUTTON = 'aonIconButton';
 export const AON_REGISTER_LOGO = 'aonRegisterLogo';
 export const AON_LOGO = 'aonLogo';
 export const AON_PARENT_LOGO = 'aonParentLogo';
+export const AON_WIDTH_ALL = 'aonWidthAll';
 export const AON_WIDTH_25 = 'aonWidth25';
 export const AON_WIDTH_50 = 'aonWidth50';
 export const AON_WIDTH_75 = 'aonWidth75';
@@ -118,8 +119,10 @@ export const AON_MOBILE_APPLICATION_CONTENT = 'aonMobileApplicationContent';
 export const AON_MOBILE_CONTENT = 'aonMobileContent';
 export const AON_MOBILE_MENU = 'aonMobileMenu';
 export const AON_MOBILE_SIDENAV = 'aonMobileSidenav';
+export const AON_MOBILE_DESKTOP_COMPANY = 'aonMobileDesktopCompany';
+export const AON_MOBILE_DESKTOP_COMPANY_NAME = 'aonMobileDesktopCompanyName';
 
-// aon-loader.css
+ // aon-loader.css
 
 export const AON_LOADING = 'aonLoading';
 

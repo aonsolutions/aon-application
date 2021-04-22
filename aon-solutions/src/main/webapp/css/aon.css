@@ -165,6 +165,10 @@ button:disabled, button[disabled]{
   cursor: pointer;
 }
 
+.aonWidthAll {
+  width: 100%;
+}
+
 .aonWidth25 {
   width: 24%;
   display: inline-block !important;

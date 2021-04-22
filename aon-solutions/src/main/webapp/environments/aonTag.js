@@ -14,6 +14,7 @@ export const UL = 'ul';
 
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
+export const AON_BASIC_TABLE = 'aon-basic-table';
 export const AON_CARD = 'aon-card';
 export const AON_CHECKBOX = 'aon-checkbox';
 export const AON_DATE = 'aon-date';
