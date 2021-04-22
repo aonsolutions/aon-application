@@ -4,14 +4,15 @@ import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEn
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -24,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.animation.client.Animation;
@@ -473,6 +475,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initResultsPanel();
 	}
 	
+	protected void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
+		contrataEmployeeObject.getSSBonus( success, failure);
+	}
+	
 	// ------------------------------------------------- Initialize preview
 
 	private void setDefaultEmployeeView() {
@@ -586,7 +592,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				}, f -> {});
 				break;
 			case 5:
-				contrataEmployeeObject.getContractBonus(s -> {
+				getContractBonus(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					contractBonusUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
@@ -596,17 +602,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		});
 	}
-	
+
 	private void initFootPanel() {
 		footPanel.addMaximizeHandler((e) -> {
-			splitLayoutPanel.setWidgetSize(footPanel, 150);
+			showFootPanel();
 		});
 		
 		footPanel.addMinimizeHandler((e) -> {
-			splitLayoutPanel.setWidgetSize(footPanel, 25);
+			hideFootPanel();
 		});	
 	}
-	
+
 	private void initResultsPanel () {
 		resultsPanel = new ResultsPanel();		
 	}
@@ -1246,7 +1252,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						removeAll();
 						employeeStatus.visit(this);
 						selectResultsPanel();
-						maximizeFootPanel();
+						showFootPanel();
 						ifSistemaREDEnabled(employeeStatus, () -> {
 							ContrataEmployee.this.setTGSSVisible(true);
 							//ContrataEmployee.this.setOnSaved(e -> run());
@@ -1298,13 +1304,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 100);
+	private void hideFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 15);
 	}
 
 	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, 200);
 	}
+	
 	
 	private void setTGSSVisible( boolean visible ) {
 		idc.setVisible(visible);

@@ -381,6 +381,23 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void getSSBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		enterprisesService.getEmployeeSSBonuses(contractId, new AsyncCallback<List<SSBonusData>>() {
+			
+			@Override
+			public void onSuccess(List<SSBonusData> result) {
+				employeeContractData.setContractBonus(result);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
 	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
 		Employee employeeAux = new Employee();
 		employeeAux.setId(getContractData().getContractId());

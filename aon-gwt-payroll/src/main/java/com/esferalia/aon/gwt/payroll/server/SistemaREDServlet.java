@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
+import com.ibm.icu.util.Calendar;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -445,8 +446,12 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
+
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+		for ( int i = 0 ; i  < 2 ; i++) {
+			addBonus(userLogin, domainName, domainId, userId, AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -i), regime, ccc, nafs);
+		}
 		
-		addBonus(userLogin, domainName, domainId, userId, new Date(), regime, ccc, nafs);
 	}
 
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
@@ -497,7 +502,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			}
 			
 		} catch ( Throwable e ) {
-			e.printStackTrace();
 		}
 	}
 }
