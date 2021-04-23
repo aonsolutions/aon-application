@@ -18,7 +18,8 @@ public class Notification {
 	private Integer sourceId;
 	private byte[] sender;
 	private Priority priority;
-	private NotificationReceiver receiver;
+	private LinkedList<NotificationReceiver> receiver;
+	private NotificationStatus status;
 	
 	public Notification() {}
 	
@@ -38,6 +39,9 @@ public class Notification {
 	}
 	public Date getDate() {
 		return date;
+	}
+	public NotificationStatus getStatus() {
+		return status;
 	}
 	public Notification setDate(Date date) {
 		this.date = date;
@@ -88,15 +92,22 @@ public class Notification {
 		return this;
 	}
 	
-	public NotificationReceiver getReceiver() {
+	public LinkedList<NotificationReceiver> getReceiver() {
+		if(receiver == null) {
+			receiver = new LinkedList<>();
+		}
 		return receiver;
 	}
 
-	public Notification setReceiver(NotificationReceiver receiver) {
+	public Notification setReceiver(LinkedList<NotificationReceiver>  receiver) {
 		this.receiver = receiver;
 		return this;
 	}
 	
+	public Notification setStatus(NotificationStatus status) {
+		this.status = status;
+		return this;
+	}
 	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
@@ -104,12 +115,14 @@ public class Notification {
 		json.put("date", getDate().getTime());
 		json.put("title", getTitle());
 		json.put("body", getBody());
-		json.put("source", getSource().name().toLowerCase());
+		json.put("source", getSource()!=null ? getSource().name().toUpperCase() : null);
 		json.put("source_id", getSourceId());
 		json.put("sender", getSender());
-		json.put("priority", getPriority().value());
-		json.put("status", getReceiver().getStatus());
-		json.put("auth", getReceiver().getAuth());
+		json.put("priority", Priority.value(getPriority()));
+		json.put("status", NotificationStatus.value(getStatus()));
+		JSONArray receiver = new JSONArray();
+		getReceiver().stream().forEach(r -> receiver.put(r.toJSON()));
+		json.put("receiver", receiver);
 		return json;
 	}
 

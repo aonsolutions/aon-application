@@ -17,7 +17,7 @@ import '../../components/aon-dialog-menu.js';
 
 import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
-import { getReader } from '../../services/utils.js';
+import { getReader, handleError } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
 import * as GWT from "../../gwt/gwt.js";
 
@@ -289,26 +289,32 @@ export class AonInvoicePanel extends AonElement {
 					fn: () => this.aonInvoice('ticket')
 				}, {
 					name: 'Importación Selfconta',
-					icon: '',
-					fn: () => selfconta().then(r => {
-						let aonApplication = document.querySelector('aon-application');
-						let toast = this.getElement(aonApplication.TOAST);
-						toast.start({
-							type: 'success',
-							message: 'Datos Importados. Revisa las facturas rechazadas.'
+					icon: 'import_export',
+					fn: () => {
+						let aonApplication = this.getApplication();
+						aonApplication.confirmDialog("Importar", "Desea importar las facturas?", async() => {
+							let toast = aonApplication.getToast();
+							aonApplication.startLoading();
+							try {
+								await selfconta();
+								toast.start({
+									type: 'success',
+									message: 'Datos Importados. Revisa las facturas rechazadas.'
+								});
+							} catch (error) {
+								error = handleError(error);
+								toast.start(error);
+							}
+							aonApplication.stopLoading();
 						});
-					}).catch(e => {
-						let aonApplication = document.querySelector('aon-application');
-						let toast = this.getElement(aonApplication.TOAST);
-						toast.start(JSON.parse(e));
-					})
+					}
 				}];
 		}
 
 		if(this.isMobile()) {
 			options.push({
 				name: 'Camara',
-				icon: 'camera',
+				icon: 'camera_alt',
 				fn: () => this.openCamera()
 			});
 		}

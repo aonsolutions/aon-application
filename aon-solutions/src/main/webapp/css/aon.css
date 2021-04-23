@@ -284,24 +284,23 @@ button:disabled, button[disabled]{
 .aonLi {
   border-bottom: 1px solid #ddd;
   cursor: pointer;
-
-    height: 72px;
-    align-items: center;
-    display: flex;
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: .04em;
-    line-height: 1;
-    min-height: 48px;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    padding: 16px;
-    color: rgba(0,0,0,.87);
-    overflow: hidden;
+  height: 72px;
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  line-height: 1;
+  min-height: 48px;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  padding: 16px;
+  color: rgba(0,0,0,.87);
+  overflow: hidden;
 }
 
 .aonLiSpan {
@@ -320,7 +319,6 @@ button:disabled, button[disabled]{
   align-items: center;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .aonLiSpanSubtitle {

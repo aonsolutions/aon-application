@@ -1,8 +1,9 @@
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import {AonElement} from '../../components/AonElement.js';
+import { EVENT } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
-import { getPending } from '../../services/notificationService.js';
+import { getTotalNotification } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { AonNotification } from './aon-notification.js';
 
@@ -36,7 +37,7 @@ export class AonNotificationIcon extends AonElement {
 
     build(){
         this.append(this.getView());
-        this.getPending();
+        this.getTotalNotification();
     }
 
 
@@ -70,9 +71,9 @@ export class AonNotificationIcon extends AonElement {
 			this.initializeFB();
 		});
 
-        window.addEventListener('receivedNotification', ({detail})=>{
-			this.getPending();
-            this.showNotificationTest(detail);
+        window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ({detail})=>{
+			this.getTotalNotification();
+            // this.showNotificationTest(detail);
 		});
 
         this.addEventListener('click', (ev)=>this.goAonNotification());
@@ -111,9 +112,9 @@ export class AonNotificationIcon extends AonElement {
         return data;
     }
 
-    async getPending(){
+    async getTotalNotification(){
         if(this.isBeta()){
-            this.COUNT = await getPending();
+            this.COUNT = await getTotalNotification();
             this.changeBadge();
         }
     }

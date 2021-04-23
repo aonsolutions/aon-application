@@ -7,7 +7,11 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 public interface INotification {
 	
 	public Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter);
+	public Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter, Integer page, Integer peerPage);
+	public Integer getTotalNotification(AONContext ctx, NotificationFilter filter);
 	public Notification getNotification(AONContext ctx, NotificationFilter filter);
 	public Notification saveNotification(AONContext ctx, Notification nt);
 	public void deleteNotification(AONContext ctx, Notification nt);
+	public void markReadNotification(AONContext ctx, Integer id);
+
 }

@@ -21,6 +21,12 @@ public class NotificationImpl implements INotification {
 	}
 	
 	@Override
+	public Stream<Notification> getNotificationStream(AONContext ctx,  NotificationFilter filter, Integer page, Integer peerPage) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> NotificationDAO.getNotificationStream(ctx, filter, page, peerPage));
+	}
+	
+	@Override
 	public Notification saveNotification(AONContext ctx, Notification nt) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> NotificationDAO.saveNotification(ctx, nt));
@@ -31,5 +37,20 @@ public class NotificationImpl implements INotification {
 		ctx.getDslContext().transaction(
 				configuration ->  NotificationDAO.deleteNotification(ctx, nt)
 		);
+		
 	}
+	
+	@Override
+	public void markReadNotification(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration ->  NotificationDAO.markReadNotification(ctx, id));
+	}
+	
+	@Override
+	public Integer getTotalNotification(AONContext ctx, NotificationFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> NotificationDAO.getTotalNotification(ctx, filter));
+	}
+	
+	
+	
 }

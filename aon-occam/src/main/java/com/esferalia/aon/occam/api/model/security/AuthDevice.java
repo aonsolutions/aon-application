@@ -33,7 +33,6 @@ public class AuthDevice {
 		return this;
 	}
 
-
 	public byte[] getAuth() {
 		return auth;
 	}

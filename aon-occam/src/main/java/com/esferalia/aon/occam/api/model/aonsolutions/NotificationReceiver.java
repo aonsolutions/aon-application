@@ -41,8 +41,8 @@ public class NotificationReceiver {
 		this.status = status;
 		return this;
 	}
-	
-	public NotificationReceiver setStatus(Domain domain) {
+
+	public NotificationReceiver setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -53,7 +53,7 @@ public class NotificationReceiver {
 		json.put("id", getId());
 		json.put("domain", getDomain());
 		json.put("auth", getAuth());
-		json.put("status", getStatus().value());
+		json.put("status", NotificationStatus.value(getStatus()));
 		return json;
 	}
 

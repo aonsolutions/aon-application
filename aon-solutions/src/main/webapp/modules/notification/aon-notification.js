@@ -1,22 +1,22 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { setFullDate, setTime } from "../../services/utils.js";
+import { scrollInfinite, setFullDate, setTime } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
-import { getNotification } from "../../services/service.js";
+import { getNotification, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
+import { AonDocumental } from "../documental/aon-documental.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
   AON_TABS;
+  MORE;
   static get observedAttributes() {
     return ["data"];
   }
 
   get data() {
-    return this.getAttribute("data")
-      ? JSON.parse(this.getAttribute("data"))
-      : null;
+    return this.getAttribute("data") ? JSON.parse(this.getAttribute("data")) : null;
   }
 
   set data(data) {
@@ -47,6 +47,11 @@ export class AonNotification extends AonElement {
       this.paintDesk();
     }
     this.notificationView();
+
+    let elementScroll = this.isMobile() ? this.getElement(this.ROOT_PANEL) : undefined;
+    scrollInfinite(elementScroll , async()=>{
+      await this.loadMore();
+    })
   }
 
   paintDesk() {
@@ -71,12 +76,7 @@ export class AonNotification extends AonElement {
         name: "Solicitudes",
         id: "messenger",
         icon: "assignment",
-      },
-      // {
-      //     name:"Facturas",
-      //     id:"invoice",
-      //     icon: "report",
-      //  }
+      }
     ]);
 
     this.appendChild(aonTabs);
@@ -84,22 +84,42 @@ export class AonNotification extends AonElement {
   }
 
   async notificationView() {
-  
     try {
+      this.MORE = true;
+      let filter = this.getFilter();
+      filter.page = 0;
+      this.setFilter(filter);
       const aonNotification = this.getElement(this.AON_NOTIFICATION);
       aonNotification.style.width = "80%";
-      const datos = await getNotification();
-      if (datos.length > 0) {
+      await this.loadMore();
+      this.changeBadgeComponent();
+    } catch (error) {}
+  }
+
+  async loadMore() {
+	  const aonNotification = this.getElement(this.AON_NOTIFICATION);
+		let filter = this.getFilter();
+		if(aonNotification && this.MORE) {
+			filter.page = filter.page + 1;
+			this.setFilter(filter);
+      const datos = await getNotification(filter);
+      if(datos.length == 0) {
+        this.MORE = false;
+        if(filter.page<=1){
+          this.createCard({
+            id: 0,
+            status:1,
+            title: "Sin notificaciones",
+            body: "No existen notificaciones pendientes."
+          });
+        }
+      } else {
         datos.map((data, idx) => {
-          const aonCard = this.createCard(data);
+          const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
-          aonCard.addEventListener("click", (ev) => {
+          aonCard.addEventListener("click", () => {
             this.goNotification(data);
           });
-          const spanContent = this.createElement("span");
-          spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
-          spanContent.innerHTML = `${data.body}`;
-          aonCard.setContent(spanContent);
           const divFooter = this.createElement("div");
           divFooter.style.display = "flex";
           divFooter.style.marginTop = "10px";
@@ -112,15 +132,10 @@ export class AonNotification extends AonElement {
           divFooter.appendChild(div1);
           aonCard.setContent(divFooter);
         });
-      } else {
-        this.createCard({
-          id: 0,
-          title: "No existen notificaciones pendientes",
-        });
       }
-      await this.changeBadgeComponent();
-    } catch (error) {}
-  }
+		}
+	}
+
 
   async messengerView() {
     try {
@@ -144,16 +159,21 @@ export class AonNotification extends AonElement {
     return aonNotification;
   }
 
-  goNotification(data) {
-    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + data.id);
-    if (aonCard) {
-      aonCard.setBackground("#fff");
-      const icon = this.getElement(`${data.id}Icon`);
-      if (icon) {
-        icon.remove();
-        this.changeBadgeComponent(-1);
+  async goNotification(data) {
+    this.markReadNotification(data);
+    const {source, source_id} = data;
+    if(source && source_id){
+      let aonComponent = null;
+      switch(source){
+        case "DOCUMENTAL":
+          aonComponent =  new AonDocumental();
+          aonComponent.value = source_id;
+          break;
       }
-      console.log(data);
+
+      if(aonComponent){
+        this.rootPanel(aonComponent);
+      }
     }
   }
 
@@ -162,27 +182,35 @@ export class AonNotification extends AonElement {
    * @param {title, id} data
    * @returns
    */
-  createCard(data) {
+  createCard(data, close = false) {
     const aonNotificationEl = this.getElement(this.AON_NOTIFICATION);
+    let idCard = this.AON_NOTIFICATION + "Card" + data.id;
+    if(this.getElement(idCard)) this.getElement(idCard).remove();
     const aonCard = new AonCard();
-    aonCard.id = this.AON_NOTIFICATION + "Card" + data.id;
+    aonCard.id = idCard;
     aonCard.style.cursor = "pointer";
     let title = `<span class="aonColorPrimary">${data.title}</span>`;
-    if (!data.read)
+    if (!data.status)
       title = /*html*/ `<span style="color:red;" class="material-icons" id ="${data.id}Icon">error</span>${title}`;
     aonCard.title = title;
     aonNotificationEl.appendChild(aonCard);
-    if (!data.read) aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
-    const label = this.createElement("label");
-    label.textContent = "×";
-    label.style =
-      "float: right;margin-top: -23px;margin-right: -19px;cursor: pointer;padding: 10px;";
-    label.addEventListener("click", (ev) =>{
-        ev.stopPropagation();
-        this.removeFadeOutNotify(aonCard, 600)
-    });
-    aonCard.getCardTitle().appendChild(label);
+    if (!data.status) aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
+    if(close){
+      const label = this.createElement("label");
+      label.textContent = "×";
+      label.style = "float: right;margin-top: -23px;margin-right: -19px;cursor: pointer;padding: 10px;";
+      label.addEventListener("click", (ev) =>{
+          ev.stopPropagation();
+          this.removeFadeOutNotify(aonCard, 600)
+      });
+      aonCard.getCardTitle().appendChild(label);
+    }
+
     aonCard.getCard().classList.add("aonCardFlex");
+    const spanContent = this.createElement("span");
+    spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
+    spanContent.innerHTML = `${data.body}`;
+    aonCard.setContent(spanContent);
     return aonCard;
   }
 
@@ -213,10 +241,9 @@ export class AonNotification extends AonElement {
 
   async changeBadgeComponent(number = 0) {
     let aonNotify = this.aonNotifyIconEl;
-
     if (aonNotify) {
       if (number == 0) { //--------DELETE
-        await aonNotify.getPending();
+        await aonNotify.getTotalNotification();
       }
       const count = aonNotify.COUNT;
       count.notification = count.notification + number;
@@ -249,5 +276,25 @@ export class AonNotification extends AonElement {
         break;
     }
   }
+  markReadNotification(data){
+    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + data.id);
+    if (aonCard) {
+      aonCard.setBackground("#fff");
+      const icon = this.getElement(`${data.id}Icon`);
+      if (icon) {
+        icon.remove();
+        this.changeBadgeComponent(-1);
+      }
+      try {markReadNotification(data);} catch (error) { } //markRead
+    }
+  }
+
+  getFilter() {
+		return this.hasAttribute('filter')? JSON.parse(this.getAttribute('filter'))	: {page:0, peerPage:10};
+	}
+
+	setFilter(filter) {
+		return this.setAttribute('filter', JSON.stringify(filter));
+	}
 }
 window.customElements.define("aon-notification", AonNotification);

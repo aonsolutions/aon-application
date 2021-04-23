@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
@@ -436,6 +438,7 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveLocation(ctx, lc);
 		}
 	}
+	
 	public static Location getLocation(Domain domain, String login, LocationFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getLocation(ctx, filter);
@@ -471,4 +474,72 @@ public class AON_SOLUTIONS {
 			return getRegistry().getSuggestionRegistries(ctx, list, filter);
 		}
 	}
+	
+	public static Notification getNotification(Domain domain, String login, NotificationFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNotification().getNotification(ctx, filter);
+		}
+	}
+	
+	
+//	public static Stream<Notification> getNotificationStream(Auth auth) {
+//		return getNotificationStream(f->f.getAuthProperty().eq(auth.getAuth()).or(f.getSenderProperty().eq(auth.getAuth())), 1, 10);
+//	}
+	
+	public static Stream<Notification> getNotificationStream(NotificationFilter filter, Integer page, Integer peerPage) {
+		List<String> schemas = AONContext.getSchemas();
+		Stream<Notification> stream = new LinkedList<Notification>().stream();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try {
+					Stream <Notification> s = getNotificationStream(domain, 0, "", filter, page, peerPage); 
+					stream = Stream.concat(stream, s);
+				} catch (Exception e) {}
+			}
+			
+		}
+		return stream;
+	}
+	
+	public static Stream<Notification> getNotificationStream(String domainName, Integer domainId, String login, NotificationFilter filter, Integer page, Integer peerPage) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getNotification().getNotificationStream(ctx, filter, page, peerPage);
+		}
+	}
+	
+	public static Notification saveNotification(Domain domain, String login, Notification nt) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNotification().saveNotification(ctx, nt);
+		}
+	}
+	
+	public static void deleteNotification(Domain domain, String login, Notification nt) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getNotification().deleteNotification(ctx, nt);
+		}
+	}
+	
+	public static void markReadNotification(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getNotification().markReadNotification(ctx, id);
+		}
+	}
+	
+	public static Integer getTotalNotification(NotificationFilter filter) {
+		List<String> schemas = AONContext.getSchemas();
+		Integer total = 0;
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try {
+					AONContext ctx = AONContext.getAONContext(domain, 0, "");
+					total =  total + getNotification().getTotalNotification(ctx, filter);
+				} catch (Exception e) {}
+			}
+			
+		}
+		return total;
+	}
+	
 }

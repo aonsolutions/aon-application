@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
-
 import com.esferalia.aon.occam.api.model.task.TagColor;
 
 public enum Priority implements Serializable {
@@ -28,6 +27,10 @@ public enum Priority implements Serializable {
 	
 	public byte value() {
 		return (byte) this.ordinal();
+	}
+	
+	public static Byte value(Priority pt){
+		return pt !=null ?  pt.value() : 0;
 	}
 	
 	public String getValue(){

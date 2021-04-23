@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, getCompanies } from "../../services/service.js";
+import { login, getManifest, rememberPassword, getCompanies, getUser, getUserAppRole } from "../../services/service.js";
 import { rootPanel } from "../../services/gwtLoader.js";
 
 import "../../components/aon-input.js";

@@ -10,6 +10,12 @@ public enum NotificationSource {
 		return (byte) ordinal();
 	}
 	
+	
+	public static Byte value(NotificationSource nc){
+		return nc !=null ?  nc.value() : null;
+	}
+	
+	
 	public static NotificationSource safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

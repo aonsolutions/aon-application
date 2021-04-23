@@ -5,7 +5,6 @@ import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import '../components/aon-icon.js';
 import '../components/aon-icon-button.js';
-import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
 import './faqs/aon-faqs.js';
 import './laboral/aon-laboral.js';

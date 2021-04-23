@@ -1,17 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import org.jooq.Record;
+import org.jooq.SelectSeekStep2;
 import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
 import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
-import com.esferalia.aon.occam.api.model.aonsolutions.NotificationReceiver;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
@@ -22,15 +22,30 @@ public class NotificationDAO {
 
 	private static final NotificationPropertiesDAO NOTIFICATION_PROPERTIES = new NotificationPropertiesDAO();
 	
-	public static Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter) {
-		ctx.checkRead();
-		return ctx.getDslContext()
+	public static SelectSeekStep2<Record, Byte, Integer> select(AONContext ctx, NotificationFilter filter) {
+		 return ctx.getDslContext()
 			.select()
-			.distinctOn(NOTIFICATION_RECEIVER.NOTIFICATION)
 			.from(NOTIFICATION)
 			.join(NOTIFICATION_RECEIVER).on(NOTIFICATION_RECEIVER.NOTIFICATION.eq(NOTIFICATION.ID))
 			.where(NOTIFICATION_PROPERTIES.getConditions(filter))
-			.orderBy(NOTIFICATION.ID.desc())
+			.groupBy(NOTIFICATION_RECEIVER.NOTIFICATION)
+			.orderBy( NOTIFICATION_RECEIVER.STATUS.asc(), NOTIFICATION.ID.desc());
+	}
+	
+	public static Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter) {
+		return select(ctx, filter)
+ 			.fetch().stream().map(new NotificationFiller());
+	}
+	
+	public static Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter, Integer limit) {
+		return select(ctx, filter)
+			.limit(limit)
+			.fetch().stream().map(new NotificationFiller());
+	}
+	
+	public static Stream<Notification> getNotificationStream(AONContext ctx, NotificationFilter filter, Integer page, Integer perPage) {
+		return select(ctx, filter)
+			.limit(perPage).offset(perPage * (page -1))
 			.fetch().stream().map(new NotificationFiller());
 	}
 	
@@ -39,17 +54,66 @@ public class NotificationDAO {
 		return notification;
 	}
 	
+	public static void markReadNotification(AONContext ctx, Integer id){
+		ctx.getDslContext().update(NOTIFICATION_RECEIVER)
+			.set(NOTIFICATION_RECEIVER.STATUS, NotificationStatus.READ.value())
+			.where(NOTIFICATION_RECEIVER.ID.eq(id))
+			.execute();
+	}
+	
+	public static Integer getTotalNotification(AONContext ctx, NotificationFilter filter){
+		  return ctx.getDslContext()
+			.selectCount()
+			.from(NOTIFICATION)
+			.join(NOTIFICATION_RECEIVER).on(NOTIFICATION_RECEIVER.NOTIFICATION.eq(NOTIFICATION.ID))
+			.where(NOTIFICATION_PROPERTIES.getConditions(filter))
+			.fetchOne(0, int.class);
+	}
+	
+	
 	private static Notification insert(AONContext ctx, Notification nt) {
 		ctx.checkWrite();
+		Timestamp dt = Timestamp.from(Instant.now());
 		Integer id = ctx.getDslContext()
 			.insertInto(NOTIFICATION, NOTIFICATION.DOMAIN, NOTIFICATION.DATE, 
 					NOTIFICATION.TITLE, NOTIFICATION.BODY, NOTIFICATION.SOURCE, 
 					NOTIFICATION.SOURCE_ID, NOTIFICATION.SENDER, NOTIFICATION.PRIORITY)
-			.values(nt.getDomain().getId(), new Timestamp(nt.getDate().getTime()), 
-					nt.getTitle(), nt.getBody(), nt.getSource().value(), 
-					nt.getSourceId(), nt.getSender(), nt.getPriority().value())
+			.values(nt.getDomain().getId(), 
+					dt, 
+					nt.getTitle(), 
+					nt.getBody(), 
+					NotificationSource.value(nt.getSource()), 
+					nt.getSourceId(), 
+					nt.getSender(), 
+					Priority.value(nt.getPriority())
+					)
 			.returning(NOTIFICATION.ID).fetchOne().getValue(NOTIFICATION.ID);
-		return nt.setId(id);
+		nt.setDate(dt);
+		nt.setId(id);
+		insertNotificationReceiver(ctx, nt);
+		return nt;
+	}
+	
+	
+	private static Notification insertNotificationReceiver(AONContext ctx, Notification nt) {
+		try {	 
+			nt.getReceiver().stream().forEach(rc->{
+				try {
+					Integer id = ctx.getDslContext()
+					.insertInto(NOTIFICATION_RECEIVER, NOTIFICATION_RECEIVER.DOMAIN, NOTIFICATION_RECEIVER.NOTIFICATION,
+							NOTIFICATION_RECEIVER.AUTH)
+					.values(
+							nt.getDomain().getId(), 
+							nt.getId(), 
+							rc.getAuth()
+					)
+					.returning(NOTIFICATION_RECEIVER.ID).fetchOne().getValue(NOTIFICATION_RECEIVER.ID);
+					rc.setId(id);
+				} catch (Exception e) {
+				}
+			});
+		} catch (Exception e) {}
+		return nt;
 	}
 	
 	private static Notification update(AONContext ctx, Notification nt) {
@@ -64,8 +128,6 @@ public class NotificationDAO {
 			.set(NOTIFICATION.PRIORITY, nt.getPriority().value())
 			.where(NOTIFICATION.ID.eq(nt.getId()))
 			.execute();		
-//		.set(NOTIFICATION.SENDER, nt.getSender())
-//		.set(NOTIFICATION.DOMAIN, nt.getDomain().getId())
 		return nt;
 	}
 		
@@ -89,12 +151,8 @@ public class NotificationDAO {
 	public static class NotificationFiller implements Function<Record, Notification> {
 		@Override
 		public Notification apply(Record r) {
-			NotificationReceiver receiver = new NotificationReceiver()
-					.setStatus(NotificationStatus.safeValueOf(r.getValue(NOTIFICATION_RECEIVER.STATUS)))
-				    .setAuth(r.getValue(NOTIFICATION_RECEIVER.AUTH));
-			
 			return new Notification()
-					.setId(r.getValue(NOTIFICATION.ID))
+					.setId(r.getValue(NOTIFICATION_RECEIVER.ID))
 					.setDomain(new Domain().setId(r.getValue(NOTIFICATION.DOMAIN)))
 					.setDate(r.getValue(NOTIFICATION.DATE))
 					.setTitle(r.getValue(NOTIFICATION.TITLE))
@@ -103,7 +161,7 @@ public class NotificationDAO {
 					.setSourceId(r.getValue(NOTIFICATION.SOURCE_ID))
 					.setSender(r.getValue(NOTIFICATION.SENDER))
 					.setPriority(Priority.safeValueOf(r.getValue(NOTIFICATION.PRIORITY)))
-					.setReceiver(receiver)
+					.setStatus(NotificationStatus.safeValueOf(r.getValue(NOTIFICATION_RECEIVER.STATUS)))
 					;
 		}
 	}

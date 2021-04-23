@@ -11,6 +11,10 @@ public enum NotificationStatus {
 		return (byte) ordinal();
 	}
 	
+	public static Byte value(NotificationStatus ns){
+		return ns !=null ?  ns.value() : 0;
+	}
+	
 	public static NotificationStatus safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

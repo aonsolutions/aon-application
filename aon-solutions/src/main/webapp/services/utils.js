@@ -215,3 +215,22 @@ export const disabledForm = (formId, elems) => {
       el.disabled = true;
   })
 }
+
+
+/**
+ * 
+ * @param {element html or undefined} element 
+ * @param {*} fn return end elment
+ */
+export const scrollInfinite = (element, fn) => {
+    if(element){
+      element.addEventListener("scroll", async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+        if (scrollTop >= (scrollHeight - offsetHeight)) fn();
+      });
+    } else {
+      element = document.body;
+      window.addEventListener('scroll', ()=>{
+        if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
+     }) 
+    }
+}
