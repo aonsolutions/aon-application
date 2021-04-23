@@ -130,6 +130,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			updatePaymentConcept(dslContext, payment);
 			updateAgreementPayment(dslContext, payment.getId(),
 					payment.getDescription(),
+					payment.getExpression(),
 					payment.getSalaryType(), 
 					payment.getMonth(),
 					EPOCH, 
@@ -437,8 +438,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		// @formatter:on
 		
 		// @formatter:off
-		dslContext.delete(AGREEMENT_PAYMENT)
-				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId())).execute();
+		// TODO : why is this here?
+//		dslContext.delete(AGREEMENT_PAYMENT)
+//				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId())).execute();
 		// @formatter:on		
 	}
 
@@ -1549,7 +1551,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	}
 
 	private static void updateAgreementPayment(DSLContext dslContext,
-			int paymentId, String description, Salary.Type salaryType, Short month, Date startDate,
+			int paymentId, String description, String expression, Salary.Type salaryType, Short month, Date startDate,
 			Date endDate) throws SQLException {
 
 		// @formatter:off
@@ -1557,6 +1559,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.update(AGREEMENT_PAYMENT)
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
 				.set(AGREEMENT_PAYMENT.DESCRIPTION, description)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, expression)
 				.set(AGREEMENT_PAYMENT.MONTH,
 						month != null ? month.byteValue() : null)
 				.set(AGREEMENT_PAYMENT.START_DATE,
