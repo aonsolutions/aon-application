@@ -511,6 +511,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						salaryTableEditors.get(next).setFocus();
 				}
 			});
+			
+			// Add title
+			String levelTitle = this.descriptionTextBox.getValue();
+			Set<String> categories = agreementDraftObject.getCategories(level);
+			if(null != categories)
+				for(String category : categories) 
+					levelTitle += "\n" + category;
+			this.descriptionTextBox.setTitle(levelTitle);
 		}
 
 		void setDeleteButton(Button button) {
@@ -4763,10 +4771,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		serviAgreementXLSButton.ensureDebugId("serviAgreementXLSButton");
 		
 		serviAgreementPanel.setVisible(false);
-	}
-
-	public void hideImportBlock() {
-		addPaymentButton.setVisible(false);
 	}
 	
 }
