@@ -1528,7 +1528,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ex.printStackTrace();
 			throw new IllegalArgumentException(ex);
 		} finally {
-			enableAutoCommit(conn);
+
+
 			if (conn != null) {
 				try {
 					conn.close();
@@ -4245,7 +4246,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			@Override
 			public String getSocialSecurityNumber() {
-				return "";
+				return draft.getEmployeeSS();
 			}
 			
 			@Override
@@ -4506,7 +4507,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			public <T extends IDeduction> Collection<T> getCostS() throws SalaryException {
 				List<T> costs = new ArrayList<>(); 
 				
-				for (T cost : costs)
+				for (Deduction cost : draft.getCosts())
 				{
 					@SuppressWarnings("unchecked")
 					T deduction = (T) new IDeduction() {
