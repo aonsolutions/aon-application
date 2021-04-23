@@ -385,8 +385,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					public void onSuccess(DomainUserRoles result) {
 						userRoles = result;
 						toolbar.setVisibleImportButton(true);
-						if(!userRoles.isAlpha())
-							agreementDraft.hideImportBlock();
 					}
 					
 					@Override
