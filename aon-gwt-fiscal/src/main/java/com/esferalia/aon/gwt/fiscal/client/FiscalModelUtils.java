@@ -188,6 +188,12 @@ public class FiscalModelUtils {
 		return AON.AON_CSS.aonAeatHeaderImage();
 	}
 	
+	/**
+	 * @param adm
+	 * @return
+	 * @deprecated Use getAdministrationIconStyle
+	 */
+	@Deprecated
 	public static String getAdministrationIcon(Administration adm) {
 		if (adm == Administration.ALAVA) {
 			return AON.AON_CSS.aonIconAraba();
@@ -201,6 +207,21 @@ public class FiscalModelUtils {
 			return AON.AON_CSS.aonIconQuestion();
 		} 
 		return AON.AON_CSS.aonIconAeat();
+	}
+
+	public static String getAdministrationIconStyle(Administration adm) {
+		if (adm == Administration.ALAVA) {
+			return AON.CSS.aonIconAraba();
+		} else if (adm == Administration.BIZKAIA) {
+			return AON.CSS.aonIconBizkaia();
+		} else if (adm == Administration.GIPUZKOA) {
+			return AON.CSS.aonIconGipuzkoa();
+		} else if (adm == Administration.NAVARRA) {
+			return AON.CSS.aonIconNavarra();
+		} else if (adm == Administration.UNKNOWN) {
+			return AON.CSS.aonIconUnknown();
+		} 
+		return AON.CSS.aonIconAeat();
 	}
 
 	public static String getAdministrationIconBW(Administration adm) {
@@ -307,6 +328,17 @@ public class FiscalModelUtils {
 		if (status  == FiscalStatus.MISSING )	return AON.AON_CSS.aonBgMissing();
 		return AON.AON_CSS.aonBgPending();
 	}
+	
+	public static String gettStatusBckColorRGB(FiscalStatus status) {
+		if (status == FiscalStatus.FINISHED)	return "#e3ffab"; // "#b8dc6f";
+		if (status == FiscalStatus.BATCHED)		return "#b8dc6f";
+		if (status  == FiscalStatus.BLOCKED )	return "#ff8080";
+		if (status  == FiscalStatus.SENT )		return "#3EC946";
+		if (status  == FiscalStatus.CUSTOMER_CHECK) return "LightYellow";
+		if (status  == FiscalStatus.MISSING )	return "White"; // "#FFC2B2";
+		return "LightGray";
+	}
+
 }
 
 

@@ -3,10 +3,12 @@ package com.esferalia.aon.gwt.fiscal.client.matrix;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.common.JsDataResponse;
+import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -16,8 +18,13 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
@@ -29,6 +36,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -48,11 +56,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class NeoMatrix extends DockLayoutPanel {
 
+	private static final Logger LOGGER = Logger.getLogger(NeoMatrix.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	private API API;
 	private AonData aonData;
-	private HashMap<Integer, IFiscalModel> modelMap = new HashMap<>();
+	private HashMap<Integer, JsFiscalMenuItem> modelMap = new HashMap<>();
 	private HashMap<Integer, JSONObject> errors = new HashMap<>();
 	private Integer eastSelected = 0;
 
@@ -65,7 +78,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	private Domain domain;
 	private String user;
 	private Boolean test = false; 
-	private HashMap<Integer, IFiscalModel> getModelMap() {
+	private HashMap<Integer, JsFiscalMenuItem> getModelMap() {
 		return modelMap;
 	}
 
@@ -118,11 +131,11 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		add(modelListPanel);
 	}
 	
-	protected Boolean hasModel(IFiscalModel model) {
+	protected Boolean hasModel(JsFiscalMenuItem model) {
 		return modelMap.containsKey(model.getId());
 	}
 	
-	protected void addModel(IFiscalModel model) {
+	protected void addModel(JsFiscalMenuItem model) {
 		getModelMap().put(model.getId(), model);
 		modelListPanel.add(item(model));
 	}
@@ -136,7 +149,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 			consolePanel.remove(consolePanel.getWidget());
 		}
 		for(Integer i = 0 ; i < modelListPanel.getWidgetCount(); i++) {
-			if(modelListPanel.getWidget(i).getTitle().equals(model.getId().toString())) {
+			if(modelListPanel.getWidget(i).getTitle().equals(model.getId()+"")) {
 				modelListPanel.remove(i);
 			}
 		}
@@ -216,20 +229,20 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		});
 		fp.add(aeatButton);
 		
-		Button finishButton = new Button();
-		finishButton.setTitle("Finalizar Modelo");
-		finishButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		finishButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
-		finishButton.getElement().getStyle().setFloat(Float.RIGHT);
-		finishButton.getElement().getStyle().setMarginRight(16, Unit.PX);
-		finishButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsFinished(0);
-			}
-		});
-		fp.add(finishButton);
+//		Button finishButton = new Button();
+//		finishButton.setTitle("Finalizar Modelo");
+//		finishButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
+//		finishButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
+//		finishButton.getElement().getStyle().setFloat(Float.RIGHT);
+//		finishButton.getElement().getStyle().setMarginRight(16, Unit.PX);
+//		finishButton.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				markAsFinished(0);
+//			}
+//		});
+//		fp.add(finishButton);
 		
 		Button cleanButton = new Button();
 		cleanButton.setTitle("Limpiar Selecci\u00f3n");
@@ -253,24 +266,32 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		return new Label("Model Info"); 
 	}
 	
-	private FocusPanel item(IFiscalModel model) {
+	private FocusPanel item(JsFiscalMenuItem model) {
 		FocusPanel wrapper = new FocusPanel();
-		wrapper.setTitle(model.getId().toString());
+		LOGGER.info(JsonUtils.stringify(model));
+		wrapper.setTitle(model.getId() + "");
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		hp.getElement().getStyle().setPaddingTop(2.5, Unit.PX);
 		hp.getElement().getStyle().setPaddingBottom(2.5, Unit.PX);
 		
 		Label icon = new Label();
-		icon.setStyleName(FiscalModelUtils.getAdministrationIcon(model.getAdministration()));
+		Administration admon = Administration.safeValueOf(model.getAdministration());
+		icon.setStyleName(FiscalModelUtils.getAdministrationIcon(admon));
 		icon.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		
-		Label l0 = new Label("Modelo " + model.getModel().getName()); 
+		FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
+		Label l0 = new Label("Modelo " + modelType.getName()); 
 		
-		Label l1 = new Label(model.getPeriod().getDescription()); 
+		Period period = Period.valueOf(model.getPeriod());
+		Label l1 = new Label(period.getDescription()); 
 		l1.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		
-		Label l2 = new Label( model.getFullName()); 
+		String fullName = (AonDocumentUtil.isEntity(model.getDocument()))
+			?model.getName()
+			:AonStringUtils.prependIfMissing(model.getName(),AonStringUtils.appendIfMissing(AonStringUtils.trimToNull(model.getSurname()), ", " ) ); 
+
+		Label l2 = new Label( fullName ); 
 		l2.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		
 		hp.add(icon);
@@ -297,43 +318,45 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		return wrapper;		
 	}
 	
-	private void markAsFinished(Integer i) {
-		if(i < modelListPanel.getWidgetCount()) {
-			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
-			IFiscalModel model = modelMap.get(id);
-			JSONObject js = new JSONObject();
-			if(hasFinishOption(model)) {
-				impl.markAsFinished(domain.getName(), domain.getId(), user, model, new AsyncCallback<Void>() {
-					@Override
-					public void onSuccess(Void v) {
-						// TODO
-						resultFocus(i, "green");
-						markAsFinished(i + 1);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						resultFocus(i, "red");
-						js.put("E00", new JSONString("Ha ocurrido un error inesperado."));
-						errors.put(model.getId(), js);
-						markAsFinished(i + 1);
-					}
-				});
-			} else {
-				resultFocus(i, "red");
-				js.put("E00", new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));
-				errors.put(model.getId(), js);
-				markAsFinished(i + 1);
-			}
-		} else onParentLoad();
-	}
+//	private void markAsFinished(Integer i) {
+//		if(i < modelListPanel.getWidgetCount()) {
+//			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
+//			JsFiscalMenuItem model = modelMap.get(id);
+//			JSONObject js = new JSONObject();
+//			if(hasFinishOption(model)) {
+//				impl.markAsFinished(domain.getName(), domain.getId(), user, model, new AsyncCallback<Void>() {
+//					@Override
+//					public void onSuccess(Void v) {
+//						// TODO
+//						resultFocus(i, "green");
+//						markAsFinished(i + 1);
+//					}
+//
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						resultFocus(i, "red");
+//						js.put("E00", new JSONString("Ha ocurrido un error inesperado."));
+//						errors.put(model.getId(), js);
+//						markAsFinished(i + 1);
+//					}
+//				});
+//			} else {
+//				resultFocus(i, "red");
+//				js.put("E00", new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));
+//				errors.put(model.getId(), js);
+//				markAsFinished(i + 1);
+//			}
+//		} else onParentLoad();
+//	}
 	
 	private void send(Integer i, String cert, String pass) {
 		if(i < modelListPanel.getWidgetCount()) {
 			Integer id = Integer.parseInt(modelListPanel.getWidget(i).getTitle());
-			IFiscalModel model = modelMap.get(id);
-
-			if(model.isAEAT() && model.isFinished() && hasSendOption(model)) {
+			JsFiscalMenuItem model = modelMap.get(id);
+			Administration admon = Administration.safeValueOf(model.getAdministration());
+			FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
+			FiscalStatus status = FiscalStatus.safeValueOf(model.getStatus());
+			if(admon == Administration.COMMON_TERRITORY && status == FiscalStatus.FINISHED && hasSendOption(modelType)) {
 				JSONObject json = new JSONObject();
 				json.put("mod", new JSONNumber(model.getId()));
 				json.put("domainId", new JSONNumber(domain.getId()));
@@ -345,7 +368,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				json.put("name", new JSONString(getAonData().getCompany().getName()));
 				json.put("document", new JSONString(getAonData().getCompany().getDocument()));
 				String requestData = JsonUtils.stringify(json.getJavaScriptObject());
-				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + getSendPath(model), 
+				getAPI().getFiscal().send2AEAT(GWT.getHostPageBaseURL() + getSendPath(modelType), 
 					requestData, new AsyncCallback<JavaScriptObject>() {
 			
 					@Override
@@ -371,15 +394,15 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 				resultFocus(i, "red");
 				JSONObject js = new JSONObject();
 				Integer error = 0;
-				if(!model.isFinished()) {
+				if(status != FiscalStatus.FINISHED) {
 					js.put("E0" + error, new JSONString("El modelo no est\u00e1 finalizado."));
 					error++;
 				}
-				if(!model.isAEAT()) {
+				if( admon != Administration.COMMON_TERRITORY ) {
 					js.put("E0" + error, new JSONString("La presentaci\u00f3n telem\u00e1tica solo es compatible para los modelos de Territorio Com\u00fan."));
 					error++;
 				}
-				if(!hasSendOption(model)) {
+				if(!hasSendOption(modelType)) {
 					js.put("E0" + error, new JSONString("La funcionalidad no est\u00e1 disponible para este modelo."));	
 					error++;
 				}
@@ -400,59 +423,59 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.getWidget(3).getElement().getStyle().setFontWeight(FontWeight.BOLD);
 	}
 	
-	private Boolean hasSendOption(IFiscalModel model) {
-		return FiscalModelType.M111.equals(model.getModel())
-			|| FiscalModelType.M115.equals(model.getModel())
-			|| FiscalModelType.M123.equals(model.getModel())
-			|| FiscalModelType.M303.equals(model.getModel())
-			|| FiscalModelType.M303_RG.equals(model.getModel())
-			|| FiscalModelType.M303_RS.equals(model.getModel())
-			|| FiscalModelType.M130.equals(model.getModel())
-			|| FiscalModelType.M131.equals(model.getModel())
-			|| FiscalModelType.M390.equals(model.getModel());
+	private Boolean hasSendOption(FiscalModelType modelType) {
+		return FiscalModelType.M111 == modelType
+			|| FiscalModelType.M115 == modelType
+			|| FiscalModelType.M123 == modelType
+			|| FiscalModelType.M303 == modelType
+			|| FiscalModelType.M303_RG == modelType
+			|| FiscalModelType.M303_RS == modelType
+			|| FiscalModelType.M130 == modelType
+			|| FiscalModelType.M131 == modelType
+			|| FiscalModelType.M390 == modelType;
 	}
 	
-	private Boolean hasFinishOption(IFiscalModel model) {
-		return FiscalModelType.M111.equals(model.getModel())
-			|| FiscalModelType.M115.equals(model.getModel())
-			|| FiscalModelType.M123.equals(model.getModel())
-			|| FiscalModelType.M130.equals(model.getModel())
-			|| FiscalModelType.M131.equals(model.getModel())
-			|| FiscalModelType.M180.equals(model.getModel())
-			|| FiscalModelType.M184.equals(model.getModel())
-			|| FiscalModelType.M190.equals(model.getModel())
-			|| FiscalModelType.M193.equals(model.getModel())
-			|| FiscalModelType.M202.equals(model.getModel())
-			|| FiscalModelType.M303.equals(model.getModel())
-			|| FiscalModelType.M303_RG.equals(model.getModel())
-			|| FiscalModelType.M303_RS.equals(model.getModel())
-			|| FiscalModelType.M347.equals(model.getModel())
-			|| FiscalModelType.M349.equals(model.getModel())
-			|| FiscalModelType.M390.equals(model.getModel())
-			|| FiscalModelType.M390_HF.equals(model.getModel());
-	}
+//	private Boolean hasFinishOption(JsFiscalMenuItem model) {
+//		return FiscalModelType.M111.equals(model.getModel())
+//			|| FiscalModelType.M115.equals(model.getModel())
+//			|| FiscalModelType.M123.equals(model.getModel())
+//			|| FiscalModelType.M130.equals(model.getModel())
+//			|| FiscalModelType.M131.equals(model.getModel())
+//			|| FiscalModelType.M180.equals(model.getModel())
+//			|| FiscalModelType.M184.equals(model.getModel())
+//			|| FiscalModelType.M190.equals(model.getModel())
+//			|| FiscalModelType.M193.equals(model.getModel())
+//			|| FiscalModelType.M202.equals(model.getModel())
+//			|| FiscalModelType.M303.equals(model.getModel())
+//			|| FiscalModelType.M303_RG.equals(model.getModel())
+//			|| FiscalModelType.M303_RS.equals(model.getModel())
+//			|| FiscalModelType.M347.equals(model.getModel())
+//			|| FiscalModelType.M349.equals(model.getModel())
+//			|| FiscalModelType.M390.equals(model.getModel())
+//			|| FiscalModelType.M390_HF.equals(model.getModel());
+//	}
 	
-	private String getSendPath(IFiscalModel model){
-		if(FiscalModelType.M111.equals(model.getModel()))
+	private String getSendPath(FiscalModelType modelType){
+		if(FiscalModelType.M111 == modelType)
 			return "/aon_gwt_fiscal/ms/Model111PrintAEAT";
-		else if(FiscalModelType.M115.equals(model.getModel()))
+		else if(FiscalModelType.M115 == modelType)
 			return "/aon_gwt_fiscal/ms/Model115PrintAEAT";
-		else if(FiscalModelType.M123.equals(model.getModel()))
+		else if(FiscalModelType.M123 == modelType)
 			return "/aon_gwt_fiscal/ms/Model123PrintAEAT";
-		else if(FiscalModelType.M130.equals(model.getModel()))
+		else if(FiscalModelType.M130 == modelType)
 			return "/aon_gwt_fiscal/ms/Model130PrintAEAT";
-		else if(FiscalModelType.M131.equals(model.getModel()))
+		else if(FiscalModelType.M131 == modelType)
 			return "/aon_gwt_fiscal/ms/Model131PrintAEAT";
-		else if(FiscalModelType.M303.equals(model.getModel())
-				|| FiscalModelType.M303_RG.equals(model.getModel())
-				|| FiscalModelType.M303_RS.equals(model.getModel()))
+		else if(FiscalModelType.M303 == modelType
+				|| FiscalModelType.M303_RG == modelType
+				|| FiscalModelType.M303_RS == modelType)
 			return "/aon_gwt_fiscal/ms/Model303PrintAEAT";
-		else if(FiscalModelType.M390.equals(model.getModel()))
+		else if(FiscalModelType.M390 == modelType)
 			return "/aon_gwt_fiscal/ms/Model390PrintAEAT";
 		return "";
 	}
 	
-	private void east(IFiscalModel model) {
+	private void east(JsFiscalMenuItem model) {
 		TabLayoutPanel tabPanel = new TabLayoutPanel(2.5, Unit.EM);
 	    tabPanel.setAnimationDuration(1000);
 	    tabPanel.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
@@ -487,7 +510,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		consolePanel.setWidget(tabPanel);
 	}
 	
-	private Widget historyItem(IFiscalModel model, JsDataResponse dataResponse) {
+	private Widget historyItem(JsFiscalMenuItem model, JsDataResponse dataResponse) {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		hp.getElement().getStyle().setPaddingTop(2.5, Unit.PX);
@@ -507,8 +530,8 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.add(icon);
 		hp.add(l0);
 		hp.add(l1);
-		
-		impl.presentationFile(domain.getName(), domain.getId(), user, model.getModel(), model.getId(), new AsyncCallback<Integer>() {
+		FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
+		impl.presentationFile(domain.getName(), domain.getId(), user, modelType, model.getId(), new AsyncCallback<Integer>() {
 
 			@Override
 			public void onSuccess(Integer result) {
@@ -566,17 +589,18 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 	}
 	
 
-	private ScrollPanel showHistoryPanel(IFiscalModel model) {
+	private ScrollPanel showHistoryPanel(JsFiscalMenuItem model) {
 		ScrollPanel panel = new ScrollPanel();
 		HashMap<String, LinkedList<String>> map = new HashMap<>();
 		LinkedList<String> list = new LinkedList<>();
 		list.add("filter2");
 		map.put("filter2",list);
 		list = new LinkedList<>(); 
-		list.add(getDataResponseSource(model.getModel()));
+		FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
+		list.add(getDataResponseSource(modelType));
 		map.put("source", list);
 		list = new LinkedList<>(); 
-		list.add(model.getId().toString()); 
+		list.add(model.getId()+""); 
 		map.put("source_id", list);
 		getAPI().getCommon().getDataResponse(map,new AsyncCallback<JSON<JsDataResponse>>() {
 			

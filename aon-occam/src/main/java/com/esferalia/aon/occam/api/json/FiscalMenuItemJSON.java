@@ -23,6 +23,7 @@ public enum FiscalMenuItemJSON {
 		public JSONObject to(IFiscalModel model, JSONObject json) {
 			return json.put(IJsonNames.DOMAIN_NAME, model.getDomainName());
 		}
+		
 	},
 	ADMINISTRATION{
 		@Override
@@ -105,7 +106,10 @@ public enum FiscalMenuItemJSON {
 	DECLARATION_TYPE{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.TYPE, model.getDeclarationType());
+			if ( model.getDeclarationTypeKey() != null) {
+				json.put(IJsonNames.TYPE, model.getDeclarationType());
+			}
+			return json;
 		}
 	},
 	;

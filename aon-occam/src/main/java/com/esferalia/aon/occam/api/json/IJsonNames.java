@@ -59,6 +59,7 @@ public interface IJsonNames {
 	String COMPLEMENTARY = "complementary";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
+	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
 	String CONTENT_DISPOSITION = "Content-disposition";
 	String CONTENT_TYPE = "content_type";
@@ -160,6 +161,7 @@ public interface IJsonNames {
 	String MAX_DEFINED_USERS = "maxDefinedUsers";
 	String MEDIA = "media";
 	String MESSAGE = "message";
+	String MADE_MODELS_VISIBLE = "madeModelsVisible";
 	String MODEL = "model";
 	String MODELS = "models";
 	String MONTH = "month";

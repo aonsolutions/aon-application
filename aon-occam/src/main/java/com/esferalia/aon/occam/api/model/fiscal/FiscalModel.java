@@ -220,7 +220,7 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public String getFullName() {
 		return (isEntity())
 			?name
-			:AonStringUtils.prependIfMissing(getName(),AonStringUtils.appendIfMissing(
+					:AonStringUtils.prependIfMissing(getName(),AonStringUtils.appendIfMissing(
 					AonStringUtils.trimToNull(getSurname()), ", " ) ); 
 	}
 	

@@ -12,10 +12,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.FiscalMatrixParamsJSON;
 import com.esferalia.aon.occam.api.json.FiscalModelJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
@@ -26,6 +28,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod123DAO;
@@ -36,6 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
+
 public class FiscalServlet extends AonApiHttpServlet{
 		
 	private static final long serialVersionUID = -8021598700474389724L;
@@ -47,11 +51,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API FISCAL SERVLET - GET METHOD");
 		try {
 			super.doGet(req, resp);
-			switch (getPath()) {
-			case "/models":
+			if ( AonStringUtils.endsWith(getPath(), "/models") ) {
 				response(req, resp, getFiscalModels());
-				break;
-			default:
+			} else if ( AonStringUtils.endsWith(getPath(), "/matrix") ) {
+				response(req, resp, getFiscalMatrix());
+			} else {
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
@@ -64,11 +68,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API FISCAL SERVLET - POST METHOD");
 		try {
 			super.doPost(req, resp);
-			switch (getPath()) {
-			case "/markAsFinished":
+			if ( AonStringUtils.endsWith(getPath(), "/markAsFinished") ) {
 				response(req, resp, markAsFinished());
-				break;
-			default:
+			} else {
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
@@ -76,6 +78,19 @@ public class FiscalServlet extends AonApiHttpServlet{
 		}
 	}
 		
+	private JSONArray getFiscalMatrix() throws ParseException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(getDomain().getName(), getDomain().getId(),getUser().getLogin());
+			JSONObject jsonParams = getParams();
+			FiscalMatrixParams params = FiscalMatrixParamsJSON.fromJSON(jsonParams); 
+			return FiscalMenuDAO.getDomainsModels(ctx, getDomain().getId(), params); 
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	private JSONArray getFiscalModels() throws ParseException {
 		AONContext ctx = null;
 		try {

@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.api.client.fiscal;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -13,13 +16,6 @@ public class Fiscal extends Methods{
 
 	final IApiAsync impl = GWT.create(IApi.class);
 
-	public Fiscal(String url, String accesToken, Integer domainId) {
-		this.url = url;
-		this.accessToken = accesToken;
-		this.domainId = domainId;
-		this.scheme = url.contains("https") ? "https" : "http";
-	}
-	
 	public Fiscal(String url, String accesToken, String domainName, Integer domainId, String userName) {
 		this.url = url;
 		this.accessToken = accesToken;
@@ -53,4 +49,10 @@ public class Fiscal extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public void getFiscalModels(HashMap<String, LinkedList<String>> filterMap,AsyncCallback<JSON<JsFiscalMenuItem>> callback){
+		String str = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		get(getUrl() + "ms/api/fiscal/"+getDomainName()+"/"+getUserName()+"/matrix" + str,callback);
+	}
+	
 }

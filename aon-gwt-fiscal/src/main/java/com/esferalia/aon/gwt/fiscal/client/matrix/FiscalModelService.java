@@ -12,4 +12,5 @@ public interface FiscalModelService extends RemoteService {
 
 	LinkedList<IFiscalModel> getFiscalPanel(String domainName,String user,int domain, FiscalMatrixParams params);
 	
+	
 }

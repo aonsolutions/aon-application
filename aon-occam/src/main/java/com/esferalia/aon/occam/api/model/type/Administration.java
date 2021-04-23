@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Administration implements Serializable {
 	
 	  ALAVA("Araba/Alava")
@@ -25,7 +27,7 @@ public enum Administration implements Serializable {
 		return (byte) ordinal();
 	}
 	public static Administration safeValueOf( String i ) {
-		if (i == null) return null;
+		if (i == null || AonStringUtils.isBlank(i)) return null;
 		return Administration.valueOf( i );
 	}
 	public static Administration safeValueOf( Byte i ) {
