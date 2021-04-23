@@ -70,7 +70,7 @@ export class AonGraphicsTrial extends AonElement {
     if (this.selectedPeriod)
       this.getElement("year").value = this.selectedPeriod.id;
 
-    this.getElement("show").value = this.filter != null ? this.filter.show : "monthly";
+    this.getElement("show").value = this.filter != null ? this.filter.show : "yearly";
     this.getElement("detail").value = this.params.level;
     
 
@@ -133,15 +133,6 @@ export class AonGraphicsTrial extends AonElement {
       }
     ];
     detailEl.options = JSON.stringify(detailsJson);
-    // if(filter && filter.period) periodEl.value = filter.period;
-    // periodEl.addEventListener("change", ({ detail }) => {
-    //   if (detail) {
-    //     console.log(detail);
-    //     const { startDate, endDate } = detail;
-    //     setValueName("startDate", startDate);
-    //     setValueName("endDate", endDate);
-    //   }
-    // });
   }
 
   async draw() {
@@ -151,7 +142,6 @@ export class AonGraphicsTrial extends AonElement {
     let id = "chart_div";
 
     const result = await this.getData();
-    console.log(result);
     if (result) {
       let div = this.getElement(id) || this.createElement(TAG.DIV);
       div.innerHTML = "";
@@ -187,7 +177,6 @@ export class AonGraphicsTrial extends AonElement {
       this.ACCOUNTS = await getAccounting(this.params).catch((error) => null);
       console.log(this.PERIODS);
       console.log(this.ACCOUNTS);
-      console.log(this.params);
     }
 
     return this.ACCOUNTS;

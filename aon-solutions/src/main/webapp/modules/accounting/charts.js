@@ -1,6 +1,5 @@
 import { formatDate } from "../../services/utils.js";
-import { getTotal } from "../laboral/company/pieChar.js";
-import { getRandomColor } from "./accounting-utils.js";
+import * as UTILS from "./accounting-utils.js";
 
 let selectedElement,
   chartData,
@@ -22,31 +21,6 @@ let selectedElement,
   selAccounts,
   position = null;
 
-function getDateFromString(strDate) {
-  if (typeof strDate == "string") {
-    let splittedDate = strDate.split("/");
-
-    if (splittedDate.length != 3) return null;
-
-    return new Date(`${splittedDate[1]}/${splittedDate[0]}/${splittedDate[2]}`);
-  } else return null;
-}
-
-function formatNumber(number) {
-  if (number && !Number.isNaN(number)) {
-    let nmbr = Math.round(number * 100) / 100;
-
-    let formatted = nmbr.toLocaleString("es-ES", { minimumFractionDigits: 2 });
-
-    if (formatted && formatted.length == 7) { 
-      formatted = formatted.charAt(0) + "." + formatted.substring(1);
-    }
-
-    return formatted;
-  }
-  return null;
-}
-
 function getArray(selectedColumn) {
   switch (selectedColumn) {
     case 1:
@@ -59,21 +33,6 @@ function getArray(selectedColumn) {
       return arrAmortizations;
     default:
       return null;
-  }
-}
-
-function getTitle(selectedColumn) {
-  switch (selectedColumn) {
-    case 1:
-      return "Ingresos";
-    case 2:
-      return "Compras";
-    case 3:
-      return "Gastos";
-    case 5:
-      return "Amortizaciones";
-    default:
-      return "";
   }
 }
 
@@ -92,128 +51,15 @@ function getTotalByColumn(selectedColumn) {
   }
 }
 
-function getPeriodName (dateFromStr, dateToStr) {
-
-  let spaMonths = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
-    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-
-  if (typeof dateFromStr == "string" && typeof dateToStr == "string") {
-    let splittedFrom = dateFromStr.split("/");
-    let splittedTo = dateToStr.split("/");
-    if (splittedFrom.length == 3 && splittedTo.length == 3) {
-      if (splittedFrom[1] == splittedTo[1]) {
-        let monthNmbr = Number.parseInt(splittedFrom[1]);
-        return (monthNmbr && !Number.isNaN(monthNmbr) && monthNmbr > 0 && monthNmbr < 13) ?
-          `${spaMonths[monthNmbr - 1]} de ${splittedFrom[2]}`:
-          `del ${dateFromStr} al ${dateToStr}`;
-      } else if (/0?1\/0?1\/d*/.test(dateFromStr) && /31\/0?3\/d*/.test(dateToStr)){
-        return `T1 ${splittedFrom[2]}`
-      } else if (/0?1\/0?4\/d*/.test(dateFromStr) && /30\/0?6\/d*/.test(dateToStr)){
-        return `T2 ${splittedFrom[2]}`
-      } else if (/0?1\/0?7\/d*/.test(dateFromStr) && /30\/0?9\/d*/.test(dateToStr)){
-        return `T3 ${splittedFrom[2]}`
-      } else if (/0?1\/10\/d*/.test(dateFromStr) && /31\/12\/d*/.test(dateToStr)){
-        return `T4 ${splittedFrom[2]}`
-      } else {
-        return `del ${dateFromStr} al ${dateToStr}`;
-      }
-    }
-  }
-  return "";
-}
-
-function getMobileLegend() {
-  let mobileLegend = document.createElement("table");
-  mobileLegend.style.margin = "auto";
-
-  const colorSize = 15;
-
-  //INCOME
-
-  let trIncome = document.createElement("tr");
-  let tdIncomeColor = document.createElement("td");
-  tdIncomeColor.style.width = colorSize * 2.5 + "px";
-
-  let divIncomeColor = document.createElement("div");
-  divIncomeColor.style.width = "100%";
-  divIncomeColor.style.height = colorSize + "px";
-  divIncomeColor.style.borderRadius = "1px";
-  divIncomeColor.style.background = "#3366cc";
-
-  tdIncomeColor.appendChild(divIncomeColor);
-  trIncome.appendChild(tdIncomeColor);
-
-  let tdIncomeDesc = document.createElement("td");
-  tdIncomeDesc.innerHTML = "Ingresos";
-  tdIncomeDesc.style.textIndent = "1em";
-
-  trIncome.appendChild(tdIncomeDesc);
-
-  mobileLegend.appendChild(trIncome);
-
-  //OUTGOING
-
-  let trOutgoing = document.createElement("tr");
-  let tdOutgoingColor = document.createElement("td");
-  tdOutgoingColor.style.width = colorSize * 2.5 + "px";
-
-  let divOutgoingColor = document.createElement("div");
-  divOutgoingColor.style.width = "100%";
-  divOutgoingColor.style.height = colorSize + "px";
-  divOutgoingColor.style.borderRadius = "1px";
-  divOutgoingColor.style.background = "#dc3912";
-
-  tdOutgoingColor.appendChild(divOutgoingColor);
-  trOutgoing.appendChild(tdOutgoingColor);
-
-  let tdOutgoingDesc = document.createElement("td");
-  tdOutgoingDesc.innerHTML = "Gastos";
-  tdOutgoingDesc.style.textIndent = "1em";
-
-  trOutgoing.appendChild(tdOutgoingDesc);
-
-  mobileLegend.appendChild(trOutgoing);
-
-  //BENEFIT
-
-  let trBenefit = document.createElement("tr");
-  let tdBenefitColor = document.createElement("td");
-  tdBenefitColor.style.width = colorSize * 2.5 + "px";
-
-  let divBenefitColor = document.createElement("div");
-  divBenefitColor.style.width = "100%";
-  divBenefitColor.style.height = colorSize / 3 + "px";
-  divBenefitColor.style.borderRadius = "1px";
-  divBenefitColor.style.background = "#ff9900";
-
-  tdBenefitColor.appendChild(divBenefitColor);
-  trBenefit.appendChild(tdBenefitColor);
-
-  let tdBenefitDesc = document.createElement("td");
-  tdBenefitDesc.innerHTML = "Beneficios";
-  tdBenefitDesc.style.textIndent = "1em";
-
-  trBenefit.appendChild(tdBenefitDesc);
-
-  mobileLegend.appendChild(trBenefit);
-
-  return mobileLegend;
-}
-
 export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
   return new Promise((resolve) => {
-    // let arr7 = ["SALES", "STOCK", "WORK", "OTHER_INCOMES"];
-    // let arr6 = ["PURCHASES", "SALARIES", "OPERATING_EXPENSES", "TAXES", "AMORTIZATION"];
-    // let arrUndef = ["EXTRA_INCOME_EXPENSES", "FINANCIAL_INCOME_EXPENSES", "PROVISION"];
-
     //PARA EL TRIMESTRAL
 
+    filter = filter == null ? { show: "yearly" } : filter;
+
     if (data.intervals && filter && filter.show === "quarterly") {
-      console.log("QUARTER");
-      console.log(selectedPeriod);
-      console.log(accounts);
       // accounts = data.intervals;
-      let dteFrom = getDateFromString(selectedPeriod.initiationDate);
+      let dteFrom = UTILS.getDateFromString(selectedPeriod.initiationDate);
       accounts = [];
       for (let i = 1; i <= 4; i++) {
         let dteTo = new Date(dteFrom.getTime());
@@ -232,10 +78,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           },
         ];
         for (let j = 0; j < data.intervals.length; j++) {
-          let interFrom = getDateFromString(
+          let interFrom = UTILS.getDateFromString(
             data.intervals[j].interval.fromDate
           );
-          let interTo = getDateFromString(data.intervals[j].interval.toDate);
+          let interTo = UTILS.getDateFromString(
+            data.intervals[j].interval.toDate
+          );
 
           if (
             interFrom.getTime() != interTo.getTime() &&
@@ -267,7 +115,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           interval: {
             fromDate: formatDate(dteFrom),
             toDate: formatDate(dteTo),
-            name: `${i}T`
+            name: `${i}T`,
           },
           statements: stmnts,
         };
@@ -275,16 +123,21 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         dteFrom.setMonth(dteFrom.getMonth() + 3);
         dteFrom.setDate(1);
       }
-      console.log("weas");
-      console.log(accounts);
+    } else if (data.intervals && filter && filter.show === "yearly") {
+      accounts = data.intervals || [];
+
+      selectedElement = accounts.filter((acc) =>
+        /31\/12\/d*/.test(acc.interval.fromDate)
+      )[0];
     } else {
       accounts = data.intervals || [];
     }
-    // accounts = data.intervals || [];
 
     const drawChart = () => {
       if (accounts.length > 1) {
-        chartData = [["Month", "Vtas./Ing.", "Cpas./Gtos./Amort.", "Resultado"]];
+        chartData = [
+          ["Month", "Vtas./Ing.", "Cpas./Gtos./Amort.", "Resultado"],
+        ];
 
         if (accounts != null) {
           let elements = accounts.filter(
@@ -334,7 +187,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         chart.draw(table, options);
 
         if (isMobile) {
-          let mobileLegend = getMobileLegend();
+          let mobileLegend = UTILS.getMobileLegend();
           div.appendChild(mobileLegend);
 
           div.querySelector(":nth-child(1)").style.marginLeft = "15%";
@@ -348,9 +201,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         divMessage.style.paddingTop = "1.5em";
         divMessage.style.maxWidth = "90%";
 
-        let message = isMobile ? document.createElement("p") : document.createElement("h4");
-        if (isMobile)
-          message.style.fontWeight = "bold";
+        let message = isMobile
+          ? document.createElement("p")
+          : document.createElement("h4");
+        if (isMobile) message.style.fontWeight = "bold";
         message.style.textAlign = "center";
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
         message.style.margin = "10%";
@@ -386,7 +240,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     };
 
     google.charts.load("current", { packages: ["corechart"] });
-    google.charts.setOnLoadCallback(drawChart);
+
+    google.charts.setOnLoadCallback(
+      filter && filter.show == "yearly"
+        ? drawPeriodChart(selectedElement)
+        : drawChart
+    );
     resolve(true);
 
     const callbackYear = () => {
@@ -404,175 +263,196 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     };
 
     function listener() {
+
       if (chart.getSelection()[0] != null) {
         let selectedColumn = chart.getSelection()[0].column;
-        let arr = getArray(selectedColumn);
+        drawPieChart(selectedColumn);
+      }
+    }
 
-        let formatter = Intl.DateTimeFormat("es");
+    function drawPieChart(selectedColumn) {
 
-        let sDteStr = selectedElement.interval.fromDate;
-        let eDteStr = selectedElement.interval.toDate;
+      document.getElementById(
+        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+      ).style.display = "";
 
-        let title = `${getTitle(selectedColumn)} ${getPeriodName(sDteStr, eDteStr)}`;
 
-        if (arr != null) {
-          data2 = new google.visualization.DataTable();
-          data2.addColumn("string", "Concepto");
-          data2.addColumn("number", "Cantidad");
+      let arr = getArray(selectedColumn);
+      let sDteStr = selectedElement.interval.fromDate;
+      let eDteStr = selectedElement.interval.toDate;
 
-          let rows = new Array();
+      let title = !(filter && filter.show == "yearly")
+        ? `${UTILS.getTitle(selectedColumn)} ${UTILS.getPeriodName(
+            sDteStr,
+            eDteStr
+          )}`
+        : `${UTILS.getTitle(selectedColumn)} ${selectedPeriod.name}`;
 
-          let colors = [];
+      if (arr != null) {
+        data2 = new google.visualization.DataTable();
+        data2.addColumn("string", "Concepto");
+        data2.addColumn("number", "Cantidad");
 
-          arr.forEach((entry) => {
-            let amount = null;
-            if (selectedColumn == 1) amount = entry.credit - entry.debit;
-            else amount = entry.debit - entry.credit;
+        let rows = new Array();
 
-            rows.push([
-              entry.account.description,
-              { v: amount, f: formatNumber(amount) + " €" },
-            ]);
-            colors.push(getRandomColor());
+        let colors = [];
+
+        arr.forEach((entry) => {
+          let amount = null;
+          if (selectedColumn == 1) amount = entry.credit - entry.debit;
+          else amount = entry.debit - entry.credit;
+
+          rows.push([
+            entry.account.description,
+            {
+              v: amount,
+              f: UTILS.formatNumber(amount) + " €",
+            },
+          ]);
+          colors.push(UTILS.getRandomColor());
+        });
+
+        data2.addRows(rows);
+
+        let opt = {
+          // title: title,
+          height: (window.innerHeight / 100) * 80,
+          // width: (window.innerWidth / 2),
+          isStacked: true,
+          colors: colors,
+          legend: { position: "none" },
+        };
+
+        document
+          .getElementById(
+            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+          )
+          .addEventListener("click", () => {
+            drawPeriodChart(selectedElement);
           });
 
-          data2.addRows(rows);
+        let pieDiv = document.createElement("div");
+        pieDiv.id = "pieDiv";
 
-          let opt = {
-            // title: title,
-            height: (window.innerHeight / 100) * 80,
-            // width: (window.innerWidth / 2),
-            isStacked: true,
-            colors: colors,
-            legend: { position: "none" },
-          };
+        console.log(isMobile);
+        pieDiv.style.width = isMobile ? "100%" : "60%";
 
-          document
-            .getElementById(
-              "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-            )
-            .addEventListener("click", () => {
-              drawPeriodChart(selectedElement);
-            });
+        var chart2 = new google.visualization.PieChart(pieDiv);
 
-          let pieDiv = document.createElement("div");
-          pieDiv.id = "pieDiv";
+        let legend = document.createElement("table");
+        legend.id = "legend";
+        legend.style.padding = "10px";
+        legend.style.marginTop = "auto";
+        legend.style.marginBottom = "auto";
 
-          console.log(isMobile);
-          pieDiv.style.width = isMobile ? "100%" : "60%";
+        for (let i = 0; i < arr.length; i++) {
+          let amount =
+            selectedColumn != 1
+              ? arr[i].debit - arr[i].credit
+              : arr[i].credit - arr[i].debit;
 
-          var chart2 = new google.visualization.PieChart(pieDiv);
+          let legendTr = document.createElement("tr");
+          let colorTd = document.createElement("td");
+          // colorTd.style.backgroundColor = colors[i];
+          // colorTd.style.width = "50px";
 
-          let legend = document.createElement("table");
-          legend.id = "legend";
-          legend.style.padding = "10px";
-          legend.style.marginTop = "auto";
-          legend.style.marginBottom = "auto";
+          const colorDiv = document.createElement("div");
+          colorDiv.style.background = colors[i];
 
-          for (let i = 0; i < arr.length; i++) {
-            let amount =
-              selectedColumn != 1
-                ? arr[i].debit - arr[i].credit
-                : arr[i].credit - arr[i].debit;
+          const pixels = 15;
 
-            let legendTr = document.createElement("tr");
-            let colorTd = document.createElement("td");
-            // colorTd.style.backgroundColor = colors[i];
-            // colorTd.style.width = "50px";
+          colorDiv.style.width = pixels + "px";
+          colorDiv.style.height = pixels + "px";
+          // colorDiv.style.padding = "5px";
+          colorDiv.style.borderRadius = "999px";
 
-            const colorDiv = document.createElement("div");
-            colorDiv.style.background = colors[i];
+          colorTd.appendChild(colorDiv);
 
-            const pixels = 15;
+          legendTr.appendChild(colorTd);
 
-            colorDiv.style.width = pixels + "px";
-            colorDiv.style.height = pixels + "px";
-            // colorDiv.style.padding = "5px";
-            colorDiv.style.borderRadius = "999px";
+          let percentTd = document.createElement("td");
+          percentTd.id = "percentTd";
+          let percent = (amount / getTotalByColumn(selectedColumn)) * 100;
+          percentTd.innerHTML = UTILS.formatNumber(percent) + "%";
+          percentTd.style.textAlign = "right";
+          percentTd.style.width = "4em";
+          legendTr.appendChild(percentTd);
 
-            colorTd.appendChild(colorDiv);
+          let descTd = document.createElement("td");
+          descTd.style.maxWidth = window.innerWidth > 360 ? "10em" : "7em";
 
-            legendTr.appendChild(colorTd);
+          // descTd.style.fontSize = ".8em";
+          descTd.style.whiteSpace = "nowrap";
+          descTd.style.textOverflow = "ellipsis";
+          descTd.style.overflow = "hidden";
+          let description = arr[i].account.description;
+          descTd.innerText = description;
+          descTd.style.padding = "5px";
+          descTd.style.cursor = "pointer";
+          // descTd.dataset["complete"] = arr[i].account.description;
+          descTd.addEventListener("click", () => {
+            if (descTd.style.whiteSpace == "nowrap") {
+              descTd.style.whiteSpace = "";
+              descTd.style.textOverflow = "";
+              descTd.style.overflow = "";
+              colorTd.style.display = "flex";
+              colorTd.style.alignItems = "flex-start";
+              colorDiv.style.marginTop = "6.5px";
+              percentTd.style.verticalAlign = "text-top";
+              percentTd.style.marginTop = "5.5px";
+            } else {
+              descTd.style.whiteSpace = "nowrap";
+              descTd.style.textOverflow = "ellipsis";
+              descTd.style.overflow = "hidden";
+              colorTd.style.display = "";
+              colorTd.style.alignItems = "";
+              colorDiv.style.marginTop = "";
+              percentTd.style.verticalAlign = "";
+              percentTd.style.marginTop = "";
+            }
+          });
 
-            let percentTd = document.createElement("td");
-            percentTd.id = "percentTd";
-            let percent = (amount / getTotalByColumn(selectedColumn)) * 100;
-            percentTd.innerHTML = formatNumber(percent) + "%";
-            percentTd.style.textAlign = "right";
-            percentTd.style.width = "4em";
-            legendTr.appendChild(percentTd);
+          legendTr.appendChild(descTd);
 
-            let descTd = document.createElement("td");
-            descTd.style.maxWidth = "10em";
-
-            // descTd.style.fontSize = ".8em";
-            descTd.style.whiteSpace = "nowrap";
-            descTd.style.textOverflow = "ellipsis";
-            descTd.style.overflow = "hidden";
-            let description = arr[i].account.description;
-            descTd.innerText = description;
-            descTd.style.padding = "5px";
-            descTd.style.cursor = "pointer";
-            // descTd.dataset["complete"] = arr[i].account.description;
-            descTd.addEventListener("click", () => {
-              if (descTd.style.whiteSpace == "nowrap") {
-                descTd.style.whiteSpace = "";
-                descTd.style.textOverflow = "";
-                descTd.style.overflow = "";
-                colorTd.style.display = "flex";
-                colorTd.style.alignItems = "flex-start";
-                colorDiv.style.marginTop = "6.5px";
-                percentTd.style.verticalAlign = "text-top";
-                percentTd.style.marginTop = "5.5px";
-              } else {
-                descTd.style.whiteSpace = "nowrap";
-                descTd.style.textOverflow = "ellipsis";
-                descTd.style.overflow = "hidden";
-                colorTd.style.display = "";
-                colorTd.style.alignItems = "";
-                colorDiv.style.marginTop = "";
-                percentTd.style.verticalAlign = "";
-                percentTd.style.marginTop = "";
-              }
-            });
-
-            legendTr.appendChild(descTd);
-
-            let amountTd = document.createElement("td");
-            amountTd.style.textAlign = "right";
-            amountTd.style.width = "15em";
-            amountTd.innerText = formatNumber(amount) + " €";
-            legendTr.appendChild(amountTd);
-            legend.appendChild(legendTr);
-            legend.style.width = isMobile ? "95%" : "38%";
-          }
-
-          let head = document.createElement("h1");
-          head.innerHTML = title;
-          head.style.fontSize = "1em";
-
-          div.innerHTML = "";
-          div.appendChild(pieDiv);
-          div.appendChild(legend);
-          div.style.marginTop = "3em";
-          div.style.marginBottom = "3em";
-          chart2.draw(data2, opt);
-
-          if (isMobile) {
-            document.querySelector(
-              "#pieDiv > div:first-of-type"
-            ).style.overflow = "hidden";
-            document.querySelector(
-              "#pieDiv > div:first-of-type > div:first-of-type"
-            ).style.marginTop = "-35%";
-            document.querySelector(
-              "#pieDiv > div:first-of-type > div:first-of-type"
-            ).style.marginBottom = "-35%";
-
-          }
-
-          pieDiv.prepend(head);
+          let amountTd = document.createElement("td");
+          amountTd.style.textAlign = "right";
+          // amountTd.style.width = "17em";
+          amountTd.innerText =
+            window.innerWidth > 350
+              ? UTILS.formatNumber(amount) + " €"
+              : UTILS.formatNumber(amount) + "€";
+          legendTr.appendChild(amountTd);
+          legend.appendChild(legendTr);
+          legend.style.width = isMobile ? "95%" : "38%";
         }
+
+        let head = document.createElement("h1");
+        head.innerHTML = title;
+        head.style.fontSize = "1em";
+
+        div.innerHTML = "";
+        div.appendChild(pieDiv);
+        div.appendChild(legend);
+        div.style.marginTop = "3em";
+        div.style.marginBottom = "3em";
+        chart2.draw(data2, opt);
+
+        if (isMobile) {
+          let ratio = window.innerWidth / window.innerHeight;
+
+          let marg = ratio <= 1 ? -1 * 35 * (1 - ratio) * 1.8 : 0;
+
+          document.querySelector("#pieDiv > div:first-of-type").style.overflow =
+            "hidden";
+          document.querySelector(
+            "#pieDiv > div:first-of-type > div:first-of-type"
+          ).style.marginTop = `${marg}%`;
+          document.querySelector(
+            "#pieDiv > div:first-of-type > div:first-of-type"
+          ).style.marginBottom = `${marg}%`;
+        }
+
+        pieDiv.prepend(head);
       }
     }
 
@@ -670,7 +550,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
       document.getElementById(
         "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-      ).style.display = "";
+      ).style.display = filter && filter.show == "yearly" ? "none" : "";
 
       data1 = new google.visualization.DataTable();
       data1.addColumn("string", "Concepto");
@@ -684,7 +564,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       data1.addRows([
         [
           "Vtas./Ing.",
-          { v: income, f: formatNumber(income) + " €" },
+          { v: income, f: UTILS.formatNumber(income) + " €" },
           null,
           null,
           null,
@@ -694,8 +574,14 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         [
           "Cpas./Gtos.",
           null,
-          { v: purchases, f: formatNumber(purchases) + " €" },
-          { v: outgoings, f: formatNumber(outgoings) + " €" },
+          {
+            v: purchases,
+            f: UTILS.formatNumber(purchases) + " €",
+          },
+          {
+            v: outgoings,
+            f: UTILS.formatNumber(outgoings) + " €",
+          },
           null,
           null,
           null,
@@ -705,7 +591,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           null,
           null,
           null,
-          { v: raw, f: formatNumber(raw) + " €" },
+          { v: raw, f: UTILS.formatNumber(raw) + " €" },
           null,
           null,
         ],
@@ -715,7 +601,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           null,
           null,
           null,
-          { v: amortizations, f: formatNumber(amortizations) + " €" },
+          {
+            v: amortizations,
+            f: UTILS.formatNumber(amortizations) + " €",
+          },
           null,
         ],
         [
@@ -725,7 +614,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           null,
           null,
           null,
-          { v: liquid, f: formatNumber(liquid) + " €" },
+          { v: liquid, f: UTILS.formatNumber(liquid) + " €" },
         ],
       ]);
       let formatter = Intl.DateTimeFormat("es");
@@ -734,29 +623,134 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       let eDteStr = selectedElement.interval.toDate;
       // Set chart options
       options = {
-        title: `Resultados ${getPeriodName(sDteStr, eDteStr)}`,
+        title: !(filter && filter.show == "yearly")
+          ? `Resultados ${UTILS.getPeriodName(sDteStr, eDteStr)}`
+          : `Resultados ${selectedPeriod.name}`,
         vAxis: { title: "Cantidad (€)" },
         height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
         isStacked: true,
         legend: {
           position: "none",
-        },
+        }
       };
 
-      // Instantiate and draw our chart, passing in some options.
-      chart = new google.visualization.ColumnChart(
-        document.getElementById("chart_div")
-      );
+      div.style.display = "flex";
+      div.style.flexWrap = "wrap";
+      div.style.justifyContent = "center";
+
+      let divCol = document.createElement("div");
+      divCol.style.width = isMobile ? "100%" : "70%";
+      divCol.id = "divCol";
+      div.appendChild(divCol);
+
+
+      chart = new google.visualization.ColumnChart(divCol);
       chart.draw(data1, options);
 
       if (isMobile) {
-
         div.querySelector(":nth-child(1)").style.marginLeft = "15%";
         div.style.overflow = "hidden";
       }
 
       //Adding listener
       google.visualization.events.addListener(chart, "select", listener);
+
+      let legend = getColLegend(isMobile);
+
+      div.appendChild(legend);
+    }
+
+    function getColLegend(isMobile) {
+      //LEGEND
+
+      let legend = document.createElement("table");
+      legend.style.marginTop = "auto";
+      legend.style.marginBottom = "auto";
+
+
+      const colorSize = 15;
+
+      let legendColData = [
+        {
+          color: "#3366cc",
+          name: "Vtas./Ing.",
+          amount: income,
+          selectedColumn: 1,
+        },
+        {
+          color: "#dc3912",
+          name: "Compras",
+          amount: purchases,
+          selectedColumn: 2,
+        },
+        {
+          color: "#ff9900",
+          name: "Gastos",
+          amount: outgoings,
+          selectedColumn: 3,
+        },
+        {
+          color: "#109618",
+          name: "Rdo. bruto",
+          amount: raw,
+          selectedColumn: null,
+        },
+        {
+          color: "#990099",
+          name: "Amortiz.",
+          amount: amortizations,
+          selectedColumn: 5,
+        },
+        {
+          color: "#0099c6",
+          name: "Rdo. neto",
+          amount: liquid,
+          selectedColumn: null,
+        },
+      ];
+
+      legendColData.forEach((categ) => {
+        let trCateg = document.createElement("tr");
+        let tdCategColor = document.createElement("td");
+        tdCategColor.style.width = colorSize * 2.5 + "px";
+
+        let divCategColor = document.createElement("div");
+        divCategColor.style.width = "100%";
+        divCategColor.style.height = colorSize + "px";
+        divCategColor.style.borderRadius = "1px";
+        divCategColor.style.background = categ.color;
+
+        tdCategColor.appendChild(divCategColor);
+        trCateg.appendChild(tdCategColor);
+
+        let tdCategDesc = document.createElement("td");
+        tdCategDesc.innerHTML = categ.name;
+        tdCategDesc.style.maxWidth = "7em";
+        tdCategDesc.style.textIndent = isMobile ? ".3em" : "";
+        tdCategDesc.style.overflow = "hidden";
+        tdCategDesc.style.whiteSpace = "nowrap";
+        // tdCategDesc.style.textOverflow = "ellipsis";
+
+        trCateg.appendChild(tdCategDesc);
+
+        let tdCategAmount = document.createElement("td");
+        tdCategAmount.style.textAlign = "right";
+        tdCategAmount.style.width = "9em";
+        tdCategAmount.innerHTML = `${UTILS.formatNumber(categ.amount)} €`;
+
+        trCateg.appendChild(tdCategAmount);
+        if (categ.selectedColumn && categ.amount && categ.amount != 0) {
+          trCateg.addEventListener("click", () => {
+            drawPieChart(categ.selectedColumn);
+          });
+        }
+
+        legend.appendChild(trCateg);
+      });
+      
+      legend.style.width = isMobile ? "80%" : "";
+
+      return legend;
     }
   });
 };

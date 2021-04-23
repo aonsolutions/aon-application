@@ -36,6 +36,10 @@ export const getPeriodAccounting = (data) => {
     {
       name: "Trimestral",
       value: "quarterly",
+    },
+    {
+      name: "Anual",
+      value: "yearly",
     }
   ];
   return jsonValues;
