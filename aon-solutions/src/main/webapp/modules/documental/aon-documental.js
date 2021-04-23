@@ -3,7 +3,7 @@ import { DocumentalSidenav, ASESOR_TYPE_OPTION,
   ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 import {getCategories, getTags, createTag, createCategory, editCategory,
     deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-    getDomainUserRoles} from '../../services/service.js';
+    getDomainUserRoles, getDocument} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {requestBidoq} from '../../services/request.js';
 import {bidoq} from  '../../services/bidoq.js';
@@ -98,7 +98,10 @@ export class AonDocumental extends AonElement {
       this.addCategoryOptions();
       this.addTagOptions();
       this.loadScopes();
-  		this.aonDocumentalList();
+
+      if(this.value){
+        this.aonDocumentById(this.value);
+      } else this.aonDocumentalList();
     }
 
     addDocumentOptions() {
@@ -381,6 +384,12 @@ export class AonDocumental extends AonElement {
   			}
   		}
   	}
+
+    aonDocumentById(id) {
+      getDocument(id)
+        .then(doc => this.aonDocument(doc))
+        .catch(error => alert(error.message));
+    }
 
     aonDocument(doc) {
       let application = this.getApplication();

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
+import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @SuppressWarnings("serial")
@@ -40,6 +41,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			super.doGet(req, resp);
 		
 			switch (getPath()) {
+			case "/":
+				response(req, resp, getFile());
+				break;
 			case "/files":
 				response(req, resp, getFiles());
 				break;
@@ -84,6 +88,17 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
+		}
+	}
+
+	private JSONObject getFile() throws Exception {
+		if(getParams().opt(IConstants.ID) != null) {
+			Attach attach = AON.getDocumentalAttachStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), 
+					f -> f.getIdProperty().eq(getParams().optInt(IConstants.ID)),AttachType.REGISTRY, false)
+			.findFirst().orElse(new Attach());
+			return attachToJSON(attach);
+		} else {
+			throw new Exception("No se ha especificado el identificador del documento");
 		}
 	}
 	
