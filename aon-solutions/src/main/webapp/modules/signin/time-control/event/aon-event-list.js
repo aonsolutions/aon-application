@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin, formatDate } from "../../../../services/utils.js";
+import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin, formatDate, isEmptyObject } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -74,10 +74,8 @@ export class AonEventList extends AonElement {
     } else {
       this.buildToolbarDesk();
     }
-
     await this.buildFilter();
     await this.getTable();
-
   }
 
 
@@ -162,7 +160,7 @@ export class AonEventList extends AonElement {
       }
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
       aonTable.addColumn(AON_MSG_DATE, "date", "dateParse", "40%");
-      aonTable.addColumn(AON_MSG_DURATION, "", "duration", "30%");
+      aonTable.addColumn(AON_MSG_DURATION, "", "durationParse", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -188,22 +186,44 @@ export class AonEventList extends AonElement {
       try {
         const resp = await this.getData();
         aonTable.removeAllLi();
+        let idxTotal = 0;
+        let timeTotal = 0;
         resp.map((res, idx) => {
           const group = res.group;
-          if(group && "DAY"!==group) res.dateParse = formatDate(res.start_date)+" - "+ formatDate(res.end_date);
-          else res.dateParse = firstLetters(setDateTpDay(res.start_date));
-          
-          let options = {
+          if(group && "DAY"!==group) {
+            res.dateParse = formatDate(res.start_date)+" - "+ formatDate(res.end_date);
+          } else {
+            res.dateParse = firstLetters(setDateTpDay(res.start_date));
+          }
+          if(res.status && res.status.indexOf("in")>=0 && res.in_date){
+            res.time = (new Date().getTime() - res.in_date)  + res.time;
+            res.durationParse = timeHour(Number(res.time));
+          }
+          const options = {
             paddingTopTitle: "5px",
-            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
+            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.durationParse}</span>`,
             title: `${res.dateParse}`,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
+          idxTotal = idx;
+          timeTotal = timeTotal + res.time;
         });
+        //---------TIME TOTAL
+        if(timeTotal>0) this.addTotalMobile(aonTable, idxTotal+1, timeTotal);
       } catch (e) {
         console.log(e);
       }
     }
+  }
+
+  addTotalMobile(aonTable, idxTotal, timeTotal){
+      const filter = !isEmptyObject(this.applicationParentEl._filter) ? this.applicationParentEl._filter : null;
+      if(filter && "DAY"===filter.group && "this_week"===filter.period ){
+        aonTable.addLi({
+          iconHtmlCustom: `<span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${timeHour(Number(timeTotal))}</span>`,
+          title: `<span style="font-weight: 500;padding-right: 10px;padding-top: 5px;float: right;">TOTAL DE HORAS</span>`,
+        }, idxTotal, (el) =>{});
+      }
   }
 
   async getData() {
@@ -227,7 +247,7 @@ export class AonEventList extends AonElement {
               textStatus: textStatus.name,
               status: newStatus,
               last_location: r.last_location,
-              duration: timeHour(Number(r.time)),
+              durationParse: timeHour(Number(r.time)),
             };
             data.push(obj);
           }

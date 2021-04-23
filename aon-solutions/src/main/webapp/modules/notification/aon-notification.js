@@ -160,8 +160,8 @@ export class AonNotification extends AonElement {
   }
 
   async goNotification(data) {
-    this.markReadNotification(data);
-    const {source, source_id} = data;
+    const {id, source, source_id} = data;
+    this.markReadNotification(id);
     if(source && source_id){
       let aonComponent = null;
       switch(source){
@@ -276,16 +276,17 @@ export class AonNotification extends AonElement {
         break;
     }
   }
-  markReadNotification(data){
-    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + data.id);
+
+  markReadNotification(id){
+    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
     if (aonCard) {
       aonCard.setBackground("#fff");
-      const icon = this.getElement(`${data.id}Icon`);
+      const icon = this.getElement(`${id}Icon`);
       if (icon) {
         icon.remove();
         this.changeBadgeComponent(-1);
       }
-      try {markReadNotification(data);} catch (error) { } //markRead
+      try {markReadNotification({id});} catch (error) { } //markRead
     }
   }
 
