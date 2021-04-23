@@ -73,7 +73,6 @@ export class AonNotificationIcon extends AonElement {
 
         window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ({detail})=>{
 			this.getTotalNotification();
-            // this.showNotificationTest(detail);
 		});
 
         this.addEventListener('click', (ev)=>this.goAonNotification());

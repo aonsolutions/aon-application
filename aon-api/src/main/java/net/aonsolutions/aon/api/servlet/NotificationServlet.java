@@ -117,7 +117,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 		AonToken at = SECURITY.getAonToken(getToken());
 		Integer page = getParams().optInt("page");
 		Integer peerPage = getParams().optInt("peerPage");
-		AON_SOLUTIONS.getNotificationStream(f->f.getAuthProperty().eq(at.getAuth()).or(f.getSenderProperty().eq(at.getAuth())), page, peerPage)
+		AON_SOLUTIONS.getNotificationStream(f->f.getAuthProperty().eq(at.getAuth()).or(f.getSenderProperty().eq(at.getAuth())).and(f.getStatusProperty().eq(NotificationStatus.UNREAD.value())), page, peerPage)
 		.forEach(nt -> {
 			array.put(nt.toJSON());
 		});

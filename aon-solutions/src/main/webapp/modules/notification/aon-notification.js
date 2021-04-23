@@ -201,7 +201,7 @@ export class AonNotification extends AonElement {
       label.style = "float: right;margin-top: -23px;margin-right: -19px;cursor: pointer;padding: 10px;";
       label.addEventListener("click", (ev) =>{
           ev.stopPropagation();
-          this.removeFadeOutNotify(aonCard, 600)
+          this.removeFadeOutNotify(aonCard, 600, data.id)
       });
       aonCard.getCardTitle().appendChild(label);
     }
@@ -214,7 +214,7 @@ export class AonNotification extends AonElement {
     return aonCard;
   }
 
-  removeFadeOutNotify(el, speed) {
+  removeFadeOutNotify(el, speed, notificationId) {
     if (el) {
       const seconds = speed / 1000;
       const divCard = el.getCard();
@@ -223,6 +223,7 @@ export class AonNotification extends AonElement {
       setTimeout(() => {
         el.parentNode.removeChild(el);
         this.changeBadgeComponent(-1);
+        this.markReadNotification(notificationId);
       }, speed);
     }
   }
@@ -234,7 +235,7 @@ export class AonNotification extends AonElement {
         let el = this.getElement(
           this.AON_NOTIFICATION + "Card" + notification.id
         );
-        this.removeFadeOutNotify(el, 600);
+        this.removeFadeOutNotify(el, 600, notification.id);
       });
     }
   }
@@ -278,6 +279,7 @@ export class AonNotification extends AonElement {
   }
 
   markReadNotification(id){
+    try {markReadNotification({id});} catch (error) { console.log(error)} //markRead
     let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
     if (aonCard) {
       aonCard.setBackground("#fff");
@@ -286,7 +288,6 @@ export class AonNotification extends AonElement {
         icon.remove();
         this.changeBadgeComponent(-1);
       }
-      try {markReadNotification({id});} catch (error) { } //markRead
     }
   }
 
