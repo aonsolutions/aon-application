@@ -1557,18 +1557,18 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------- NormalizeIT.Methods
 	
 	private void normalizeITToSave() {
-		if( (byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue()) || (byte) 8 == Byte.parseByte(causeLowPart.getSelectedValue())) {
-				Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
-				
-				ITPart lowPart = getLowPart(this.it);
-				lowPart.setDate(DateUtils.copyDateOnly(realStartDate));
-				
-				this.it.setStartDate(DateUtils.addDays2Date(realStartDate, 1));
+		if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
+			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
+			
+			ITPart lowPart = getLowPart(this.it);
+			lowPart.setDate(DateUtils.copyDateOnly(realStartDate));
+			
+			this.it.setStartDate(DateUtils.addDays2Date(realStartDate, 1));
 		}
 	}
 	
 	private void normalizeITToPaint(IT it) {
-		if( (byte) 1 == it.getTypeLowPart() || (byte) 8 == it.getTypeLowPart()) {
+		if( (byte) 1 == it.getTypeLowPart()) {
 			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
 			it.setStartDate(DateUtils.addDays2Date(realStartDate, -1));
 		}

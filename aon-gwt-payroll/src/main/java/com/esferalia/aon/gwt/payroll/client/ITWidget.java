@@ -385,15 +385,6 @@ public abstract class ITWidget extends ResizeComposite {
 			tooltip.showTooltip(mouseClientX, mouseClientY);
 		}
 
-		private Date getRealStartDate(IT it) {
-			if( (byte) 1 == it.getTypeLowPart() || (byte) 8 == it.getTypeLowPart()) {
-				Date realStartDate = DateUtils.copyDateOnly(it.getStartDate());
-				return DateUtils.addDays2Date(realStartDate, -1);
-			}
-			
-			return it.getStartDate();
-		}
-
 	}
     
     private void evalTooltip() {
@@ -765,7 +756,10 @@ public abstract class ITWidget extends ResizeComposite {
 			if (leaveEndAux == null)
 				leaveEndAux = end;
 
-			leaveStart = DateUtils.after(it.getStartDate(), startYear);
+			Date itStartDate = getRealStartDate(it);
+					
+//			leaveStart = DateUtils.after(it.getStartDate(), startYear);
+			leaveStart = DateUtils.after(itStartDate, startYear);
 			leaveEnd = DateUtils.before(leaveEndAux, endYear);
 
 			int contractLeaveId = it.getId();
@@ -848,6 +842,15 @@ public abstract class ITWidget extends ResizeComposite {
 			if (AonStringUtils.equals(type.getDescription(), description))
 				return type;
 		return null;
+	}
+	
+	private Date getRealStartDate(IT it) {
+		if((byte) 1 == it.getTypeLowPart()) {
+			Date realStartDate = DateUtils.copyDateOnly(it.getStartDate());
+			return DateUtils.addDays2Date(realStartDate, -1);
+		}
+		
+		return it.getStartDate();
 	}
 	
 	public static String getColor(Type type) {
