@@ -2005,6 +2005,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Salary salary;
 	private Statistics stats;
 	private EnterpriseSalary enterpriseSalary;
+	private EnterpriseIT enterpriseIT;
 	private ITEditor it;
 	private WorkplaceSalary workplaceSalary;
 	private CalendarDraft calendarDraft;
@@ -2347,6 +2348,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEnterpriseSalary());
 		getEnterpriseSalary().setEnterpriseSalaryObject(enterpriseSalaryObject);
 	}
+	
+	@Override
+	public void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
+		employeeDetail.setWidget(getEnterpriseIT());
+		getEnterpriseIT().setEnterpriseITObject(enterpriseITObject);
+	}
 
 	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
@@ -2625,6 +2632,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (enterpriseSalary == null)
 			(enterpriseSalary = new EnterpriseSalary()).addListener(this);
 		return enterpriseSalary;
+	}
+	
+	private EnterpriseIT getEnterpriseIT() {
+		if (enterpriseIT == null)
+			enterpriseIT = new EnterpriseIT();
+		return enterpriseIT;
 	}
 
 	public Salary getSalary() {

@@ -338,8 +338,14 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		EnterpriseSalary enterpriseSalary = new EnterpriseSalary();
 		detailPanel.setWidget(enterpriseSalary);
 		enterpriseSalary.setEnterpriseSalaryObject(enterpiseSalaryObject);
-		enterpriseSalary.hideEnterpriseSiteButtons();
-				
+		enterpriseSalary.hideEnterpriseSiteButtons();			
+	}
+	
+	@Override
+	public void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
+		EnterpriseIT enterpriseIT = new EnterpriseIT();
+		detailPanel.setWidget(enterpriseIT);
+		enterpriseIT.setEnterpriseITObject(enterpriseITObject);		
 	}
 
 	@Override

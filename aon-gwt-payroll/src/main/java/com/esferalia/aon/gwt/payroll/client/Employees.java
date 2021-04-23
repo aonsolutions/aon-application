@@ -106,6 +106,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onStatisticsSelected(Statistics stats);
 		
 		void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalary);
+		
+		void onEnterpriseITSelected(EnterpriseITObject enterpiseITObject);
 
 		void onITDataSelected(ITDataObject dataObject);
 		
@@ -165,7 +167,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
 //	private static final int ENTERPRISE_SALARIES_INDEX = 3;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
-	private static final int ENTERPRISE_PARTSIT_INDEX = 4;
+//	private static final int ENTERPRISE_PARTSIT_INDEX = 4;
 	private static final int ENTERPRISE_REPORTS_INDEX = 6;
 
 	private static final int WORKPLACE_COSTS_INDEX = 0;
@@ -328,11 +330,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.addItem(enterpriseItem);
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
+		
 		// Nominas Beta Empresa
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries())
 			.setUserObject(new EnterpriseSalaryObject(enterprise));
 
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
+		
+		addImageItem(enterpriseItem, "Partes IT", images.itDatas())
+			.setUserObject(new EnterpriseITObject());
+		
 //		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
 		
 		
@@ -433,6 +440,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof EnterpriseSalaryObject) {
 			onEnterpriseSalariesSelected((EnterpriseSalaryObject) userObject);
+		} else if (userObject instanceof EnterpriseITObject) {
+			onEnterpriseITSelected((EnterpriseITObject) userObject);
 		} else if (userObject instanceof ITDataObject) {
 			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof WorkplaceSalaryObject) {
@@ -936,24 +945,24 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			});
 		}
 
-		final TreeItem partsItItem = enterpriseItem.getChild(ENTERPRISE_PARTSIT_INDEX);
-
-		if (null == partsItItem.getUserObject()) {
-
-			employeesService.getEnterpriseITData(enterprise.getId(), new AsyncCallback<ITData>() {
-
-				@Override
-				public void onSuccess(ITData partsIt) {
-					partsItItem.setUserObject(partsIt);
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Apéndice de método generado automáticamente
-					Window.alert(caught.getLocalizedMessage());
-				}
-			});
-		}
+//		final TreeItem partsItItem = enterpriseItem.getChild(ENTERPRISE_PARTSIT_INDEX);
+//
+//		if (null == partsItItem.getUserObject()) {
+//
+//			employeesService.getEnterpriseITData(enterprise.getId(), new AsyncCallback<ITData>() {
+//
+//				@Override
+//				public void onSuccess(ITData partsIt) {
+//					partsItItem.setUserObject(partsIt);
+//				}
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					// TODO Apéndice de método generado automáticamente
+//					Window.alert(caught.getLocalizedMessage());
+//				}
+//			});
+//		}
 	}
 
 	/*
@@ -1120,6 +1129,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
 		for (Listener listener : listeners) {
 			listener.onEnterpriseSalariesSelected(enterpriseSalaryObject);
+		}
+	}
+	
+	private void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
+		for (Listener listener : listeners) {
+			listener.onEnterpriseITSelected(enterpriseITObject);
 		}
 	}
 
