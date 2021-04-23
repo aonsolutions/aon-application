@@ -37,88 +37,94 @@
 		<g:DeckPanel ui:field="deckPanel">
 			<g:HTMLPanel ui:field="salaryBasePanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBaseAnualCB" value="true" />
+		    		<g:CheckBox ui:field="salaryBaseAnualCB"/>
 		    		<g:Label>[01] SALARIO BASE ANUAL</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBaseMensualCB" value="true" />
+		    		<g:CheckBox ui:field="salaryBaseMensualCB"/>
 		    		<g:Label>[02] SALARIO BASE MENSUAL</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBaseDailyCB" value="true" />
+		    		<g:CheckBox ui:field="salaryBaseDailyCB"/>
 		    		<g:Label>[03] SALARIO BASE DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBaseHoursCB" value="true" />
+		    		<g:CheckBox ui:field="salaryBaseHoursCB"/>
 		    		<g:Label>[04] SALARIO BASE HORAS</g:Label>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryPlusMensualCB" value="true" />
+		    		<g:CheckBox ui:field="salaryPlusMensualCB"/>
 		    		<g:Label>[10] PLUS SALARIAL MENSUAL</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryPlusDailyCB" value="true" />
+		    		<g:CheckBox ui:field="salaryPlusDailyCB"/>
 		    		<g:Label>[11] PLUS SALARIAL DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryPlusWorkDailyCB" value="true" />
+		    		<g:CheckBox ui:field="salaryPlusWorkDailyCB"/>
 		    		<g:Label>[12] PLUS SALARIAL DIARIO LABORABLES</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBasePermanentCB" value="true" />
+		    		<g:CheckBox ui:field="salaryBasePermanentCB"/>
 		    		<g:Label>[13] PLUS SALARIAL FIJO</g:Label>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="extraSalaryPlusesPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="extraSalaryPlusMensualCB" value="true" />
+		    		<g:CheckBox ui:field="extraSalaryPlusMensualCB"/>
 		    		<g:Label>[20] PLUS EXTRA SALARIAL MENSUAL</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="extraSalaryPlusDailyCB" value="true" />
+		    		<g:CheckBox ui:field="extraSalaryPlusDailyCB"/>
 		    		<g:Label>[21] PLUS EXTRA SALARIAL DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="extraSalaryPlusWorkDailyCB" value="true" />
+		    		<g:CheckBox ui:field="extraSalaryPlusWorkDailyCB"/>
 		    		<g:Label>[22] PLUS EXTRA SALARIAL DIARIO LABORABLES</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="extraSalaryBasePermanentCB" value="true" />
+		    		<g:CheckBox ui:field="extraSalaryBasePermanentCB"/>
 		    		<g:Label>[23] PLUS EXTRA SALARIAL FIJO</g:Label>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryComplementsPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="spiceComplementCB" value="true" />
+		    		<g:CheckBox ui:field="spiceComplementCB"/>
 		    		<g:Label>[30] RETRIBUCION EN ESPECIE</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="antiquityComplementCB" value="true" />
+		    		<g:CheckBox ui:field="antiquityComplementCB"/>
 		    		<g:Label>[40] COMPLEMENTO PERSONAL DE ANTIGÜEDAD</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="overnightComplementCB" value="true" />
+		    		<g:CheckBox ui:field="overnightComplementCB"/>
 		    		<g:Label>[43] GASTOS PERNOCTA DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="maintenanceComplementCB" value="true" />
+		    		<g:CheckBox ui:field="maintenanceComplementCB"/>
 		    		<g:Label>[45] GASTOS MANUTENCION DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="locomotionComplementCB" value="true" />
+		    		<g:CheckBox ui:field="locomotionComplementCB"/>
 		    		<g:Label>[50] GASTOS LOCOMOCIÓN SIN JUSTIFICANTE</g:Label>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryExtrasPanel" styleName="{style.flexColumn}">
 		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryExtraCB" value="true" />
+		    		<g:CheckBox ui:field="salaryExtraCB" />
 		    		<g:Label>[90-91] PAGA EXTRA VERANO NAVIDAD</g:Label>
+		    		<g:Button ui:field="apportionExtraB" />
+		    		<g:Label>PRORRATEO</g:Label>
+		    	</g:HTMLPanel>
+		    	<g:HTMLPanel styleName="{style.flex}">
+		    		<g:CheckBox ui:field="salaryBenefitsCB" />
+		    		<g:Label>[90-91] PAGA EXTRA BENEFICIOS</g:Label>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
 		</g:DeckPanel>

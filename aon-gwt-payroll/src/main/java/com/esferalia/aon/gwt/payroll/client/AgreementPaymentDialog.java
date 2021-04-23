@@ -47,7 +47,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		GASTOS_MANUTENCION_DIARIO(null, "G_MANUTENCION * DIAS_MANUNTECION"),
 		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE(null, "IMPORTE_KMS * KMS"),
 		
-		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL")
+		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL"),
+		PAGA_EXTRA_BENEFICIOS("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL")
 		;
 		
 		private String suggestName;
@@ -160,6 +161,12 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	CheckBox salaryExtraCB;
 	
 	@UiField
+	Button apportionExtraB;
+	
+	@UiField
+	CheckBox salaryBenefitsCB;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	private int widgetIndex;
@@ -193,12 +200,13 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		this.availablePaymens = new ArrayList<Payment>();
 		
 		initializePanelList();
+		initializeapportionExtraButton();
 		initializeCheckBoxesList();
 		getButtonsPanel();
 		
 		deckPanel.showWidget(widgetIndex);
 	}
-	
+
 	private String getCustomCaption() {
 		switch (widgetIndex) {
 		case 0:
@@ -230,7 +238,18 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		this.panelList.add(salaryExtrasPanel);
 	}
 	
+	private void initializeapportionExtraButton() {
+		getEnableDisableButton(apportionExtraB, false);
+		apportionExtraB.addClickHandler(e -> {
+			Boolean oldValue = isActiveToggleButton(apportionExtraB);
+			Boolean value = !oldValue;
+			getEnableDisableButton(apportionExtraB, value);
+		});
+	}
+	
 	private void initializeCheckBoxesList() {
+		
+		
 		this.salaryBaseCBs = new ArrayList<Pair<CheckBox, String>>();
 		this.salaryBaseCBs.add(new Pair<CheckBox, String>(salaryBaseAnualCB, "[01] SALARIO BASE ANUAL"));
 		this.salaryBaseCBs.add(new Pair<CheckBox, String>(salaryBaseMensualCB, "[02] SALARIO BASE MENSUAL"));
@@ -258,6 +277,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		
 		this.salaryExtrasCBs = new ArrayList<Pair<CheckBox, String>>();
 		this.salaryExtrasCBs.add(new Pair<CheckBox, String>(salaryExtraCB, "[90-91] PAGA EXTRA VERANO NAVIDAD"));
+		this.salaryExtrasCBs.add(new Pair<CheckBox, String>(salaryBenefitsCB, "[92] PAGA EXTRA BENEFICIOS"));
 	}
 	
 	protected abstract void onAcceptExtra(List<Payment> paymentResultList, List<Extra> extraResultList);
@@ -414,7 +434,9 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		AgreementPayment agreementPayment = AgreementPayment.safeValueOf(normalizeName(name));
 		String suggestName = null == agreementPayment ? "" : agreementPayment.getSuggestName();
 		
-		if(checkBox.getValue()) {
+		if(checkBox.getValue() && AonStringUtils.equalsIgnoreCase(name, "[90-91] PAGA EXTRA VERANO NAVIDAD")) {
+			
+			Boolean apportionExtra = isActiveToggleButton(apportionExtraB);
 			
 			// Sumer payment and extra
 			
@@ -443,17 +465,21 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				
 			paymentResultList.add(newPaymentSummer);
 			
-			Extra newExtraSummer = new Extra();
-			newExtraSummer.setId(--nextDraftExtraId);
-			newExtraSummer.setIssueDate("31/07");
-			newExtraSummer.setStartDate("01/01");
-			newExtraSummer.setEndDate("30/06");
-			newExtraSummer.setDomain(newPaymentSummer.getDomain());
-			newExtraSummer.setPaymentId(newPaymentSummer.getId());
-			newExtraSummer.setPaymentDescription(newPaymentSummer.getDescription());
-			newExtraSummer.setAgreementDescription(newPaymentSummer.getDescription());
+			if(!apportionExtra) {
+				
+				Extra newExtraSummer = new Extra();
+				newExtraSummer.setId(--nextDraftExtraId);
+				newExtraSummer.setIssueDate("31/07");
+				newExtraSummer.setStartDate("01/01");
+				newExtraSummer.setEndDate("30/06");
+				newExtraSummer.setDomain(newPaymentSummer.getDomain());
+				newExtraSummer.setPaymentId(newPaymentSummer.getId());
+				newExtraSummer.setPaymentDescription(newPaymentSummer.getDescription());
+				newExtraSummer.setAgreementDescription(newPaymentSummer.getDescription());
+				
+				extraResultList.add(newExtraSummer);
 			
-			extraResultList.add(newExtraSummer);
+			}
 			
 			// Winter payment and extra
 			
@@ -482,17 +508,62 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				
 			paymentResultList.add(newPaymentWinter);
 			
-			Extra newExtraWinter = new Extra();
-			newExtraWinter.setId(--nextDraftExtraId);
-			newExtraWinter.setIssueDate("31/12");
-			newExtraWinter.setStartDate("01/07");
-			newExtraWinter.setEndDate("31/12");
-			newExtraWinter.setDomain(newPaymentWinter.getDomain());
-			newExtraWinter.setPaymentId(newPaymentWinter.getId());
-			newExtraWinter.setPaymentDescription(newPaymentWinter.getDescription());
-			newExtraWinter.setAgreementDescription(newPaymentWinter.getDescription());
+			if(!apportionExtra) {
 			
-			extraResultList.add(newExtraWinter);
+				Extra newExtraWinter = new Extra();
+				newExtraWinter.setId(--nextDraftExtraId);
+				newExtraWinter.setIssueDate("31/12");
+				newExtraWinter.setStartDate("01/07");
+				newExtraWinter.setEndDate("31/12");
+				newExtraWinter.setDomain(newPaymentWinter.getDomain());
+				newExtraWinter.setPaymentId(newPaymentWinter.getId());
+				newExtraWinter.setPaymentDescription(newPaymentWinter.getDescription());
+				newExtraWinter.setAgreementDescription(newPaymentWinter.getDescription());
+				
+				extraResultList.add(newExtraWinter);
+			
+			}
+			
+		} else if (checkBox.getValue() && AonStringUtils.equalsIgnoreCase(name, "[92] PAGA EXTRA BENEFICIOS")) {
+			
+			// Benefits payment and extra
+			
+			Payment newPaymentBenefit = new Payment();
+			newPaymentBenefit.setId(--nextDraftPaymentId);
+			
+			Payment conceptBenefit = getPayment(suggestName);
+			
+			if (conceptBenefit == null) {
+				newPaymentBenefit.setDescription("[90] PAGA BENEFICIOS");
+				newPaymentBenefit.setExpression(agreementPayment.getExpression());
+				newPaymentBenefit.setIrpfExpression("_P");
+				newPaymentBenefit.setQuoteExpression("_P");
+				newPaymentBenefit.setType(Payment.Type.CRA_0004);
+				newPaymentBenefit.setSalaryType(Salary.Type.SALARY);
+			} else {
+				newPaymentBenefit.setType(conceptBenefit.getType());
+				newPaymentBenefit.setName(conceptBenefit.getName());
+				newPaymentBenefit.setConceptId(conceptBenefit.getId());
+				newPaymentBenefit.setDescription("[90] PAGA BENEFICIOS");
+				newPaymentBenefit.setExpression(agreementPayment.getExpression());
+				newPaymentBenefit.setIrpfExpression(conceptBenefit.getIrpfExpression());
+				newPaymentBenefit.setQuoteExpression(conceptBenefit.getQuoteExpression());
+				newPaymentBenefit.setSalaryType(Salary.Type.SALARY);	
+			}
+				
+			paymentResultList.add(newPaymentBenefit);
+				
+			Extra newExtraBenefits = new Extra();
+			newExtraBenefits.setId(--nextDraftExtraId);
+			newExtraBenefits.setIssueDate("31/03");
+			newExtraBenefits.setStartDate("01/01 -1");
+			newExtraBenefits.setEndDate("31/12 -1");
+			newExtraBenefits.setDomain(newPaymentBenefit.getDomain());
+			newExtraBenefits.setPaymentId(newPaymentBenefit.getId());
+			newExtraBenefits.setPaymentDescription(newPaymentBenefit.getDescription());
+			newExtraBenefits.setAgreementDescription(newPaymentBenefit.getDescription());
+			
+			extraResultList.add(newExtraBenefits);
 			
 		}
 	}
@@ -523,5 +594,19 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			expression = expression.replaceAll("REMOVE", "HIDE");
 		
 		return expression;
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
 	}
 }
