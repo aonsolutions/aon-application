@@ -263,7 +263,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     };
 
     function listener() {
-
       if (chart.getSelection()[0] != null) {
         let selectedColumn = chart.getSelection()[0].column;
         drawPieChart(selectedColumn);
@@ -271,11 +270,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     }
 
     function drawPieChart(selectedColumn) {
-
       document.getElementById(
         "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
       ).style.display = "";
-
 
       let arr = getArray(selectedColumn);
       let sDteStr = selectedElement.interval.fromDate;
@@ -457,92 +454,143 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     }
 
     function drawPeriodChart(selectedElement) {
-      div.innerHTML = "";
+      if (accounts.length > 1) {
+        div.innerHTML = "";
 
-      document
-        .getElementById(
-          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-        )
-        .addEventListener("click", () => {
-          drawChart();
-          document.getElementById(
+        document
+          .getElementById(
             "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-          ).style.display = "none";
-        });
+          )
+          .addEventListener("click", () => {
+            drawChart();
+            document.getElementById(
+              "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+            ).style.display = "none";
+          });
 
-      selAccounts = selectedElement.statements;
+        selAccounts = selectedElement.statements;
 
-      arrIncome = selAccounts
-        .filter(
-          (a) =>
-            a.account.code != null &&
-            a.account.code.length > 2 &&
-            ((a.account.code.substring(0, 1) == "7" &&
-              a.credit - a.debit > 0) ||
-              (a.account.code.substring(0, 1) == "6" && a.debit - a.credit < 0))
-        )
-        .sort((a, b) => b.credit - b.debit - (a.credit - a.debit));
+        arrIncome = selAccounts
+          .filter(
+            (a) =>
+              a.account.code != null &&
+              a.account.code.length > 2 &&
+              ((a.account.code.substring(0, 1) == "7" &&
+                a.credit - a.debit > 0) ||
+                (a.account.code.substring(0, 1) == "6" &&
+                  a.debit - a.credit < 0))
+          )
+          .sort((a, b) => b.credit - b.debit - (a.credit - a.debit));
 
-      income =
-        arrIncome.length != 0
-          ? arrIncome.map((a) => a.credit - a.debit).reduce((a, b) => a + b)
-          : 0;
+        income =
+          arrIncome.length != 0
+            ? arrIncome.map((a) => a.credit - a.debit).reduce((a, b) => a + b)
+            : 0;
 
-      arrPurchases = selAccounts
-        .filter(
-          (a) =>
-            a.account.code != null &&
-            a.account.code.length > 2 &&
-            Number.parseInt(a.account.code.substring(0, 2)) >= 60 &&
-            Number.parseInt(a.account.code.substring(0, 2)) <= 61 &&
-            a.debit - a.credit > 0
-        )
-        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
+        arrPurchases = selAccounts
+          .filter(
+            (a) =>
+              a.account.code != null &&
+              a.account.code.length > 2 &&
+              Number.parseInt(a.account.code.substring(0, 2)) >= 60 &&
+              Number.parseInt(a.account.code.substring(0, 2)) <= 61 &&
+              a.debit - a.credit > 0
+          )
+          .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
-      purchases =
-        arrPurchases.length != 0
-          ? arrPurchases.map((a) => a.debit - a.credit).reduce((a, b) => a + b)
-          : 0;
+        purchases =
+          arrPurchases.length != 0
+            ? arrPurchases
+                .map((a) => a.debit - a.credit)
+                .reduce((a, b) => a + b)
+            : 0;
 
-      arrOutgoings = selAccounts
-        .filter(
-          (a) =>
-            a.account.code != null &&
-            a.account.code.length > 2 &&
-            ((Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
-              Number.parseInt(a.account.code.substring(0, 2)) <= 67 &&
-              a.debit - a.credit > 0) ||
-              (a.account.code.substring(0, 1) == "7" && a.credit - a.debit < 0))
-        )
-        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
+        arrOutgoings = selAccounts
+          .filter(
+            (a) =>
+              a.account.code != null &&
+              a.account.code.length > 2 &&
+              ((Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
+                Number.parseInt(a.account.code.substring(0, 2)) <= 67 &&
+                a.debit - a.credit > 0) ||
+                (a.account.code.substring(0, 1) == "7" &&
+                  a.credit - a.debit < 0))
+          )
+          .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
-      outgoings =
-        arrOutgoings.length != 0
-          ? arrOutgoings.map((a) => a.debit - a.credit).reduce((a, b) => a + b)
-          : 0;
+        outgoings =
+          arrOutgoings.length != 0
+            ? arrOutgoings
+                .map((a) => a.debit - a.credit)
+                .reduce((a, b) => a + b)
+            : 0;
 
-      raw = income - purchases - outgoings;
+        raw = income - purchases - outgoings;
 
-      arrAmortizations = selAccounts
-        .filter(
-          (a) =>
-            a.account.code != null &&
-            a.account.code.length > 2 &&
-            a.account.code.substring(0, 2) == "68" &&
-            a.debit - a.credit > 0
-        )
-        .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
+        arrAmortizations = selAccounts
+          .filter(
+            (a) =>
+              a.account.code != null &&
+              a.account.code.length > 2 &&
+              a.account.code.substring(0, 2) == "68" &&
+              a.debit - a.credit > 0
+          )
+          .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
-      amortizations =
-        arrAmortizations.length != 0
-          ? arrAmortizations
-              .map((a) => a.debit - a.credit)
-              .reduce((a, b) => a + b)
-          : 0;
+        amortizations =
+          arrAmortizations.length != 0
+            ? arrAmortizations
+                .map((a) => a.debit - a.credit)
+                .reduce((a, b) => a + b)
+            : 0;
 
-      liquid = raw - amortizations;
-      google.charts.load("current", { packages: ["corechart"] });
-      google.charts.setOnLoadCallback(drawBarChart);
+        liquid = raw - amortizations;
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawBarChart);
+      } else {
+        let divMessage = document.createElement("div");
+        divMessage.style.display = "flex";
+        divMessage.style.justifyContent = "center";
+        divMessage.style.alignItems = "center";
+        divMessage.style.paddingTop = "1.5em";
+        divMessage.style.maxWidth = "90%";
+
+        let message = isMobile
+          ? document.createElement("p")
+          : document.createElement("h4");
+        if (isMobile) message.style.fontWeight = "bold";
+        message.style.textAlign = "center";
+        message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
+        message.style.margin = "10%";
+
+        let infoSpan = document.createElement("span");
+        infoSpan.classList.add("material-icons-outlined");
+        infoSpan.style.fontSize = isMobile ? "2em" : "3.5em";
+
+        infoSpan.style.display = isMobile ? "block" : "";
+
+        infoSpan.style.marginRight = "10px";
+
+        infoSpan.innerHTML = "info";
+
+        divMessage.appendChild(infoSpan);
+        divMessage.appendChild(message);
+
+        div.appendChild(divMessage);
+
+        document
+          .getElementById(
+            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+          )
+          .addEventListener("click", () => {
+            drawChart();
+            document
+              .querySelector(
+                "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
+              )
+              .click();
+          });
+      }
     }
 
     function drawBarChart() {
@@ -631,7 +679,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         isStacked: true,
         legend: {
           position: "none",
-        }
+        },
       };
 
       div.style.display = "flex";
@@ -642,7 +690,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       divCol.style.width = isMobile ? "100%" : "70%";
       divCol.id = "divCol";
       div.appendChild(divCol);
-
 
       chart = new google.visualization.ColumnChart(divCol);
       chart.draw(data1, options);
@@ -667,10 +714,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       legend.style.marginTop = "auto";
       legend.style.marginBottom = "auto";
 
-
       const colorSize = 15;
 
-      let legendColData = [
+      const legendColData = [
         {
           color: "#3366cc",
           name: "Vtas./Ing.",
@@ -740,14 +786,17 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         trCateg.appendChild(tdCategAmount);
         if (categ.selectedColumn && categ.amount && categ.amount != 0) {
+          trCateg.style.cursor = "pointer";
           trCateg.addEventListener("click", () => {
             drawPieChart(categ.selectedColumn);
           });
+        } else {
+          trCateg.style.cursor = "default";
         }
 
         legend.appendChild(trCateg);
       });
-      
+
       legend.style.width = isMobile ? "80%" : "";
 
       return legend;

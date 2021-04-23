@@ -110,74 +110,44 @@ export function getMobileLegend() {
 
   const colorSize = 15;
 
-  //INCOME
+  const legendData = [
+    {
+      color: "#3366cc",
+      name: "Vtas./Ing."
+    },
+    {
+      color: "#dc3912",
+      name: "Cpas./Gtos./Amort."
+    },
+    {
+      color: "#ff9900",
+      name: "Resultado"
+    }
+  ];
 
-  let trIncome = document.createElement("tr");
-  let tdIncomeColor = document.createElement("td");
-  tdIncomeColor.style.width = colorSize * 2.5 + "px";
+  legendData.forEach(d => {
+    let trColumn = document.createElement("tr");
+    let tdColumnColor = document.createElement("td");
+    tdColumnColor.style.width = colorSize * 2.5 + "px";
+  
+    let divColumnColor = document.createElement("div");
+    divColumnColor.style.width = "100%";
+    divColumnColor.style.height = colorSize + "px";
+    divColumnColor.style.borderRadius = "1px";
+    divColumnColor.style.background = d.color;
+  
+    tdColumnColor.appendChild(divColumnColor);
+    trColumn.appendChild(tdColumnColor);
+  
+    let tdColumnDescriptor = document.createElement("td");
+    tdColumnDescriptor.innerHTML = d.name;
+    tdColumnDescriptor.style.textIndent = "1em";
+  
+    trColumn.appendChild(tdColumnDescriptor);
+  
+    mobileLegend.appendChild(trColumn);
+  });
 
-  let divIncomeColor = document.createElement("div");
-  divIncomeColor.style.width = "100%";
-  divIncomeColor.style.height = colorSize + "px";
-  divIncomeColor.style.borderRadius = "1px";
-  divIncomeColor.style.background = "#3366cc";
-
-  tdIncomeColor.appendChild(divIncomeColor);
-  trIncome.appendChild(tdIncomeColor);
-
-  let tdIncomeDesc = document.createElement("td");
-  tdIncomeDesc.innerHTML = "Ingresos";
-  tdIncomeDesc.style.textIndent = "1em";
-
-  trIncome.appendChild(tdIncomeDesc);
-
-  mobileLegend.appendChild(trIncome);
-
-  //OUTGOING
-
-  let trOutgoing = document.createElement("tr");
-  let tdOutgoingColor = document.createElement("td");
-  tdOutgoingColor.style.width = colorSize * 2.5 + "px";
-
-  let divOutgoingColor = document.createElement("div");
-  divOutgoingColor.style.width = "100%";
-  divOutgoingColor.style.height = colorSize + "px";
-  divOutgoingColor.style.borderRadius = "1px";
-  divOutgoingColor.style.background = "#dc3912";
-
-  tdOutgoingColor.appendChild(divOutgoingColor);
-  trOutgoing.appendChild(tdOutgoingColor);
-
-  let tdOutgoingDesc = document.createElement("td");
-  tdOutgoingDesc.innerHTML = "Gastos";
-  tdOutgoingDesc.style.textIndent = "1em";
-
-  trOutgoing.appendChild(tdOutgoingDesc);
-
-  mobileLegend.appendChild(trOutgoing);
-
-  //BENEFIT
-
-  let trBenefit = document.createElement("tr");
-  let tdBenefitColor = document.createElement("td");
-  tdBenefitColor.style.width = colorSize * 2.5 + "px";
-
-  let divBenefitColor = document.createElement("div");
-  divBenefitColor.style.width = "100%";
-  divBenefitColor.style.height = colorSize / 3 + "px";
-  divBenefitColor.style.borderRadius = "1px";
-  divBenefitColor.style.background = "#ff9900";
-
-  tdBenefitColor.appendChild(divBenefitColor);
-  trBenefit.appendChild(tdBenefitColor);
-
-  let tdBenefitDesc = document.createElement("td");
-  tdBenefitDesc.innerHTML = "Beneficios";
-  tdBenefitDesc.style.textIndent = "1em";
-
-  trBenefit.appendChild(tdBenefitDesc);
-
-  mobileLegend.appendChild(trBenefit);
 
   return mobileLegend;
 }
