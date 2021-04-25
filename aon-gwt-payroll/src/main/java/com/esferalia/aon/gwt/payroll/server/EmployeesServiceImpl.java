@@ -4750,6 +4750,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
 						return getSalaryDeductions();
 					}
+					
+					@Override
+					public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+						return super.getSalaryEmbargos();
+					}
 				};
 				// default ones
 				salary.setTotalIrpf(0.00);
