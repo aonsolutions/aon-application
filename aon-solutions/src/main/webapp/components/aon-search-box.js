@@ -55,7 +55,7 @@ export class AonSearchBox extends HTMLElement {
 		let input = document.getElementById('search-input');
 		input.addEventListener('keyup', () => {
 			this.value = input.value;
-	    this.dispatchEvent(new Event('keyup'));
+	    	this.dispatchEvent(new Event('keyup'));
 		});
 
 

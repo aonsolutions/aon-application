@@ -46,7 +46,7 @@ export class AonDocument extends AonElement {
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-          <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
+          <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
         </div>
         <div id="${this.FILE}" class="aonSubContent">
 
@@ -105,7 +105,7 @@ export class AonDocument extends AonElement {
 
     let tdDate = document.createElement('td');
     tdDate.setAttribute('colspan', '1');
-		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
+		tdDate.innerHTML = `<aon-date id="date" title="${MSG.DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
@@ -117,7 +117,7 @@ export class AonDocument extends AonElement {
     }
     let tdConfidential = document.createElement('td');
     tdConfidential.setAttribute('colspan', '1');
-    tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.AON_MSG_CONFIDENTIAL}"></aon-switch>`;
+    tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.CONFIDENTIAL}"></aon-switch>`;
     tr.appendChild(tdConfidential);
     let confidential = this.getElement('confidential');
     confidential.disabled = !this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal();
@@ -129,7 +129,7 @@ export class AonDocument extends AonElement {
 
     let tdName = document.createElement('td');
     tdName.setAttribute('colspan', '2');
-		tdName.innerHTML = `<aon-input id="name" description="${MSG.AON_MSG_NAME}"></aon-input>`;
+		tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
 		tr2.appendChild(tdName);
 		let name = this.getElement('name');
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
@@ -149,7 +149,7 @@ export class AonDocument extends AonElement {
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
       categorySelect.readonly = 'true';
     }
-    categorySelect.title = MSG.AON_MSG_CATEGORY;
+    categorySelect.title = MSG.CATEGORY;
     tdCategory.appendChild(categorySelect);
     tr3.appendChild(tdCategory);
     getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
@@ -172,7 +172,7 @@ export class AonDocument extends AonElement {
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
       scopeSelect.readonly = 'true';
     }
-    scopeSelect.title = MSG.AON_MSG_SCOPE;
+    scopeSelect.title = MSG.SCOPE;
     tdScope.appendChild(scopeSelect);
     tr3.appendChild(tdScope);
     getScopes().then( scopes => {
@@ -197,7 +197,7 @@ export class AonDocument extends AonElement {
 
     let tagSelect = new AonSelect();
     tagSelect.id = 'tag';
-    tagSelect.title = MSG.AON_MSG_TAG;
+    tagSelect.title = MSG.TAG;
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
       tagSelect.readonly = 'true';
     }
@@ -221,7 +221,7 @@ export class AonDocument extends AonElement {
 
     let typeSelect = new AonSelect();
     typeSelect.id = 'type';
-    typeSelect.title = MSG.AON_MSG_TYPE;
+    typeSelect.title = MSG.TYPE;
     if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
       typeSelect.readonly = 'true';
     }
@@ -319,7 +319,7 @@ export class AonDocument extends AonElement {
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_NEXT);
+		d.setTitle(MSG.NEXT);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
 		d.open();
@@ -330,7 +330,7 @@ export class AonDocument extends AonElement {
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_PREVIOUS);
+		d.setTitle(MSG.PREVIOUS);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
 		d.open();
@@ -341,7 +341,7 @@ export class AonDocument extends AonElement {
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_SEND_FILE);
+		d.setTitle(MSG.SEND_FILE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
 		d.open();
@@ -352,7 +352,7 @@ export class AonDocument extends AonElement {
     let d = document.getElementById(aonDocumental.DIALOG);
     d.clear();
     if(!this.isMobile()) d.width = '400px';
-    d.setTitle(MSG.AON_MSG_DELETE_FILE);
+    d.setTitle(MSG.DELETE_FILE);
     d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.title}`);
     d.addAcceptAction(() => {
       let data = {

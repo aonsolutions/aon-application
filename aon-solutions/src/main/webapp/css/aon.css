@@ -303,6 +303,13 @@ button:disabled, button[disabled]{
   overflow: hidden;
 }
 
+.aonTextOverflow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+
 .aonLiSpan {
   height: 36px;
   line-height: 20px;

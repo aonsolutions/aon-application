@@ -81,13 +81,13 @@ export class AonInvoice extends AonElement {
 
 			<div style="display:flex;">
 				<div id="aonInvoiceData" class="aonSubContent" style="width:100%">
-					<aon-card id="aonInvoiceItemCommentsCard" title="${MSG.AON_MSG_COMMENTS}" style="display:none;"> </aon-card>
+					<aon-card id="aonInvoiceItemCommentsCard" title="${MSG.COMMENTS}" style="display:none;"> </aon-card>
 					<div id="aonInvoiceDiv" style="display:flex;">
-						<aon-card id="aonInvoiceItemDataCard" title="${MSG.AON_MSG_INVOICE_DATA}" style="width:50%"> </aon-card>
-						<aon-card id="aonInvoiceItemTaxesCard" title="${MSG.AON_MSG_TAXES_DETAIL}" style="width:50%"> </aon-card>
+						<aon-card id="aonInvoiceItemDataCard" title="${MSG.INVOICE_DATA}" style="width:50%"> </aon-card>
+						<aon-card id="aonInvoiceItemTaxesCard" title="${MSG.TAXES_DETAIL}" style="width:50%"> </aon-card>
 					</div>
-					<aon-card id="aonInvoiceItemDetailCard" title="${MSG.AON_MSG_INVOICE_CONCEPTS}"> </aon-card>
-					<aon-card id="aonInvoiceItemFinanceCard" title="${MSG.AON_MSG_EXPIRATIONS}"> </aon-card>
+					<aon-card id="aonInvoiceItemDetailCard" title="${MSG.INVOICE_CONCEPTS}"> </aon-card>
+					<aon-card id="aonInvoiceItemFinanceCard" title="${MSG.EXPIRATIONS}"> </aon-card>
 				</div>
 				<div id="aonInvoiceFile" class="aonSubContent">
 				</div>
@@ -103,10 +103,10 @@ export class AonInvoice extends AonElement {
 
 	getInvoiceTitle() {
 		if(this._invoice.isEmitida()) {
-			return MSG.AON_MSG_INVOICE_ISSUED;
+			return MSG.INVOICE_ISSUED;
 		} else if(this._invoice.isTicket()){
-			return MSG.AON_MSG_TICKET;
-		} else return MSG.AON_MSG_INVOICE_RECEIVED;
+			return MSG.TICKET;
+		} else return MSG.INVOICE_RECEIVED;
 	}
 
 	build() {
@@ -291,7 +291,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_REJECT_INVOICE);
+		d.setTitle(MSG.REJECT_INVOICE);
 		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -342,8 +342,8 @@ export class AonInvoice extends AonElement {
 			let d = document.getElementById(aonInvoice.DIALOG);
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
-			d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
-			d.setContentHTML(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION);
+			d.setTitle(MSG.DELETE_FOREVER);
+			d.setContentHTML(MSG.DELETE_FOREVER_INVOICE_CONFIRMATION);
 			d.addAcceptAction(() => this.back());
 			d.open();
 		});
@@ -359,7 +359,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_RECTIFY_INVOICE);
+		d.setTitle(MSG.RECTIFY_INVOICE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
 		d.open();
@@ -395,7 +395,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_SEND_INVOICES);
+		d.setTitle(MSG.SEND_INVOICES);
 		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
 		d.addAcceptAction(() => {
 			let mail = this.getElement('sendInvoicesMail');
@@ -413,7 +413,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_ADD_COMMENT);
+		d.setTitle(MSG.ADD_COMMENT);
 		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
@@ -461,7 +461,7 @@ export class AonInvoice extends AonElement {
 				let d = document.getElementById(aonInvoice.DIALOG);
 				d.clear();
 				if(!this.isMobile())d.width = '400px';
-				d.setTitle(MSG.AON_MSG_RECORD_INVOICE);
+				d.setTitle(MSG.RECORD_INVOICE);
 				d.setContentHTML('Esta opción está en desarrollo...');
 				d.addAcceptAction(() => {});
 				d.open();
@@ -547,7 +547,7 @@ export class AonInvoice extends AonElement {
 		// DATE
 		let tdDate = document.createElement('td');
 		tdDate.setAttribute('colspan', this._invoice.isEmitida() ? '1' : '2');
-		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
+		tdDate.innerHTML = `<aon-date id="date" title="${MSG.DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
 		date.setDate(this._invoice.date);
@@ -559,7 +559,7 @@ export class AonInvoice extends AonElement {
 		// TOTAL
 		let tdTotal = document.createElement('td');
 		tdTotal.setAttribute('colspan', this._invoice.isEmitida() ? '1' : '2');
-		tdTotal.innerHTML = `<aon-number id="total" description="${MSG.AON_MSG_TOTAL}" format="true" decimals="2"></aon-number>`;
+		tdTotal.innerHTML = `<aon-number id="total" description="${MSG.TOTAL}" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdTotal);
 		let total = document.getElementById('total');
 		total.value = this._invoice.total;
@@ -675,7 +675,7 @@ export class AonInvoice extends AonElement {
 		// CATEGORY
 		let tdCategory = document.createElement('td');
 		tdCategory.setAttribute('colspan', this._invoice.isEmitida() ? '2' : '3');
-		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}" autocomplete="true" ></aon-select>`;
+		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.CATEGORY}" autocomplete="true" ></aon-select>`;
 		tr4.appendChild(tdCategory);
 
 		getInvoiceAccounts({type: this._invoice.getInvoiceType()}).then(accounts => {
@@ -692,7 +692,7 @@ export class AonInvoice extends AonElement {
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
 		tdPaymethod.setAttribute('colspan', this._invoice.isEmitida() ? '2' : '3');
-		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="${MSG.AON_MSG_PAYMETHOD}"></aon-select>`;
+		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="${MSG.PAYMETHOD}"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);
@@ -740,7 +740,7 @@ export class AonInvoice extends AonElement {
 
 		let tdCriterioCaja = document.createElement('td');
 		tdCriterioCaja.setAttribute('colspan', '1');
-		tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="${MSG.AON_MSG_BOX_CRITERION}"></aon-switch>`;
+		tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="${MSG.BOX_CRITERION}"></aon-switch>`;
 		tr1.appendChild(tdCriterioCaja);
 		let criterioCaja = this.getElement('criterioCaja');
 		if(this.isAccounting()) {
@@ -749,7 +749,7 @@ export class AonInvoice extends AonElement {
 
 		let tdSuplidos= document.createElement('td');
 		tdSuplidos.setAttribute('colspan', '1');
-		tdSuplidos.innerHTML = `<aon-switch id="suplidos" title="${MSG.AON_MSG_SUPPLIED}"></aon-switch>`;
+		tdSuplidos.innerHTML = `<aon-switch id="suplidos" title="${MSG.SUPPLIED}"></aon-switch>`;
 		tr1.appendChild(tdSuplidos);
 		let suplidos = this.getElement('suplidos');
 		suplidos.checked = this._invoice.suplidos.active;
@@ -770,7 +770,7 @@ export class AonInvoice extends AonElement {
 		let tdConceptoSuplidos = document.createElement('td');
 		tdConceptoSuplidos.style.width = '70%';
 		tdConceptoSuplidos.setAttribute('colspan', '3');
-		tdConceptoSuplidos.innerHTML = `<aon-input id="conceptoSuplidos" description="${MSG.AON_MSG_CONCEPT}"></aon-input>`;
+		tdConceptoSuplidos.innerHTML = `<aon-input id="conceptoSuplidos" description="${MSG.CONCEPT}"></aon-input>`;
 		trSuplidos.appendChild(tdConceptoSuplidos);
 		let conceptoSuplidos = this.getElement('conceptoSuplidos');
 		conceptoSuplidos.value = this._invoice.suplidos.description;
@@ -781,7 +781,7 @@ export class AonInvoice extends AonElement {
 
 		let tdTotalSuplidos = document.createElement('td');
 		tdTotalSuplidos.setAttribute('colspan', '1');
-		tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}" format="true"  decimals="2"></aon-number>`;
+		tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.TOTAL_SUPPLIED}" format="true"  decimals="2"></aon-number>`;
 		trSuplidos.appendChild(tdTotalSuplidos);
 		let totalSuplidos = this.getElement('totalSuplidos');
 		totalSuplidos.value = this._invoice.suplidos.total;
@@ -951,7 +951,7 @@ export class AonInvoice extends AonElement {
 		let tdDetailDescription = document.createElement('td');
 		tdDetailDescription.setAttribute('colspan','3');
 		tdDetailDescription.style.width = '50%';
-		tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="${MSG.AON_MSG_CONCEPT}"></aon-input>`;
+		tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="${MSG.CONCEPT}"></aon-input>`;
 		tr.appendChild(tdDetailDescription);
 		let detailDescription = document.getElementById('detailDescription' + i);
 		detailDescription.value = detail.description;
@@ -962,7 +962,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL QUANTITY
 		let tdDetailQuantity = document.createElement('td');
-		tdDetailQuantity.innerHTML = `<aon-number id="detailQuantity${i}" description="${MSG.AON_MSG_QUANTITY}" format="true" decimals="2"></aon-number>`;
+		tdDetailQuantity.innerHTML = `<aon-number id="detailQuantity${i}" description="${MSG.QUANTITY}" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdDetailQuantity);
 		let detailQuantity = document.getElementById('detailQuantity' + i);
 		detailQuantity.value = detail.quantity;
@@ -973,7 +973,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL PRICE
 		let tdDetailPrice = document.createElement('td');
-		tdDetailPrice.innerHTML = `<aon-number id="detailPrice${i}" description="${MSG.AON_MSG_PRICE}" format="true" decimals="2"></aon-number>`;
+		tdDetailPrice.innerHTML = `<aon-number id="detailPrice${i}" description="${MSG.PRICE}" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdDetailPrice);
 		let detailPrice = document.getElementById('detailPrice' + i);
 		detailPrice.value = detail.price;
@@ -995,7 +995,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL AMOUNT
 		let tdDetailAmount = document.createElement('td');
-		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="${MSG.AON_MSG_AMOUNT}" format="true" decimals="2"></aon-number>`;
+		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="${MSG.AMOUNT}" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdDetailAmount);
 		let detailAmount = document.getElementById('detailAmount' + i);
 		detailAmount.readonly = 'readonly';
@@ -1384,7 +1384,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
-		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="${MSG.AON_MSG_AMOUNT}" format="true"  decimals="2"></aon-number>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="${MSG.AMOUNT}" format="true"  decimals="2"></aon-number>`;
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;

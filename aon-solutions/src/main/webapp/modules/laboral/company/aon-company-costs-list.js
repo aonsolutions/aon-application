@@ -23,7 +23,7 @@ import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
 import { pieChar, addLegend} from "./pieChar.js";
-import { AON_MSG_COMPANY_COSTS, AON_MSG_FILTERS, AON_MSG_RESUME_COSTS, AON_MSG_VIEW_PAYROLL } from "../../../environments/msg.js";
+import { MSG } from "../../../environments/environments.js";
 
 export class AonCompanyCostsList extends AonElement {
   TABLE_ID;
@@ -65,7 +65,7 @@ export class AonCompanyCostsList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this.applicationEl.addToolbarTitle(AON_MSG_COMPANY_COSTS);
+    this.applicationEl.addToolbarTitle(MSG.COMPANY_COSTS);
   }
 
   async build() {
@@ -76,7 +76,7 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   paintView() {
-    this.innerHTML =  /*html*/`<aon-filter id="${this.id}Filter" title="${AON_MSG_FILTERS}"></aon-filter>`;
+    this.innerHTML =  /*html*/`<aon-filter id="${this.id}Filter" title="${MSG.FILTERS}"></aon-filter>`;
   }
 
 
@@ -145,7 +145,7 @@ export class AonCompanyCostsList extends AonElement {
   async paintPieChar() {
     let startDate = new Date();
     let endDate = new Date();
-    let title = AON_MSG_RESUME_COSTS;
+    let title = MSG.RESUME_COSTS;
     let workplaceText = "";
     let id = this.id+ "pieChar";
     let idTitle = id + "Title";
@@ -212,7 +212,7 @@ export class AonCompanyCostsList extends AonElement {
         let button = this.createElement('button');
         button.className = "aonButton";
         button.id = `${this.id}Nomina`;
-        button.innerHTML = AON_MSG_VIEW_PAYROLL;
+        button.innerHTML = MSG.VIEW_PAYROLL;
         button.style.marginTop = "10px";
         div.appendChild(button);
         button.addEventListener('click',()=>{

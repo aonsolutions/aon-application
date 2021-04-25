@@ -42,7 +42,7 @@ export class AonCompanyList extends AonElement {
 
 	build() {
 	 let aonTable = this.getElement(this.AON_COMPANY_TABLE);
-	 aonTable.addColumn(MSG.AON_MSG_BUSINESS_NAME, 'string', 'name', '80%');
+	 aonTable.addColumn(MSG.BUSINESS_NAME, 'string', 'name', '80%');
 	 aonTable.addColumn('CIF', 'string', 'document', '20%');
 
 	 // INFO

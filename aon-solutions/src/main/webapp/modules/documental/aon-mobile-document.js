@@ -24,8 +24,8 @@ export class AonMobileDocument extends AonDocument {
     this.innerHTML = `
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="DOCUMENTO"> </aon-toolbar>
       <div>
-        <aon-card id="${this.FILE_CARD}" title="${MSG.AON_MSG_FILE}" style="display:none;"> </aon-card>
-        <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
+        <aon-card id="${this.FILE_CARD}" title="${MSG.FILE}" style="display:none;"> </aon-card>
+        <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
       </div>
     `;
 

@@ -19,16 +19,18 @@ export const BACK = 'back';
 // ----- C
 
 export const CARD = 'card';
+export const CARRIER = 'carrier';
+export const CATEGORY = 'category';
 export const CHECKED = 'checked';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
-export const CONSTANT_SUCCESS = "success";
-export const CONSTANT_PRIMARY = "primary";
-export const CONSTANT_ERROR = "error";
+export const CREDITOR = 'creditor';
+export const CUSTOMER = 'customer';
 
 
 // ----- D
 
+export const DATE = 'date';
 export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
@@ -45,6 +47,8 @@ export const DUPLICATE_INVOICE = 'duplicateInvoice';
 
 export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
+export const ENTERPRISE = 'enterprise';
+export const ERROR = "error";
 
 // ----- F
 
@@ -77,6 +81,7 @@ export const MIN = 'min';
 
 export const NAME = 'name';
 export const NEXT = 'next';
+export const NUMBER = 'number';
 
 // ----- O
 
@@ -85,7 +90,10 @@ export const OPTIONS = 'options';
 // ----- P
 
 export const PATTERN = 'pattern';
+export const PAYMETHOD = 'paymethod';
+export const PERSON = 'person';
 export const PREVIOUS = 'previous';
+export const PRIMARY = "primary";
 
 // ----- Q
 
@@ -96,6 +104,7 @@ export const RECORD = 'record';
 export const RECORD_INVOICE = 'recordInvoice';
 export const RECTIFY = 'rectify';
 export const RECTIFY_INVOICE = 'rectifyInvoice';
+export const REFERENCE = 'reference';
 export const REFUSED = 'refused';
 export const REJECT = 'reject';
 export const REJECT_INVOICE = 'rejectInvoice';
@@ -111,13 +120,17 @@ export const SAVE = 'save';
 export const SEND = 'send';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
+export const SERIE = 'serie';
 export const SHOW_FILE = 'showFile';
+export const SUCCESS = "success";
+
 
 // ----- T
 
 export const TABLE = 'table';
 export const TEXT = 'text';
 export const TITLE = 'title';
+export const TOTAL = 'total';
 export const TRASH = 'trash';
 export const TRUE = 'true';
 export const TYPE = 'type';

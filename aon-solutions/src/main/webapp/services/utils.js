@@ -1,4 +1,4 @@
-import { CONSTANT_PRIMARY, INPUTS_ALL } from '../environments/constants.js';
+import { CONSTANT } from "../environments/environments.js";
 
 const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
@@ -75,7 +75,7 @@ export const decimalAdjust = (type, value, exp) => {
 
 export const serializeForm = (form) => {
   let inputs = [
-    ...form.querySelectorAll(INPUTS_ALL)
+    ...form.querySelectorAll(CONSTANT.INPUTS_ALL)
   ];
   let obj = {}
   inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
@@ -204,13 +204,13 @@ export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, local
 export const handleError = (error)=>{
   if(typeof error === "string") error = JSON.parse(error);
   let {message, type} = error;
-  type = type || CONSTANT_PRIMARY;
+  type = type || CONSTANT.PRIMARY;
   return {message, type};
 }
 
 export const disabledForm = (formId, elems) => {
-  let elems_disabled = INPUTS_ALL;
-  if (elems) elems_disabled = elems + ', ' + INPUTS_ALL;
+  let elems_disabled = CONSTANT.INPUTS_ALL;
+  if (elems) elems_disabled = elems + ', ' + CONSTANT.INPUTS_ALL;
   [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => {
       el.disabled = true;
   })

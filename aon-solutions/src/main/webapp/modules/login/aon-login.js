@@ -161,7 +161,7 @@ export class AonLogin extends AonElement {
 
   aonDialogLoginRemember() {
     let dialog = this.getElement("aonDialogLogin");
-    dialog.setTitle(MSG.AON_MSG_RECOVER_PASSWORD);
+    dialog.setTitle(MSG.RECOVER_PASSWORD);
     dialog.setContentHTML(`
 			<form action="#">
 				<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>

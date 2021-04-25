@@ -2,12 +2,12 @@ import { AonElement } from './AonElement.js';
 import { RegistryType } from '../models/enums.js';
 import { getRegistries } from '../services/service.js';
 
+import { AonBasicTable, AonSuggestion, AonAddress } from './components.js';
 import { CONSTANT, CSS, MSG, TAG } from '../environments/environments.js';
 
 export class AonRegistry extends AonElement {
 
   OPTIONS;
-
   types;
 
 	get id() {
@@ -26,6 +26,14 @@ export class AonRegistry extends AonElement {
 		this.setAttribute(CONSTANT.VALUE, value);
 	}
 
+  get type() {
+		return this.getAttribute(CONSTANT.TYPE);
+	}
+
+	set type(type) {
+		this.setAttribute(CONSTANT.TYPE, type);
+	}
+
 	constructor() {
 		super();
 	}
@@ -37,35 +45,32 @@ export class AonRegistry extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonRegistry';
+    this.TABlE = this.id + CONSTANT.TABLE.initCap();
     this.OPTIONS = this.id + 'Options'
     this.NIF = this.id + 'Nif';
     this.NAME = this.id + 'Name';
   }
 
-  clear() {
-    this.innerHTML = '';
-  }
-
   build() {
     this.clear();
-    let div = document.createElement('div');
-    div.style.marginBottom = '1.5rem';
-    this.appendChild(div);
 
-    let table = document.createElement('table');
-    table.style.width = '100%';
-    div.appendChild(table);
-
-    let tdNif = document.createElement('td');
-		tdNif.setAttribute('colspan', '2');
-		tdNif.innerHTML = `<aon-input id="${this.NIF}" description="NIF"></aon-input>`;
-    table.appendChild(tdNif);
-    let nif = this.getElement(this.NIF);
-    this.getElement(nif.DIV).style.margin = '0px';
-    nif.addEventListener('keyup', () => {
-      console.log(nif.value);
-      if(nif.value.length > 2) {
-        let data = { types: this.types, document: nif.value};
+    let table = new AonBasicTable();
+		table.id = this.TABLE;
+		this.appendChild(table);
+    
+    let document = new AonSuggestion();
+    document.id = this.DOCUMENT;
+    document.title = MSG.NIF;
+    document.value = this.registry.document;
+    document.readonly = this.invoice.isReadonly();
+    document.addEventListener(EVENT.CHANGE, () => {
+      this.registry.setDocument(document.value);
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    document.addEventListener(EVENT.KEYUP, () => {
+      console.log(document.value);
+      if(document.value.length > 2) {
+        let data = { types: this.types, document: document.value};
 				getRegistries(data).then(r => {
 					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
 				});
@@ -73,15 +78,24 @@ export class AonRegistry extends AonElement {
 				this.closeOptions();
 			}
     });
-
-    let tdName = document.createElement('td');
-    tdName.setAttribute('colspan', '4');
-    tdName.innerHTML = `<aon-input id="${this.NAME}" description="${MSG.AON_MSG_BUSINESS_NAME}"></aon-input>`;
-    table.appendChild(tdName);
-    let name = this.getElement(this.NAME);
-    this.getElement(name.DIV).style.margin = '0px';
-    name.addEventListener('keyup', () => {
-      // get options!!
+    document.addEventListener(EVENT.SELECT, (event) => {
+      this.setRegistry(event.detail.registry);
+      this.dispatchEvent(new Event(EVENT.SELECT));
+    });
+    table.addCell(document, 2);
+  
+    let name = new AonSuggestion();
+    name.id = this.NAME;
+    name.name = CONSTANT.NAME;
+    name.title = MSG.BUSINESS_NAME;
+    name.value = this.registry.name;
+    name.readonly = this.invoice.isReadonly();
+    name.addEventListener(EVENT.CHANGE, () => {
+      let registry = this.invoice.getRegistry();
+      registry.setName(total.value);
+      this.invoice.setRegistry(registry);
+    });
+    name.addEventListener(EVENT.KEYUP, () => {
       if(name.value.length > 2) {
         console.log(this.types);
         let data = { types: this.types, name: name.value};
@@ -92,13 +106,17 @@ export class AonRegistry extends AonElement {
         this.closeOptions();
       }
     });
+    name.addEventListener(EVENT.SELECT, (event) => {
+      let registry = event.detail.registry;
+      this.invoice.setRegistry(registry);
+    });
+    table.addCell(name, 4)
 
 		let options = this.createElement('div');
 		options.id = this.OPTIONS;
 		options.className = CSS.AON_INPUT_LIST_OPTIONS;
     options.style.width = table.clientWidth;
 		div.appendChild(options);
-
   }
 
 	buildOptions(options) {
@@ -149,9 +167,19 @@ export class AonRegistry extends AonElement {
     }
   }
 
+
+  setRegistry(registry) { 
+    this.registry = registry;
+  }
+
+  setType(type) { 
+    this.type = type;
+  }
+
   setTypes(types){
     this.types = types;
   }
+
 }
 
 if(!window.customElements.get(TAG.AON_REGISTRY)){

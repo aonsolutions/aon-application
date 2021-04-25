@@ -22,6 +22,14 @@ export class Invoice {
   selfconta;
   insight;
 
+  service; // boolean | servicio
+  withholding; // boolean | retencion 
+  investment; // boolean | bienes de inversion
+  withholding_farmer; // boolean | regimen agrario
+  vat_accrual_payment; // boolean | criterio de caja
+  surcharge; // boolean | recargo de equivalencia
+  rectified; // boolean | rectificativa
+
   constructor(type) {
     this.type = type || 'emitida';
     this.series = '';

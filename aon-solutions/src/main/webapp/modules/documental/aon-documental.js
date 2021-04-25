@@ -39,7 +39,7 @@ export class AonDocumental extends AonElement {
     connectedCallback () {
       this.initialize();
       this.innerHTML = `
-        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}"></aon-application>
+        <aon-application id="${this.DOCUMENTAL}" title="${MSG.DOCUMENTARY}"></aon-application>
         <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
       `;
       getDomainUserRoles({}).then(r => {
@@ -108,7 +108,7 @@ export class AonDocumental extends AonElement {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
       let documentOptions = [
         {
-          name: MSG.AON_MSG_ALL_FILES,
+          name: MSG.ALL_FILES,
           icon: 'insert_drive_file',
           fn: () => {
             this._filter.category = undefined;
@@ -124,7 +124,7 @@ export class AonDocumental extends AonElement {
     addTypeOptions() {
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
         let typeOptions = [{
-            name: MSG.AON_MSG_ENTERPRISE,
+            name: MSG.ENTERPRISE,
             icon: MATERIAL_ICONS.BUSINESS,
             fn: () => {
               this._filter.category = undefined;
@@ -133,7 +133,7 @@ export class AonDocumental extends AonElement {
               this.aonDocumentalList();
             }
         },{
-          name: MSG.AON_MSG_EMPLOYEE,
+          name: MSG.EMPLOYEE,
           icon: MATERIAL_ICONS.PERSON,
           fn: () => {
             this._filter.category = undefined;
@@ -144,7 +144,7 @@ export class AonDocumental extends AonElement {
         }];
         if(this.getDur().isDocumentalManager()) {
           typeOptions.push({
-            name: MSG.AON_MSG_ASESOR,
+            name: MSG.ASESOR,
             icon: 'work',
             fn: () => {
               this._filter.category = undefined;
@@ -219,8 +219,8 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
-      d.setTitle(MSG.AON_MSG_ADD_CATEGORY);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.AON_MSG_CATEGORY}"> </aon-input>`);
+      d.setTitle(MSG.ADD_CATEGORY);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.CATEGORY}"> </aon-input>`);
       d.addAcceptAction(() => {
         let input = this.getElement('aonDocumentalAddCategory');
         if(!input.value.isEmpty()){
@@ -236,8 +236,8 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
   		if(!this.isMobile()) d.width = '400px';
-  		d.setTitle(MSG.AON_MSG_EDIT_CATEGORY);
-  		d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.AON_MSG_CATEGORY}"> </aon-input>`);
+  		d.setTitle(MSG.EDIT_CATEGORY);
+  		d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.CATEGORY}"> </aon-input>`);
   		d.addAcceptAction(() => {
         let input = this.getElement('aonDocumentalAddCategory');
         if(!input.value.isEmpty()){
@@ -254,7 +254,7 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
   		if(!this.isMobile()) d.width = '400px';
-  		d.setTitle(MSG.AON_MSG_DELETE_CATEGORY);
+  		d.setTitle(MSG.DELETE_CATEGORY);
       d.setContentHTML(`Estás seguro de eliminar la Categoría ${category.name}`);
   		d.addAcceptAction(() => {
         deleteCategory(category).then(() => {
@@ -314,8 +314,8 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
-      d.setTitle(MSG.AON_MSG_ADD_TAG);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.AON_MSG_TAG}"> </aon-input>`);
+      d.setTitle(MSG.ADD_TAG);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.TAG}"> </aon-input>`);
       d.addAcceptAction(() => {
         let input = this.getElement('aonDocumentalAddTag');
         if(!input.value.isEmpty()){
@@ -331,8 +331,8 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
-      d.setTitle(MSG.AON_MSG_EDIT_TAG);
-      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.AON_MSG_TAG}"> </aon-input>`);
+      d.setTitle(MSG.EDIT_TAG);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.TAG}"> </aon-input>`);
       d.addAcceptAction(() => {
         let input = this.getElement('aonDocumentalAddTag');
         if(!input.value.isEmpty()){
@@ -349,7 +349,7 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
-      d.setTitle(MSG.AON_MSG_DELETE_TAG);
+      d.setTitle(MSG.DELETE_TAG);
       d.setContentHTML(`Estás seguro de eliminar la Etiqueta ${tag.name}`);
       d.addAcceptAction(() => {
         deleteTag(tag).then(() => {
@@ -409,7 +409,7 @@ export class AonDocumental extends AonElement {
       let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
-      d.setTitle(MSG.AON_MSG_UPLOAD_FILE);
+      d.setTitle(MSG.UPLOAD_FILE);
       d.setContent(this.uploadOption(files.length === 1));
       let selType = this.getElement("aonDocumentalUploadType");
       selType.value = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()
@@ -442,7 +442,7 @@ export class AonDocumental extends AonElement {
       //
       //   let tdName = document.createElement('td');
       //   tdName.setAttribute('colspan', '1');
-  		//   tdName.innerHTML = `<aon-input id="name" description="${MSG.AON_MSG_NAME}"></aon-input>`;
+  		//   tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
   		//   tr1.appendChild(tdName);
   		//   let name = this.getElement('name');
       //   name.value = this.document.title;
@@ -456,7 +456,7 @@ export class AonDocumental extends AonElement {
 
       let selCat = new AonSelect();
       selCat.id = "aonDocumentalUploadCategory";
-      selCat.title = MSG.AON_MSG_CATEGORY;
+      selCat.title = MSG.CATEGORY;
       selCat.options = JSON.stringify(this._categories);
       tdCategory.appendChild(selCat);
 
@@ -470,7 +470,7 @@ export class AonDocumental extends AonElement {
 
       let selScp = new AonSelect();
       selScp.id = "aonDocumentalUploadScope";
-      selScp.title = MSG.AON_MSG_SCOPE;
+      selScp.title = MSG.SCOPE;
       selScp.options = JSON.stringify(this._scopes);
       tdScope.appendChild(selScp);
 
@@ -485,7 +485,7 @@ export class AonDocumental extends AonElement {
       tdTag.setAttribute('colspan', '1');
       let selTag = new AonSelect();
       selTag.id = "aonDocumentalUploadTag";
-      selTag.title = MSG.AON_MSG_TAG;
+      selTag.title = MSG.TAG;
       selTag.options = JSON.stringify(this._tags);
       tdTag.appendChild(selTag);
 
@@ -500,7 +500,7 @@ export class AonDocumental extends AonElement {
       tdType.setAttribute('colspan', '1');
       let selType = new AonSelect();
       selType.id = "aonDocumentalUploadType";
-      selType.title = MSG.AON_MSG_TYPE;
+      selType.title = MSG.TYPE;
 
       let typeOptions = EMPLOYEE_TYPE_OPTION;
       if(this.getDur().isDocumentalManager()) {

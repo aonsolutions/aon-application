@@ -12,9 +12,7 @@ import { TAG } from "../../../environments/environments.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { AON_MSG_SAVED_DATA } from "../../../environments/msg.js";
-import { CONSTANT_SUCCESS } from "../../../environments/constants.js";
-
+import { MSG, CONSTANT } from '../../../environments/environments.js';
 export class AonTax extends AonElement {
   TABLE_ID;
   BANKS;
@@ -417,7 +415,7 @@ export class AonTax extends AonElement {
       const form = {...resp,...this.getFormValues()};
       await setModelStatus(form);
       await this.getTable(); //reload
-      this.applicationEl.getToast().start({message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS});
+      this.applicationEl.getToast().start({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
       this.applicationEl.getToast().start(handleError(error));
     }

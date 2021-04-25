@@ -203,7 +203,7 @@ export class AonDialog extends AonElement {
 		cancel.className = 'aonButton';
 		cancel.style.backgroundColor="grey";
 		cancel.style.marginRight = "10px";
-		cancel.innerHTML = MSG.AON_MSG_CANCEL;
+		cancel.innerHTML = MSG.CANCEL;
 		cancel.addEventListener('click', () => {
 			fn();
 			this.close();
@@ -223,7 +223,7 @@ export class AonDialog extends AonElement {
 		let accept = this.getElement(this.ACCEPT) || this.createElement('button');
 		accept.id = this.ACCEPT;
 		accept.className = 'aonButton';
-		accept.innerHTML = MSG.AON_MSG_ACCEPT;
+		accept.innerHTML = MSG.ACCEPT;
 		accept.style.marginLeft= "auto";
 		let divAction = this.getElement(this.ACTION);
 		divAction.style.display = "flex";
@@ -235,7 +235,7 @@ export class AonDialog extends AonElement {
 	addSendAction(fn) {
 		let button = this.buttonAccept();
 		button.classList.add('buttonload')
-		// accept.innerHTML =  `<span class="button__text">${MSG.AON_MSG_ACCEPT}</span>`;
+		// accept.innerHTML =  `<span class="button__text">${MSG.ACCEPT}</span>`;
 		button.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			ev.preventDefault();

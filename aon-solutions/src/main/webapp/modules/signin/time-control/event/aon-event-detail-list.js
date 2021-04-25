@@ -16,9 +16,9 @@ import { dateCustomDayHour } from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import { AON_MSG_DATE, AON_MSG_STATUS, AON_MSG_LOCATION } from "../../../../environments/msg.js";
 
 import * as ACTION from '../../../actions.js';
+import { MSG } from "../../../../environments/environments.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -172,9 +172,9 @@ export class AonEventDetailList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn(AON_MSG_STATUS, "string", "textStatus", "10%");
-      aonTable.addColumn(AON_MSG_DATE, "date", "dateParse", "20%");
-      aonTable.addColumn(AON_MSG_LOCATION, "string", "nameLocation", "30%");
+      aonTable.addColumn(MSG.STATUS, "string", "textStatus", "10%");
+      aonTable.addColumn(MSG.DATE, "date", "dateParse", "20%");
+      aonTable.addColumn(MSG.LOCATION, "string", "nameLocation", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

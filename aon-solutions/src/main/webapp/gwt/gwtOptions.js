@@ -135,13 +135,13 @@ export const TEMPLATE = {
 };
 
 export const MODEL_111 = {
-  name: MSG.AON_MSG_MODEL_111_DESCRIPTION,
+  name: MSG.MODEL_111_DESCRIPTION,
   module: GWT_FISCAL,
   entryPoint: 'Model111'
 };
 
 export const MODEL_190 = {
-  name: MSG.AON_MSG_MODEL_111_DESCRIPTION,
+  name: MSG.MODEL_190_DESCRIPTION,
   module: GWT_FISCAL,
   entryPoint: 'Model90'
 };

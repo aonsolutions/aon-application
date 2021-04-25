@@ -5,13 +5,12 @@ import { getPosition } from "../../../../services/maps.js";
 import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import { AON_MSG_DELETE, AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA, AON_MSG_DELETE_CONFIRM, AON_MSG_RADIO, AON_MSG_LOCATION, AON_MSG_NAME } from "../../../../environments/msg.js";
-import { CONSTANT_SUCCESS } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
 
 import * as ACTION from '../../../actions.js';
+import { CONSTANT, MSG } from "../../../../environments/environments.js";
 
 export class AonLocationAdd extends AonElement {
   NAME;
@@ -47,7 +46,7 @@ export class AonLocationAdd extends AonElement {
   constructor() {
     super();
     this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
-    this.NAME =  AON_MSG_LOCATION;
+    this.NAME =  MSG.LOCATION;
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
   }
@@ -90,10 +89,10 @@ export class AonLocationAdd extends AonElement {
     let aonCard = this.getElement(`${this.id}Card`);
     aonCard.setContentHTML(`
             <div class="aonCol-xs-10">
-              <aon-input name="description" id="description" description="${AON_MSG_NAME}" type="text"></aon-input>
+              <aon-input name="description" id="description" description="${MSG.NAME}" type="text"></aon-input>
             </div>
             <div class="aonCol-xs-2">
-              <aon-number name="radio" id="radio" description="${AON_MSG_RADIO}" type="text"></aon-number>
+              <aon-number name="radio" id="radio" description="${MSG.RADIO}" type="text"></aon-number>
             </div>
             <div class="aonCol-xs-12">
              <div id="${this.id}Map" title="Mapa"></div>
@@ -218,7 +217,7 @@ export class AonLocationAdd extends AonElement {
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
-        this.applicationEl.getToast().start({ message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS });
+        this.applicationEl.getToast().start({ message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS });
         if (id) { setValueName("id", id); }
       } catch (error) {
         this.applicationEl.getToast().start(handleError(error));
@@ -228,12 +227,12 @@ export class AonLocationAdd extends AonElement {
   }
 
   async delete() {
-    this.applicationEl.confirmDialog(AON_MSG_DELETE, `${AON_MSG_DELETE_CONFIRM} ${this.NAME}?`, async()=>{
+    this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} ${this.NAME}?`, async()=>{
       this.applicationEl.startLoading();
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
-        this.applicationEl.getToast().start({ message: AON_MSG_DELETED_DATA });
+        this.applicationEl.getToast().start({ message: MSG.DELETED_DATA });
         this.back();
       } catch (error) {
         this.applicationEl.getToast().start(handleError(error));

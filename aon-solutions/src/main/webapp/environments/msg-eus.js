@@ -1,210 +1,262 @@
+// ----- A
+
+export const ACCEPT = 'Onartu';
+export const ACCOUNT = 'Kuenta';
+export const ACCOUNTED = 'Kontabilizatuta';
+export const ACCOUNTEDS = 'Kontabilizatutak';
+export const ACCOUNTING = 'Kontabilitatea';
+export const ACTIVATE = 'Aktibatu';
+export const ADD_CATEGORY = 'Kategoria Gehitu';
+export const ADD_COMMENT = 'Iruzkina Gehitu';
+export const ADD_FILE = 'Fitxategia Erantsi';
+export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_TAG = 'Etiketa Gehitu';
+export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
+export const ADDRESS = 'Helbidea';
+export const ALL_FILES = 'Fitxategi Guztiak';
+export const AMOUNT = 'Zenbatekoa';
+export const API_DOCUMENTATION = 'APIren Dokumentazioa';
+export const ASESOR = 'Aholkulari';
+
+// ----- B
+
+export const BACK = 'Atzera';
+export const BACKGROUND_ADJUST = 'Atzealdea Estutu';
+export const BILLING = 'Fakturazioa';
+export const BLOCKED_POPUP = "Ventana bloqueada!";
+export const BOOKING = 'Kontratazioa';
+export const BOX_CRITERION = 'Kutxa-Irizpidea';
+export const BUDGET = 'Aurrekontua';
+export const BUDGETS = 'Aurrekontuak';
+export const BUSINESS_NAME = 'Izen Sozial';
+
+// ----- C
+
+export const CANCEL = 'Ezeztatu';
+export const CATEGORY = 'Kategoria';
+export const CATEGORIES = 'Kategoriak';
+export const CITY = 'Hiria';
+export const COMMENT = 'Iruzkina';
+export const COMMENTS = 'Iruzkinak';
+export const COMPANIES = 'Enpresak';
+export const COMPANY = 'Enpresa';
+export const COMPANY_COSTS = 'Enpresaren kostuak';
+export const CONCEPT = 'Kontzeptua';
+export const CONCEPTS = 'Kontzeptuak';
+export const CONFIDENTIAL = 'Konfidentziala';
+export const CONTACT = 'Kontaktua';
+export const CONTACTS = 'Kontaktuak';
+export const CONTRACT = 'Kontratatu';
+export const COUNTRY = 'Herrialde';
+export const CREDITOR = 'Hartzekodun';
+export const CREDITORS = 'Hartzekodunak';
+export const CUSTOMER = 'Bezero';
+export const CUSTOMERS = 'Bezeroak';
+
+// ----- D
+
+export const DATE = 'Data';
+export const DEACTIVATE = 'Desaktibatu';
+export const DELETE = 'Ezabatu';
+export const DELETE_CATEGORY = 'Kategoria Ezabatu';
+export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_FILE = 'Fitxategia Ezabatu';
+export const DELETE_FOREVER = 'Betirako Ezabatu';
+export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
+export const DELETE_TAG = 'Etiketa Ezabatu';
+export const DELETED_DATA = 'Datuak zuzen ezabatu dira';
+export const DETAILED = 'Xehatua';
+export const DOCUMENT = 'Dokumentua';
+export const DOCUMENTS = 'Dokumentuak';
+export const DOCUMENTARY = 'Dokumentala';
+export const DOWNLOAD = 'Deskargatu';
+export const DOWNLOAD_FILE = 'Fitxategia Deskargatu';
+export const DOWNLOAD_FILES = 'Fitxategiak Deskargatu';
+export const DOWNLOAD_INVOICE = 'Faktura Deskargatu';
+export const DOWNLOAD_INVOICES = 'Fakturak Deskargatu';
 export const DUPLICATE = 'Bikoiztu';
+export const DUPLICATE_INVOICE = 'Faktura Bikoiztu';
+export const DURATION = "Duración";
+
+// ----- E
+
 export const EDIT = 'Editatu';
+export const EDIT_CATEGORY = 'Kategoria Aldatu';
+export const EDIT_FILE = 'Fitxategia Editatu';
+export const EDIT_FILES = 'Fitxategiak Editatu';
+export const EDIT_TAG = 'Etiketa Aldatu';
+export const EMAIL = 'Email';
+export const EMPLOYEE = 'Langile';
+export const ENTERPRISE = 'Enpresa';
+export const EXPIRATIONS = 'Epemugak';
+
+// ----- F
+
+export const FAX = 'Fax';
+export const FILE = 'Fitxategia';
+export const FILE_DATA = 'Fitxategiaren Datuak';
+export const FILTER = "Filtro";
+export const FILTERS = "Filtros";
+export const FOOTER = 'Oina';
+
+// ----- G
+
+export const GENERAL_INFORMATION = 'Informazio Generala';
+
+// ----- H
+
+export const HEADER = 'Goiburu';
+export const HOLDER = 'Titularra';
+
+// ----- I
+
+export const INBOX = 'Sarrera-Ontzia';
+export const INVOICE = 'Faktura';
+export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
+export const INVOICE_DATA = 'Fakturaren Datuak';
+export const INVOICE_ISSUED = 'Igorritako Faktura';
+export const INVOICE_NUMBER = 'Faktura Zenbakia';
+export const INVOICE_RECEIVED = 'Jasotako Faktura';
+export const INVOICES = 'Fakturak';
+export const IRPF = 'PFEZ';
+export const ISSUED = 'Igorritakoa';
+export const ISSUEDS = 'Igorritakoak';
+
+// ----- J
+
+// ----- K
+
+// ----- L
+
+export const LAST_LOCATION = "Última ubicación";
+export const LAST_STATUS = "Último estado";
+export const LOCATION = "Ubicación";
+
+// ----- M
+
+export const MODEL_111 = '111 Eredua';
+export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
+export const MODEL_190 = '190 Eredua';
+export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+
+// ----- N
+
+export const NAME = 'Izena';
+export const NEW_COMPANY = 'Enpresa Berria';
+export const NEXT = 'Hurrengoa';
+export const NUMBER = 'Zenbakia';
+
+// ----- O
+
+// ----- P
+
+export const PAYMETHOD = 'Ordainketa Era';
+export const PAYROLL = "Nómina";
+export const PAYROLLS = "Nóminas";
+export const PAYSHEET = 'Nomina';
+export const PAYSHEETS = 'NominaK';
+export const PENDING = 'Zain';
+export const PENDING_DOCUMENTS = 'Zain Dauden Fitxategiak'; 
+export const PENDING_INVOICES = 'Zain Dauden Fakturak'
+export const PENDINGS = 'Zain Daudenak';
+export const PERMISSIONS = 'Baimenak';
+export const PHONE =  'Telefono';
+export const POSTAL_CODE = 'Posta-kodea';
+export const PREVIOUS = 'Aurrekoa';
+export const PRICE = 'Prezioa';
+export const PRINT_INVOICE = 'Faktura Inprimatu';
+export const PRINTING_INVOICES = 'Fakturen Inprimazioa';
+export const PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
+export const PROVINCE = 'Probintzia';
+
+// ----- Q
+
+export const QUANTITY = 'Kantitatea';
+
+// ----- R
+
+export const RADIO = "Radio";
+export const RECEIVED = 'Jasotakoa';
+export const RECEIVEDS = 'Jasotakoak';
+export const RECENTS = 'Berriak';
+export const RECORD = 'Kontabilizatu';
+export const RECORD_INVOICE = 'Faktura Kontabilizatu';
 export const RECTIFY = 'Zuzendu';
+export const RECTIFY_INVOICE = 'Faktura Zuzendu';
+export const REFERENCE = 'Erreferentzia';
+export const REJECT = 'Baztertu';
+export const REJECT_INVOICE = 'Faktura Baztertu';
+export const REJECT_INVOICES = 'Fakturak Baztertu'
+export const REJECTED = 'Baztertua';
+export const REJECTED_INVOICES = 'Baztertu Diren Fakturak';
+export const REJECTEDS = 'Baztertua';
 export const RESTORE = 'Berreskuratu';
+export const RESTORE_INVOICE = 'Faktura Berreskuratu';
+export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
+export const RESUME_COSTS = "Resumen de costes";
+
+// ----- S
+
+export const SAVE = 'Gorde';
+export const SAVED_DATA = 'Datuak zuzen gorde dira';
+export const SCOPE = 'Esparrua';
 export const SEND = 'Bidali';
+export const SEND_FILE = 'Fitxategia Bidali';
+export const SEND_FILES = 'Fitxategiak Bidali';
+export const SEND_INVOICE = 'Faktura Bidali';
+export const SEND_INVOICES =  'Fakturak Bidali';
+export const SEPA_FILES = 'SEPA Fitxategiak';
+export const SERIE = 'Serie';
+export const SETTING = 'Konfigurazioa';
+export const SHOW_FILE = 'Fitxategia Erakutsi';
+export const SII = 'SII';
+export const SII_TICKETBAI = 'SII / TicketBAI';
+export const SIZE = 'Neurria';
+export const STATUS = "Estado";
+export const SUPPLIED = 'Ordezkatuak';
+export const SUPPLIER = 'Hornitzaile';
+export const SUPPLIERS = 'Hornitzaileak';
+export const SURNAME = 'Abizenak';
+export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
+
+// ----- T
+
+export const TAG = 'Etiketa';
+export const TAGS = 'Etiketak';
+export const TAXES_DETAIL = 'Zergak';
+export const TICKET = 'Tiket';
+export const TICKETBAI = 'TicketBAI';
+export const TICKETS = 'Tiketak';
+export const TITULAR_DATA = 'Titularraren Datuak';
+export const TO_TRASH = 'Paperontzira Bidali';
+export const TOTAL = 'Guztira';
+export const TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
+export const TRASH = 'Paperontzia';
+export const TYPE = 'Mota';
+export const TYPES = 'Motak';
+
+// ----- U
+
+export const UPDATED_CONTRACT = "Kontratua zuzen aldatu da";
 export const UPLOAD = 'Igo';
+export const UPLOAD_FILE = 'Fitxategia Igo';
+export const USER = 'Erabiltzailea';
+export const USER_DATA = 'Erabiltzailearen Datuak';
+export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
+export const USERS = 'Erabiltzaileak';
 
-export const AON_MSG_INVOICE = 'Faktura';
-export const AON_MSG_INVOICES = 'Fakturak';
-export const AON_MSG_RESTORE_INVOICE = 'Faktura Berreskuratu';
-export const AON_MSG_RESTORE_INVOICES = 'Fakturak Berreskuratu';
-export const AON_MSG_REJECT_INVOICE = 'Faktura Baztertu';
-export const AON_MSG_REJECT_INVOICES = 'Fakturak Baztertu';
-export const AON_MSG_PRINT_INVOICE = 'Faktura Inprimatu';
-export const AON_MSG_SEND_INVOICE = 'Faktura Bidali';
-export const AON_MSG_SEND_INVOICES = 'Fakturak Bidali';
-export const AON_MSG_RECTIFY_INVOICE = 'Faktura Zuzendu';
-export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
-export const AON_MSG_INVOICE_DATA = 'Fakturaren Datuak';
-export const AON_MSG_INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
-export const AON_MSG_INVOICE_ISSUED = 'Igorritako Faktura';
-export const AON_MSG_INVOICE_RECEIVED = 'Jasotako Faktura';
-export const AON_MSG_INVOICE_NUMBER = 'Faktura Zenbakia';
-export const AON_MSG_DUPLICATE_INVOICE = 'Faktura Bikoiztu';
-export const AON_MSG_RECORD_INVOICE = 'Faktura Kontabilizatu';
-export const AON_MSG_PENDING_INVOICES = 'Zain Dauden Fakturak';
-export const AON_MSG_REJECTED_INVOICES = 'Baztertu Diren Fakturak';
-export const AON_MSG_ADD_INVOICE = 'Faktura Gehitu';
-export const AON_MSG_DOWNLOAD_INVOICE = 'Faktura Deskargatu';
-export const AON_MSG_DOWNLOAD_INVOICES = 'Fakturak Deskargatu';
+// ----- V
 
-export const AON_MSG_TICKET = 'Tiket';
-export const AON_MSG_TICKETS = 'Tiketak';
+export const VAT = 'BEZ';
+export const VIEW_PAYROLL = "Ver nómina";
+export const VIEW_PAYROLLS = "Ver nóminas";
 
-export const AON_MSG_TAXES_DETAIL= 'Zergak';
-export const AON_MSG_EXPIRATIONS= 'Epemugak';
+// ----- W
 
-export const AON_MSG_PAYMETHOD = 'Ordainketa Era';
-export const AON_MSG_REJECTED = 'Baztertua';
-export const AON_MSG_REJECTEDS = 'Baztertuak';
-export const AON_MSG_TRASH = 'Paperontzia';
-export const AON_MSG_TO_TRASH = 'Paperontzira Bidali';
-export const AON_MSG_DELETE_FOREVER = 'Betirako Ezabatu';
-export const AON_MSG_ADD_FILE = 'Fitxategia Erantsi';
-export const AON_MSG_SHOW_FILE = 'Fitxategia Erakutsi';
-export const AON_MSG_ADD_COMMENT = 'Iruzkina Gehitu';
+export const WEB = 'Web';
 
-export const AON_MSG_COMMENT = 'Iruzkina';
-export const AON_MSG_COMMENTS = 'Iruzkinak';
+// ----- X
 
-export const AON_MSG_DATE = 'Data';
-export const AON_MSG_AMOUNT = 'Zenbatekoa';
-export const AON_MSG_HOLDER = 'Titularra';
+// ----- Y
 
-export const AON_MSG_BACK = 'Atzera';
-export const AON_MSG_NEXT = 'Hurrengoa';
-export const AON_MSG_PREVIOUS = 'Aurrekoa';
-
-export const AON_MSG_PENDING = 'Zain';
-export const AON_MSG_PENDINGS = 'Zain Daudenak';
-export const AON_MSG_PENDING_DOCUMENTS = 'Zain Dauden Fitxategiak';
-
-export const AON_MSG_RECENTS = 'Berriak';
-
-export const AON_MSG_ACCOUNTED = 'Kontabilizatuta';
-export const AON_MSG_ACCOUNTEDS = 'Kontabilizatutak';
-
-export const AON_MSG_RECEIVED = 'Jasotakoa';
-export const AON_MSG_RECEIVEDS = 'Jasotakoak';
-
-export const AON_MSG_ISSUED = 'Igorritakoa';
-export const AON_MSG_ISSUEDS ='Igorritakoak';
-
-export const AON_MSG_SETTING = 'Konfigurazioa';
-
-export const AON_MSG_INBOX = 'Sarrera-Ontzia';
-export const AON_MSG_PRINTING_INVOICES = 'Fakturen Inprimazioa';
-
-export const AON_MSG_SUPPLIED = 'Ordezkatuak';
-export const AON_MSG_TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
-export const AON_MSG_TOTAL = 'Guztira';
-
-export const AON_MSG_BOX_CRITERION = 'Kutxa-Irizpidea';
-export const AON_MSG_CONCEPT = 'Kontzeptua';
-export const AON_MSG_CONCEPTS = 'Kontzeptuak';
-export const AON_MSG_QUANTITY = 'Kantitatea';
-export const AON_MSG_PRICE = 'Prezioa';
-export const AON_MSG_IRPF = 'PFEZ';
-export const AON_MSG_VAT = 'BEZ';
-
-export const AON_MSG_CANCEL = 'Ezeztatu';
-export const AON_MSG_ACCEPT = 'Onartu';
-
-export const AON_MSG_SYSTEM_MESSAGES = 'Sistemaren Mezuak';
-
-export const AON_MSG_ALL_FILES = 'Fitxategi Guztiak';
-export const AON_MSG_FILE = 'Fitxategia';
-export const AON_MSG_FILE_DATA = 'Fitxategiaren Datuak';
-export const AON_MSG_UPLOAD_FILE = 'Fitxategia Igo';
-export const AON_MSG_SEND_FILE = 'Fitxategia Bidali';
-export const AON_MSG_SEND_FILES = 'Fitxategiak Bidali';
-export const AON_MSG_DELETE_FILE = 'Fitxategia Ezabatu';
-export const AON_MSG_DOWNLOAD_FILE = 'Fitxategia Deskargatu';
-export const AON_MSG_DOWNLOAD_FILES = 'Fitxategiak Deskargatu';
-export const AON_MSG_EDIT_FILE = 'Fitxategia Editatu';
-export const AON_MSG_EDIT_FILES = 'Fitxategiak Editatu';
-
-export const AON_MSG_USER = 'Erabiltzailea';
-export const AON_MSG_USERS = 'Erabiltzaileak';
-export const AON_MSG_USER_DATA = 'Erabiltzailearen Datuak';
-export const AON_MSG_USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
-
-export const AON_MSG_NAME = 'Izena';
-export const AON_MSG_SURNAME = 'Abizenak';
-
-export const AON_MSG_DOCUMENTARY = 'Dokumentala';
-
-export const AON_MSG_DOCUMENT = 'Dokumentua';
-export const AON_MSG_DOCUMENTS = 'Dokumentuak';
-
-export const AON_MSG_CATEGORY = 'Kategoria';
-export const AON_MSG_CATEGORIES = 'Kategoriak';
-export const AON_MSG_ADD_CATEGORY = 'Kategoria Gehitu';
-export const AON_MSG_EDIT_CATEGORY = 'Kategoria Aldatu';
-export const AON_MSG_DELETE_CATEGORY = 'Kategoria Ezabatu';
-
-export const AON_MSG_TAG = 'Etiketa';
-export const AON_MSG_TAGS = 'Etiketak';
-export const AON_MSG_ADD_TAG = 'Etiketa Gehitu';
-export const AON_MSG_EDIT_TAG = 'Etiketa Aldatu';
-export const AON_MSG_DELETE_TAG = 'Etiketa Ezabatu';
-
-export const AON_MSG_SIZE = 'Neurria';
-
-export const AON_MSG_CONFIDENTIAL = 'Konfidentziala';
-export const AON_MSG_SCOPE = 'Esparrua';
-
-export const AON_MSG_HEADER = 'Goiburu';
-export const AON_MSG_FOOTER = 'Oina';
-export const AON_MSG_BACKGROUND_ADJUST = 'Atzealdea Estutu';
-export const AON_MSG_DETAILED = 'Xehatua';
-export const AON_MSG_ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
-export const AON_MSG_GENERAL_INFORMATION = 'Informazio Generala';
-
-export const AON_MSG_PERMISSIONS = 'Baimenak';
-export const AON_MSG_DELETE = 'Ezabatu';
-export const AON_MSG_SAVE = 'Gorde';
-export const AON_MSG_TYPE = 'Mota';
-export const AON_MSG_TYPES = 'Motak';
-
-export const AON_MSG_ENTERPRISE = 'Enpresa';
-export const AON_MSG_EMPLOYEE = 'Langile';
-export const AON_MSG_ASESOR = 'Aholkulari';
-
-export const AON_MSG_ACCOUNTING = 'Kontabilitatea';
-export const AON_MSG_BOOKING = 'Kontratazioa';
-
-export const AON_MSG_BUDGET = 'Aurrekontua';
-export const AON_MSG_BUDGETS = 'Aurrekontuak';
-export const AON_MSG_BILLING = 'Fakturazioa';
-
-export const AON_MSG_SII = 'SII';
-export const AON_MSG_TICKETBAI = 'TicketBAI';
-export const AON_MSG_SII_TICKETBAI = 'SII / TicketBAI';
-
-export const AON_MSG_ACTIVATE = 'Aktibatu';
-export const AON_MSG_DEACTIVATE = 'Desaktibatu';
-export const AON_MSG_CONTRACT = 'Kontratatu';
-
-export const AON_MSG_BUSINESS_NAME = 'Izen Sozial';
-export const AON_MSG_TITULAR_DATA = 'Titularraren Datuak';
-export const AON_MSG_PAYSHEET = 'Nomina';
-export const AON_MSG_PAYSHEETS = 'Nominak';
-export const AON_MSG_COMPANY_COSTS = 'Enpresaren kostuak';
-export const AON_MSG_SEPA_FILES = 'SEPA Fitxategiak';
-
-export const AON_MSG_CONTACT = 'Kontaktua';
-export const AON_MSG_CONTACTS = 'Kontaktuak';
-export const AON_MSG_CUSTOMER = 'Bezero';
-export const AON_MSG_CUSTOMERS = 'Bezeroak';
-export const AON_MSG_SUPPLIER = 'Hornitzaile';
-export const AON_MSG_SUPPLIERS = 'Hornitzaileak';
-export const AON_MSG_CREDITOR = 'Hartzekodun';
-export const AON_MSG_CREDITORS = 'Hartzekodunak';
-
-// MODELOS FISCALES
-
-export const AON_MSG_MODEL_111 = '111 Eredua';
-export const AON_MSG_MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
-export const AON_MSG_MODEL_190 = '190 Eredua';
-export const AON_MSG_MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
-
-export const AON_MSG_ADDRESS = 'Helbidea';
-export const AON_MSG_POSTAL_CODE = 'Posta-kodea';
-export const AON_MSG_CITY = 'Hiria';
-export const AON_MSG_PROVINCE = 'Probintzia';
-export const AON_MSG_COUNTRY = 'Herrialde';
-export const AON_MSG_PHONE = 'Telefono';
-export const AON_MSG_FAX = 'Fax';
-export const AON_MSG_WEB = 'Web';
-export const AON_MSG_EMAIL = 'Email';
-
-export const AON_MSG_DELETED_DATA= "Datuak zuzen ezabatu dira";
-export const AON_MSG_SAVED_DATA  = "Datuak zuzen gorde dira";
-export const AON_MSG_PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
-export const AON_MSG_UPDATED_CONTRACT = "Kontratua zuzen aldatu da";
-
-export const AON_MSG_COMPANY = 'Enpresa';
-export const AON_MSG_COMPANIES = 'Enpresak';
-export const AON_MSG_NEW_COMPANY = 'Enpresa Berria';
+// ----- Z

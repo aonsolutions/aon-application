@@ -7,11 +7,7 @@ import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../user/aon-user-list.js';
 import '../user/aon-user.js';
-
-
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import { MSG } from '../../environments/environments.js';
 
 export class AonUserPanel extends AonElement {
 
@@ -30,11 +26,8 @@ export class AonUserPanel extends AonElement {
 	}
 
 	connectedCallback () {
-		// this.innerHTML = `
-		// 	<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}" sidenav="block"></aon-application>
-		// `;
 		this.innerHTML = `
-			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}"></aon-application>
+			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.USERS}"></aon-application>
 		`;
 		getDomainUserRoles({}).then(r => {
 				this._roles = new DomainUserRoles(r);

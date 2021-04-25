@@ -1,5 +1,4 @@
-import { AON_MSG_BLOCKED_POPUP } from "../environments/msg.js";
-import { CONSTANT_ERROR } from "../environments/constants.js";
+import { CONSTANT, MSG } from "../environments/environments.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
@@ -206,7 +205,7 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
           openFileDesktop(newUrl);
           setTimeout(()=>{ URL.revokeObjectURL(url);},50);
         } catch (e) {
-          reject({message:e.message, type:CONSTANT_ERROR});
+          reject({message:e.message, type:CONSTANT.ERROR});
         }
       }
       resolve(true);
@@ -219,7 +218,7 @@ export const openFileDesktop = (url) => {
       const openWindow =  window.open(url, '_blank');
       if(openWindow) return openWindow;
   } catch (error) {}
-  throw new  Error(AON_MSG_BLOCKED_POPUP);
+  throw new  Error(MSG.BLOCKED_POPUP);
 }
 
 //if true is mobile APP

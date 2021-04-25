@@ -10,7 +10,7 @@ import '../signin/aon-sign.js';
 import '../invoice/aon-invoice-panel.js';
 import './aon-mobile-parent.js';
 
-import {MSG, TAG, MATERIAL_ICONS} from '../../environments/environments.js';
+import { MSG, TAG, MATERIAL_ICONS } from '../../environments/environments.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -217,12 +217,12 @@ export class AonMobileDesktop extends AonElement {
 			rejectedCount = notice.invoice.rejected.count;
 		}
 
-		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_PENDING_INVOICES, 'inbox', inboxCount, () => {
+		ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, 'inbox', inboxCount, () => {
 			if(inboxCount > 0) {
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 			}
 		}));
-		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_REJECTED_INVOICES, 'report', rejectedCount, () => {
+		ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
 			if(rejectedCount > 0) {
 				rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 			}

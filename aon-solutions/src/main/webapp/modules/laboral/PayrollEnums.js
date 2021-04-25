@@ -2,13 +2,13 @@ import * as MSG from "../../environments/msg.js";
 
 export const PAYSHEET = {
   id: 'Paysheet',
-  name: MSG.AON_MSG_PAYSHEETS,
+  name: MSG.PAYSHEETS,
   icon: 'text_snippet'
 };
 
 export const COMPANY_COSTS = {
   id: 'CompanyCosts',
-  name: MSG.AON_MSG_COMPANY_COSTS,
+  name: MSG.COMPANY_COSTS,
   icon: 'assignment'
 };
 
@@ -36,7 +36,7 @@ export const AON_COMUNICA = {
 
 export const SEPA_FILES = {
   id: 'SepaFiles',
-  name: MSG.AON_MSG_SEPA_FILES,
+  name: MSG.SEPA_FILES,
   icon: 'account_balance'
 }
 

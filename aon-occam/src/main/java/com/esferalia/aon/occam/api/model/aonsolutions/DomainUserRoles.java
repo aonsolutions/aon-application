@@ -135,6 +135,10 @@ public class DomainUserRoles implements Serializable {
 		return  hasRole(AonRole.ADMIN); // && hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN);
 	}
 	
+	public Boolean isDev() {
+		return  hasRole(AonRole.DEV);
+	}
+	
 	// ACCOUNTING - CONTABILIDAD
 	
 	public boolean hasAccounting() {

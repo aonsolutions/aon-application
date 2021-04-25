@@ -71,7 +71,7 @@ export class AonConfiguration extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    this.createApplication(this.AON_CONFIGURATION, MSG.AON_MSG_SETTING, new AonApplication());
+    this.createApplication(this.AON_CONFIGURATION, MSG.SETTING, new AonApplication());
 
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
@@ -90,13 +90,13 @@ export class AonConfiguration extends AonElement {
 
     let userOptions = [
       {
-        name: MSG.AON_MSG_USER_DATA,
+        name: MSG.USER_DATA,
         icon: "person",
         fn: () => this.buildPersonal(),
       },
     ];
     aonConfiguration.addSidenavOptions(
-      MSG.AON_MSG_USER.toUpperCase(),
+      MSG.USER.toUpperCase(),
       userOptions
     );
 
@@ -112,7 +112,7 @@ export class AonConfiguration extends AonElement {
         fn: () => this.buildGeneral(),
       });
       companyOptions.push({
-        name: MSG.AON_MSG_USER_MANAGEMENT,
+        name: MSG.USER_MANAGEMENT,
         icon: "people",
         fn: () => this.buildUser(),
       });

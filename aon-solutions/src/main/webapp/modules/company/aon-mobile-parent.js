@@ -106,7 +106,7 @@ export class AonMobileParent extends AonElement {
   		li.addEventListener(EVENT.CLICK, () => this.companySelection(company));
 
   		let span = this.createElement(TAG.SPAN);
-  		span.className = 'aonLiSpan';
+  		span.className = 'aonLiSpan aonTextOverflow';
 
   		let i = this.createElement(TAG.I);
   		i.className = 'material-icons aonAvatar';

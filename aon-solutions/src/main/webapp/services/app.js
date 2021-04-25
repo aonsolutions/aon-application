@@ -113,7 +113,7 @@ export const DOCUMENTAL = {
 
 export const INVOICE = {
   app: 'invoice',
-  title: MSG.AON_MSG_INVOICES,
+  title: MSG.INVOICES,
   description: 'Gestion de Facturas.',
   icon: 'aon_app',
   color: '#B50061',

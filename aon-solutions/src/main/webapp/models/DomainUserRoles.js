@@ -143,6 +143,10 @@ export class DomainUserRoles {
 		return this.hasRole(Role.ADMIN);
 	}
 
+  isDev() {
+		return this.hasRole(Role.DEV);
+	}
+
   hasPackSuite() {
     return this.hasApp(App.PACK_SUITE);
   }

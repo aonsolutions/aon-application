@@ -1,9 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { CONSTANT_SUCCESS } from '../../../environments/constants.js';
 import { setValueName, serializeForm, formatDateOrigin, handleError, disabledForm } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
-import { AON_MSG_PROCESSED_MOVEMENT, AON_MSG_UPDATED_CONTRACT } from '../../../environments/msg.js';
-import { CONSTANT_PRIMARY } from '../../../environments/constants.js';
 import { ToolbarType } from '../../../models/enums.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
@@ -14,7 +11,7 @@ import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
 import { PAYROLL_VIEWS } from '../PayrollEnums.js';
-
+import { CONSTANT } from '../../../environments/environments.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -635,7 +632,7 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
-            this.applicationEl.getToast().start({ message: AON_MSG_PROCESSED_MOVEMENT, type: CONSTANT_SUCCESS, delay: 3000 });
+            this.applicationEl.getToast().start({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
@@ -655,7 +652,7 @@ export class AonAltaDirecta extends AonElement {
         }
         try {
             await postUpdateCto(cto_new);
-            this.applicationEl.getToast().start({ message: AON_MSG_UPDATED_CONTRACT, type: CONSTANT_PRIMARY, delay: 3000 });
+            this.applicationEl.getToast().start({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {

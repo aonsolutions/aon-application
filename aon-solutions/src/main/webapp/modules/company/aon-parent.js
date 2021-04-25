@@ -55,7 +55,7 @@ export class AonParent extends AonElement {
 				icon: 'notifications',
 				fn: () => {}
 			},{
-				name: MSG.AON_MSG_PENDING_INVOICES,
+				name: MSG.PENDING_INVOICES,
 				count: inboxCount,
 				icon: 'inbox',
 				fn: () => {
@@ -64,7 +64,7 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
-				name: MSG.AON_MSG_REJECTED_INVOICES,
+				name: MSG.REJECTED_INVOICES,
 				count: rejectedCount,
 				icon: 'report',
 				fn: () => {

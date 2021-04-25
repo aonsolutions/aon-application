@@ -114,13 +114,13 @@ export class AonUser extends AonElement {
 		this.initialize();
 		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 		this.innerHTML = `
-			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.AON_MSG_USER}"> </aon-toolbar>
+			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
 			<div style="display:flex;width:100%;">
 				<div id="aonConfigurationUserDiv" class="aonSubContent" style="width:50%;">
-					<aon-card id="aonConfigurationUserCard"  title="${MSG.AON_MSG_USER}"></aon-card>
-					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.AON_MSG_ADDITIONAL_INFORMATION}"></aon-card>
+					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 				</div>
-				<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.AON_MSG_PERMISSIONS}"></aon-card>
+				<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
 			</div>
 		`;
 
@@ -445,7 +445,7 @@ export class AonUser extends AonElement {
     let d = document.getElementById(aonApplication.DIALOG);
     d.clear();
     if(!this.isMobile()) d.width = '400px';
-    d.setTitle(MSG.AON_MSG_DELETE);
+    d.setTitle(MSG.DELETE);
     d.setContentHTML(`Estás seguro de eliminar el usuario`);
     d.addAcceptAction(() => {
 			let data = { user: this._user.id};

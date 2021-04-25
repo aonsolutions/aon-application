@@ -13,7 +13,7 @@ export class AonMarketplacePanel extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.innerHTML = `
-			<aon-application id="${this.AON_MARKETPLACE}" title="${MSG.AON_MSG_BOOKING}"></aon-application>
+			<aon-application id="${this.AON_MARKETPLACE}" title="${MSG.BOOKING}"></aon-application>
 		`;
 
 		this.build();

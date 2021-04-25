@@ -52,11 +52,11 @@ export class AonInvoiceList extends AonElement {
 
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_DATE, 'date', 'dateTable', '10%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_INVOICE_NUMBER, 'string', 'reference', '25%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_HOLDER, 'string', 'name', '35%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_AMOUNT, 'number', 'total', '10%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_PAYMETHOD, 'string', 'paymethod', '15%');
+		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
+		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
+		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');
+		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'total', '10%');
+		aonInvoiceTable.addColumn(MSG.PAYMETHOD, 'string', 'paymethod', '15%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
 		this.init();
@@ -175,7 +175,7 @@ export class AonInvoiceList extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
+		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
 		d.addAcceptAction(() => deleteInvoices(aonInvoiceTable.selected.map(r => r.id)).then(() => this.init()));
 		d.open();
@@ -214,7 +214,7 @@ export class AonInvoiceList extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_SEND_INVOICES);
+		d.setTitle(MSG.SEND_INVOICES);
 		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
 		d.addAcceptAction(() => {
 			let mail = this.getElement('sendInvoicesMail');

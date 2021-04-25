@@ -51,7 +51,7 @@ export class AonCompany extends AonElement {
 		let toolbar = new AonToolbar();
 		toolbar.id = this.COMPANY_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
-		toolbar.title = this.company.id ? this.company.name : MSG.AON_MSG_NEW_COMPANY;
+		toolbar.title = this.company.id ? this.company.name : MSG.NEW_COMPANY;
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
@@ -70,17 +70,17 @@ export class AonCompany extends AonElement {
 	buildGeneralCard(parent){
 			let card = new AonCard();
 			card.id = this.GENERAL_CARD;
-			card.title = MSG.AON_MSG_GENERAL_INFORMATION;
+			card.title = GENERAL_INFORMATION;
 			parent.appendChild(card);
 
 
 			card.setContentHTML(`
 				<form action="#" class="aon-margin-0">
 					<aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${this.company.document}"></aon-input>
-					<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="${MSG.AON_MSG_BUSINESS_NAME}" value="${this.company.name}"></aon-input>
+					<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="${MSG.BUSINESS_NAME}" value="${this.company.name}"></aon-input>
 				</form>
 				<form action="#" class="aon-margin-0">
-					<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" title="${MSG.AON_MSG_ADDRESS}"></aon-address>
+					<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" title="${MSG.ADDRESS}"></aon-address>
 				</form>
 			`);
 
@@ -98,7 +98,7 @@ export class AonCompany extends AonElement {
 	buildInfoCard(parent){
 			let infoCard = new AonCard();
 			infoCard.id = this.INFO_CARD;
-			infoCard.title = MSG.AON_MSG_ADDITIONAL_INFORMATION;
+			infoCard.title = MSG.ADDITIONAL_INFORMATION;
 			parent.appendChild(infoCard);
 
 			infoCard.setContentHTML(`

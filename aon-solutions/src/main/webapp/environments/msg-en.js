@@ -1,210 +1,262 @@
+// ----- A
+
+export const ACCEPT = 'Accept';
+export const ACCOUNT = 'Account';
+export const ACCOUNTED = 'Accounted';
+export const ACCOUNTEDS = 'Accounted';
+export const ACCOUNTING = 'Accounting';
+export const ACTIVATE = 'Activate';
+export const ADD_CATEGORY = 'Add Category';
+export const ADD_COMMENT = 'Add Comment';
+export const ADD_FILE = 'Add File';
+export const ADD_INVOICE = 'Add Invoice';
+export const ADD_TAG = 'Add Tag';
+export const ADDITIONAL_INFORMATION = 'Additional Information';
+export const ADDRESS = 'Address';
+export const ALL_FILES = 'All Files';
+export const AMOUNT = 'Amount';
+export const API_DOCUMENTATION = 'API Documentation';
+export const ASESOR = 'Asesor';
+
+// ----- B
+
+export const BACK = 'Back';
+export const BACKGROUND_ADJUST = 'Background Adjust';
+export const BILLING = 'Billing';
+export const BLOCKED_POPUP = "Ventana bloqueada!";
+export const BOOKING = 'Booking';
+export const BOX_CRITERION = 'Box Criterion';
+export const BUDGET = 'Budget';
+export const BUDGETS = 'Budgets';
+export const BUSINESS_NAME = 'Business Name';
+
+// ----- C
+
+export const CANCEL = 'Cancel';
+export const CATEGORY = 'Category';
+export const CATEGORIES = 'Categories';
+export const CITY = 'City';
+export const COMMENT = 'Comment';
+export const COMMENTS = 'Comments';
+export const COMPANIES = 'Companies';
+export const COMPANY = 'Company';
+export const COMPANY_COSTS = 'Company Costs';
+export const CONCEPT = 'Concept';
+export const CONCEPTS = 'Concepts';
+export const CONFIDENTIAL = 'Confidential';
+export const CONTACT = 'Contact';
+export const CONTACTS = 'Contacts';
+export const CONTRACT = 'Contract';
+export const COUNTRY = 'Country';
+export const CREDITOR = 'Creditor';
+export const CREDITORS = 'Creditors';
+export const CUSTOMER = 'Customer';
+export const CUSTOMERS = 'Customers';
+
+// ----- D
+
+export const DATE = 'Date';
+export const DEACTIVATE = 'Deactivate';
+export const DELETE = 'Delete';
+export const DELETE_CATEGORY = 'Delete Category';
+export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_FILE = 'Delete File';
+export const DELETE_FOREVER = 'Delete Permanently';
+export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
+export const DELETE_TAG = 'Delete Tag';
+export const DELETED_DATA = "The data has been deleted successfully";
+export const DETAILED = 'Detailed';
+export const DOCUMENT = 'Document';
+export const DOCUMENTS = 'Documents';
+export const DOCUMENTARY = 'Documentary';
+export const DOWNLOAD = 'Download';
+export const DOWNLOAD_FILE = 'Download File';
+export const DOWNLOAD_FILES = 'Download Files';
+export const DOWNLOAD_INVOICE = 'Download Invoice';
+export const DOWNLOAD_INVOICES = 'Download Invoices';
 export const DUPLICATE = 'Duplicate';
+export const DUPLICATE_INVOICE = 'Duplicate Invoice';
+export const DURATION = "Duración";
+
+// ----- E
+
 export const EDIT = 'Edit';
+export const EDIT_CATEGORY = 'Edit Category';
+export const EDIT_FILE = 'Edit File';
+export const EDIT_FILES = 'Edit Files';
+export const EDIT_TAG = 'Edit Tag';
+export const EMAIL = 'Email';
+export const EMPLOYEE = 'Employee';
+export const ENTERPRISE = 'Enterprise';
+export const EXPIRATIONS = 'Expirations';
+
+// ----- F
+
+export const FAX = 'Fax';
+export const FILE = 'File';
+export const FILE_DATA = 'File Data'
+export const FILTER = "Filtro";
+export const FILTERS = "Filtros";
+export const FOOTER = 'Footer';
+
+// ----- G
+
+export const GENERAL_INFORMATION = 'General Information';
+
+// ----- H
+
+export const HEADER = 'Header';
+export const HOLDER = 'Holder';
+
+// ----- I
+
+export const INBOX = 'Inbox';
+export const INVOICE = 'Invoice';
+export const INVOICE_CONCEPTS = 'Invoice Concepts';
+export const INVOICE_DATA = 'Invoice Data';
+export const INVOICE_ISSUED = 'Invoice Issued';
+export const INVOICE_NUMBER = 'Invoice Number';
+export const INVOICE_RECEIVED = 'Invoice Received';
+export const INVOICES = 'Invoices';
+export const IRPF = 'IRPF';
+export const ISSUED = 'Issued';
+export const ISSUEDS = 'Issued';
+
+// ----- J
+
+// ----- K
+
+// ----- L
+
+export const LAST_LOCATION = 'Last Location';
+export const LAST_STATUS = 'Last Status';
+export const LOCATION = "Location";
+
+// ----- M
+
+export const MODEL_111 = 'Form 111';
+export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
+export const MODEL_190 = 'Form 190';
+export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
+
+// ----- N
+
+export const NAME = 'Name';
+export const NEW_COMPANY = 'New Company';
+export const NEXT = 'Next';
+export const NUMBER = 'Number';
+
+// ----- O
+
+// ----- P
+
+export const PAYMETHOD = 'Payment Method';
+export const PAYROLL = 'Payroll';
+export const PAYROLLS = 'Payrolls';
+export const PAYSHEET = 'Paysheet';
+export const PAYSHEETS = 'Paysheets';
+export const PENDING = 'Pending';
+export const PENDING_DOCUMENTS = 'Pending Documents';
+export const PENDING_INVOICES = 'Pending Invoices';
+export const PENDINGS = 'Pending';
+export const PERMISSIONS = 'Permissions';
+export const PHONE = 'Phone';
+export const POSTAL_CODE = 'Postal Code';
+export const PREVIOUS = 'Previous';
+export const PRICE =  'Price';
+export const PRINT_INVOICE = 'Print Invoice';
+export const PRINTING_INVOICES = 'Printing Invoices';
+export const PROCESSED_MOVEMENT = "The discharge has been processed successfully";
+export const PROVINCE = 'Province';
+
+// ----- Q
+
+export const QUANTITY = 'Quantity';
+
+// ----- R
+
+export const RADIO = "Radio";
+export const RECEIVED = 'Received';
+export const RECEIVEDS = 'Received';
+export const RECENTS = 'Recents';
+export const RECORD = 'Record';
+export const RECORD_INVOICE = 'Record Invoice';
 export const RECTIFY = 'Rectify';
+export const RECTIFY_INVOICE = 'Rectify Invoice';
+export const REFERENCE = 'Reference';
+export const REJECT = 'Reject';
+export const REJECT_INVOICE = 'Reject Invoice';
+export const REJECT_INVOICES = 'Reject Invoices';
+export const REJECTED = 'Rejected';
+export const REJECTED_INVOICES = 'Rejected Invoices';
+export const REJECTEDS = 'Rejected';
 export const RESTORE = 'Restore';
+export const RESTORE_INVOICE = 'Restore Invoice';
+export const RESTORE_INVOICES = 'Restore Invoices';
+export const RESUME_COSTS = "Resumen de costes";
+
+// ----- S
+
+export const SAVE = 'Save';
+export const SAVED_DATA = "The data has been saved successfully";
+export const SCOPE = 'Scope';
 export const SEND = 'Send';
+export const SEND_FILE = 'Send File';
+export const SEND_FILES = 'Send Files';
+export const SEND_INVOICE = 'Send Invoice';
+export const SEND_INVOICES = 'Send Invoices';
+export const SEPA_FILES = 'SEPA Files';
+export const SERIE = 'Serie';
+export const SETTING = 'Setting';
+export const SHOW_FILE = 'Show File';
+export const SII = 'SII';
+export const SII_TICKETBAI = 'SII / TicketBAI';
+export const SIZE = 'Size';
+export const STATUS = "Estado";
+export const SUPPLIED = 'Supplied';
+export const SUPPLIER = 'Supplier';
+export const SUPPLIERS = 'Suppliers';
+export const SURNAME = 'Surname';
+export const SYSTEM_MESSAGES = 'System Messages';
+
+// ----- T
+
+export const TAG = 'Tag';
+export const TAGS = 'Tags';
+export const TAXES_DETAIL= 'Taxes Detail';
+export const TICKET = 'Ticket';
+export const TICKETBAI = 'TicketBAI';
+export const TICKETS = 'Tickets';
+export const TITULAR_DATA = 'Titular Data';
+export const TO_TRASH = 'Send to Trash';
+export const TOTAL = 'Total';
+export const TOTAL_SUPPLIED = 'Total Supplied';
+export const TRASH = 'Trash';
+export const TYPE = 'Type';
+export const TYPES = 'Types';
+
+// ----- U
+
+export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Upload';
+export const UPLOAD_FILE = 'Upload File';
+export const USER = 'User';
+export const USER_DATA = 'User Data';
+export const USER_MANAGEMENT = 'User Management';
+export const USERS = 'Users';
 
-export const AON_MSG_INVOICE = 'Invoice';
-export const AON_MSG_INVOICES = 'Invoices';
-export const AON_MSG_RESTORE_INVOICE = 'Restore Invoice';
-export const AON_MSG_RESTORE_INVOICES = 'Restore Invoices';
-export const AON_MSG_REJECT_INVOICE = 'Reject Invoice';
-export const AON_MSG_REJECT_INVOICES = 'Reject Invoices';
-export const AON_MSG_PRINT_INVOICE = 'Print Invoice';
-export const AON_MSG_SEND_INVOICE = 'Send Invoice';
-export const AON_MSG_SEND_INVOICES = 'Send Invoices';
-export const AON_MSG_RECTIFY_INVOICE = 'Rectify Invoice';
-export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
-export const AON_MSG_INVOICE_DATA = 'Invoice Data';
-export const AON_MSG_INVOICE_CONCEPTS = 'Invoice Concepts';
-export const AON_MSG_INVOICE_ISSUED = 'Invoice Issued';
-export const AON_MSG_INVOICE_RECEIVED = 'Invoice Received';
-export const AON_MSG_INVOICE_NUMBER = 'Invoice Number';
-export const AON_MSG_DUPLICATE_INVOICE = 'Duplicate Invoice';
-export const AON_MSG_RECORD_INVOICE = 'Record Invoice';
-export const AON_MSG_PENDING_INVOICES = 'Pending Invoices';
-export const AON_MSG_REJECTED_INVOICES = 'Rejected Invoices';
-export const AON_MSG_ADD_INVOICE = 'Add Invoice';
-export const AON_MSG_DOWNLOAD_INVOICE = 'Download Invoice';
-export const AON_MSG_DOWNLOAD_INVOICES = 'Download Invoices';
+// ----- V
 
+export const VAT = 'VAT';
+export const VIEW_PAYROLL = "Ver nómina";
+export const VIEW_PAYROLLS = "Ver nóminas";
 
-export const AON_MSG_TICKET = 'Ticket';
-export const AON_MSG_TICKETS = 'Tickets';
-export const AON_MSG_TAXES_DETAIL= 'Taxes Detail';
-export const AON_MSG_EXPIRATIONS= 'Expirations';
+// ----- W
 
-export const AON_MSG_PAYMETHOD = 'Payment Method';
-export const AON_MSG_REJECTED = 'Rejected';
-export const AON_MSG_REJECTEDS = 'Rejected';
-export const AON_MSG_TRASH = 'Trash';
-export const AON_MSG_TO_TRASH = 'Send to Trash';
-export const AON_MSG_DELETE_FOREVER = 'Delete Permanently';
-export const AON_MSG_ADD_FILE = 'Add File';
-export const AON_MSG_SHOW_FILE = 'Show File';
-export const AON_MSG_ADD_COMMENT = 'Add Comment';
+export const WEB = 'Web';
 
-export const AON_MSG_COMMENT = 'Comment';
-export const AON_MSG_COMMENTS = 'Comments';
+// ----- X
 
-export const AON_MSG_DATE = 'Date';
-export const AON_MSG_AMOUNT = 'Amount';
-export const AON_MSG_HOLDER = 'Holder';
+// ----- Y
 
-export const AON_MSG_BACK = 'Back';
-export const AON_MSG_NEXT = 'Next';
-export const AON_MSG_PREVIOUS = 'Previous';
-
-export const AON_MSG_PENDING = 'Pending';
-export const AON_MSG_PENDINGS = 'Pendings';
-export const AON_MSG_PENDING_DOCUMENTS = 'Pending Documents';
-
-export const AON_MSG_RECENTS = 'Recents';
-
-export const AON_MSG_ACCOUNTED = 'Accounted';
-export const AON_MSG_ACCOUNTEDS = 'Accounted';
-
-export const AON_MSG_RECEIVED = 'Received';
-export const AON_MSG_RECEIVEDS = 'Received';
-
-
-export const AON_MSG_ISSUED = 'Issued';
-export const AON_MSG_ISSUEDS ='Issued';
-
-
-export const AON_MSG_SETTING = 'Setting';
-export const AON_MSG_INBOX = 'Inbox';
-export const AON_MSG_PRINTING_INVOICES = 'Printing Invoices';
-
-export const AON_MSG_SUPPLIED = 'Supplied';
-export const AON_MSG_TOTAL_SUPPLIED = 'Total Supplied';
-export const AON_MSG_TOTAL = 'Total';
-
-export const AON_MSG_BOX_CRITERION = 'Box Criterion';
-export const AON_MSG_CONCEPT = 'Concept';
-export const AON_MSG_CONCEPTS = 'Concepts';
-export const AON_MSG_QUANTITY = 'Quantity';
-export const AON_MSG_PRICE = 'Price';
-export const AON_MSG_IRPF = 'IRPF';
-export const AON_MSG_VAT = 'VAT';
-
-export const AON_MSG_CANCEL = 'Cancel';
-export const AON_MSG_ACCEPT = 'Accept';
-
-export const AON_MSG_SYSTEM_MESSAGES = 'System Messages';
-
-export const AON_MSG_ALL_FILES = 'All Files';
-export const AON_MSG_FILE = 'File';
-export const AON_MSG_FILE_DATA = 'File Data';
-export const AON_MSG_UPLOAD_FILE = 'Upload File';
-export const AON_MSG_SEND_FILE = 'Send File';
-export const AON_MSG_SEND_FILES = 'Send Files';
-export const AON_MSG_DELETE_FILE = 'Delete File';
-export const AON_MSG_DOWNLOAD_FILE = 'Download File';
-export const AON_MSG_DOWNLOAD_FILES = 'Download Files';
-export const AON_MSG_EDIT_FILE = 'Edit File';
-export const AON_MSG_EDIT_FILES = 'Edit Files';
-
-export const AON_MSG_USER = 'User';
-export const AON_MSG_USERS = 'Users';
-export const AON_MSG_USER_DATA = 'User Data';
-export const AON_MSG_USER_MANAGEMENT = 'User Management';
-
-export const AON_MSG_NAME = 'Name';
-export const AON_MSG_SURNAME = 'Surname';
-
-export const AON_MSG_DOCUMENTARY = 'Documentary';
-
-export const AON_MSG_DOCUMENT = 'Document';
-export const AON_MSG_DOCUMENTS = 'Documents';
-
-export const AON_MSG_CATEGORY = 'Category';
-export const AON_MSG_CATEGORIES = 'Categories';
-export const AON_MSG_ADD_CATEGORY = 'Add Category';
-export const AON_MSG_EDIT_CATEGORY = 'Edit Category';
-export const AON_MSG_DELETE_CATEGORY = 'Delete Category';
-
-export const AON_MSG_TAG = 'Tag';
-export const AON_MSG_TAGS = 'Tags';
-export const AON_MSG_ADD_TAG = 'Add Tag';
-export const AON_MSG_EDIT_TAG = 'Edit Tag';
-export const AON_MSG_DELETE_TAG = 'Delete Tag';
-
-export const AON_MSG_SIZE = 'Size';
-
-export const AON_MSG_CONFIDENTIAL = 'Confidential';
-export const AON_MSG_SCOPE = 'Scope';
-
-export const AON_MSG_HEADER = 'Header';
-export const AON_MSG_FOOTER = 'Footer';
-export const AON_MSG_BACKGROUND_ADJUST = 'Background Adjust';
-export const AON_MSG_DETAILED = 'Detailed';
-export const AON_MSG_ADDITIONAL_INFORMATION = 'Additional Information';
-export const AON_MSG_GENERAL_INFORMATION = 'General Information';
-export const AON_MSG_PERMISSIONS = 'Permissions';
-export const AON_MSG_DELETE = 'Delete';
-export const AON_MSG_SAVE = 'Save';
-export const AON_MSG_TYPE = 'Type';
-export const AON_MSG_TYPES = 'Types';
-
-export const AON_MSG_ENTERPRISE = 'Enterprise';
-export const AON_MSG_EMPLOYEE = 'Employee';
-export const AON_MSG_ASESOR = 'Asesor';
-
-export const AON_MSG_ACCOUNTING = 'Accounting';
-export const AON_MSG_BOOKING = 'Booking';
-
-export const AON_MSG_BUDGET = 'Budget';
-export const AON_MSG_BUDGETS = 'Budgets';
-export const AON_MSG_BILLING = 'Billing';
-
-export const AON_MSG_SII = 'SII';
-export const AON_MSG_TICKETBAI = 'TicketBAI';
-export const AON_MSG_SII_TICKETBAI = 'SII / TicketBAI';
-
-export const AON_MSG_ACTIVATE = 'Activate';
-export const AON_MSG_DEACTIVATE = 'Deactivate';
-export const AON_MSG_CONTRACT = 'Contract';
-
-export const AON_MSG_BUSINESS_NAME = 'Business Name';
-export const AON_MSG_TITULAR_DATA = 'Titular Data';
-export const AON_MSG_PAYSHEET = 'Paysheet';
-export const AON_MSG_PAYSHEETS = 'Paysheets';
-export const AON_MSG_COMPANY_COSTS = 'Company Costs';
-export const AON_MSG_SEPA_FILES = 'SEPA Files';
-
-export const AON_MSG_CONTACT = 'Contact';
-export const AON_MSG_CONTACTS = 'Contacts';
-export const AON_MSG_CUSTOMER = 'Customer';
-export const AON_MSG_CUSTOMERS = 'Customers';
-export const AON_MSG_SUPPLIER = 'Supplier';
-export const AON_MSG_SUPPLIERS = 'Suppliers';
-export const AON_MSG_CREDITOR = 'Creditor';
-export const AON_MSG_CREDITORS = 'Creditors';
-
-// MODELOS FISCALES
-
-export const AON_MSG_MODEL_111 = 'Form 111';
-export const AON_MSG_MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
-export const AON_MSG_MODEL_190 = 'Form 190';
-export const AON_MSG_MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
-
-export const AON_MSG_ADDRESS = 'Address';
-export const AON_MSG_POSTAL_CODE = 'Postal Code';
-export const AON_MSG_CITY = 'City';
-export const AON_MSG_PROVINCE = 'Province';
-export const AON_MSG_COUNTRY = 'Country';
-export const AON_MSG_PHONE = 'Phone';
-export const AON_MSG_FAX = 'Fax';
-export const AON_MSG_WEB = 'Web';
-export const AON_MSG_EMAIL = 'Email';
-
-export const AON_MSG_DELETED_DATA = "The data has been deleted successfully";
-export const AON_MSG_SAVED_DATA  = "The data has been saved successfully";
-export const AON_MSG_PROCESSED_MOVEMENT = "The discharge has been processed successfully";
-export const AON_MSG_UPDATED_CONTRACT = "The contract has been modified successfully";
-
-export const AON_MSG_COMPANY = 'Company';
-export const AON_MSG_COMPANIES = 'Companies';
-export const AON_MSG_NEW_COMPANY = 'New Company';
+// ----- Z

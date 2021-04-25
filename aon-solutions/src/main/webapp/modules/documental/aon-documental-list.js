@@ -53,9 +53,9 @@ export class AonDocumentalList extends AonElement {
 
  	build() {
 		let aonDocumentalTable = this.getElement(this.TABLE);
-		aonDocumentalTable.addColumn(MSG.AON_MSG_DATE, 'date', 'date', '20%');
-		aonDocumentalTable.addColumn(MSG.AON_MSG_NAME, 'string', 'title', '60%');
-		aonDocumentalTable.addColumn(MSG.AON_MSG_SIZE, 'string', 'size', '15%');
+		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
+		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
@@ -130,7 +130,7 @@ export class AonDocumentalList extends AonElement {
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_EDIT_FILES);
+		d.setTitle(MSG.EDIT_FILES);
 		d.setContent(parent.uploadOption());
 		// d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {
@@ -150,7 +150,7 @@ export class AonDocumentalList extends AonElement {
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_SEND_FILES);
+		d.setTitle(MSG.SEND_FILES);
 		d.setContentHTML('<aon-input id="sendDocumentsMail" description="Email"></aon-input>');
 		d.addAcceptAction(() => {
 			let mail = this.getElement('sendDocumentsMail');

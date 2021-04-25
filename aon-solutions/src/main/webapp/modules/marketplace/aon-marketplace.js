@@ -52,7 +52,7 @@ export class AonMarketplace extends AonElement {
 		cbutton.style.width = '110px';
 		cbutton.style.padding = '0.3rem 0.8rem';
 		cbutton.style.borderRadius = '25px';
-		cbutton.innerHTML = MSG.AON_MSG_CONTRACT;
+		cbutton.innerHTML = MSG.CONTRACT;
 		cbutton.style.backgroundColor = '#12ccd1';
 		cbutton.style.position = 'absolute';
 		cbutton.style.right = '70px';
@@ -143,7 +143,7 @@ export class AonMarketplace extends AonElement {
 			contratar.style.width = '110px';
 			contratar.style.padding = '0.3rem 0.8rem';
 			contratar.style.borderRadius = '25px';
-			contratar.innerHTML = contratado ? MSG.AON_MSG_DEACTIVATE : MSG.AON_MSG_ACTIVATE;
+			contratar.innerHTML = contratado ? MSG.DEACTIVATE : MSG.ACTIVATE;
 			contratar.style.backgroundColor = '#002469';
 			contratar.style.opacity = contratado ? '0.3' : '1';
 			if(this.isDisabled(dur, app.app.toUpperCase()) || this.hasParentApp(dur, app.app.toUpperCase()) || app.disabled){
@@ -171,7 +171,7 @@ export class AonMarketplace extends AonElement {
 		if(contractIcon)
 			contractIcon.color = contract || app.app.includes('pack') ? app.color : 'lightgray';
 		let contractButton = this.getElement(this.APP + app.app + 'ContractButton');
-		contractButton.innerHTML = contract ? MSG.AON_MSG_DEACTIVATE : MSG.AON_MSG_ACTIVATE;
+		contractButton.innerHTML = contract ? MSG.DEACTIVATE : MSG.ACTIVATE;
 		contractButton.style.opacity = contract ? '0.3' : '1';
 		if(contract && !disabled) {
 			this.apps.push(app.app.toUpperCase());

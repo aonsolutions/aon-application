@@ -51,9 +51,10 @@ export class AonBasicTable extends AonElement {
   }
 
   addRow() {
-    rows = rows + 1;
+    this.rows = this.rows + 1;
     let tr = this.createElement(TAG.TR);
     tr.id = this.TABLE_ROW + this.rows;
+    this.getElement(this.TABLE).appendChild(tr);
     return this.rows;
   }
 

@@ -43,3 +43,4 @@ export const AON_VIEWER = 'aon-viewer';
 export const AON_MODULE = 'aon-module';
 export const AON_COMPANY = 'aon-company';
 export const AON_COMPANY_LIST = 'aon-company-list';
+export const AON_API_DOC = 'aon-api-doc';

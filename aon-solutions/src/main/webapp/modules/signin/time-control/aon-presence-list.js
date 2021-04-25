@@ -3,10 +3,10 @@ import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from ".
 import { handleError, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
-import { AON_MSG_DURATION, AON_MSG_LAST_LOCATION, AON_MSG_LAST_STATUS, AON_MSG_NAME } from "../../../environments/msg.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+import { MSG } from "../../../environments/environments.js";
 
 
 export class AonPresenceList extends AonElement {
@@ -122,10 +122,10 @@ export class AonPresenceList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn(AON_MSG_NAME, "string", "name", "34%");
-      aonTable.addColumn(AON_MSG_LAST_STATUS, "", "lastStatus", "35%");
-      aonTable.addColumn(AON_MSG_DURATION, "", "duration", "5%");
-      aonTable.addColumn(AON_MSG_LAST_LOCATION, "string", "nameLocation", "20%");
+      aonTable.addColumn(MSG.NAME, "string", "name", "34%");
+      aonTable.addColumn(MSG.LAST_STATUS, "", "lastStatus", "35%");
+      aonTable.addColumn(MSG.DURATION, "", "duration", "5%");
+      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

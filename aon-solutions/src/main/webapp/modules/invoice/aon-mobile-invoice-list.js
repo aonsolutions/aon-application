@@ -58,10 +58,10 @@ export class AonMobileInvoiceList extends AonElement {
 
   getInvoiceTitle() {
 		if(this.getFilter().status === 'rejected' || this.getFilter().status === 'refused'){
-			return MSG.AON_MSG_REJECTEDS;
+			return MSG.REJECTEDS;
 		} else if(this.getFilter().status === 'draft' || this.getFilter().status === 'trash' ) {
-      return MSG.AON_MSG_TRASH;
-    } else return MSG.AON_MSG_INBOX;
+      return MSG.TRASH;
+    } else return MSG.INBOX;
 	}
 
   buildLi(invoice, index) {

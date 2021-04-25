@@ -6,7 +6,6 @@ import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { AON_MSG_PAYROLL } from "../../../environments/msg.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
@@ -141,7 +140,7 @@ export class AonPayrollList extends AonElement {
       this.insertBefore(toolbarEl, filterEl);
       toolbarEl.removeButtons();
       toolbarEl.addButton2(ACTION.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
-      toolbarEl.title = AON_MSG_PAYROLL;
+      toolbarEl.title = MSG.PAYROLL;
     } 
   }
 

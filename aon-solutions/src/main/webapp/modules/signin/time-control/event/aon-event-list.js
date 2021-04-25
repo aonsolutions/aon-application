@@ -12,9 +12,9 @@ import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import { AON_MSG_DATE, AON_MSG_DURATION } from "../../../../environments/msg.js";
 
 import * as ACTION from '../../../actions.js';
+import { MSG } from "../../../../environments/environments.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -159,8 +159,8 @@ export class AonEventList extends AonElement {
         iconBack = "arrow_back";
       }
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn(AON_MSG_DATE, "date", "dateParse", "40%");
-      aonTable.addColumn(AON_MSG_DURATION, "", "durationParse", "30%");
+      aonTable.addColumn(MSG.DATE, "date", "dateParse", "40%");
+      aonTable.addColumn(MSG.DURATION, "", "duration", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
