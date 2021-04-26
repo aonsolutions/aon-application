@@ -179,6 +179,8 @@ export const NUMBER = MSG.NUMBER;
 
 // ----- O
 
+export const OPTIONS = MSG.OPTIONS;
+
 // ----- P
 
 export const PAYMETHOD = MSG.PAYMETHOD;

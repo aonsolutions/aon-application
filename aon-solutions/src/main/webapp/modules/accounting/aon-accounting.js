@@ -8,8 +8,8 @@ import {getDomainUserRoles} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 // CONSTANTS
-import * as CONSTANT from "../../environments/constants.js";
 
+import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
 
 export class AonAccounting extends AonElement {
@@ -21,7 +21,7 @@ export class AonAccounting extends AonElement {
 		this.initialize();
 
 		this.innerHTML = `
-			<aon-application id="${this.AON_ACCOUNTING}" title="Accounting"></aon-application>
+			<aon-application id="${this.AON_ACCOUNTING}" title="${MSG.ACCOUNTING}"></aon-application>
 		`;
 
 		getDomainUserRoles({}).then(r => {
@@ -41,10 +41,28 @@ export class AonAccounting extends AonElement {
 
 		let options = [{
 			name: 'Pérdidas y Ganancias',
-			icon: 'accessibility',
+			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 			fn: () => this.aonGraphicsTrialView ()
-		}];
-		application.addSidenavOptions('OPCIONES', options);
+		},];
+		application.addSidenavOptions(MSG.ACCOUNTING, options);
+
+
+		let options2 = [{
+			name: 'Vista Trimestral',
+			icon: MATERIAL_ICONS.CALENDAR_TODAY,
+			fn: () => {}
+		},
+		{
+			name: 'Vista Anual',
+			icon: MATERIAL_ICONS.CALENDAR_TODAY,
+			fn: () => {}
+		},
+		{
+			name: 'Vista Mensual',
+			icon: MATERIAL_ICONS.CALENDAR_TODAY,
+			fn: () => {}
+		},];
+		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
 
@@ -52,6 +70,8 @@ export class AonAccounting extends AonElement {
 		const aonGraphicsTrial = new AonGraphicsTrial();
 		this.getApplication().setContent(aonGraphicsTrial);
 	}
+
+
 }
 if(!window.customElements.get('aon-accounting')){
 	window.customElements.define('aon-accounting', AonAccounting);

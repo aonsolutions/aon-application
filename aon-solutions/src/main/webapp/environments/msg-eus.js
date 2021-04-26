@@ -149,6 +149,8 @@ export const NUMBER = 'Zenbakia';
 
 // ----- O
 
+export const OPTIONS = 'Aukerak';
+
 // ----- P
 
 export const PAYMETHOD = 'Ordainketa Era';

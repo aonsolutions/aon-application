@@ -149,6 +149,8 @@ export const NUMBER = 'Nombre';
 
 // ----- O
 
+export const OPTIONS = 'Opcions';
+
 // ----- P
 
 export const PAYMETHOD = 'Forma de Pagament';

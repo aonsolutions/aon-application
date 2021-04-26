@@ -152,7 +152,30 @@ export class AonGraphicsTrial extends AonElement {
       div.style.flexWrap = "wrap";
       this.appendChild(div);
       div.style.margin = "auto";
+      
       colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+
+      document.getElementById("aonAccountingSidenavVista Trimestral").addEventListener("click", () => {
+        if (!this.filter) this.filter = new Object();
+        div.innerHTML = "";
+        this.filter.show = "quarterly";
+        this.getElement("show").value = this.filter.show;
+        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+      });
+      document.getElementById("aonAccountingSidenavVista Anual").addEventListener("click", () => {
+        if (!this.filter) this.filter = new Object();
+        div.innerHTML = "";
+        this.filter.show = "yearly";
+        this.getElement("show").value = this.filter.show;
+        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+      });
+      document.getElementById("aonAccountingSidenavVista Mensual").addEventListener("click", () => {
+        if (!this.filter) this.filter = new Object();
+        div.innerHTML = "";
+        this.filter.show = "monthly";
+        this.getElement("show").value = this.filter.show;
+        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+      });
     }
     this.getApplication().stopLoader();
   }

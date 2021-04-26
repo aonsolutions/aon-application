@@ -55,7 +55,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
   return new Promise((resolve) => {
     //PARA EL TRIMESTRAL
 
-    filter = filter == null ? { show: "yearly" } : filter;
+    filter = filter == null ? { show: "yearly" } : filter
+
+    
 
     if (data.intervals && filter && filter.show === "quarterly") {
       // accounts = data.intervals;
@@ -123,6 +125,21 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         dteFrom.setMonth(dteFrom.getMonth() + 3);
         dteFrom.setDate(1);
       }
+
+      let totalYear = null;
+      try {
+        totalYear = data.intervals
+          ? data.intervals.filter(
+              (acc) =>
+                acc.interval.fromDate == acc.interval.toDate &&
+                /31\/12\/d*/.test(acc.interval.fromDate)
+            )[0]
+          : null;
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (totalYear) accounts.push(totalYear);
     } else if (data.intervals && filter && filter.show === "yearly") {
       accounts = data.intervals || [];
 
@@ -134,6 +151,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     }
 
     const drawChart = () => {
+      let divCombo = document.createElement("div");
+
       if (accounts.length > 1) {
         chartData = [
           ["Month", "Vtas./Ing.", "Cpas./Gtos./Amort.", "Resultado"],
@@ -170,13 +189,20 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           seriesType: "bars",
           series: { 2: { type: "line" } },
           height: isMobile ? window.innerHeight / 2 : window.innerWidth / 3,
-          legend: {
-            position: position,
-            alignment: "center",
-          },
+          legend: "none",
+          // legend: {
+          //   position: position,
+          //   alignment: "center",
+          // },
         };
 
-        chart = new google.visualization.ComboChart(div);
+        divCombo.style.width = isMobile ? "100%" : "70%";
+        div.style.display = "flex";
+        div.style.flexWrap = "wrap";
+        div.style.justifyContent = "center";
+        div.style.alignItems = "center";
+        div.appendChild(divCombo);
+        chart = new google.visualization.ComboChart(divCombo);
 
         google.visualization.events.addListener(chart, "select", callbackYear);
 
@@ -186,12 +212,11 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         chart.draw(table, options);
 
+        let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
+        div.appendChild(mobileLegend);
         if (isMobile) {
-          let mobileLegend = UTILS.getMobileLegend();
-          div.appendChild(mobileLegend);
-
-          div.querySelector(":nth-child(1)").style.marginLeft = "15%";
-          div.style.overflow = "hidden";
+          divCombo.querySelector(":nth-child(1)").style.marginLeft = "8%";
+          divCombo.style.overflow = "hidden";
         }
       } else {
         let divMessage = document.createElement("div");
