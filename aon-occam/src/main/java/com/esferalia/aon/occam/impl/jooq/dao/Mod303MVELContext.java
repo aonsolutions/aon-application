@@ -210,6 +210,26 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 		return q;
 	}
+	
+	// Comprobación de la casilla 78 (Cuotas a compensar de periodos anteriores aplicadas en este periodo)
+	public double checkC78(double c78, double c110, double c66, double c77) {
+		
+		// No puede ser mayor que la casilla c110		
+		if (c78 > c110)
+			c78 = c110;
+		
+		// No puede ser mayor que el resultado del modelo hasta ahora (casillas 66 y 77)
+		if (c78 > (c66+c77))
+			c78 = (c66+c77);
+		
+		// No puede ser negativa
+		if (c78 < 0)
+			c78 = 0;	
+		
+		return c78;
+		
+	}
+	
 }
 
 

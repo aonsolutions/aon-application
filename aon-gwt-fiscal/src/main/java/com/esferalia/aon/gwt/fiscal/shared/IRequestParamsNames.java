@@ -132,4 +132,7 @@ public interface IRequestParamsNames {
 	String REFERENCE_CODE = "referenceCode";
 	String PAY_METHOD = "payMethod";
 	
+	String AEAT_BOOK = "aeatBook";  // Libro Registro AEAT
+	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
+	
 }

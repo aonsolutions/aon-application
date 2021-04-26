@@ -25,7 +25,7 @@ public class OperationBreakdown implements Serializable {
 	private double total;              // Base imponible + iva + req en facturas, y total apunte en el resto de apuntes
 	
 	// Añadido para poder obtener Libros Registro de IVA e IRPF según formato de la Agencia Tributaria	
-	private int activityType;          		// Tipo de Actividad (1..5)
+	private String activityType;          	// Tipo de Actividad (1..5)
 	private String activityIAE; 	   		// Epigrafe IAE
 	private String invoiceType; 	   		// Tipo de Factura (F1,F2,...)
 	private String conceptType; 	   		// Clave concepto Ingreso/Gasto (I01,IX1,GX1,G04,...) (Solo Libro IRPF)
@@ -171,10 +171,10 @@ public class OperationBreakdown implements Serializable {
 		return c;
 		
 	}
-	public int getActivityType() {
+	public String getActivityType() {
 		return activityType;
 	}
-	public OperationBreakdown setActivityType(int activityType) {
+	public OperationBreakdown setActivityType(String activityType) {
 		this.activityType = activityType;
 		return this;
 	}

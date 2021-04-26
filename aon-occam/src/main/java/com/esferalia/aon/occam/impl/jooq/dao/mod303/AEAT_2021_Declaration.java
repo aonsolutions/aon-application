@@ -1580,9 +1580,14 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				+ "<li>Resultado (Cuotas a compensar pendientes de periodos anteriores): <b>@{CT_C110}</b></li>")
 
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
+		// Validación que hace la Agencia Tributaria:
+		//	El resultado de la autoliquidación no podrá ser A COMPENSAR, si la casilla (78)
+		//	está cumplimentada, es decir, si se hubieran aplicado a la autoliquidación que se
+		//	esté presentando cuotas pendientes de compensación generadas en períodos
+		//	anteriores.		
 		, CT_C78(Mod303Key.CT_C78, null, null,
-				(ctx, mod) -> add(Mod303Key.CT_C78, mod, mod.getAmount(Mod303Key.CT_C110)), null, null)
-
+				(ctx, mod) -> add(Mod303Key.CT_C78, mod, mod.getAmount(Mod303Key.CT_C110)), "checkC78(CT_C78,CT_C110,CT_C66,CT_C77)", null)
+		
 		// Cuotas a compensar de periodos previos pendientes para periodos posteriores
 		, CT_C87(Mod303Key.CT_C87, null, null, null, "CT_C110-CT_C78", null)
 

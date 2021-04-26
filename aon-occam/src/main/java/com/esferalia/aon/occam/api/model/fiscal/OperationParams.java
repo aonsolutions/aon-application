@@ -15,6 +15,14 @@ public class OperationParams implements Serializable {
 	private Integer activity;   // Actividad (ID)
 	private String activityDescription;  // Actividad (Descripción)
 	private Boolean irpf;       // Listado IRPF (true) / Listado IVA (false)
+	private Boolean aeatBook;     // Libro Registro AEAT
+	private Boolean unifiedBook;  // Libro AEAT Unificado (IVA e IRPF)
+
+	public OperationParams() {
+		super();
+		this.aeatBook = false;
+		this.unifiedBook = false;
+	}
 
 	public int getDomain() {
 		return domain;
@@ -63,6 +71,20 @@ public class OperationParams implements Serializable {
 	}
 	public OperationParams setToDate(Date toDate) {
 		this.toDate = toDate;
+		return this;
+	}
+	public Boolean getAeatBook() {
+		return aeatBook;
+	}
+	public OperationParams setAeatBook(Boolean aeatBook) {
+		this.aeatBook = aeatBook;
+		return this;
+	}
+	public Boolean getUnifiedBook() {
+		return unifiedBook;
+	}
+	public OperationParams setUnifiedBook(Boolean unifiedBook) {
+		this.unifiedBook = unifiedBook;
 		return this;
 	}
 	

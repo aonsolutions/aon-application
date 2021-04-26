@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
@@ -24,6 +25,8 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -55,7 +58,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class OperationReport extends MainEntryPoint {
 
 	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
-	//private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
+	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
 	
 	private static CommonServiceAsync commonService;
 	private String currentDomainName;
@@ -228,12 +231,29 @@ public class OperationReport extends MainEntryPoint {
 		export.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {				
-				submitForm(OPERATION_EXCEL_REPORT_PRINT);
-				//submitForm(OPERATION_EXCEL_REPORT_BOOK);
+			public void onClick(ClickEvent event) {	
+				submitForm(OPERATION_EXCEL_REPORT_PRINT, getWidgetParams());				
 			}
 		});
 		buttonContainer.add(export);
+		
+		final NewContextMenu newContextMenu = new NewContextMenu();
+		final Button book = new Button();
+		book.setText("LIBROS AEAT");
+		book.setTitle("Libro Registro AEAT");
+		book.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		book.addStyleName(AON.AON_CSS.aonIconExcel());
+		book.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				newContextMenu.setPopupPosition(nativeEvent.getClientX(),
+						nativeEvent.getClientY());
+				newContextMenu.show();
+			}
+		});
+		buttonContainer.add(book);
 		
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -253,13 +273,58 @@ public class OperationReport extends MainEntryPoint {
 		return toolbarPanel;
 	}
 	
-	private void submitForm(String action) {
+	private class NewContextMenu extends ContextMenu {
+	  public NewContextMenu() {
+		super.addItem("Facturas Expedidas (IVA)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(false).setExpenses(false));
+			}
+		});
+		super.addItem("Facturas Recibidas (IVA)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(false).setExpenses(true));
+			}
+		});
+		super.addItem("Ventas e Ingresos (IRPF)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(true).setExpenses(false));
+			}
+		});
+		super.addItem("Compras y Gastos (IRPF)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(false).setIrpf(true).setExpenses(true));
+			}
+		});
+		super.addItem("Unificado de Facturas Expedidas (IVA) y de Ventas e Ingresos (IRPF)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(true).setIrpf(true).setExpenses(false));
+			}
+		});
+		super.addItem("Unificado de Facturas Recibidas (IVA) y de Compras y Gastos (IRPF)", new ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams().setAeatBook(true).setUnifiedBook(true).setIrpf(true).setExpenses(true));
+			}
+	    });
+		
+		addStyleName(AON.AON_CSS.aonSelector());
+	  }
+	}
+	
+	private void submitForm(String action, OperationParams params) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		
-		//operationParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
-		// FALTA - ESTO SOLO ES PARA EL BOTON NUEVO AUNQUE SE PUEDE DEJAR PARA EL OTRO TAMBIEN CREO
-		OperationParams params = getWidgetParams();
-		params.setIrpf(tabLayout.getSelectedIndex() == 1);
 		operationParamsHidden.setValue(JsonParams.convert(params));				
 		
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
@@ -438,6 +503,8 @@ public class OperationReport extends MainEntryPoint {
 			.setDomain(getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
+			.setAeatBook(false)
+			.setUnifiedBook(false)			
 			;
 		if (configuration != null && configuration.hasActivities() ) {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
