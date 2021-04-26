@@ -106,9 +106,8 @@ export class AonElement extends HTMLElement{
   }
 
 	isBeta(){
-    return true;
-    // const href = window.location.href;
-		// return href.includes('aonsolutions.org') || href.includes('localhost');
+    const href = window.location.href;
+		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
 
 }
