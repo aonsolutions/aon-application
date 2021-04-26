@@ -1,0 +1,43 @@
+.centerFlex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flexRow{
+    display: flex ;
+    flex-direction: row;
+}
+
+.flexColumn{
+    display: flex;
+    flex-direction: column;
+}
+
+.flexJustifyCenter{
+    justify-content: center;
+}
+
+.flexJustifyStart{
+    justify-content: flex-start;
+}
+
+.flexJustifyEnd{
+    justify-content: flex-end;
+}
+
+.flexJustifyBetween{
+    justify-content: space-between;
+}
+
+.flexAlignCenter{
+    align-items: center;
+}
+
+:root{
+    --materialBlue : #2F80ED;
+}
+
+.materialButton:hover{
+    border-radius:  50px !important;
+}

@@ -264,6 +264,7 @@ public class DraftPayrollBuilder {
 				Double no_struct_ap_enterprise = 0d;
 				
 				for (IDeduction c : costs) {
+					System.out.println("DraftPayrollBuilder (267): " + c.getDescription() + " / " + c.getAmount() );
 					
 					Double percentD = null;
 					try {

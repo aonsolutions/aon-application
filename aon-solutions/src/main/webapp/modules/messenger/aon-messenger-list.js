@@ -6,6 +6,9 @@ import { setFullDate, setTime } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS } from "./MessengerEnums.js";
 import { SigninSidenav } from  "../signin//signinEnums.js";
+import { AonMessengerChat } from "./aon-messeger-chat.js";
+import { getDomainUserRoles } from "../../services/companyService.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -22,7 +25,10 @@ export class AonMessengerList extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    this.build();
+    getDomainUserRoles({}).then(r => {
+      this.dur = new DomainUserRoles(r);
+      this.build();
+  });
   }
 
   initialize() {
@@ -58,7 +64,11 @@ export class AonMessengerList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.applicationEl.development() );
+    if(this.dur.isAlpha())
+      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => {
+        const chat = new AonMessengerChat();
+        this.applicationEl.setContent(chat);
+      } );
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
   }
 

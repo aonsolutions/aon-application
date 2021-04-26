@@ -1,0 +1,42 @@
+.aonWritter{
+ --fontColor: 787878;
+ transition: .75s;
+}
+
+.aonWritterBar{
+    --border-color: #e0e0e0;
+    position : relative;
+    height: 50px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.aonWritterBar .textFormat {
+    width: 100px;
+    height : 100%;
+    padding-left: 5px; 
+}
+
+.aonWritterBar .otherOptions{
+    height : 100%;
+    width: 200px;
+    padding-right: 5px;
+}
+
+.aonWritterBar .icon{
+    transition: .25s;
+    width: 30px;
+    display: block; 
+    padding: 5px;
+    border-radius: 100px;
+    font-size: 1.5em;
+    color: var(--fontColor);
+    cursor: pointer;
+}
+
+.aonWritterBar .icon:hover{
+    background: #e0e0e0;
+}
+
+.aonWritter textarea{
+
+}

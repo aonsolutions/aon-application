@@ -123,13 +123,6 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 		
-
-		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-				.getSalaryPayments()) {
-			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ")" );
-		}
-
 		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
 
 	}
@@ -174,13 +167,6 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 
 		Salary salary = calculator.calculate(ctx);
 		
-
-		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-				.getSalaryPayments()) {
-			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ")" );
-		}
-
 		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalPayment());
 
 	}
@@ -325,12 +311,6 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		Salary salary = calculator.calculate(ctx);		
-
-		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-				.getSalaryPayments()) {
-			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ")" );
-		}
 
 		Assert.assertEquals(1000.00 * 11 / 30, salary.getTotalLiquid(), DELTA);
 
@@ -498,11 +478,6 @@ public class SQLContractSalaryCalculator4DummiesTestCase extends AbstractSQLTest
 		
 		
 		// 10-11-12-13-14-15 , 20-21-22-23-24
-		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-				.getSalaryPayments()) {
-			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ")" );
-		}
 		
 
 	}

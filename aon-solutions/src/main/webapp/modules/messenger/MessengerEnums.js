@@ -22,4 +22,5 @@ export const MessengerOptions = {
 export const MESSENGER_VIEWS = {
     AON_MESSENGER: "aonMessenger",
     AON_MESSENGER_LIST: "aonMessengerList",
+    AON_MESSENGER_CHAT: "aonMessengerChat",
 }

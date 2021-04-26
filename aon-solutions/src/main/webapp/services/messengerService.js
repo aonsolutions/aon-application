@@ -25,3 +25,14 @@ export const getMessenger = () => new Promise(resolve=>{
         }
     ]);
 });
+
+/**
+ * Gegt messenger chat data
+ * @returns 
+ */
+export const getMessengerChat = () => new Promise(resolve => {
+    resolve({
+        //No data available
+        status : "Not implemented" 
+    });
+});

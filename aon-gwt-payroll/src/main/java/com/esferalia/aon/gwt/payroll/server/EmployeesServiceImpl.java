@@ -118,6 +118,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -1511,8 +1512,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getAvaiableEmployees(String domain)
-			throws IllegalArgumentException {
+	public Map<String, String> getAvaiableEmployees(String domain){
 
 		Connection conn = null;
 		try {
@@ -1707,7 +1707,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
 			ISalary salary = getSalary(draft);
-			
 			
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
@@ -4455,6 +4454,51 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return embargos;
 			}
 			
+
+			public void addDeductionToList(List<IDeduction> list,Deduction deduction) {
+				
+				if(deduction instanceof CompositeDeduction) {
+					System.out.println("composite");
+					CompositeDeduction compositeDeduction = (CompositeDeduction) deduction;
+					for (Deduction child : compositeDeduction.getChilds())
+					{
+						addDeductionToList(list, child);
+					}
+				} else {
+					try {
+						IDeduction pm = new IDeduction() {
+							
+							@Override
+							public DeductionType getType() {
+								return DeductionType.values()[deduction.getType().ordinal()];
+							}
+							
+							@Override
+							public String getName() {
+								return deduction.getName();
+							}
+							
+							@Override
+							public String getDescription() {
+								return deduction.getDescription();
+							}
+							
+							@Override
+							public double getAmount() {
+								return deduction.getAmount();
+							}
+							
+							@Override
+							public String getExpression() {
+								return deduction.getExpression();
+							}
+						};
+						list.add(pm);
+						
+					}catch(Exception ignored) {}	
+				}
+			}
+			
 			@Override
 			public Deductions getDeductions() throws SalaryException {
 				return null;
@@ -4462,85 +4506,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			@Override
 			public <T extends IDeduction> Collection<T> getDeductionS() throws SalaryException {
-				List<T> deductions = new ArrayList<>(); 
+				List<IDeduction> deductions = new ArrayList<>(); 
 				List<Deduction> draftDeductions = draft.getDeductions();
 				
 				for (Deduction draftDeduction : draftDeductions)
 				{
-					@SuppressWarnings("unchecked")
-					T deduction = (T) new IDeduction() {
-						
-						@Override
-						public DeductionType getType() {
-							return DeductionType.values()[draftDeduction.getType().ordinal()];
-						}
-						
-						@Override
-						public String getName() {
-							return draftDeduction.getName();
-						}
-						
-						@Override
-						public String getDescription() {
-							return draftDeduction.getDescription();
-						}
-						
-						@Override
-						public double getAmount() {
-							return draftDeduction.getAmount();
-						}
-						
-						@Override
-						public String getExpression() {
-							return draftDeduction.getExpression();
-						}
-					};
-					
-					deductions.add(deduction);
+					addDeductionToList(deductions, draftDeduction);
 				}
 				
-				
-				return deductions;
+				return (Collection<T>) deductions;
 			}
 			
 			@Override
 			public <T extends IDeduction> Collection<T> getCostS() throws SalaryException {
-				List<T> costs = new ArrayList<>(); 
+				List<IDeduction> costs = new ArrayList<>(); 
 				
 				for (Deduction cost : draft.getCosts())
 				{
-					@SuppressWarnings("unchecked")
-					T deduction = (T) new IDeduction() {
-						
-						@Override
-						public DeductionType getType() {
-							return DeductionType.values()[cost.getType().ordinal()];
-						}
-						
-						@Override
-						public String getName() {
-							return cost.getName();
-						}
-						
-						@Override
-						public String getDescription() {
-							return cost.getDescription();
-						}
-						
-						@Override
-						public double getAmount() {
-							return cost.getAmount();
-						}
-						
-						@Override
-						public String getExpression() {
-							return cost.getExpression();
-						}
-					};
+					addDeductionToList(costs, cost);
 				}
 				
 				
-				return costs;
+				return (Collection<T>) costs;
 			}
 			
 			@Override
@@ -4713,12 +4700,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		    	String description = deduction.getDescription(); 
 		    	settle.addDeduction(type, description, deduction.getAmount(), type);
 		    }
-		} catch (SalaryException e) {}
+		} catch (SalaryException ignored) {}
 		
 		try {
 		    for (IPayment payment : salary.getPaymentS()) 
 			settle.addPayment(payment.getName(), payment.getExpression(), payment.getDescription(), payment.getAmount(), 0.00, (byte) payment.getType().ordinal());
-		} catch (SalaryException e) {}
+		} catch (SalaryException ignored) {}
+		
+		try {
+    		for (IDeduction cost : salary.getCostS())
+    		{
+    			settle.addCost((byte)cost.getType().ordinal(), "0" , cost.getDescription(), cost.getAmount(), (byte)cost.getType().ordinal());
+    		}
+    	}
+		catch(SalaryException ignored) {}
 		
 		return settle;
 	}
