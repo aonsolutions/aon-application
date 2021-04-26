@@ -671,7 +671,7 @@ button:disabled, button[disabled]{
 }
 
 .aonCardTitleSection {
-  /* display: inline-flex; */
+  display: inline-flex; 
   flex: 1 1 auto;
   align-items: center;
   white-space: nowrap;

@@ -42,10 +42,9 @@ export class AonBasicTable extends AonElement {
 
   addCell(elem, colspan, row) {
     row = row || this.rows;
-    colspan = colspan || 1;
     let tr = this.getElement(this.TABLE_ROW + row);
     let td = this.createElement(TAG.TD);
-    td.colspan = colspan;
+    td.colSpan = colspan || '1';
     td.appendChild(elem);
     tr.appendChild(td);
   }

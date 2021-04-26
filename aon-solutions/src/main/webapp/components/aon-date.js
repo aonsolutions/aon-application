@@ -74,6 +74,19 @@ export class AonDate extends AonElement {
   }
 	constructor () {
 		super();
+  }
+
+	connectedCallback () {
+    this.initialize();
+		this.innerHTML = `
+      <aon-input id="${this.INPUT}" description="${this.title}"></aon-input>
+		`;
+    this.build();
+    this.buildDatepicker();
+	}
+
+  initialize() {
+    this.id = this.id || 'aonDate';
     this.INPUT = this.id + 'Input';
     this.DATEPICKER = this.id + 'Datepicker';
     this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';
@@ -87,14 +100,6 @@ export class AonDate extends AonElement {
     this.month = this.date.getMonth();
     this.year = this.date.getFullYear();
   }
-
-	connectedCallback () {
-		this.innerHTML = `
-      <aon-input id="${this.INPUT}" description="${this.title}"></aon-input>
-		`;
-    this.build();
-    this.buildDatepicker();
-	}
 
   build() {
     let input = this.getElement(this.INPUT);

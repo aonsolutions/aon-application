@@ -309,8 +309,8 @@ export class AonDocument extends AonElement {
 
   back() {
     let aonDocumental = this.getApplication();
-    let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
-    aonDocumentalToolbar.removeButtons();
+    //let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
+    //aonDocumentalToolbar.removeButtons();
     aonDocumental.getParent().aonDocumentalList();
   }
 

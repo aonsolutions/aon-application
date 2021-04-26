@@ -9,6 +9,10 @@ export const LI = 'li';
 export const SPAN = 'span';
 export const FORM = 'form';
 export const UL = 'ul';
+export const TABLE = 'table';
+export const TH = 'th';
+export const TR = 'tr';
+export const TD = 'td';
 
 // COMPONENTS
 

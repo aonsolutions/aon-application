@@ -176,6 +176,7 @@ export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const NAME = MSG.NAME;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEXT = MSG.NEXT;
+export const NIF = 'NIF';
 export const NUMBER = MSG.NUMBER;
 
 // ----- O

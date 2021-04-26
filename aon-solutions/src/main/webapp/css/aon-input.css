@@ -9,6 +9,10 @@
 	--aon-color-bg-high-contrast: #ffffff;
 }
 
+input:required {
+    box-shadow:none;
+}
+
 .aonInputGroup {
   margin-bottom: 1rem;
   position: relative;

@@ -85,6 +85,7 @@ export const FILE_UPLOAD = 'file_upload';
 export const FOLDER = 'folder';
 export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
+export const MORE_VERT = 'more_vert';
 export const PERSON = 'person';
 export const REPORT = 'report';
 export const ROOM = 'room';

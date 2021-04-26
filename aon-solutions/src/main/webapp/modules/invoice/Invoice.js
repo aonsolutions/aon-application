@@ -3,6 +3,7 @@ export class Invoice {
   id;
   type;
   series;
+  serie;
   number;
   reference;
   date;
@@ -78,7 +79,8 @@ export class Invoice {
     if(invoice) {
       this.id = invoice.id || undefined;
       this.series = invoice.series || '';
-      this.number = invoice.number || 0;
+      this.serie = invoice.serie || '';
+      this.number = invoice.number || '';
       this.reference = invoice.reference && invoice.reference !== ''
         ? invoice.reference
         : (invoice.series ? invoice.series + '/' + invoice.number : invoice.number);
@@ -125,6 +127,39 @@ export class Invoice {
     }
   }
 
+  getSerie() {
+      return this.serie;
+  }
+
+  setSerie(serie) {
+      this.serie = serie;
+  }
+
+  getNumber() {
+    return this.number;
+  }
+
+  setNumber(number) {
+    this.number = number;
+  }
+
+  getDate() {
+    return this.getDate();
+  }
+
+  setDate(date) {
+    this.date = date;
+  }
+
+  getTotal(){
+    return this.total;
+  }
+
+  setTotal(total){
+    this.total = total;
+    // TODO CALCULATE
+  }
+
   isEmitida() {
     return this.type.toLowerCase() === 'emitida';
   }
@@ -155,6 +190,14 @@ export class Invoice {
 
   isAccounting() {
     return this.status.toLowerCase() === 'scored' || this.status.toLowerCase() === 'accounting';
+  }
+
+  isReadonly() {
+    return false;
+  }
+
+  getRegistry() {
+    return this.isEmitida() ? this.receiver : this.sender;
   }
 
   getDate() {

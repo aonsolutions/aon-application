@@ -159,7 +159,7 @@ export class AonInput extends AonElement {
       }
     }
 
-    if (CONSTANT.READONLY === name) {
+    if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
       if (this.isReadonly())
         this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
       else this.getElement(this.INPUT).removeAttribute(CONSTANT.READONLY);
