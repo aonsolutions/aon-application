@@ -160,7 +160,7 @@ export class AonEventList extends AonElement {
       }
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "40%");
-      aonTable.addColumn(MSG.DURATION, "", "duration", "30%");
+      aonTable.addColumn(MSG.DURATION, "", "durationParse", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

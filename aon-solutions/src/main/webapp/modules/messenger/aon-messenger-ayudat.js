@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 
-class AonMessengerAyudat extends AonElement {
+export class AonMessengerAyudat extends AonElement {
     constructor () {
         super();
     }

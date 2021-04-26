@@ -169,7 +169,7 @@ export const PREVIOUS = 'Anterior';
 export const PRICE = 'Precio';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PRINTING_INVOICES = 'Impresión de Facturas';
-export const PROCESSED_MOVEMENT = "El alta se ha procesado procesado correctamente";
+export const PROCESSED_MOVEMENT = "El alta se ha procesado correctamente";
 export const PROVINCE = 'Provincia';
 
 // ----- Q

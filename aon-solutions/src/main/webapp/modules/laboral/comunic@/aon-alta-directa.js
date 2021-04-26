@@ -11,7 +11,7 @@ import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
 import { PAYROLL_VIEWS } from '../PayrollEnums.js';
-import { CONSTANT } from '../../../environments/environments.js';
+import { CONSTANT, MSG } from '../../../environments/environments.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;

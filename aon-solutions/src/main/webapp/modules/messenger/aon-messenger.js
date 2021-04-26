@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { MessengerOptions, MESSENGER_VIEWS } from './MessengerEnums.js';
 import { AonMessengerList } from './aon-messenger-list.js';
+import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 import '../../components/aon-application.js';
 
 class AonMessenger extends AonElement {
@@ -19,11 +20,12 @@ class AonMessenger extends AonElement {
 	}
 
  	build() {
-		this.paintView();
-		this.applicationEl = this.getApplication();
-		this.applicationParentEl = this.getApplicationParent();
-		this.buildToolbar();
-		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		// this.paintView();
+		// this.applicationEl = this.getApplication();
+		// this.applicationParentEl = this.getApplicationParent();
+		// this.buildToolbar();
+		// this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		this.rootPanel(new AonMessengerAyudat()); //DELETE 
 	}
 
 	paintView(){

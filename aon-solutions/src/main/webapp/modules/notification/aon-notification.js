@@ -1,11 +1,13 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, setFullDate, setTime } from "../../services/utils.js";
+import { newComponent, scrollInfinite, setFullDate, setTime } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
+import { Swipe } from "../../components/swipe.js";
 import { getNotification, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
+
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -30,6 +32,7 @@ export class AonNotification extends AonElement {
   }
 
   connectedCallback() {
+    // this.paintTest();
     this.initialize();
     this.build();
   }
@@ -41,7 +44,7 @@ export class AonNotification extends AonElement {
   }
 
   async build() {
-    if (this.isMobile()) {
+    if (this.isMobile()) { 
       this.paintMobile();
     } else {
       this.paintDesk();
@@ -134,6 +137,7 @@ export class AonNotification extends AonElement {
         });
       }
 		}
+    this.swipe();
 	}
 
 
@@ -156,6 +160,10 @@ export class AonNotification extends AonElement {
     aonNotification.style.margin = "auto";
     aonNotification.style.marginTop = "21px";
     aonNotification.style.width = "80%";
+    let ul = this.createElement("ul");
+    ul.id = this.AON_NOTIFICATION+"Ul";
+    ul.style = "list-style: none;padding: 0;margin: 0;";
+    aonNotification.appendChild(ul);
     return aonNotification;
   }
 
@@ -183,7 +191,23 @@ export class AonNotification extends AonElement {
    * @returns
    */
   createCard(data, close = false) {
-    const aonNotificationEl = this.getElement(this.AON_NOTIFICATION);
+    const ulEl = this.getElement(this.AON_NOTIFICATION+"Ul");
+    const liEl = newComponent({
+      type: "li",
+      styles:{
+        width: "100%",
+        position: "relative",
+        transition: "background-color 1s",
+        "-webkit-touch-callout": "none",
+        "-webkit-user-select": "none",
+        "-khtml-user-select": "none",
+        "-moz-user-select": "none",
+        "-ms-user-select": "none",
+        "user-select": "none"
+      },
+      dataset:data
+    });
+
     let idCard = this.AON_NOTIFICATION + "Card" + data.id;
     if(this.getElement(idCard)) this.getElement(idCard).remove();
     const aonCard = new AonCard();
@@ -193,7 +217,8 @@ export class AonNotification extends AonElement {
     if (!data.status)
       title = /*html*/ `<span style="color:red;" class="material-icons" id ="${data.id}Icon">error</span>${title}`;
     aonCard.title = title;
-    aonNotificationEl.appendChild(aonCard);
+    liEl.appendChild(aonCard);
+    liEl.appendTo(ulEl);
     if (!data.status) aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
     if(close){
       const label = this.createElement("label");
@@ -211,6 +236,7 @@ export class AonNotification extends AonElement {
     spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
     spanContent.innerHTML = `${data.body}`;
     aonCard.setContent(spanContent);
+    
     return aonCard;
   }
 
@@ -286,7 +312,6 @@ export class AonNotification extends AonElement {
       const icon = this.getElement(`${id}Icon`);
       if (icon) {
         icon.remove();
-        this.changeBadgeComponent(-1);
       }
     }
   }
@@ -298,5 +323,19 @@ export class AonNotification extends AonElement {
 	setFilter(filter) {
 		return this.setAttribute('filter', JSON.stringify(filter));
 	}
+
+  swipe(){    
+    let tasks = document.querySelectorAll(`#${this.AON_NOTIFICATION} ul > li`);
+    if(tasks.length){
+      new Swipe(tasks).onDelete(({dataset})=>{
+        if(dataset && dataset.id ) {
+          this.markReadNotification(dataset.id);
+          this.changeBadgeComponent(-1);
+        }
+      });
+    }
+
+  }
+
 }
 window.customElements.define("aon-notification", AonNotification);

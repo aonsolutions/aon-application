@@ -111,13 +111,9 @@ export class AonDesktop extends AonElement {
 					}
 				}
 			}, {
-				name: 'Solicitudes Abiertas',
+				name: 'Solicitudes',
 				icon: 'assignment',
-				fn: () => {}
-			}, {
-				name: 'Solicitudes para ti',
-				icon: 'assignment_ind',
-				fn: () => {}
+				fn: () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')
 			}
 		];
 		aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);

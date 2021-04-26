@@ -9,6 +9,7 @@ import '../../components/aon-suggestion.js';
 import '../signin/aon-sign.js';
 import '../invoice/aon-invoice-panel.js';
 import './aon-mobile-parent.js';
+import '../messenger/aon-messenger.js';
 
 import { MSG, TAG, MATERIAL_ICONS } from '../../environments/environments.js';
 
@@ -227,8 +228,7 @@ export class AonMobileDesktop extends AonElement {
 				rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 			}
 		}));
-		ul.appendChild(this.buildNotificationsLi('Solicitudes Abiertas', 'assignment', 0, () => {}));
-		ul.appendChild(this.buildNotificationsLi('Solicitudes para ti', 'assignment_ind', 0, () => {}));
+		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
 
 		let div2 = document.createElement('div');
 
