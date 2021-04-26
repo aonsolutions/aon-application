@@ -275,16 +275,16 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	
 	private Set<Date> draftSections;
 
-	private ITDataObject dataObject;
+//	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
 	private EmployeeEventsDraftObject employeeEventsDraftObject;
 	private DomainEmployeesServiceAsync employeesServiceAsync;
 
-	public SalaryDraftObject(SalaryDraft salaryDraft, ITDataObject dataObject,
+	public SalaryDraftObject(SalaryDraft salaryDraft, /*ITDataObject dataObject,*/
 			DomainEmployeesServiceAsync employeesServiceAsync) {
-		this.dataObject = dataObject;
+//		this.dataObject = dataObject;
 		this.salaryDraft = salaryDraft;
 		this.draftSections = new HashSet<Date>();
 		this.employeesServiceAsync = employeesServiceAsync;
@@ -437,7 +437,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		
 		removeSalaryPart(salaryDraft);
 
-		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
+//		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
 		
 		final AsyncCallback<SalaryDraft> asyncCallback = new AsyncCallback<SalaryDraft>() {
 
@@ -477,7 +477,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		
 		removeSalaryPart(salaryDraft);
 
-		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
+//		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
 		
 		final AsyncCallback<SalaryDraft> asyncCallback = new AsyncCallback<SalaryDraft>() {
 
@@ -582,25 +582,25 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			employeesServiceAsync.saveSalary(salaryDraft, sections, saveCallback );
 	}
 
-	public void saveITData(final CalculateCallback callback) {
-
-		// TODO: Save only data relative to this employee.
-
-		dataObject.save(new ITDataObject.CallculateCallback() {
-
-			@Override
-			public void onCalculateSuccess(ITDataObject object) {
-				dataObject = object;
-				callback.onCalculateSucces(SalaryDraftObject.this);
-			}
-
-			@Override
-			public void onCalculateFailure(Throwable throwable) {
-				callback.onCalculateFailure(throwable);
-			}
-		});
-
-	}
+//	public void saveITData(final CalculateCallback callback) {
+//
+//		// TODO: Save only data relative to this employee.
+//
+//		dataObject.save(new ITDataObject.CallculateCallback() {
+//
+//			@Override
+//			public void onCalculateSuccess(ITDataObject object) {
+//				dataObject = object;
+//				callback.onCalculateSucces(SalaryDraftObject.this);
+//			}
+//
+//			@Override
+//			public void onCalculateFailure(Throwable throwable) {
+//				callback.onCalculateFailure(throwable);
+//			}
+//		});
+//
+//	}
 
 	public void redo() {
 		undoManager.redo();
@@ -1328,9 +1328,9 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		undoManager.add(new CompositeUndoable<UndoablePaymentEdit>(edits));
 	}
 
-	private List<ITDataPerson> getDrafLeaveIts() {
-		return dataObject.getDraftList(salaryDraft.getEmployee().getId());
-	}
+//	private List<ITDataPerson> getDrafLeaveIts() {
+//		return dataObject.getDraftList(salaryDraft.getEmployee().getId());
+//	}
 
 	// ------------------------------------------------------------------------
 	//

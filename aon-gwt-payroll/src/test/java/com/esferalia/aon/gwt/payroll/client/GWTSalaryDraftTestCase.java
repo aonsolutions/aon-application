@@ -397,11 +397,11 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 		
 		DomainEmployeesServiceAsync domainEmployeesServiceAsync = DomainEmployeesServiceAsync.newInstance(employeesServiceAsync); 
 
-		ITDataObject itDataObject = new ITDataObject(workplaceId,
-				domainEmployeesServiceAsync);
+//		ITDataObject itDataObject = new ITDataObject(workplaceId,
+//				domainEmployeesServiceAsync);
 
 		SalaryDraftObject salaryDraftObject = new SalaryDraftObject(
-				salaryDraft, itDataObject, domainEmployeesServiceAsync);
+				salaryDraft, /*itDataObject,*/ domainEmployeesServiceAsync);
 
 		salaryDraftWidget.setSalaryDraftObject(salaryDraftObject);
 

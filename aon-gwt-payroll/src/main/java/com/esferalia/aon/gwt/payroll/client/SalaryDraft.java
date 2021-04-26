@@ -3295,36 +3295,16 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("salaryButton")
 	void onSalaryButtonClick(ClickEvent event) {
 
-			
-		salaryDraftObject.saveITData(new CalculateCallback() {
+		salaryDraftObject.save(new CalculateCallback() {
+
 			@Override
 			public Calculate getCalculate() {
 				return SalaryDraft.this.getCalculate();
 			}
-
 			@Override
 			public void onCalculateSucces(SalaryDraftObject object) {
-				
-				salaryDraftObject.save(new CalculateCallback() {
-
-					@Override
-					public Calculate getCalculate() {
-						return SalaryDraft.this.getCalculate();
-					}
-					@Override
-					public void onCalculateSucces(SalaryDraftObject object) {
-						SalaryDraft.this.onCalculateSucces(object); // TODO:
-																	// It's
-																	// necessary
-																	// ?
-						SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
-					}
-
-					@Override
-					public void onCalculateFailure(Throwable throwable) {
-						SalaryDraft.this.onCalculateFailure(throwable);
-					}
-				});
+				SalaryDraft.this.onCalculateSucces(object);
+				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
 			}
 
 			@Override
@@ -3332,6 +3312,43 @@ public class SalaryDraft extends ResizeComposite
 				SalaryDraft.this.onCalculateFailure(throwable);
 			}
 		});
+			
+//		salaryDraftObject.saveITData(new CalculateCallback() {
+//			@Override
+//			public Calculate getCalculate() {
+//				return SalaryDraft.this.getCalculate();
+//			}
+//
+//			@Override
+//			public void onCalculateSucces(SalaryDraftObject object) {
+//				
+//				salaryDraftObject.save(new CalculateCallback() {
+//
+//					@Override
+//					public Calculate getCalculate() {
+//						return SalaryDraft.this.getCalculate();
+//					}
+//					@Override
+//					public void onCalculateSucces(SalaryDraftObject object) {
+//						SalaryDraft.this.onCalculateSucces(object); // TODO:
+//																	// It's
+//																	// necessary
+//																	// ?
+//						SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+//					}
+//
+//					@Override
+//					public void onCalculateFailure(Throwable throwable) {
+//						SalaryDraft.this.onCalculateFailure(throwable);
+//					}
+//				});
+//			}
+//
+//			@Override
+//			public void onCalculateFailure(Throwable throwable) {
+//				SalaryDraft.this.onCalculateFailure(throwable);
+//			}
+//		});
 	}
 
 	@UiHandler("tgssCheck")
