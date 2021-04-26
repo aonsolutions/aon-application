@@ -138,6 +138,7 @@ export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 
 export const HEADER = MSG.HEADER;
 export const HOLDER = MSG.HOLDER;
+export const HOLDERS = MSG.HOLDERS;
 
 // ----- I
 
@@ -234,6 +235,7 @@ export const RESUME_COSTS = "Resumen de costes";
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
+export const SEARCH = MSG.SEARCH;
 export const SEND = MSG.SEND;
 export const SEND_FILE = MSG.SEND_FILE;
 export const SEND_FILES = MSG.SEND_FILES;

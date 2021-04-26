@@ -89,6 +89,7 @@ export const PERSON = 'person';
 export const REPORT = 'report';
 export const ROOM = 'room';
 export const SAVE = 'save';
+export const SEARCH = 'search';
 export const SWAP_CALLS = 'swap_calls';
 export const TUNE = 'tune';
 export const VISIBILITY = 'visibility';

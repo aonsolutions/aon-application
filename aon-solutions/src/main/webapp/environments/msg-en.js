@@ -108,6 +108,7 @@ export const GENERAL_INFORMATION = 'General Information';
 
 export const HEADER = 'Header';
 export const HOLDER = 'Holder';
+export const HOLDERS = 'Holders';
 
 // ----- I
 
@@ -204,6 +205,7 @@ export const RESUME_COSTS = "Resumen de costes";
 export const SAVE = 'Save';
 export const SAVED_DATA = "The data has been saved successfully";
 export const SCOPE = 'Scope';
+export const SEARCH = 'Search';
 export const SEND = 'Send';
 export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';

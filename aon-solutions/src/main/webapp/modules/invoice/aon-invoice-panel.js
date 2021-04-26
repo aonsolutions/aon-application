@@ -149,26 +149,26 @@ export class AonInvoicePanel extends AonElement {
 			];
 			aonInvoice.addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
 
-
-			let contactOptions = [
-				{
-					name: MSG.CUSTOMERS,
-					icon: MATERIAL_ICONS.CONTACT_PAGE,
-					fn: () => GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT)
-				},
-				{
-					name: MSG.SUPPLIERS,
-					icon: MATERIAL_ICONS.CONTACT_PAGE,
-					fn: () => GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT)
-				},
-				{
-					name: MSG.CREDITORS,
-					icon: MATERIAL_ICONS.CONTACT_PAGE,
-					fn: () => GWT.load(GWT.CREDITOR, this.getApplication().CONTENT)
-				}
-			];
-			aonInvoice.addSidenavOptions(MSG.CONTACTS.toUpperCase(), contactOptions);
-
+			if(!this.isMobile()) {
+				let contactOptions = [
+					{
+						name: MSG.CUSTOMERS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT)
+					},
+					{
+						name: MSG.SUPPLIERS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT)
+					},
+					{
+						name: MSG.CREDITORS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.CREDITOR, this.getApplication().CONTENT)
+					}
+				];
+				aonInvoice.addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
+			}
 
 			let settingOptions = [
 				{

@@ -39,7 +39,7 @@ export const ACCOUNTING = {
 };
 
 export const FISCAL = {
-  app: CONTACT.FISCAL,
+  app: CONSTANT.FISCAL,
   title: MSG.FISCAL,
   description: MSG.FISCAL,
   icon: AON_ICONS.AON_APP,
@@ -243,7 +243,7 @@ export const OUTSOURCING = {
 
 export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, TOOLS};
 
-export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, PAYROLL, COMUNICA, MESSENGER, FISCAL, ACCOUNTING];
+export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 
 export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger', 'invoice'];
 export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio'];

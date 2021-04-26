@@ -2,6 +2,8 @@ import {AonElement} from './AonElement.js';
 import {ToolbarType} from '../models/enums.js';
 
 import './aon-icon-button.js';
+import { AonSearch } from './aon-search.js';
+import { EVENT } from '../environments/environments.js';
 
 export class AonToolbar extends AonElement {
 	HEADER;
@@ -169,43 +171,18 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
-	addSearchButton() {
-		const buttonId = this.TOOL_SECTION + 'SearchButton';
-		const inputId = this.TOOL_SECTION + 'SearchInput';
-		let span = document.createElement('span');
-		span.style.display = 'contents';
-		span.innerHTML= `
-			<aon-icon-button id="${buttonId}" icon="search" title="Búsqueda"> </aon-icon-button>
-			<form><input id='${inputId}' title="Búsqueda" placeholder="Búsqueda" style="display:none"></input></form>
-		`;
+	addSearchButton(advanced) {
+		let search = new AonSearch();
+		search.id = this.TOOL_SECTION + 'Search';
+		search.addEventListener(EVENT.SEARCH, (event) => {
+			this.dispatchEvent(new CustomEvent('search',{detail: event.detail}));
+		});
 
 		let toolSection = this.getElement(this.TOOL_SECTION);
 		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 		if(toolSection.children.length > 0) {
-			toolSection.insertBefore(span, toolSection.children[0]);
-		} else toolSection.appendChild(span);
-
-		let input = this.getElement(inputId);
-		input.style.border = '0px';
-		input.style.borderBottom = '1px solid #999';
-		input.style.backgroundColor = 'transparent';
-		input.style.outline = 'none';
-		input.style.fontSize = '14px';
-		input.addEventListener('keyup', () => {
-			this.dispatchEvent(new CustomEvent('search',{detail: input.value}));
-		});
-
-		let b = document.getElementById(buttonId);
-		b.addEventListener('click', () => {
-			if(input.style.display === 'none'){
-				input.style.display = 'block';
-				input.focus();
-			} else {
-				input.value = '';
-				this.dispatchEvent(new CustomEvent('search',{detail: input.value}));
-				input.style.display = 'none';
-			}
-		});
+			toolSection.insertBefore(search, toolSection.children[0]);
+		} else toolSection.appendChild(search);
 	}
 
 	addButton2(action, fn) {

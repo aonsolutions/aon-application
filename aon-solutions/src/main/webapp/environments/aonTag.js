@@ -28,6 +28,7 @@ export const AON_LOADER = 'aon-loader';
 export const AON_MOBILE_LIST = 'aon-mobile-list';
 export const AON_NUMBER = 'aon-number';
 export const AON_REGISTRY = 'aon-registry';
+export const AON_SEARCH = 'aon-search';
 export const AON_SEARCH_BOX = 'aon-search-box';
 export const AON_SELECT = 'aon-select';
 export const AON_SLIDER = 'aon-slider';

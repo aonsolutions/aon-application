@@ -108,6 +108,7 @@ export const GENERAL_INFORMATION = 'Informazio Generala';
 
 export const HEADER = 'Goiburu';
 export const HOLDER = 'Titularra';
+export const HOLDERS = 'Titularrak';
 
 // ----- I
 
@@ -204,6 +205,7 @@ export const RESUME_COSTS = "Resumen de costes";
 export const SAVE = 'Gorde';
 export const SAVED_DATA = 'Datuak zuzen gorde dira';
 export const SCOPE = 'Esparrua';
+export const SEARCH = 'Bilatu';
 export const SEND = 'Bidali';
 export const SEND_FILE = 'Fitxategia Bidali';
 export const SEND_FILES = 'Fitxategiak Bidali';

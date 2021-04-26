@@ -23,6 +23,7 @@ import "../../../../components/aon-select.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 
 import * as ACTION from '../../../actions.js';
+import { MSG } from "../../../../environments/environments.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;

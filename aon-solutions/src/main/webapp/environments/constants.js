@@ -7,9 +7,11 @@ export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
+export const ADVANCED_BUTTON = 'advancedButton';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
+export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
 
 
@@ -91,6 +93,7 @@ export const NUMBER = 'number';
 
 // ----- O
 
+export const OPENED = 'opened';
 export const OPTIONS = 'options';
 
 // ----- P
@@ -125,6 +128,8 @@ export const ROW = 'row';
 
 export const SAVE = 'save';
 export const SEND = 'send';
+export const SEARCH_BUTTON = 'searchButton';
+export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';

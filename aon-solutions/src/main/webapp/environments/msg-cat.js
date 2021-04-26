@@ -108,6 +108,7 @@ export const GENERAL_INFORMATION = 'Informació General';
 
 export const HEADER = 'Capçalera';
 export const HOLDER = 'Titular';
+export const HOLDERS = 'Titulars';
 
 // ----- I
 
@@ -204,6 +205,7 @@ export const RESUME_COSTS = "Resumen de costes";
 export const SAVE = 'Guardar';
 export const SAVED_DATA = "Los datos se han guardado correctamente";
 export const SCOPE = 'Àmbit';
+export const SEARCH = 'Buscar';
 export const SEND = 'Enviar';
 export const SEND_FILE = 'Enviar Fitxer';
 export const SEND_FILES = 'Enviar Fitxers';
