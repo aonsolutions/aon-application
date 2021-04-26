@@ -2008,6 +2008,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EnterpriseIT enterpriseIT;
 	private ITEditor it;
 	private WorkplaceSalary workplaceSalary;
+	private WorkplaceIT workplaceIT;
 	private CalendarDraft calendarDraft;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
@@ -2366,6 +2367,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getWorkplceSalary());
 		getWorkplceSalary().setWorkplaceSalaryObject(dataObject);
 	}
+	
+	@Override
+	public void onWorkplaceITSelected(WorkplaceITObject workplaceITObject) {
+		employeeDetail.setWidget(getWorkplceIT());
+		getWorkplceIT().setWorkplaceITObject(workplaceITObject);
+	}
 
 	@Override
 	public void onCalendarSelected(CalendarDraftObjectData calendarDraftObjectData) {
@@ -2607,6 +2614,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		if (workplaceSalary == null)
 			(workplaceSalary = new WorkplaceSalary()).addListener(this);
 		return workplaceSalary;
+	}
+	
+	private WorkplaceIT getWorkplceIT() {
+		if (workplaceIT == null)
+			workplaceIT = new WorkplaceIT();
+		return workplaceIT;
 	}
 
 	private Cost getCost() {

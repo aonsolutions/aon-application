@@ -112,6 +112,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onITDataSelected(ITDataObject dataObject);
 		
 		void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalary);
+		
+		void onWorkplaceITSelected(WorkplaceITObject workplaceSalary);
 
 		void onSalariesSelected(SalaryDocuments docs);
 
@@ -174,7 +176,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 //	private static final int WORKPLACE_SALARIES_INDEX = 5;
 	private static final int WORKPLACE_CALENDAR_INDEX = 2;
 	private static final int WORKPLACE_STATISTICS_INDEX = 3;
-	private static final int WORKPLACE_PARTSIT_INDEX = 4;
+//	private static final int WORKPLACE_PARTSIT_INDEX = 4;
 
 //	private static final int EMPLOYEE_SALARIES_INDEX = 1;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
@@ -446,6 +448,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof WorkplaceSalaryObject) {
 			onWorkplaceSalarySelected((WorkplaceSalaryObject) userObject); 
+		} else if (userObject instanceof WorkplaceITObject) {
+			onWorkplaceITSelected((WorkplaceITObject) userObject); 
 		} else if (userObject instanceof CalendarDraftObjectData) {
 			onCalendarSelected((CalendarDraftObjectData) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
@@ -763,8 +767,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				.setUserObject(new CalendarDraftObjectData(workplace.getId(), employeesService));
 		addImageItem(workplaceItem, "Estad\u00EDsticas", images.statistics());
 		addImageItem(workplaceItem, "Partes IT", images.itDatas())
-				.setUserObject(new ITDataObject(workplace.getId(), employeesService));
-		
+			.setUserObject(new WorkplaceITObject(workplace.getId()));
+//		addImageItem(workplaceItem, "Partes IT", images.itDatas())
+//				.setUserObject(new ITDataObject(workplace.getId(), employeesService));
+//		
 //		addImageItem(workplaceItem, "N\u00F3minas (Old)", images.salaries());
 		
 		if (extended) {
@@ -1150,6 +1156,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
+	private void onWorkplaceITSelected(WorkplaceITObject workplaceITObject) {
+		for (Listener listener : listeners) {
+			listener.onWorkplaceITSelected(workplaceITObject);
+		}
+	}
+	
 	private void onEmployeeCopy(Employee employee) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeCopy(employee);
@@ -1485,7 +1497,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 
 		if (extended) {
-			ITDataObject dataObject = getITDataObject(workplaceItem);
+//			ITDataObject dataObject = getITDataObject(workplaceItem);
 
 			Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
 					employee.getEndDate());
@@ -1503,7 +1515,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			salaryDraft.setIssueDate(issueDate);
 			salaryDraft.setType(Type.SALARY);
 
-			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, dataObject, employeesService);
+			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
 			salaryDraftItem.setUserObject(draftObject);
 
 			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Incidencias", images.data());
@@ -2000,9 +2012,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
-	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
-		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
-	}
+//	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
+//		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
+//	}
 	
 	private static String getId(Enterprise enterprise) {
 		return normalize(enterprise.getName());
