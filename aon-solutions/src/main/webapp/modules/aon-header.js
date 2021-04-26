@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
@@ -17,6 +17,7 @@ import './messenger/aon-messenger.js';
 import './notification/aon-notification-icon.js';
 import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
 
 export class AonHeader extends AonElement {
 
@@ -125,14 +126,11 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderHelpButton = document.getElementById(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
+				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
+				const left = aonHeaderHelpButton.getBoundingClientRect().left;
 				getDomainUserRoles({}).then(r => {
 					this.dur = new DomainUserRoles(r);
-					this.build();
-				
-					const top  = aonHeaderUserButton.getBoundingClientRect().top;
-					const left = aonHeaderUserButton.getBoundingClientRect().left;
 					let d = document.getElementById('aonHeaderDialogHelpOption');
-
 					let options = [{
 						name: 'Solicitudes',
 						icon: 'assignment',
