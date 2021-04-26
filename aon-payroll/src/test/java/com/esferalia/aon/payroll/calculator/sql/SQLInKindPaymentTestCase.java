@@ -99,7 +99,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		
 
 		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 , (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 , (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) , (double) salary.getRemuneration(), DELTA);
 		
 		
 		assertEquals( 1.62, (double) salary.getTotalDeduction(), DELTA);
@@ -118,7 +118,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		
 
 		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 + 33.33 , (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 + 33.33, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) , (double) salary.getRemuneration(), DELTA);
 		
 		
 		assertEquals( 1.62 + 33.33, (double) salary.getTotalDeduction(), DELTA);
@@ -198,7 +198,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		
 
 		assertEquals( (double) ( 1150.00 + 1.62 ) / 2, (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 + 1.62 ) / 2, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 ) / 2, (double) salary.getRemuneration(), DELTA);
 		
 		
 		assertEquals( 1.62 / 2, (double) salary.getTotalDeduction(), DELTA);
@@ -217,7 +217,7 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		
 
 		assertEquals( (double) ( 1150.00 + 1.62 + 33.33 ) / 2, (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 + 1.62 + 33.33 ) / 2, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 ) / 2, (double) salary.getRemuneration(), DELTA);
 		
 		
 		assertEquals( ( 1.62 + 33.33 ) / 2, (double) salary.getTotalDeduction(), DELTA);

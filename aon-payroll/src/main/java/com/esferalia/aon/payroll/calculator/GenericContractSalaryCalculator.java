@@ -1496,6 +1496,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 	private void saveResult(IContractPayment contractPayment, ExpressionContext expressionContext, Date resultStart,
 			Date resultEnd, double resultValue) {
+		if ( contractPayment == null )
+			return;
+		if ( contractPayment.getType()== null )
+			return;
+		
 		contractPayment.getType().accept( new PaymentTypeVisitor() {
 			
 			@Override
