@@ -279,6 +279,8 @@ public enum ContextVariable implements IResourceable {
 
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
+	
+	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false)
 	;
 
 	public static final String ALL = "_P";

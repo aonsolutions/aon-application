@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_Q
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
@@ -1445,7 +1446,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							result.getContext());
 
 				} 
-
+				
+				saveResult(contractPayment, expressionContext, resultStart, resultEnd, resultValue);
+				
 			}
 
 			if (AonStringUtils.isNotBlank(name)) 
@@ -1489,6 +1492,29 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			throw new UndefinedVariablesException();
 		} 
 
+	}
+
+	private void saveResult(IContractPayment contractPayment, ExpressionContext expressionContext, Date resultStart,
+			Date resultEnd, double resultValue) {
+		contractPayment.getType().accept( new PaymentTypeVisitor() {
+			
+			@Override
+			public void visitStructuralHours(PaymentType paymentType) {
+			}
+			
+			@Override
+			public void visitSalaryInKind(PaymentType paymentType) {
+				addResult(expressionContext, IN_KIND.getName(), resultStart, resultEnd, resultValue);
+			}
+			
+			@Override
+			public void visitOther(PaymentType paymentType) {
+			}
+			
+			@Override
+			public void visitNonStructuralHours(PaymentType paymentType) {
+			}
+		});
 	}
 
 	// -------------------------------------------------------------- Protected

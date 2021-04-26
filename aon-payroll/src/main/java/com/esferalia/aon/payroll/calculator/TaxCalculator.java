@@ -148,7 +148,7 @@ public abstract class TaxCalculator {
 				throw new NotNowException();
 			}
 			
-			DefaultTaxCalculator.this.renumeration += amount;
+			DefaultTaxCalculator.this.totalPayment += amount;
 			
 			final double  tax  = getTax(contractPayment, start, end, amount);
 			
@@ -159,13 +159,13 @@ public abstract class TaxCalculator {
 				
 				@Override
 				public void visitOther(PaymentType type) {
-					DefaultTaxCalculator.this.totalPayment += amount;
+					DefaultTaxCalculator.this.renumeration += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
 
 				@Override
 				public void visitStructuralHours(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
+					DefaultTaxCalculator.this.renumeration += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
 				
@@ -177,7 +177,7 @@ public abstract class TaxCalculator {
 				
 				@Override
 				public void visitNonStructuralHours(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
+					DefaultTaxCalculator.this.renumeration += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
 			};			

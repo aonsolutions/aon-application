@@ -993,19 +993,29 @@ public class Payment extends ResizeComposite {
 		com.google.gwt.user.client.Element quoteRow = mainGrid.getRowFormatter().getElement(rows-2);
 		com.google.gwt.user.client.Element taxRow = mainGrid.getRowFormatter().getElement(rows-3);
 		
-		if ( taxAndQuoteFull() ) {
-			taxDeckPanel.showWidget(taxFullPanelIndex);
+		
+		if ( taxEditableAndQuoteFull() ) {
+			taxDeckPanel.showWidget(taxEditPanelIndex);
+			UIObject.setVisible(taxRow, true );
 			quoteDeckPanel.showWidget(quoteFullPanelIndex);
+			UIObject.setVisible(quoteRow, false );
+		} else if ( taxAndQuoteFull() ) {
+			taxDeckPanel.showWidget(taxFullPanelIndex);
+			UIObject.setVisible(taxRow, false );
+			quoteDeckPanel.showWidget(quoteFullPanelIndex);
+			UIObject.setVisible(quoteRow, false );
 		} else if ( taxAndQuoteNone() ) {
 			taxDeckPanel.showWidget(taxNonePanelIndex);
+			UIObject.setVisible(taxRow, false );
 			quoteDeckPanel.showWidget(quoteNonePanelIndex);
+			UIObject.setVisible(quoteRow, false );
 		} else {
 			taxDeckPanel.showWidget(taxEditPanelIndex);
+			UIObject.setVisible(taxRow, true );
 			quoteDeckPanel.showWidget(quoteEditPanelIndex);
+			UIObject.setVisible(quoteRow, true );
 		}
 		
-		UIObject.setVisible(quoteRow, !taxAndQuoteFull() && !taxAndQuoteNone());
-		UIObject.setVisible(taxRow, !taxAndQuoteFull() && !taxAndQuoteNone());
 	}
 	
 	private void enableOrDisablePayments() {
@@ -1053,6 +1063,11 @@ public class Payment extends ResizeComposite {
 		}
 		
 		return false;
+	}
+
+	private boolean taxEditableAndQuoteFull() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0013 );
 	}
 
 	private boolean taxAndQuoteFull() {
