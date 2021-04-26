@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -29,15 +30,18 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -64,6 +68,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model111 extends MainEntryPoint {
 
+	private static final Logger LOGGER = Logger.getLogger(Model111.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	final static int IDENTIFICATION_TAB = 0;
 	final static int LIQUIDATION_TAB = 1;
 	final static int FISCAL_INFORMATION_TAB = 2;
@@ -88,7 +97,7 @@ public class Model111 extends MainEntryPoint {
 	}
 	
 	private Mod111 currentMod;
-	private AonData aonData;
+	private Model111ModuleOptions options;
 	private boolean dirty;
 
 	@UiField
@@ -239,21 +248,38 @@ public class Model111 extends MainEntryPoint {
 		}
 
 	};
+	
+	
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model111ModuleOptions options = new Model111ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
 			}
 			
-			@Override public void onFailure(Throwable caught) {}
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
 		});
 	}
-
-	public void onModuleLoad(AonData aonData) {
-		this.aonData = aonData;
+	private Model111ModuleOptions getOptions() {
+		if (this.options == null) {
+			this.options = new Model111ModuleOptions();
+		}
+		return this.options;
+	}
+	
+	public void onModuleLoad(Model111ModuleOptions options) {
+		this.options = options;
 		AON.ensureInjected();
 
 		Mod111ServiceAsync serviceRaw = GWT.create(Mod111Service.class);
@@ -263,6 +289,9 @@ public class Model111 extends MainEntryPoint {
 
 		Widget ui = MODEL_111_BINDER.createAndBindUi(this);
 
+		if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
 		html.setWidth("100%");
 		html.setHeight("100%");
@@ -283,8 +312,47 @@ public class Model111 extends MainEntryPoint {
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+//		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+//		root.add(ui);
+		getOptions().getParentWidget().add(ui);
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+			public void execute() {
+				LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
+				if (getOptions().getFiscalModelId() != null ) {
+					tabPanel.selectTab(LIQUIDATION_TAB);
+					int i = deckPanel.getWidgetIndex(formPanel);
+					deckPanel.showWidget(i);
+					onSelect(getOptions().getFiscalModelId());
+				} else if (getOptions().getNewModel() != null ) {
+					newModel(getOptions().getNewModel()); 
+				}
+			}
+		});		
+		
+	}
+	
+	private void onSelect(Integer id ) {
+		SERVICE.getMod111(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id
+			, new AsyncCallback<Mod111>() {
+					@Override
+					public void onSuccess(Mod111 selected) {
+						if (selected == null) {
+							showErrorMessage(AON.MSG.unableToFindDeclaration());
+						} else {
+							select(selected);
+							tabPanel.selectTab(LIQUIDATION_TAB);
+							int i = deckPanel.getWidgetIndex(formPanel);
+							deckPanel.showWidget(i);
+							cleanErrorMessage();
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
 	}
 
 	class Mod111SelectionHandler implements SelectionChangeEvent.Handler {
@@ -319,10 +387,6 @@ public class Model111 extends MainEntryPoint {
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 		styleDirtyLabel();
-	}
-	
-	public AonData getAonData() {
-		return this.aonData;
 	}
 	
 	private void refreshToolbarState() {
@@ -422,30 +486,30 @@ public class Model111 extends MainEntryPoint {
 		FiscalModelIdentificationData<Mod111> identificationData = new FiscalModelIdentificationData<Mod111>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
-			declaration = new Model111AEAT(callback, getAonData());
+			declaration = new Model111AEAT(callback, getOptions().getAonData());
 		} else  if (currentMod.getAdministration() == Administration.GIPUZKOA) {
 			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model110Gipuzkoa(callback, getAonData());
+				declaration = new Model110Gipuzkoa(callback, getOptions().getAonData());
 			} else {
-				declaration = new Model111Gipuzkoa(callback, getAonData());
+				declaration = new Model111Gipuzkoa(callback, getOptions().getAonData());
 			}
 		} else  if (currentMod.getAdministration() == Administration.BIZKAIA) {
 			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model110Bizkaia(callback, getAonData());
+				declaration = new Model110Bizkaia(callback, getOptions().getAonData());
 			} else {
-				declaration = new Model111Bizkaia(callback, getAonData());
+				declaration = new Model111Bizkaia(callback, getOptions().getAonData());
 			}
 		} else  if (currentMod.getAdministration() == Administration.NAVARRA) {
 			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model715Navarra(callback, getAonData());
+				declaration = new Model715Navarra(callback, getOptions().getAonData());
 			} else {
-				declaration = new Model745Navarra(callback, getAonData());
+				declaration = new Model745Navarra(callback, getOptions().getAonData());
 			}
 		} else  if (currentMod.getAdministration() == Administration.ALAVA) {
 			if (currentMod.getYear() > 2015) {
-				declaration = new Model111Araba2016(callback, getAonData());	
+				declaration = new Model111Araba2016(callback, getOptions().getAonData());	
 			} else {
-				declaration = new Model111Araba(callback, getAonData());
+				declaration = new Model111Araba(callback, getOptions().getAonData());
 			}
 		}
 		if (declaration != null) {
@@ -690,8 +754,11 @@ public class Model111 extends MainEntryPoint {
 	void onNewButtonClick(ClickEvent event) {
 		newButton.setEnabled(false);
 		cleanErrorMessage();
+		newModel( null);
+	}		
 		
-		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),null,
+	private void newModel(Mod111 newModel) {
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
 				new AsyncCallback<Mod111>() {
 					@Override
 					public void onSuccess(Mod111 m111) {
@@ -710,8 +777,7 @@ public class Model111 extends MainEntryPoint {
 						newButton.setEnabled(true);
 					}
 				});
-	}		
-		
+	}
 	private void showNewDeclarationPopup() {
 		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(
 			new FiscalModelCallback() {
@@ -753,22 +819,30 @@ public class Model111 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		if (!isDirty()) {
-			cancel();
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancel();
+			}
 		} else {
-			cancelButton.setEnabled(false);
-			ConfirmDialog cd = new ConfirmDialog();
-			cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
-
-				@Override
-				public void onAccept() {
-					cancel();
-				}
-
-				@Override
-				public void onCancel() {
-					cancelButton.setEnabled(true);
-				}
-			});
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancelButton.setEnabled(false);
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
+	
+					@Override
+					public void onAccept() {
+						cancel();
+					}
+	
+					@Override
+					public void onCancel() {
+						cancelButton.setEnabled(true);
+					}
+				});
+			}
 		}
 	}
 	
@@ -935,7 +1009,7 @@ public class Model111 extends MainEntryPoint {
 				
 			}
 			
-		},getAonData());
+		},getOptions().getAonData());
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}

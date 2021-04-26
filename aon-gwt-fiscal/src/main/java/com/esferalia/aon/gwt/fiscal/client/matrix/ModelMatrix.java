@@ -10,8 +10,10 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
@@ -26,7 +28,11 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
+import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -433,12 +439,12 @@ public class ModelMatrix extends MainEntryPoint {
 												
 											});
 										} else {
-//											focusPanel.addClickHandler( new ClickHandler() {
-//												@Override
-//												public void onClick(ClickEvent event) {
-//													viewModel( aonData, model );
-//												}
-//											});
+											focusPanel.addClickHandler( new ClickHandler() {
+												@Override
+												public void onClick(ClickEvent event) {
+													viewModel( aonData, model );
+												}
+											});
 										}
 									}
 									focusPanel.add(mod);
@@ -561,7 +567,6 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 	
 //	protected void newModel(AonData aonData, IFiscalModel model) {
-//		int dom = 536;
 //		Mod111 mod111 = new Mod111();
 //		mod111.setAdministration(Administration.COMMON_TERRITORY);
 //		mod111.setDomain(dom);
@@ -603,32 +608,76 @@ public class ModelMatrix extends MainEntryPoint {
 //		});
 //	}
 
-//	protected void viewModel(AonData aonData, IFiscalModel model) {
-//		if ( model.getModel() == FiscalModelType.M111 ) {
-//			AonCustomPopup entryDialog = new AonCustomPopup();
-//			entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-//			entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-//			entryDialog.setAnimationEnabled(true);
-//			entryDialog.setGlassEnabled(true);
-//			entryDialog.setModal(true);
-//			entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(model.getModel()) , 60 ));
-//			
-//			Model111 model111 = new Model111();
-//			Model111ModuleOptions options = new Model111ModuleOptions();
-//			options.setParentWidget(entryDialog);
-//			options.setDomainName(aonData.getDomain().getName());
-//			options.setDomain( 536 );
-//			options.setUser(aonData.getUser().getLogin());
-//			options.setAonData(aonData);
-//			options.setFiscalModelId( model.getId() );
-//			options.setEmbedded(true);
-//			model111.onModuleLoad( options );
-//			
-//			entryDialog.center();
-//			entryDialog.show();
-//		}
-//	}
-	
+	protected void viewModel(AonData aonData, JsFiscalMenuItem model) {
+		Integer id = Integer.valueOf(model.getId() + ""); 
+		FiscalModelType modelType = FiscalModelType.safeValueByName(model.getModel());
+		IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
+			@Override public void visitM390HF(){}
+			@Override public void visitM390() {}
+			@Override public void visitM349() {}
+			@Override public void visitM347() {}
+			@Override public void visitM303() {}
+			@Override public void visitM202() {}
+			@Override public void visitM200() {}
+			@Override public void visitM193() {}
+			@Override public void visitM190() {}
+			@Override public void visitM184() {}
+			@Override public void visitM180() {}
+			@Override public void visitM131() {}
+			@Override public void visitM130() {}
+			@Override public void visitM123() {}
+			@Override public void visitM115() {}
+			
+			@Override
+			public void visitM111() {
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+				try {
+					Model111 model111 = new Model111();
+					Model111ModuleOptions options = new Model111ModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(aonData.getDomain().getName());
+					options.setDomain( model.getDomain() );
+					options.setUser(aonData.getUser().getLogin());
+					options.setAonData(aonData);
+					options.setFiscalModelId( id );
+					options.setEmbedded(true);
+					options.setBackButtonVisible(true);
+					options.setExternalCallback( new ModuleCallback() {
+						
+						@Override
+						public void onRemove(IAccountEntryWrapper removed) {
+							entryDialog.hide();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+						
+						@Override
+						public void onExit() {
+							entryDialog.hide();
+						}
+						
+						@Override
+						public void onChange(IAccountEntryWrapper changed) {
+							entryDialog.hide();
+						}
+					});
+					model111.onModuleLoad( options );
+					entryDialog.center();
+					entryDialog.show();
+				} catch (Throwable t) {
+					Window.alert("Error inesperado! [" + t.getMessage() + "]");
+				}
+			}
+		};
+		modelType.visit(visitor);
+	}
 	
 	private void search(AonData aonData, FiscalMatrixParams params) {
 		API API = new API(GWT.getHostPageBaseURL(), aonData.getMd5(),
