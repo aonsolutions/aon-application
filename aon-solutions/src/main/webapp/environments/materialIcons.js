@@ -78,6 +78,7 @@ export const CONTACTLESS = 'contactless';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DONE = 'done';
+export const EXTENSION = 'extension';
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';

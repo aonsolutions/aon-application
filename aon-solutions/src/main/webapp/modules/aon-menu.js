@@ -147,7 +147,7 @@ export class AonMenu extends AonElement {
 		aonMenuSidenav.addEventListener('mouseover', () => {
 			if(aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
 				aonMenuSidenav.style.transitionDuration = '0ms';
-				aonMenuSidenav.style.width = '150px';
+				aonMenuSidenav.style.width = '175px';
 				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 					item.style.display = 'inline-block';
 					item.style.fontSize = '12px';
@@ -350,7 +350,7 @@ export class AonMenu extends AonElement {
 		});
 		let closeButton = document.getElementById('aon-menu-sidenav-app-close-button');
 		closeButton.addEventListener('click', () => {
-			aonMenuSidenav.style.width = '150px';
+			aonMenuSidenav.style.width = '175px';
 			this.buildMenu();
 		});
 	}

@@ -1,10 +1,12 @@
-import * as MSG from "../environments/msg.js";
+import { AON_ICON } from '../environments/aonTag.js';
+import { MSG, CONSTANT, AON_ICONS } from '../environments/environments.js';
+import { CONTACT } from '../environments/msg-en.js';
 
 export const TIMECONTROL = {
-  app: 'timecontrol',
-  title: 'Horario',
-  description: 'Control de Horario.',
-  icon: 'aon_app',
+  app: CONSTANT.TIMECONTROL,
+  title: MSG.TIMECONTROL,
+  description: MSG.TIMECONTROL,
+  icon: AON_ICONS.AON_APP,
   color: '#9966cc',
   access: [{
       value: 'Asesor',
@@ -21,10 +23,10 @@ export const TIMECONTROL = {
 }
 
 export const ACCOUNTING = {
-  app: 'accounting',
-  title: 'Contabilidad',
-  description: 'Gestor de Contabilidad.',
-  icon: 'aon_app',
+  app: CONSTANT.ACCOUNTING,
+  title: MSG.ACCOUNTING,
+  description: MSG.ACCOUNTING,
+  icon: AON_ICONS.AON_APP,
   color: '#1FD8B9',
   access: [{
       value: 'Asesor',
@@ -37,10 +39,10 @@ export const ACCOUNTING = {
 };
 
 export const FISCAL = {
-  app: 'fiscal',
-  title: 'Fiscal',
-  description: 'Gestor Fiscal.',
-  icon: 'aon_app',
+  app: CONTACT.FISCAL,
+  title: MSG.FISCAL,
+  description: MSG.FISCAL,
+  icon: AON_ICONS.AON_APP,
   color: '#1FBCE5',
   access: [{
       value: 'Asesor',
@@ -53,10 +55,10 @@ export const FISCAL = {
 };
 
 export const PAYROLL = {
-  app: 'payroll',
-  title: 'Laboral',
-  description: 'Gestor Laboral.',
-  icon: 'aon_app',
+  app: CONSTANT.PAYROLL,
+  title: MSG.PAYROLL,
+  description: MSG.PAYROLL,
+  icon: AON_ICONS.AON_APP,
   color: '#1F8CFF',
   access: [{
       value: 'Asesor',
@@ -72,10 +74,10 @@ export const PAYROLL = {
 };
 
 export const COMUNICA = {
-  app: 'comunica',
-  title: 'Comunic@',
-  description: 'Comunic@',
-  icon: 'aon_app',
+  app: CONSTANT.COMUNICA,
+  title: MSG.COMUNICA,
+  description: MSG.COMUNICA,
+  icon: AON_ICONS.AON_APP,
   color: '#6C75AB',
   access: [{
       value: 'Asesor',
@@ -92,10 +94,10 @@ export const COMUNICA = {
 };
 
 export const DOCUMENTAL = {
-  app: 'documental',
-  title: 'Documental',
-  description: 'Gestor de Documentos.',
-  icon: 'aon_app',
+  app: CONSTANT.DOCUMENTAL,
+  title: MSG.DOCUMENTARY,
+  description: MSG.DOCUMENTARY,
+  icon: AON_ICONS.AON_APP,
   color: '#6986BB',
   access: [{
       value: 'Asesor',
@@ -112,10 +114,10 @@ export const DOCUMENTAL = {
 };
 
 export const INVOICE = {
-  app: 'invoice',
+  app: CONSTANT.INVOICE,
   title: MSG.INVOICES,
-  description: 'Gestion de Facturas.',
-  icon: 'aon_app',
+  description: MSG.INVOICES,
+  icon: AON_ICONS.AON_APP,
   color: '#B50061',
   access: [{
       value: 'Asesor',
@@ -132,10 +134,10 @@ export const INVOICE = {
 };
 
 export const MESSENGER = {
-  app: 'messenger',
-  title: 'Mensajería',
-  description: 'Mensajería',
-  icon: 'aon_app',
+  app: CONSTANT.MESSENGER,
+  title: MSG.REQUESTS,
+  description: MSG.REQUESTS,
+  icon: AON_ICONS.AON_APP,
   color: '#CADEFF',
   access: [{
       value: 'Asesor',
@@ -149,9 +151,9 @@ export const MESSENGER = {
 };
 
 export const TOOLS = {
-  app: 'tools',
-  title: 'Herramientas',
-  icon: 'aon_app',
+  app: CONSTANT.TOOLS,
+  title: MSG.TOOLS,
+  icon: AON_ICONS.AON_APP,
   color: '#535353',
   price:'-'
 };
@@ -241,7 +243,7 @@ export const OUTSOURCING = {
 
 export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, TOOLS};
 
-export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, PAYROLL, INVOICE, COMUNICA, MESSENGER, FISCAL, ACCOUNTING];
+export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, PAYROLL, COMUNICA, MESSENGER, FISCAL, ACCOUNTING];
 
 export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger', 'invoice'];
 export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio'];

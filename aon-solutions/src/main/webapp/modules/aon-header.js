@@ -18,6 +18,7 @@ import './notification/aon-notification-icon.js';
 import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { AonComponentsDoc } from './dev/aon-components-doc.js';
 
 export class AonHeader extends AonElement {
 
@@ -141,6 +142,12 @@ export class AonHeader extends AonElement {
 						fn: () => rootPanel('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
 					}];
 					if(this.dur.isDev()) {
+						options.push({
+							name: MSG.COMPONENTS,
+							icon: MATERIAL_ICONS.EXTENSION,
+							fn: () => this.rootPanel(new AonComponentsDoc())
+						});
+						
 						options.push({
 							name: MSG.API_DOCUMENTATION,
 							icon: MATERIAL_ICONS.API,

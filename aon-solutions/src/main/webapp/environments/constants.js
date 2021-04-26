@@ -4,6 +4,7 @@ export const UNDEFINED = 'undefined';
 // ----- A
 
 export const ACCEPT = 'accept';
+export const ACCOUNTING = 'accounting';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
 export const AON_APPLICATION = 'aonApplication';
@@ -24,6 +25,7 @@ export const CATEGORY = 'category';
 export const CHECKED = 'checked';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
+export const COMUNICA = 'comunica';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 
@@ -37,6 +39,7 @@ export const DELETE_FOREVER = 'deleteForever';
 export const DESCRIPTION = 'description';
 export const DISABLED = 'disabled';
 export const DRAFT = 'draft';
+export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
 export const DOWNLOAD_INVOICE = 'downloadInvoice';
@@ -55,6 +58,7 @@ export const ERROR = "error";
 export const FALSE = 'false';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
+export const FISCAL = 'fiscal';
 
 // ----- G
 
@@ -65,6 +69,7 @@ export const FILTER = 'filter';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
+export const INVOICE = 'invoice';
 
 // ----- J
 
@@ -75,6 +80,7 @@ export const INPUT = 'input';
 // ----- M
 
 export const MAX = 'max';
+export const MESSENGER = 'messenger';
 export const MIN = 'min';
 
 // ----- N
@@ -91,6 +97,7 @@ export const OPTIONS = 'options';
 
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
+export const PAYROLL = 'payroll';
 export const PERSON = 'person';
 export const PREVIOUS = 'previous';
 export const PRIMARY = "primary";
@@ -129,7 +136,9 @@ export const SUCCESS = "success";
 
 export const TABLE = 'table';
 export const TEXT = 'text';
+export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
+export const TOOLS = 'tools';
 export const TOTAL = 'total';
 export const TRASH = 'trash';
 export const TRUE = 'true';

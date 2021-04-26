@@ -69,6 +69,8 @@ export const COMMENTS = MSG.COMMENTS;
 export const COMPANIES = MSG.COMPANIES;
 export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
+export const COMPONENTS = MSG.COMPONENTS;
+export const COMUNICA = "Comunic@";
 export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
@@ -125,6 +127,7 @@ export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FISCAL = 'Fiscal';
 export const FOOTER = MSG.FOOTER;
 
 // ----- G
@@ -179,8 +182,7 @@ export const NUMBER = MSG.NUMBER;
 // ----- P
 
 export const PAYMETHOD = MSG.PAYMETHOD;
-export const PAYROLL = "Nómina";
-export const PAYROLLS = "Nóminas";
+export const PAYROLL = "Laboral";
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;
 export const PENDING = MSG.PENDING;
@@ -218,6 +220,8 @@ export const REJECT_INVOICES = MSG.REJECT_INVOICES;
 export const REJECTED = MSG.REJECTED;
 export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
+export const REQUEST = MSG.REQUEST;
+export const REQUESTS = MSG.REQUESTS;
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
@@ -255,8 +259,10 @@ export const TAXES_DETAIL= MSG.TAXES_DETAIL;
 export const TICKET = MSG.TICKET;
 export const TICKETBAI = MSG.TICKETBAI;
 export const TICKETS = MSG.TICKETS;
+export const TIMECONTROL = MSG.TIMECONTROL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
 export const TO_TRASH = MSG.TO_TRASH;
+export const TOOLS = MSG.TOOLS;
 export const TOTAL = MSG.TOTAL;
 export const TOTAL_SUPPLIED = MSG.TOTAL_SUPPLIED;
 export const TRASH = MSG.TRASH;

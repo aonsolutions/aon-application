@@ -140,7 +140,7 @@ export class AonPayrollList extends AonElement {
       this.insertBefore(toolbarEl, filterEl);
       toolbarEl.removeButtons();
       toolbarEl.addButton2(ACTION.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
-      toolbarEl.title = MSG.PAYROLL;
+      toolbarEl.title = MSG.PAYSHEETS;
     } 
   }
 
