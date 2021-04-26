@@ -167,6 +167,9 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	CheckBox salaryBenefitsCB;
 	
 	@UiField
+	Button apportionBenefitsB;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	private int widgetIndex;
@@ -200,7 +203,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		this.availablePaymens = new ArrayList<Payment>();
 		
 		initializePanelList();
-		initializeapportionExtraButton();
+		initializeApportionButtons();
 		initializeCheckBoxesList();
 		getButtonsPanel();
 		
@@ -238,12 +241,19 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		this.panelList.add(salaryExtrasPanel);
 	}
 	
-	private void initializeapportionExtraButton() {
+	private void initializeApportionButtons() {
 		getEnableDisableButton(apportionExtraB, false);
 		apportionExtraB.addClickHandler(e -> {
 			Boolean oldValue = isActiveToggleButton(apportionExtraB);
 			Boolean value = !oldValue;
 			getEnableDisableButton(apportionExtraB, value);
+		});
+		
+		getEnableDisableButton(apportionBenefitsB, false);
+		apportionBenefitsB.addClickHandler(e -> {
+			Boolean oldValue = isActiveToggleButton(apportionBenefitsB);
+			Boolean value = !oldValue;
+			getEnableDisableButton(apportionBenefitsB, value);
 		});
 	}
 	
@@ -526,6 +536,9 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 		} else if (checkBox.getValue() && AonStringUtils.equalsIgnoreCase(name, "[92] PAGA EXTRA BENEFICIOS")) {
 			
+			// Apportion Benefits
+			Boolean apportionBenefits = isActiveToggleButton(apportionBenefitsB);
+			
 			// Benefits payment and extra
 			
 			Payment newPaymentBenefit = new Payment();
@@ -534,7 +547,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			Payment conceptBenefit = getPayment(suggestName);
 			
 			if (conceptBenefit == null) {
-				newPaymentBenefit.setDescription("[90] PAGA BENEFICIOS");
+				newPaymentBenefit.setDescription("[92] PAGA BENEFICIOS");
 				newPaymentBenefit.setExpression(agreementPayment.getExpression());
 				newPaymentBenefit.setIrpfExpression("_P");
 				newPaymentBenefit.setQuoteExpression("_P");
@@ -544,7 +557,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentBenefit.setType(conceptBenefit.getType());
 				newPaymentBenefit.setName(conceptBenefit.getName());
 				newPaymentBenefit.setConceptId(conceptBenefit.getId());
-				newPaymentBenefit.setDescription("[90] PAGA BENEFICIOS");
+				newPaymentBenefit.setDescription("[92] PAGA BENEFICIOS");
 				newPaymentBenefit.setExpression(agreementPayment.getExpression());
 				newPaymentBenefit.setIrpfExpression(conceptBenefit.getIrpfExpression());
 				newPaymentBenefit.setQuoteExpression(conceptBenefit.getQuoteExpression());
@@ -552,19 +565,22 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			}
 				
 			paymentResultList.add(newPaymentBenefit);
+			
+			if(!apportionBenefits) {
 				
-			Extra newExtraBenefits = new Extra();
-			newExtraBenefits.setId(--nextDraftExtraId);
-			newExtraBenefits.setIssueDate("31/03");
-			newExtraBenefits.setStartDate("01/01 -1");
-			newExtraBenefits.setEndDate("31/12 -1");
-			newExtraBenefits.setDomain(newPaymentBenefit.getDomain());
-			newExtraBenefits.setPaymentId(newPaymentBenefit.getId());
-			newExtraBenefits.setPaymentDescription(newPaymentBenefit.getDescription());
-			newExtraBenefits.setAgreementDescription(newPaymentBenefit.getDescription());
-			
-			extraResultList.add(newExtraBenefits);
-			
+				Extra newExtraBenefits = new Extra();
+				newExtraBenefits.setId(--nextDraftExtraId);
+				newExtraBenefits.setIssueDate("31/03");
+				newExtraBenefits.setStartDate("01/01 -1");
+				newExtraBenefits.setEndDate("31/12 -1");
+				newExtraBenefits.setDomain(newPaymentBenefit.getDomain());
+				newExtraBenefits.setPaymentId(newPaymentBenefit.getId());
+				newExtraBenefits.setPaymentDescription(newPaymentBenefit.getDescription());
+				newExtraBenefits.setAgreementDescription(newPaymentBenefit.getDescription());
+				
+				extraResultList.add(newExtraBenefits);
+				
+			}
 		}
 	}
 	

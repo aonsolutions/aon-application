@@ -24,6 +24,12 @@
 			gap: 10px;
 		}
 		
+		.flexBetween{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+		}
+		
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
@@ -116,17 +122,28 @@
 		    </g:HTMLPanel>
 		    
 		    <g:HTMLPanel ui:field="salaryExtrasPanel" styleName="{style.flexColumn}">
-		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryExtraCB" />
-		    		<g:Label>[90-91] PAGA EXTRA VERANO NAVIDAD</g:Label>
-		    		<g:Button ui:field="apportionExtraB" />
-		    		<g:Label>PRORRATEO</g:Label>
+		    	<g:HTMLPanel styleName="{style.flexBetween}">
+		    		<g:HTMLPanel styleName="{style.flex}">
+		    			<g:CheckBox ui:field="salaryExtraCB" />
+			    		<g:Label>[90-91] PAGA EXTRA VERANO NAVIDAD</g:Label>
+			    	</g:HTMLPanel>
+			    	<g:HTMLPanel styleName="{style.flex}">
+			    		<g:Button ui:field="apportionExtraB" />
+			    		<g:Label>PRORRATEO</g:Label>
+			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
-		    	<g:HTMLPanel styleName="{style.flex}">
-		    		<g:CheckBox ui:field="salaryBenefitsCB" />
-		    		<g:Label>[90-91] PAGA EXTRA BENEFICIOS</g:Label>
+		    	<g:HTMLPanel styleName="{style.flexBetween}">
+		    		<g:HTMLPanel styleName="{style.flex}">
+			    		<g:CheckBox ui:field="salaryBenefitsCB" />
+			    		<g:Label>[92] PAGA EXTRA BENEFICIOS</g:Label>
+		    		</g:HTMLPanel>
+		    		<g:HTMLPanel styleName="{style.flex}">
+			    		<g:Button ui:field="apportionBenefitsB" />
+			    		<g:Label>PRORRATEO</g:Label>
+			    	</g:HTMLPanel>
 		    	</g:HTMLPanel>
 		    </g:HTMLPanel>
+		    
 		</g:DeckPanel>
 	    
 	   	<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
