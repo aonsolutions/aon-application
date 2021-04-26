@@ -296,16 +296,6 @@ public class Model111 extends MainEntryPoint {
 		html.setWidth("100%");
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
-		
-		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
-		});
 
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		
@@ -316,35 +306,52 @@ public class Model111 extends MainEntryPoint {
 //		root.add(ui);
 		getOptions().getParentWidget().add(ui);
 		
-		Scheduler.get().scheduleDeferred(new Command() {
-			public void execute() {
-				LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
-				if (getOptions().getFiscalModelId() != null ) {
-					tabPanel.selectTab(LIQUIDATION_TAB);
-					int i = deckPanel.getWidgetIndex(formPanel);
-					deckPanel.showWidget(i);
-					onSelect(getOptions().getFiscalModelId());
-				} else if (getOptions().getNewModel() != null ) {
-					newModel(getOptions().getNewModel()); 
-				}
-			}
-		});		
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Model111 setting LIQUIDATION_TAB");
+			tabPanel.selectTab(LIQUIDATION_TAB);
+			int i = deckPanel.getWidgetIndex(formPanel);
+			deckPanel.showWidget(i);
+		} else {
+			LOGGER.info("Model111 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
 		
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				openFootPanelIfNeeded();
+			}
+		});
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model111 new Model");
+			newModel(getOptions().getNewModel()); 
+		}
 	}
 	
 	private void onSelect(Integer id ) {
-		SERVICE.getMod111(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id
-			, new AsyncCallback<Mod111>() {
+		LOGGER.info("OnSelect Model111 with a ID: " + getOptions().getFiscalModelId());
+		SERVICE.getMod111(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod111>() {
 					@Override
 					public void onSuccess(Mod111 selected) {
 						if (selected == null) {
+							LOGGER.info("onSuccess Model111 with a NULL selected Model ID: ");
 							showErrorMessage(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected);
-							tabPanel.selectTab(LIQUIDATION_TAB);
-							int i = deckPanel.getWidgetIndex(formPanel);
-							deckPanel.showWidget(i);
-							cleanErrorMessage();
+							LOGGER.info("onSuccess Model111 with a ID: " + selected.getId());
+							Scheduler.get().scheduleDeferred(new Command() {
+								public void execute() {
+									select(selected);
+									tabPanel.selectTab(LIQUIDATION_TAB);
+									int i = deckPanel.getWidgetIndex(formPanel);
+									deckPanel.showWidget(i);
+									cleanErrorMessage();
+								}
+							});		
 						}
 					}
 
@@ -390,7 +397,7 @@ public class Model111 extends MainEntryPoint {
 	}
 	
 	private void refreshToolbarState() {
-		newButton.setVisible(!currentMod.isNew());
+		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
 		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());

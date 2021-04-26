@@ -10,7 +10,7 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 	private ModuleCallback externalCallback;
 	private AonData aonData;
 	private boolean embedded = false;
-	private boolean backButtonVisible = true;
+	private boolean backButtonVisible = false;
 
 	public Integer getFiscalModelId() {
 		return fiscalModelId;

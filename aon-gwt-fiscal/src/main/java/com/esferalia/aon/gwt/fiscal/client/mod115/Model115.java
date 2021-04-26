@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod115;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -29,15 +30,18 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -64,6 +68,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model115 extends MainEntryPoint {
 
+	private static final Logger LOGGER = Logger.getLogger(Model115.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	final static int IDENTIFICATION_TAB = 0;
 	final static int LIQUIDATION_TAB = 1;
 	
@@ -87,7 +96,7 @@ public class Model115 extends MainEntryPoint {
 	}
 	
 	private Mod115 currentMod;
-	private AonData aonData;
+	private Model115ModuleOptions options;
 	private boolean dirty;
 
 	@UiField
@@ -243,18 +252,33 @@ public class Model115 extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
+			
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model115ModuleOptions options = new Model115ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
 			}
 		});
 	}
+	private Model115ModuleOptions getOptions() {
+		if (this.options == null) {
+			this.options = new Model115ModuleOptions();
+		}
+		return this.options;
+	}
 
-	public void onModuleLoad(AonData aonData) {
-		this.aonData = aonData;
+	public void onModuleLoad(Model115ModuleOptions options) {
+		this.options = options;
 		AON.ensureInjected();
 
 		Mod115ServiceAsync serviceRaw = GWT.create(Mod115Service.class);
@@ -264,13 +288,34 @@ public class Model115 extends MainEntryPoint {
 
 		Widget ui = MODEL_115_BINDER.createAndBindUi(this);
 
+		if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
 		html.setWidth("100%");
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
 		
+		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+		
+		replacedNumber.setVisibleLength(13);
+		replacedNumber.setMaxLength(13);
+
+//		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+//		root.add(ui);
+		getOptions().getParentWidget().add(ui);
+		
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Model115 setting LIQUIDATION_TAB");
+			tabPanel.selectTab(LIQUIDATION_TAB);
+			int i = deckPanel.getWidgetIndex(formPanel);
+			deckPanel.showWidget(i);
+		} else {
+			LOGGER.info("Model115 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
+		
 		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
@@ -278,14 +323,13 @@ public class Model115 extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
-
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		
-		replacedNumber.setVisibleLength(13);
-		replacedNumber.setMaxLength(13);
-
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model115 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model115 new Model");
+			newModel(getOptions().getNewModel()); 
+		}
 	}
 
 	class Mod115SelectionHandler implements SelectionChangeEvent.Handler {
@@ -322,12 +366,8 @@ public class Model115 extends MainEntryPoint {
 		styleDirtyLabel();
 	}
 	
-	public AonData getAonData() {
-		return this.aonData;
-	}
-	
 	private void refreshToolbarState() {
-		newButton.setVisible(!currentMod.isNew());
+		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
 		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
@@ -362,6 +402,57 @@ public class Model115 extends MainEntryPoint {
 		markAsPendingButton.setVisible(false);
 		markAsFinishedButton.setVisible(false);
 		markAsSentButton.setVisible(false);
+	}
+	
+	private void onSelect(Integer id ) {
+		LOGGER.info("OnSelect Model115 with a ID: " + getOptions().getFiscalModelId());
+		SERVICE.getMod115(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id, new AsyncCallback<Mod115>() {
+					@Override
+					public void onSuccess(Mod115 selected) {
+						if (selected == null) {
+							LOGGER.info("onSuccess Model115 with a NULL selected Model ID: ");
+							showErrorMessage(AON.MSG.unableToFindDeclaration());
+						} else {
+							LOGGER.info("onSuccess Model115 with a ID: " + selected.getId());
+							Scheduler.get().scheduleDeferred(new Command() {
+								public void execute() {
+									select(selected);
+									tabPanel.selectTab(LIQUIDATION_TAB);
+									int i = deckPanel.getWidgetIndex(formPanel);
+									deckPanel.showWidget(i);
+									cleanErrorMessage();
+								}
+							});		
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
+	private void newModel(Mod115 newModel) {
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
+				new AsyncCallback<Mod115>() {
+					@Override
+					public void onSuccess(Mod115 m115) {
+						currentMod = m115;
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						showNewDeclarationPopup();
+						newButton.setEnabled(true);
+					}
+
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						newButton.setEnabled(true);
+					}
+				});
 	}
 	
 	private void select(Mod115 selected) {
@@ -423,19 +514,19 @@ public class Model115 extends MainEntryPoint {
 		FiscalModelIdentificationData<Mod115> identificationData = new FiscalModelIdentificationData<Mod115>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
-			declaration = new Model115AEAT(callback, getAonData());
+			declaration = new Model115AEAT(callback, getOptions().getAonData());
 		} else  if (currentMod.getAdministration() == Administration.GIPUZKOA) {
-			declaration = new Model115Gipuzkoa(callback, getAonData());
+			declaration = new Model115Gipuzkoa(callback, getOptions().getAonData());
 		} else  if (currentMod.getAdministration() == Administration.BIZKAIA) {
-			declaration = new Model115Bizkaia(callback, getAonData());
+			declaration = new Model115Bizkaia(callback, getOptions().getAonData());
 		} else  if (currentMod.getAdministration() == Administration.NAVARRA) {
 			declaration = (currentMod.getPeriod().isQuarterPeriod())
-				?new Model759Navarra(callback, getAonData())
-				:new Model760Navarra(callback, getAonData());
+				?new Model759Navarra(callback, getOptions().getAonData())
+				:new Model760Navarra(callback, getOptions().getAonData());
 		} else  if (currentMod.getAdministration() == Administration.ALAVA) {
 			declaration = (currentMod.getYear() > 2015) 
-				?new Model115Araba2016(callback, getAonData())
-				:new Model115Araba(callback, getAonData());	
+				?new Model115Araba2016(callback, getOptions().getAonData())
+				:new Model115Araba(callback, getOptions().getAonData());	
 		}
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );
@@ -736,22 +827,30 @@ public class Model115 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		if (!isDirty()) {
-			cancel();
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancel();
+			}
 		} else {
-			cancelButton.setEnabled(false);
-			ConfirmDialog cd = new ConfirmDialog();
-			cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
-
-				@Override
-				public void onAccept() {
-					cancel();
-				}
-
-				@Override
-				public void onCancel() {
-					cancelButton.setEnabled(true);
-				}
-			});
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancelButton.setEnabled(false);
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
+	
+					@Override
+					public void onAccept() {
+						cancel();
+					}
+	
+					@Override
+					public void onCancel() {
+						cancelButton.setEnabled(true);
+					}
+				});
+			}
 		}
 	}
 	
@@ -919,7 +1018,7 @@ public class Model115 extends MainEntryPoint {
 				
 			}
 			
-		},getAonData());
+		},getOptions().getAonData());
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}

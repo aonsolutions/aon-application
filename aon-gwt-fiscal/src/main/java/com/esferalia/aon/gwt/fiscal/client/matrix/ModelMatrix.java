@@ -30,6 +30,8 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod115.Model115;
+import com.esferalia.aon.gwt.fiscal.client.mod115.Model115ModuleOptions;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
@@ -626,7 +628,58 @@ public class ModelMatrix extends MainEntryPoint {
 			@Override public void visitM131() {}
 			@Override public void visitM130() {}
 			@Override public void visitM123() {}
-			@Override public void visitM115() {}
+
+			@Override 
+			public void visitM115() {
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+				try {
+					Model115 model115 = new Model115();
+					Model115ModuleOptions options = new Model115ModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(aonData.getDomain().getName());
+					options.setDomain( model.getDomain() );
+					options.setUser(aonData.getUser().getLogin());
+					options.setAonData(aonData);
+					options.setFiscalModelId( id );
+					options.setEmbedded(true);
+					options.setBackButtonVisible(true);
+					options.setExternalCallback( new ModuleCallback() {
+						
+						@Override
+						public void onRemove(IAccountEntryWrapper removed) {
+							hide();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {}
+						
+						@Override
+						public void onExit() {
+							hide();
+						}
+						
+						@Override
+						public void onChange(IAccountEntryWrapper changed) {
+							hide();
+						}
+						private void hide() {
+							entryDialog.hide();
+							entryDialog.clear();
+						}
+					});
+					model115.onModuleLoad( options );
+					entryDialog.center();
+					entryDialog.show();
+				} catch (Throwable t) {
+					Window.alert("Error inesperado! [" + t.getMessage() + "]");
+				}
+			}
 			
 			@Override
 			public void visitM111() {
@@ -652,20 +705,25 @@ public class ModelMatrix extends MainEntryPoint {
 						
 						@Override
 						public void onRemove(IAccountEntryWrapper removed) {
-							entryDialog.hide();
+							hide();
 						}
-						
+
 						@Override
 						public void onFailure(Throwable caught) {}
 						
 						@Override
 						public void onExit() {
-							entryDialog.hide();
+							hide();
 						}
 						
 						@Override
 						public void onChange(IAccountEntryWrapper changed) {
+							hide();
+						}
+						
+						private void hide() {
 							entryDialog.hide();
+							entryDialog.clear();
 						}
 					});
 					model111.onModuleLoad( options );
