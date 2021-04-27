@@ -1,7 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT } from '../environments/environments.js';
 
-
 export class AonSwitch extends AonElement {
 
 	INPUT;
@@ -48,47 +47,48 @@ export class AonSwitch extends AonElement {
   }
 
   set disabled(disabled) {
-    this.setAttribute("disabled", disabled);
+    this.setAttribute(CONSTANT.DISABLED, disabled);
   }
 
 	get readonly() {
-		return this.getAttribute('readonly');
+		return this.getAttribute(CONSTANT.READONLY);
 	}
 
 	set readonly(readonly) {
-		this.setAttribute('readonly', readonly);
+		this.setAttribute(CONSTANT.READONLY, readonly);
 	}
 
+  get name() {
+		return this.getAttribute(CONSTANT.NAME);
+	}
+
+	set name(name) {
+		this.setAttribute(CONSTANT.NAME, name);
+	}
 
   attributeChangedCallback(name, oldValue, newValue) {
+    const el = this.getElement(this.INPUT);
     if(CONSTANT.VALUE === name) {
-      this.getElement(this.INPUT).value = newValue;
-  	}
-    if(CONSTANT.CHECKED === name) {
-      this.getElement(this.INPUT).checked = this.isChecked();
-  	}
-		if(CONSTANT.TITLE === name) {
+      if(el) el.value = newValue;
+  	} else if(CONSTANT.CHECKED === name) {
+      let boolean = newValue == CONSTANT.TRUE;
+      if(el) el.checked = boolean;
+      this.value = boolean;
+  	} else if(CONSTANT.TITLE === name) {
 			let title = this.getElement(this.TITLE);
 			if(title)
 				title.innerHTML = this.hasAttribute(CONSTANT.TITLE)
 					? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
-    }
-
-    if ('disabled' === name) {
-      let el = this.getElement(this.INPUT);
+    } else if (CONSTANT.DISABLED === name) {
       if (el) {
-        if (newValue == "false")
-          el.removeAttribute('disabled');
+        if (newValue ==CONSTANT.FALSE)
+          el.removeAttribute(CONSTANT.DISABLED);
         else
-          el.setAttribute('disabled', newValue);
+          el.setAttribute(CONSTANT.DISABLED, newValue);
       }
-    }
-
-		if ('readonly' === name) {
-      let el = this.getElement(this.INPUT);
-      if (el) {
-        el.setAttribute('readonly', newValue);
-      }
+    } else if (CONSTANT.READONLY === name) {
+      if (el) 
+        el.setAttribute(CONSTANT.READONLY, newValue);
     }
   }
 
@@ -102,7 +102,7 @@ export class AonSwitch extends AonElement {
 	connectedCallback () {
 		this.innerHTML = `
       <label class="aonSwitch">
-        <input id="${this.INPUT}" type="checkbox">
+        <input id="${this.INPUT}" name="${this.name || this.INPUT}" type="checkbox">
         <span id="${this.TITLE}"></span>
       </label>
 		`;
@@ -112,13 +112,19 @@ export class AonSwitch extends AonElement {
       this.value = input.value;
       this.checked = input.checked;
     });
-		if(this.hasAttribute('readonly')) {
-			input.setAttribute('readonly', 'readonly');
+		if(this.hasAttribute(CONSTANT.READONLY)) {
+			input.setAttribute(CONSTANT.READONLY, CONSTANT.READONLY);
 		}
-
+   
     let title = this.getElement(this.TITLE);
 		title.innerHTML = this.hasAttribute(CONSTANT.TITLE)
 			? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
+    let boolean = false
+    if(this.checked && this.checked==CONSTANT.TRUE) {
+      input.checked = true;
+      boolean= true;
+    }
+    this.value = boolean;
 	}
 
   isChecked(){

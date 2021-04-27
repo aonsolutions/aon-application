@@ -11,6 +11,7 @@ import '../../components/aon-table.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
+import { formatNumber } from '../../services/utils.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -55,7 +56,7 @@ export class AonInvoiceList extends AonElement {
 		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
 		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
 		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');
-		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'total', '10%');
+		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '10%');
 		aonInvoiceTable.addColumn(MSG.PAYMETHOD, 'string', 'paymethod', '15%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
@@ -98,6 +99,7 @@ export class AonInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
+					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
@@ -126,6 +128,7 @@ export class AonInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
+					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});

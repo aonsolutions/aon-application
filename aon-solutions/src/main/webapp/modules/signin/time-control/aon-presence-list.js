@@ -6,6 +6,7 @@ import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+import { AonSwitch } from "../../../components/aon-switch.js";
 import { MSG } from "../../../environments/environments.js";
 
 
@@ -83,6 +84,14 @@ export class AonPresenceList extends AonElement {
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs(PRESENCE_FILTER);
+
+    // let filterFormEl = aonFilter.getFormEl();
+    // let aonSwitch = new AonSwitch();
+    // aonSwitch.name = "linked";
+    // aonSwitch.title = "Usuarios vinculados";
+    // aonSwitch.checked = true;
+    // filterFormEl.appendChild(aonSwitch);
+
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.applicationParenEl.setDataFilter(detail);
     });

@@ -57,7 +57,7 @@ export class AonCheckbox extends AonElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('value' === name){
-			let input = document.getElementById(this.getAttribute('id') + 'Input');
+			let input = this.getElement(this.getAttribute('id') + 'Input');
 			if(this.hasAttribute('value') && "true" === this.getAttribute('value')){
 				input.setAttribute('checked', 'checked');
 			} else input.removeAttribute('checked');
@@ -78,7 +78,7 @@ export class AonCheckbox extends AonElement {
 			this.style.display = 'none';
 		}
 
-		let input = document.createElement('input');
+		let input = this.createElement('input');
 		input.setAttribute('id', this.getAttribute('id') + 'Input');
 
 		input.name = this.name;
@@ -91,14 +91,14 @@ export class AonCheckbox extends AonElement {
 			input.setAttribute('disabled', 'disabled');
 		}
 		input.addEventListener('change', () => {
-			this.setAttribute('value', document.getElementById(input.getAttribute('id')).checked);
+			this.setAttribute('value', this.getElement(input.getAttribute('id')).checked);
 		});
 
-		let label = document.createElement('label');
+		let label = this.createElement('label');
 		label.className = 'aonCheckbox';
 		label.style.marginBottom = '0px';
 
-		let span = document.createElement('span');
+		let span = this.createElement('span');
 		span.innerHTML = this.getAttribute('description');
 
 		label.appendChild(input);

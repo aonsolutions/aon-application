@@ -1,6 +1,7 @@
 import { AonElement } from "./AonElement.js";
-import "./aon-dialog.js";
 import { serializeForm } from "../services/utils.js";
+import { CONSTANT } from '../environments/environments.js';
+import "./aon-dialog.js";
 
 export class AonFilter extends AonElement {
   DIALOG;
@@ -10,19 +11,19 @@ export class AonFilter extends AonElement {
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get title() {
-    return this.getAttribute("title");
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute("title", title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {}
@@ -65,7 +66,10 @@ export class AonFilter extends AonElement {
 
     d.setContentHTML(htmlContent);
     d.addAcceptAction(() => this.applyFilter());
- 
+  }
+
+  getDialog(){
+    return this.getElement(this.DIALOG);
   }
 
   dialogClear() {
@@ -75,6 +79,10 @@ export class AonFilter extends AonElement {
   getValues() {
     const form = this.getElement(`${this.id}Form`);
     return serializeForm(form);
+  }
+
+  getFormEl(){
+    return this.getElement(`${this.id}Form`);
   }
 
   applyFilter() {
@@ -90,13 +98,13 @@ export class AonFilter extends AonElement {
     let html = "";
     let newAttributes = this.convertObjToString(attribute, " ");
     switch (type) {
-      case "text":
+      case CONSTANT.TEXT:
         html = `<aon-input ${newAttributes}></aon-input>`;
         break;
-      case "select":
+      case CONSTANT.SELECT:
         html = `<aon-select ${newAttributes}></aon-select>`;
         break;
-      case "date":
+      case CONSTANT.DATE:
         html = `<aon-date ${newAttributes}></aon-date>`;
         break;
     }

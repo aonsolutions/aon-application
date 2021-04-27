@@ -6,6 +6,7 @@ import {Invoice} from './Invoice.js';
 import {setInvoices, setIndex} from './InvoiceCache.js';
 
 import { CONSTANT, MSG } from '../../environments/environments.js'; 
+import { formatNumber } from '../../services/utils.js';
 
 export class AonMobileInvoiceList extends AonElement {
   static get observedAttributes() {
@@ -95,7 +96,7 @@ export class AonMobileInvoiceList extends AonElement {
     let span3 = document.createElement('span');
     span3.className = 'aonLiSpanSubtitle';
 
-    span3.innerHTML = inv.getDateStr() + ' - ' + inv.total + ' €';
+    span3.innerHTML = inv.getDateStr() + ' - ' + formatNumber(inv.total, 2, "EUR");
 
     span.appendChild(i);
     span.appendChild(div);

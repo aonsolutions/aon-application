@@ -36,6 +36,7 @@ export const CUSTOMER = 'customer';
 // ----- D
 
 export const DATE = 'date';
+export const SELECT = 'select';
 export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
@@ -169,7 +170,7 @@ export const VISIBLE = 'visible';
 
 // ----- Z
 
-export const INPUTS_ALL = 'aon-input, aon-date, aon-select, aon-number';
+export const INPUTS_ALL = 'aon-input, aon-date, aon-select, aon-number, aon-switch';
 
 export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
 

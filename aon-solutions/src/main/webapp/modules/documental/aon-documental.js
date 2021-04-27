@@ -8,18 +8,17 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {requestBidoq} from '../../services/request.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {AonSelect} from '../../components/aon-select.js';
-
+import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+import * as ACTION from '../actions.js';
+import { handleError } from '../../services/utils.js';
 import './aon-documental-list.js';
 import './aon-document.js';
-
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
-
 import '../../components/aon-application.js';
 import '../../components/aon-input.js';
 
-import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
-import * as ACTION from '../actions.js';
+
 
 export class AonDocumental extends AonElement {
     _filter;
@@ -388,7 +387,7 @@ export class AonDocumental extends AonElement {
     aonDocumentById(id) {
       getDocument(id)
         .then(doc => this.aonDocument(doc))
-        .catch(error => alert(error.message));
+        .catch(error =>this.getApplication().getToast().start(handleError(error)));
     }
 
     aonDocument(doc) {

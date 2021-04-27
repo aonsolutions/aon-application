@@ -87,7 +87,7 @@ export const serializeForm = (form) => {
   let inputs = [
     ...form.querySelectorAll(CONSTANT.INPUTS_ALL)
   ];
-  let obj = {}
+  let obj = {};
   inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
   return obj;
 }
