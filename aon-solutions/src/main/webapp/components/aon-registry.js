@@ -4,6 +4,7 @@ import { getRegistries } from '../services/service.js';
 
 import { AonBasicTable, AonSuggestion, AonAddress } from './components.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
+import { AonDialog } from './aon-dialog.js';
 
 export class AonRegistry extends AonElement {
 
@@ -45,14 +46,16 @@ export class AonRegistry extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonRegistry';
-    this.TABlE = this.id + CONSTANT.TABLE.initCap();
+    this.TABLE = this.id + CONSTANT.TABLE.initCap();
     this.OPTIONS = this.id + 'Options'
     this.DOCUMENT = this.id + 'Document';
     this.NAME = this.id + 'Name';
+    this.DIALOG = this.id + 'Dialog';
   }
 
   build() {
     this.clear();
+
     let div = this.createElement(TAG.DIV);
     div.style.display = "flex";
     this.appendChild(div);
@@ -121,16 +124,17 @@ export class AonRegistry extends AonElement {
     });
     span2.appendChild(name);
 
+		let options = this.createElement('div');
+		options.id = this.OPTIONS;
+		options.className = CSS.AON_INPUT_LIST_OPTIONS;
+    options.style.width = div.clientWidth;
+    options.style.marginTop = "-16px";
+		this.appendChild(options);
+
     let div2 = this.createElement(TAG.DIV);
     let address = new AonAddress();
     div2.appendChild(address);
     this.appendChild(div2);
-
-		// let options = this.createElement('div');
-		// options.id = this.OPTIONS;
-		// options.className = CSS.AON_INPUT_LIST_OPTIONS;
-    // options.style.width = table.clientWidth;
-		// div.appendChild(options);
   }
 
 	buildOptions(options) {
