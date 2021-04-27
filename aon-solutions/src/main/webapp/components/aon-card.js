@@ -2,7 +2,6 @@ import {AonElement} from './AonElement.js';
 import "./aon-icon-button.js";
 
 export class AonCard extends AonElement {
-
  	CARD;
 	TITLE;
 	TITLE_SECTION1;
@@ -52,8 +51,8 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
-    }
-  }
+		}
+	}
 
 	constructor () {
 		super();
@@ -73,7 +72,6 @@ export class AonCard extends AonElement {
 	}
 
 	build() {
-
 		let div = this.createElement('div');
 		div.id = this.CARD;
     	div.className = 'aonCard';
@@ -102,32 +100,30 @@ export class AonCard extends AonElement {
 		div.appendChild(content);
 	}
 
-  cleanSection2() {
-    let section2 = this.getElement(this.TITLE_SECTION2);
-    section2.innerHTML = '';
-  }
+	cleanSection2() {
+		let section2 = this.getElement(this.TITLE_SECTION2);
+		section2.innerHTML = '';
+	}
 
-  addTitleButton(name, icon, selected, fn) {
-    let id = this.TITLE_SECTION2 + name + 'Button';
-    let background = selected ? 'lightgray' : 'transparent';
-    let btn = `<aon-icon-button id="${id}" icon="${icon}" style="position:relative;" title="${name}" background="${background}"></aon-icon-button>`
+	addTitleButton(name, icon, selected, fn) {
+		let id = this.TITLE_SECTION2 + name + 'Button';
+		let background = selected ? 'lightgray' : 'transparent';
+		let btn = `<aon-icon-button id="${id}" icon="${icon}" style="position:relative;" title="${name}" background="${background}"></aon-icon-button>`
+		let span = this.createElement('span');
+		span.id = id + "Span";
+		span.innerHTML = btn;
 
-    // let button = new AonIconButton();
-    // button.id = this.TITLE_SECTION2 + name + 'Button';
-    // button.icon = icon;
-    // button.style.position = 'relative';
-    // button.title = name;
+		let title = this.getElement(this.TITLE_SECTION2);
+		title.appendChild(span);
 
-    let span = document.createElement('span');
-    span.id = id + "Span";
-    span.innerHTML = btn;
+		let button = this.getElement(id);
+		button.addEventListener('click', fn);
+	}
 
-    let title = this.getElement(this.TITLE_SECTION2);
-    title.appendChild(span);
+	getSection1() {
+		return this.getElement(this.TITLE_SECTION1);
+	}
 
-    let button = document.getElementById(id);
-    button.addEventListener('click', fn);
-  }
 
 	setContent(el) {
 		this.getElement(this.CONTENT).appendChild(el);
@@ -152,10 +148,12 @@ export class AonCard extends AonElement {
 	getCard(){
 		return this.getElement(this.CARD);
 	}
+	
 	getCardTitle(){
 		return this.getElement(this.TITLE);
 	}
 }
+
 if(!window.customElements.get('aon-card')){
   window.customElements.define('aon-card',  AonCard);
 }

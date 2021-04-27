@@ -7,7 +7,7 @@ import { Swipe } from "../../components/swipe.js";
 import { getNotification, markReadNotification } from "../../services/service.js";
 import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
-
+import { createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl } from "./createComponent.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -25,6 +25,14 @@ export class AonNotification extends AonElement {
     this.setAttribute("data", data);
   }
 
+  getFilter() {
+		return this.hasAttribute('filter')? JSON.parse(this.getAttribute('filter'))	: {page:0, peerPage:10};
+	}
+
+	setFilter(filter) {
+		return this.setAttribute('filter', JSON.stringify(filter));
+	}
+
   attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
@@ -32,7 +40,6 @@ export class AonNotification extends AonElement {
   }
 
   connectedCallback() {
-    // this.paintTest();
     this.initialize();
     this.build();
   }
@@ -94,9 +101,15 @@ export class AonNotification extends AonElement {
       this.setFilter(filter);
       const aonNotification = this.getElement(this.AON_NOTIFICATION);
       aonNotification.style.width = "80%";
+      
+      const idUl = this.AON_NOTIFICATION+"Ul";
+      createUl(idUl).appendTo(aonNotification);
+
       await this.loadMore();
       this.changeBadgeComponent();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async loadMore() {
@@ -117,23 +130,17 @@ export class AonNotification extends AonElement {
           });
         }
       } else {
-        datos.map((data, idx) => {
+        datos.map((data) => {
           const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
           aonCard.addEventListener("click", () => {
             this.goNotification(data);
           });
-          const divFooter = this.createElement("div");
-          divFooter.style.display = "flex";
-          divFooter.style.marginTop = "10px";
-          divFooter.style.fontWeight = "800";
-          divFooter.style.fontSize = "10px";
-          const div1 = this.createElement("div");
-          div1.innerHTML =
-            firstLetters(setFullDate(data.date)) + " " + setTime(data.date);
-          div1.style.marginLeft = "auto";
-          divFooter.appendChild(div1);
-          aonCard.setContent(divFooter);
+
+          const divFooter = createDivFooter();
+          aonCard.setContent(divFooter.element);
+          const dateText = firstLetters(setFullDate(data.date)) + " " + setTime(data.date);
+          createDivFooter1(dateText).appendTo(divFooter)
         });
       }
 		}
@@ -155,16 +162,7 @@ export class AonNotification extends AonElement {
   }
 
   createContentDiv() {
-    const aonNotification = this.getElement(this.AON_NOTIFICATION) || this.createElement("div");
-    aonNotification.id = this.AON_NOTIFICATION;
-    aonNotification.style.margin = "auto";
-    aonNotification.style.marginTop = "21px";
-    aonNotification.style.width = "80%";
-    let ul = this.createElement("ul");
-    ul.id = this.AON_NOTIFICATION+"Ul";
-    ul.style = "list-style: none;padding: 0;margin: 0;";
-    aonNotification.appendChild(ul);
-    return aonNotification;
+    return this.getElement(this.AON_NOTIFICATION) || createAonNotification(this.AON_NOTIFICATION).element;
   }
 
   async goNotification(data) {
@@ -192,52 +190,86 @@ export class AonNotification extends AonElement {
    */
   createCard(data, close = false) {
     const ulEl = this.getElement(this.AON_NOTIFICATION+"Ul");
-    const liEl = newComponent({
-      type: "li",
-      styles:{
-        width: "100%",
-        position: "relative",
-        transition: "background-color 1s",
-        "-webkit-touch-callout": "none",
-        "-webkit-user-select": "none",
-        "-khtml-user-select": "none",
-        "-moz-user-select": "none",
-        "-ms-user-select": "none",
-        "user-select": "none"
-      },
-      dataset:data
-    });
 
-    let idCard = this.AON_NOTIFICATION + "Card" + data.id;
+    const idCard = this.AON_NOTIFICATION + "Card" + data.id;
     if(this.getElement(idCard)) this.getElement(idCard).remove();
+
     const aonCard = new AonCard();
-    aonCard.id = idCard;
     aonCard.style.cursor = "pointer";
-    let title = `<span class="aonColorPrimary">${data.title}</span>`;
-    if (!data.status)
-      title = /*html*/ `<span style="color:red;" class="material-icons" id ="${data.id}Icon">error</span>${title}`;
-    aonCard.title = title;
-    liEl.appendChild(aonCard);
-    liEl.appendTo(ulEl);
-    if (!data.status) aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
+    aonCard.id = idCard;    
+    
+    createLi(data).appendTo(ulEl).appendChild(aonCard);
+
     if(close){
-      const label = this.createElement("label");
-      label.textContent = "×";
-      label.style = "float: right;margin-top: -23px;margin-right: -19px;cursor: pointer;padding: 10px;";
-      label.addEventListener("click", (ev) =>{
-          ev.stopPropagation();
-          this.removeFadeOutNotify(aonCard, 600, data.id)
-      });
-      aonCard.getCardTitle().appendChild(label);
+      this.createButtonClose(aonCard, data.id);
+    }
+    const content = createContent(data.body);
+    aonCard.setContent(content.element);
+    if (!data.status) {
+      aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
     }
 
-    aonCard.getCard().classList.add("aonCardFlex");
-    const spanContent = this.createElement("span");
-    spanContent.style = "font-size: 14px;font-family: Times New Roman, Times, serif; word-wrap: break-word;";
-    spanContent.innerHTML = `${data.body}`;
-    aonCard.setContent(spanContent);
-    
+    const titleEl =  aonCard.getSection1();
+    titleEl.style.display="block";
+    titleEl.innerHTML = createTitle(data.title).element.outerHTML;
     return aonCard;
+  }
+
+  changeTabs(position = 0) {
+    let aonNotification = this.getElement(this.AON_NOTIFICATION);
+    if (aonNotification) aonNotification.innerHTML = "";
+    switch (position) {
+      case 0:
+        this.notificationView();
+        break;
+      case 1:
+        this.messengerView();
+        break;
+    }
+  }
+
+  markReadNotification(id){
+    this.changeBadgeComponent(-1);
+    try {markReadNotification({id});} catch (error) { console.log(error)} //markRead
+    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
+    if (aonCard) {
+      aonCard.setBackground("#fff");
+      const icon = this.getElement(`${id}Icon`);
+      if (icon) {
+        icon.remove();
+      }
+    }
+  }
+
+  swipe(){    
+    let tasks = document.querySelectorAll(`#${this.AON_NOTIFICATION} ul > li`);
+    if(tasks.length){
+      new Swipe(tasks).onDelete(({dataset})=>{
+        if(dataset && dataset.id ) {
+          this.markReadNotification(dataset.id);
+        }
+      });
+    }
+  }
+
+  createButtonClose(aonCard, id){
+    newComponent({
+      type: "label",
+      text: "×",
+      styles:{
+        float: "right",
+        marginTop: "-23px",
+        marginRight: "-19px",
+        cursor: "pointer",
+        padding: "10px",
+      },
+      events:{
+        click: (ev) => {
+            ev.stopPropagation();
+            this.removeFadeOutNotify(aonCard, 600, id)
+        }
+      }
+    }).appendTo( aonCard.getCardTitle() );
   }
 
   removeFadeOutNotify(el, speed, notificationId) {
@@ -248,7 +280,6 @@ export class AonNotification extends AonElement {
       divCard.style.opacity = 0;
       setTimeout(() => {
         el.parentNode.removeChild(el);
-        this.changeBadgeComponent(-1);
         this.markReadNotification(notificationId);
       }, speed);
     }
@@ -290,52 +321,5 @@ export class AonNotification extends AonElement {
       }
     }
   }
-
-  changeTabs(position = 0) {
-    let aonNotification = this.getElement(this.AON_NOTIFICATION);
-    if (aonNotification) aonNotification.innerHTML = "";
-    switch (position) {
-      case 0:
-        this.notificationView();
-        break;
-      case 1:
-        this.messengerView();
-        break;
-    }
-  }
-
-  markReadNotification(id){
-    try {markReadNotification({id});} catch (error) { console.log(error)} //markRead
-    let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
-    if (aonCard) {
-      aonCard.setBackground("#fff");
-      const icon = this.getElement(`${id}Icon`);
-      if (icon) {
-        icon.remove();
-      }
-    }
-  }
-
-  getFilter() {
-		return this.hasAttribute('filter')? JSON.parse(this.getAttribute('filter'))	: {page:0, peerPage:10};
-	}
-
-	setFilter(filter) {
-		return this.setAttribute('filter', JSON.stringify(filter));
-	}
-
-  swipe(){    
-    let tasks = document.querySelectorAll(`#${this.AON_NOTIFICATION} ul > li`);
-    if(tasks.length){
-      new Swipe(tasks).onDelete(({dataset})=>{
-        if(dataset && dataset.id ) {
-          this.markReadNotification(dataset.id);
-          this.changeBadgeComponent(-1);
-        }
-      });
-    }
-
-  }
-
 }
 window.customElements.define("aon-notification", AonNotification);

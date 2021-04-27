@@ -34,6 +34,11 @@ export const removeEmpty = (obj) => {
 //order by obj, campo, order asc or desc
 export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value]));
 
+/**
+ * 
+ * @param {string} selector selector html
+ * @returns element
+ */
 export const waitEl = (selector)=> new Promise((resolve,reject)=>{
   let i = 0;
   let element = null;
@@ -73,6 +78,11 @@ export const decimalAdjust = (type, value, exp) => {
   return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
 
+/**
+ * 
+ * @param {element HTML} form 
+ * @returns {Obj} values form 
+ */
 export const serializeForm = (form) => {
   let inputs = [
     ...form.querySelectorAll(CONSTANT.INPUTS_ALL)
@@ -107,10 +117,10 @@ export const timePaser = (time) =>{
 
 
 export const formatDate = (d) => {
-  let date = new Date(d);
-  let day = addZero(date.getDate(), 2);
-  let month = addZero(date.getMonth() + 1, 2);
-  let year = date.getFullYear();
+  const date = new Date(d);
+  const day = addZero(date.getDate(), 2);
+  const month = addZero(date.getMonth() + 1, 2);
+  const year = date.getFullYear();
   return day + '/' + month + '/' + year;
 }
 
@@ -136,9 +146,9 @@ export const addYear = (date, year) => {
 
 export const formatDateOrigin = (d) => {
   let date = new Date(d);
-  let day = addZero(date.getDate(), 2);
-  let month = addZero(date.getMonth() + 1, 2);
-  let year = date.getFullYear();
+  const day = addZero(date.getDate(), 2);
+  const month = addZero(date.getMonth() + 1, 2);
+  const year = date.getFullYear();
   return year + '-' + month + '-' + day;
 }
 
@@ -188,19 +198,32 @@ export const getDayMonth = (date) => {
   const month = months[d.getMonth()];
   return day + '-' + month;
 }
+
 export const geMonthYear = (date) => {
   const d = new Date(date)
   const month = months[d.getMonth()];
   return month+". "+ d.getFullYear();
 }
 
+/**
+ * 
+ * @param {number} value valor
+ * @param {decimals} decimals cantidad de decimales  (opcional)
+ * @param {string} simbolo moneda (EUR) (opcional)
+ * @param {*} locale pais (opcional)
+ * @returns 
+ */
 export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, locale = "de-DE") => {
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   if(simbolo) { options.style = 'currency'; options.currency = simbolo;  }
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
 }
 
-
+/**
+ * 
+ * @param {string or obj} error error del catch 
+ * @returns obj{message, type}
+ */
 export const handleError = (error)=>{
   if(typeof error === "string") error = JSON.parse(error);
   let {message, type} = error;
@@ -208,6 +231,11 @@ export const handleError = (error)=>{
   return {message, type};
 }
 
+/**
+ * 
+ * @param {string} formId form para deshabilitar
+ * @param {string} elems elementos adicionales para deshabilitar (opcional)
+ */
 export const disabledForm = (formId, elems) => {
   let elems_disabled = CONSTANT.INPUTS_ALL;
   if (elems) elems_disabled = elems + ', ' + CONSTANT.INPUTS_ALL;
@@ -215,7 +243,6 @@ export const disabledForm = (formId, elems) => {
       el.disabled = true;
   })
 }
-
 
 /**
  * 
@@ -235,7 +262,7 @@ export const scrollInfinite = (element, fn) => {
     }
 }
 
-/*
+/** 
  * Creates a new component
  * @param {*} properties - json with properties
  *  
@@ -280,8 +307,8 @@ export const scrollInfinite = (element, fn) => {
           properties.element.addEventListener(key,properties.events[key]);
 
   if(properties.styles != undefined) 
-      for (const key in properties.styles)  
-          properties.element.style.setProperty(key,properties.styles[key]);  
+    for (const key in properties.styles)  
+      properties.element.style[key] = properties.styles[key];  
 
   if(properties.classes != undefined) 
       properties.classes.forEach(cl => properties.element.classList.add(cl));
