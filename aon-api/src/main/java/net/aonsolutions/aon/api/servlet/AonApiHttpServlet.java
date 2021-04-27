@@ -93,7 +93,11 @@ public class AonApiHttpServlet extends HttpServlet{
 		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(getToken()) && getDomain().getId() != null && getDomain().getId() != 0) {
 			AonToken aonToken = SECURITY.getAonToken(getToken());
 			user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-					.and(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId()))));
+					.and(f.getDomainProperty().eq(getDomain().getId())));
+			if(user == null || user.getId() == null) {
+				user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+						.and(f.getDomainProperty().eq(getDomain().getParentId())));
+			}
 		} else if(getDomain().getId() != null && getDomain().getId() != 0){
 			user = AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
 		}

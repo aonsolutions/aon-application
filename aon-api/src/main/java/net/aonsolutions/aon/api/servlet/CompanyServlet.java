@@ -307,9 +307,15 @@ public class CompanyServlet extends AonApiHttpServlet{
 			List<String> schemas = AONContext.getSchemas();
 		
 			for(String schema : schemas) {
+				LinkedList<Integer> ds = new LinkedList<Integer>();
 				AON_SOLUTIONS.getCompanyStream(getToken(), schema, null, null)
 				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
-						ac -> jsArray.put(ac.toJSON()));
+						ac -> {
+							if(!ds.contains(ac.getDomain().getId())){
+								jsArray.put(ac.toJSON());
+								ds.add(ac.getDomain().getId());
+							}
+						});
 			}
 		}
 		return jsArray;
