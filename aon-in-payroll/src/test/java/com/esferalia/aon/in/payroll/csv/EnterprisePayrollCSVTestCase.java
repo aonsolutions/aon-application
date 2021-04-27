@@ -50,6 +50,10 @@ public class EnterprisePayrollCSVTestCase {
 		private Double cgcBase;
 		@JsonProperty("Base IRPF")
 		private Double irpfBase;
+		@JsonProperty("Base IRPF Mon.")
+		private Double moneyIrpfBase;
+		@JsonProperty("Base IRPF Esp.")
+		private Double inKindIrpfBase;
 		
 		@JsonProperty("Contingencias comunes empleado")
 		private Double cgc;
@@ -231,6 +235,16 @@ public class EnterprisePayrollCSVTestCase {
 		public Double getEmbargos() {
 			return embargos;
 		}
+
+		@Override
+		public Double getInkindIrpfBase() {
+			return inKindIrpfBase;
+		}
+
+		@Override
+		public Double getMoneyIrpfBase() {
+			return moneyIrpfBase;
+		}
 		
 	}
 	
@@ -260,6 +274,8 @@ public class EnterprisePayrollCSVTestCase {
 				enterprisePayroll.bonuses = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.cgcBase = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.irpfBase = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.inKindIrpfBase = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.moneyIrpfBase = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.cgc = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.cgp = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.unemployment = number.randomDouble(2, 0, 2000);

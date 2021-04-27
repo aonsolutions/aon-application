@@ -47,13 +47,14 @@ export class AonAccounting extends AonElement {
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 
 
-		let options2 = [{
-			name: 'Vista Trimestral',
+		let options2 = [
+		{
+			name: 'Vista Anual',
 			icon: MATERIAL_ICONS.CALENDAR_TODAY,
 			fn: () => {}
 		},
 		{
-			name: 'Vista Anual',
+			name: 'Vista Trimestral',
 			icon: MATERIAL_ICONS.CALENDAR_TODAY,
 			fn: () => {}
 		},

@@ -72,13 +72,19 @@ public class CostPDFServlet extends HttpServlet {
 		
 		
 		
-		if (salaryIds.length > 0)
+		if (salaryIds.length > 0) {
+			
+			String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) != null ?
+					Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) :
+					req.getServerName();
+			
 			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream()
-					, req.getServerName()
+					, domainName
 					, salaryIds
 					, getMonth(AonServletUtils.getFileName(req.getRequestURI()))
 					, getEnterpriseId(request)
 					);
+		}
 		else
 			noIds(resp.getOutputStream(), req.getServerName(), request, types);
 		
@@ -126,9 +132,13 @@ public class CostPDFServlet extends HttpServlet {
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 		
+		String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) != null ?
+				Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) :
+				req.getServerName();
+		
 		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
 				resp.getOutputStream()
-				, req.getServerName()
+				, domainName
 				, startDate
 				, endDate
 				, enterpriseId

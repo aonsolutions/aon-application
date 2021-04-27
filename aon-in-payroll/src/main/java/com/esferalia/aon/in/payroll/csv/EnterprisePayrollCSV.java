@@ -70,6 +70,8 @@ public class EnterprisePayrollCSV {
 		        .addColumn("Otr.Ded.Empl", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Base C.C.", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Base IRPF", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Base IRPF Mon.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Base IRPF Esp.", CsvSchema.ColumnType.NUMBER)
 		        .setUseHeader(true)
 		        .build();
 		
@@ -129,6 +131,8 @@ public class EnterprisePayrollCSV {
 
 			enterprisePayroll.cgcBase = s.getCommonContingenciesBase();
 			enterprisePayroll.irpfBase = s.getIrpfBase();
+			enterprisePayroll.inKindIrpfBase = s.getInkindIrpfBase();
+			enterprisePayroll.moneyIrpfBase = s.getMoneyIrpfBase();
 
 			enterprisePayroll.raw = s.getTotalPayment();
 			enterprisePayroll.liquid = s.getTotalLiquid();
@@ -341,6 +345,10 @@ public class EnterprisePayrollCSV {
 		private Double cgcBase;
 		@JsonProperty("Base IRPF")
 		private Double irpfBase;
+		@JsonProperty("Base IRPF Mon.")
+		private Double moneyIrpfBase;
+		@JsonProperty("Base IRPF Esp.")
+		private Double inKindIrpfBase;
 		
 		@JsonProperty("C.C.Empl.")
 		private Double cgc;
@@ -525,6 +533,16 @@ public class EnterprisePayrollCSV {
 
 		public String getSalaryTypeStr() {
 			return salaryTypeStr;
+		}
+
+		@Override
+		public Double getInkindIrpfBase() {
+			return inKindIrpfBase;
+		}
+
+		@Override
+		public Double getMoneyIrpfBase() {
+			return moneyIrpfBase;
 		}
 		
 		

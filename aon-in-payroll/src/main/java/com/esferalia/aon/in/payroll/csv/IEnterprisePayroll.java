@@ -19,6 +19,8 @@ public interface IEnterprisePayroll {
 	
 	public Double getCgcBase();
 	public Double getIrpfBase();
+	public Double getInkindIrpfBase();
+	public Double getMoneyIrpfBase();
 	
 	public Double getCgc();
 	public Double getCgp();

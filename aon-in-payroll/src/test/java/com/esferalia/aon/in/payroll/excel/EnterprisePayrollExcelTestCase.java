@@ -56,6 +56,8 @@ public class EnterprisePayrollExcelTestCase {
 
 		private Double cgcBase;
 		private Double irpfBase;
+		private Double moneyIrpfBase;
+		private Double inKindIrpfBase;
 
 		private Double cgc;
 		private Double cgp;
@@ -218,6 +220,16 @@ public class EnterprisePayrollExcelTestCase {
 		@Override
 		public Double getEmbargos() {
 			return embargos;
+		}
+
+		@Override
+		public Double getInkindIrpfBase() {
+			return inKindIrpfBase;
+		}
+
+		@Override
+		public Double getMoneyIrpfBase() {
+			return moneyIrpfBase;
 		}
 
 	}

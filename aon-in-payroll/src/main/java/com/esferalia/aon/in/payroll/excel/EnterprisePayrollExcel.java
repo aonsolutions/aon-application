@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -114,6 +113,9 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("cgcBase", "BASE C.C.");
 			DEFAULT_HEADER.put("irpfBase", "BASE IRPF");
+			DEFAULT_HEADER.put("joint6", "");
+			DEFAULT_HEADER.put("moneyIrpfBase", "IRPF MON.");
+			DEFAULT_HEADER.put("inKindIrpfBase", "IRPF ESP.");
 		}
 		//SUMMARY
 		{
@@ -377,6 +379,9 @@ public class EnterprisePayrollExcel {
 		CellStyle jointCellStyle = wb.createCellStyle();
 		jointCellStyle.setBorderLeft(BorderStyle.THIN);
 		jointCellStyle.setBorderRight(BorderStyle.THIN);
+		
+		final int completeLength = 34;
+		final int summaryLength = 11;
 
 		Row row = null;
 
@@ -401,7 +406,7 @@ public class EnterprisePayrollExcel {
 
 			Iterator<String> itHead = finalHeader.keySet().iterator();
 			
-			int lCell = excelType == ExcelType.COMPLETE ? 31 : 11;
+			int lCell = excelType == ExcelType.COMPLETE ? completeLength : summaryLength;
 			
 			totals.addMergedRegion(new CellRangeAddress(0, 0, 0, lCell));
 			row = totals.createRow(0);
@@ -446,7 +451,7 @@ public class EnterprisePayrollExcel {
 				jointCell = row.createCell(10, CellType.STRING);
 				jointCell.setCellStyle(jointCellStyle);
 				
-				epCell = row.createCell(11, CellType.STRING);
+				epCell = row.createCell(summaryLength, CellType.STRING);
 				epCell.setCellStyle(headerCellStyle);
 				epCell.setCellValue("TGSS");
 				
@@ -505,6 +510,10 @@ public class EnterprisePayrollExcel {
 						.allMatch(p -> ((IEnterprisePayroll) p).getCgcBase() == null);
 				boolean thereIsIrpfBase = !Arrays.stream(arr)
 						.allMatch(p -> ((IEnterprisePayroll) p).getIrpfBase() == null);
+				boolean thereIsInKindIrpfBase = !Arrays.stream(arr)
+						.allMatch(p -> ((IEnterprisePayroll) p).getInkindIrpfBase() == null);
+				boolean thereIsMoneyIrpfBase = !Arrays.stream(arr)
+						.allMatch(p -> ((IEnterprisePayroll) p).getMoneyIrpfBase() == null);
 				boolean thereIsCgc = !Arrays.stream(arr).allMatch(
 						p -> ((IEnterprisePayroll) p).getCgc() == null || ((IEnterprisePayroll) p).getCgc() == 0);
 				boolean thereIsCgp = !Arrays.stream(arr).allMatch(
@@ -662,9 +671,12 @@ public class EnterprisePayrollExcel {
 						
 						if (!thereIsCgcBase)
 							finalHeader.remove("cgcBase");
-						
 						if (!thereIsIrpfBase)
 							finalHeader.remove("irpfBase");
+						if (!thereIsMoneyIrpfBase)
+							finalHeader.remove("moneyIrpfBase");
+						if (!thereIsInKindIrpfBase)
+							finalHeader.remove("inKindIrpfBase");
 						
 						
 						
@@ -1062,9 +1074,21 @@ public class EnterprisePayrollExcel {
 							} else
 								createDoubleCell(row, column++, payroll.getCgcBase(), style);
 						}
-
 						if (thereIsIrpfBase) {
 							createDoubleCell(row, column++, payroll.getIrpfBase(), style);
+						}
+						
+						//JOINT
+						{
+							Cell jointCell = row.createCell(column++, CellType.STRING);
+							jointCell.setCellStyle(jointCellStyle);
+						}
+						
+						if (thereIsMoneyIrpfBase) {
+							createDoubleCell(row, column++, payroll.getMoneyIrpfBase(), style);
+						}
+						if (thereIsInKindIrpfBase) {
+							createDoubleCell(row, column++, payroll.getInkindIrpfBase(), style);
 						}
 					}
 					
@@ -1510,7 +1534,7 @@ public class EnterprisePayrollExcel {
 							tCell.setCellType(CellType.FORMULA);
 							tCell.setCellStyle(doubleCellStyle);
 						}
-
+						
 						if (thereIsIrpfBase) {
 							tCell = row.createCell(cell++);
 							tCell.setCellType(CellType.FORMULA);
@@ -1528,6 +1552,50 @@ public class EnterprisePayrollExcel {
 							finalCellStyle.setBorderBottom(BorderStyle.THIN);
 							tCell.setCellStyle(finalCellStyle);
 						}
+						
+						//JOINT
+						{
+							column++;
+							Cell jointCell = row.createCell(cell++, CellType.STRING);
+							jointCell.setCellStyle(jointCellStyle);
+						}
+						
+						if (thereIsMoneyIrpfBase) {
+							tCell = row.createCell(cell++);
+							tCell.setCellType(CellType.FORMULA);
+							tCell.setCellFormula("sum('" + workplace + "'!" + CellReference.convertNumToColString(column) + "1:" + CellReference.convertNumToColString(column) + last + ")");
+							CellStyle finalCellStyle = wb.createCellStyle();
+							finalCellStyle.setBorderRight(BorderStyle.THIN);
+							finalCellStyle.setBorderBottom(BorderStyle.THIN);
+							tCell.setCellStyle(finalCellStyle);
+							column++;
+						} else {
+							tCell = row.createCell(cell++);
+							tCell.setCellType(CellType.FORMULA);
+							CellStyle finalCellStyle = wb.createCellStyle();
+							finalCellStyle.setBorderRight(BorderStyle.THIN);
+							finalCellStyle.setBorderBottom(BorderStyle.THIN);
+							tCell.setCellStyle(finalCellStyle);
+						}
+						
+						if (thereIsInKindIrpfBase) {
+							tCell = row.createCell(cell++);
+							tCell.setCellType(CellType.FORMULA);
+							tCell.setCellFormula("sum('" + workplace + "'!" + CellReference.convertNumToColString(column) + "1:" + CellReference.convertNumToColString(column) + last + ")");
+							CellStyle finalCellStyle = wb.createCellStyle();
+							finalCellStyle.setBorderRight(BorderStyle.THIN);
+							finalCellStyle.setBorderBottom(BorderStyle.THIN);
+							tCell.setCellStyle(finalCellStyle);
+							column++;
+						} else {
+							tCell = row.createCell(cell++);
+							tCell.setCellType(CellType.FORMULA);
+							CellStyle finalCellStyle = wb.createCellStyle();
+							finalCellStyle.setBorderRight(BorderStyle.THIN);
+							finalCellStyle.setBorderBottom(BorderStyle.THIN);
+							tCell.setCellStyle(finalCellStyle);
+						}
+						
 					}					
 
 				}
@@ -1540,7 +1608,7 @@ public class EnterprisePayrollExcel {
 				if (totals != null)
 					for (int i = 0; i<=totals.getLastRowNum(); i++) {
 						Row r = totals.getRow(i);
-						int lCell = (excelType == ExcelType.COMPLETE) ? 32 : 12;
+						int lCell = (excelType == ExcelType.COMPLETE) ? completeLength + 1 : summaryLength +1;
 						Cell borderCell = r.createCell(lCell);
 						borderCell.setCellStyle(wb.createCellStyle());
 						borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);
@@ -1558,11 +1626,11 @@ public class EnterprisePayrollExcel {
 
 		if (totals != null) {
 			if (excelType == ExcelType.COMPLETE)
-				for (int i = 0; i <= 31; i++) {
+				for (int i = 0; i <= completeLength; i++) {
 					totals.autoSizeColumn(i);
 				}
 			else if (excelType == ExcelType.SUMMARY)
-				for (int i = 0; i <= 11; i++) {
+				for (int i = 0; i <= summaryLength; i++) {
 					totals.autoSizeColumn(i);
 				}
 		}
@@ -1594,7 +1662,6 @@ public class EnterprisePayrollExcel {
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
 		return salaries.map(s -> {
-
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 			enterprisePayroll.employee = s.getEmployeeName();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
@@ -1606,6 +1673,8 @@ public class EnterprisePayrollExcel {
 
 			enterprisePayroll.cgcBase = s.getCommonContingenciesBase();
 			enterprisePayroll.irpfBase = s.getIrpfBase();
+			enterprisePayroll.inKindIrpfBase = s.getInkindIrpfBase();
+			enterprisePayroll.moneyIrpfBase = s.getMoneyIrpfBase();
 
 			enterprisePayroll.raw = s.getTotalPayment();
 			enterprisePayroll.liquid = s.getTotalLiquid();
@@ -1634,29 +1703,29 @@ public class EnterprisePayrollExcel {
 			enterprisePayroll.bonuses = s.getBonuses().stream().mapToDouble(Bonus::getAmount).sum();
 			// PICKING UP DEDUCTIONS
 			Double cgc = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double cgp = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.IT.ordinal()
-							|| d.getDeductionType().ordinal() == DeductionType.IMS.ordinal())
+					.filter(d -> (d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.IT.ordinal())
+							|| (d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.IMS.ordinal()))
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double unemployment = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double jobTraining = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double advancedPayment = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.ADVANCE_PAYMENT.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.ADVANCE_PAYMENT.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double otherDeductions = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.OTHER.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.OTHER.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double estruc = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double noEstruct = s.getDeductions().stream()
-					.filter(d -> d.getDeductionType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
+					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
 					.mapToDouble(d -> d.getAmount()).sum();
 			Double embargos = s.getEmbargos().stream()
 					.mapToDouble(Embargo::getAmount).sum();
@@ -1832,6 +1901,8 @@ public class EnterprisePayrollExcel {
 
 		private Double cgcBase;
 		private Double irpfBase;
+		private Double moneyIrpfBase;
+		private Double inKindIrpfBase;
 
 		private Double cgc;
 		private Double cgp;
@@ -1994,6 +2065,16 @@ public class EnterprisePayrollExcel {
 		@Override
 		public Double getEmbargos() {
 			return embargos;
+		}
+
+		@Override
+		public Double getInkindIrpfBase() {
+			return inKindIrpfBase;
+		}
+
+		@Override
+		public Double getMoneyIrpfBase() {
+			return moneyIrpfBase;
 		}
 
 	}

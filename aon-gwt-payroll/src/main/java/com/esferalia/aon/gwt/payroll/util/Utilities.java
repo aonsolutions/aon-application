@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -7,6 +9,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -251,6 +255,17 @@ public class Utilities {
 		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date));
 		return formattedDate;
+	}
+	
+	public static String getDomainNameByEnterpriseId(String domain, Integer enterpriseId) {
+		try {
+			AONContext aonContext = AONContext.getAONContext(domain, "");
+			Integer dom = AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), "", enterpriseId).getDomain();
+			DomainRecord domainRecord = aonContext.getDslContext().select().from(DOMAIN).where(DOMAIN.ID.eq(dom)).fetchAnyInto(DOMAIN);
+			return domainRecord.getName();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }
