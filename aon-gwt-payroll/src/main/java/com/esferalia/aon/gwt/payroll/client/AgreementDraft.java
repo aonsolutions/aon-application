@@ -870,6 +870,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				public void onChange(ChangeEvent event) {
 					payment.setType(PaymentEditor.this.typeListBox.getSelected());
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+//					AgreementDraft.this.calculate();
 					AgreementDraft.this.calculate(getDescriptionFocusCallback());
 				}
 			});
@@ -898,7 +899,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					//Window.alert("DEVENGO");
 					payment.setExpression(event.getValue());
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getExpressionFocusCallback());
+					AgreementDraft.this.calculate(getNewDescriptionFocusCallback());
 					//Window.alert("PAGOS : "+AgreementDraft.this.agreementDraftObject.getPayments().size());
 //					if(AgreementDraft.this.agreementDraftObject.getPayments().size()==1){
 //						EmployeeCalendarUntillDialog selectedDate = new EmployeeCalendarUntillDialog("Fecha inicio tramo", 
@@ -929,7 +930,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				public void onValueChange(ValueChangeEvent<String> event) {
 					payment.setDescription(event.getValue());
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getExpressionFocusCallback());
+//					AgreementDraft.this.calculate();
+//					AgreementDraft.this.calculate(getExpressionFocusCallback());
 
 				}
 			});
@@ -960,6 +962,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						payment.setExpression(getExpression4Payment(concept));
 						
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+//						AgreementDraft.this.calculate();
 						AgreementDraft.this.calculate(getExpressionFocusCallback());
 					} else {
 						typeListBox.setSelected(payment.getType());
@@ -981,7 +984,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 					payment.setDescription(description);
 					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getExpressionFocusCallback());
+//					AgreementDraft.this.calculate();
+//					AgreementDraft.this.calculate(getExpressionFocusCallback());
 
 				}
 			});
@@ -1019,6 +1023,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			};
 		}
 
+		
+		CalculateCallback getNewDescriptionFocusCallback() {
+			return new SuccessCalculateCallback() {
+				@Override
+				public void onCalculateSucces(AgreementDraftObject object) {
+					PaymentEditor editor = getLastPaymentEditor();
+					if (editor != null)
+						editor.descriptionBox.setFocus(true);
+				}
+			};
+		}
 	}
 
 	private class PaymentSuggestionDisplay extends AbstractItemSuggestionDisplay<Payment> {
@@ -4139,6 +4154,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			if (id == editor.payment.getId())
 				return editor;
 		return null;
+	}
+	
+	private PaymentEditor getLastPaymentEditor() {
+		return paymentEditors.isEmpty() ? null : paymentEditors.get(paymentEditors.size() - 1);
 	}
 
 	private PaymentEditor getNextPaymentEditorFor(int id) {
