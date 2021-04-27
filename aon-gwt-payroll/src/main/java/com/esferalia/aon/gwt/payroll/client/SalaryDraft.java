@@ -5272,6 +5272,7 @@ public class SalaryDraft extends ResizeComposite
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		case OTHER:
+		case IN_KIND:
 			return newPercentLabel("");
 		case UNEMPLOYMENT:
 			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
