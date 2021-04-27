@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -1126,7 +1127,7 @@ public abstract class ITWidget extends ResizeComposite {
 		it.setMaternityType(jsIT.getMaternityType());
 		it.setId(jsIT.getId());
 		it.setIsParent(jsIT.isParent());
-		//it.setITParts(jsIT.getITParts());
+		it.setITParts(createDefaultITParts(jsIT));
 		it.setParent(jsIT.getParent());
 		it.setStartDate(parseDate(jsIT.getStartDate()));
 		it.setTypeHighPart(jsIT.getTypeHighPart());
@@ -1134,6 +1135,20 @@ public abstract class ITWidget extends ResizeComposite {
 		return it;
 	}
 	
+	private static List<ITPart> createDefaultITParts(JsIT jsIT) {
+		List<ITPart> itParts = new ArrayList<ITPart>();
+		
+		// Low ITPart
+		ITPart itPart = new ITPart();
+		itPart.setType((byte)0);
+		itPart.setDomain(jsIT.getDomain());
+		itPart.setDate(parseDate(jsIT.getStartDate()));
+		
+		itParts.add(itPart);
+		
+		return itParts;
+	}
+
 	private static ContractInfo fromJsContractInfo(JsContractInfo jsContractInfo) {
 		ContractInfo contractInfo = new ContractInfo();	
 		contractInfo.setActivityId(jsContractInfo.getActivityId());

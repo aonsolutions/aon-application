@@ -2,8 +2,11 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
+import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
@@ -11,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,8 +44,10 @@ import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.in.payroll.tgss.fie.FieListener;
 import com.esferalia.aon.in.payroll.tgss.fie.FieParser;
 import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
@@ -483,6 +489,41 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
 		
 				contractLeaveRecord.store();
+				
+				// Create Contract Leave Detail
+				
+				ContractLeaveDetailRecord lowContractLeaveDetail = ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+					.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
+					.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)0)
+					.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+					.set(CONTRACT_LEAVE_DETAIL.DATE,itStartDate)
+					.returning(CONTRACT_LEAVE_DETAIL.ID)
+					.fetchOne();
+				
+				if(null != contractLeaveRecord.getEndDate())
+					ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
+						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)2)
+						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+						.set(CONTRACT_LEAVE_DETAIL.DATE, contractLeaveRecord.getEndDate())
+						.execute();
+				
+				// Create Leave Detail
+				
+				LeaveBatchRecord leaveBatchRecord = ctx.insertInto(LEAVE_BATCH)
+					.set(LEAVE_BATCH.DOMAIN, contractRecord.getDomain())
+					.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(LEAVE_BATCH.STATUS, (byte)1)
+					.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
+					.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
+					.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
+					.returning(LEAVE_BATCH.ID).fetchOne();
+				
+				ctx.insertInto(LEAVE_BATCH_DETAIL)
+					.set(LEAVE_BATCH_DETAIL.DOMAIN, contractRecord.getDomain())
+					.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
+					.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, lowContractLeaveDetail.getId())
+					.execute();
 						
 				return contractLeaveRecord.getId();
 				

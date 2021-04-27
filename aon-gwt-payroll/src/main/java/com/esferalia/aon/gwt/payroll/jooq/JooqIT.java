@@ -544,17 +544,23 @@ public class JooqIT {
 						it.addITPart(itPart);
 						
 						if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
-							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.eq(
-									dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
-										.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
-										.fetchOne(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
-							)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
+							Record leaveBatchDetailRecord = dslContext.select().from(LEAVE_BATCH_DETAIL)
+								.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
+								.fetchOne();
 							
-							if(null != leaveBatchRecord) {
-								it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
-								it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
-							} else
+							if(null == leaveBatchDetailRecord)
 								it.setIsComunicate(false);
+							else {
+								Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH)
+										.where(LEAVE_BATCH.ID.eq(leaveBatchDetailRecord.get(LEAVE_BATCH_DETAIL.LEAVE_BATCH)))
+										.and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA"))
+										.fetchOne();
+								if(null != leaveBatchRecord) {
+									it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
+									it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
+								} else
+									it.setIsComunicate(false);
+							}
 						}
 						
 					}
@@ -899,9 +905,13 @@ public class JooqIT {
 				
 				dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 				
+				dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+				
 				dslContext.delete(CONTRACT_LEAVE_DETAIL)
 					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(it.getId()))
 					.execute();
+				
+				dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 				
 				for(ITPart itPart : it.getITParts()) {
 					
