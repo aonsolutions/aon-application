@@ -33,10 +33,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -93,6 +96,7 @@ public class Model115 extends MainEntryPoint {
 		LinkedList<Pair<String, String>> getInformationLinks();
 		void calculateAndRefresh(IFiscalModelCallback<Mod115> callback);
 		void printButtonClick();
+		HandlerRegistration addAttachHandler(Handler handler);
 	}
 	
 	private Mod115 currentMod;
@@ -304,17 +308,16 @@ public class Model115 extends MainEntryPoint {
 //		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 //		root.add(ui);
 		getOptions().getParentWidget().add(ui);
-		
 		if (getOptions().getFiscalModelId() != null ) {
-			LOGGER.info("Model115 setting LIQUIDATION_TAB");
-			tabPanel.selectTab(LIQUIDATION_TAB);
-			int i = deckPanel.getWidgetIndex(formPanel);
-			deckPanel.showWidget(i);
+			LOGGER.info("Access to Model115 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model115 new Model");
+			newModel(getOptions().getNewModel()); 
 		} else {
 			LOGGER.info("Model115 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
-		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
@@ -323,13 +326,27 @@ public class Model115 extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
-		if (getOptions().getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model115 with a ID: " + getOptions().getFiscalModelId());
-			onSelect(getOptions().getFiscalModelId());
-		} else if (getOptions().getNewModel() != null ) {
-			LOGGER.info("Access to Model115 new Model");
-			newModel(getOptions().getNewModel()); 
-		}
+	}
+
+	private void onSelect(Integer id ) {
+		LOGGER.info("OnSelect Model115 with a ID: " + getOptions().getFiscalModelId());
+		SERVICE.getMod115(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id, new AsyncCallback<Mod115>() {
+					@Override
+					public void onSuccess(Mod115 selected) {
+						if (selected == null) {
+							LOGGER.info("onSuccess Model115 with a NULL selected Model ID: ");
+							showErrorMessage(AON.MSG.unableToFindDeclaration());
+						} else {
+							LOGGER.info("onSuccess Model115 with a ID: " + selected.getId());
+							select(selected);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
 	}
 
 	class Mod115SelectionHandler implements SelectionChangeEvent.Handler {
@@ -367,6 +384,7 @@ public class Model115 extends MainEntryPoint {
 	}
 	
 	private void refreshToolbarState() {
+		LOGGER.info("Model115 refreshToolbarState! ");
 		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
@@ -402,35 +420,6 @@ public class Model115 extends MainEntryPoint {
 		markAsPendingButton.setVisible(false);
 		markAsFinishedButton.setVisible(false);
 		markAsSentButton.setVisible(false);
-	}
-	
-	private void onSelect(Integer id ) {
-		LOGGER.info("OnSelect Model115 with a ID: " + getOptions().getFiscalModelId());
-		SERVICE.getMod115(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id, new AsyncCallback<Mod115>() {
-					@Override
-					public void onSuccess(Mod115 selected) {
-						if (selected == null) {
-							LOGGER.info("onSuccess Model115 with a NULL selected Model ID: ");
-							showErrorMessage(AON.MSG.unableToFindDeclaration());
-						} else {
-							LOGGER.info("onSuccess Model115 with a ID: " + selected.getId());
-							Scheduler.get().scheduleDeferred(new Command() {
-								public void execute() {
-									select(selected);
-									tabPanel.selectTab(LIQUIDATION_TAB);
-									int i = deckPanel.getWidgetIndex(formPanel);
-									deckPanel.showWidget(i);
-									cleanErrorMessage();
-								}
-							});		
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				});
 	}
 	
 	private void newModel(Mod115 newModel) {
@@ -529,6 +518,24 @@ public class Model115 extends MainEntryPoint {
 				:new Model115Araba(callback, getOptions().getAonData());	
 		}
 		if (declaration != null) {
+			declaration.addAttachHandler(new Handler() {
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if (event.isAttached() ) {
+						
+						Scheduler.get().scheduleDeferred(new Command() {
+							public void execute() {
+								LOGGER.info("Declaration Attached!");
+								tabPanel.selectTab(LIQUIDATION_TAB);
+								int i = deckPanel.getWidgetIndex(formPanel);
+								deckPanel.showWidget(i);
+								cleanErrorMessage();
+								refreshToolbarState();
+							}
+						});		
+					}
+				}
+			});
 			declarationContainer.setWidget( declaration );
 			infoContainer.setWidget(declaration.getDeclarationPanel());
 		} else {

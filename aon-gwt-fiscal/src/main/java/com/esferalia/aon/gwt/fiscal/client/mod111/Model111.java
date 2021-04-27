@@ -33,10 +33,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -94,6 +97,7 @@ public class Model111 extends MainEntryPoint {
 		LinkedList<Pair<String, String>> getInformationLinks();
 		void calculateAndRefresh(IFiscalModelCallback<Mod111> callback);
 		void printButtonClick();
+		HandlerRegistration addAttachHandler(Handler handler);
 	}
 	
 	private Mod111 currentMod;
@@ -305,17 +309,16 @@ public class Model111 extends MainEntryPoint {
 //		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 //		root.add(ui);
 		getOptions().getParentWidget().add(ui);
-		
 		if (getOptions().getFiscalModelId() != null ) {
-			LOGGER.info("Model111 setting LIQUIDATION_TAB");
-			tabPanel.selectTab(LIQUIDATION_TAB);
-			int i = deckPanel.getWidgetIndex(formPanel);
-			deckPanel.showWidget(i);
+			LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model111 new Model");
+			newModel(getOptions().getNewModel()); 
 		} else {
 			LOGGER.info("Model111 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
-		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
@@ -324,13 +327,6 @@ public class Model111 extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
-		if (getOptions().getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
-			onSelect(getOptions().getFiscalModelId());
-		} else if (getOptions().getNewModel() != null ) {
-			LOGGER.info("Access to Model111 new Model");
-			newModel(getOptions().getNewModel()); 
-		}
 	}
 	
 	private void onSelect(Integer id ) {
@@ -343,15 +339,7 @@ public class Model111 extends MainEntryPoint {
 							showErrorMessage(AON.MSG.unableToFindDeclaration());
 						} else {
 							LOGGER.info("onSuccess Model111 with a ID: " + selected.getId());
-							Scheduler.get().scheduleDeferred(new Command() {
-								public void execute() {
-									select(selected);
-									tabPanel.selectTab(LIQUIDATION_TAB);
-									int i = deckPanel.getWidgetIndex(formPanel);
-									deckPanel.showWidget(i);
-									cleanErrorMessage();
-								}
-							});		
+							select(selected);
 						}
 					}
 
@@ -397,6 +385,7 @@ public class Model111 extends MainEntryPoint {
 	}
 	
 	private void refreshToolbarState() {
+		LOGGER.info("Model111 refreshToolbarState! ");
 		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
@@ -520,6 +509,24 @@ public class Model111 extends MainEntryPoint {
 			}
 		}
 		if (declaration != null) {
+			declaration.addAttachHandler(new Handler() {
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if (event.isAttached() ) {
+						
+						Scheduler.get().scheduleDeferred(new Command() {
+							public void execute() {
+								LOGGER.info("Declaration Attached!");
+								tabPanel.selectTab(LIQUIDATION_TAB);
+								int i = deckPanel.getWidgetIndex(formPanel);
+								deckPanel.showWidget(i);
+								cleanErrorMessage();
+								refreshToolbarState();
+							}
+						});		
+					}
+				}
+			});
 			declarationContainer.setWidget( declaration );
 			infoContainer.setWidget(declaration.getDeclarationPanel()) ;
 		} else {
