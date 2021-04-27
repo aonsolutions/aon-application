@@ -233,21 +233,21 @@ public class DiaryImport {
 			} catch (Exception e) {
 				date = AonDateUtils.parse(o.toString(), "dd/MM/yyyy");
 			}
-			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), login, date);
-			if(ap == null) { 
-				Integer year = AonDateUtils.getYear(date);
-				ap = ACCOUNTING.save(domain.getName(), domain.getId(), login, new AccountPeriod()
-						.setDomain(domain.getId())
-						.setName(year.toString())
-						.setInitiationDate(AonDateUtils.getYearFirstDay(year))
-						.setDeadline(AonDateUtils.getYearLastDay(year))
-						.setStatus(AccountPeriodStatus.ACTIVE)
-				);
-			}
+//			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), login, date);
+//			if(ap == null) { 
+//				Integer year = AonDateUtils.getYear(date);
+//				ap = ACCOUNTING.save(domain.getName(), domain.getId(), login, new AccountPeriod()
+//						.setDomain(domain.getId())
+//						.setName(year.toString())
+//						.setInitiationDate(AonDateUtils.getYearFirstDay(year))
+//						.setDeadline(AonDateUtils.getYearLastDay(year))
+//						.setStatus(AccountPeriodStatus.ACTIVE)
+//				);
+//			}
 			diary.get(asiento).getEntry().setEntryDate(date);
-			diary.get(asiento).getEntry().setPeriod(ap.getId());
-			diary.get(asiento).getEntry().setPeriodName(ap.getName());
-			diary.get(asiento).getEntry().setPeriodStatus(ap.getStatus());
+//			diary.get(asiento).getEntry().setPeriod(ap.getId());
+//			diary.get(asiento).getEntry().setPeriodName(ap.getName());
+//			diary.get(asiento).getEntry().setPeriodStatus(ap.getStatus());
 			return ;
 		}
 		
@@ -354,6 +354,22 @@ public class DiaryImport {
 
 		AccountEntryImportClass ae = dvs.get(index);
 		try {
+			
+			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", ae.getEntry().getEntryDate());
+			if(ap == null) { 
+				Integer year = AonDateUtils.getYear(ae.getEntry().getEntryDate());
+				ap = ACCOUNTING.save(domain.getName(), domain.getId(), "", new AccountPeriod()
+						.setDomain(domain.getId())
+						.setName(year.toString())
+						.setInitiationDate(AonDateUtils.getYearFirstDay(year))
+						.setDeadline(AonDateUtils.getYearLastDay(year))
+						.setStatus(AccountPeriodStatus.ACTIVE)
+				);
+				ae.getEntry().setPeriod(ap.getId());
+				ae.getEntry().setPeriodName(ap.getName());
+				ae.getEntry().setPeriodStatus(ap.getStatus());
+			}
+			
 			for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
 				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
 				user.getLogin(), ae.getEntry().getDetails().get(i).getAccountCode());
