@@ -260,9 +260,11 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	
 	private JSONObject save(AonToken aonToken) {
 		TaskHolder taskHolder = null;
-		if(getData().opt("task_holder") != null) {
+		if(getData().opt("task_holder") != null && getDomain().getId() != 0) {
 			taskHolder = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f ->
 				f.getIdProperty().eq(getData().optInt("task_holder")));
+		} else if(getData().opt("task_holder") != null) {
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream().filter(th -> th.getId().equals(getData().optInt("task_holder"))).findFirst().orElse(null);
 		} else {
 			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream().findFirst().orElse(null);
 		}
