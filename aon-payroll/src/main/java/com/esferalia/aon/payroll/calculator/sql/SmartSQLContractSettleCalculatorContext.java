@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Result;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
@@ -34,6 +33,7 @@ import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.AgreementExtra;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -41,15 +41,16 @@ import com.esferalia.aon.payroll.SystemPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -212,7 +213,30 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						extraPayments.add( extraPayment );
 						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 					}
-				}).calculate(extraCtx);
+					
+					
+				}) {
+					@Override
+					protected void resolvePayment(IContractPayment contractPayment, Date start, Date end,
+							Date issueDate, ExpressionContext expressionContext, TaxCalculator taxCalculator,
+							QuoteCalculator quoteCalculator, List<Period> leavePeriods, List<Period> strikePeriods)
+							throws AonException {
+						
+						DelegateContractPayment delegatePayment = new DelegateContractPayment(contractPayment) {
+							@Override
+							public SalaryType getSalaryType() {
+
+								if ( getType() == PaymentType.CRA_0004)
+									return SalaryType.EXTRA;
+								
+								return super.getSalaryType();
+							}
+						};
+						
+						super.resolvePayment(delegatePayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
+								leavePeriods, strikePeriods);
+					}
+				}.calculate(extraCtx);
 				
 				if ( extraPayments.isEmpty()  )
 					break;
