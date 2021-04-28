@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -11,8 +12,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class AonToken {
+public class AonToken implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private static final String SCHEMA = "schema";
 	private static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	private static final String UUID = "uuid";

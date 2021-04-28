@@ -1,13 +1,18 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.esferalia.aon.occam.api.model.Domain;
+
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+
+import net.aonsolutions.aon.api.ewok.AonApiData;
 @SuppressWarnings("serial")
 @WebServlet(name = "AonTaskHolderServlet", urlPatterns = {"/ms/api/taskholder/*"})
 public class TaskHolderServlet extends AonApiHttpServlet{
@@ -19,10 +24,10 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TASKHOLDER SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 				case "/":
-					response(req, resp, getTaskHolders());
+					response(req, resp, getTaskHolders(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -36,8 +41,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API TASKHOLDER SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -48,8 +53,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 
 
-	private JSONArray getTaskHolders() {
-		Domain domain = getDomain();
+	private JSONArray getTaskHolders(AonApiData api) {
+		Domain domain = api.getDomain();
 		JSONArray array = new JSONArray();
 		AON.getTaskHolderStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
 		.forEach(th->{

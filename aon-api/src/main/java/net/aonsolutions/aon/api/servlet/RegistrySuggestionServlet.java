@@ -16,6 +16,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiRegistrySuggestionServlet", urlPatterns = {"/ms/api/suggestion/registry/*"})
 public class RegistrySuggestionServlet extends AonApiHttpServlet {
@@ -26,11 +28,11 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API REGISTRY SUGGESTION SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getRegistries());
+				response(req, resp, getRegistries(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -40,9 +42,9 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		}
 	}
 
-	private JSONArray getRegistries() {
+	private JSONArray getRegistries(AonApiData api) {
 		JSONArray array = new JSONArray();
-		String types = getParams().optString("types");
+		String types = api.getParams().optString("types");
 		String[] types2 = types.split(",");
 		LinkedList<RegistryType> list = new LinkedList<>();
 		if (types != null) {
@@ -52,16 +54,16 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 			}
 		}
 		
-		AON_SOLUTIONS.getSuggestionRegistries(getDomain(), getUser().getLogin(), list,
-				f -> rfilter(f)).forEach(r -> array.put(registryToJSON(r)));
+		AON_SOLUTIONS.getSuggestionRegistries(api.getDomain(), api.getUser().getLogin(), list,
+				f -> rfilter(api, f)).forEach(r -> array.put(registryToJSON(r)));
 		return array;
 	}
 	
-	private Filter rfilter(RegistryProperties f) {
-    	Filter filter =  f.getDomainProperty().eq(getDomain().getId());
+	private Filter rfilter(AonApiData api, RegistryProperties f) {
+    	Filter filter =  f.getDomainProperty().eq(api.getDomain().getId());
  
-    	String name = getParams().optString("name");
-		String document = getParams().optString("document");
+    	String name = api.getParams().optString("name");
+		String document = api.getParams().optString("document");
 		
 		if(!AonStringUtils.isBlank(document)) {
 			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import org.json.JSONArray;
@@ -7,8 +8,13 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.Priority;
 
-public class Notification {
+public class Notification implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Domain domain;
 	private Date date;

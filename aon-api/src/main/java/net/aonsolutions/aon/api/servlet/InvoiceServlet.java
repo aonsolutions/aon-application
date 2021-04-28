@@ -18,10 +18,8 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.AccountProperties;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -42,13 +40,13 @@ import com.google.api.services.drive.model.File;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.json.TediInvoiceJSON;
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tedi.AonParser;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
-import net.aonsolutions.aon.tedi.TediParser;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -117,14 +115,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getInvoiceObject());
+				response(req, resp, getInvoiceObject(api));
 				break;
 			case "/accounts":
-				response(req, resp, getAccountsObject());
+				response(req, resp, getAccountsObject(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -138,19 +136,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, setInvoice(getDomain(), getUser().getLogin(), getData()));
+				response(req, resp, setInvoice(api.getDomain(), api.getUser().getLogin(), api.getData()));
 				break;
 			case "/selfconta":
-				response(req, resp, setSelfcontaInvoice());
+				response(req, resp, setSelfcontaInvoice(api));
 				break;
 			case "/selfconta_import":
-				response(req, resp, selfconta());
+				response(req, resp, selfconta(api));
 				break;
 			case "/selfconta_record":
-				response(req, resp, selfcontaRecord());
+				response(req, resp, selfcontaRecord(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -164,10 +162,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - DELETE METHOD");
 		try {
-			super.doDelete(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, deleteInvoiceObject());
+				response(req, resp, deleteInvoiceObject(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -177,25 +175,25 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private Object getInvoiceObject() {
-		if(getParams().opt(IConstants.ID) != null) {
-			Integer id = getParams().optInt(IConstants.ID);
-			return getInvoice(getDomain(), getUser().getLogin(), id);
+	private Object getInvoiceObject(AonApiData api) {
+		if(api.getParams().opt(IConstants.ID) != null) {
+			Integer id = api.getParams().optInt(IConstants.ID);
+			return getInvoice(api.getDomain(), api.getUser().getLogin(), id);
 		} else {
 			InvoiceFilter filter = new InvoiceFilter()
-					.setDescription(getParams().optString("description"))
-					.setStatus(getParams().optString(IConstants.STATUS))
-					.setTypes(getParams().opt(IConstants.TYPE) != null ? getParams().optString(IConstants.TYPE).split(","): null)
-					.setPage(getParams().optInt("page"))
-					.setPerPage(getParams().optInt("per_page"));
-			return getInvoices(getDomain(), getUser().getLogin(), filter);
+					.setDescription(api.getParams().optString("description"))
+					.setStatus(api.getParams().optString(IConstants.STATUS))
+					.setTypes(api.getParams().opt(IConstants.TYPE) != null ? api.getParams().optString(IConstants.TYPE).split(","): null)
+					.setPage(api.getParams().optInt("page"))
+					.setPerPage(api.getParams().optInt("per_page"));
+			return getInvoices(api.getDomain(), api.getUser().getLogin(), filter);
 		}
 	}
 	
-	private JSONArray getAccountsObject() {
+	private JSONArray getAccountsObject(AonApiData api) {
 		JSONArray array = new JSONArray();
-		String type = getParams().optString(IConstants.TYPE);
-		ACCOUNTING.getAccounts(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> accountFilter(f, getDomain(), type)).forEach(acc -> {
+		String type = api.getParams().optString(IConstants.TYPE);
+		ACCOUNTING.getAccounts(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> accountFilter(f, api.getDomain(), type)).forEach(acc -> {
 			if(acc.getCode().length() > 5) {
 				JSONObject json = new JSONObject();
 				json.put("code", acc.getCode());
@@ -206,10 +204,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return array;
 	}
 
-	private JSONObject deleteInvoiceObject() {
-		LinkedList<Integer> invoiceIds = toList(getData().optJSONArray(IConstants.ID));
+	private JSONObject deleteInvoiceObject(AonApiData api) {
+		LinkedList<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
 		if(invoiceIds != null) {
-			deleteInvoices(getDomain(), getUser().getLogin(), invoiceIds);
+			deleteInvoices(api.getDomain(), api.getUser().getLogin(), invoiceIds);
 		}
 		return new JSONObject();
 	}
@@ -397,19 +395,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private JSONObject setSelfcontaInvoice() {
-		BidoqRequest.selfconta2Aon(getDomain(), getUser(), getData());
+	private JSONObject setSelfcontaInvoice(AonApiData api) {
+		BidoqRequest.selfconta2Aon(api.getDomain(), api.getUser(), api.getData());
 		return new JSONObject();
 	}
 	
-	private JSONObject selfconta() throws JSONException, Exception {
-		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
-		BidoqRequest.selfconta(getDomain(), getUser(), company.getDocument());
+	private JSONObject selfconta(AonApiData api) throws JSONException, Exception {
+		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+		BidoqRequest.selfconta(api.getDomain(), api.getUser(), company.getDocument());
 		return new JSONObject();
 	}
 	
-	private JSONObject selfcontaRecord() throws Exception {
-		BidoqRequest.selfcontaRecord(getDomain(), getUser(), getData());
+	private JSONObject selfcontaRecord(AonApiData api) throws Exception {
+		BidoqRequest.selfcontaRecord(api.getDomain(), api.getUser(), api.getData());
 		return new JSONObject();
 	}
 	

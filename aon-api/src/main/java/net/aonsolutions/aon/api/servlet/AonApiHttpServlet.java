@@ -9,11 +9,14 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -24,6 +27,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 
 public class AonApiHttpServlet extends HttpServlet{
@@ -34,13 +39,6 @@ public class AonApiHttpServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger LOGGER  = Logger.getLogger(AonApiHttpServlet.class.getName());
-	
-	private String token;
-	private Domain domain;
-	private User user;
-	private JSONObject data;
-	private JSONObject params;
-	private String path;
 	
 	public AonApiHttpServlet() {
 	
@@ -66,12 +64,14 @@ public class AonApiHttpServlet extends HttpServlet{
 		initialize(req, resp);
 	}
 	
-	private void initialize(HttpServletRequest req, HttpServletResponse resp) {
+	protected AonApiData initialize(HttpServletRequest req, HttpServletResponse resp) {
+		AonApiData api = new AonApiData();
+		
 		LOGGER.info("SESSION_ID -> " + req.getHeader(IConstants.SESSION_ID));
 		LOGGER.info("DOMAIN_NAME -> " + req.getHeader(IConstants.DOMAIN_NAME));
 		LOGGER.info("DOMAIN_ID -> " + req.getHeader(IConstants.DOMAIN_ID));
-		
-		setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
+	
+		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
@@ -86,75 +86,28 @@ public class AonApiHttpServlet extends HttpServlet{
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		}catch (Exception e) {}
-		setDomain(domain);
+		api.setDomain(domain);
 		
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
 		User user = new User().setLogin("");
-		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(getToken()) && getDomain().getId() != null && getDomain().getId() != 0) {
-			AonToken aonToken = SECURITY.getAonToken(getToken());
+		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(api.getToken()) && api.getDomain().getId() != null && api.getDomain().getId() != 0) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-					.and(f.getDomainProperty().eq(getDomain().getId())));
+					.and(f.getDomainProperty().eq(api.getDomain().getId())));
 			if(user == null || user.getId() == null) {
 				user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
-						.and(f.getDomainProperty().eq(getDomain().getParentId())));
+						.and(f.getDomainProperty().eq(api.getDomain().getParentId())));
 			}
-		} else if(getDomain().getId() != null && getDomain().getId() != 0){
-			user = AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
+		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
 		}
-		setUser(user);
+		api.setUser(user);
 		
-		setParams(getParamsJSON(req));
-		setData(getRequestJSON(req));
+		api.setParams(getParamsJSON(req));
+		api.setData(getRequestJSON(req));
 		
-		setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
-	}
-	
-	public String getToken() {
-		return token;
-	}
-	
-	public void setToken(String token) {
-		this.token = token;
-	}
-	
-	public Domain getDomain() {
-		return domain;
-	}
-	
-	public void setDomain(Domain domain) {
-		this.domain = domain;
-	}
-	
-	public JSONObject getData() {
-		return data;
-	}
-	
-	public void setData(JSONObject data) {
-		this.data = data;
-	}
-	
-	public JSONObject getParams() {
-		return params;
-	}
-	
-	public void setParams(JSONObject params) {
-		this.params = params;
-	}
-	
-	public User getUser() {
-		return user;
-	}
-	
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	public String getPath() {
-		return path;
-	}
-	
-	public void setPath(String path) {
-		this.path = path;
+		api.setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
+		return api;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {

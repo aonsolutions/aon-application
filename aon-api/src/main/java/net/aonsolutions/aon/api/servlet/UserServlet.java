@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.aws.SES;
 
 @SuppressWarnings("serial")
@@ -56,25 +57,25 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON USER SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getDomainUsers());
+				response(req, resp, getDomainUsers(api));
 				break;
 			case "/app":
-				response(req, resp, getDomainUserRoles());
+				response(req, resp, getDomainUserRoles(api));
 				break;
 			case "/notice":
 				List<String> schemas = AONContext.getSchemas();
 				RawdocUserData rawdocUserData = new RawdocUserData();
 				for(String schema : schemas) {
-					rawdocUserData.append(AON.getRawdocUserData(getToken(), schema));
+					rawdocUserData.append(AON.getRawdocUserData(api.getToken(), schema));
 				}
 				response(req, resp, rawdocUserData.toJSON());
 				break;
 			case "/info":
-				response(req, resp, getDomainUser());
+				response(req, resp, getDomainUser(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -88,13 +89,13 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, setUser());
+				response(req, resp, setUser(api));
 				break;
 			case "/app":
-				response(req, resp, setUserAppRole());
+				response(req, resp, setUserAppRole(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -107,10 +108,10 @@ public class UserServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			super.doDelete(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
-				deleteUser();
+				deleteUser(api);
 				response(req, resp);
 				break;
 			default:
@@ -121,38 +122,38 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONArray getDomainUserRoles() {
-		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
+	private JSONArray getDomainUserRoles(AonApiData api) {
+		Integer userId = api.getParams().opt("user") != null ? api.getParams().optInt("user") : null;
 		User user = new User();
 		if(userId != null) {
-			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
 		} else {
-			if(AonStringUtils.isBlank(getToken())) {
-				user = getUser();
+			if(AonStringUtils.isBlank(api.getToken())) {
+				user = api.getUser();
 			} else {
-				AonToken aonToken = SECURITY.getAonToken(getToken());
-				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
-					(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
+				AonToken aonToken = SECURITY.getAonToken(api.getToken());
+				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
 					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 			}
 		}
-		return getUserRoles(getDomain(), user);
+		return getUserRoles(api.getDomain(), user);
 	}
 	
-	private JSONArray getDomainUsers() {
+	private JSONArray getDomainUsers(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
 		Stream<User> users;
-		if(!getDomain().isParent() && getParams().opt("filter") != null && getParams().optString("filter").equals("entorno")) {
-			users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getParentId()));
-		} else if(getParams().opt("filter") != null && getParams().optString("filter").equals("shared")) {
-			users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId())
+		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null && api.getParams().optString("filter").equals("entorno")) {
+			users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getParentId()));
+		} else if(api.getParams().opt("filter") != null && api.getParams().optString("filter").equals("shared")) {
+			users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getSharedProperty().eq((byte)1)));
-		} else users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+		} else users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 
 		users.forEach(r -> {
 			JSONObject json = new JSONObject();
 			if(r.getAuth() != null) {
-				Auth auth = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), r.getAuth());
+				Auth auth = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), r.getAuth());
 				if(auth.getEmail() == null) {
 					auth = AON_SOLUTIONS.getAuth(r.getAuth());
 				}
@@ -163,7 +164,7 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 				json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				json.put("roles", getUserRoles(getDomain(), r));
+				json.put("roles", getUserRoles(api.getDomain(), r));
 				json.put("portal", r.isPortal());
 				json.put("shared", r.isShared());
 				jsArray.put(json);
@@ -172,15 +173,15 @@ public class UserServlet extends AonApiHttpServlet {
 		return jsArray;
 	}
 	
-	private JSONObject getDomainUser() {
-		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
+	private JSONObject getDomainUser(AonApiData api) {
+		Integer userId = api.getParams().opt("user") != null ? api.getParams().optInt("user") : null;
 		User user = new User();
 		if(userId != null) {
-			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
 		} else {
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
-				(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+				(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 		JSONObject json = new JSONObject();
@@ -192,7 +193,7 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("shared", user.isShared());
 		
 		JSONArray scopes = new JSONArray();
-		AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), userId, null)
+		AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), userId, null)
 		.forEach(us ->{
 			JSONObject scope = new JSONObject();
 			scope.put("id", us.getId());
@@ -202,7 +203,7 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("scopes", scopes);
 		
 		JSONArray workgroups = new JSONArray();
-		AON.getUserWorkgroupStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getUserIdProperty().eq(userId))
+		AON.getUserWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getUserIdProperty().eq(userId))
 		.forEach(wg ->{
 			JSONObject workgroup = new JSONObject();
 			workgroup.put("id", wg.getWorkgroup().getId());
@@ -283,8 +284,8 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONObject setUserAppRole(){
-		JSONArray roles = getData().optJSONArray("roles");
+	private JSONObject setUserAppRole(AonApiData api){
+		JSONArray roles = api.getData().optJSONArray("roles");
 		Boolean portal = false;
 		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
 		for (Integer i = 0; i < roles.length(); i++) {
@@ -298,8 +299,8 @@ public class UserServlet extends AonApiHttpServlet {
 			
 			AonRole aonRole = AonRole.safeValueOf(role);
 			if(aonRole != null) {
-				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(getDomain().getName(), getDomain().getId(), "", f -> 
-					f.getDomainProperty().eq(getDomain().getId())
+				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getUserIdProperty().eq(user))
 					.and(f.getRoleProperty().eq(aonRole.value())))
 					.findFirst().orElse(new UserAppRole());
@@ -308,32 +309,32 @@ public class UserServlet extends AonApiHttpServlet {
 					if(uar.getId() == null) {
 						uar = new UserAppRole();
 						uar.setApp(aonApp)
-							.setDomain(getDomain().getId())
+							.setDomain(api.getDomain().getId())
 							.setRole(aonRole)
 							.setUser(user);
-						uar = AON_SOLUTIONS.insertUserAppRole(getDomain().getName(), getDomain().getId(), "", uar);
+						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
 					}
-					if(!getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), "", f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
+						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
 						if(th == null || th.getId() == null) {
-							User u = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(user));
-							Auth a = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), u.getAuth());
+							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
+							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
 
 							Registry r = null;
 							if(!AonStringUtils.isBlank(a.getDocument())) {
-								r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
-								f.getDomainProperty().eq(getDomain().getId())
+								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+								f.getDomainProperty().eq(api.getDomain().getId())
 								.and(f.getDocumentProperty().eq(a.getDocument())));
 							}
 							if(r == null || r.getId() == null) {
-								r = AON.save(getDomain().getName(), getDomain().getId(), "", new Registry()
+								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
 										.setDocument(a.getDocument())
 										.setName(a.getName()+ " "+ a.getSurname())
 										.setAlias(a.getName())
-										.setDomain(getDomain()));
+										.setDomain(api.getDomain()));
 							}
 							Integer registryId = r.getId();
-							th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), "", f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
 							if(th != null && th.getId() != null) {
 								th.setActive(true);
 							} else {
@@ -344,7 +345,7 @@ public class UserServlet extends AonApiHttpServlet {
 						} else if(!th.isActive()) {
 							th.setActive(true);
 						}
-						AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), th);
+						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
 					} 
 				
 					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
@@ -353,22 +354,22 @@ public class UserServlet extends AonApiHttpServlet {
 								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
 							
 						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
-						AON_SOLUTIONS.deleteUserAppRole(getDomain().getName(), getDomain().getId(), "", f -> 
-							f.getDomainProperty().eq(getDomain().getId())
+						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+							f.getDomainProperty().eq(api.getDomain().getId())
 							.and(f.getUserIdProperty().eq(user))
 							.and(f.getRoleProperty().notIn(arr)));
 					}
 				} else {
 					if(uar.getId() != null) {
 						Integer id = uar.getId();
-						AON_SOLUTIONS.deleteUserAppRole(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(id));
+						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
 					}
 					
 					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), "", f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
 						if(th != null && th.getId() != null) {
 							th.setActive(false);
-							AON.updateTaskHolder(getDomain().getName(), getDomain().getId(), "", th);
+							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
 						}
 					}
 				}
@@ -376,31 +377,31 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 		
 		if(portal) {
-			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
 			if(usr.getEnterprise() == null) {
-				Company cp = AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 				usr.setEnterprise(cp.getId());
-				AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), usr);
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
 			}
 		} else {
-			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
 			if(usr.getEnterprise() != null) {
 				usr.setEnterprise(null);
-				AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), usr);
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
 			}
 		}
 		
 		return new JSONObject();
 	}
 	
-	private JSONObject setUser() throws Exception {
+	private JSONObject setUser(AonApiData api) throws Exception {
 		JSONObject js = new JSONObject();
-		String email = getData().optString("email");
+		String email = api.getData().optString("email");
 
 		if(Utils.isEmail(email)) {
 			
-			User usr = getData().opt("id") != null 
-					? AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")))
+			User usr = api.getData().opt("id") != null 
+					? AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(api.getData().getInt("id")))
 					: new User();
 			
 			String login = ramdonLogin();
@@ -412,30 +413,30 @@ public class UserServlet extends AonApiHttpServlet {
 
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null) {
-				auth = createAuth(getDomain(), getData(), login, pass);
+				auth = createAuth(api.getDomain(), api.getData(), login, pass);
 				sendAuthCreateInfoMail(email, login);
-			} else updateAuth(auth, getData());
+			} else updateAuth(auth, api.getData());
 			
 			byte[] a = auth.getAuth();
 
-			User user = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), "", f -> 
+			User user = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
 					f.getAuthProperty().eq(a)).findFirst().orElse(new User());
 					
-			if((user == null || user.getId() == null) && getData().opt("id") != null) {
-				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
+			if((user == null || user.getId() == null) && api.getData().opt("id") != null) {
+				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(api.getData().getInt("id")));
 			} 
-			if(user != null && user.getId() != null && !user.getId().equals(getData().optInt("id"))){
+			if(user != null && user.getId() != null && !user.getId().equals(api.getData().optInt("id"))){
 				throw new Exception("El mail introducido ya está asociado a otro usuario.");
 			}
 			
-			if(user != null && user.getId() != null && !user.getId().equals(getData().getInt("id"))){
+			if(user != null && user.getId() != null && !user.getId().equals(api.getData().getInt("id"))){
 				throw new Exception("El mail pertenece a un usuario del entorno.");
 			}
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
-					user = createUser(getDomain(), getData(), login, auth);
+					user = createUser(api, api.getDomain(), api.getData(), login, auth);
 					
-				} else AON_SOLUTIONS.assignAuthToUser(getDomain().getName(), getDomain().getId(), user, auth.getAuth());
+				} else AON_SOLUTIONS.assignAuthToUser(api.getDomain().getName(), api.getDomain().getId(), user, auth.getAuth());
 
 				js.put("id", user.getId());
 				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
@@ -444,7 +445,7 @@ public class UserServlet extends AonApiHttpServlet {
 				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				js.put("roles", getUserRoles(getDomain(), user));
+				js.put("roles", getUserRoles(api.getDomain(), user));
 				js.put("portal", user.isPortal());
 				js.put("shared", user.isShared());
 			}
@@ -454,11 +455,11 @@ public class UserServlet extends AonApiHttpServlet {
 		return js;
 	}
 	
-	private void deleteUser() {
-		if(getData().opt("user") != null) {
-			Integer userId = getData().optInt("user");
-			User user = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
-			SECURITY.delete(getDomain(), getUser().getLogin(), user);
+	private void deleteUser(AonApiData api) {
+		if(api.getData().opt("user") != null) {
+			Integer userId = api.getData().optInt("user");
+			User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			SECURITY.delete(api.getDomain(), api.getUser().getLogin(), user);
 		}
 	}
 	
@@ -487,8 +488,8 @@ public class UserServlet extends AonApiHttpServlet {
 		return AON_SOLUTIONS.updateAuth(auth);
 	}
 	
-	private User createUser(Domain domain, JSONObject json, String login, Auth auth) {
-		Company cp = AON.getCompany(getDomain().getName(), getDomain().getId(), login, f -> f.getDomainProperty().eq(getDomain().getId()));
+	private User createUser(AonApiData api, Domain domain, JSONObject json, String login, Auth auth) {
+		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		
 		User user = new User()
 			.setAuth(auth.getAuth())
@@ -504,7 +505,7 @@ public class UserServlet extends AonApiHttpServlet {
 			String document = json.optString("document");
 			if(!AonStringUtils.isBlank(document) && AonDocumentUtil.isValid(document)) {
 				Integer registryId = null;
-				Optional<Person> p = AON.getPerson(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+				Optional<Person> p = AON.getPerson(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getDocumentProperty().eq(document)));
 				if(p.isPresent() && p.get().getId() != null) {
@@ -512,7 +513,7 @@ public class UserServlet extends AonApiHttpServlet {
 				}
 				
 				if(registryId == null) {
-					Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
+					Registry r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
 						f.getDomainProperty().eq(domain.getId())
 						.and(f.getDocumentProperty().eq(document)));
 					registryId = r.getId();
@@ -521,25 +522,25 @@ public class UserServlet extends AonApiHttpServlet {
 			}
 		}	
 		user = AON.save(domain.getName(), domain.getId(), "", user);
-		AON.updateUserPassword(domain.getName(), domain.getId(),getUser().getLogin(), user.getId(), auth.getPassword());
-		Scope s = getScope();
+		AON.updateUserPassword(domain.getName(), domain.getId(), api.getUser().getLogin(), user.getId(), auth.getPassword());
+		Scope s = getScope(api);
 		if(s != null) {
-			AON.insertUserScope(getDomain().getName(), getDomain().getId(), getUser().getLogin(), new UserScope()
-					.setDomain(getDomain().getId())
+			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
+					.setDomain(api.getDomain().getId())
 					.setScope(s.getId())
 					.setUserId(user.getId()));
 		}
 		
-		ApplicationParameter a = AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), getUser().getLogin(), AppParam.AON_PORTAL);
+		ApplicationParameter a = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), AppParam.AON_PORTAL);
 		ApplicationParameter appParam = new ApplicationParameter()
-				.setDomain(getDomain().getId())
+				.setDomain(api.getDomain().getId())
 				.setValue("288")
 				.setName(AppParam.AON_PORTAL.getValue());
 
 		if(a == null && a.getId() == null)
-			AON.insertApplicationParameter(getDomain().getName(), getDomain().getId(), getUser().getLogin(), appParam);
+			AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), appParam);
 	
-		AON_SOLUTIONS.saveUserFinancePortal(getDomain(), getUser().getLogin(), user.getId());		
+		AON_SOLUTIONS.saveUserFinancePortal(api.getDomain(), api.getUser().getLogin(), user.getId());		
 		return user;
 	}
 	
@@ -584,24 +585,24 @@ public class UserServlet extends AonApiHttpServlet {
 		return writer.toString();
 	}
 	
-	private Scope getScope() {
-		Scope s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
-				f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getDescriptionProperty().eq("GENERAL")))
+	private Scope getScope(AonApiData api) {
+		Scope s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDescriptionProperty().eq("GENERAL")))
 				.findFirst().orElse(null);
-		if(s == null && getDomain().getParentId() != null) {
-			s =   AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
-					f -> f.getDomainProperty().eq(getDomain().getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+		if(s == null && api.getDomain().getParentId() != null) {
+			s =   AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getDomainProperty().eq(api.getDomain().getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
 					.findFirst().orElse(null);
 		}
 		
 		if(s== null){
-			s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
-					f -> f.getDomainProperty().eq(getDomain().getId()))
+			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getDomainProperty().eq(api.getDomain().getId()))
 					.findFirst().orElse(null);
 		}
-		if(s == null && getDomain().getParentId() != null) {
-			s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
-					f -> f.getDomainProperty().eq(getDomain().getParentId()))
+		if(s == null && api.getDomain().getParentId() != null) {
+			s = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
 					.findFirst().orElse(null);
 		}
 		return s;

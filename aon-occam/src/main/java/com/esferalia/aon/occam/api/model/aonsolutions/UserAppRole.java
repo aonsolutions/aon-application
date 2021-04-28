@@ -1,9 +1,16 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class UserAppRole {
+public class UserAppRole implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Integer domain;
 	private AonApp app;

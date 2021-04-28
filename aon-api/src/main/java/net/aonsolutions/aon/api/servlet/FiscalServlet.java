@@ -38,6 +38,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
 
 public class FiscalServlet extends AonApiHttpServlet{
@@ -50,11 +52,11 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
-			if ( AonStringUtils.endsWith(getPath(), "/models") ) {
-				response(req, resp, getFiscalModels());
-			} else if ( AonStringUtils.endsWith(getPath(), "/matrix") ) {
-				response(req, resp, getFiscalMatrix());
+			AonApiData api = initialize(req, resp);
+			if ( AonStringUtils.endsWith(api.getPath(), "/models") ) {
+				response(req, resp, getFiscalModels(api));
+			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
+				response(req, resp, getFiscalMatrix(api));
 			} else {
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -67,9 +69,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API FISCAL SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			if ( AonStringUtils.endsWith(getPath(), "/markAsFinished") ) {
-				response(req, resp, markAsFinished());
+			AonApiData api = initialize(req, resp);
+			if ( AonStringUtils.endsWith(api.getPath(), "/markAsFinished") ) {
+				response(req, resp, markAsFinished(api));
 			} else {
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -78,31 +80,31 @@ public class FiscalServlet extends AonApiHttpServlet{
 		}
 	}
 		
-	private JSONArray getFiscalMatrix() throws ParseException {
+	private JSONArray getFiscalMatrix(AonApiData api) throws ParseException {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(getDomain().getName(), getDomain().getId(),getUser().getLogin());
-			JSONObject jsonParams = getParams();
+			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+			JSONObject jsonParams = api.getParams();
 			FiscalMatrixParams params = FiscalMatrixParamsJSON.fromJSON(jsonParams); 
-			return FiscalMenuDAO.getDomainsModels(ctx, getDomain().getId(), params); 
+			return FiscalMenuDAO.getDomainsModels(ctx, api.getDomain().getId(), params); 
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	private JSONArray getFiscalModels() throws ParseException {
+	private JSONArray getFiscalModels(AonApiData api) throws ParseException {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(getDomain().getName(), getDomain().getId(),getUser().getLogin());
+			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			LinkedList<FiscalModel> models = new LinkedList<FiscalModel>();
-			models.addAll( Mod303DAO.getMod303s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod111DAO.getMod111s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod115DAO.getMod115s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod123DAO.getMod123s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod130DAO.getMod130s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod131DAO.getMod131s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
-			models.addAll( Mod202DAO.getMod202s(ctx, getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod303DAO.getMod303s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod111DAO.getMod111s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod115DAO.getMod115s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod123DAO.getMod123s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod130DAO.getMod130s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod131DAO.getMod131s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
+			models.addAll( Mod202DAO.getMod202s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			JSONArray jsonModels = new JSONArray();
 			int i = 0;
 			for (FiscalModel model : models ) {
@@ -115,10 +117,10 @@ public class FiscalServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private JSONObject markAsFinished() {
+	private JSONObject markAsFinished(AonApiData api) {
 		AONContext ctx = null;
 		try {
-			JSONObject params = getData();
+			JSONObject params = api.getData();
 			Integer id = JsonUtils.getInteger(params , IJsonNames.ID);
 			String iban = JsonUtils.getString(params , IJsonNames.IBAN);
 			FiscalModelType type = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));

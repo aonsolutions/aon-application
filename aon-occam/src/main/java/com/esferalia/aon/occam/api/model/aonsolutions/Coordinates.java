@@ -1,11 +1,18 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Coordinates {
+public class Coordinates implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Double latitude;
 	private Double longitude;
 	

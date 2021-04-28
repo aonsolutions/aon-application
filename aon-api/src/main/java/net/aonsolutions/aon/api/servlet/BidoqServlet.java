@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "BidoqServlet", urlPatterns = {"/ms/api/bidoq/*"})
 public class BidoqServlet extends AonApiHttpServlet {
@@ -30,11 +32,11 @@ public class BidoqServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API BIDOQ SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			if(BIDOQ_SESSION_ID.equals(getToken())) {
-				String user = getData().optString("user");
-				String company = getData().optString("company");
-				String action = getData().optString("action");
+			AonApiData api = initialize(req, resp);
+			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+				String user = api.getData().optString("user");
+				String company = api.getData().optString("company");
+				String action = api.getData().optString("action");
 
 				if(AonStringUtils.isEmpty(user)) {
 					throw new Exception("El campo user está vacío");
@@ -79,7 +81,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 				json.put("domain_name", cp.getDomain().getName());
 				response(req, resp, json);
 			} else {
-				LOGGER.info("TOKEN RECIBIDO: " + getToken());
+				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
 				throw new Exception("El token es incorrecto.");
 			}
 		} catch (Exception e) {

@@ -1,11 +1,18 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Domain;
 
-public class Location {
+public class Location implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Domain domain;
 	private String description;

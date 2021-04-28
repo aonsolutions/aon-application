@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonAuthServlet", urlPatterns = {"/ms/api/auth/*"})
 public class AuthServlet extends AonApiHttpServlet{
@@ -25,16 +27,16 @@ public class AuthServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON AUTH SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 			Auth auth = new Auth();
-			if(getParams().opt("email") != null) {
-				auth = AON_SOLUTIONS.getAuth(getParams().optString("email"));
-			} else if(getParams().opt("task_holder") != null){
-				TaskHolder th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f-> f.getIdProperty().eq(getParams().optInt("task_holder")));
-				User user = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
+			if(api.getParams().opt("email") != null) {
+				auth = AON_SOLUTIONS.getAuth(api.getParams().optString("email"));
+			} else if(api.getParams().opt("task_holder") != null){
+				TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f-> f.getIdProperty().eq(api.getParams().optInt("task_holder")));
+				User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				auth = AON_SOLUTIONS.getAuth(user.getAuth());	
 			} else {
-				AonToken aonToken = SECURITY.getAonToken(getToken());
+				AonToken aonToken = SECURITY.getAonToken(api.getToken());
 				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 			}
 			
@@ -56,10 +58,10 @@ public class AuthServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/password":
-				response(req, resp, changePassword());
+				response(req, resp, changePassword(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -70,16 +72,16 @@ public class AuthServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private JSONObject changePassword() throws Exception {
-		String oldPassword = getData().opt("oldPassword") != null ? getData().optString("oldPassword") : null;
+	private JSONObject changePassword(AonApiData api) throws Exception {
+		String oldPassword = api.getData().opt("oldPassword") != null ? api.getData().optString("oldPassword") : null;
 		if(oldPassword == null) {
 			throw new Exception("La contraseña introducida es incorrecta.");
 		} 
 		
-		AonToken aonToken = SECURITY.getAonToken(getToken());
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
 		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 		auth.setSchema(aonToken.getSchema());
-		String password = getData().optString("newPassword");
+		String password = api.getData().optString("newPassword");
 		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);

@@ -10,6 +10,8 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonLocationServlet", urlPatterns = {"/ms/api/location/*"})
 public class LocationServlet extends AonApiHttpServlet{
@@ -21,10 +23,10 @@ public class LocationServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API LOCATION SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 				case "/":
-					response(req, resp, getLocationList());
+					response(req, resp, getLocationList(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -38,10 +40,10 @@ public class LocationServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API LOCATION SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 				case "/":
-					response(req, resp, saveLocation());
+					response(req, resp, saveLocation(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -55,10 +57,10 @@ public class LocationServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
 		LOGGER.info("AON API LOCATION SERVLET - DELETE METHOD");
 		try {
-			super.doDelete(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 				case "/":
-					response(req, resp, deleteLocation());
+					response(req, resp, deleteLocation(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -68,9 +70,9 @@ public class LocationServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private Object getLocationList() {
+	private Object getLocationList(AonApiData api) {
 		JSONArray array = new JSONArray();
-		AON_SOLUTIONS.getLocationStream(getDomain(), "", f -> f.getDomainProperty().eq(getDomain().getId()))
+		AON_SOLUTIONS.getLocationStream(api.getDomain(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()))
 		.forEach(lc -> {
 			array.put(lc.toJSON());
 		});
@@ -78,23 +80,23 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	
-	private JSONObject saveLocation() {
-		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
+	private JSONObject saveLocation(AonApiData api) {
+		Coordinates coordinates = new Coordinates(api.getData().optString("coordinates"));
 		Location location = new Location()
-				.setDomain(getDomain())
-				.setDescription(getData().optString("description"))
+				.setDomain(api.getDomain())
+				.setDescription(api.getData().optString("description"))
 				.setCoordinates(coordinates)
-				.setRadio(getData().optInt("radio"))
-				.setId(getData().optInt("id"));
+				.setRadio(api.getData().optInt("radio"))
+				.setId(api.getData().optInt("id"));
 
-		location = AON_SOLUTIONS.saveLocation(getDomain(), "", location);
+		location = AON_SOLUTIONS.saveLocation(api.getDomain(), "", location);
 		JSONObject respObject = location.toJSON();
 		return respObject;
 	}
 
-	private JSONObject deleteLocation() {
-		Location location = new Location().setId(getData().optInt("id"));
-		AON_SOLUTIONS.deleteLocation(getDomain(), "", location);
+	private JSONObject deleteLocation(AonApiData api) {
+		Location location = new Location().setId(api.getData().optInt("id"));
+		AON_SOLUTIONS.deleteLocation(api.getDomain(), "", location);
 		return new JSONObject();
 	}
 	

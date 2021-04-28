@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "ExampleServlet", urlPatterns = {"/ms/api/example/*"})
 public class ExampleServlet extends AonApiHttpServlet {
@@ -17,9 +19,9 @@ public class ExampleServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getResponseObject());
 				break;
@@ -37,8 +39,8 @@ public class ExampleServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getResponseObject());
 				break;

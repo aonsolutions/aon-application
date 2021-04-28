@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonRegisterServlet", urlPatterns = {"/ms/api/register/*"})
 public class RegisterServlet extends AonApiHttpServlet{
@@ -23,10 +25,9 @@ public class RegisterServlet extends AonApiHttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		super.doPost(req, resp);
-
 		try {
-//			Auth auth = createAuth();
+//			AonApiData api = initialize(req, resp);
+//			Auth auth = createAuth(api);
 //			Domain domain = createDomain(auth.getSchema());
 //			User user = createUser(domain , auth);
 		} catch (Exception e) {
@@ -35,16 +36,16 @@ public class RegisterServlet extends AonApiHttpServlet{
 		response(req, resp);
 	}
 	
-	private Auth createAuth() {
-		Auth auth = AON_SOLUTIONS.getAuth(getData().getString("email"));
+	private Auth createAuth(AonApiData api) {
+		Auth auth = AON_SOLUTIONS.getAuth(api.getData().getString("email"));
 		if(auth.getUuid() == null) {
-    		String pass = Utils.createPasswordHash(auth.getEmail(), getData().getString("password"));
+    		String pass = Utils.createPasswordHash(auth.getEmail(), api.getData().getString("password"));
 			auth = new Auth()
-					.setDocument(getData().getString("document"))
-					.setEmail(getData().getString("email"))
-					.setName(getData().getString("name"))
-					.setPhone(getData().getString("phone"))
-					.setSurname(getData().getString("surname"))
+					.setDocument(api.getData().getString("document"))
+					.setEmail(api.getData().getString("email"))
+					.setName(api.getData().getString("name"))
+					.setPhone(api.getData().getString("phone"))
+					.setSurname(api.getData().getString("surname"))
 					.setPassword(pass);
 			
 			auth = AON_SOLUTIONS.insertAuth(auth);
@@ -52,19 +53,19 @@ public class RegisterServlet extends AonApiHttpServlet{
 		return auth;
 	}
 	
-	private Domain createDomain(String schema) throws Exception{
+	private Domain createDomain(AonApiData api, String schema) throws Exception{
 		Domain domain = new Domain()
-				.setDescription(getData().getString("company_name"))
-				.setName(getData().getString("company_document") + ".aonsolutions.net")
-				.setOwner(getData().getString("email"))
+				.setDescription(api.getData().getString("company_name"))
+				.setName(api.getData().getString("company_document") + ".aonsolutions.net")
+				.setOwner(api.getData().getString("email"))
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)
 				.setEnableHeredity(false)
 				.setDomainManagement(false);
 		
 		Registry registry = new Registry()
-				.setDocument(getData().getString("company_document"))
-				.setName(getData().getString("company_name"));
+				.setDocument(api.getData().getString("company_document"))
+				.setName(api.getData().getString("company_name"));
 
 		return AON_SOLUTIONS.insertDomain(schema, domain, registry);
 	}

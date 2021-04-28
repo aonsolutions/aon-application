@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -38,14 +39,14 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - GET METHOD");	
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getFile());
+				response(req, resp, getFile(api));
 				break;
 			case "/files":
-				response(req, resp, getFiles());
+				response(req, resp, getFiles(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -59,9 +60,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - POST METHOD");
 		try {
-			super.doPost(req, resp);
-		
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			
+			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());
 				break;
@@ -77,9 +78,9 @@ public class DocumentalServlet extends AonApiHttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("Aon Api Documental Servlet - DELETE METHOD");
 		try {
-			super.doDelete(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());
 				break;
@@ -91,10 +92,10 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private JSONObject getFile() throws Exception {
-		if(getParams().opt(IConstants.ID) != null) {
-			Attach attach = AON.getDocumentalAttachStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), 
-					f -> f.getIdProperty().eq(getParams().optInt(IConstants.ID)),AttachType.REGISTRY, false)
+	private JSONObject getFile(AonApiData api) throws Exception {
+		if(api.getParams().opt(IConstants.ID) != null) {
+			Attach attach = AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> f.getIdProperty().eq(api.getParams().optInt(IConstants.ID)),AttachType.REGISTRY, false)
 			.findFirst().orElse(new Attach());
 			return attachToJSON(attach);
 		} else {
@@ -102,29 +103,29 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private JSONArray getFiles() {
+	private JSONArray getFiles(AonApiData api) {
 		JSONArray array = new JSONArray();
 		
-		AON.getDocumentalAttachStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), 
-				f -> attachFilter(f),AttachType.REGISTRY, false).forEach(a -> {
+		AON.getDocumentalAttachStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> attachFilter(api, f),AttachType.REGISTRY, false).forEach(a -> {
 			array.put(attachToJSON(a));
 		});
 		return array;
 	}
     
-	private Filter attachFilter(AttachProperties f) {
-		DomainUserRoles dur = SECURITY.getDomainUserRoles(getDomain(), getUser().getLogin(), getUser().getId());
+	private Filter attachFilter(AonApiData api, AttachProperties f) {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
 		
 		Integer[] scopes = null;
 		try {
-			scopes = AON.getUserScopes(getDomain().getName(), getDomain().getId(), getUser().getLogin(), getUser().getId());
+			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
 		} catch (Exception e) {
 			scopes = null;
 		}
-		Integer domainId = getDomain().getId();
-		if(getParams().opt("parent") != null && getParams().optBoolean("parent") 
-				&& getDomain().getParentId() != null) {
-			domainId = getDomain().getParentId();
+		Integer domainId = api.getDomain().getId();
+		if(api.getParams().opt("parent") != null && api.getParams().optBoolean("parent") 
+				&& api.getDomain().getParentId() != null) {
+			domainId = api.getDomain().getParentId();
 		}
     	
 		Filter filter = f.getDomainProperty().eq(domainId);
@@ -133,16 +134,16 @@ public class DocumentalServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
     	} else filter = filter.and(f.getScopeProperty().isNull());
 
-    	if(getParams().opt("type") != null) {
-        	if("system".equalsIgnoreCase(getParams().optString("type"))) {
+    	if(api.getParams().opt("type") != null) {
+        	if("system".equalsIgnoreCase(api.getParams().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value()));
-        	} else if("enterprise".equalsIgnoreCase(getParams().optString("type"))) {
+        	} else if("enterprise".equalsIgnoreCase(api.getParams().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
-        	} else if("employee".equalsIgnoreCase(getParams().optString("type"))) {
+        	} else if("employee".equalsIgnoreCase(api.getParams().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));
-        	} else if("asesor".equalsIgnoreCase(getParams().optString("type"))) {
+        	} else if("asesor".equalsIgnoreCase(api.getParams().optString("type"))) {
         		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()));
-        	} else if("all".equalsIgnoreCase(getParams().optString("type"))) {
+        	} else if("all".equalsIgnoreCase(api.getParams().optString("type"))) {
         		if(dur.isDocumentalManager()) {
             		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
             			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()))
@@ -160,25 +161,25 @@ public class DocumentalServlet extends AonApiHttpServlet{
     		filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
     	}
     	
-    	if(getParams().opt("description") != null) {
-    		filter = filter.and(f.getDescriptionProperty().like("%"+ getParams().optString("description") + "%"));
+    	if(api.getParams().opt("description") != null) {
+    		filter = filter.and(f.getDescriptionProperty().like("%"+ api.getParams().optString("description") + "%"));
 		}
     	
-    	if(getParams().opt("category") != null) {
+    	if(api.getParams().opt("category") != null) {
     		// TODO FILTRO CATEGORÍA MÚLTIPLE
-    		filter = filter.and(f.getCategoryProperty().eq(getParams().optInt("category")));
+    		filter = filter.and(f.getCategoryProperty().eq(api.getParams().optInt("category")));
     	}
     	
-    	if(getParams().opt("tag") != null) {
+    	if(api.getParams().opt("tag") != null) {
     		// TODO FILTRO ETIQUETAS MÚLTIPLE
-    		filter = filter.and(f.getTagProperty().eq(getParams().optInt("tag")));
+    		filter = filter.and(f.getTagProperty().eq(api.getParams().optInt("tag")));
     	}
 
-		if(getParams().opt("per_page") != null){
-			filter.perPage(getParams().optInt("per_page"));
+		if(api.getParams().opt("per_page") != null){
+			filter.perPage(api.getParams().optInt("per_page"));
 		}
-		if(getParams().opt("page") != null){
-			filter.page(getParams().optInt("page"));
+		if(api.getParams().opt("page") != null){
+			filter.page(api.getParams().optInt("page"));
 		}
 		
 		return filter;

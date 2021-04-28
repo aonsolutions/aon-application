@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -8,7 +9,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
-public class TimeControl {
+public class TimeControl implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private Date startDate;
 	private Date endDate;

@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Scope;
 
+import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiScopeServlet", urlPatterns = {"/ms/api/scope/*"})
 public class ScopeServlet extends AonApiHttpServlet {
@@ -21,11 +23,11 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - GET METHOD");
 		try {
-			super.doGet(req, resp);
+			AonApiData api = initialize(req, resp);
 		
-			switch (getPath()) {
+			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getScopes());
+				response(req, resp, getScopes(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -41,8 +43,8 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());
 				break;
@@ -59,8 +61,8 @@ public class ScopeServlet extends AonApiHttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API SCOPE SERVLET - DELETE METHOD");
 		try {
-			super.doDelete(req, resp);
-			switch (getPath()) {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
 			case "/":
 				//response(req, resp, getResponseObject());
 				break;
@@ -73,25 +75,25 @@ public class ScopeServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONArray getScopes() {
+	private JSONArray getScopes(AonApiData api) {
 		JSONArray array = new JSONArray();
-		if(!getDomain().isParent() && getDomain().isEnableHeredity()) {
-			if(getUser().getDomain().equals(getDomain().getId())) {
-				AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), getUser().getId(), 
-						f -> f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
+		if(!api.getDomain().isParent() && api.getDomain().isEnableHeredity()) {
+			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
+				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), 
+						f -> f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
 					.forEach(s -> array.put(scopeToJSON(s)));
 			} else {
-				AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()))
+				AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
 					.forEach(s -> array.put(scopeToJSON(s)));
-				AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), getUser().getId(), f -> f.getDomainProperty().eq(getDomain().getParentId()))
+				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getParentId()))
 					.forEach(s -> array.put(scopeToJSON(s)));
 			}
 		} else {
-			if(getUser().getDomain().equals(getDomain().getId())) {
-				AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), getUser().getId(), f -> f.getDomainProperty().eq(getDomain().getId()))
+			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
+				AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
 				.forEach(s -> array.put(scopeToJSON(s)));
 			} else {
-				AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()))
+				AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()))
 					.forEach(s -> array.put(scopeToJSON(s)));
 			}
 		}
