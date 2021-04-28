@@ -12,7 +12,7 @@ public class SalariesDocuments extends CostDocuments {
 
 	public SalariesDocuments(List<Cost> costs,
 			DomainEmployeesServiceAsync employeesServiceAsync) {
-		super(costs, employeesServiceAsync);
+		super(costs);
 	}
 	
 	@Override

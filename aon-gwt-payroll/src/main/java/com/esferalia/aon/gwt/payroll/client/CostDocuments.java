@@ -11,26 +11,27 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class CostDocuments extends AbstractSpinnable<IDocument> implements
-		IDocument {
+public class CostDocuments extends AbstractSpinnable<IDocument> implements IDocument {
 
+	// ----------------------------------------------- Variables
+	
 	private List<Cost> costs;
 	private List<Salary.Type> types;
-	private DomainEmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 
-	public CostDocuments(List<Cost> costs,
-			DomainEmployeesServiceAsync employeesServiceAsync) {
-		this(costs, new ArrayList<Salary.Type>(Arrays.asList(Salary.Type
-				.values())), employeesServiceAsync);
+	// ----------------------------------------------- Constructor
+	
+	public CostDocuments(List<Cost> costs) {
+		this(costs, new ArrayList<Salary.Type>(Arrays.asList(Salary.Type.values())));
 	}
 
-	CostDocuments(List<Cost> costs, List<Salary.Type> types,
-			DomainEmployeesServiceAsync employeesServiceAsync) {
+	CostDocuments(List<Cost> costs, List<Salary.Type> types) {
 		this.costs = costs;
 		this.types = types;
-		this.employeesService = employeesServiceAsync;
 		last();
 	}
+	
+	// ----------------------------------------------- IDocument
 
 	@Override
 	public int size() {
@@ -69,16 +70,12 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 				getSalaryTypes(), zoom, callback);
 	}
 
-	public void getSLDAsHTML(int zoom, AsyncCallback<String> callback) {
-		Cost cost = costs.get(getCurrentIndex());
-		employeesService.getSLDCalcReceiptHTML(cost,
-				getSalaryTypes(), zoom, callback);
-	}
-
 	@Override
 	public String[] getSupportedFormats() {
 		return new String[] { "xls" };
 	}
+	
+	// ------------------------------------------------------ CostDocuments.Methods
 
 	public List<Cost> getCosts() {
 		return costs;
@@ -100,7 +97,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 		return types.contains(type);
 	}
 
-	// ------------------------------------------------------ protected methods
+	// ------------------------------------------------------ SDL
 	
 	Salary.Type [] getSalaryTypes() {
 		return types.toArray(new Salary.Type[types.size()]);
@@ -108,6 +105,12 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 	
 	protected DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
+	}
+	
+	public void getSLDAsHTML(int zoom, AsyncCallback<String> callback) {
+		Cost cost = costs.get(getCurrentIndex());
+		employeesService.getSLDCalcReceiptHTML(cost,
+				getSalaryTypes(), zoom, callback);
 	}
 
 }

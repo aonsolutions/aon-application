@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
 
@@ -9,36 +8,33 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -47,29 +43,148 @@ import com.google.gwt.user.client.ui.Widget;
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class Cost extends ResizeComposite {
+	
+	// ----------------------------------------------- Static Variables 
 
 	private static final int ZOOM_STEP = 20;
 	private static final int MIN_ZOOM = 25;
 	private static final int MAX_ZOOM = 500;
 
-	private static final int DEFAULT_ZOOM = 135;
+	private static final int DEFAULT_ZOOM = 115;
+	
+	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
 
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH);
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH);
 
-	interface Binder extends UiBinder<Widget, Cost> {
-	}
+	// ----------------------------------------------- UiBinder 
+
+	interface Binder extends UiBinder<Widget, Cost> {}
+	
+	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ----------------------------------------------- Listener 
 	
 	static interface Listener {
 		void onStartSLD();
 		void onFinishSLD();
 		void onPublish(CostDocuments documents, String type);
+	}
+	
+	// ----------------------------------------------- ScheduledCommand (Excel)
+	
+	class ExcelCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			printExcel(SUMMARY);
+		}
+	}
+	
+	class ExcelCompleteCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			printExcel(COMPLETE);
+		}
+	}
+	
+	class CSVCCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			printCSV();
+		}
+	}
+	
+	class ExcelMenu extends ContextMenu {
+				
+		private MenuItem excel = null;
+		private MenuItem excelComplete = null;
+		private MenuItem csv = null;
+		
+		public ExcelMenu() {
+			
+			excel = addItem("Microsoft Excel (.xls)", new ExcelCommand(), 
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			excel.ensureDebugId("excel");
+			
+			excelComplete = addItem("Microsoft Excel (.xls, detallado)", new ExcelCompleteCommand(), 
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			excelComplete.ensureDebugId("excelComplete");
+			
+			csv = addItem("Valores separados por comas (.csv)", new CSVCCommand(), 
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			csv.ensureDebugId("csv");
+		}
+	}
+	
+	// ----------------------------------------------- ScheduledCommand (See Type) 
+	
+	class SalaryCommand implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+	
+	class ExtraCommand implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+	
+	class SettleCommand implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+	
+	class DelayCommand implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+	
+	class SeeMenu extends ContextMenu {
+				
+		private MenuItem salary = null;
+		private MenuItem extra = null;
+		private MenuItem settle = null;
+		private MenuItem delay = null;
+		
+		public SeeMenu() {
+			
+			salary = addItem(Salary.Type.SALARY.getDescription(), new SalaryCommand(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			salary.ensureDebugId("salary");
+			
+			extra = addItem(Salary.Type.EXTRA.getDescription(), new ExtraCommand(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			extra.ensureDebugId("extra");
+			
+			settle = addItem(Salary.Type.SETTLE.getDescription(), new SettleCommand(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			settle.ensureDebugId("settle");
+			
+			delay = addItem(Salary.Type.DELAY.getDescription(), new DelayCommand(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			delay.ensureDebugId("delay");
+		}
+
+		public MenuItem getSalary() {
+			return salary;
+		}
+
+		public MenuItem getExtra() {
+			return extra;
+		}
+
+		public MenuItem getSettle() {
+			return settle;
+		}
+
+		public MenuItem getDelay() {
+			return delay;
+		}
 		
 	}
 	
-	private static final Binder binder = GWT.create(Binder.class);
-
-	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
+	// ----------------------------------------------- ScheduledCommand (Type)
 
 	private class TypeCommand implements ScheduledCommand {
 
@@ -99,105 +214,63 @@ public class Cost extends ResizeComposite {
 		}
 
 	}
+	
+	// ----------------------------------------------- UiFields
+	
+	@UiField
+	static
+	MyStyle style;
 
-	private class TypeValueChangeHandler implements ValueChangeHandler<Boolean> {
-
-		private Salary.Type type;
-		private CheckBox checkBox;
-
-		private TypeValueChangeHandler(CheckBox checkBox, Salary.Type type) {
-			this.type = type;
-			this.checkBox = checkBox;
-			this.checkBox.addValueChangeHandler(this);
-		}
-
-		@Override
-		public void onValueChange(ValueChangeEvent<Boolean> event) {
-			if (!costDocuments.containsType(type)) {
-				costDocuments.addType(type);
-			} else {
-				costDocuments.removeType(type);
-			}
-			getAsHTML();
-		}
-
+	interface MyStyle extends CssResource {
+		String cmd_btn();
 	}
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	FlowPanel mainPanel;
 	
 	@UiField
 	ScrollPanel scrollPanel;
+	
 	@UiField
 	SplitLayoutPanel containerSplitLayoutPanel;
-
-	@UiField
-	Button excelButton;
-	@UiField
-	Button printButton;
-
-	@UiField
-	MenuItem printMenuItem;
-	@UiField
-	MenuItem downloadMenuItem;
-	@UiField
-	MenuItem downloadPDFMenuItem;
-	@UiField
-	MenuItem downloadExcelMenuItem;
-	@UiField
-	MenuItem downloadDetailedExcelMenuItem;
-	@UiField
-	MenuItem downloadCSVMenuItem;
-
-	@UiField
-	MenuItem reduceMenuItem;
-	@UiField
-	MenuItem enlargeMenuItem;
-
-	@UiField
-	MenuItem salaryMenuItem;
-	@UiField
-	MenuItem extraMenuItem;
-	@UiField
-	MenuItem settleMenuItem;
-	@UiField
-	MenuItem delayMenuItem;
-	@UiField
-	MenuItem publishMenuItem;
-
-	@UiField
-	CheckBox salaryCheckBox;
-	@UiField
-	CheckBox extraCheckBox;
-	@UiField
-	CheckBox settleCheckBox;
-	@UiField
-	CheckBox delayCheckBox;
-
-	@UiField
-	ListBox dateListBox;
-
-	@UiField
-	Label titleLabel;
 	
 	@UiField
 	Viewer pdfViewer;
 	
-	@UiField
-	Button publishButton;
-	
-	@UiField
-	Button bidoqPublishButton;
+	// ----------------------------------------------- Variables
 
 	private int zoom = DEFAULT_ZOOM;
 
 	private CostDocuments costDocuments;
 	
 	private List<Listener> listeners;
-
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton excelBtn;
+	private AonToolbarButton pdfBtn;
+	private AonToolbarButton publishBtn;
+	private AonToolbarButton bidoqBtn;
+	private ListBox dateListBox = new ListBox();
+	private AonToolbarButton zoomInBtn;
+	private AonToolbarButton zoomOutBtn;
+	private AonToolbarButton seeBtn;
+	
+	private ExcelMenu excelMenu;
+	private SeeMenu seeMenu;
+	
+	// ----------------------------------------------- Constructor
 	public Cost() {
+		toolbar = getToolbarPanel();
 
 		initWidget(binder.createAndBindUi(this));
+		
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		excelMenu = new ExcelMenu();
+		seeMenu = new SeeMenu();
 
 		dateListBox.addChangeHandler(new ChangeHandler() {
 			@Override
@@ -206,110 +279,20 @@ public class Cost extends ResizeComposite {
 			}
 		});
 
-		printButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				printPDF();
-//				IDocument document = costDocuments.current();
-//				document.print();
-			}
-		});
-		printMenuItem.setCommand(new Command() {
-
-			@Override
-			public void execute() {
-				IDocument document = costDocuments.current();
-				document.print();
-			}
-		});
-
-		reduceMenuItem.setCommand(new Command() {
-
-			@Override
-			public void execute() {
-				zoom = Math.max(MIN_ZOOM, zoom - ZOOM_STEP);
-				getAsHTML();
-			}
-		});
-
-		enlargeMenuItem.setCommand(new Command() {
-
-			@Override
-			public void execute() {
-				zoom = Math.min(MAX_ZOOM, zoom + ZOOM_STEP);
-				getAsHTML();
-			}
-		});
-		
-		publishMenuItem.setScheduledCommand( new ScheduledCommand() {
-			@Override
-			public void execute() {
-				onPublish(costDocuments, "drive");
-			}
-		});
-
-		new TypeCommand(salaryMenuItem, Salary.Type.SALARY);
-		new TypeCommand(extraMenuItem, Salary.Type.EXTRA);
-		new TypeCommand(settleMenuItem, Salary.Type.SETTLE);
-		new TypeCommand(delayMenuItem, Salary.Type.DELAY);
-		
-		new TypeValueChangeHandler(salaryCheckBox, Salary.Type.SALARY);
-		new TypeValueChangeHandler(extraCheckBox, Salary.Type.EXTRA);
-		new TypeValueChangeHandler(settleCheckBox, Salary.Type.SETTLE);
-		new TypeValueChangeHandler(delayCheckBox, Salary.Type.DELAY);
+		new TypeCommand(seeMenu.getSalary(), Salary.Type.SALARY);
+		new TypeCommand(seeMenu.getExtra(), Salary.Type.EXTRA);
+		new TypeCommand(seeMenu.getSettle(), Salary.Type.SETTLE);
+		new TypeCommand(seeMenu.getDelay(), Salary.Type.DELAY);
 		
 		listeners = new LinkedList<Listener>(); 
 
-		publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
-		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
-		
-		downloadPDFMenuItem.setScheduledCommand(() -> {
-			
-			printPDF();
-			
-			
-//			IDocument document = costDocuments.current();
-//			document.print();
-		});
-		
-		downloadExcelMenuItem.setScheduledCommand(() -> {
-			printExcel(SUMMARY);
-		});
-		
-		downloadDetailedExcelMenuItem.setScheduledCommand(() -> {
-			printExcel(COMPLETE);
-		});
-		
-		downloadCSVMenuItem.setScheduledCommand(() -> {
-			printCSV();
-		});
-		
-		excelButton.addClickHandler(e -> {
-			MenuBar menuBar = new MenuBar(true);
-			
-			MenuItem simpleExcelItem = new MenuItem(downloadExcelMenuItem.getText(),downloadExcelMenuItem.getScheduledCommand());
-			MenuItem detailedExcelItem = new MenuItem(downloadDetailedExcelMenuItem.getText(),downloadDetailedExcelMenuItem.getScheduledCommand());
-			
-			menuBar.addItem(simpleExcelItem);
-			menuBar.addItem(detailedExcelItem);
-			
-			PopupPanel popupPanel = new PopupPanel(true);
-			popupPanel.add(menuBar);
-			popupPanel.showRelativeTo(excelButton);
-		});
-		
+		publishBtn.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		bidoqBtn.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		
 	}
 
-	@Override
-	public void setTitle(String title) {
-		super.setTitle(title);
-		titleLabel.setText(title);
-	}
-
-	/**
-	 * 
-	 */
+	// ----------------------------------------------- Cost.Methods
+	
 	public void setCostDocuments(CostDocuments costDocuments) {
 
 		this.costDocuments = costDocuments;
@@ -319,17 +302,6 @@ public class Cost extends ResizeComposite {
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
-	
-	@UiHandler("publishButton")
-	void onPublisButtonClick(ClickEvent event) {
-		onPublish(costDocuments, "drive");
-	}
-	
-	@UiHandler("bidoqPublishButton")
-	void onBidoqPublisButtonClick(ClickEvent event) {
-		onPublish(costDocuments, "bidoq");
-	}
-	
 	
 	void onStartSLD() {
 		for (Listener listener : listeners)
@@ -346,32 +318,31 @@ public class Cost extends ResizeComposite {
 			listener.onPublish(documents, type);
 	}
 	
-	private void getAsHTML() {
-		costDocuments.getAsHTML(zoom, new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String html) {
-				pdfViewer.setDocument(html, zoom/100d);
-				syncTypeCheckBoxes();
-				syncTypeMenuItems();
-//				getSLDAsHTML();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {}
-		});				
-	}
-
-
 	private void onCostDocumentsChanged() {
 		getAsHTML();
 		syncFormatsButtons();
 		syncCostDateListBox();
 	}
-
+	
 	private void onSalaryDateChanged() {
 		int selected = dateListBox.getSelectedIndex();
 		costDocuments.setCurrentIndex(selected);
 		getAsHTML();
+	}
+	
+	// ----------------------------------------------- Cost.Auxiliar Methods
+	
+	private void getAsHTML() {
+		costDocuments.getAsHTML(zoom, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String html) {
+				pdfViewer.setDocument(html, zoom/100d);
+				syncTypeMenuItems();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {}
+		});				
 	}
 
 	private void syncCostDateListBox() {
@@ -385,28 +356,21 @@ public class Cost extends ResizeComposite {
 	}
 
 	private void syncTypeMenuItems() {
-		setCheckedStyle(salaryMenuItem,
+		setCheckedStyle(seeMenu.getSalary(),
 				costDocuments.containsType(Salary.Type.SALARY));
-		setCheckedStyle(extraMenuItem,
+		setCheckedStyle(seeMenu.getExtra(),
 				costDocuments.containsType(Salary.Type.EXTRA));
-		setCheckedStyle(settleMenuItem,
+		setCheckedStyle(seeMenu.getSettle(),
 				costDocuments.containsType(Salary.Type.SETTLE));
-		setCheckedStyle(delayMenuItem,
+		setCheckedStyle(seeMenu.getDelay(),
 				costDocuments.containsType(Salary.Type.DELAY));
-	}
-
-	private void syncTypeCheckBoxes() {
-		salaryCheckBox.setValue(costDocuments.containsType(Salary.Type.SALARY), false);;
-		extraCheckBox.setValue(costDocuments.containsType(Salary.Type.EXTRA), false);;
-		settleCheckBox.setValue(costDocuments.containsType(Salary.Type.SETTLE), false);;
-		delayCheckBox.setValue(costDocuments.containsType(Salary.Type.DELAY), false);;
 	}
 
 	private void syncFormatsButtons() {
 		String formats[] = costDocuments.getSupportedFormats();
 		Arrays.sort(formats);
 
-		excelButton.setVisible(Arrays.binarySearch(formats, "xls") >= 0);
+		excelBtn.setVisible(Arrays.binarySearch(formats, "xls") >= 0);
 	}
 
 	private void setCheckedStyle(MenuItem menuItem, boolean checked) {
@@ -417,6 +381,12 @@ public class Cost extends ResizeComposite {
 		}
 	}
 	
+	private boolean isMenuItemChecked(MenuItem salary) {
+		return AonStringUtils.containsIgnoreCase(salary.getStyleName(), STYLENAME_CHECKED_ITEM);
+	}
+
+	// ----------------------------------------------- Export Methods
+	
 	private void printExcel (ExcelType excelType) {
 		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
@@ -425,7 +395,6 @@ public class Cost extends ResizeComposite {
 				+ costDocuments.geCurrentCost().getMonth() + "_" + costDocuments.geCurrentCost().getYear() + "_"
 				+ costDocuments.geCurrentCost().getEnterpriseId() + "_" + costDocuments.geCurrentCost().getWorkplaceId() + "."
 				+ "xsl");
-		
 		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(printURL);
@@ -438,18 +407,16 @@ public class Cost extends ResizeComposite {
 		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
 		flowPanel.add(new Hidden("excelType", excelType.name()));
 		
-		if (salaryCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSalary()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
-		if (extraCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getExtra()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
-		if (settleCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSettle()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
-		if (delayCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
 		
-		
 		formPanel.add(flowPanel);
-		
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
 			mainPanel.remove(formPanel);
@@ -459,20 +426,6 @@ public class Cost extends ResizeComposite {
 		
 		formPanel.submit();
 		
-		
-//		String printURL = GWT.getModuleBaseURL()+ "/cost_excel/"
-//				+ "?month=" + costDocuments.geCurrentCost().getMonth()
-//	            + "&year=" + costDocuments.geCurrentCost().getYear()
-//	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
-//	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
-		
-//		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
-//		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
-//		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
-//		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
-//		printURL += "&excelType=" + excelType.name().toLowerCase();
-//		
-//		Window.open(printURL, "_blank", null);
 	}
 	
 	private void printCSV () {
@@ -494,18 +447,16 @@ public class Cost extends ResizeComposite {
 		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
 		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
 		
-		if (salaryCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSalary()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
-		if (extraCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getExtra()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
-		if (settleCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSettle()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
-		if (delayCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
 		
-		
 		formPanel.add(flowPanel);
-		
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
 			mainPanel.remove(formPanel);
@@ -515,21 +466,10 @@ public class Cost extends ResizeComposite {
 		
 		formPanel.submit();
 		
-//		String printURL = GWT.getModuleBaseURL()+ "/cost_csv/"
-//				+ "?month=" + costDocuments.geCurrentCost().getMonth()
-//	            + "&year=" + costDocuments.geCurrentCost().getYear()
-//	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
-//	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
-		
-//		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
-//		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
-//		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
-//		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
-//		
-//		Window.open(printURL, "_blank", null);
 	}
 	
 	public void printPDF () {
+		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/"
@@ -547,18 +487,16 @@ public class Cost extends ResizeComposite {
 		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
 		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
 		
-		if (salaryCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSalary()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
-		if (extraCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getExtra()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
-		if (settleCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getSettle()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
-		if (delayCheckBox.getValue())
+		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
 		
-		
 		formPanel.add(flowPanel);
-		
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
 			mainPanel.remove(formPanel);
@@ -567,6 +505,96 @@ public class Cost extends ResizeComposite {
 		mainPanel.add(formPanel);
 		
 		formPanel.submit();
+	}
+	
+	// ----------------------------------------------- Toolbar
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("Costes");
+		
+		excelBtn = new AonToolbarButton( "Excel", AON.CSS.aonIconExcel() );
+		excelBtn.addClickHandler(e -> {
+			onExcel(e);
+		});
+		toolbar.add(excelBtn);
+		
+		pdfBtn = new AonToolbarButton( "PDF", AON.CSS.aonIconPdf() );
+		pdfBtn.addClickHandler(e -> {
+			onPDF(e);
+		});
+		toolbar.add(pdfBtn);
+		
+		publishBtn = new AonToolbarButton( "Publicar", AON.CSS.aonIconDrive() );
+		publishBtn.addClickHandler(e -> {
+			onPublish(e);
+		});
+		toolbar.add(publishBtn);
+		
+		bidoqBtn = new AonToolbarButton( "Publicar", "aon-icon-bidoq" );
+		bidoqBtn.addClickHandler(e -> {
+			onBidoq(e);
+		});
+		toolbar.add(bidoqBtn);
+		
+		toolbar.add(dateListBox);
+		
+		zoomOutBtn = new AonToolbarButton( "Reducir", AON.CSS.aonIconZoomOut() );
+		zoomOutBtn.addClickHandler(e -> {
+			onZoomOut(e);
+		});
+		toolbar.add(zoomOutBtn);
+		
+		zoomInBtn = new AonToolbarButton( "Ampliar", AON.CSS.aonIconZoomIn() );
+		zoomInBtn.addClickHandler(e -> {
+			onZoomIn(e);
+		});
+		toolbar.add(zoomInBtn);
+		
+		seeBtn = new AonToolbarButton( "Ver", AON.CSS.aonIconVisibility() );
+		seeBtn.addClickHandler(e -> {
+			onView(e);
+		});
+		toolbar.add(seeBtn);
+		
+		return toolbar;
+
+	}
+	
+	// ----------------------------------------------- Toolbar.Methods
+
+	private void onExcel(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		excelMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		excelMenu.show();
+	}
+	
+	private void onPDF(ClickEvent e) {
+		printPDF();
+	}
+
+	private void onPublish(ClickEvent e) {
+		onPublish(costDocuments, "drive");
+	}
+	
+	private void onBidoq(ClickEvent e) {
+		onPublish(costDocuments, "bidoq");
+	}
+
+	private void onZoomIn(ClickEvent e) {
+		zoom = Math.max(MIN_ZOOM, zoom + ZOOM_STEP);
+		getAsHTML();
+	}
+
+	private void onZoomOut(ClickEvent e) {
+		zoom = Math.min(MAX_ZOOM, zoom - ZOOM_STEP);
+		getAsHTML();
+	}
+	
+	private void onView(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		seeMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		seeMenu.show();
 	}
 
 }

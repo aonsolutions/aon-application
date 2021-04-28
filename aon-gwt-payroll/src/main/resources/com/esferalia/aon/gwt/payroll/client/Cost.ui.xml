@@ -5,9 +5,10 @@
 	xmlns:p='urn:import:net.aonsolutions.gwt.pdfjs.client'
 >
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Cost.MyStyle">
+		
 		.editor {
-			
+			margin-top: 50px;
 		}
 		
 		.document {
@@ -16,99 +17,23 @@
 			margin-right: auto;
 			margin-bottom: 15px;
 		}
-		.toolBar-checkBox input {
-			vertical-align: middle;
+		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
 		}
 		
 	</ui:style>
-	<ui:import field="com.esferalia.aon.gwt.payroll.shared.Salary.Type.*" />
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="72">
-
-			<g:FlowPanel ui:field="mainPanel">
-
-				<g:MenuBar>
-					<g:MenuItem text="Archivo">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="downloadMenuItem" text="Descargar" >
-								<g:MenuBar vertical="true">
-									<g:MenuItem ui:field="downloadPDFMenuItem" text="Documento PDF (.pdf)"/>
-									<g:MenuItem ui:field="downloadExcelMenuItem" text="Microsoft Excel (.xls)"/>
-									<g:MenuItem ui:field="downloadDetailedExcelMenuItem" text="Microsoft Excel (.xls, detallado)"/>
-									<g:MenuItem ui:field="downloadCSVMenuItem" text="Valores separados por comas (.csv)"/>
-								</g:MenuBar>
-							</g:MenuItem>
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
-							<g:MenuItem ui:field="publishMenuItem" text="Publicar..." />
-						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem ui:field="viewMenuItem" text="Ver">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
-							<g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" />
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem text="{SALARY.getDescription}" ui:field="salaryMenuItem" />
-							<g:MenuItem text="{EXTRA.getDescription}" ui:field="extraMenuItem" />
-							<g:MenuItem text="{SETTLE.getDescription}" ui:field="settleMenuItem" />
-							<g:MenuItem text="{DELAY.getDescription}" ui:field="delayMenuItem" />
-						</g:MenuBar>
-					</g:MenuItem>
-				</g:MenuBar>
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" ui:field="titleLabel">Costes</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
-								<g:Label styleName="aon-outputText" text=" " />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='excelButton'
-									styleName='aon-finding-toolbar-item aon-icon-excel' text="Excel" />
-								<g:Button ui:field='printButton'
-									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
-								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
-								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text="Publicar" />
-								<g:ListBox ui:field='dateListBox' styleName='' />
-								<!-- g:ListBox ui:field='endDateBox' styleName='' / -->
-								
-								<g:CheckBox ui:field='salaryCheckBox'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="{SALARY.getDescription}" checked="false" />
-								<g:CheckBox ui:field='extraCheckBox'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="{EXTRA.getDescription}" checked="false" />
-								<g:CheckBox ui:field='settleCheckBox'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="{SETTLE.getDescription}" checked="false" />
-								<g:CheckBox ui:field='delayCheckBox'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="{DELAY.getDescription}" checked="false" />
-									
-								</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-
-			</g:FlowPanel>
-
-		</g:north>
+	
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
 			<g:SplitLayoutPanel ui:field="containerSplitLayoutPanel">
 				<g:center>
 					<g:ScrollPanel styleName="{style.editor}" ui:field="scrollPanel">
 						<g:VerticalPanel styleName="{style.document}">
+							<g:FlowPanel ui:field="mainPanel"/>
 							<p:Viewer styleName="reset" ui:field='pdfViewer' />
 						</g:VerticalPanel>
 					</g:ScrollPanel>

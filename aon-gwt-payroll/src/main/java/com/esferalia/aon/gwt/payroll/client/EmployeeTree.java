@@ -2312,7 +2312,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onCCCSelected(CCC ccc) {
-
 		getCCCCretaDetail().setCCC(ccc);
 		getCCCCretaDetail().onTrabajadoresYTramos();
 		employeeDetail.setWidget(getCCCCretaDetail());
@@ -2730,7 +2729,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			progressPanel = new ProgressPanel();
 			cccCretaDetail = new CCCCretaDetail();
 
-			
 			// I use an array for skip compile warning/error 'handlerRegistration may not be initialized'.
 			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
 			handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
@@ -2741,9 +2739,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());
 				handlerRegistration[0].removeHandler();
 			});
+			
 			showProgressPanel();
-
 		}
+		
 		return cccCretaDetail;
 	}
 

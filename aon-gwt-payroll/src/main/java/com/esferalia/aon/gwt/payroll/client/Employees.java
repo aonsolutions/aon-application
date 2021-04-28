@@ -923,7 +923,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 				@Override
 				public void onSuccess(List<Cost> costs) {
-					CostDocuments documents = new CostDocuments(costs, employeesService);
+					CostDocuments documents = new CostDocuments(costs);
 					costsItem.setUserObject(documents);
 
 //					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
@@ -996,7 +996,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 				@Override
 				public void onSuccess(List<Cost> costs) {
-					CostDocuments costDocuments = new CostDocuments(costs, employeesService);
+					CostDocuments costDocuments = new CostDocuments(costs);
 					costsItem.setUserObject(costDocuments);
 
 //					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
@@ -1264,7 +1264,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(List<Cost> costs) {
-				CostDocuments docs = new CostDocuments(costs, employeesService);
+				CostDocuments docs = new CostDocuments(costs);
 				costsItem.setUserObject(docs);
 
 				costsItem.setUserObject(docs);
@@ -1286,7 +1286,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(List<Cost> costs) {
-				CostDocuments docs = new CostDocuments(costs, employeesService);
+				CostDocuments docs = new CostDocuments(costs);
 				costsItem.setUserObject(docs);
 
 				costsItem.setUserObject(docs);
