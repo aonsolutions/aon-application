@@ -1,10 +1,29 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
->
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.CretaDetail.MyStyle">
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+		}
+		
+		.container{
+			margin-top: 50px;
+			padding: 10px 15px;
+		}
+		
+		.grid {
+			margin-left: 18px;
+			margin-rigth: 18px;
+			width: 100%;
+			height: 100%;
+		}
+	
 		@external .aon-finding-title;
 		
 		.aon-finding-title{
@@ -16,6 +35,13 @@
 		.aon-finding-title-toolbar {
 			height: auto !important;		
 		}
+		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
 					
 	</ui:style>
 
@@ -23,113 +49,15 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.CretaService.File.*" />
 
-	<g:DockLayoutPanel unit="PX" >
-		<g:north size="114"  >
-
-			<g:FlowPanel >
-				<g:MenuBar width="100%">
-					<g:MenuItem text="SLD-Cret@" enabled="false" width="100%">
-						<g:MenuBar vertical="true">
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="msjRecMenuItem"  text="Mensajes Recibidos" />
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="dclMenuItem"  text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" />
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="basesMenuItem"  text="{BASES.getFilename}" enabled="false"/>
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="trabajadoresYTramosMenuItem"  text="{SOLICITUD_TRABAJADORES_TRAMOS.getFilename}" enabled="false"/>
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="borradorMenuItem"  text="{SOLICITUD_BORRADOR.getFilename}" enabled="false"/>
-							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="confirmacionMenuItem"  text="{SOLICITUD_CONFIRMACION.getFilename}" enabled="false"/>
-						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem ui:field="viewMenuItem" text="Filtrar..."  >
-						<g:MenuBar ui:field="viewMenuBar" vertical="true">
-							<g:MenuItem ui:field="l00MenuItem" text="L00 Normal" />
-							<g:MenuItem ui:field="l13MenuItem" text="L13 Vacaciones" />
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem ui:field="nextMonthMenuItem" text="-" />
-							<g:MenuItem ui:field="prevMonthMenuItem" text="-" />							
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem ui:field="pendingMenuItem" ><span class="aon-icon-warn aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span></g:MenuItem>	
-							<g:MenuItem ui:field="processingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;</span><span> En Proceso </span></g:MenuItem>	
-							<g:MenuItem ui:field="errorMenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span> Con Errores </span></g:MenuItem>							
-							<g:MenuItem ui:field="calculatedMenuItem" ><span class="aon-icon-okwarning aon-icon-commandButton" >&nbsp;</span><span> Calculada </span></g:MenuItem>						
-							<g:MenuItem ui:field="confirmedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Confirmada </span></g:MenuItem>
-							<g:MenuItem ui:field="moreViewMenuItem" text="M&aacute;s..."  >
-								<g:MenuBar ui:field="moreViewMenuBar" vertical="true">
-									<g:MenuItem ui:field="r9546MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9546 CCC no asignado a la autorizaci&oacute;n </span></g:MenuItem>
-									<g:MenuItem ui:field="r9607MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9607 Liquidaci&oacute;n sin trabajadores en alta </span></g:MenuItem>
-									<g:MenuItem ui:field="r9650MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9650 No existen trabajadores en alta por vacaciones no disfrutadas </span></g:MenuItem>
-									<g:MenuItem ui:field="r9544MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > A9544 Existe obligación de presentar en este periodo Liquidaci&oacute;n L13 del mes </span></g:MenuItem>
-								</g:MenuBar>
-							</g:MenuItem>						
-						</g:MenuBar>
-					</g:MenuItem>
-				</g:MenuBar>
-				
-				<g:FlowPanel styleName="aon-finding-title-toolbar" >
-					<g:HorizontalPanel >
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >SLD</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="sldToolbarPanel">
-								<g:Button ui:field='msjRecButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="Mensajes Recibidos" /> 
-								<g:Button ui:field='dclButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" /> 
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>				
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar" >
-					<g:HorizontalPanel >
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >Comunicaciones</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='basesButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{BASES.getFilename}" enabled="false"/> 
-								<g:Button ui:field='dbaButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{COMUNICACION_DATOS_BANCARIOS.getFilename}" />
-								<g:Button ui:field='agrarianButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="JORNADAS REALES AGRARIAS" visible="false"/> 
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>				
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar" >
-					<g:HorizontalPanel >
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText" >Solicitudes</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='trabajadoresYTramosButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_TRABAJADORES_TRAMOS.getFilename}" /> 
-								<g:Button ui:field='borradorButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_BORRADOR.getFilename}" /> 
-								<g:Button ui:field='confirmacionButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{SOLICITUD_CONFIRMACION.getFilename}" /> 
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>				
-
-
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:center>
+			<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
+				<cell:DataGrid ui:field="dataGrid" />
 				<g:FormPanel visible="false" ui:field="formPanel" method="{METHOD_POST}" action="{CRETA_URL}/{TRABAJADORES_TRAMOS.name}"  encoding="{ENCODING_MULTIPART}">
 					<g:FileUpload visible="false"  name="{TRABAJADORES_TRAMOS.name}" ui:field="fileUpload" />
 				</g:FormPanel>
-				
-			</g:FlowPanel>
-
-		</g:north>
-
-		<g:center>
-			<cell:DataGrid ui:field="dataGrid" />
+			</g:HTMLPanel>
 		</g:center>
-
 	</g:DockLayoutPanel>
 
 </ui:UiBinder>

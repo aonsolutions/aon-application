@@ -1693,9 +1693,35 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			return null;
 		}
-	}
 
+		@Override
+		protected void onClickDBAButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickConfirmacionButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickBorradorButton(ClickEvent e) {}
+	}
+	
 	private class CCCCretaDetail extends BaseCretaDetail {
+		
+		class IdcCommand implements ScheduledCommand {
+			@Override
+			public void execute() {
+				showIdc(DateUtils.getFirstDayOfMonth());
+			}
+		}
+		
+		class Up2DateCommand implements ScheduledCommand {
+			@Override
+			public void execute() {
+				onUp2DateSS();
+			}
+		}
 
 		private CCC ccc;
 		
@@ -1703,8 +1729,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		private Button up2DateButton;
 		
 		public CCCCretaDetail() {			
-			idcButton = addSLDButton(new Button("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", (ClickHandler) e -> onClickIdcButton(e)));
-			up2DateButton = addSLDButton(new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e)));
+			idcButton = new Button("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", (ClickHandler) e -> onClickIdcButton(e));
+			up2DateButton = new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e));
+			addSLDMenuItem("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", new IdcCommand());
+			// TODO: esta en la actividad
+//			addSLDMenuItem("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", new Up2DateCommand());
 		}
 
 		public void setCCC(CCC ccc) {
@@ -1741,22 +1770,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		@Override
-		void onClickBorradorButton(ClickEvent e) {
+		protected void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
 
 		@Override
-		void onClickConfirmacionButton(ClickEvent e) {
+		protected void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
 
 		@Override
-		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
 
 		@Override
-		void onClickDBAButton(ClickEvent e) {
+		protected void onClickDBAButton(ClickEvent e) {
 			CCCDBACommand cmd = new CCCDBACommand();
 			cmd.setCCC(ccc);
 			cmd.execute();
@@ -1828,6 +1857,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 
 		void onClickUp2DateSSButton(ClickEvent e) {
+			onUp2DateSS();
+		}
+		
+		private void onUp2DateSS() {
 			XMLHttpRequest xhr = XMLHttpRequest.create();
 			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_CCC_REPORT);
 			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1858,7 +1891,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			
 			xhr.send(requestDataBuffer.toString());
 			AON.start();
-			
 		}
 
 		protected void onRequestCommand(File file) {

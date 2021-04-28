@@ -1071,7 +1071,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		protected <T extends JsFile> List<T> filter(Collection<T> jsFiles) {
 			return null;
 		}
-		
+
+		@Override
+		protected void onClickDBAButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickConfirmacionButton(ClickEvent e) {}
+
+		@Override
+		protected void onClickBorradorButton(ClickEvent e) {}
 		
 	}
 	
@@ -1257,22 +1268,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		@Override
-		void onClickBorradorButton(ClickEvent e) {
+		protected void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
 
 		@Override
-		void onClickConfirmacionButton(ClickEvent e) {
+		protected void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
 
 		@Override
-		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
 
 		@Override
-		void onClickDBAButton(ClickEvent e) {
+		protected void onClickDBAButton(ClickEvent e) {
 			MainEnterpriseDBACommand cmd = new MainEnterpriseDBACommand();
 			cmd.setEnterprise(enterprise);
 			cmd.execute();
@@ -1465,22 +1476,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		@Override
-		void onClickBorradorButton(ClickEvent e) {
+		protected void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
 
 		@Override
-		void onClickConfirmacionButton(ClickEvent e) {
+		protected void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
 
 		@Override
-		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
 
 		@Override
-		void onClickDBAButton(ClickEvent e) {
+		protected void onClickDBAButton(ClickEvent e) {
 			MainActivityDBACommand cmd = new MainActivityDBACommand();
 			cmd.setActivity(activity);
 			cmd.execute();
@@ -1781,22 +1792,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		@Override
-		void onClickBorradorButton(ClickEvent e) {
+		protected void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
 
 		@Override
-		void onClickConfirmacionButton(ClickEvent e) {
+		protected void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
 
 		@Override
-		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
 
 		@Override
-		void onClickDBAButton(ClickEvent e) {
+		protected void onClickDBAButton(ClickEvent e) {
 			MainCCCDBACommand cmd = new MainCCCDBACommand();
 			cmd.setCCC(ccc);
 			cmd.execute();
@@ -2000,22 +2011,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		@Override
-		void onClickBorradorButton(ClickEvent e) {
+		protected void onClickBorradorButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_BORRADOR);
 		}
 
 		@Override
-		void onClickConfirmacionButton(ClickEvent e) {
+		protected void onClickConfirmacionButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_CONFIRMACION);
 		}
 
 		@Override
-		void onClickTrabajadoresYTramosButton(ClickEvent e) {
+		protected void onClickTrabajadoresYTramosButton(ClickEvent e) {
 			onRequestCommand(File.SOLICITUD_TRABAJADORES_TRAMOS);
 		}
 
 		@Override
-		void onClickDBAButton(ClickEvent e) {
+		protected void onClickDBAButton(ClickEvent e) {
 			EnterprisesDBACommand cmd = new EnterprisesDBACommand();
 			cmd.setEnterprises(enterprises);
 			cmd.execute();

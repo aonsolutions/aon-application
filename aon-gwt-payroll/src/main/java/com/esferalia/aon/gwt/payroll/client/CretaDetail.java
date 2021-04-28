@@ -21,8 +21,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
@@ -54,6 +57,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -69,11 +73,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ImageResourceRenderer;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -88,17 +91,23 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class CretaDetail extends Composite {
 	
+	// ----------------------------------------------- Static Variables 
+	
 	private static final Images IMAGES = GWT.create(Images.class);
 	
 	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
+	
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat.getFormat("MMMM 'de' yyyy");
 	
+	private static final JsEmployeeTemplate JSEMPLOYEE_TEMPLATE = GWT.create(JsEmployeeTemplate.class);
+	
+	// ----------------------------------------------- UiBinder
+	
+	private static CretaDetailUiBinder uiBinder = GWT.create(CretaDetailUiBinder.class);
 
-	private static CretaDetailUiBinder uiBinder = GWT
-			.create(CretaDetailUiBinder.class);
-
-	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {
-	}
+	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {}
+	
+	// ----------------------------------------------- ViewMenuBar
 	
 	public static class ViewMenuBar extends MenuBar {
 		  
@@ -134,13 +143,15 @@ public abstract class CretaDetail extends Composite {
 		    	      event.stopPropagation();
 		    	      event.preventDefault();
 		    	  }
-		    	  return;
-		    	 
+		    	  return; 
 		      }
 		    }
+		    
 		    super.onBrowserEvent(event);
 		}		
 	};
+	
+	// ----------------------------------------------- Expand Collapse Cell
 
 	private class ExpandCollapseCell extends AbstractCell<JsFile> {
 
@@ -167,98 +178,435 @@ public abstract class CretaDetail extends Composite {
 	  
 	}
 	
-	static interface JsEmployeeTemplate extends SafeHtmlTemplates {
+	// ----------------------------------------------- JsEmployeeTemplate
 
+	static interface JsEmployeeTemplate extends SafeHtmlTemplates {
 		@Template("<div class=\"aon-nowrap\" ><span class=\"{0}\" style=\"padding-left: 16px;\"></span><span class=\"aon-bold\" style=\"padding-left: 8px;\">{3} {1}</span><span> ({2})</span></div>")
 		SafeHtml trabajador(String iconStyle, String naf, String ipf, String caf);
 	}
 	
-	private static final JsEmployeeTemplate JSEMPLOYEE_TEMPLATE = GWT
-			.create(JsEmployeeTemplate.class);
+	// ----------------------------------------------- ScheduledCommand (SDL-Cret@)
 	
+	class MsjRecCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			fileUpload.click();
+		}
+	}
+	
+	class DclCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {}
+	}
+	
+	class BasesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {}
+	}
+	
+	class TrabajadoresYTramosCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {}
+	}
+	
+	class BorradorCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {}
+	}
+	
+	class ConfirmacionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {}
+	}
+	
+	class SLDCretaMenu extends ContextMenu {
+				
+		private MenuItem msjRecMenuItem = null;
+		private MenuItem dclMenuItem = null;
+		private MenuItem basesMenuItem = null;
+		private MenuItem trabajadoresYTramosMenuItem = null;
+		private MenuItem borradorMenuItem = null;
+		private MenuItem confirmacionMenuItem = null;
+		
+		public SLDCretaMenu() {
+			
+			msjRecMenuItem = addItem("Mensajes Recibidos", new MsjRecCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			msjRecMenuItem.ensureDebugId("msjRecMenuItem");
+			
+			dclMenuItem = addItem(CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION.getFilename(), new DclCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			dclMenuItem.ensureDebugId("dclMenuItem");
+			
+			basesMenuItem = addItem(CretaService.File.BASES.getFilename(), new BasesCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			basesMenuItem.ensureDebugId("basesMenuItem");
+			basesMenuItem.setEnabled(false);
+			
+			basesMenuItem = addItem(CretaService.File.BASES.getFilename(), new BasesCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			basesMenuItem.ensureDebugId("basesMenuItem");
+			basesMenuItem.setEnabled(false);
+			
+			trabajadoresYTramosMenuItem = addItem(CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS.getFilename(), new TrabajadoresYTramosCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			trabajadoresYTramosMenuItem.ensureDebugId("trabajadoresYTramosMenuItem");
+			trabajadoresYTramosMenuItem.setEnabled(false);
+			
+			borradorMenuItem = addItem(CretaService.File.SOLICITUD_BORRADOR.getFilename(), new BorradorCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			borradorMenuItem.ensureDebugId("borradorMenuItem");
+			borradorMenuItem.setEnabled(false);
+			
+			confirmacionMenuItem = addItem(CretaService.File.SOLICITUD_CONFIRMACION.getFilename(), new ConfirmacionCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			confirmacionMenuItem.ensureDebugId("confirmacionMenuItem");
+			confirmacionMenuItem.setEnabled(false);
+		
+		}
+	}
+	
+	// ----------------------------------------------- ScheduledCommand (Filter)
+	
+	class EmptyCommand implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+	
+	class FilterMenu extends ContextMenu {
+				
+		private MenuItem l00MenuItem = null;
+		private MenuItem l13MenuItem = null;
+		private MenuItem nextMonthMenuItem = null;
+		private MenuItem prevMonthMenuItem = null;
+		private MenuItem pendingMenuItem = null;
+		private MenuItem processingMenuItem = null;
+		private MenuItem errorMenuItem = null;
+		private MenuItem calculatedMenuItem = null;
+		private MenuItem confirmedMenuItem = null;
+		private MenuItem moreViewMenuItem = null;
+		
+		private MoreViewMenu moreViewMenu = new MoreViewMenu(true);
+		
+		public FilterMenu() {
+			
+			l00MenuItem = addItem("L00 Normal", new EmptyCommand(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			l00MenuItem.ensureDebugId("l00MenuItem");
+			
+			l13MenuItem = addItem("L13 Vacaciones", new EmptyCommand(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			l13MenuItem.ensureDebugId("l13MenuItem");
+			
+			addSeparator();
+			
+			nextMonthMenuItem = addItem("-", new EmptyCommand(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			nextMonthMenuItem.ensureDebugId("nextMonthMenuItem");
+			
+			prevMonthMenuItem = addItem("-", new EmptyCommand(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			prevMonthMenuItem.ensureDebugId("prevMonthMenuItem");
+			
+			addSeparator();
+			
+			pendingMenuItem = addItem("Pendiente", new EmptyCommand(), "aon-icon-warn", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			pendingMenuItem.ensureDebugId("pendingMenuItem");
+			
+			processingMenuItem = addItem("En Proceso", new EmptyCommand(), "aon-icon-errorwarning", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			processingMenuItem.ensureDebugId("processingMenuItem");
+			
+			errorMenuItem = addItem("Con Errores", new EmptyCommand(), "aon-icon-exception", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			errorMenuItem.ensureDebugId("errorMenuItem");
+			
+			calculatedMenuItem = addItem("Calculada", new EmptyCommand(), "aon-icon-okwarning", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			calculatedMenuItem.ensureDebugId("calculatedMenuItem");
+			
+			confirmedMenuItem = addItem("Confirmada", new EmptyCommand(), "aon-icon-predetermine", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			confirmedMenuItem.ensureDebugId("confirmedMenuItem");
+			
+			moreViewMenuItem = addItem("M&aacute;s...", moreViewMenu, AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			moreViewMenuItem.ensureDebugId("moreViewMenuItem");
+		}
+
+		public MenuItem getL00MenuItem() {
+			return l00MenuItem;
+		}
+
+		public MenuItem getL13MenuItem() {
+			return l13MenuItem;
+		}
+
+		public MenuItem getNextMonthMenuItem() {
+			return nextMonthMenuItem;
+		}
+
+		public MenuItem getPrevMonthMenuItem() {
+			return prevMonthMenuItem;
+		}
+
+		public MenuItem getPendingMenuItem() {
+			return pendingMenuItem;
+		}
+
+		public MenuItem getProcessingMenuItem() {
+			return processingMenuItem;
+		}
+
+		public MenuItem getErrorMenuItem() {
+			return errorMenuItem;
+		}
+
+		public MenuItem getCalculatedMenuItem() {
+			return calculatedMenuItem;
+		}
+
+		public MenuItem getConfirmedMenuItem() {
+			return confirmedMenuItem;
+		}
+
+		public MenuItem getMoreViewMenuItem() {
+			return moreViewMenuItem;
+		}
+
+		public MenuItem getR9546MenuItem() {
+			return moreViewMenu.getR9546MenuItem();
+		}
+
+		public MenuItem getR9607MenuItem() {
+			return moreViewMenu.getR9607MenuItem();
+		}
+
+		public MenuItem getR9650MenuItem() {
+			return moreViewMenu.getR9650MenuItem();
+		}
+
+		public MenuItem getR9544MenuItem() {
+			return moreViewMenu.getR9544MenuItem();
+		}
+		
+	}
+	
+	class MoreViewMenu extends MenuBar {
+		
+		private MenuItem r9546MenuItem = null;
+		private MenuItem r9607MenuItem = null;
+		private MenuItem r9650MenuItem = null;
+		private MenuItem r9544MenuItem = null;
+		
+		public MoreViewMenu(boolean isVertical) {
+			
+			super(isVertical);
+			
+			r9546MenuItem = addItem("",  new EmptyCommand());
+			r9546MenuItem.getElement().setInnerHTML(getHTML("R9546 CCC no asignado a la autorizaci\u00F3n", "aon-icon-exception", AON.AON_ICON_CMD_BUTTON, style.cmd_btn()));
+			r9546MenuItem.ensureDebugId("r9546MenuItem");
+			
+			r9607MenuItem = addItem("",  new EmptyCommand());
+			r9607MenuItem.getElement().setInnerHTML(getHTML("R9607 Liquidaci\u00F3n sin trabajadores en alta", "aon-icon-exception", AON.AON_ICON_CMD_BUTTON, style.cmd_btn()));
+			r9607MenuItem.ensureDebugId("r9607MenuItem");
+			
+			r9650MenuItem = addItem("",  new EmptyCommand());
+			r9650MenuItem.getElement().setInnerHTML(getHTML("R9650 No existen trabajadores en alta por vacaciones no disfrutadas", "aon-icon-exception", AON.AON_ICON_CMD_BUTTON, style.cmd_btn()));
+			r9650MenuItem.ensureDebugId("r9650MenuItem");
+			
+			r9544MenuItem = addItem("",  new EmptyCommand());
+			r9544MenuItem.getElement().setInnerHTML(getHTML("A9544 Existe obligaci\u00F3n de presentar en este periodo Liquidaci\u00F3n L13 del mes", "aon-icon-exception", AON.AON_ICON_CMD_BUTTON, style.cmd_btn()));
+			r9544MenuItem.ensureDebugId("r9544MenuItem");
+			
+		}
+
+		public MenuItem getR9546MenuItem() {
+			return r9546MenuItem;
+		}
+
+		public MenuItem getR9607MenuItem() {
+			return r9607MenuItem;
+		}
+
+		public MenuItem getR9650MenuItem() {
+			return r9650MenuItem;
+		}
+
+		public MenuItem getR9544MenuItem() {
+			return r9544MenuItem;
+		}
+		
+		private String getHTML(String text, String ...styles ) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("<span class='");
+			for (String style : styles)
+				buffer.append(style + ' ' );
+			buffer.append("' >");
+			buffer.append(text);
+			buffer.append("</span>");
+			
+			return buffer.toString();
+		}
+		
+	}
+	
+	// ----------------------------------------------- ScheduledCommand (SLD)
+	
+	class MsjRecButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			fileUpload.setName(TRABAJADORES_TRAMOS.name());
+			formPanel.setAction(CRETA_URL + '/' +TRABAJADORES_TRAMOS.name());
+			fileUpload.click();
+		}
+	}
+	
+	class DclButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			fileUpload.setName(DOCUMENTO_CALCULO_LIQUIDACION.name());
+			formPanel.setAction(CRETA_URL + '/' +DOCUMENTO_CALCULO_LIQUIDACION.name());
+			fileUpload.click();
+		}
+	}
+	
+	// Comunicaciones
+	
+	class BasesButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			submitBases();
+		}
+	}
+	
+	class DbaButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			onClickDBAButton(null);
+		}
+	}
+	
+	class AgrarianButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {}
+	}
+	
+	// Solicitudes
+	
+	class TrabajadoresYTramosButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			onClickTrabajadoresYTramosButton(null);
+		}
+	}
+	
+	class BorradorButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			onClickBorradorButton(null);
+		}
+	}
+	
+	class ConfirmacionButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			onClickConfirmacionButton(null);
+		}
+	}
+	
+	class SLDMenu extends ContextMenu {
+		
+		// Comunicaciones
+		private MenuItem basesButtonMenuItem = null;
+		private MenuItem dbaButtonMenuItem = null;
+		private MenuItem agrarianButtonMenuItem = null;
+		
+		// Solicitudes
+		private MenuItem trabajadoresYTramosButtonMenuItem = null;
+		private MenuItem borradorButtonMenuItem = null;
+		private MenuItem confirmacionButtonMenuItem = null;
+		
+		// SLD
+		private MenuItem msjRecButtonMenuItem = null;
+		private MenuItem dclButtonMenuItem = null;
+		
+		public SLDMenu() {
+			
+			basesButtonMenuItem = addItem(CretaService.File.BASES.getFilename(), new BasesButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			basesButtonMenuItem.ensureDebugId("basesButtonMenuItem");
+			basesButtonMenuItem.setEnabled(false);
+			
+			dbaButtonMenuItem = addItem(CretaService.File.COMUNICACION_DATOS_BANCARIOS.getFilename(), new DbaButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			dbaButtonMenuItem.ensureDebugId("dbaButtonMenuItem");
+			
+			agrarianButtonMenuItem = addItem(CretaService.File.COMUNICACION_DATOS_BANCARIOS.getFilename(), new AgrarianButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			agrarianButtonMenuItem.ensureDebugId("agrarianButtonMenuItem");
+			agrarianButtonMenuItem.setVisible(false);
+			
+			addSeparator();
+			
+			trabajadoresYTramosButtonMenuItem = addItem(CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS.getFilename(), new TrabajadoresYTramosButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			trabajadoresYTramosButtonMenuItem.ensureDebugId("trabajadoresYTramosButtonMenuItem");
+			
+			borradorButtonMenuItem = addItem(CretaService.File.SOLICITUD_BORRADOR.getFilename(), new BorradorButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			borradorButtonMenuItem.ensureDebugId("borradorButtonMenuItem");
+			
+			confirmacionButtonMenuItem = addItem(CretaService.File.SOLICITUD_CONFIRMACION.getFilename(), new ConfirmacionButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			confirmacionButtonMenuItem.ensureDebugId("confirmacionButtonMenuItem");
+			
+			addSeparator();
+			
+			msjRecButtonMenuItem = addItem("Mensajes Recibidos", new MsjRecButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			msjRecButtonMenuItem.ensureDebugId("msjRecButtonMenuItem");
+			
+			dclButtonMenuItem = addItem(DOCUMENTO_CALCULO_LIQUIDACION.getFilename(), new MsjRecButtonCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			dclButtonMenuItem.ensureDebugId("dclButtonMenuItem");
+			
+		}
+		
+		public MenuItem getBasesButtonMenuItem() {
+			return basesButtonMenuItem;
+		}
+	}
+	
+	// ----------------------------------------------- UiFields
+	
+	@UiField
+	static
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String cmd_btn();
+		String grid();
+	}
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 
 	@UiField
 	FormPanel formPanel;
+	
 	@UiField
 	FileUpload fileUpload;
-
-	@UiField
-	Button msjRecButton;
-	@UiField
-	MenuItem msjRecMenuItem;
-
-	@UiField
-	Button dclButton;
-	@UiField
-	MenuItem dclMenuItem;
 	
-	@UiField
-	HTMLPanel sldToolbarPanel;
-
-	@UiField
-	Button basesButton;
-	@UiField
-	MenuItem basesMenuItem;
-
-	@UiField
-	Button trabajadoresYTramosButton;
-	@UiField
-	MenuItem trabajadoresYTramosMenuItem;
-
-	@UiField
-	Button borradorButton;
-	@UiField
-	MenuItem borradorMenuItem;
-
-	@UiField 
-	Button confirmacionButton;
-	@UiField
-	MenuItem confirmacionMenuItem;
-	
-	@UiField
-	Button agrarianButton;
-
 	@UiField(provided = true)
 	DataGrid<JsFile> dataGrid;
-	
-	@UiField(provided = true)
-	MenuBar viewMenuBar;
-	
-	@UiField
-	MenuItem l00MenuItem;
-	@UiField 
-	MenuItem l13MenuItem;
 
-	@UiField
-	MenuItem nextMonthMenuItem;
-	@UiField 
-	MenuItem prevMonthMenuItem;
-
-	@UiField 
-	MenuItem viewMenuItem;
-	@UiField 
-	MenuItem pendingMenuItem;
-	@UiField 
-	MenuItem processingMenuItem;
-	@UiField 
-	MenuItem errorMenuItem;
-	@UiField 
-	MenuItem calculatedMenuItem;
-	@UiField 
-	MenuItem confirmedMenuItem;
-
-	@UiField(provided = true)
-	MenuBar moreViewMenuBar;
-
-	@UiField 
-	MenuItem r9546MenuItem;
-	@UiField 
-	MenuItem r9607MenuItem;
-	@UiField 
-	MenuItem r9650MenuItem;
-	@UiField 
-	MenuItem r9544MenuItem;
-
+	// ----------------------------------------------- Variables
 
 	private PopupPanel popupTooltip;
 	private Timer jsFileToolTipTimer;
@@ -269,46 +617,102 @@ public abstract class CretaDetail extends Composite {
 	private Map<String, CretaService.JsTrabajadoresYTramos> trabajadoresYTramosMap;
 	private Map<String, MultiSelectionModel<String>> trabajadoresSelectionModel;
 	
+	private SLDCretaMenu sldCretaMenu;
+	private SLDMenu sldMenu;
+	private FilterMenu filterMenu;
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton sldCretaBtn;
+	private AonToolbarButton sldBtn;
+	private AonToolbarButton comunicationsBtn;
+	private AonToolbarButton requestsBtn;
+	private AonToolbarButton filterBtn;
+	
+	// ----------------------------------------------- Constructor
 
 	public CretaDetail() {
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		AON.ensureInjected();
+		
 		ProvidesKey<JsFile> keyProvider = new HasIdKeyProvider<JsFile>();
+		
 		dataGrid = new CustomDataGrid<JsFile>(keyProvider) {
 			@Override
 			protected void onBrowserEvent2(Event event) {
-				// TODO Auto-generated method stub
 				super.onBrowserEvent2(event);
-				
-			}
-			
-			
+			}	
 		};
 		
-		
-		viewMenuBar = new ViewMenuBar(true);
-		moreViewMenuBar = new ViewMenuBar(true);
+		toolbar = getToolbarPanel();
 
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		sldCretaMenu = new SLDCretaMenu();
+		sldMenu = new SLDMenu();
+		filterMenu = new FilterMenu();
 		
 		showingEmployees = new HashSet<String>();
 
 		jsFileSelectionModel = new MultiSelectionModel<JsFile>(keyProvider);
 		trabajadoresSelectionModel = new HashMap<String,MultiSelectionModel<String>>();
-
-		dataGrid.setSelectionModel(jsFileSelectionModel,
-				DefaultSelectionEventManager.<JsFile> createCheckboxManager(0));
 		
+		basesMap = new HashMap<String, CretaService.JsBases>();
+		respuestasMap = new HashMap<String, CretaService.JsRespuesta>();
+		trabajadoresYTramosMap = new HashMap<String, CretaService.JsTrabajadoresYTramos>();
 
-		// init MSJREC Command
-		ScheduledCommand msjRecCommand = new ScheduledCommand() {
-			@Override
-			public void execute() {
-				fileUpload.click();
-			}
+		fileUpload.getElement().setPropertyString("multiple", "multiple");
+		
+		// View Menu
+		MenuItem viewMenuItems [] = {
+				filterMenu.getL00MenuItem(),
+				filterMenu.getL13MenuItem(),
+				filterMenu.getNextMonthMenuItem(),
+				filterMenu.getPrevMonthMenuItem(),
+				filterMenu.getPendingMenuItem(),
+				filterMenu.getProcessingMenuItem(),
+				filterMenu.getErrorMenuItem(),
+				filterMenu.getCalculatedMenuItem(),
+				filterMenu.getConfirmedMenuItem(),
+				filterMenu.getR9544MenuItem(),
+				filterMenu.getR9546MenuItem(),
+				filterMenu.getR9607MenuItem(),
+				filterMenu.getR9650MenuItem()
 		};
-		msjRecMenuItem.setScheduledCommand(msjRecCommand);
+		
+		for ( MenuItem menuItem: viewMenuItems ) {
+			setCheckedStyle(menuItem, true);
+			menuItem.setScheduledCommand( () -> {
+				setCheckedStyle(menuItem, !isChecked(menuItem));
+				onTrabajadoresYTramos();
+			} );
+		}
+		
+		filterMenu.getNextMonthMenuItem().setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getNextMonth())));
+		filterMenu.getPrevMonthMenuItem().setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getPrevMonth())));
+		
+		setCheckedStyle(filterMenu.getR9544MenuItem(), false );
+		setCheckedStyle(filterMenu.getR9650MenuItem(), false );
+		setCheckedStyle(filterMenu.getR9607MenuItem(), false );
+		setCheckedStyle(filterMenu.getPrevMonthMenuItem(), new Date().getDate() < 5 );
+		
+		initializeDataGrid();
+		dataGrid.setHeight((Window.getClientHeight() - 200) + "px");
+		dataGrid.setWidth("98%");
+		
+	}
+	
+	// ----------------------------------------------- InitializeDataGrid
+
+	private void initializeDataGrid() {
+		
+		dataGrid.setSelectionModel(jsFileSelectionModel, DefaultSelectionEventManager.<JsFile> createCheckboxManager(0));
 
 		dataGrid.addColumn(new Column<JsFile, Boolean>(new CheckboxCell() {
+			
 			private Set<String> extendedConsumedEvents;
+			
 			@Override
 			public Set<String> getConsumedEvents() {
 				if ( extendedConsumedEvents == null ) { 
@@ -320,8 +724,7 @@ public abstract class CretaDetail extends Composite {
 			}
 			
 			@Override
-			public void onBrowserEvent(Context context, Element parent, Boolean value, NativeEvent event,
-					ValueUpdater<Boolean> valueUpdater) {
+			public void onBrowserEvent(Context context, Element parent, Boolean value, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
 				super.onBrowserEvent(context, parent, value, event, valueUpdater);
 				if ( event.getType().equals(BrowserEvents.CLICK) 
 					|| event.getType().equals(BrowserEvents.KEYUP) ) 
@@ -329,7 +732,6 @@ public abstract class CretaDetail extends Composite {
 				else if ( event.getType().equals(BrowserEvents.KEYDOWN) 
 					&&  event.getKeyCode() == KeyCodes.KEY_ENTER  ) 
 					setSelectedAllEmployee(context.getKey().toString(), !value);
-				
 			}
 			
 		}) {
@@ -342,32 +744,28 @@ public abstract class CretaDetail extends Composite {
 		dataGrid.setColumnWidth(0, "40px");
 		
 		// --------------------------------------------------------------------
-		// 
-		Column<JsFile, JsFile> showEmployeesColumn = 
-		new Column<JsFile, JsFile>( new ExpandCollapseCell(CLICK, DBLCLICK)  )
-		{
+
+		Column<JsFile, JsFile> showEmployeesColumn = new Column<JsFile, JsFile>( new ExpandCollapseCell(CLICK, DBLCLICK) ){
 			@Override
 			public JsFile getValue(JsFile jsFile) {
 				return jsFile;
 			}
-			
 		};
+		
 		showEmployeesColumn.setFieldUpdater(new FieldUpdater<JsFile, JsFile>() {
 			@Override
 			public void update(int index, JsFile jsFile, JsFile value) {
 				String id = jsFile.getId();
-				if ( showingEmployees.contains(id)) {
+				if ( showingEmployees.contains(id))
 					showingEmployees.remove(id);
-				}else {
+				else
 					showingEmployees.add(id);
-				}
-				dataGrid.redrawRow(index);
 				
+				dataGrid.redrawRow(index);	
 			}
 		});
 		
 		dataGrid.setTableBuilder(new DefaultCellTableBuilder<JsFile>(dataGrid) {
-
 		    @Override
 			public void buildRowImpl(JsFile jsFile, int absRowIndex) {
 				super.buildRowImpl(jsFile, absRowIndex);
@@ -414,15 +812,14 @@ public abstract class CretaDetail extends Composite {
 						td.endTD();
 
 						tr.endTR();
-						
-						
 					}
 				}
 			}
-			
 		});
+		
 		dataGrid.addColumn(showEmployeesColumn);
 		dataGrid.setColumnWidth(1, "40px");
+		
 		// --------------------------------------------------------------------
 
 		dataGrid.addColumn(new JsFileColumn() {
@@ -448,7 +845,6 @@ public abstract class CretaDetail extends Composite {
 					CretaDetail.this.jsFileToolTipTimer.cancel();
 				CretaDetail.this.onJsFileClick(jsFile.getId(),
 						event.getClientX(), event.getClientY());
-
 			}
 
 			@Override
@@ -461,6 +857,7 @@ public abstract class CretaDetail extends Composite {
 				List<JsFile> jsFiles = new ArrayList<JsFile>(3);
 				jsFiles.add(jsFile);
 				JsRespuesta jsRespuesta = CretaDetail.this.respuestasMap.get(jsFile.getId());
+				
 				if ( jsRespuesta != null) {
 					
 					if ( !isSolicitudTrabajdoresYTramosRespuesta(jsRespuesta, jsFile))
@@ -480,7 +877,6 @@ public abstract class CretaDetail extends Composite {
 						for ( JsFile old: MainCreta.getOld(File.BASES, jsBases) )
 							if ( replied(jsBases, jsFiles)) 
 								jsFiles.add(old);
-
 					}
 				}
 
@@ -534,57 +930,23 @@ public abstract class CretaDetail extends Composite {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				boolean selected = CretaDetail.this.jsFileSelectionModel
 						.getSelectedSet().size() > 0;
-				CretaDetail.this.basesButton.setEnabled(selected);
+				CretaDetail.this.sldMenu.getBasesButtonMenuItem().setEnabled(selected);
 
 			}
 		});
 		
 		dataGrid.setRowData(new ArrayList<CretaService.JsFile>(0));
-				
-		basesMap = new HashMap<String, CretaService.JsBases>();
-		respuestasMap = new HashMap<String, CretaService.JsRespuesta>();
-		trabajadoresYTramosMap = new HashMap<String, CretaService.JsTrabajadoresYTramos>();
-
-		fileUpload.getElement().setPropertyString("multiple", "multiple");
-		
-		
-		
-		// View Menu
-		viewMenuItem.addStyleName("aon-float-right");
-		MenuItem viewMenuItems [] = {
-				l00MenuItem,
-				l13MenuItem,
-				nextMonthMenuItem,
-				prevMonthMenuItem,
-				pendingMenuItem,
-				processingMenuItem,
-				errorMenuItem,
-				calculatedMenuItem,
-				confirmedMenuItem,
-				r9544MenuItem,
-				r9546MenuItem,
-				r9607MenuItem,
-				r9650MenuItem
-		};
-		for ( MenuItem menuItem: viewMenuItems ) {
-			setCheckedStyle(menuItem, true);
-			menuItem.setScheduledCommand( () -> {
-				setCheckedStyle(menuItem, !isChecked(menuItem));
-				onTrabajadoresYTramos();
-			} );
-		}
-		
-		nextMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getNextMonth())));
-		prevMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getPrevMonth())));
-		
-		setCheckedStyle(r9546MenuItem, false );
-		setCheckedStyle(r9650MenuItem, false );
-		setCheckedStyle(r9607MenuItem, false );
-		setCheckedStyle(prevMonthMenuItem, new Date().getDate() < 5 );
-		
-
 	}
+	
+	// ----------------------------------------------- UIHandlers
 
+	@UiHandler("fileUpload")
+	void onFileUploadChange(ChangeEvent event) {
+		formPanel.submit();
+	}
+	
+	// ----------------------------------------------- CreataDetail.Auxiliar Methods
+	
 	Set<JsFile> getSelected() {
 		return jsFileSelectionModel.getSelectedSet();
 	}
@@ -597,65 +959,16 @@ public abstract class CretaDetail extends Composite {
 	Collection<String> getSelectedNafs() {
 		return getNafs();
 	}
-	// ------------------------------------------------------------- UIHandlers
-
-	@UiHandler("fileUpload")
-	void onFileUploadChange(ChangeEvent event) {
-		formPanel.submit();
-	}
-
-	@UiHandler("msjRecButton")
-	void onClickMsjRecButton(ClickEvent e) {
-		fileUpload.setName(TRABAJADORES_TRAMOS.name());
-		formPanel.setAction(CRETA_URL + '/' +TRABAJADORES_TRAMOS.name());
-		fileUpload.click();
-	}
-
-	@UiHandler("dclButton")
-	void onClickLiquidacionButton(ClickEvent e) {
-		fileUpload.setName(DOCUMENTO_CALCULO_LIQUIDACION.name());
-		formPanel.setAction(CRETA_URL + '/' +DOCUMENTO_CALCULO_LIQUIDACION.name());
-		fileUpload.click();
-	}
-
-	@UiHandler("dbaButton")
-	void onClickDBAButton(ClickEvent e) {
-	}
-
-	@UiHandler("basesButton")
-	void onClickBasesButton(ClickEvent e) {
-		submitBases();
-	}
-
-	@UiHandler("borradorButton")
-	void onClickBorradorButton(ClickEvent e) {
-	}
-
-	@UiHandler("confirmacionButton")
-	void onClickConfirmacionButton(ClickEvent e) {
-	}
-
-	@UiHandler("trabajadoresYTramosButton")
-	void onClickTrabajadoresYTramosButton(ClickEvent e) {
-	}
-	
-
-	// ------------------------------------------------------------------------
 	
 	String getEmployeeFullName(JsEmployee jsEmployee) {
 		return jsEmployee.getCaf();
 	}
 	
-	Button addSLDButton(Button button) {
-		button.setStylePrimaryName(AON.AON_FINDING_TOOLBAR_ITEM);
-		button.addStyleName(AON.AON_UPPERCASE);
-		button.addStyleName(AON.AON_ICON_SEGSOCIAL_SMALL);
-		
-		sldToolbarPanel.add(button);
-		return button;
+	void addSLDMenuItem(String text, ScheduledCommand scheduledCommand) {
+		sldMenu.addItem(text, scheduledCommand, AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 	}
 	
-	// ------------------------------------------------------------------------
+	// ----------------------------------------------- CreataDetail.On Action Methods
 
 	public void onTrabajadoresYTramos() {
 		onTrabajadoresYTramos(new JsTrabajadoresYTramos[0], new JsRespuesta[0], new JsBases[0]);
@@ -674,29 +987,18 @@ public abstract class CretaDetail extends Composite {
 
 			Map<String, JsFile> filteredMap = new HashMap<String, JsFile>();
 			
-			Collection<CretaService.JsTrabajadoresYTramos> visibleTrabajadoresYTramos = 
-					filterVisible(trabajadoresYTramosMap.values());
-			
-			
+			Collection<CretaService.JsTrabajadoresYTramos> visibleTrabajadoresYTramos = filterVisible(trabajadoresYTramosMap.values());
 			
 			filter(visibleTrabajadoresYTramos).forEach(f -> filteredMap.putIfAbsent(f.getId(), f));
-//			filtered.addAll(filter(visibleTrabajadoresYTramos));
-
 			
 			Collection<CretaService.JsRespuesta> visibleRespuestas = 
 					filterVisible(respuestasMap.values());
 
 			basesMap = MainCreta.add(File.BASES, bases);
 
-			for (JsRespuesta jsRespuesta : visibleRespuestas ) {
-				if (
-//						!contains(filtered, jsRespuesta)
-						!filteredMap.containsKey(jsRespuesta.getId())
-//						&& ( hasTrabajadoresYTramos(jsRespuesta) || isAON(jsRespuesta))
-					)
+			for (JsRespuesta jsRespuesta : visibleRespuestas )
+				if (!filteredMap.containsKey(jsRespuesta.getId()))
 					filter(Collections.singleton(jsRespuesta)).forEach(f -> filteredMap.putIfAbsent(f.getId(), f));
-//					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
-			}
 			
 			List<JsFile> filtered = new ArrayList<JsFile>(filteredMap.values());
 			Collections.sort(filtered, JsFileComparator.newInstace());
@@ -706,12 +1008,12 @@ public abstract class CretaDetail extends Composite {
 		} catch (UnsupportedOperationException e) {
 
 			respuestasMap = new HashMap<String, JsRespuesta>();
+			
 			for (CretaService.JsRespuesta respuesta : respuestas)
-				respuestasMap.put(respuesta.getCCC() + respuesta.getFrom(),
-						respuesta);
+				respuestasMap.put(respuesta.getCCC() + respuesta.getFrom(), respuesta);
 
-			List<JsTrabajadoresYTramos> filtered = filter(
-					Arrays.asList(trabajadoresYTramos));
+			List<JsTrabajadoresYTramos> filtered = filter(Arrays.asList(trabajadoresYTramos));
+			
 			dataGrid.setRowData(filtered);
 		}
 
@@ -725,22 +1027,18 @@ public abstract class CretaDetail extends Composite {
 	public void onEmployeeOver(String trabajadoresYTramosId, String naf, int x , int y ) {
 		jsFileToolTipTimer = new Timer() {
 			
-			
 			@Override
 			public void run() {
-
 				if (CretaDetail.this.popupTooltip != null)
 					CretaDetail.this.popupTooltip.hide();
 				
 				Arrays.stream(trabajadoresYTramosMap.get(trabajadoresYTramosId).getEmployees())
-				.filter(e -> e.getNaf().equalsIgnoreCase(naf)).findAny()
-				.ifPresent(e -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(e, x, y));								
-				
+					.filter(e -> e.getNaf().equalsIgnoreCase(naf)).findAny()
+					.ifPresent(e -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(e, x, y));									
 			}
 		};
 
 		jsFileToolTipTimer.schedule(1000);
-		
 	}
 	
 	public void onEmployeeChange(String trabajadoresYTramosId, String naf, boolean checked ) {
@@ -754,8 +1052,45 @@ public abstract class CretaDetail extends Composite {
 		onDCLResults(success, errors);
 
 	}
-	// ------------------------------------------------------------------------
-
+	
+	// ----------------------------------------------- CreataDetail.On Action JS Methods
+	
+	private native void exportSubmitComplete() /*-{
+		var that = this;
+		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
+				respuestas,
+				bases) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsBases;)(trabajadoresYTramos, respuestas, bases);
+		});
+		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
+				errors) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onDocumentoCalculoLiquidacion([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;)(success, errors);
+		});
+	}-*/;
+	
+	private native void exportOnEmployeeOut() /*-{
+		var that = this;
+		$wnd.onEmployeeOut = $entry(function() {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOut()();
+		});
+	}-*/;
+	
+	private native void exportOnEmployeeOver() /*-{
+		var that = this;
+		$wnd.onEmployeeOver = $entry(function(trabajadoresYTramosId, naf, x, y) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOver(Ljava/lang/String;Ljava/lang/String;II)(trabajadoresYTramosId, naf, x, y);
+		});
+	}-*/;
+	
+	private native void exportOnEmployeeChange() /*-{
+		var that = this;
+		$wnd.onEmployeeChange = $entry(function(trabajadoresYTramosId, naf,checked) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeChange(Ljava/lang/String;Ljava/lang/String;Z)(trabajadoresYTramosId, naf, checked);
+		});
+	}-*/;
+	
+	// ----------------------------------------------- CreataDetail.Composite Methods
+	
 	@Override
 	protected void onAttach() {
 		exportSubmitComplete();
@@ -778,10 +1113,7 @@ public abstract class CretaDetail extends Composite {
 				new AsyncCallback<CretaService.JsBasesResult>() {
 
 					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						//Window.alert(caught.getMessage());
-					}
+					public void onFailure(Throwable caught) {}
 
 					@Override
 					public void onSuccess(JsBasesResult result) {
@@ -791,25 +1123,7 @@ public abstract class CretaDetail extends Composite {
 				(progress) -> onProgress(progress));
 	}
 	
-	protected abstract void onBases(JsBasesResult result);
-	
-	protected abstract void onProgress(JsProgress progress);
-
-	protected abstract String getDescription(String ccc);
-
-	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
-
-	protected abstract void onDCLResults(JsEvent success [], JsEvent errors []);
-
-	protected void onJsFileClick(final String key, final int x, final int y) {
-		// NOOP
-	}
-
-	protected void onJsFileDblClick(final int x, final int y, JsFile ...jsFile ) {
-		// NOOP
-	}
-
-	// ------------------------------------------------------------------------
+	// ----------------------------------------------- DataGrid.Methods
 
 	private void onJsFileOut(final int clientX, final int clientY) {
 		if (jsFileToolTipTimer != null)
@@ -895,30 +1209,29 @@ public abstract class CretaDetail extends Composite {
 					return false;
 			
 				String type = jsFile.getType();
-				if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(l00MenuItem))
+				if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(filterMenu.getL00MenuItem()))
 					return false;
-				if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(l13MenuItem))
+				if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(filterMenu.getL13MenuItem()))
 					return false;
 				
 				
 				int month = Integer.parseInt(jsFile.getFrom().split("-")[1]);
 				
 				int nextMonth = getNextMonth().getMonth() + 1;
-				if ( month == nextMonth && !isChecked(nextMonthMenuItem))
+				if ( month == nextMonth && !isChecked(filterMenu.getNextMonthMenuItem()))
 					return false;
 				
 				int prevMonth = getPrevMonth().getMonth() + 1;
-				if ( month == prevMonth && !isChecked(prevMonthMenuItem))
+				if ( month == prevMonth && !isChecked(filterMenu.getPrevMonthMenuItem()))
 					return false;
 				
 				JsRespuesta jsRespuesta = respuestasMap.get(jsFile.getId());
-//				if ( jsRespuesta == null && !isChecked(pendingMenuItem))
-//					return false;
-				if ( jsRespuesta == null && !isChecked(processingMenuItem))
+
+				if ( jsRespuesta == null && !isChecked(filterMenu.getProcessingMenuItem()))
 					return false;
 				
 				JsError jsErros[] = jsRespuesta.getErrors();
-				if ( jsErros == null && !isChecked(processingMenuItem) )
+				if ( jsErros == null && !isChecked(filterMenu.getProcessingMenuItem()))
 					return false;
 				
 				boolean error = false;
@@ -985,25 +1298,25 @@ public abstract class CretaDetail extends Composite {
 					}
 				}
 				
-				if ( !error && !confirmed && calculated && !isChecked(calculatedMenuItem))
+				if ( !error && !confirmed && calculated && !isChecked(filterMenu.getCalculatedMenuItem()))
 					return false;
-				if ( !error && confirmed && !isChecked(confirmedMenuItem))
+				if ( !error && confirmed && !isChecked(filterMenu.getConfirmedMenuItem()))
 					return false;
-				if ( !error && processing && !isChecked(processingMenuItem))
+				if ( !error && processing && !isChecked(filterMenu.getProcessingMenuItem()))
 					return false;
-				if ( !error && pending && !isChecked(pendingMenuItem))
+				if ( !error && pending && !isChecked(filterMenu.getPendingMenuItem()))
 					return false;
 				
-				if ( !error && r9544 && !isChecked(r9544MenuItem))
+				if ( !error && r9544 && !isChecked(filterMenu.getR9544MenuItem()))
 					return false;
-				if ( !error && r9546 && !isChecked(r9546MenuItem))
+				if ( !error && r9546 && !isChecked(filterMenu.getR9546MenuItem()))
 					return false;
-				if ( !error && r9607 && !isChecked(r9607MenuItem))
+				if ( !error && r9607 && !isChecked(filterMenu.getR9607MenuItem()))
 					return false;				
-				if ( !error && r9650 && !isChecked(r9650MenuItem))
+				if ( !error && r9650 && !isChecked(filterMenu.getR9650MenuItem()))
 					return false;				
 				
-				if ( error && !isChecked(errorMenuItem))
+				if ( error && !isChecked(filterMenu.getErrorMenuItem()))
 					return false;
 				
 				
@@ -1016,57 +1329,6 @@ public abstract class CretaDetail extends Composite {
 		.collect(Collectors.toList());
 	}
 	
-	// ------------------------------------------------------------------------
-
-	private native void exportSubmitComplete() /*-{
-		var that = this;
-		$wnd.__onTrabajadoresYTramos = $entry(function(trabajadoresYTramos,
-				respuestas,
-				bases) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onTrabajadoresYTramos([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsTrabajadoresYTramos;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsRespuesta;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsBases;)(trabajadoresYTramos, respuestas, bases);
-		});
-		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
-				errors) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onDocumentoCalculoLiquidacion([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;)(success, errors);
-		});
-	}-*/;
-
-	private native void exportOnEmployeeOut() /*-{
-		var that = this;
-		$wnd.onEmployeeOut = $entry(function() {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOut()();
-		});
-	}-*/;
-
-	private native void exportOnEmployeeOver() /*-{
-		var that = this;
-		$wnd.onEmployeeOver = $entry(function(trabajadoresYTramosId, naf, x, y) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOver(Ljava/lang/String;Ljava/lang/String;II)(trabajadoresYTramosId, naf, x, y);
-		});
-	}-*/;
-
-	private native void exportOnEmployeeChange() /*-{
-		var that = this;
-		$wnd.onEmployeeChange = $entry(function(trabajadoresYTramosId, naf,checked) {
-			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeChange(Ljava/lang/String;Ljava/lang/String;Z)(trabajadoresYTramosId, naf, checked);
-		});
-	}-*/;
-
-	// ------------------------------------------------------------------------
-
-	protected static boolean isChecked(MenuItem menuItem) {
-		return AonStringUtils.containsIgnoreCase(menuItem.getStyleName(), STYLENAME_CHECKED_ITEM);
-	}
-
-	protected static void setCheckedStyle(MenuItem menuItem, boolean checked) {
-		if (checked) {
-			menuItem.addStyleName(STYLENAME_CHECKED_ITEM);
-		} else {
-			menuItem.removeStyleName(STYLENAME_CHECKED_ITEM);
-		}
-	}
-	
-	
 	private static boolean contains(List<JsFile> jsFiles, String id) {
 		for (JsFile jsF : jsFiles)
 			if (jsF.getId().equals(id))
@@ -1078,7 +1340,6 @@ public abstract class CretaDetail extends Composite {
 		return contains(jsFiles, jsFile.getId());
 	}
 	
-
 	private static Date getNextMonth() {
 		Date nextMonth = new Date();
 		CalendarUtil.setToFirstDayOfMonth(nextMonth);
@@ -1101,5 +1362,96 @@ public abstract class CretaDetail extends Composite {
 		console.log(message);
 	}-*/
 	;
+	
+	// ----------------------------------------------- Checked
 
+	protected static boolean isChecked(MenuItem menuItem) {
+		return AonStringUtils.containsIgnoreCase(menuItem.getStyleName(), STYLENAME_CHECKED_ITEM);
+	}
+
+	protected static void setCheckedStyle(MenuItem menuItem, boolean checked) {
+		if (checked) {
+			menuItem.addStyleName(STYLENAME_CHECKED_ITEM);
+		} else {
+			menuItem.removeStyleName(STYLENAME_CHECKED_ITEM);
+		}
+	}
+	
+	// ----------------------------------------------- Toolbar
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("SLD-Cret@");
+		
+		sldCretaBtn = new AonToolbarButton( "SLD-Cret@", AON.CSS.aonIconTgss() );
+		sldCretaBtn.addClickHandler(e -> {
+			onSldCreta(e);
+		});
+		sldCretaBtn.setVisible(false);
+		toolbar.add(sldCretaBtn);
+		
+		sldBtn = new AonToolbarButton( "SLD", AON.CSS.aonIconTgss() );
+		sldBtn.addClickHandler(e -> {
+			onSld(e);
+		});
+		toolbar.add(sldBtn);
+		
+		filterBtn = new AonToolbarButton( "Filtrar", AON.CSS.aonIconVisibility() );
+		filterBtn.addClickHandler(e -> {
+			onFilter(e);
+		});
+		toolbar.add(filterBtn);
+		
+		return toolbar;
+
+	}
+
+	// ----------------------------------------------- Toolbar.Methods
+
+	private void onSldCreta(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		sldCretaMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		sldCretaMenu.show();
+	}
+
+	private void onSld(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		sldMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		sldMenu.show();
+	}
+
+	private void onFilter(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		filterMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		filterMenu.show();
+	}
+	
+	// ----------------------------------------------- Abstract Methods
+	
+	protected abstract void onClickDBAButton(ClickEvent e);
+	
+	protected abstract void onClickTrabajadoresYTramosButton(ClickEvent e);
+	
+	protected abstract void onClickConfirmacionButton(ClickEvent e);
+	
+	protected abstract void onClickBorradorButton(ClickEvent e);
+	
+	protected abstract void onBases(JsBasesResult result);
+	
+	protected abstract void onProgress(JsProgress progress);
+
+	protected abstract String getDescription(String ccc);
+
+	protected abstract <T extends JsFile> List<T> filter(Collection<T> jsFiles);
+
+	protected abstract void onDCLResults(JsEvent success [], JsEvent errors []);
+
+	protected void onJsFileClick(final String key, final int x, final int y) {
+		// NOOP
+	}
+
+	protected void onJsFileDblClick(final int x, final int y, JsFile ...jsFile ) {
+		// NOOP
+	}
+	
 }
