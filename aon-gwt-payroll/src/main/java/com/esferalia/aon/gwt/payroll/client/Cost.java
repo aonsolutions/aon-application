@@ -286,7 +286,7 @@ public class Cost extends ResizeComposite {
 		
 		listeners = new LinkedList<Listener>(); 
 
-		publishBtn.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+//		publishBtn.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		bidoqBtn.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		
 	}
@@ -529,6 +529,7 @@ public class Cost extends ResizeComposite {
 		publishBtn.addClickHandler(e -> {
 			onPublish(e);
 		});
+		publishBtn.setVisible(false);
 		toolbar.add(publishBtn);
 		
 		bidoqBtn = new AonToolbarButton( "Publicar", "aon-icon-bidoq" );
@@ -536,6 +537,12 @@ public class Cost extends ResizeComposite {
 			onBidoq(e);
 		});
 		toolbar.add(bidoqBtn);
+		
+		seeBtn = new AonToolbarButton( "Ver", AON.CSS.aonIconVisibility() );
+		seeBtn.addClickHandler(e -> {
+			onView(e);
+		});
+		toolbar.add(seeBtn);
 		
 		toolbar.add(dateListBox);
 		
@@ -550,12 +557,6 @@ public class Cost extends ResizeComposite {
 			onZoomIn(e);
 		});
 		toolbar.add(zoomInBtn);
-		
-		seeBtn = new AonToolbarButton( "Ver", AON.CSS.aonIconVisibility() );
-		seeBtn.addClickHandler(e -> {
-			onView(e);
-		});
-		toolbar.add(seeBtn);
 		
 		return toolbar;
 
