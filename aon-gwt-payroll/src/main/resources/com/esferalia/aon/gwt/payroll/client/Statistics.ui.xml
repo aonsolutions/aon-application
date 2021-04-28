@@ -1,78 +1,33 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:style>
+	
 		.editor {
+			margin-top: 50px;
 		}
+		
 		.pos {
-		align: center;
-		text-align: center;
+			align: center;
+			text-align: center;
 		}
 
 		.document {
-		margin-top: 5px;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 15px;
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
 		}
+		
 		.toolBar-checkBox input {
-		vertical-align: middle;
+			vertical-align: middle;
 		}
 
 	</ui:style>
-	<ui:import field="com.esferalia.aon.gwt.payroll.shared.Salary.Type.*" />
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="72">
-
-			<g:FlowPanel>
-
-				<g:MenuBar>
-					<!-- <g:MenuItem text="Archivo"> <g:MenuBar vertical="true"> <g:MenuItem 
-						ui:field="downloadMenuItem" text="Descargar" /> <g:MenuItem styleName="gwt-MenuItemSeparator"> 
-						<div class="menuSeparatorInner"></div> </g:MenuItem> <g:MenuItem ui:field="printMenuItem" 
-						text="Imprimir..." /> </g:MenuBar> </g:MenuItem> <g:MenuItem ui:field="viewMenuItem" 
-						text="Ver"> <g:MenuBar vertical="true"> <g:MenuItem ui:field="reduceMenuItem" 
-						text="Reducir" /> <g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" /> 
-						</g:MenuBar> </g:MenuItem> -->
-				</g:MenuBar>
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" ui:field="titleLabel">Estadísticas</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
-								<g:Label styleName="aon-outputText" text=" " />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-
-
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-
-
-								<!-- <g:Button ui:field='printButton' styleName='aon-finding-toolbar-item 
-									aon-icon-pdf' text="Exportar" /> -->
-
-								<g:ListBox ui:field='dateListBox' styleName='' />
-
-								<!-- <g:ListBox ui:field='chartListBox' styleName='' /> -->
-
-
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-
-
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-
-			</g:FlowPanel>
-
-		</g:north>
+	
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document}">

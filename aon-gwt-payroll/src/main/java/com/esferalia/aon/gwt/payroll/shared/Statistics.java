@@ -3,33 +3,30 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+@SuppressWarnings("serial")
 public class Statistics implements Serializable {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 9031263186810808872L;
+	// ----------------------------------------------- Variables
 	
-	//private LinkedList<StaticalData> datos = new LinkedList<StaticalData>();
-	private LinkedList<StatisticYears> years 
-				= new LinkedList<StatisticYears>();
+	private LinkedList<StatisticYears> years = new LinkedList<StatisticYears>();
 	
-	/*
-	 * Inicializo el LinkedList
-	 */
-	public Statistics() {
-
-	}
+	// ----------------------------------------------- Constructor
+	
+	public Statistics() {}
+	
+	// ----------------------------------------------- Methods
+	
 	public void initializedListYears(int pCont) {
 		years.clear();
 		for(int x=0; x<pCont; x++) {
 			years.add(new StatisticYears());
 		}
-		
 	}
+	
 	public void addYear(int pCont, int pYear) {
 		years.get(pCont).setYear(pYear);
 	}
+	
 	public LinkedList<StatisticYears> getStatisticYears() {
 		return years;
 	}
