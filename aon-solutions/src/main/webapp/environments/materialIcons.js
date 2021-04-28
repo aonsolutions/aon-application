@@ -1,5 +1,8 @@
 export const _360 = '360';
 export const _3D_ROTATION = '3d_rotation';
+
+// ----- A
+
 export const ACCESSIBILITY = 'accessibility';
 export const ACCESSIBILITY_NEW = 'accessibility_new';
 export const ACCESSIBLE = 'accessible';
@@ -41,6 +44,9 @@ export const ASSIGNMENT_RETURNED = 'assignment_returned';
 export const ASSIGNMENT_TURNED_IN = 'assignment_turned_in';
 export const ATTACH_FILE = 'attach_file';
 export const AUTORENEW = 'autorenew';
+
+// ----- B
+
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
 export const BATCH_PREDICTION = 'batch_prediction';
@@ -53,6 +59,9 @@ export const BUG_REPORT = 'bug_report';
 export const BUILD = 'build';
 export const BUILD_CIRCLE = 'build_circle';
 export const BUSINESS = 'business';
+
+// ----- C
+
 export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
@@ -75,22 +84,53 @@ export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
+
+// ----- D
+
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DONE = 'done';
+
+// ----- E
+
 export const EXTENSION = 'extension';
+
+// ----- F
+
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
 export const FOLDER = 'folder';
+
+// ----- K
+
 export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
 export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
+
+// ----- M
+
 export const MORE_VERT = 'more_vert';
+
+// ----- P
+
 export const PERSON = 'person';
+
+// ----- R
+
+export const REMOVE_CIRCLE = 'remove_circle';
 export const REPORT = 'report';
 export const ROOM = 'room';
+
+// ----- S
+
 export const SAVE = 'save';
 export const SEARCH = 'search';
 export const SWAP_CALLS = 'swap_calls';
+
+// ----- T
+
 export const TUNE = 'tune';
+
+// ----- V
+
 export const VISIBILITY = 'visibility';

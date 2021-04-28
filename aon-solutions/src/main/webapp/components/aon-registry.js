@@ -1,14 +1,16 @@
 import { AonElement } from './AonElement.js';
-import { RegistryType } from '../models/enums.js';
-import { getRegistries } from '../services/service.js';
+import { getRegistries, getRegistryAddress } from '../services/service.js';
 
-import { AonBasicTable, AonSuggestion, AonAddress } from './components.js';
+import { AonSuggestion, AonAddress } from './components.js';
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
-import { AonDialog } from './aon-dialog.js';
 
 export class AonRegistry extends AonElement {
 
   OPTIONS;
+  DOCUMENT;
+  NAME;
+  ADDRESS;
+
   types;
 
 	get id() {
@@ -27,12 +29,12 @@ export class AonRegistry extends AonElement {
 		this.setAttribute(CONSTANT.VALUE, value);
 	}
 
-  get type() {
-		return this.getAttribute(CONSTANT.TYPE);
+  get readonly() {
+		return this.getAttribute(CONSTANT.READONLY);
 	}
 
-	set type(type) {
-		this.setAttribute(CONSTANT.TYPE, type);
+	set readonly(readonly) {
+		this.setAttribute(CONSTANT.READONLY, readonly);
 	}
 
 	constructor() {
@@ -46,11 +48,10 @@ export class AonRegistry extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonRegistry';
-    this.TABLE = this.id + CONSTANT.TABLE.initCap();
     this.OPTIONS = this.id + 'Options'
     this.DOCUMENT = this.id + 'Document';
     this.NAME = this.id + 'Name';
-    this.DIALOG = this.id + 'Dialog';
+    this.ADDRESS= this.id + 'Address';
   }
 
   build() {
@@ -59,10 +60,7 @@ export class AonRegistry extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.style.display = "flex";
     this.appendChild(div);
-    // let table = new AonBasicTable();
-		// table.id = this.TABLE;
-		// div.appendChild(table);
-    // table.addRow();
+    
     let span1 = this.createElement(TAG.SPAN);
     span1.style.width="25%";
     span1.style.marginRight = "2px";
@@ -71,9 +69,15 @@ export class AonRegistry extends AonElement {
     doc.id = this.DOCUMENT;
     doc.title = MSG.NIF;
     doc.value = this.registry.document;
-    // doc.readonly = this.invoice.isReadonly();
+    doc.readonly = this.isReadonly();
     doc.addEventListener(EVENT.CHANGE, () => {
-      this.registry.setDocument(doc.value);
+      this.registry.document = doc.value;
+      // getGlobalRegistries().then(r => {
+      //   if(r.length > 0) {
+      //     this.setRegistry(r[0]);
+      //   }
+      //   this.dispatchEvent(new Event(EVENT.CHANGE));
+      // });
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     doc.addEventListener(EVENT.KEYUP, () => {
@@ -87,10 +91,6 @@ export class AonRegistry extends AonElement {
 				this.closeOptions();
 			}
     });
-    doc.addEventListener(EVENT.SELECT, (event) => {
-      this.setRegistry(event.detail.registry);
-      this.dispatchEvent(new Event(EVENT.SELECT));
-    });
     span1.appendChild(doc);
 
     let span2 = this.createElement(TAG.SPAN);
@@ -101,11 +101,10 @@ export class AonRegistry extends AonElement {
     name.name = CONSTANT.NAME;
     name.title = MSG.BUSINESS_NAME;
     name.value = this.registry.name;
-    // name.readonly = this.invoice.isReadonly();
+    name.readonly = this.isReadonly();
     name.addEventListener(EVENT.CHANGE, () => {
-      // let registry = this.invoice.getRegistry();
-      // registry.setName(total.value);
-      // this.invoice.setRegistry(registry);
+      this.registry.name = name.value;
+      this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     name.addEventListener(EVENT.KEYUP, () => {
       if(name.value.length > 2) {
@@ -113,14 +112,10 @@ export class AonRegistry extends AonElement {
         let data = { types: this.types, name: name.value};
 				getRegistries(data).then(r => {
 					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
-				});
+				}).catch(e => alert(e));
       } else {
         this.closeOptions();
       }
-    });
-    name.addEventListener(EVENT.SELECT, (event) => {
-      let registry = event.detail.registry;
-      this.invoice.setRegistry(registry);
     });
     span2.appendChild(name);
 
@@ -132,9 +127,16 @@ export class AonRegistry extends AonElement {
 		this.appendChild(options);
 
     let div2 = this.createElement(TAG.DIV);
-    let address = new AonAddress();
-    div2.appendChild(address);
     this.appendChild(div2);
+    let address = new AonAddress();
+    address.id = this.ADDRESS;
+    address.title = MSG.ADDRESS;
+    div2.appendChild(address);
+    address.buildAddressValue(this.registry.address)
+    address.addEventListener(EVENT.CHANGE, () => {
+      this.registry.address = JSON.parse(address.value);
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
   }
 
 	buildOptions(options) {
@@ -151,17 +153,8 @@ export class AonRegistry extends AonElement {
         li.innerHTML = options[i].name;
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
-          this.value = options[i].value;
-          // let input = this.getElement(this.INPUT);
-          // input.value = options[i].name;
-
-          let nif = this.getElement(this.NIF);
-          nif.value = options[i].registry.document;
-
-          let name = this.getElement(this.NAME);
-          name.value = options[i].registry.name;
-
-          this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
+          this.setRegistry(options[i].registry);
+          this.dispatchEvent(new Event(EVENT.CHANGE));
         });
         ul.appendChild(li);
       }
@@ -185,19 +178,31 @@ export class AonRegistry extends AonElement {
     }
   }
 
-
   setRegistry(registry) { 
     this.registry = registry;
-  }
-
-  setType(type) { 
-    this.type = type;
+    if(this.DOCUMENT && this.NAME && this.ADDRESS) {
+      let doc = this.getElement(this.DOCUMENT);
+      if(doc) doc.value = registry.document;
+      let name = this.getElement(this.NAME);
+      if(name) name.value = registry.name;
+      let address = this.getElement(this.ADDRESS);
+      if(address) {
+        let data = {registry: registry.id};
+        getRegistryAddress(data).then(ra => {
+           address.buildAddressValue(ra);
+        });
+      }
+    }
   }
 
   setTypes(types){
     this.types = types;
   }
 
+  isReadonly() {
+    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+      && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
 }
 
 if(!window.customElements.get(TAG.AON_REGISTRY)){

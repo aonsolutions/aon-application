@@ -62,6 +62,13 @@ export class AonDialog extends AonElement {
 	}
 
 	connectedCallback() {
+		this.initialize();
+		if(this.isTypeBlank()) this.buildBlank();
+		else if(this.isTypeMenu()) this.buildMenu();
+		else this.build();
+	}
+
+	initialize() {
 		this.DIALOG = this.id + 'Dialog';
 		this.MAIN = this.DIALOG + 'Main';
 		this.TITLE = this.DIALOG + 'Title';
@@ -69,7 +76,64 @@ export class AonDialog extends AonElement {
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
+	}
 
+	clear() {
+		this.getElement(this.TITLE).innerHTML = '';
+		this.getElement(this.CONTENT).innerHTML = '';
+		this.getElement(this.ACTION).innerHTML = '';
+	}
+
+	buildBlank() {
+		this.innerHTML = /*html*/`
+		<div id="${this.DIALOG}" class="aonDialog">
+			<div id="${this.CONTENT}" class="aonDialogContent">
+				
+			</div>
+		</div>
+		`;
+		let dialog = this.getElement(this.DIALOG);
+		dialog.style.backgroundColor = 'transparent';
+		dialog.style.paddingTop = '0px';
+
+		let content = this.getElement(this.CONTENT);
+		content.style.position = 'absolute';
+		content.style.width = '200px';
+		content.style.padding = '0px';
+
+		dialog.onclick = (event) => {
+			if (event.target === dialog) {
+				this.close();
+			}
+		}
+
+	}
+
+	buildMenu() {
+		this.innerHTML = /*html*/`
+		<div id="${this.DIALOG}" class="aonDialog">
+			<div id="${this.CONTENT}" class="aonDialogContent">
+			</div>
+		</div>
+		`;
+		let dialog = this.getElement(this.DIALOG);
+		dialog.style.backgroundColor = 'transparent';
+		dialog.style.paddingTop = '0px';
+
+		let content = this.getElement(this.CONTENT);
+		content.style.position = 'absolute';
+		content.style.width = '200px';
+		content.style.padding = '0px';
+
+		dialog.onclick = (event) => {
+			if (event.target === dialog) {
+				this.close();
+			}
+		}
+
+	}
+ 
+	build() {
 		this.innerHTML = /*html*/`
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
@@ -81,20 +145,7 @@ export class AonDialog extends AonElement {
 
 		</div>
 		`;
-		this.build();
 
-		this.getElement(`${this.DIALOG}Click`).addEventListener('click', (ev)=>{
-			this.close()
-		})
-	}
-
-	clear() {
-		this.getElement(this.TITLE).innerHTML = '';
-		this.getElement(this.CONTENT).innerHTML = '';
-		this.getElement(this.ACTION).innerHTML = '';
-	}
-
-	build() {
 		let dialog = this.getElement(this.DIALOG);
 		let main = this.getElement(this.MAIN);
 		let content = this.getElement(this.CONTENT);
@@ -122,10 +173,18 @@ export class AonDialog extends AonElement {
 			}
 		}
 
+		this.getElement(`${this.DIALOG}Click`).addEventListener('click', (ev)=>{
+			this.close()
+		})
+
 	}
 
 	isTypeMenu() {
 		return this.hasAttribute('type') && 'menu' === this.getAttribute('type');
+	}
+
+	isTypeBlank() {
+		return this.hasAttribute('type') && 'blank' === this.getAttribute('type');
 	}
 
 	open() {
@@ -142,10 +201,15 @@ export class AonDialog extends AonElement {
 		return document.getElementById(this.getAttribute('id') + 'DialogContent');
 	}
 
-	setContent(widget, title) {
+	setContent(widget, top, left) {
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
 		content.innerHTML = '';
 		content.appendChild(widget);
+		if(top && left) {
+			let dialog = this.getElement(this.DIALOG);
+			content.style.top = top + 'px' || '90px';
+			content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
+		}
 	}
 
 	setContentHTML(html) {

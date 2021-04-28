@@ -11,6 +11,7 @@ export const ADD_COMMENT = 'Add Comment';
 export const ADD_FILE = 'Add File';
 export const ADD_INVOICE = 'Add Invoice';
 export const ADD_TAG = 'Add Tag';
+export const ADD_TAX = 'Add Tax';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
 export const ALL_FILES = 'All Files';
@@ -22,6 +23,7 @@ export const ASESOR = 'Asesor';
 
 export const BACK = 'Back';
 export const BACKGROUND_ADJUST = 'Background Adjust';
+export const BASE = 'Base';
 export const BILLING = 'Billing';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Booking';
@@ -65,6 +67,7 @@ export const DELETE_FILE = 'Delete File';
 export const DELETE_FOREVER = 'Delete Permanently';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
 export const DELETE_TAG = 'Delete Tag';
+export const DELETE_TAX = 'Delete Tax';
 export const DELETED_DATA = "The data has been deleted successfully";
 export const DETAILED = 'Detailed';
 export const DOCUMENT = 'Document';
@@ -89,6 +92,7 @@ export const EDIT_TAG = 'Edit Tag';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Employee';
 export const ENTERPRISE = 'Enterprise';
+export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
 export const EXPIRATIONS = 'Expirations';
 
 // ----- F
@@ -113,6 +117,7 @@ export const HOLDERS = 'Holders';
 // ----- I
 
 export const INBOX = 'Inbox';
+export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
 export const INVOICE_DATA = 'Invoice Data';
@@ -175,6 +180,7 @@ export const PROVINCE = 'Province';
 // ----- Q
 
 export const QUANTITY = 'Quantity';
+export const QUOTA = 'Quota';
 
 // ----- R
 
@@ -184,6 +190,7 @@ export const RECEIVEDS = 'Received';
 export const RECENTS = 'Recents';
 export const RECORD = 'Record';
 export const RECORD_INVOICE = 'Record Invoice';
+export const RECTIFIED = 'Rectified';
 export const RECTIFY = 'Rectify';
 export const RECTIFY_INVOICE = 'Rectify Invoice';
 export const REFERENCE = 'Reference';
@@ -213,6 +220,7 @@ export const SEND_INVOICE = 'Send Invoice';
 export const SEND_INVOICES = 'Send Invoices';
 export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';
+export const SERVICE = 'Service';
 export const SETTING = 'Setting';
 export const SHOW_FILE = 'Show File';
 export const SII = 'SII';
@@ -222,6 +230,7 @@ export const STATUS = "Estado";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
+export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
 
@@ -229,6 +238,8 @@ export const SYSTEM_MESSAGES = 'System Messages';
 
 export const TAG = 'Tag';
 export const TAGS = 'Tags';
+export const TAX = 'Tax';
+export const TAX_BASE = 'Tax Base';
 export const TAXES_DETAIL= 'Taxes Detail';
 export const TICKET = 'Ticket';
 export const TICKETBAI = 'TicketBAI';
@@ -239,6 +250,7 @@ export const TO_TRASH = 'Send to Trash';
 export const TOOLS = 'Tools';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
+export const TRANSACTION_TYPE = 'Transaction Type';
 export const TRASH = 'Trash';
 export const TYPE = 'Type';
 export const TYPES = 'Types';
@@ -262,6 +274,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 // ----- W
 
 export const WEB = 'Web';
+export const WITHHOLDING = 'Withholding';
 
 // ----- X
 

@@ -83,6 +83,7 @@ export class AonSelect extends AonElement {
       let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
       let detail = {};
       options.forEach((item, i) => {
+        console.log(item.value + ' - ' + newValue );
         if(item.value == newValue) {
           this.getElement(this.INPUT).value = item.name;
         }
@@ -140,6 +141,13 @@ export class AonSelect extends AonElement {
     options.id = this.OPTIONS;
     options.className = 'aonInputListOptions';
     span.appendChild(options);
+
+    let opts = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+    opts.forEach((item, i) => {
+      if(item.value == this.value) {
+        this.getElement(this.INPUT).value = item.name;
+      }
+    });
   }
 
   buildOptions(options) {

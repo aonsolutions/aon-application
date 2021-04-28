@@ -139,16 +139,20 @@ export class AonNumber extends AonElement {
 
     constructor() {
         super();
+    }
+
+    connectedCallback() {
+        this.initialize();
+        this.build();
+    }
+
+    initialize() {
         this.SPAN = this.id + 'Span';
         this.DIV = this.id + 'Div';
         this.ICON = this.id + 'Icon';
         this.ICON_LABEL = this.id + 'IconLabel';
         this.INPUT = this.id + 'Input';
         this.DESCRIPTION = this.id + 'Description';
-    }
-
-    connectedCallback() {
-        this.build();
     }
 
     build() {

@@ -129,6 +129,10 @@ export class AonCard extends AonElement {
 		this.getElement(this.CONTENT).appendChild(el);
 	}
 
+	addContent(el) {
+		this.getElement(this.CONTENT).appendChild(el);
+	}
+
 	setContentHTML(html) {
 		this.getElement(this.CONTENT).innerHTML = html;
 	}

@@ -39,6 +39,7 @@ export const ADD_COMMENT = MSG.ADD_COMMENT;
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_INVOICE = MSG.ADD_INVOICE;
 export const ADD_TAG = MSG.ADD_TAG;
+export const ADD_TAX = MSG.ADD_TAX;
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDRESS = MSG.ADDRESS;
 export const ALL_FILES = MSG.ALL_FILES;
@@ -50,6 +51,7 @@ export const ASESOR = MSG.ASESOR;
 
 export const BACK = MSG.BACK;
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
+export const BASE = MSG.BASE;
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = MSG.BOOKING;
@@ -94,6 +96,7 @@ export const DELETE_FILE = MSG.DELETE_FILE;
 export const DELETE_FOREVER = MSG.DELETE_FOREVER;
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = MSG.DELETE_FOREVER_INVOICE_CONFIRMATION;
 export const DELETE_TAG = MSG.DELETE_TAG;
+export const DELETE_TAX = MSG.DELETE_TAX;
 export const DELETED_DATA = MSG.DELETED_DATA;
 export const DETAILED = MSG.DETAILED;
 export const DOCUMENT = MSG.DOCUMENT;
@@ -118,6 +121,7 @@ export const EDIT_TAG = MSG.EDIT_TAG;
 export const EMAIL = MSG.EMAIL;
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const ENTERPRISE = MSG.ENTERPRISE;
+export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 
 // ----- F
@@ -143,6 +147,7 @@ export const HOLDERS = MSG.HOLDERS;
 // ----- I
 
 export const INBOX = MSG.INBOX;
+export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;
 export const INVOICE_DATA = MSG.INVOICE_DATA;
@@ -206,6 +211,7 @@ export const PROVINCE = MSG.PROVINCE;
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
+export const QUOTA = MSG.QUOTA;
 
 // ----- R
 
@@ -215,6 +221,7 @@ export const RECEIVEDS = MSG.RECEIVEDS;
 export const RECENTS = MSG.RECENTS;
 export const RECORD = MSG.RECORD;
 export const RECORD_INVOICE = MSG.RECORD_INVOICE;
+export const RECTIFIED = MSG.RECTIFIED;
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
 export const REFERENCE = MSG.REFERENCE;
@@ -244,6 +251,7 @@ export const SEND_INVOICE = MSG.SEND_INVOICE;
 export const SEND_INVOICES = MSG.SEND_INVOICES;
 export const SEPA_FILES = MSG.SEPA_FILES;
 export const SERIE = MSG.SERIE;
+export const SERVICE = MSG.SERVICE;
 export const SETTING = MSG.SETTING;
 export const SHOW_FILE = MSG.SHOW_FILE;
 export const SII = MSG.SII;
@@ -253,6 +261,8 @@ export const STATUS = "Estado";
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;
+export const SURCHARGE = MSG.SURCHARGE;
+export const SURCHARGE_RE = 'R.E.';
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 
@@ -260,6 +270,8 @@ export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 
 export const TAG = MSG.TAG;
 export const TAGS = MSG.TAGS;
+export const TAX = MSG.TAX;
+export const TAX_BASE = MSG.TAX_BASE;
 export const TAXES_DETAIL= MSG.TAXES_DETAIL;
 export const TICKET = MSG.TICKET;
 export const TICKETBAI = MSG.TICKETBAI;
@@ -270,6 +282,7 @@ export const TO_TRASH = MSG.TO_TRASH;
 export const TOOLS = MSG.TOOLS;
 export const TOTAL = MSG.TOTAL;
 export const TOTAL_SUPPLIED = MSG.TOTAL_SUPPLIED;
+export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
@@ -293,6 +306,8 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 // ----- W
 
 export const WEB = MSG.WEB;
+export const WITHHOLDING = MSG.WITHHOLDING;
+export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca';
 
 // ----- X
 

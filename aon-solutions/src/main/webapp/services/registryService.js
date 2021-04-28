@@ -14,6 +14,8 @@ export const clearDomain = () => domain = undefined;
 
 export const getRegistries = (data) => get(`${API_URL}/suggestion/registry`, data);
 
+export const getRegistryAddress = (data) => get(`${API_URL}/registry/address`, data);
+
 export const getCustomers = (data) => {
   data = data || {};
   return new Promise((resolve, reject) => {

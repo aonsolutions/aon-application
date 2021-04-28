@@ -1,10 +1,10 @@
-import {AonElement} from '../../components/AonElement.js';
-import {AonApplication} from '../../components/aon-application.js';
-import {insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta} from '../../services/service.js';
-import {Invoice} from './Invoice.js';
-import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+import { AonElement } from '../../components/AonElement.js';
+import { AonApplication } from '../../components/aon-application.js';
+import { insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta } from '../../services/service.js';
+import { Invoice } from './Invoice.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
-// import {AonNewInvoice} from './aon-new-invoice.js';
+import { AonNewInvoice } from './aon-new-invoice.js';
 
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
@@ -94,7 +94,7 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 
 			aonInvoice.addSearchOption();
-      aonInvoice.addEventListener('search', (event) => this.search(event.detail));
+      		aonInvoice.addEventListener('search', (event) => this.search(event.detail));
 		}
 
 		this.appendChild(input);
@@ -385,13 +385,11 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
 				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
-		}
-		//  else if(this.getDur().isAlpha()){
-		// 	let ni = new AonNewInvoice();
-		// 	ni.setInvoice(invoice);
-		// 	aonInvoice.setContent(ni);
-		// }
-		else {
+		} else if(this.getDur().isAlpha()){
+			let ni = new AonNewInvoice();
+			ni.setInvoice(invoice);
+			aonInvoice.setContent(ni);
+		} else {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice).replaceAll("'", "")}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);

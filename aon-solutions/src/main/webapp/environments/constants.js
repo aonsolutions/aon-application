@@ -5,12 +5,17 @@ export const UNDEFINED = 'undefined';
 
 export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
+export const ADD = 'add';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
 export const ADVANCED_BUTTON = 'advancedButton';
+export const AMOUNT = 'amount';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
 export const AON_INVOICE = 'aonInvoice';
+export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
+export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
+export const AON_INVOICE_TAX = 'aonInvoiceTax';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
@@ -19,6 +24,10 @@ export const AUTOCOMPLETE = 'autocomplete';
 // ----- B
 
 export const BACK = 'back';
+export const BANK = 'bank';
+export const BANK_ACCOUNT = 'bankAccount';
+export const BASE = 'base';
+export const BLANK = 'blank';
 
 // ----- C
 
@@ -41,12 +50,14 @@ export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
 export const DESCRIPTION = 'description';
+export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DRAFT = 'draft';
 export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
 export const DOWNLOAD_INVOICE = 'downloadInvoice';
+export const DUE_DATE = 'dueDate';
 export const DUPLICATE = 'duplicate';
 export const DUPLICATE_INVOICE = 'duplicateInvoice';
 
@@ -73,6 +84,7 @@ export const FISCAL = 'fiscal';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
+export const INVESTMENT = 'investment';
 export const INVOICE = 'invoice';
 
 // ----- J
@@ -103,17 +115,24 @@ export const OPTIONS = 'options';
 export const PATTERN = 'pattern';
 export const PAYMETHOD = 'paymethod';
 export const PAYROLL = 'payroll';
+export const PERCENTAGE = 'percentage';
 export const PERSON = 'person';
+export const PREPAYMENT = 'prepayment';
 export const PREVIOUS = 'previous';
+export const PRICE = 'price';
 export const PRIMARY = "primary";
 
 // ----- Q
+
+export const QUANTITY = 'quantity';
+export const QUOTA = 'quota';
 
 // ----- R
 
 export const READONLY = 'readonly';
 export const RECORD = 'record';
 export const RECORD_INVOICE = 'recordInvoice';
+export const RECTIFIED = 'rectified';
 export const RECTIFY = 'rectify';
 export const RECTIFY_INVOICE = 'rectifyInvoice';
 export const REFERENCE = 'reference';
@@ -136,9 +155,10 @@ export const SEARCH_INPUT = 'searchInput';
 export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';
+export const SERVICE = 'service';
 export const SHOW_FILE = 'showFile';
 export const SUCCESS = "success";
-
+export const SURCHARGE = 'surcharge';
 
 // ----- T
 
@@ -148,6 +168,7 @@ export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLS = 'tools';
 export const TOTAL = 'total';
+export const TRANSACTION_TYPE = 'transactionType';
 export const TRASH = 'trash';
 export const TRUE = 'true';
 export const TYPE = 'type';
@@ -160,9 +181,13 @@ export const UPLOAD_FILE = 'uploadFile';
 // ----- V
 
 export const VALUE = 'value';
+export const VAT = 'vat';
 export const VISIBLE = 'visible';
 
 // ----- W
+
+export const WITHHOLDING = 'withholding';
+export const WITHHOLDING_FARMER = 'withholdingFarmer';
 
 // ----- X
 

@@ -11,6 +11,7 @@ export const ADD_COMMENT = 'Afegir Comentari';
 export const ADD_FILE = 'Adjuntar Fitxer';
 export const ADD_INVOICE = 'Afegir Factura';
 export const ADD_TAG = 'Afegir Etiqueta';
+export const ADD_TAX = 'Afegir Impost';
 export const ADDITIONAL_INFORMATION = 'Informació Addicional';
 export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Tots els Fitxers';
@@ -22,6 +23,7 @@ export const ASESOR = 'Assessor';
 
 export const BACK = 'Endarrere';
 export const BACKGROUND_ADJUST = 'Ajustar Fons';
+export const BASE = 'Base';
 export const BILLING = 'Facturació';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contractació';
@@ -65,6 +67,7 @@ export const DELETE_FILE = 'Esborrar Fitxer';
 export const DELETE_FOREVER = 'Esborrar Definitivament';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = `La factura s'ha esborrat definitivament.`;
 export const DELETE_TAG = 'Esborrar Etiqueta';
+export const DELETE_TAX = 'Esborrar Impost';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DETAILED = 'Detallat';
 export const DOCUMENT = 'Document';
@@ -89,6 +92,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleat';
 export const ENTERPRISE = 'Empresa';
+export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
 export const EXPIRATIONS = 'Venciments';
 
 // ----- F
@@ -113,6 +117,7 @@ export const HOLDERS = 'Titulars';
 // ----- I
 
 export const INBOX = `Safata d'Entrada`;
+export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptes Factura';
 export const INVOICE_DATA = 'Dades Factura';
@@ -175,6 +180,7 @@ export const PROVINCE = 'Provincia';
 // ----- Q
 
 export const QUANTITY = 'Quantitat';
+export const QUOTA = 'Quota';
 
 // ----- R
 
@@ -184,6 +190,7 @@ export const RECEIVEDS = 'Rebudes';
 export const RECENTS = 'Recents';
 export const RECORD = 'Comptabilitzar';
 export const RECORD_INVOICE = 'Comptabilitzar';
+export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE = 'Rectificar Factura';
 export const REFERENCE = 'Referència';
@@ -213,6 +220,7 @@ export const SEND_INVOICE = 'Enviar Factura';
 export const SEND_INVOICES = 'Enviar Factures';
 export const SEPA_FILES = 'Fitxers SEPA';
 export const SERIE = 'Sèrie';
+export const SERVICE = 'Servei';
 export const SETTING = 'Configuració';
 export const SHOW_FILE = 'Mostrar Fitxer';
 export const SII = 'SII';
@@ -222,6 +230,7 @@ export const STATUS = "Estado";
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';
 export const SUPPLIERS = 'Proveïdors';
+export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
 
@@ -229,6 +238,8 @@ export const SYSTEM_MESSAGES =  'Missatges de Sistema';
 
 export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetes';
+export const TAX = 'Impost';
+export const TAX_BASE = 'Base Imposable';
 export const TAXES_DETAIL= 'Detall Impostos'
 export const TICKET = 'Tiquet';
 export const TICKETBAI = 'TicketBAI';
@@ -239,6 +250,7 @@ export const TO_TRASH = 'Enviar a la Paperera';
 export const TOOLS = 'Eines';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Bestretes';
+export const TRANSACTION_TYPE = 'Tipus de Transacció';
 export const TRASH = 'Paperera';
 export const TYPE = 'Tipus';
 export const TYPES = 'Tipues';
@@ -262,6 +274,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 // ----- W
 
 export const WEB = 'Web';
+export const WITHHOLDING = 'Retenció';
 
 // ----- X
 

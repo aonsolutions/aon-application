@@ -11,6 +11,7 @@ export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
+export const ADD_TAX = 'Zerga Gehitu';
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
 export const ALL_FILES = 'Fitxategi Guztiak';
@@ -22,6 +23,7 @@ export const ASESOR = 'Aholkulari';
 
 export const BACK = 'Atzera';
 export const BACKGROUND_ADJUST = 'Atzealdea Estutu';
+export const BASE = 'Oinarria';
 export const BILLING = 'Fakturazioa';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Kontratazioa';
@@ -65,6 +67,7 @@ export const DELETE_FILE = 'Fitxategia Ezabatu';
 export const DELETE_FOREVER = 'Betirako Ezabatu';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
 export const DELETE_TAG = 'Etiketa Ezabatu';
+export const DELETE_TAX = 'Zerga Ezabatu';
 export const DELETED_DATA = 'Datuak zuzen ezabatu dira';
 export const DETAILED = 'Xehatua';
 export const DOCUMENT = 'Dokumentua';
@@ -89,6 +92,7 @@ export const EDIT_TAG = 'Etiketa Aldatu';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Langile';
 export const ENTERPRISE = 'Enpresa';
+export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
 export const EXPIRATIONS = 'Epemugak';
 
 // ----- F
@@ -113,6 +117,7 @@ export const HOLDERS = 'Titularrak';
 // ----- I
 
 export const INBOX = 'Sarrera-Ontzia';
+export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
 export const INVOICE_DATA = 'Fakturaren Datuak';
@@ -175,6 +180,7 @@ export const PROVINCE = 'Probintzia';
 // ----- Q
 
 export const QUANTITY = 'Kantitatea';
+export const QUOTA = 'Kuota';
 
 // ----- R
 
@@ -184,6 +190,7 @@ export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
 export const RECORD = 'Kontabilizatu';
 export const RECORD_INVOICE = 'Faktura Kontabilizatu';
+export const RECTIFIED = 'Zuzenketa';
 export const RECTIFY = 'Zuzendu';
 export const RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const REFERENCE = 'Erreferentzia';
@@ -213,6 +220,7 @@ export const SEND_INVOICE = 'Faktura Bidali';
 export const SEND_INVOICES =  'Fakturak Bidali';
 export const SEPA_FILES = 'SEPA Fitxategiak';
 export const SERIE = 'Serie';
+export const SERVICE = 'Zerbitzu';
 export const SETTING = 'Konfigurazioa';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SII = 'SII';
@@ -222,6 +230,7 @@ export const STATUS = "Estado";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';
+export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
 
@@ -229,6 +238,8 @@ export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
 
 export const TAG = 'Etiketa';
 export const TAGS = 'Etiketak';
+export const TAX = 'Zerga';
+export const TAX_BASE = 'Zerga-Oinarria';
 export const TAXES_DETAIL = 'Zergak';
 export const TICKET = 'Tiket';
 export const TICKETBAI = 'TicketBAI';
@@ -239,6 +250,7 @@ export const TO_TRASH = 'Paperontzira Bidali';
 export const TOOLS = 'Erremintak';
 export const TOTAL = 'Guztira';
 export const TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
+export const TRANSACTION_TYPE = 'Transakzio Mota';
 export const TRASH = 'Paperontzia';
 export const TYPE = 'Mota';
 export const TYPES = 'Motak';
@@ -262,6 +274,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 // ----- W
 
 export const WEB = 'Web';
+export const WITHHOLDING = 'Atxikipen';
 
 // ----- X
 

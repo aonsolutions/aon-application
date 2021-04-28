@@ -94,12 +94,10 @@ export class AonSwitch extends AonElement {
 
 	constructor () {
 		super();
-    this.id = this.id || 'aonSwitch';
-		this.INPUT = this.id + CONSTANT.INPUT.initCap();
-		this.TITLE = this.id + CONSTANT.TITLE.initCap();
 	}
 
 	connectedCallback () {
+    this.initialize();
 		this.innerHTML = `
       <label class="aonSwitch">
         <input id="${this.INPUT}" name="${this.name || this.INPUT}" type="checkbox">
@@ -126,6 +124,12 @@ export class AonSwitch extends AonElement {
     }
     this.value = boolean;
 	}
+
+  initialize() {
+    this.id = this.id || 'aonSwitch';
+		this.INPUT = this.id + CONSTANT.INPUT.initCap();
+		this.TITLE = this.id + CONSTANT.TITLE.initCap();
+  }
 
   isChecked(){
     return this.hasAttribute(CONSTANT.CHECKED) && this.getAttribute(CONSTANT.CHECKED)

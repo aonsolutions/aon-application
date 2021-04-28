@@ -1,3 +1,5 @@
+import { RegistryType } from "../../models/enums.js";
+
 export class Invoice {
 
   id;
@@ -160,6 +162,17 @@ export class Invoice {
     // TODO CALCULATE
   }
 
+  getCategory() {
+    return this.category;
+  }
+
+  setCategory(category) {
+    this.category = category;
+    if(category.substring(0, 3) === '705'){
+      this.service = true;
+    } else this.service = false;
+  }
+  
   isEmitida() {
     return this.type.toLowerCase() === 'emitida';
   }
@@ -196,8 +209,75 @@ export class Invoice {
     return false;
   }
 
+  isService() {
+    return this.service;
+  }
+
+  setService(service) {
+    this.service = service;
+  }
+
+  isInvestment() {
+    return this.investment;
+  }
+
+  setInvestment(investment) {
+    this.investment = investment;
+  }
+
+  isRectified() {
+    return this.rectified;
+  }
+
+  setRectified(rectified) {
+    this.rectified = rectified;
+  }
+
+  isSurcharge() {
+    return this.surcharge;
+  }
+
+  setSurcharge(surcharge) {
+    this.surcharge = surcharge;
+  }
+
+  isWithholding() {
+    return this.withholding;
+  }
+
+  setWithholding(withholding) {
+    this.withholding = withholding;
+  }
+
+  isWithholdingFarmer() {
+    return this.withholding_farmer;
+  }
+
+  setWithholdingFarmer(withholding_farmer) {
+    this.withholding_farmer = withholding_farmer;
+  }
+
+  getTransaction() {
+
+  }
+
+  setTransaction(transaction) {
+    this.transaction = transaction;
+  }
+
   getRegistry() {
     return this.isEmitida() ? this.receiver : this.sender;
+  }
+
+  setRegistry(registry) {
+    if(this.isEmitida()) {
+      this.receiver = registry;
+    } else this.sender = registry;
+  }
+ 
+  getRegistryType() {
+    return this.isEmitida() ? [RegistryType.CUSTOMER]
+      : [RegistryType.SUPPLIER, RegistryType.CREDITOR];
   }
 
   getDate() {

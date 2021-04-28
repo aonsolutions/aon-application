@@ -11,6 +11,7 @@ export const ADD_COMMENT = 'Añadir Comentario';
 export const ADD_FILE = 'Adjuntar Fichero';
 export const ADD_INVOICE = 'Añadir Factura';
 export const ADD_TAG = 'Añadir Etiqueta';
+export const ADD_TAX = 'Añadir Impuesto';
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
 export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Todos los Ficheros';
@@ -22,6 +23,7 @@ export const ASESOR = 'Asesor';
 
 export const BACK = 'Atrás';
 export const BACKGROUND_ADJUST = 'Ajustar Fondo';
+export const BASE = 'Base';
 export const BILLING = 'Facturación';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contratación';
@@ -65,6 +67,7 @@ export const DELETE_FILE = 'Borrar Fichero';
 export const DELETE_FOREVER = 'Borrar Definitivamente';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'La Factura se ha borrado Definitivamente.';
 export const DELETE_TAG = 'Borrar Etiqueta';
+export const DELETE_TAX = 'Borrar Impuesto';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DETAILED = 'Detallado';
 export const DOCUMENT = 'Documento';
@@ -89,6 +92,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleado';
 export const ENTERPRISE = 'Empresa';
+export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
 export const EXPIRATIONS = 'Vencimientos';
 
 // ----- F
@@ -113,6 +117,7 @@ export const HOLDERS = 'Titulares';
 // ----- I
 
 export const INBOX = 'Bandeja de Entrada';
+export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
 export const INVOICE_DATA = 'Datos Factura';
@@ -175,6 +180,7 @@ export const PROVINCE = 'Provincia';
 // ----- Q
 
 export const QUANTITY = 'Cantidad';
+export const QUOTA = 'Cuota';
 
 // ----- R
 
@@ -184,6 +190,7 @@ export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recientes';
 export const RECORD = 'Contabilizar';
 export const RECORD_INVOICE = 'Contabilizar Factura';
+export const RECTIFIED = 'Rectificativa';
 export const RECTIFY = 'Rectificar';
 export const RECTIFY_INVOICE =  'Rectificar Factura';
 export const REFERENCE = 'Referencia';
@@ -213,6 +220,7 @@ export const SEND_INVOICE = 'Enviar Factura';
 export const SEND_INVOICES = 'Enviar Facturas';
 export const SEPA_FILES = 'Ficheros SEPA';
 export const SERIE = 'Serie';
+export const SERVICE = 'Servicio';
 export const SETTING =  'Configuración';
 export const SHOW_FILE = 'Mostrar Fichero';
 export const SII = 'SII';
@@ -222,6 +230,7 @@ export const STATUS = "Estado";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';
+export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
 
@@ -229,6 +238,8 @@ export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
 
 export const TAG = 'Etiqueta';
 export const TAGS = 'Etiquetas';
+export const TAX = 'Impuesto';
+export const TAX_BASE = 'Base Imponible';
 export const TAXES_DETAIL= 'Detalle Impuestos';
 export const TICKET = 'Ticket';
 export const TICKETBAI = 'TicketBAI';
@@ -239,6 +250,7 @@ export const TO_TRASH = 'Enviar a la Papelera';
 export const TOOLS = 'Herramientas';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Suplidos';
+export const TRANSACTION_TYPE = 'Tipo de Transacción';
 export const TRASH = 'Papelera';
 export const TYPE = 'Tipo';
 export const TYPES = 'Tipos';
@@ -262,6 +274,7 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 // ----- W
 
 export const WEB = 'Web';
+export const WITHHOLDING = 'Retención';
 
 // ----- X
 
