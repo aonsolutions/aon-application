@@ -1,75 +1,18 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
-
-	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EventsDraft.MyStyle">
 
-		/* ESTILOS CABECERA */
-
-		.eventsStyle{
-			padding-top: 5px;
-		}
+		/* ESTILOS XML */
 		
-		.listBxGroup{
-			display: flex !important;
-			padding: 4px;
-			align-items: center;
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
 		}
-
-		.labelStyle{
-    		text-transform: uppercase;
-			font-size: 0.8em;
-			font-weight: bold;
-		}
-
-		.listBoxStyle{
-			font-size: smaller;
-			margin-left: 5px;
-		}
-
-		.hideElement{
-			visibility: hidden;
-		}
-
-		/* ESTILOS CAMBIO DE AÑO */
-
-		.paddingHorizontalPanel{
-			padding-bottom: 30px;
-		}
-
-		.date {
-			font-size: 20px;
-			color: #FF704D;
-			padding-left: 8px;
-			padding-right: 8px;
-			padding-top: 7px;
-		}
-
-		.optionButtons{
-			width: 30px;
-			height: 25px;
-			cursor: pointer;
-			border: none;
-		}
-
-		.optionButtonsLeft {
-			margin-top: 8px;
-			margin-left: 18px;
-		}
-
-		.optionButtonsRight {
-			margin-top: 8px;
-		}
-
-		/* ESTILOS TABLA */
 
 		.scrollStyle {
-			position: absolute !important;
-			right: 5px !important;
+			margin: 15px;
 		}
 
 		.tableStyle {
@@ -102,6 +45,31 @@
 			width: 100%;
 		}
 		
+		.yearPanel{
+			display: flex;
+			justify-content: center;
+			margin: .5rem 0;
+			margin-top: 50px;
+		}
+		
+		.optionButtons {
+			cursor: pointer;
+			background-color: transparent;
+			font-size: 1rem;
+			color: #757575;
+			border: .01rem solid #757575;
+			border-radius: 10%;
+			margin: .7rem 0;
+		}
+		
+		.year {
+			font-size: 2.2rem;
+			color: #ff704d;
+			padding: 0 1rem;
+		}
+		
+		/* EVENTS DRAFT STYLES */
+		
 		.blankHeaderCell{
 			width: 100px;
 		}
@@ -132,149 +100,38 @@
 			color: #aaa;
 		}
 		
-		/* ------------------- Menu Bar ------------------- */
-		.flex{
-			display: flex;
-			align-items: center;
-		}
-		
-		.menuBar{
-			cursor: pointer;
-			display: grid;
-			border-right: #808080 1px solid;
-		}
-		
-		.findingTitleCalendar{
-			width: 90px !important;
-		}
-		
-		.findingTitleEdition{
-			width: 65px !important;
-		}
-		
-		.bold{
-			text-transform: uppercase;
-			font-size: 0.8em;
-			font-weight: bold;
-			padding: 4px;
-		}
-		
-		/* ------------------- Year Panel ------------------- */
-		.yearPanel{
-			display: flex;
-			justify-content: center;
-			margin: .5rem 0;
-		}
-		
-		.optionButtons {
-			cursor: pointer;
-			background-color: transparent;
-			font-size: 1rem;
-			color: #757575;
-			border: .01rem solid #757575;
-			border-radius: 10%;
-			margin: .7rem 0;
-		}
-		
-		.year {
-			font-size: 2.2rem;
-			color: #ff704d;
-			padding: 0 1rem;
-		}
-		
 		.aonCheck{
 			background-position: 0.1rem !important;
-		}
-		
-		.showVariables{
-			padding-left: 20px !important;
-			min-width: 140px;
 		}
 		
 		.pointer{
 			cursor: pointer;
 		}
 		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+		
+		.flexVariables{
+			display: flex;
+    		align-items: center;
+    		margin-left: 5px;
+		}
+		
+		.widthMenuItem{
+			display: inline-block;
+			min-width: 130px !important;
+		}
+		
 	</ui:style>
 
-	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
-
-	<g:DockLayoutPanel unit="PX" ui:field="mainPanel">
-		<g:north size="55">
-			<g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar {style.flex}">
-					<g:HTMLPanel styleName="aon-finding-title {style.findingTitleCalendar}">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Incidencias</g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar {style.flex}">
-						<g:MenuBar styleName="aon-finding-toolbar-item-group {style.menuBar}">
-							<g:MenuItem text="Visualización" ui:field="showVariablesMenuItem" styleName="{style.bold}">
-								<g:MenuBar vertical="true">
-									<g:MenuItem ui:field="allVariablesMenuItem" text="Todas las variables" styleName="{style.showVariables}"></g:MenuItem>
-									<g:MenuItem ui:field="editableVariablesMenuItem" text="Variables editables" styleName="{style.showVariables}"></g:MenuItem>	
-									<g:MenuItem ui:field="calendarVariablesMenuItem" text="Variables del calendario" styleName="{style.showVariables}"></g:MenuItem>
-								</g:MenuBar>
-							</g:MenuItem>
-						</g:MenuBar>
-						<g:MenuBar styleName="aon-finding-toolbar-item-group {style.menuBar}">
-							<g:MenuItem text="Utilidades" styleName="{style.bold}">
-								<g:MenuBar vertical="true">
-									<g:MenuItem ui:field="undoAllMenuItem" text="Restaurar últimos valores guardados"></g:MenuItem>	
-								</g:MenuBar>
-							</g:MenuItem>
-						</g:MenuBar>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.menuBar} {style.listBxGroup}">
-						    <g:Label styleName="aon-outputText {style.labelStyle}">Tipo de vista :</g:Label>
-						    <g:ListBox styleName="{style.listBoxStyle}" ui:field="typeView" />
-						</g:HTMLPanel>
-						<g:HTMLPanel ui:field="varListViewPanel" styleName="aon-finding-toolbar-item-group {style.menuBar} {style.listBxGroup} {style.hideElement}">
-						    <g:Label styleName="aon-outputText {style.labelStyle}">Variable :</g:Label>
-						    <g:ListBox styleName="{style.listBoxStyle}" ui:field="varListView" />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:FlowPanel>
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar {style.flex}">
-					<g:HTMLPanel styleName="aon-finding-title {style.findingTitleEdition}">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText">Edici&oacute;n</g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar {style.flex}">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="true">
-							<g:Button debugId='undoAllButton' ui:field='undoAllButton'
-									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='newValueButton'
-									styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO VALOR" />
-						</g:HTMLPanel>
-						
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-							<g:Button ui:field='saveButton'
-								styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:FlowPanel>
-
-			</g:FlowPanel>
-		</g:north>
-		
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-		    <g:HTMLPanel>
-				<!-- PANEL CAMBIO DE AÑO -->
+			<g:HTMLPanel styleName="{style.flexColumn}">
+			
 				<g:HTMLPanel styleName="{style.yearPanel}">
 					<g:Button
 						styleName="{style.optionButtons}"
@@ -285,16 +142,12 @@
 						ui:field="nextDateButton"> &#62; </g:Button>
 				</g:HTMLPanel>
 				
-				<!-- TABLA -->
-				<g:DockLayoutPanel unit="PX" height="90%">
-					<g:center>
-						<g:ScrollPanel styleName="{style.scrollStyle}">
-							<g:FlexTable ui:field="eventsTable" styleName="{style.tableStyle} {style.noSelectStyle} {style.widthEventTable}">
-								<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
-							</g:FlexTable>
-						</g:ScrollPanel>
-					</g:center>
-				</g:DockLayoutPanel>
+				<g:ScrollPanel styleName="{style.scrollStyle}">
+					<g:FlexTable ui:field="eventsTable" styleName="{style.tableStyle} {style.noSelectStyle} {style.widthEventTable}">
+						<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
+					</g:FlexTable>
+				</g:ScrollPanel>
+	
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>

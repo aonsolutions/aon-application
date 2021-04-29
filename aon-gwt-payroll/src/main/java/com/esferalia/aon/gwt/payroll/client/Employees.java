@@ -784,7 +784,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			if (Enterprise.isGPS(enterprise))
 				eventsDraftObject = new EventsDraftObject(workplace.getId(),
-						agreement != null ? agreement.getId() : null, employeesService,
+						agreement != null ? agreement.getId() : null,
 						// @formatter:off
 						new AbstractEventsDraftObject.EnumEventMetaData("DESEMPE\u00D1O",
 								"DESEMPE\u00D1O", "Desempe\u00F1o por Trabajador y Jornada", "", new String[] { "4",
@@ -794,7 +794,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				);
 			else
 				eventsDraftObject = new EventsDraftObject(workplace.getId(),
-						agreement != null ? agreement.getId() : null, employeesService,
+						agreement != null ? agreement.getId() : null,
 						new BooleanEventMetaData("DIAS_EFECTIVOS", DateField.DAY),
 						new BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
 						// new BooleanEventMetaData("HUELGA", DAY),
