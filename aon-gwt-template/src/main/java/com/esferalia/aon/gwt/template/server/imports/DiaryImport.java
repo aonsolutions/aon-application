@@ -365,10 +365,10 @@ public class DiaryImport {
 						.setDeadline(AonDateUtils.getYearLastDay(year))
 						.setStatus(AccountPeriodStatus.ACTIVE)
 				);
-				ae.getEntry().setPeriod(ap.getId());
-				ae.getEntry().setPeriodName(ap.getName());
-				ae.getEntry().setPeriodStatus(ap.getStatus());
 			}
+			ae.getEntry().setPeriod(ap.getId());
+			ae.getEntry().setPeriodName(ap.getName());
+			ae.getEntry().setPeriodStatus(ap.getStatus());
 			
 			for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
 				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
