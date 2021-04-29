@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getTaskHoldersUser, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { timePaser, setDateTimestampDay, handleError } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
@@ -7,7 +7,6 @@ import { SIGNIN_VIEWS } from "./signinEnums.js";
 
 export class AonSign extends AonElement {
 
-  _timeAction;
   _taskHolders;
   _taskHolder;
 
@@ -33,7 +32,7 @@ export class AonSign extends AonElement {
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
     this.applicationEl = this.getApplication();
-    getTaskHolders().then(r => {
+    getTaskHoldersUser().then(r => {
       if(r.length > 0) {
         this._taskHolders = r;
         this._taskHolder = r[0].id;
@@ -43,7 +42,7 @@ export class AonSign extends AonElement {
   }
 
   disconnectedCallback(){
-    this.timeStop();
+    this.clearTimeAction();
   }
 
   build(){
@@ -181,17 +180,17 @@ export class AonSign extends AonElement {
       const time = signin.time + (new Date().getTime() - signin.in_date);
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
-      this.timeStop();
+      this.clearTimeAction();
       this.timeAction(time);
     } else if(signin.status === 'pause') {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
-      this.timeStop();
+      this.clearTimeAction();
       if(timeEl)timeEl.innerHTML = timePaser(signin.time);
     } else {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
-      this.timeStop();
+      this.clearTimeAction();
       if(timeEl)timeEl.innerHTML = timePaser(signin.time);
     }
     this.divLastTime(signin);
@@ -202,8 +201,8 @@ export class AonSign extends AonElement {
     if(timeDiv && time>0){
       timeDiv.innerHTML = timePaser(time);
       timeDiv.style.cursor = "default";
-    } else this.timeStop();
-    this._timeAction = setTimeout( () => this.timeAction(time + 1000), 1000);
+    } else this.clearTimeAction();
+    this.setTimeAction(setTimeout( () => this.timeAction(time + 1000), 1000));
   }
 
   divLastTime(signin){
@@ -228,10 +227,6 @@ export class AonSign extends AonElement {
       div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
       content.append(div);
     }
-  }
-
-  timeStop() {
-    clearTimeout(this._timeAction);
   }
 }
 window.customElements.define('aon-sign', AonSign);

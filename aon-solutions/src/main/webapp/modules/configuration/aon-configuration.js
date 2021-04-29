@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { AonNotificationManual } from "./aon-notification-manual.js";
+// import { AonNotificationManual } from "./aon-notification-manual.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
 import "../../components/aon-address.js";
@@ -14,7 +14,7 @@ import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
 
-import { MSG } from '../../environments/environments.js';
+import { CONSTANT, MSG } from '../../environments/environments.js';
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -29,11 +29,11 @@ export class AonConfiguration extends AonElement {
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get company() {
@@ -53,11 +53,11 @@ export class AonConfiguration extends AonElement {
   }
 
   get option() {
-    return this.getAttribute("option");
+    return this.getAttribute(CONSTANT.OPTION);
   }
 
   set option(option) {
-    this.setAttribute("option", option);
+    this.setAttribute(CONSTANT.OPTION, option);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -130,11 +130,11 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildStore(),
         });
       }
-      companyOptions.push({
-        name: "Notificación manual",
-        icon: "notifications",
-        fn: () => this.buildNotification(),
-      });
+      // companyOptions.push({
+      //   name: "Notificación manual",
+      //   icon: "notifications",
+      //   fn: () => this.buildNotification(),
+      // });
 
       aonConfiguration.addSidenavOptions("EMPRESA", companyOptions);
     }
@@ -160,8 +160,8 @@ export class AonConfiguration extends AonElement {
     aonConfiguration.removeToolbarOptions();
     aonConfiguration.setContentHTML(`
 			<div style="display:flex;">
-				<aon-card id="aonConfigurationGeneralCard" style="width:50%;" title="Información General"></aon-card>
-				<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" title="Información Adicional"></aon-card>
+				<aon-card id="aonConfigurationGeneralCard" style="width:50%;" flex="true" title="Información General"></aon-card>
+				<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" flex="true" title="Información Adicional"></aon-card>
 			</div>
 		`);
     getCompanyOne().then(cp => {
@@ -237,11 +237,11 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(aonCompany);
   }
 
-  buildNotification() {
-    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-    aonConfiguration.removeToolbarOptions();
-    aonConfiguration.setContent(new AonNotificationManual());
-  }
+  // buildNotification() {
+  //   let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+  //   aonConfiguration.removeToolbarOptions();
+  //   aonConfiguration.setContent(new AonNotificationManual());
+  // }
 
   buildCreateUser(share) {
     let content =  this.getApplication().getContent();

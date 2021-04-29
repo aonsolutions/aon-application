@@ -1,7 +1,9 @@
 import { AonElement } from "./AonElement.js";
+import { CONSTANT } from "../environments/environments.js";
 import "./aon-checkbox.js";
 import "./aon-dialog-menu.js";
 import "./aon-icon-button.js";
+
 export class AonTable extends AonElement {
   columns;
   selected;
@@ -10,11 +12,11 @@ export class AonTable extends AonElement {
   TBODY;
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get selectable() {

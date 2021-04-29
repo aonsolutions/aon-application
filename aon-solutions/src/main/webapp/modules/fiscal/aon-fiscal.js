@@ -2,6 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { MSG } from '../../environments/environments.js';
 import { FiscalOptions, FISCAL_VIEWS} from "./FiscalEnums.js";
 import { AonTax } from './tax/aon-tax.js';
 class AonFiscal extends AonElement {
@@ -20,7 +21,7 @@ class AonFiscal extends AonElement {
       }
     
       initialize(){
-        this.AON_FISCAL = "aonFiscal";
+        this.AON_FISCAL = FISCAL_VIEWS.AON_FISCAL;
       }
     
       getDur() {
@@ -34,7 +35,7 @@ class AonFiscal extends AonElement {
       }
 
       paintView(){
-        this.innerHTML = /*html*/`<aon-application id="${this.AON_FISCAL}" title="FISCAL"></aon-application>`;
+        this.innerHTML = /*html*/`<aon-application id="${this.AON_FISCAL}" title="${MSG.FISCAL}"></aon-application>`;
         this.applicationEl = this.getApplication();
       }
 
@@ -45,13 +46,13 @@ class AonFiscal extends AonElement {
         tax.fn = () => this.showView(FISCAL_VIEWS.AON_TAX);
         fiscalOpts.push(tax);
         
-        this.applicationEl.addSidenavOptions('FISCAL', fiscalOpts);
+        this.applicationEl.addSidenavOptions(MSG.FISCAL, fiscalOpts);
       }
 
       showView(view, data, filter = undefined){
         return new Promise(async(resolve)=>{
           let aonView = undefined;
-          if(!this.getElement(view)){
+          // if(!this.getElement(view)){
             switch(view){
               case FISCAL_VIEWS.AON_TAX:
                 aonView = new AonTax();
@@ -62,7 +63,7 @@ class AonFiscal extends AonElement {
               if(filter) aonView.filter = filter;
               this.applicationEl.setContent(aonView);
             }
-          }
+          // }
           resolve(aonView);
         });
       }

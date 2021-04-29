@@ -7,6 +7,7 @@ import "./aon-icon-button.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
+import { CONSTANT, EVENT } from "../environments/environments.js";
 
 export class AonApplication extends AonElement {
   SIDENAV;
@@ -20,23 +21,23 @@ export class AonApplication extends AonElement {
   selected;
   VIEWS;
   static get observedAttributes() {
-    return ["title"];
+    return [CONSTANT.TITLE];
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get title() {
-    return this.getAttribute("title");
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute("title", title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   get main() {
@@ -64,9 +65,9 @@ export class AonApplication extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("title" === name) {
+    if (CONSTANT.TITLE === name) {
       let toolbar = this.getElement(this.TOOLBAR);
-      if (toolbar) toolbar.setAttribute("title", newValue);
+      if (toolbar) toolbar.setAttribute(CONSTANT.TITLE, newValue);
     }
   }
 
@@ -148,28 +149,28 @@ export class AonApplication extends AonElement {
         : "aonContent";
 
     if (this.hasAttribute("drag_and_drop")) {
-      content.addEventListener("dragover", (event) => {
+      content.addEventListener(EVENT.DRAGOVER, (event) => {
         event.preventDefault();
-        console.log("dragover");
+        console.log(EVENT.DRAGOVER);
       });
 
-      content.addEventListener("dragenter", (event) => {
+      content.addEventListener(EVENT.DRAGENTER, (event) => {
         event.preventDefault();
         content.style.border = "2px solid #002469";
         content.style.opacity = "0.6";
       });
 
-      content.addEventListener("mouseleave", (event) => {
+      content.addEventListener(EVENT.MOUSELEAVE, (event) => {
         content.style.border = "0px";
         content.style.opacity = "1";
       });
 
-      content.addEventListener("mouseover", (event) => {
+      content.addEventListener(EVENT.MOUSEOVER, (event) => {
         content.style.border = "0px";
         content.style.opacity = "1";
       });
 
-      document.addEventListener("dragleave", (event) => {
+      document.addEventListener(EVENT.DRAGLEAVE, (event) => {
         event.preventDefault();
         let isClickInside = content.contains(event.target);
         if (!isClickInside) {
@@ -178,12 +179,12 @@ export class AonApplication extends AonElement {
         }
       });
 
-      content.addEventListener("drop", (event) => {
+      content.addEventListener(EVENT.DROP, (event) => {
         event.preventDefault();
-        console.log("drop");
+        console.log(EVENT.DROP);
         content.style.border = "0px";
         content.style.opacity = "1";
-        this.dispatchEvent(new CustomEvent("drop"));
+        this.dispatchEvent(new CustomEvent(EVENT.DROP));
       });
     }
 
@@ -524,11 +525,11 @@ export class AonApplication extends AonElement {
   }
 
   getId() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   getTitle() {
-    return this.getAttribute("title");
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   getParent() {

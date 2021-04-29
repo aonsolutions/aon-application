@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -10,7 +11,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 @SuppressWarnings("serial")
@@ -26,8 +31,11 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, getTaskHolders(api));
+				case "/enterprise":
+					response(req, resp, getTaskHoldersEnterprise(api));
+					break;
+				case "/user":
+					response(req, resp, getTaskHoldersUser(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -51,9 +59,22 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	private Object getTaskHoldersUser(AonApiData api) throws Exception {
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
+		JSONArray array = new JSONArray();
+		taskHolders.stream().forEach(th -> {
+			JSONObject json = new JSONObject();
+			json.put("id", th.getId());
+			json.put("name", th.getName());
+			json.put("company", th.getDomain().getDescription());
+			json.put("domain_id", th.getDomain().getId());
+			array.put(json);
+		});
+		return array;
+	}
 
-
-	private JSONArray getTaskHolders(AonApiData api) {
+	private JSONArray getTaskHoldersEnterprise(AonApiData api) {
 		Domain domain = api.getDomain();
 		JSONArray array = new JSONArray();
 		AON.getTaskHolderStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))

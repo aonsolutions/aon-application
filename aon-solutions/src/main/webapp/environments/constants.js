@@ -28,6 +28,7 @@ export const BANK = 'bank';
 export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
 export const BLANK = 'blank';
+export const BADGE = 'badge';
 
 // ----- C
 
@@ -45,7 +46,7 @@ export const CUSTOMER = 'customer';
 // ----- D
 
 export const DATE = 'date';
-export const SELECT = 'select';
+export const DATA = 'data';
 export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
@@ -78,6 +79,7 @@ export const FISCAL = 'fiscal';
 // ----- G
 
 // ----- H
+export const HIDDEN = 'hidden';
 
 // ----- I
 
@@ -108,6 +110,7 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OPENED = 'opened';
+export const OPTION = 'option';
 export const OPTIONS = 'options';
 
 // ----- P
@@ -130,6 +133,7 @@ export const QUOTA = 'quota';
 // ----- R
 
 export const READONLY = 'readonly';
+export const REQUIRED = 'required';
 export const RECORD = 'record';
 export const RECORD_INVOICE = 'recordInvoice';
 export const RECTIFIED = 'rectified';
@@ -149,6 +153,8 @@ export const ROW = 'row';
 // ----- S
 
 export const SAVE = 'save';
+export const SELECT = 'select';
+export const SELECTED = 'selected';
 export const SEND = 'send';
 export const SEARCH_BUTTON = 'searchButton';
 export const SEARCH_INPUT = 'searchInput';
@@ -194,8 +200,6 @@ export const WITHHOLDING_FARMER = 'withholdingFarmer';
 // ----- Y
 
 // ----- Z
-
-export const INPUTS_ALL = 'aon-input, aon-date, aon-select, aon-number, aon-switch';
 
 export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
 

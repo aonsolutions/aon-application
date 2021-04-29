@@ -52,3 +52,6 @@ export const AON_COMPANY_LIST = 'aon-company-list';
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';
+
+export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
+

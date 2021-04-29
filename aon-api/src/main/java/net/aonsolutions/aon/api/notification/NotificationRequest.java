@@ -20,6 +20,11 @@ import org.json.JSONObject;
 
 public class NotificationRequest extends Notification {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String path_image;
 	private String url;
 	private JSONObject data;

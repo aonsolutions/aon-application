@@ -1,9 +1,8 @@
 import {AonElement} from './AonElement.js';
 import {ToolbarType} from '../models/enums.js';
-
-import './aon-icon-button.js';
 import { AonSearch } from './aon-search.js';
-import { EVENT } from '../environments/environments.js';
+import { CONSTANT, EVENT } from '../environments/environments.js';
+import './aon-icon-button.js';
 
 export class AonToolbar extends AonElement {
 	HEADER;
@@ -13,31 +12,31 @@ export class AonToolbar extends AonElement {
 	TOOL_SECTION;
 
 	static get observedAttributes() {
-		return ['title', 'option'];
+		return [CONSTANT.TITLE, CONSTANT.OPTION];
 	}
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	get title() {
-		return this.getAttribute('title');
+		return this.getAttribute(CONSTANT.TITLE);
 	}
 
 	set title(title) {
-		this.setAttribute('title', title);
+		this.setAttribute(CONSTANT.TITLE, title);
 	}
 
 	get option() {
-		return this.getAttribute('option');
+		return this.getAttribute(CONSTANT.OPTION);
 	}
 
 	set option(option) {
-		this.setAttribute('option', option);
+		this.setAttribute(CONSTANT.OPTION, option);
 	}
 
 	get type() {
@@ -49,11 +48,11 @@ export class AonToolbar extends AonElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('title' === name) {
+		if(CONSTANT.TITLE === name) {
 			let title = this.getElement(this.TITLE_SECTION_SPAN);
 			if(title) title.innerHTML = newValue;
 		}
-		if('option' === name) {
+		if(CONSTANT.OPTION === name) {
 			let option = this.getElement(this.TITLE_SECTION_OPTION);
 			if(option) option.innerHTML = ' / ' + newValue;
 		}

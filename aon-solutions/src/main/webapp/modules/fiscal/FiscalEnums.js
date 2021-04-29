@@ -12,6 +12,7 @@ export const FiscalOptions = {
 
 export const FISCAL_VIEWS = {
   AON_TAX:"aonTax",
+  AON_FISCAL: "aonFiscal"
 }
 
 const TAX_MODEL_NUMBER  = {

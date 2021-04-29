@@ -7,7 +7,7 @@ export class AonSwitch extends AonElement {
 	TITLE;
 
   static get observedAttributes() {
-    return [CONSTANT.VALUE, CONSTANT.CHECKED, CONSTANT.TITLE, 'disabled'];
+    return [CONSTANT.VALUE, CONSTANT.CHECKED, CONSTANT.TITLE, CONSTANT.DISABLED];
   }
 
 	get id() {

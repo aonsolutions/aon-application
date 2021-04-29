@@ -2,6 +2,8 @@ import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, formatDateOrigin, handleError, disabledForm } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
+import { PAYROLL_VIEWS } from '../PayrollEnums.js';
+import { CONSTANT, MSG } from '../../../environments/environments.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
 import '../../../components/aon-number.js';
@@ -10,8 +12,7 @@ import '../../../components/aon-suggestion.js';
 import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
-import { PAYROLL_VIEWS } from '../PayrollEnums.js';
-import { CONSTANT, MSG } from '../../../environments/environments.js';
+
 
 export class AonAltaDirecta extends AonElement {
     _contrato;

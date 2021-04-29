@@ -1,3 +1,4 @@
+import { CONSTANT } from '../environments/environments.js';
 import {AonElement} from './AonElement.js';
 
 export class AonLoader extends AonElement {
@@ -5,17 +6,17 @@ export class AonLoader extends AonElement {
 	PROGRESS;
 	LOADING;
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	constructor () {
 		super();
-		this.PROGRESS = this.getAttribute('id') + 'Progress';
-		this.LOADING = this.getAttribute('id') + 'Loading';
+		this.PROGRESS = this.getAttribute(CONSTANT.ID) + 'Progress';
+		this.LOADING = this.getAttribute(CONSTANT.ID) + 'Loading';
 	}
 
 	connectedCallback () {

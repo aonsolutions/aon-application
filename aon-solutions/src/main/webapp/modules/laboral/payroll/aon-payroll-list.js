@@ -6,13 +6,12 @@ import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
+import { MSG } from '../../../environments/environments.js';
+import * as ACTION from '../../actions.js';
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
 
-import { MSG } from '../../../environments/environments.js';
-
-import * as ACTION from '../../actions.js';
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;

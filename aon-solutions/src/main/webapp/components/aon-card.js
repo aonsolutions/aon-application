@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
 import "./aon-icon-button.js";
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonCard extends AonElement {
  	CARD;
@@ -9,31 +10,31 @@ export class AonCard extends AonElement {
 	CONTENT;
 
 	static get observedAttributes() {
-		return ['id','visible', 'flex'];
+		return [CONSTANT.ID, CONSTANT.VISIBLE, 'flex'];
 	}
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	get title() {
-		return this.getAttribute('title');
+		return this.getAttribute(CONSTANT.TITLE);
 	}
 
 	set title(title) {
-		this.setAttribute('title', title);
+		this.setAttribute(CONSTANT.TITLE, title);
 	}
 
 	get visible() {
-		return this.getAttribute('visible');
+		return this.getAttribute(CONSTANT.VISIBLE);
 	}
 
 	set visible(visible) {
-		this.setAttribute('visible', visible);
+		this.setAttribute(CONSTANT.VISIBLE, visible);
 	}
 
 	get flex() {
@@ -45,8 +46,8 @@ export class AonCard extends AonElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('visible' === name){
-			if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
+		if(CONSTANT.VISIBLE === name){
+			if(this.getAttribute(CONSTANT.VISIBLE) != undefined && 'false' == this.getAttribute(CONSTANT.VISIBLE)){
 				this.style.display = 'none';
 			} else {
 				this.style.display = 'block';
@@ -138,7 +139,7 @@ export class AonCard extends AonElement {
 	}
 
 	setVisible(visible) {
-		this.setAttribute('visible', visible);
+		this.setAttribute(CONSTANT.VISIBLE, visible);
 	}
 
 	setBackground(color) {

@@ -1,8 +1,8 @@
 import { AonElement } from './AonElement.js';
-
+import { CONSTANT, MSG } from '../environments/environments.js';
 import './aon-icon.js';
 
-import { MSG } from '../environments/environments.js';
+
 
 export class AonDialog extends AonElement {
 
@@ -19,27 +19,27 @@ export class AonDialog extends AonElement {
 	}
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	get title() {
-		return this.getAttribute('title');
+		return this.getAttribute(CONSTANT.TITLE);
 	}
 
 	set title(title) {
-		this.setAttribute('title', title);
+		this.setAttribute(CONSTANT.TITLE, title);
 	}
 
 	get type() {
-		return this.getAttribute('type');
+		return this.getAttribute(CONSTANT.TYPE);
 	}
 
 	set type(type) {
-		this.setAttribute('type', type);
+		this.setAttribute(CONSTANT.TYPE, type);
 	}
 
 	get width() {
@@ -71,7 +71,7 @@ export class AonDialog extends AonElement {
 	initialize() {
 		this.DIALOG = this.id + 'Dialog';
 		this.MAIN = this.DIALOG + 'Main';
-		this.TITLE = this.DIALOG + 'Title';
+		this.TITLE = this.DIALOG + CONSTANT.TITLE;
 		this.CONTENT = this.DIALOG + 'Content';
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
@@ -180,29 +180,29 @@ export class AonDialog extends AonElement {
 	}
 
 	isTypeMenu() {
-		return this.hasAttribute('type') && 'menu' === this.getAttribute('type');
+		return this.hasAttribute(CONSTANT.TYPE) && 'menu' === this.getAttribute(CONSTANT.TYPE);
 	}
 
 	isTypeBlank() {
-		return this.hasAttribute('type') && 'blank' === this.getAttribute('type');
+		return this.hasAttribute(CONSTANT.TYPE) && 'blank' === this.getAttribute(CONSTANT.TYPE);
 	}
 
 	open() {
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
+		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog');
 		dialog.style.display = 'block';
 	}
 
 	close() {
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
+		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog');
 		dialog.style.display = 'none';
 	}
 
 	getContent() {
-		return document.getElementById(this.getAttribute('id') + 'DialogContent');
+		return document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 	}
 
 	setContent(widget, top, left) {
-		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		let content = document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 		content.innerHTML = '';
 		content.appendChild(widget);
 		if(top && left) {
@@ -213,14 +213,14 @@ export class AonDialog extends AonElement {
 	}
 
 	setContentHTML(html) {
-		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		let content = document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 		content.innerHTML = html;
 	}
 
 	setMenuOptions(options, top, left) {
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog')
 
-		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		let content = document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 		content.style.top = top || '90px';
 		content.style.left = left > (dialog.offsetWidth / 2) ? left - 180 : left;
 		content.innerHTML = '';
@@ -283,11 +283,11 @@ export class AonDialog extends AonElement {
 		});
 	}
 	
-	buttonAccept(){
+	buttonAccept(title=undefined){
 		let accept = this.getElement(this.ACCEPT) || this.createElement('button');
 		accept.id = this.ACCEPT;
 		accept.className = 'aonButton';
-		accept.innerHTML = MSG.ACCEPT;
+		accept.innerHTML = title || MSG.ACCEPT;
 		accept.style.marginLeft= "auto";
 		let divAction = this.getElement(this.ACTION);
 		divAction.style.display = "flex";
@@ -296,8 +296,12 @@ export class AonDialog extends AonElement {
 		return accept;
 	}
 
-	addSendAction(fn) {
-		let button = this.buttonAccept();
+	getButtonAccept(){
+		return this.getElement(this.ACCEPT);
+	}
+
+	addSendAction(fn, title) {
+		let button = this.buttonAccept(title);
 		button.classList.add('buttonload')
 		// accept.innerHTML =  `<span class="button__text">${MSG.ACCEPT}</span>`;
 		button.addEventListener('click', (ev) => {

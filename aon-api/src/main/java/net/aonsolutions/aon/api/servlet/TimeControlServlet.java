@@ -59,9 +59,6 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "/list-holder-detail":
 				response(req, resp, getTimeControlDetailStream(api));
 				break;
-			case "/taskholder":
-				response(req, resp, getTaskHolders(api));
-				break;
 			case "/excel":
 				responseFile(req, resp, getTimeControlExcel(req, api), MimeType.MS_EXCEL);
 				break;
@@ -121,21 +118,6 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
-	}
-
-	private Object getTaskHolders(AonApiData api) throws Exception {
-		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
-		JSONArray array = new JSONArray();
-		taskHolders.stream().forEach(th -> {
-			JSONObject json = new JSONObject();
-			json.put("id", th.getId());
-			json.put("name", th.getName());
-			json.put("company", th.getDomain().getDescription());
-			json.put("domain_id", th.getDomain().getId());
-			array.put(json);
-		});
-		return array;
 	}
 	
 	private Object getTimeControl(AonApiData api) throws Exception {

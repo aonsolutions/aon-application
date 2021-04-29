@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
 
 import './aon-input.js';
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonSelect extends AonElement {
 
@@ -10,82 +11,82 @@ export class AonSelect extends AonElement {
   _selected;
 
   static get observedAttributes() {
-    return ['value', 'options', 'disabled'];
+    return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
   get name() {
-    return this.getAttribute('name');
+    return this.getAttribute(CONSTANT.NAME);
   }
 
   set name(name) {
-    this.setAttribute('name', name);
+    this.setAttribute(CONSTANT.NAME, name);
   }
 
   get value() {
-    return this.getAttribute('value');
+    return this.getAttribute(CONSTANT.VALUE);
   }
 
   set value(value) {
-    this.setAttribute('value', value);
+    this.setAttribute(CONSTANT.VALUE, value);
   }
 
   get title() {
-    return this.getAttribute('title');
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute('title', title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   get options() {
-  	return this.getAttribute('options');
+  	return this.getAttribute(CONSTANT.OPTIONS);
   }
 
 	set options(options) {
-		this.setAttribute('options', options);
+		this.setAttribute(CONSTANT.OPTIONS, options);
 	}
 
   get autocomplete() {
-    return this.getAttribute('autocomplete');
+    return this.getAttribute(CONSTANT.AUTOCOMPLETE);
   }
 
   set autocomplete(autocomplete) {
-    this.setAttribute('autocomplete', autocomplete);
+    this.setAttribute(CONSTANT.AUTOCOMPLETE, autocomplete);
   }
 
   get disabled() {
-    return this.getAttribute('disabled')
+    return this.getAttribute(CONSTANT.DISABLED)
   }
 
   set disabled(disabled) {
-    this.setAttribute("disabled", disabled);
+    this.setAttribute(CONSTANT.DISABLED, disabled);
   }
 
   get readonly() {
-    return this.getAttribute('readonly');
+    return this.getAttribute(CONSTANT.READONLY);
   }
 
   set readonly(readonly) {
-    this.setAttribute('readonly', readonly);
+    this.setAttribute(CONSTANT.READONLY, readonly);
   }
 
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if('value' === name) {
-      let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+    if(CONSTANT.VALUE === name) {
+      let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       let detail = {};
       options.forEach((item, i) => {
-        console.log(item.value + ' - ' + newValue );
         if(item.value == newValue) {
-          this.getElement(this.INPUT).value = item.name;
+          let input = this.getElement(this.INPUT);
+          if(input) input.value = item.name;
         }
       });
 
@@ -102,7 +103,7 @@ export class AonSelect extends AonElement {
 
 	connectedCallback () {
     this.INPUT = this.id + 'Input';
-    this.OPTIONS = this.id + 'Options'
+    this.OPTIONS = this.id + CONSTANT.OPTIONS
     this.innerHTML = `
       <aon-input id="${this.INPUT}"  description="${this.title}"></aon-input>
 		`;
@@ -111,23 +112,23 @@ export class AonSelect extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
-    if(!this.hasAttribute('autocomplete')) {
-      input.setAttribute('readonly', true);
+    if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
+      input.setAttribute(CONSTANT.READONLY, true);
     }
     input.addEventListener('keyup', () => {
-      let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+      let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       this.buildOptions(options.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
     });
     input.addIconButton('arrow_drop_down', () => {
-      if(!this.hasAttribute('readonly')) {
-        let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+      if(!this.hasAttribute(CONSTANT.READONLY)) {
+        let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
         this.buildOptions(options);
       }
     });
 
     input.addEventListener('click', () => {
-      if(!this.hasAttribute('readonly')) {
-        let options = this.hasAttribute('options') && !this.getDisabled() ? JSON.parse(this.getAttribute('options')) : [];
+      if(!this.hasAttribute(CONSTANT.READONLY)) {
+        let options = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
         this.buildOptions(options);
       }
     });
@@ -142,7 +143,7 @@ export class AonSelect extends AonElement {
     options.className = 'aonInputListOptions';
     span.appendChild(options);
 
-    let opts = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+    let opts = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
     opts.forEach((item, i) => {
       if(item.value == this.value) {
         this.getElement(this.INPUT).value = item.name;
@@ -159,7 +160,7 @@ export class AonSelect extends AonElement {
 
     let ul = this.createElement('ul');
     ul.className = 'aonInputListOptionsUl';
-    ul.setAttribute('for', this.getAttribute('id') + 'Icon');
+    ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     for(let i = 0; i < options.length; i++) {
       let li = this.createElement('li');
       li.className = 'aonInputListOptionsItem'
@@ -196,7 +197,7 @@ export class AonSelect extends AonElement {
   }
 
   setOptions(options) {
-    this.setAttribute('options', JSON.stringify(options));
+    this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(options));
   }
 
   setEnumOptions(options) {
@@ -207,7 +208,7 @@ export class AonSelect extends AonElement {
         name: options[key]
       });
     }
-    this.setAttribute('options', JSON.stringify(opts));
+    this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(opts));
   }
 
   getDisabled(){

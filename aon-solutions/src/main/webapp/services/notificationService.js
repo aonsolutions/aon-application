@@ -11,4 +11,3 @@ export const markReadNotification = (data) => post(`${API_URL}/notification/mark
 
 //remove test sendNotificationTest
 export const saveNotificationTest = (data) => post(`${API_URL}/notification/save-test`, data);
-

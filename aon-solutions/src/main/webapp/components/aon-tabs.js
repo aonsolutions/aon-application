@@ -1,5 +1,6 @@
 import { AonElement } from "./AonElement.js";
 import { waitEl } from "../services/utils.js";
+import { CONSTANT } from "../environments/environments.js";
 
 export class AonTabs extends AonElement {
   ACTIVE_CLASS;
@@ -10,11 +11,11 @@ export class AonTabs extends AonElement {
   DIV_ICON;
   POSITION;
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   constructor() {

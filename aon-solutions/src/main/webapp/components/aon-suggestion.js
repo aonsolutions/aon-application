@@ -1,6 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import './aon-input.js';
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonSuggestion extends AonElement {
 
@@ -8,73 +9,73 @@ export class AonSuggestion extends AonElement {
   OPTIONS;
 
   static get observedAttributes() {
-    return ['value', 'readonly', 'title', 'disabled'];
+    return [CONSTANT.VALUE, CONSTANT.READONLY, CONSTANT.TITLE, CONSTANT.DISABLED];
   }
 
   get id() {
-    return this.getAttribute('id');
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute('id', id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get name() {
-    return this.getAttribute('name');
+    return this.getAttribute(CONSTANT.NAME);
   }
 
   set name(name) {
-    this.setAttribute('name', name);
+    this.setAttribute(CONSTANT.NAME, name);
   }
 
   get value() {
-    return this.getAttribute('value');
+    return this.getAttribute(CONSTANT.VALUE);
   }
 
   set value(value) {
-    this.setAttribute('value', value);
+    this.setAttribute(CONSTANT.VALUE, value);
   }
 
   get title() {
-    return this.getAttribute('title');
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute('title', title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   get readonly() {
-    return this.getAttribute('readonly');
+    return this.getAttribute(CONSTANT.READONLY);
   }
 
   set readonly(readonly) {
-    this.setAttribute('readonly', readonly);
+    this.setAttribute(CONSTANT.READONLY, readonly);
   }
 
   get disabled() {
-    return this.getAttribute('disabled');
+    return this.getAttribute(CONSTANT.DISABLED);
   }
 
   set disabled(disabled) {
-    this.setAttribute('disabled', disabled);
+    this.setAttribute(CONSTANT.DISABLED, disabled);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     //console.log(`attribute ${name} change!! ${newValue}`);
-    if ('value' === name && this.getElement(this.INPUT)) {
+    if (CONSTANT.VALUE === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).value = newValue;
     }
 
-    if ('readonly' === name && this.getElement(this.INPUT)) {
+    if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).readonly = newValue;
     }
 
-    if ('title' === name && this.getElement(this.INPUT)) {
+    if (CONSTANT.TITLE === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).description = newValue;
     }
-    if ('disabled' === name) {
+    if (CONSTANT.DISABLED === name) {
       let el = this.getElement(`${this.INPUT}`);
-      el.setAttribute('disabled', newValue);
+      el.setAttribute(CONSTANT.DISABLED, newValue);
     }
   }
 

@@ -1,3 +1,4 @@
+import { CONSTANT } from '../environments/environments.js';
 import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {
@@ -5,11 +6,11 @@ export class AonToast extends AonElement {
 	DIV;
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	constructor() {

@@ -3,7 +3,7 @@ import { TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
-
+  TIME_ACTION;
   constructor () {
     super();
     this.ROOT_PANEL = 'rootPanel';
@@ -109,5 +109,13 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
+  
+  clearTimeAction() {
+    clearTimeout(this.TIME_ACTION);
+  }
+  
+  setTimeAction(tm){
+    this.TIME_ACTION = tm;
+  }
 
 }

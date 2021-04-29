@@ -15,15 +15,14 @@ import {
   saveTimeControlDetail,
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
-import { INPUTS_ALL } from "../../../../environments/constants.js";
+import { SIGNIN_VIEWS } from "../../signinEnums.js";
+import * as ACTION from '../../../actions.js';
+import { MSG } from "../../../../environments/environments.js";
+import { AON_TAGS } from "../../../../environments/aonTag.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-date.js";
 import "../../../../components/aon-select.js";
-import { SIGNIN_VIEWS } from "../../signinEnums.js";
-
-import * as ACTION from '../../../actions.js';
-import { MSG } from "../../../../environments/environments.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -125,7 +124,9 @@ export class AonEventAdd extends AonElement {
       let iframe = this.createElement("iframe");
       iframe.id = iframeId;
       iframe.frameborder = 0;
-      iframe.style = "border:0;height: 400px;width: 100%;";
+      iframe.style.border = 0;
+      iframe.style.height = "400px";
+      iframe.style.width = "100%";
       iframe.src = `https://maps.google.es/maps?q=${coordinates.latitude},${coordinates.longitude}&z=${zoom}&output=embed&hl=es`;
       aonMap.setContent(iframe);
       aonMap.setAttribute("visible", true);
@@ -273,7 +274,7 @@ export class AonEventAdd extends AonElement {
   }
 
   formRead() {
-    [...this.getElement(`${this.id}Form`).querySelectorAll(INPUTS_ALL)].map(el => {
+    [...this.getElement(`${this.id}Form`).querySelectorAll(AON_TAGS)].map(el => {
       el.readonly = true;
     });
   }

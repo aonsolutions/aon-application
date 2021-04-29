@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
-
+import { CONSTANT } from '../environments/environments.js';
 import './aon-icon.js';
+
 
 export class AonDialogMenu extends AonElement {
 
@@ -8,11 +9,11 @@ export class AonDialogMenu extends AonElement {
 	CONTENT;
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	constructor () {

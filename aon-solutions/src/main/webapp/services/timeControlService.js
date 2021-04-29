@@ -39,21 +39,6 @@ new Promise((resolve) => {
   resolve(jsonValues);
 });
 
-let taskHolders;
-export const getTaskHolders = (data) => {
-  const newData = data || {};
-  return new Promise((resolve, reject) => {
-    if (taskHolders && !newData.reload) {
-      resolve(taskHolders);
-    } else {
-      get(`${API_URL}/timecontrol/taskholder`, newData)
-        .then(r => {
-          taskHolders = r;
-          resolve(taskHolders);
-        }).catch(e => reject(e));
-    }
-  });
-}
 
 export const getTimeControlList = (data) =>
   get(`${API_URL}/timecontrol/list`, data);

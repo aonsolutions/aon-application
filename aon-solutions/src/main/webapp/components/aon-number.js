@@ -1,8 +1,8 @@
 import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
+import { CONSTANT, CSS } from '../environments/environments.js';
 import './aon-icon-button.js';
 
-import { CONSTANT, CSS } from '../environments/environments.js';
 
 export class AonNumber extends AonElement {
 
@@ -14,79 +14,79 @@ export class AonNumber extends AonElement {
     DESCRIPTION;
 
     static get observedAttributes() {
-        return ['value', 'disabled', 'readonly', 'visible', 'options', 'description'];
+        return [CONSTANT.VALUE, CONSTANT.DISABLED, CONSTANT.READONLY, CONSTANT.VISIBLE, CONSTANT.OPTIONS, CONSTANT.DESCRIPTION];
     }
 
     get id() {
-        return this.getAttribute('id');
+        return this.getAttribute(CONSTANT.ID);
     }
 
     set id(id) {
-        this.setAttribute('id', id);
+        this.setAttribute(CONSTANT.ID, id);
     }
 
     get required() {
-        return this.getAttribute('required');
+        return this.getAttribute(CONSTANT.REQUIRED);
     }
 
     set required(required) {
-        this.setAttribute('required', required);
+        this.setAttribute(CONSTANT.REQUIRED, required);
     }
 
     get name() {
-        return this.getAttribute('name');
+        return this.getAttribute(CONSTANT.NAME);
     }
 
     set name(name) {
-        this.setAttribute('name', name);
+        this.setAttribute(CONSTANT.NAME, name);
     }
 
     get type() {
-        return this.getAttribute('type');
+        return this.getAttribute(CONSTANT.TYPE);
     }
 
     set type(type) {
-        this.setAttribute('type', type);
+        this.setAttribute(CONSTANT.TYPE, type);
     }
 
     get value() {
-        return this.getAttribute('value');
+        return this.getAttribute(CONSTANT.VALUE);
     }
 
     set value(value) {
-        this.setAttribute('value', value);
+        this.setAttribute(CONSTANT.VALUE, value);
     }
 
     get description() {
-        return this.getAttribute('description');
+        return this.getAttribute(CONSTANT.DESCRIPTION);
     }
 
     set description(description) {
-        this.setAttribute('description', description);
+        this.setAttribute(CONSTANT.DESCRIPTION, description);
     }
 
     get visible() {
-        return this.getAttribute('visible');
+        return this.getAttribute(CONSTANT.VISIBLE);
     }
 
     set visible(visible) {
-        this.setAttribute('visible', visible);
+        this.setAttribute(CONSTANT.VISIBLE, visible);
     }
 
     get readonly() {
-        return this.getAttribute('readonly');
+        return this.getAttribute(CONSTANT.READONLY);
     }
 
     set readonly(readonly) {
-        this.setAttribute('readonly', readonly);
+        this.setAttribute(CONSTANT.READONLY, readonly);
     }
 
     get disabled() {
-        return this.getAttribute('disabled');
+        return this.getAttribute(CONSTANT.DISABLED);
     }
 
     set disabled(disabled) {
-        this.setAttribute('disabled', disabled);
+        this.setAttribute(CONSTANT.DISABLED, disabled);
     }
 
     get format() {
@@ -115,24 +115,24 @@ export class AonNumber extends AonElement {
               desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
             } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
         }
-        if ('disabled' === name) {
-            this.getElement(this.getAttribute('id') + 'Input').setAttribute('disabled', this.isDisabled());
+        if (CONSTANT.DISABLED === name) {
+            this.getElement(this.getAttribute('id') + 'Input').setAttribute(CONSTANT.DISABLED, this.isDisabled());
         }
 
-        if ('readonly' === name) {
+        if (CONSTANT.READONLY === name) {
             if (this.isReadonly())
-                this.getElement(this.INPUT).setAttribute('readonly', this.isReadonly());
-            else this.getElement(this.INPUT).removeAttribute('readonly');
+                this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
+            else this.getElement(this.INPUT).removeAttribute(CONSTANT.READONLY);
         }
 
-        if ('visible' === name) {
+        if (CONSTANT.VISIBLE === name) {
             let label = this.getElement(this.getAttribute('id') + 'Label');
             if (label) {
                 label.style.display = this.isVisible() ? 'block' : 'none';
             }
         }
 
-        if ('description' === name && this.getElement(this.DESCRIPTION)) {
+        if (CONSTANT.DESCRIPTION === name && this.getElement(this.DESCRIPTION)) {
             this.getElement(this.DESCRIPTION).innerHTML = newValue;
         }
     }
@@ -152,7 +152,7 @@ export class AonNumber extends AonElement {
         this.ICON = this.id + 'Icon';
         this.ICON_LABEL = this.id + 'IconLabel';
         this.INPUT = this.id + 'Input';
-        this.DESCRIPTION = this.id + 'Description';
+        this.DESCRIPTION = this.id + CONSTANT.DESCRIPTION;
     }
 
     build() {
@@ -169,14 +169,14 @@ export class AonNumber extends AonElement {
         label.style.width = '100%';
 
         let input = document.createElement('input');
-        input.required = true;//this.getAttribute('required');
+        input.required = true;//this.getAttribute(CONSTANT.REQUIRED);
         input.id = this.getAttribute('id') + 'Input';
-        input.name = this.getAttribute('name');
+        input.name = this.getAttribute(CONSTANT.NAME);
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
         input.type = 'text';
         input.autocomplete = "off"
         input.style.textAlign = 'right'
-        if ('date' === this.getAttribute('type')) {
+        if ('date' === this.getAttribute(CONSTANT.TYPE)) {
             this.style.minWidth = '150px';
         }
         if (this.isDisabled())
@@ -219,7 +219,7 @@ export class AonNumber extends AonElement {
         let span = document.createElement('span');
         span.id = this.DESCRIPTION;
         span.className = CSS.AON_INPUT_LABEL;
-        span.innerHTML = this.getAttribute('description');
+        span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
         if(input.value && CONSTANT.EMPTY !== input.value) {
           span.classList.add(CSS.AON_INPUT_NOT_EMPTY);
         }
@@ -270,28 +270,28 @@ export class AonNumber extends AonElement {
     }
 
     isVisible() {
-        return !this.hasAttribute('visible') || (this.hasAttribute('visible') && 'false' !== this.getAttribute('visible'));
+        return !this.hasAttribute(CONSTANT.VISIBLE) || (this.hasAttribute(CONSTANT.VISIBLE) && 'false' !== this.getAttribute(CONSTANT.VISIBLE));
     }
 
     setVisible(visible) {
-        this.setAttribute('visible', visible);
+        this.setAttribute(CONSTANT.VISIBLE, visible);
     }
 
     isReadonly() {
-        return this.hasAttribute('readonly') && this.getAttribute('readonly')
-            && 'false' !== this.getAttribute('readonly')
+        return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+            && 'false' !== this.getAttribute(CONSTANT.READONLY)
     }
 
     setReadonly(readonly) {
-        this.setAttribute('readonly', readonly);
+        this.setAttribute(CONSTANT.READONLY, readonly);
     }
 
     isDisabled() {
-        return this.hasAttribute('disabled') && 'false' !== this.getAttribute('disabled')
+        return this.hasAttribute(CONSTANT.DISABLED) && 'false' !== this.getAttribute(CONSTANT.DISABLED)
     }
 
     setDisabled(disabled) {
-        this.setAttribute('disabled', disabled);
+        this.setAttribute(CONSTANT.DISABLED, disabled);
     }
 }
 if(!window.customElements.get('aon-number')){

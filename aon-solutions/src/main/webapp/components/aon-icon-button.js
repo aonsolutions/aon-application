@@ -1,6 +1,7 @@
 import { AonElement } from "./AonElement.js";
 
 import "./aon-icon.js";
+import { CONSTANT } from "../environments/environments.js";
 
 export class AonIconButton extends AonElement {
   BUTTON;
@@ -9,7 +10,7 @@ export class AonIconButton extends AonElement {
   IMAGE;
 
   static get observedAttributes() {
-    return ["disabled", "visible", "icon", "color"];
+    return [CONSTANT.DISABLED, CONSTANT.VISIBLE, "icon", "color"];
   }
 
   get id() {
@@ -69,19 +70,19 @@ export class AonIconButton extends AonElement {
   }
 
   get visible() {
-    return this.getAttribute("visible");
+    return this.getAttribute(CONSTANT.VISIBLE);
   }
 
   set visible(visible) {
-    this.setAttribute("visible", visible);
+    this.setAttribute(CONSTANT.VISIBLE, visible);
   }
 
   get disabled() {
-    return this.getAttribute("disabled");
+    return this.getAttribute(CONSTANT.DISABLED);
   }
 
   set disabled(disabled) {
-    this.setAttribute("disabled", disabled);
+    this.setAttribute(CONSTANT.DISABLED, disabled);
   }
 
   get title() {
@@ -102,16 +103,16 @@ export class AonIconButton extends AonElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
-    if ("disabled" === name) {
+    if (CONSTANT.DISABLED === name) {
       document
         .getElementById(this.getAttribute("id") + "IconButton")
-        .setAttribute("disabled", newValue);
+        .setAttribute(CONSTANT.DISABLED, newValue);
     }
 
-    if ("visible" === name) {
+    if (CONSTANT.VISIBLE === name) {
       if (
-        this.getAttribute("visible") != undefined &&
-        "false" == this.getAttribute("visible")
+        this.getAttribute(CONSTANT.VISIBLE) != undefined &&
+        "false" == this.getAttribute(CONSTANT.VISIBLE)
       ) {
         this.style.width = "0px";
         this.style.display = "none";
@@ -180,13 +181,13 @@ export class AonIconButton extends AonElement {
       button.title = this.getAttribute("title");
     }
 
-    if (this.getAttribute("disabled")) {
-      button.setAttribute("disabled", true);
+    if (this.getAttribute(CONSTANT.DISABLED)) {
+      button.setAttribute(CONSTANT.DISABLED, true);
     }
 
     if (
-      this.getAttribute("visible") != undefined &&
-      "false" == this.getAttribute("visible")
+      this.getAttribute(CONSTANT.VISIBLE) != undefined &&
+      "false" == this.getAttribute(CONSTANT.VISIBLE)
     ) {
       this.style.width = "0px";
       this.style.display = "none";

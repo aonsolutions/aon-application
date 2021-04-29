@@ -1,6 +1,7 @@
-import {AonElement} from './AonElement.js';
-
+// import {AonElement} from './AonElement.js';
+import { CONSTANT } from '../environments/environments.js';
 import './aon-icon-button.js';
+
 
 export class AonSearchBox extends HTMLElement {
 
@@ -9,35 +10,35 @@ export class AonSearchBox extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return ['selected'];
+		return [CONSTANT.SELECTED];
 	}
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	get opened() {
-		return this.getAttribute('opened');
+		return this.getAttribute(CONSTANT.OPENED);
 	}
 
 	set opened(opened) {
-		this.setAttribute('opened', opened);
+		this.setAttribute(CONSTANT.OPENED, opened);
 	}
 
 	get value() {
-		return this.getAttribute('value');
+		return this.getAttribute(CONSTANT.VALUE);
 	}
 
 	set value(value) {
-		this.setAttribute('value', value);
+		this.setAttribute(CONSTANT.VALUE, value);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('value' === name){
+		if(CONSTANT.VALUE === name){
 			document.getElementById('search-input').value = newValue;
 		}
 	}

@@ -1,7 +1,7 @@
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import {AonElement} from '../../components/AonElement.js';
-import { EVENT } from '../../environments/environments.js';
+import { CONSTANT, EVENT } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
 import { getTotalNotification } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
@@ -13,7 +13,7 @@ export class AonNotificationIcon extends AonElement {
     BADGE;
     COUNT;
     static get observedAttributes() {
-        return ["badge"];
+        return [CONSTANT.BADGE];
     }
  
     attributeChangedCallback(name, oldValue, newValue) {

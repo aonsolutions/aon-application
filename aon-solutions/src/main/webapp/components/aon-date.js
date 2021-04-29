@@ -4,6 +4,7 @@ import './aon-input.js';
 import './aon-icon-button.js';
 
 import {setDate} from '../services/utils.js';
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonDate extends AonElement {
 
@@ -21,51 +22,51 @@ export class AonDate extends AonElement {
   DATEPICKER_DAYS;
 
   static get observedAttributes() {
-    return ['value'];
+    return [CONSTANT.VALUE];
   }
 
 	get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
   get name() {
-		return this.getAttribute('name');
+		return this.getAttribute(CONSTANT.NAME);
 	}
 
 	set name(name) {
-		this.setAttribute('name', name);
+		this.setAttribute(CONSTANT.NAME, name);
 	}
 
   get value() {
-    return this.getAttribute('value');
+    return this.getAttribute(CONSTANT.VALUE);
   }
 
   set value(value) {
-    this.setAttribute('value', value);
+    this.setAttribute(CONSTANT.VALUE, value);
   }
 
   get title() {
-    return this.getAttribute('title');
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute('title', title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   get readonly() {
-    return this.getAttribute('readonly');
+    return this.getAttribute(CONSTANT.READONLY);
   }
 
   set readonly(readonly) {
-    this.setAttribute('readonly', readonly);
+    this.setAttribute(CONSTANT.READONLY, readonly);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if('value' === name) {
+    if(CONSTANT.VALUE === name) {
       let input = this.getElement(this.INPUT);
       if(newValue && input)
         input.value = setDate(newValue);
@@ -103,7 +104,7 @@ export class AonDate extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
-    input.setAttribute('readonly', true);
+    input.setAttribute(CONSTANT.READONLY, true);
     input.addIconButton('calendar_today', () => this.openDatepicker());
     this.getElement(input.INPUT).style.minWidth = '125px';
   }
@@ -302,7 +303,7 @@ export class AonDate extends AonElement {
   }
 
   openDatepicker() {
-    if(!this.hasAttribute('readonly')) {
+    if(!this.hasAttribute(CONSTANT.READONLY)) {
       this.getElement(this.DATEPICKER).classList.add('is-visible');
     }
   }

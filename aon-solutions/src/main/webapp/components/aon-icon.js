@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
 import {icons} from '../assets/icons/icons.js';
+import { CONSTANT } from '../environments/environments.js';
 
 export class AonIcon extends AonElement {
 
@@ -8,11 +9,11 @@ export class AonIcon extends AonElement {
   }
 
   get id() {
-    return this.getAttribute('id');
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute('id', id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get icon() {

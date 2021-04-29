@@ -1,3 +1,4 @@
+import { AON_TAGS } from "../environments/aonTag.js";
 import { CONSTANT } from "../environments/environments.js";
 
 const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
@@ -85,7 +86,7 @@ export const decimalAdjust = (type, value, exp) => {
  */
 export const serializeForm = (form) => {
   let inputs = [
-    ...form.querySelectorAll(CONSTANT.INPUTS_ALL)
+    ...form.querySelectorAll(AON_TAGS)
   ];
   let obj = {};
   inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
@@ -237,8 +238,8 @@ export const handleError = (error)=>{
  * @param {string} elems elementos adicionales para deshabilitar (opcional)
  */
 export const disabledForm = (formId, elems) => {
-  let elems_disabled = CONSTANT.INPUTS_ALL;
-  if (elems) elems_disabled = elems + ', ' + CONSTANT.INPUTS_ALL;
+  let elems_disabled = AON_TAGS;
+  if (elems) elems_disabled = elems + ', ' + AON_TAGS;
   [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => {
       el.disabled = true;
   })
@@ -286,34 +287,88 @@ export const scrollInfinite = (element, fn) => {
  */
  export const newComponent = (properties) =>{
   if(properties == undefined) properties = {};
-  properties.element  =  document.createElement('div');
+  properties.element  =  properties.element || document.createElement('div');
+
+  //Internal functions
   properties.appendTo =  (e) => e.appendChild(properties.element);
   properties.appendChild =  (e) => properties.element.appendChild(e);
+  properties.clean = () => properties.element.innerHTML = '';
 
-  if(properties.type != undefined)    properties.element           = document.createElement(properties.type);
-  if(properties.id   != undefined)    properties.element.id        = properties.id;
-  if(properties.text != undefined)    properties.element.innerHTML = properties.text;
+  //Check information
+  if(properties.type)   
+      properties.element = document.createElement(properties.type);
 
-  if(properties.attributes != undefined) 
-      for (const key in properties.attributes)  
-          properties.element.setAttribute(key,properties.attributes[key]);
+  if(properties.id)    
+      properties.element.id  = properties.id;
 
-  if(properties.dataset != undefined) 
-      for (const key in properties.dataset) 
-          properties.element.dataset[key] = properties.dataset[key];
+  if(properties.text)   
+      properties.element.innerHTML = properties.text;
 
-  if(properties.events != undefined) 
-      for (const key in properties.events)  
-          properties.element.addEventListener(key,properties.events[key]);
-
-  if(properties.styles != undefined) 
-    for (const key in properties.styles)  
-      properties.element.style[key] = properties.styles[key];  
-
-  if(properties.classes != undefined) 
-      properties.classes.forEach(cl => properties.element.classList.add(cl));
-
-  properties.clean = function(){properties.element.innerHTML = '';};
+  //Set data to element
+  setAttributes(properties.element,properties.attributes);
+  setDataset(properties.element,properties.dataset);
+  setEvents(properties.element,properties.events);
+  setStyles(properties.element,properties.styles);
+  setClasses(properties.element,properties.classes);
 
   return properties;
 } 
+
+/**
+ * Set attributes to element
+ * @param {*} element 
+ * @param {*} attributes 
+ */
+export const setAttributes = (element, attributes) =>{
+  if(element && attributes) 
+      for (const key in attributes)  
+          element.setAttribute(key,attributes[key]);
+  return element;
+}
+
+/**
+ * Set dataset to an element
+ * @param {*} element 
+ * @param {*} dataset 
+ */
+export const setDataset = (element,dataset) => {
+  if(element && dataset) 
+      for (const key in dataset) 
+          element.dataset[key] = dataset[key];
+  return element;
+}
+
+/**
+ * Set events to an element
+ * @param {*} element 
+ * @param {*} events 
+ */
+export const setEvents =(element,events) => {
+  if(element && events) 
+      for (const key in events)  
+          element.addEventListener(key,events[key]);
+  return element;
+}
+
+/**
+ * Set styles to an element
+ * @param {*} element 
+ * @param {*} styles 
+ */
+export const setStyles = (element,styles) => {
+  if(element && styles) 
+    for (const key in styles)  
+      element.style[key] = styles[key];  
+  return element;
+}
+
+/**
+ * Set classes 
+ * @param {*} element 
+ * @param {*} classes 
+ */
+export const setClasses = (element,classes) => {
+  if(element && classes) 
+    classes.forEach(cl => element.classList.add(cl));
+  return element;
+}
