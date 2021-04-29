@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
@@ -15,14 +16,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
 	
-	// --------------------------------------------- VARIABLES
+	// ----------------------------------------------- Variables 
 	
 	private EmployeeEventsData employeeEventsData;
 	private Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar;
 	
 	private Integer idEmployee;
 	
-	private DomainEmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	private EmployeeCalendarDraftObject employeeCalendar;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
@@ -30,17 +31,16 @@ public class EmployeeEventsDraftObject {
 	
 	private ArrayList<String> calendarVariables;
 	
-	public EmployeeEventsDraftObject(Integer idEmployee, DomainEmployeesServiceAsync employeesService) {
+	// ----------------------------------------------- Constructor 
+	
+	public EmployeeEventsDraftObject(Integer idEmployee) {
 		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
-		
 		this.idEmployee = idEmployee;
-		this.employeesService = employeesService;
-		
 		this.employeeContractVariables = new ArrayList<String>();
-		
 		this.calendarVariables = new ArrayList<String>();
-		
 	}
+	
+	// ----------------------------------------------- initCalendarVariables 
 
 	private void initCalendarVariables() {
 		calendarVariables.add("DIAS_TRABAJADOS");
@@ -59,7 +59,7 @@ public class EmployeeEventsDraftObject {
 		return this.calendarVariables;
 	}
 
-	// --------------------------------------------- GETTERS / SETTERS
+	// ----------------------------------------------- EmployeeEventsDraftObject.Methods
 	
 	public Integer getIdEmployee() {
 		return idEmployee;
@@ -146,12 +146,11 @@ public class EmployeeEventsDraftObject {
 		return this.employeeEventsData.getContractEndDate();
 	}
 	
-	// --------------------------------------------- SYNC DATABASE
+	// ----------------------------------------------- DataBase.Methods
 	
-	@SuppressWarnings("deprecation")
 	public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success, Consumer<Throwable> failure) {
 		
-		employeesService.getEmployeeEventsVariables(idEmployee, new Date(year,0,1), new Date(year,11,31), 
+		employeesService.getEmployeeEventsVariables(idEmployee, DateUtils.getDate(0, year), DateUtils.getLastDayOfMonth(DateUtils.getDate(11, year)), 
 				new AsyncCallback<ContextDescriptor>() {
 			
 			@Override
@@ -211,8 +210,6 @@ public class EmployeeEventsDraftObject {
 		});
 	}
 	
-	// --------------------------------------------- UPDATE DATABASE
-	
 	public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
 		employeesService.setEmployeeEvents(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
@@ -229,8 +226,6 @@ public class EmployeeEventsDraftObject {
 		
 	}
 	
-	// --------------------------------------------- SYNC DATABASE (AUX METHODS)
-
 	private Set<String> filterContextVariables(Set<String> contextVariables, ArrayList<String> allStaticVariables) {
 		Set<String> resultSet = new LinkedHashSet<String>();
 		
@@ -264,21 +259,20 @@ public class EmployeeEventsDraftObject {
 		return false;
 	}
 
-	// --------------------------------------------- EVENT PAGE METHODS
+	// ----------------------------------------------- EmployeeEventsDraft.Methods
 	
 	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
 		return this.mapEventsVar.getOrDefault(varName, null);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
 		
 		if(null != varList) {
 			for (EmployeeEventsVariable e : this.mapEventsVar.get(varName)){
-				if(year != e.getStartDate().getYear())
+				if(year != DateUtils.getYear(e.getStartDate()))
 					continue;
-				if (month == e.getStartDate().getMonth())
+				if (month == DateUtils.getMonth(e.getStartDate()))
 					return e;
 			}
 		}
@@ -287,7 +281,6 @@ public class EmployeeEventsDraftObject {
 	}
 
 	public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
-//		Window.alert("ADD DATA --> " + variableName + " = " + value + ", Start : " + startDate + " End : " + endDate);
 		employeeEventsData.addEventData(variableName, startDate, endDate, value);
 		mapEventsVar = employeeEventsData.getEventDateVarList();
 	}
