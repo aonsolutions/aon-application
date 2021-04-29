@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -764,14 +763,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			.setUserObject(new WorkplaceSalaryObject(workplace));
 
 		addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
-				.setUserObject(new CalendarDraftObjectData(workplace.getId(), employeesService));
+				.setUserObject(new CalendarDraftObjectData(workplace.getId()));
+		
 		addImageItem(workplaceItem, "Estad\u00EDsticas", images.statistics());
+		
 		addImageItem(workplaceItem, "Partes IT", images.itDatas())
 			.setUserObject(new WorkplaceITObject(workplace.getId()));
-//		addImageItem(workplaceItem, "Partes IT", images.itDatas())
-//				.setUserObject(new ITDataObject(workplace.getId(), employeesService));
-//		
-//		addImageItem(workplaceItem, "N\u00F3minas (Old)", images.salaries());
 		
 		if (extended) {
 
@@ -1478,9 +1475,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 		
-//		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas (Old)", images.salaries());
-//		salariestItem.ensureDebugId(getId(employee)+"-salaries");
-		
 		//Employee Calendar (BETA)
 		TreeItem calendarNewDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
@@ -1492,12 +1486,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
 		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
 		
-		//Add employeeCalendar to Draft
-		//employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
 		
-
 		if (extended) {
-//			ITDataObject dataObject = getITDataObject(workplaceItem);
 
 			Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
 					employee.getEndDate());
@@ -1528,21 +1518,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
 			
-			//Employee Calendar (OLD)
-//			TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario (Old)", images.laboralCalendar());
-//			EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
-//					employee.getStartDate(), employee.getEndDate(), employeesService);
-//			calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
-//			calendarDraftItem.ensureDebugId(getId(employee)+"-employeecalendar");
-			
 			//Add employeeCalendar to Draft
 			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
 			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
 			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
 						
-			// A.E.T
-			// addImageItem(employeeItem, "Regularizaciones", images.aet());
-
 			Category category = employee.getCategory();
 
 			// Agreement Category
@@ -1575,7 +1555,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					Wnd.getCurrentDomainNameURL(),
 					categoryDraft, 
 					employeesService);
-			// categoryItem.setUserObject(categoryDraftObject);
 
 			employeesService.getChanges(Wnd.getCurrentDomainNameURL(),agreement, new AsyncCallback<SortedSet<Date>>() {
 				@Override

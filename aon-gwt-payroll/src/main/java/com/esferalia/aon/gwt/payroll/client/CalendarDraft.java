@@ -16,6 +16,8 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
@@ -23,9 +25,10 @@ import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
@@ -52,44 +55,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class CalendarDraft extends Composite implements
-		CalendarDraftObjectData.CalendarDraftListener {
+public class CalendarDraft extends Composite implements CalendarDraftObjectData.CalendarDraftListener {
 
-	static class WeekDay implements HasId<Integer> {
-		
-		private static WeekDay MONDAY = new WeekDay(Calendar.MONDAY, "Lunes");
-		private static WeekDay TUESDAY = new WeekDay(Calendar.TUESDAY, "Martes");
-		private static WeekDay WEDNESDAY = new WeekDay(Calendar.WEDNESDAY, "Mi\u00E9rcoles");
-		private static WeekDay THURSDAY = new WeekDay(Calendar.THURSDAY, "Jueves");
-		private static WeekDay FRIDAY = new WeekDay(Calendar.FRIDAY, "Viernes");
-		private static WeekDay SATURDAY = new WeekDay(Calendar.SATURDAY, "S\u00E1bado");
-		private static WeekDay SUNDAY = new WeekDay(Calendar.SUNDAY, "Domingo");
-		
-		private String name;
-		private int weekDay;
-		
-		WeekDay(int weekDay, String name) {
-			this.name = name;
-			this.weekDay = weekDay;
-		}
-		
-		public int getDay() {
-			return weekDay -1;
-		}
+	// ----------------------------------------------- UiBinder 
+	
+	private static CalendarDraftUiBinder uiBinder = GWT.create(CalendarDraftUiBinder.class);
 
-		@Override
-		public Integer getId() {
-			return weekDay;
-		}
-		
-		@Override
-		public String toString() {
-			return name;
-		}
-		
-		
-	}
+	interface CalendarDraftUiBinder extends UiBinder<Widget, CalendarDraft> {}
 
+	// ----------------------------------------------- CssResource 
+	
 	interface Style extends CssResource {
 
 		@ClassName("disclosure-panel")
@@ -126,15 +101,44 @@ public class CalendarDraft extends Composite implements
 		String notWork();
 	}
 	
+	// ----------------------------------------------- WeekDay 
+	
+	static class WeekDay implements HasId<Integer> {
+		
+		private static WeekDay MONDAY = new WeekDay(Calendar.MONDAY, "Lunes");
+		private static WeekDay TUESDAY = new WeekDay(Calendar.TUESDAY, "Martes");
+		private static WeekDay WEDNESDAY = new WeekDay(Calendar.WEDNESDAY, "Mi\u00E9rcoles");
+		private static WeekDay THURSDAY = new WeekDay(Calendar.THURSDAY, "Jueves");
+		private static WeekDay FRIDAY = new WeekDay(Calendar.FRIDAY, "Viernes");
+		private static WeekDay SATURDAY = new WeekDay(Calendar.SATURDAY, "S\u00E1bado");
+		private static WeekDay SUNDAY = new WeekDay(Calendar.SUNDAY, "Domingo");
+		
+		private String name;
+		private int weekDay;
+		
+		WeekDay(int weekDay, String name) {
+			this.name = name;
+			this.weekDay = weekDay;
+		}
+		
+		public int getDay() {
+			return weekDay -1;
+		}
 
-	private static CalendarDraftUiBinder uiBinder = GWT
-			.create(CalendarDraftUiBinder.class);
-
-	interface CalendarDraftUiBinder extends UiBinder<Widget, CalendarDraft> {
+		@Override
+		public Integer getId() {
+			return weekDay;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
+		}
+		
 	}
-	
-	
 
+	// ----------------------------------------------- EnableButtons 
+	
 	class EnableButtons implements CalendarDraftObjectData.CalendarEvents {
 		
 		private CalendarDraftObjectData calendarDraftObjectData;
@@ -154,11 +158,15 @@ public class CalendarDraft extends Composite implements
 			setEnableSaveButton();			
 		}
 	}
+	
+	// ----------------------------------------------- UiFields 
 
 	@UiField
-	ListBox holidayList;
+	VerticalPanel leyend;
 	@UiField
 	DockLayoutPanel mainPanel;
+	@UiField
+	DockLayoutPanel centerPanel;
 	@UiField
 	static Style style;
 	@UiField
@@ -168,29 +176,42 @@ public class CalendarDraft extends Composite implements
 	@UiField
 	VerticalPanel legendVerticalPanel;
 	@UiField
-	Button deleteButton;
-	@UiField
-	Button addEvent;
-	@UiField
-	Button saveButton;
-	@UiField
 	Label yearLabel;
 	@UiField
 	Button lastYearButton;
 	@UiField
 	Button nextYearButton;
 
+	// ----------------------------------------------- Variables 
+	
 	private Date datePickerDateSelected;
 	private Integer nameValueListBoxSelected;
 
+	@SuppressWarnings("unused")
 	private EnableButtons enableButtons;
+	
 	private CalendarDraftObjectData calendarDraftObjectData;
+	
+	private boolean isCollapsed = false;
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton collapseButton;
+	private AonToolbarButton saveButton;
+	private AonToolbarButton addEvent;
+	private AonToolbarButton workDays;
+	private AonToolbarButton deleteButton;
+	
+	private ListBox holidayList = new ListBox();
 
+	// ----------------------------------------------- Constructor 
+	
 	public CalendarDraft() {
+		toolbar = getToolbarPanel();
 		initWidget(uiBinder.createAndBindUi(this));
+		mainPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 	}
 
-	// --------------------------------------------- UiHandlers
+	// ----------------------------------------------- UiHandlers
 
 	@UiHandler("calendarPanel")
 	void onCalendarPanelAttach(AttachEvent event) {
@@ -202,135 +223,7 @@ public class CalendarDraft extends Composite implements
 		yearLabel.setText(String.valueOf(getYear(new Date())));
 	}
 
-	@UiHandler("holidayList")
-	void onListChangeHandler(ChangeEvent event) {
-		saveButton.setEnabled(true);		
-		Integer value = Integer.parseInt(holidayList.getSelectedValue());
-		
-		calendarDraftObjectData.assignHoliday2Draft(value);
-		
-		loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()),
-				calendarDraftObjectData);
-	}
-
-	@UiHandler("workDays")
-	void onWorkDaysClick(ClickEvent event) {
-		
-		List<WeekDay> weekDays = new ArrayList<WeekDay>(7);
-		weekDays.add(WeekDay.MONDAY);
-		weekDays.add(WeekDay.TUESDAY);
-		weekDays.add(WeekDay.WEDNESDAY);
-		weekDays.add(WeekDay.THURSDAY);
-		weekDays.add(WeekDay.FRIDAY);
-		weekDays.add(WeekDay.SATURDAY);
-		weekDays.add(WeekDay.SUNDAY);
-		
-		SelectDialog<WeekDay> selectDialog = new SelectDialog<WeekDay>() {
-			{
-				hideSelectLabel();
-				setCaption("D\u00EDas Laborables");
-				
-				addColumn(
-				new Column<WeekDay, String>(new TextCell())
-				{
-					@Override
-					public String getValue(WeekDay weekDay) {
-						return weekDay.toString();
-					}
-				}
-				, "D\u00EDa de la Semana");
-				
-				
-				
-				setData(weekDays);
-				
-				List<WeekDay> workingDays = new ArrayList<WeekDay>();
-				weekDays.stream()
-				.filter(w -> calendarDraftObjectData.getDayType(w.getDay()) == DayType.WORKING_DAY )
-				.forEach( w -> workingDays.add(w));
-				;
-				setSelectedData(workingDays);
-				
-			}
-			
-			@Override
-			void onAcceptClick(ClickEvent event) {
-				super.onAcceptClick(event);
-				
-				Set<WeekDay> selected = getSelectedData();
-				
-				weekDays.stream().filter(w -> selected.contains(w)).forEach(w -> calendarDraftObjectData.setWorkingDay(w.getDay()));
-				weekDays.stream().filter(w -> !selected.contains(w)).forEach(w -> calendarDraftObjectData.setNonWorkingDay(w.getDay()));
-				
-				setEnableSaveButton();
-				
-//				getSelectedData().stream()
-//				.forEach(w -> calendarDraftObjectData.setWorkingDay(w.getDay()));
-				
-			}
-		};
-
-		selectDialog.center();
-		selectDialog.show();
-	}
-
-	@UiHandler("addEvent")
-	void onAddEventClick(ClickEvent event) {
-
-		FilterDialog filterDialog = new FilterDialog() {
-
-			{
-				setCaption("Nuevo Festivo");
-				setFilterLabel("Datos de la festividad ...");
-				setNameLabel("Descripci\u00F3n");
-				setDateLabel("Fecha");
-				setDateTimeFormat(AON.DATE_FORMAT);
-				setVisibleDatePatternLabel(false);
-			}
-
-			@Override
-			protected void onAccept() {
-
-				if (!getName().isEmpty() && getDateFrom() != null) {
-					String name = getName();
-					Date date = getDateFrom();
-					calendarDraftObjectData.addHoliday(date, name);
-					initializeLegendPanel();
-				}
-			}
-		};
-
-		filterDialog.setDateFrom(getDateSelected());
-		filterDialog.center();
-		filterDialog.show();
-		filterDialog.setFocusOnNameTextBox(true);
-	}
 	
-	@UiHandler("deleteButton")
-	void onClickDeleteButton(ClickEvent event) {
-		calendarDraftObjectData.deleteHoliday(getDateSelected());
-		deleteButton.setVisible(false);
-	}
-
-	@UiHandler("saveButton")
-	void onSaveButtonClick(ClickEvent event) {
-		Integer id = Integer.parseInt(holidayList.getSelectedValue());
-		calendarDraftObjectData.saveHolidayDraft(id, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				saveButton.setEnabled(false);
-				loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()),
-						calendarDraftObjectData);
-			}
-		});
-	}
 
 	@UiHandler("nextYearButton")
 	void onClickNextYearButton(ClickEvent event) {
@@ -396,7 +289,7 @@ public class CalendarDraft extends Composite implements
 		saveButton.setEnabled(!calendarDraftObjectData.insertIsEmpy());
 	}
 
-	// --------------------------------------------- Listeners
+	// ----------------------------------------------- Listeners
 
 	@Override
 	public void onValueChangeEvent(Date date) {
@@ -452,18 +345,30 @@ public class CalendarDraft extends Composite implements
 	protected void onSuprKeyPressAction(final Date date) {
 		calendarDraftObjectData.deleteHoliday(date);
 	}
+	
+	// ----------------------------------------------- Listeners.Auxiliar Methods
+	
+	protected void initOnSuccess(CalendarDraftObjectData result) {
+		
+		CalendarDraft.this.calendarPanel.clear();
+		CalendarDraft.this.calendarDraftObjectData = result;
+		CalendarDraft.this.calendarPanel.add(result
+				.getCalendar());
+		CalendarDraft.this.calendarDraftObjectData
+				.insertHolidays();
+		CalendarDraft.this.getItemLoadIndex();
+		CalendarDraft.this.initializeLegendPanel();
+		
+	}
 
-	// --------------------------------------------- ---------
-
-	public void setCalendarDraftObject(Integer pattern,
-			CalendarDraftObjectData calendarDraftObjectData) {
-		calendarDraftObjectData
-				.loadListBoxItems(new AsyncCallback<Map<Integer, String>>() {
+	// ----------------------------------------------- setCalendarDraftObject
+	
+	public void setCalendarDraftObject(Integer pattern, CalendarDraftObjectData calendarDraftObjectData) {
+		
+		calendarDraftObjectData.loadListBoxItems(new AsyncCallback<Map<Integer, String>>() {
 
 					@Override
-					public void onFailure(Throwable caught) {
-
-					}
+					public void onFailure(Throwable caught) {}
 
 					@Override
 					public void onSuccess(Map<Integer, String> map) {
@@ -479,9 +384,10 @@ public class CalendarDraft extends Composite implements
 					}
 				});
 
-		loadCalendarPanel(pattern, Integer.parseInt(yearLabel.getText()),
-				calendarDraftObjectData);
+		loadCalendarPanel(pattern, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
 	}
+	
+	// ----------------------------------------------- setCalendarDraftObject.Auxiliar Methods
 
 	private void addItem2DraftMap(Integer id, String item) {
 
@@ -513,8 +419,7 @@ public class CalendarDraft extends Composite implements
 				});
 	}
 
-	private void loadCalendarPanelWithYearChange(Integer pattern, Integer year,
-			CalendarDraftObjectData calendarDraftData) {
+	private void loadCalendarPanelWithYearChange(Integer pattern, Integer year, CalendarDraftObjectData calendarDraftData) {
 
 		calendarDraftData.getHolidayCalendarWithYearChange(pattern, year,
 				new AsyncCallback<CalendarDraftObjectData>() {
@@ -534,18 +439,7 @@ public class CalendarDraft extends Composite implements
 				});
 	}
 	
-	protected void initOnSuccess(CalendarDraftObjectData result) {
-		
-		CalendarDraft.this.calendarPanel.clear();
-		CalendarDraft.this.calendarDraftObjectData = result;
-		CalendarDraft.this.calendarPanel.add(result
-				.getCalendar());
-		CalendarDraft.this.calendarDraftObjectData
-				.insertHolidays();
-		CalendarDraft.this.getItemLoadIndex();
-		CalendarDraft.this.initializeLegendPanel();
-		
-	}
+	
 	
 	protected void deshabilitGestionCalendar() {
 		
@@ -563,6 +457,8 @@ public class CalendarDraft extends Composite implements
 				holidayList.setItemSelected(x, true);
 		}
 	}
+	
+	// ----------------------------------------------- Leyend
 
 	private void initializeLegendPanel() {
 
@@ -596,15 +492,38 @@ public class CalendarDraft extends Composite implements
 		}
 	}
 
+	private DisclosurePanel createDisclosurePanel(boolean open, String title,
+			String pStyle) {
+		DisclosurePanel disclosurePanel = new DisclosurePanel();
+		disclosurePanel.setStylePrimaryName(style.disclosurePanel());
+		disclosurePanel.setAnimationEnabled(true);
+
+		HorizontalPanel headerPanel = new HorizontalPanel();
+		HTML icon = new HTML();
+		icon.addStyleName(style.legendIcon());
+		icon.addStyleName(pStyle);
+		headerPanel.add(icon);
+
+		InlineLabel holidayLabel = new InlineLabel(title);
+
+		holidayLabel.addStyleName(style.legendCaption());
+		holidayLabel.addStyleName(style.typeHoliday());
+		headerPanel.add(holidayLabel);
+
+		disclosurePanel.setHeader(headerPanel);
+		disclosurePanel.setOpen(open);
+		return disclosurePanel;
+	}
+	
 	private DisclosurePanel addNotWorkLegend(boolean open, String title, String pStyle) {
 
-		DisclosurePanel disclosurePanel = createDisclosurePanel(open,
-				title, pStyle);
+		DisclosurePanel disclosurePanel = createDisclosurePanel(open, title, pStyle);
 		VerticalPanel vPanel = new VerticalPanel();
 		
 		DateTimeFormat dayOfWeekFormat = DateTimeFormat.getFormat("EEEE");
 		
 		Date date = new Date();
+		
 		while ( date.getDay() != 0 )
 			CalendarUtil.addDaysToDate(date, 1);
 		
@@ -697,28 +616,7 @@ public class CalendarDraft extends Composite implements
 		return statalDisclosurePanel;
 	}
 
-	private DisclosurePanel createDisclosurePanel(boolean open, String title,
-			String pStyle) {
-		DisclosurePanel disclosurePanel = new DisclosurePanel();
-		disclosurePanel.setStylePrimaryName(style.disclosurePanel());
-		disclosurePanel.setAnimationEnabled(true);
-
-		HorizontalPanel headerPanel = new HorizontalPanel();
-		HTML icon = new HTML();
-		icon.addStyleName(style.legendIcon());
-		icon.addStyleName(pStyle);
-		headerPanel.add(icon);
-
-		InlineLabel holidayLabel = new InlineLabel(title);
-
-		holidayLabel.addStyleName(style.legendCaption());
-		holidayLabel.addStyleName(style.typeHoliday());
-		headerPanel.add(holidayLabel);
-
-		disclosurePanel.setHeader(headerPanel);
-		disclosurePanel.setOpen(open);
-		return disclosurePanel;
-	}
+	// ----------------------------------------------- Leyend.Auxiliar Methods
 
 	private Integer getDay(Date date) {
 		return Integer.parseInt(DateTimeFormat.getFormat("dd-MM-yyyy")
@@ -782,4 +680,176 @@ public class CalendarDraft extends Composite implements
 
 		return sortedMap;
 	}
+	
+	// ----------------------------------------------- Toolbar
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("Calendario Laboral");
+		
+		collapseButton = new AonToolbarButton( "", AON.CSS.aonIconMenu() );
+		collapseButton.addClickHandler(e -> {
+			onCollapse(e);
+		});
+		toolbar.add(collapseButton);
+		
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.addClickHandler(e -> {
+			onSave(e);
+		});
+		toolbar.add(saveButton);
+		
+		addEvent = new AonToolbarButton( "A\u00F1dir Festivo", AON.CSS.aonIconAdd());
+		addEvent.addClickHandler(e -> {
+			onAddEvent(e);
+		});
+		toolbar.add(addEvent);
+		
+		workDays = new AonToolbarButton( "D\u00EDas Laborables", AON.CSS.aonIconRestore() );
+		workDays.addClickHandler(e -> {
+			onWorkDays(e);
+		});
+		toolbar.add(workDays);
+		
+		deleteButton = new AonToolbarButton( "Eliminar", AON.CSS.aonIconDelete() );
+		deleteButton.addClickHandler(e -> {
+			onDelete(e);
+		});
+		deleteButton.setVisible(false);
+		toolbar.add(deleteButton);
+		
+		Label holidayLabel = new Label("Festivos");
+		holidayLabel.getElement().getStyle().setMarginRight(5, Unit.PX);
+		holidayLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		toolbar.add(holidayLabel);
+		
+		holidayList.addChangeHandler(e -> {
+			saveButton.setEnabled(true);		
+			Integer value = Integer.parseInt(holidayList.getSelectedValue());
+			
+			calendarDraftObjectData.assignHoliday2Draft(value);
+			
+			loadCalendarPanel(value, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+		});
+		toolbar.add(holidayList);
+		
+		return toolbar;
+	
+	}
+
+	// ----------------------------------------------- Toolbar.Methods
+	
+	private void onCollapse(ClickEvent e) {
+		if(isCollapsed)
+			centerPanel.setWidgetSize(leyend, 190);
+		else
+			centerPanel.setWidgetSize(leyend, 0);
+		isCollapsed = !isCollapsed;
+		centerPanel.animate(500);
+	}
+	
+	private void onSave(ClickEvent e) {
+		Integer id = Integer.parseInt(holidayList.getSelectedValue());
+		calendarDraftObjectData.saveHolidayDraft(id, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(Void result) {
+				saveButton.setEnabled(false);
+				loadCalendarPanel(null, Integer.parseInt(yearLabel.getText()), calendarDraftObjectData);
+			}
+		});
+	}
+	
+	private void onAddEvent(ClickEvent e) {
+		
+		FilterDialog filterDialog = new FilterDialog() {
+			{
+				setCaption("Nuevo Festivo");
+				setFilterLabel("Datos de la festividad ...");
+				setNameLabel("Descripci\u00F3n");
+				setDateLabel("Fecha");
+				setDateTimeFormat(AON.DATE_FORMAT);
+				setVisibleDatePatternLabel(false);
+			}
+
+			@Override
+			protected void onAccept() {
+
+				if (!getName().isEmpty() && getDateFrom() != null) {
+					String name = getName();
+					Date date = getDateFrom();
+					calendarDraftObjectData.addHoliday(date, name);
+					initializeLegendPanel();
+				}
+			}
+		};
+
+		filterDialog.setDateFrom(getDateSelected());
+		filterDialog.center();
+		filterDialog.show();
+		filterDialog.setFocusOnNameTextBox(true);
+	}
+	
+	private void onWorkDays(ClickEvent e) {
+		List<WeekDay> weekDays = new ArrayList<WeekDay>(7);
+		weekDays.add(WeekDay.MONDAY);
+		weekDays.add(WeekDay.TUESDAY);
+		weekDays.add(WeekDay.WEDNESDAY);
+		weekDays.add(WeekDay.THURSDAY);
+		weekDays.add(WeekDay.FRIDAY);
+		weekDays.add(WeekDay.SATURDAY);
+		weekDays.add(WeekDay.SUNDAY);
+		
+		SelectDialog<WeekDay> selectDialog = new SelectDialog<WeekDay>() {
+			{
+				hideSelectLabel();
+				setCaption("D\u00EDas Laborables");
+				
+				addColumn(
+				new Column<WeekDay, String>(new TextCell())
+				{
+					@Override
+					public String getValue(WeekDay weekDay) {
+						return weekDay.toString();
+					}
+				}
+				, "D\u00EDa de la Semana");
+				
+				setData(weekDays);
+				
+				List<WeekDay> workingDays = new ArrayList<WeekDay>();
+				weekDays.stream()
+				.filter(w -> calendarDraftObjectData.getDayType(w.getDay()) == DayType.WORKING_DAY )
+				.forEach( w -> workingDays.add(w));
+				;
+				setSelectedData(workingDays);
+				
+			}
+			
+			@Override
+			void onAcceptClick(ClickEvent event) {
+				super.onAcceptClick(event);
+				
+				Set<WeekDay> selected = getSelectedData();
+				
+				weekDays.stream().filter(w -> selected.contains(w)).forEach(w -> calendarDraftObjectData.setWorkingDay(w.getDay()));
+				weekDays.stream().filter(w -> !selected.contains(w)).forEach(w -> calendarDraftObjectData.setNonWorkingDay(w.getDay()));
+				
+				setEnableSaveButton();
+				
+			}
+		};
+
+		selectDialog.center();
+		selectDialog.show();
+	}
+
+	private void onDelete(ClickEvent e) {
+		calendarDraftObjectData.deleteHoliday(getDateSelected());
+		deleteButton.setVisible(false);
+	}
+	
 }

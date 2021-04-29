@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +15,8 @@ import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CalendarDraftObject implements Calendar.Listener {
+	
+	// ----------------------------------------------- Listener
 
 	public interface Listener {
 
@@ -26,6 +27,33 @@ public class CalendarDraftObject implements Calendar.Listener {
 		void onEnterPressEvent(Date date);
 
 	}
+	
+	// ----------------------------------------------- Listener.Methods
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void onValueChangeEvent(Date date) {
+		
+		for (Listener listener : listeners)
+			listener.onValueChangeEvent(date);
+	}
+	
+	@Override
+	public void onSuprPressEvent(Date date) {
+		for (Listener listener : listeners)
+			listener.onSuprPressEvent(date);
+	}
+	
+	@Override
+	public void onEnterPressEvent(Date date) {
+		for(Listener listener : listeners)
+			listener.onEnterPressEvent(date);
+	}
+	
+	// ----------------------------------------------- ValueComparator
 	
 	static class ValueComparator implements Comparator<Integer> {
 		 
@@ -40,23 +68,25 @@ public class CalendarDraftObject implements Calendar.Listener {
 			return map.get(o2).compareTo(map.get(o1));
 		}
 	}
+	
+	// ----------------------------------------------- Variables
 
-	private DomainEmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	private Integer workplaceId;
 	private Calendar calendar;
 	private Integer year;
 	private CalendarDraft calendarDraft;
 	private Map<Integer, String> listBoxItems;
 	private List<Listener> listeners;
+	
+	// ----------------------------------------------- Constructor
 
-	public CalendarDraftObject(Integer workplaceId,
-			DomainEmployeesServiceAsync employeesService) {
-
+	public CalendarDraftObject(Integer workplaceId) {
 		this.listeners = new ArrayList<Listener>();
 		this.workplaceId = workplaceId;
-		this.employeesService = employeesService;
-
 	}
+
+	// ----------------------------------------------- DataBase Methods
 
 	public Map<Integer, String> loadListBoxItems(
 			final AsyncCallback<Map<Integer, String>> cb) {
@@ -66,7 +96,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 		else
 			return loadListBox(cb);
 	}
-
+	
 	private Map<Integer, String> loadListBox(final AsyncCallback<Map<Integer, String>> cb) {
 		
 		CalendarDraftObject.this.listBoxItems = new HashMap<Integer, String>();
@@ -145,6 +175,8 @@ public class CalendarDraftObject implements Calendar.Listener {
 			}
 		});
 	}
+	
+	// ----------------------------------------------- Auxiliar Methods
 
 	public DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
@@ -165,6 +197,10 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public List<HolidayDraft> getHolidays() {
 		return calendarDraft.getHolidayDrafts();
 	}
+	
+	public Calendar getCalendar() {
+		return (this.calendar != null) ? calendar : new Calendar(4);
+	}
 
 	private void initCalendarObject() {
 
@@ -175,33 +211,6 @@ public class CalendarDraftObject implements Calendar.Listener {
 		
 		calendar.setFirstDate(DateUtils.getFirstDayOfYear(dateAux));
 		calendar.setLastDate(DateUtils.getLastDayOfYear(dateAux));
-	}
-
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-
-	public Calendar getCalendar() {
-		return (this.calendar != null) ? calendar : new Calendar(4);
-	}
-
-	@Override
-	public void onValueChangeEvent(Date date) {
-		
-		for (Listener listener : listeners)
-			listener.onValueChangeEvent(date);
-	}
-	
-	@Override
-	public void onSuprPressEvent(Date date) {
-		for (Listener listener : listeners)
-			listener.onSuprPressEvent(date);
-	}
-	
-	@Override
-	public void onEnterPressEvent(Date date) {
-		for(Listener listener : listeners)
-			listener.onEnterPressEvent(date);
 	}
 	
 }

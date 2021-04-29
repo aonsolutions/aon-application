@@ -47,7 +47,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	}
 	
 	public CalendarDraftObjectData getCalendarDraftObjectData() {
-		return new CalendarDraftObjectData(workplace.getId(), employeesService);
+		return new CalendarDraftObjectData(workplace.getId());
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
