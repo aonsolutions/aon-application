@@ -172,6 +172,11 @@ export class AonNewInvoice extends AonElement {
 		this.buildContent();
 	}
 
+	reload(){
+		this.clear();
+		this.build();
+	}
+
 	buildToolbar() {
 		let invoiceToolbar = new AonToolbar();
 		invoiceToolbar.id = this.TOOLBAR;
@@ -370,13 +375,16 @@ export class AonNewInvoice extends AonElement {
 		total.description = MSG.TOTAL;
 		total.format = CONSTANT.TRUE;
 		total.decimals = "2";
-		total.value = this.invoice.total;
-		// total.readonly = this.invoice.isReadonly();
 		total.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setTotal(total.value);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
+		total.readonly = this.invoice.isReadonly()
+			|| this.invoice.taxes.length > 1 
+			|| this.invoice.details.length > 0;
+		total.value = this.invoice.total;
 
 		table.addRow(); // ----- ROW 2
 
@@ -511,6 +519,8 @@ export class AonNewInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 			addButton.addEventListener('click', () => {
 				this.invoice.addTax();
+				this.reload();
+				if(this.autosave) this.save();
 			});
 			div.appendChild(addButton);
 		}
@@ -548,11 +558,11 @@ export class AonNewInvoice extends AonElement {
 		percentage.title = '%';
 		percentage.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		percentage.options = JSON.stringify( TaxType.IVA === tax.type || TaxType.IVA === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
-		console.log(tax.percentage);
 		percentage.value = tax.percentage;
 		percentage.addEventListener(Event.SELECT, () => {
 			tax.percentage = percentage.value;
 			this.invoice.setTax(tax, i);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		taxesTable.addCell(percentage);
@@ -564,14 +574,16 @@ export class AonNewInvoice extends AonElement {
 		base.description = MSG.BASE;
 		base.format = CONSTANT.TRUE;
 		base.decimals = "2";
-		base.value = tax.base;
-		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		base.addEventListener(Event.CHANGE, () => {
+			alert('aaaaaaaaaaa')
 			tax.base = base.value;
 			this.invoice.setTax(tax, i);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		taxesTable.addCell(base);
+		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+		base.value = tax.base;
 
 		// ----- TAX QUOTA
 		
@@ -580,14 +592,14 @@ export class AonNewInvoice extends AonElement {
 		quota.description = MSG.QUOTA;
 		quota.format = CONSTANT.TRUE;
 		quota.decimals = "2";
-		quota.value = tax.quota;
-		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
 		// quota.addEventListener(Event.CHANGE, () => {
 		// 	tax.quota = quota.value;
 		// 	this.invoice.setTax(tax, i);
 		// 	if(this.autosave) this.save();
 		// });
 		taxesTable.addCell(quota);
+		quota.value = tax.quota;
+		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
 
 		// ----- TAX DELETE
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
@@ -597,6 +609,7 @@ export class AonNewInvoice extends AonElement {
 			taxDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 			taxDelete.addEventListener(EVENT.CLICK, () => {
 				this.invoice.deleteTax(tax, i);
+				this.reload();
 				if(this.autosave) this.save();
 			});
 			taxesTable.addCell(taxDelete);

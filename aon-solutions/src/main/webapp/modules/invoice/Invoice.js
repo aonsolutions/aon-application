@@ -1,4 +1,6 @@
 import { RegistryType } from "../../models/enums.js";
+import { round } from "../../services/utils.js";
+import { TaxType } from "./invoiceEnums.js";
 
 export class Invoice {
 
@@ -159,7 +161,7 @@ export class Invoice {
 
   setTotal(total){
     this.total = total;
-    // TODO CALCULATE
+    this.calculateTaxFromTotal();
   }
 
   getCategory() {
@@ -298,6 +300,58 @@ export class Invoice {
     } else if(this.isRecibida()) {
       return 'purchase';
     } else return 'ticket';
+  }
+
+  addTax(){
+    let tax = {
+      tax: TaxType.IVA,
+      type: TaxType.IVA,
+      percentage: 21.0,
+      base: 0.0,
+      quota: 0.0
+     };
+     this.taxes.push(tax);
+     this.calculateTotalFromTax();
+  }
+
+  setTax(tax, i) {
+    alert(JSON.stringify(tax));
+    this.taxes[i] = this.calculateTax(tax);
+    this.calculateTotalFromTax();
+  }
+
+
+  calculateTotalFromTax() {
+    let total = 0.0;
+    this.taxes.filter(f => TaxType.IVA === f.type).forEach(tax => {
+      total = total + round(Number(tax.base) + Number(tax.quota));
+    });
+    this.total = round(Number(total));
+  }
+
+  calculateTax(tax) {
+    tax.quota = round(tax.base / 100 * tax.percentage);
+    return tax;
+  }
+
+  calculateTaxFromTotal() {
+    if (this.taxes.length === 0) {
+			let tax = {
+				tax: TaxType.IVA,
+				type: TaxType.IVA,
+				percentage: 21.0,
+				base: round(Number(this.total) / 1.21),
+				quota: round(Number(this.total / 1.21) * 0.21)
+		 	};
+			this.taxes.push(tax);
+		} else if(this.taxes.length === 1){
+			let tax = this.taxes[0];
+		 	const p1 = tax.percentage / 100;
+			const p2 = p1 + 1;
+			tax.base = round(Number(this.total) / p2),
+			tax.quota = round(Number(this.total / p2) * p1);
+			this.taxes[0] = tax;
+		}
   }
 }
 
