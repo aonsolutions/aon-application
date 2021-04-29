@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.JsFileComparator;
@@ -623,7 +624,7 @@ public abstract class CretaDetail extends Composite {
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton sldCretaBtn;
-	private AonToolbarButton sldBtn;
+	private AonExpandButton sldExpandBtn;
 	private AonToolbarButton comunicationsBtn;
 	private AonToolbarButton requestsBtn;
 	private AonToolbarButton filterBtn;
@@ -1390,13 +1391,27 @@ public abstract class CretaDetail extends Composite {
 		sldCretaBtn.setVisible(false);
 		toolbar.add(sldCretaBtn);
 		
-		sldBtn = new AonToolbarButton( "SLD", AON.CSS.aonIconTgss() );
-		sldBtn.addClickHandler(e -> {
-			onSld(e);
-		});
-		toolbar.add(sldBtn);
+		sldExpandBtn = new AonExpandButton("SLD", AON.CSS.aonIconTgss()) {
+			
+			@Override
+			public void onExpandClick(ClickEvent e) {
+				onSld(e);
+			}
+			
+			@Override
+			public void onDefaultClick(ClickEvent e) {
+				submitBases();
+			}
+		};
+		toolbar.add(sldExpandBtn);
 		
-		filterBtn = new AonToolbarButton( "Filtrar", AON.CSS.aonIconVisibility() );
+//		sldBtn = new AonToolbarButton("SLD", AON.CSS.aonIconTgss());
+//		sldBtn.addClickHandler(e -> {
+//			onSld(e);
+//		});
+//		toolbar.add(sldBtn);
+		
+		filterBtn = new AonToolbarButton( "Filtrar", AON.CSS.aonIconFilter() );
 		filterBtn.addClickHandler(e -> {
 			onFilter(e);
 		});
