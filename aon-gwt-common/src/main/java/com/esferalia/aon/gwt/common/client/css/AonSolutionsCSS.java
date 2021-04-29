@@ -222,6 +222,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_import")
 	String aonIconImport();
 	
+	@ClassName("aon_icon_fix")
+	String aonIconFix();
+
 	@ClassName("aon_icon_menu")
 	String aonIconMenu();
 	
@@ -678,6 +681,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_table_button")
 	String aonTableButton();
 	
+	@ClassName("aon_text_button")
+	String aonTextButton();
+
 	@ClassName("aon_search_panel_button")
 	String aonSearchPanelButton();
 	

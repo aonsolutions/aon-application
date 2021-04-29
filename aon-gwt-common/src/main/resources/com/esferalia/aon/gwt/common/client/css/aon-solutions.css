@@ -147,6 +147,8 @@
 .aon_icon_cloud_import { background-image: iconCloudImport;}
 @url iconImport aonIconImport;
 .aon_icon_import { background-image: iconImport;}
+@url iconFix aonIconFix;
+.aon_icon_fix { background-image: iconFix;}
 @url iconMenu aonIconMenu;
 .aon_icon_menu { background-image: iconMenu;}
 @url iconMenuCollapse aonIconMenuCollapse;
@@ -638,6 +640,15 @@
 	height: 20px;
 	background-size: 20px 20px;
 }
+.aon_text_button {
+	width: auto;
+	height: 20px;
+	background-size: 20px 20px;
+	background-position: top left !important;
+	padding-left: 20px !important;
+	text-decoration: underline;
+}
+
 .aon_search_panel_button {
 	width: 20px;
 	height: 20px;

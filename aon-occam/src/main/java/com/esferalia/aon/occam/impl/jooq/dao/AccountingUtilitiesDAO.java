@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
@@ -503,7 +504,7 @@ public class AccountingUtilitiesDAO {
 
 	private static void domainIntegrity(AONContext ctx, Domain domain, AccUtilitiesResult result) {
 		Condition accountCondition = ACCOUNT.DOMAIN.ne(domain.getId());
-		if (domain.isEnableHeredity()) {
+		if (domain.isEnableHeredity() && domain.getParentId() != null) {
 			accountCondition = accountCondition.and(ACCOUNT.DOMAIN.ne(domain.getParentId()));
 		}
 		Field<Integer> COUNT = DSL.count(ACCOUNT.ID);
