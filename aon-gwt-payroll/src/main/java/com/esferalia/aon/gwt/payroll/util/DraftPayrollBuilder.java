@@ -152,10 +152,13 @@ public class DraftPayrollBuilder {
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
 				deductions.stream().filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
+					System.out.println("(DraftPayrollBuilder :: 155) " + d.getDescription() + " : " + d.getAmount() + " : INDEDUCTION " + d.getName());
 					
 					try {
-						percent = Double.parseDouble(d.getDescription().replaceAll("\\s", "").replaceAll("%", ""));
-					} catch (NumberFormatException e) {}
+						String desc = d.getDescription().replaceAll(".*(\\d+\\.+\\d+).*","$1");
+						System.out.println("(DraftPayrollBulder :: 159) " + desc);
+						percent = Double.parseDouble(desc);
+					} catch (NumberFormatException ignored) {}
 					
 					int type = getDeductionPDFType(d.getType().ordinal());
 					String desc = d.getType().getName(new Locale("es"));
@@ -264,7 +267,6 @@ public class DraftPayrollBuilder {
 				Double no_struct_ap_enterprise = 0d;
 				
 				for (IDeduction c : costs) {
-					System.out.println("DraftPayrollBuilder (267): " + c.getDescription() + " / " + c.getAmount() );
 					
 					Double percentD = null;
 					try {

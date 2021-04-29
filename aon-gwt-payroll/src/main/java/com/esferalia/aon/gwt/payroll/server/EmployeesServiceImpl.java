@@ -4458,7 +4458,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			public void addDeductionToList(List<IDeduction> list,Deduction deduction) {
 				
 				if(deduction instanceof CompositeDeduction) {
-					System.out.println("composite");
 					CompositeDeduction compositeDeduction = (CompositeDeduction) deduction;
 					for (Deduction child : compositeDeduction.getChilds())
 					{
@@ -4493,6 +4492,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 								return deduction.getExpression();
 							}
 						};
+												
 						list.add(pm);
 						
 					}catch(Exception ignored) {}	
@@ -4504,6 +4504,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return null;
 			}
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public <T extends IDeduction> Collection<T> getDeductionS() throws SalaryException {
 				List<IDeduction> deductions = new ArrayList<>(); 

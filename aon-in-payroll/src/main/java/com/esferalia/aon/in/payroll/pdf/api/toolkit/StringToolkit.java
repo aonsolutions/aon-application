@@ -86,5 +86,15 @@ public class StringToolkit {
 		String lorem = "";
 		return append(lorem,text, times);
 }
+	
+	/**
+	 * Get something inside a text with regex
+	 * @param text
+	 * @param regex
+	 * @return
+	 */
+	public static String getInside(String text,String regex) {
+		return text.replaceAll(".*(" + regex + ").*","$1");
+	}
 
 }
