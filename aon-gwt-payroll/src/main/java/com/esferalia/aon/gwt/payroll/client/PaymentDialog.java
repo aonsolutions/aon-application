@@ -147,6 +147,10 @@ public class PaymentDialog extends CustomDialog {
 		buttonsRow.getStyle().setDisplay(readOnly ? Display.NONE : Display.TABLE_ROW);
 	}
 	
+	public void setEnabledTypeListBox(boolean enabled) {
+		payment.setEnabledTypeListBox(enabled);
+	}
+
 	public void setTypeListVisible() {
 		payment.typeDeckPanel.showWidget(0);
 		payment.taxTypeDeckPanel.showWidget(0);

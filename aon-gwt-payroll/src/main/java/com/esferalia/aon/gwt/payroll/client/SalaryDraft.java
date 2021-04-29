@@ -1474,7 +1474,8 @@ public class SalaryDraft extends ResizeComposite
 			
 			paymentDialog.setAvailablePayments(salaryDraftObject.getPayments());
 			
-			paymentDialog.setReadOnly(isSettle());
+			paymentDialog.setReadOnly(isSettle() && isSystem(item));
+			paymentDialog.setEnabledTypeListBox(!isSettle());
 
 			paymentDialog.center();
 			paymentDialog.show(this);
@@ -2031,8 +2032,10 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		protected void onEdit() {
 			PaymentDialog paymentDialog = new PaymentDialog();
-			paymentDialog.setReadOnly(true);
+			//paymentDialog.setReadOnly(true);
 			paymentDialog.setTypeListVisible();
+			paymentDialog.setEnabledTypeListBox(false);
+			paymentDialog.setType(Payment.Type.CRA_0000);
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
 

@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -56,6 +57,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -278,7 +280,7 @@ public class Payment extends ResizeComposite {
 		}
 
 		void enable(boolean enabled) {
-
+			
 			if (isEnabled() == enabled)
 				return;
 
@@ -294,6 +296,7 @@ public class Payment extends ResizeComposite {
 				getElement().getStyle().clearBorderStyle();
 			}
 		}
+		
 	}
 
 	@UiField
@@ -407,6 +410,8 @@ public class Payment extends ResizeComposite {
 		initTaxDeckPanel();
 		showReceipt(false);
 		paymentsGrid.setVisible(false);
+		initAdvancedMode();
+		
 	}
 
 	public void setNumberFormat(NumberFormat numberFormat) {
@@ -573,6 +578,9 @@ public class Payment extends ResizeComposite {
 		monthListBox.setEnabled(enabled);
 	}
 	
+	public void setEnabledTypeListBox(boolean enabled){
+		typeListBox.setEnabled(enabled);
+	}
 	
 	public void setAvailablePayments(List<com.esferalia.aon.gwt.payroll.shared.Payment> payments) {
 		this.payments = payments;
@@ -715,6 +723,24 @@ public class Payment extends ResizeComposite {
 	// ------------------------------------------
 	// Private members
 	// ------------------------------------------
+	
+	
+	private void initAdvancedMode() {
+		
+		RootPanel.get().addDomHandler((e) -> {
+			
+			if ( e.isAltKeyDown() && e.isControlKeyDown()) {
+			switch (e.getCharCode()) {
+				case 'm':
+					Payment.this.enableEditTaxAndQuote();
+					break;
+				case 'h':
+					Payment.this.resetEditTaxAndQuote();
+					break;
+				}
+			}
+		}, KeyPressEvent.getType());
+	}
 
 	@SuppressWarnings("deprecation")
 	private void initMonthListBox() {
@@ -999,6 +1025,11 @@ public class Payment extends ResizeComposite {
 			UIObject.setVisible(taxRow, true );
 			quoteDeckPanel.showWidget(quoteFullPanelIndex);
 			UIObject.setVisible(quoteRow, false );
+		}else if ( taxEditableAndQuoteNone() ) {
+			taxDeckPanel.showWidget(taxEditPanelIndex);
+			UIObject.setVisible(taxRow, true );
+			quoteDeckPanel.showWidget(quoteNonePanelIndex);
+			UIObject.setVisible(quoteRow, true );
 		} else if ( taxAndQuoteFull() ) {
 			taxDeckPanel.showWidget(taxFullPanelIndex);
 			UIObject.setVisible(taxRow, false );
@@ -1018,6 +1049,22 @@ public class Payment extends ResizeComposite {
 		
 	}
 	
+	private void enableEditTaxAndQuote() {
+		int rows = mainGrid.getRowCount();
+		com.google.gwt.user.client.Element quoteRow = mainGrid.getRowFormatter().getElement(rows-2);
+		com.google.gwt.user.client.Element taxRow = mainGrid.getRowFormatter().getElement(rows-3);
+		
+		taxDeckPanel.showWidget(taxEditPanelIndex);
+		quoteDeckPanel.showWidget(quoteEditPanelIndex);
+		
+		UIObject.setVisible(quoteRow, true);
+		UIObject.setVisible(taxRow, true);
+	}
+
+	private void resetEditTaxAndQuote() {
+		enableOrDisableTaxAndQuote();
+	}
+
 	private void enableOrDisablePayments() {
 		Type type = getType();
 		boolean visible = type == Type.CRA_0004 
@@ -1063,6 +1110,11 @@ public class Payment extends ResizeComposite {
 		}
 		
 		return false;
+	}
+
+	private boolean taxEditableAndQuoteNone() {
+		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
+		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0000 );
 	}
 
 	private boolean taxEditableAndQuoteFull() {

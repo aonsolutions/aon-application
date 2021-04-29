@@ -22,7 +22,6 @@ import org.apache.commons.collections.iterators.FilterIterator;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
@@ -661,7 +660,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 
 	private IContractPayment getDraftPayment(Payment payment, Collection<IContractPayment> agreementPayments) {
-		if (StringUtils.containsIgnoreCase(payment.getExpression(),"CONVENIO()")){
+		if (AonStringUtils.containsIgnoreCase(payment.getExpression(),"CONVENIO()")){
 			
 			for (IContractPayment agreementPayment : agreementPayments) {
 				if (payment.getId().equals(agreementPayment.getId())) {
@@ -673,7 +672,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			}
 			
 			for (IContractPayment agreementPayment : agreementPayments) {
-				if (StringUtils.equals(payment.getName(),agreementPayment.getName())) {
+				if (AonStringUtils.equals(payment.getName(),agreementPayment.getName())) {
 					DraftPayment draftPayment = newDraftPayment(agreementPayment, AgreementDraftPayment::new);
 					draftPayment.setId(payment.getId());
 					agreementPayments.remove(agreementPayment);
@@ -792,7 +791,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		expr.setName(var.getName());
 		expr.setScope(ExpressionScope.SALARY);
 		String expression = var.getExpression();
-		if (StringUtils.isBlank(expression))
+		if (AonStringUtils.isBlank(expression))
 			expr.setExpression(String.valueOf(var.getValue()));
 		else
 			expr.setExpression(var.getExpression());
