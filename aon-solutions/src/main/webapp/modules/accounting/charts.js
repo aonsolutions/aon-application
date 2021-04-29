@@ -623,7 +623,17 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
       document.getElementById(
         "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+      ).addEventListener("click", () => {
+        div.innerHTML = "";
+        drawChart();
+      });
+
+      document.getElementById(
+        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
       ).style.display = filter && filter.show == "yearly" ? "none" : "";
+
+
+
 
       data1 = new google.visualization.DataTable();
       data1.addColumn("string", "Concepto");
