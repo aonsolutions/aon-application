@@ -26,7 +26,7 @@ import * as ACTION from '../actions.js';
 import { Paymethods } from '../../services/paymethod.js';
 import { DIV } from '../../environments/aonTag.js';
 import { Transactions } from '../../services/transaction.js';
-import { TaxIRPFPercentage, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
+import { getTaxPercentageOption, getTaxTypeName, TaxIRPFPercentage, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
 
 export class AonNewInvoice extends AonElement {
 
@@ -321,9 +321,9 @@ export class AonNewInvoice extends AonElement {
 			let serie = new AonInput();
 			serie.id = this.SERIE;
 			serie.description = MSG.SERIE;
-			serie.value = this.invoice.serie;
-			// serie.readonly = this.invoice.isReadonly();
 			table.addCell(serie);
+			serie.readonly = this.invoice.isReadonly();
+			serie.value = this.invoice.serie;
 			serie.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setSerie(serie.value);
 				if(this.autosave) this.save();
@@ -476,6 +476,7 @@ export class AonNewInvoice extends AonElement {
 		surcharge.readonly = this.invoice.isReadonly();
 		surcharge.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setSurcharge(surcharge.checked);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(surcharge);
@@ -489,6 +490,7 @@ export class AonNewInvoice extends AonElement {
 		farmer.readonly = this.invoice.isReadonly();
 		farmer.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholdingFarmer(farmer.checked);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(farmer);
@@ -499,14 +501,16 @@ export class AonNewInvoice extends AonElement {
 
 		for(let i = 0; i < this.invoice.taxes.length; i++) {
 			let tax = this.invoice.taxes[i];
-			if(TaxType.IVA === tax.type) 
+			if(TaxType.IVA === tax.tax) 
 				this.printTax(taxesTable, tax, i);
 		}
 
 		for(let i = 0; i < this.invoice.taxes.length; i++) {
 			let tax = this.invoice.taxes[i];
-			if(TaxType.IRPF === tax.type) 
+			if(TaxType.IRPF === tax.tax) {
+				this.invoice.withholding = true;
 				this.printTax(taxesTable, tax, i);
+			}
 		}
 
 		let div = this.createElement(TAG.DIV);
@@ -534,7 +538,9 @@ export class AonNewInvoice extends AonElement {
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpd.checked); 
+			this.invoice.setWithholding(irpf.checked); 
+			this.reload();
+			if(this.autosave) this.save();
 		});
 		div.appendChild(irpf);
 	}
@@ -547,26 +553,27 @@ export class AonNewInvoice extends AonElement {
 		let taxType = new AonInput();
 		taxType.id = this.TAX_TYPE + i;
 		taxType.description = MSG.TYPE;
-		taxType.readonly = CONSTANT.TRUE;
-		taxType.value = tax.type;
 		taxesTable.addCell(taxType);
+		taxType.readonly = CONSTANT.TRUE;
+		taxType.value = getTaxTypeName(tax.type);
 
 		// ----- TAX PERCENT
 		
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '%';
-		percentage.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
-		percentage.options = JSON.stringify( TaxType.IVA === tax.type || TaxType.IVA === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
-		percentage.value = tax.percentage;
-		percentage.addEventListener(Event.SELECT, () => {
+		//percentage.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+
+		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
 			this.invoice.setTax(tax, i);
 			this.reload();
 			if(this.autosave) this.save();
 		});
 		taxesTable.addCell(percentage);
-
+		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type));
+		percentage.value = tax.percentage;		
+	
 		// ----- TAX BASE
 		
 		let base = new AonNumber();
@@ -574,8 +581,7 @@ export class AonNewInvoice extends AonElement {
 		base.description = MSG.BASE;
 		base.format = CONSTANT.TRUE;
 		base.decimals = "2";
-		base.addEventListener(Event.CHANGE, () => {
-			alert('aaaaaaaaaaa')
+		base.addEventListener(EVENT.CHANGE, () => {
 			tax.base = base.value;
 			this.invoice.setTax(tax, i);
 			this.reload();
@@ -680,7 +686,7 @@ export class AonNewInvoice extends AonElement {
 		quantity.decimals = "2";
 		quantity.readonly = this.invoice.isReadonly();
 		quantity.value = detail.quantity;
-		quantity.addEventListener(Event.CHANGE, () => {
+		quantity.addEventListener(EVENT.CHANGE, () => {
 			detail.quantity = quantity.value;
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
@@ -696,7 +702,7 @@ export class AonNewInvoice extends AonElement {
 		price.decimals = "2";
 		price.readonly = this.invoice.isReadonly();
 		price.value = detail.price;
-		price.addEventListener(Event.CHANGE, () => {
+		price.addEventListener(EVENT.CHANGE, () => {
 			detail.price = price.value;
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
@@ -712,7 +718,7 @@ export class AonNewInvoice extends AonElement {
 		discount.decimals = "2";
 		discount.readonly = this.invoice.isReadonly();
 		discount.value = detail.discount;
-		discount.addEventListener(Event.CHANGE, () => {
+		discount.addEventListener(EVENT.CHANGE, () => {
 			detail.discount = discount.value;
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
