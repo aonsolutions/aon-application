@@ -10,6 +10,8 @@ import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
 
+import { MSG } from '../../../environments/environments.js';
+
 import * as ACTION from '../../actions.js';
 
 export class AonPayrollList extends AonElement {
@@ -54,7 +56,7 @@ export class AonPayrollList extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Nóminas");
   }
-  
+
   async build(){
     this.paintView();
     if(!this.applicationParentEl.isEmployee()){
@@ -95,7 +97,7 @@ export class AonPayrollList extends AonElement {
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail)this.applicationParentEl.setDataFilter(detail);
     });
-  
+
     // ----------WORKPLACES ------------
     let workplaces = await getWorkplaceCCCs();
     let workplaceEl = this.getElement("workplace");
@@ -105,7 +107,7 @@ export class AonPayrollList extends AonElement {
     });
     // ----------WORKPLACES END ------------
 
-  
+
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
@@ -134,14 +136,14 @@ export class AonPayrollList extends AonElement {
   buildToolbarMobile(){
     let parentEl = this.applicationParentEl;
     if(!parentEl.isEmployee()){
-      const toolbarEl = new AonToolbar(); 
+      const toolbarEl = new AonToolbar();
       const filterEl = this.getElement(`${this.id}Filter`);
       toolbarEl.type = ToolbarType.SECONDARY;
       this.insertBefore(toolbarEl, filterEl);
       toolbarEl.removeButtons();
       toolbarEl.addButton2(ACTION.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
       toolbarEl.title = MSG.PAYSHEETS;
-    } 
+    }
   }
 
 
@@ -178,7 +180,7 @@ export class AonPayrollList extends AonElement {
         aonTable.removeAllLi();
 
         let isEmployee = this.applicationParentEl.isEmployee();
-        
+
         resp.map((res, idx) => {
           let options = {};
           let dateParse = firstLetters(geMonthYear(res.endDate));
@@ -267,7 +269,7 @@ export class AonPayrollList extends AonElement {
       let employeeEl = this.getElement("employee");
       let employees = await getAllEmployeesWorkplace({workplace: detail.value, allEmployees:true});
       if(employees.length>0) {
-        employeeEl.options = JSON.stringify( 
+        employeeEl.options = JSON.stringify(
           sortBy(employees, 'surName', 'asc').map(({name, surName, contractId})=> ({name:surName+" "+name, value:contractId}))
         );
         employeeEl.hidden =  false;
