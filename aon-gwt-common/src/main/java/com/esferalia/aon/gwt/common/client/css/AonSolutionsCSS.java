@@ -15,6 +15,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_drive")
 	String aonIconDrive();
 	
+	@ClassName("aon_icon_filter")
+	String aonIconFilter();
+	
+	@ClassName("aon_icon_drop_down")
+	String aonIconDropDown();
+	
 	@ClassName("aon_icon_zoom_in")
 	String aonIconZoomIn();
 	

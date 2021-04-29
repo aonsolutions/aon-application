@@ -11,6 +11,10 @@
 .aon_icon_email { background-image: iconEmail;}
 @url iconDrive aonIconDrive;
 .aon_icon_drive { background-image: iconDrive;}
+@url iconFilter aonIconFilter;
+.aon_icon_filter { background-image: iconFilter;}
+@url iconDropDown aonIconDropDown;
+.aon_icon_drop_down { background-image: iconDropDown;}
 @url iconZoomIn aonIconZoomIn;
 .aon_icon_zoom_in { background-image: iconZoomIn;}
 @url iconZoomOut aonIconZoomOut;
