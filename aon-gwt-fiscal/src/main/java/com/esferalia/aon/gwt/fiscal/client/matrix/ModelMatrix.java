@@ -32,6 +32,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod123.Model123;
+import com.esferalia.aon.gwt.fiscal.client.mod123.Model123ModuleOptions;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
@@ -615,6 +617,7 @@ public class ModelMatrix extends MainEntryPoint {
 
 	protected void viewModel(AonData aonData, JsFiscalMenuItem model) {
 		Integer id = Integer.valueOf(model.getId() + ""); 
+		LOGGER.info("Before view Model: [" + model.getModel() + "] " + id );
 		FiscalModelType modelType = FiscalModelType.safeValueByName(model.getModel());
 		IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
 			@Override public void visitM390HF(){}
@@ -630,10 +633,71 @@ public class ModelMatrix extends MainEntryPoint {
 			@Override public void visitM180() {}
 			@Override public void visitM131() {}
 			@Override public void visitM130() {}
-			@Override public void visitM123() {}
+			
+			@Override 
+			public void visitM123() {
+				LOGGER.info("Before visitM123");
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+				try {
+					Model123 model123 = new Model123();
+					Model123ModuleOptions options = new Model123ModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(aonData.getDomain().getName());
+					options.setDomain( model.getDomain() );
+					options.setUser(aonData.getUser().getLogin());
+					options.setAonData(aonData);
+					options.setFiscalModelId( id );
+					options.setEmbedded(true);
+					options.setBackButtonVisible(true);
+					options.setExternalCallback( new ModuleCallback() {
+						
+						@Override
+						public void onRemove(IAccountEntryWrapper removed) {
+							hide();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {}
+						
+						@Override
+						public void onExit() {
+							hide();
+						}
+						
+						@Override
+						public void onChange(IAccountEntryWrapper changed) {
+							hide();
+						}
+						
+						private void hide() {
+							entryDialog.hide();
+							entryDialog.clear();
+						}
+					});
+					entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+						
+						@Override
+						public void onClose(CloseEvent<PopupPanel> event) {
+							entryDialog.clear();
+						}
+					});
+					model123.onModuleLoad( options );
+					entryDialog.center();
+					entryDialog.show();
+				} catch (Throwable t) {
+					Window.alert("Error inesperado! [" + t.getMessage() + "]");
+				}
+			}
 
 			@Override 
 			public void visitM115() {
+				LOGGER.info("Before visitM115");
 				AonCustomPopup entryDialog = new AonCustomPopup();
 				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -686,6 +750,7 @@ public class ModelMatrix extends MainEntryPoint {
 			
 			@Override
 			public void visitM111() {
+				LOGGER.info("Before visitM111");
 				AonCustomPopup entryDialog = new AonCustomPopup();
 				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
