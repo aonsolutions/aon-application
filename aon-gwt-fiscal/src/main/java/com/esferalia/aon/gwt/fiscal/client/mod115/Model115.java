@@ -300,8 +300,6 @@ public class Model115 extends MainEntryPoint {
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
 		
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
@@ -315,6 +313,7 @@ public class Model115 extends MainEntryPoint {
 			LOGGER.info("Access to Model115 new Model");
 			newModel(getOptions().getNewModel()); 
 		} else {
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 			LOGGER.info("Model115 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
