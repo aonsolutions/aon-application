@@ -1,0 +1,37 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton.MyStyle">
+	
+		.mainButton {
+			width: 35px;
+			height: 35px;
+			position: relative;
+		}
+		
+		.footerButton {
+			height: 10px;
+			width: 10px;
+			position: absolute;
+			bottom: 4px;
+			right: -1px;
+		}
+		
+		.footerButton:hover {background-color: transparent !important;}
+		
+		.footerButton:focus{background-color: transparent !important;}
+		
+		.innerButton{
+			position: absolute;
+			height: 35px;
+			width: 35px;
+			left: 0;
+		}
+		
+		
+	</ui:style>
+
+	<g:HTMLPanel debugId='buttonBarBeta' styleName="{style.mainButton}" ui:field='mainButton' />
+	
+</ui:UiBinder> 
