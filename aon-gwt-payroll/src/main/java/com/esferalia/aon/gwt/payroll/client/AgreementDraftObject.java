@@ -1076,6 +1076,7 @@ public class AgreementDraftObject {
 				
 				// BASES
 				add("BASE_CGC");
+				add("BASE_REGULADORA");
 
 				// DIAS
 				add("DIAS_AÑO");
