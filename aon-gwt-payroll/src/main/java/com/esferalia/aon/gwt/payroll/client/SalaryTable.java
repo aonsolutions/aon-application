@@ -20,6 +20,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
@@ -385,11 +386,21 @@ public abstract class SalaryTable extends ResizeComposite {
 
 	    // We know that the data is sorted alphabetically by default.
 	    salaryDG.getColumn(5).setDefaultSortAscending(false);
-	    salaryDG.getColumnSortList().push(salaryDG.getColumn(5));   
+	    salaryDG.getColumnSortList().push(salaryDG.getColumn(1));   
 	}
 
 	// ----------------------------------------------- Aux Methods ------------------------------------------------
 
+	public void sortTableByName() {
+		salaryDG.getColumnSortList().push(salaryDG.getColumn(1));
+		ColumnSortEvent.fire(salaryDG, salaryDG.getColumnSortList());
+	}
+	
+	public void sortTableByStartDate() {
+		salaryDG.getColumnSortList().push(salaryDG.getColumn(5));  
+		ColumnSortEvent.fire(salaryDG, salaryDG.getColumnSortList());
+	}
+	
 	private void setScrollPanelHeight() {
 		scrollPanel.setHeight((Window.getClientHeight() - 235) + "px");
 		salaryDG.setHeight((Window.getClientHeight() - 245) + "px");

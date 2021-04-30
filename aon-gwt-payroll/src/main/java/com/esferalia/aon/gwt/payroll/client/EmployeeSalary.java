@@ -175,6 +175,7 @@ public class EmployeeSalary extends Composite {
 		mainContainer.add(salaryTable);
 		
 		salaryTable.setEmployeeView();
+		salaryTable.sortTableByStartDate();
 		
 		listeners = new LinkedList<Listener>();
 		

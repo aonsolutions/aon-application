@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,14 @@ public class EnterpriseSalaryObject {
 	}
 	
 	public List<SalaryInfo> getEnterpriseSalaries() {
+		this.enterpriseSalaries.sort(new Comparator<SalaryInfo>() {
+
+			@Override
+			public int compare(SalaryInfo o1, SalaryInfo o2) {
+				return AonStringUtils.compare(o1.getEmployeeName(), o2.getEmployeeName());
+			}
+		});
+		
 		return this.enterpriseSalaries;
 	}
 	

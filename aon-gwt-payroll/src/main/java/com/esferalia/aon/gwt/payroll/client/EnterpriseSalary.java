@@ -183,6 +183,8 @@ public class EnterpriseSalary extends Composite {
 		dockLayoutPanel.addStyleName(style.container());
 		mainContainer.add(salaryTable);
 		
+		salaryTable.sortTableByName();
+		
 		listeners = new LinkedList<Listener>();
 		
 		initFilterPanel();

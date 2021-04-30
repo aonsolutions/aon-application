@@ -180,6 +180,7 @@ public class WorkplaceSalary extends Composite {
 		mainContainer.add(salaryTable);
 		
 		salaryTable.setWorkplaceView();
+		salaryTable.sortTableByName();
 		
 		listeners = new LinkedList<Listener>();
 		
