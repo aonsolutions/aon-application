@@ -4414,44 +4414,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return draft.getEmployeeDocument();
 			}
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
-				ArrayList<T> embargos = new ArrayList<>();
+				ArrayList<IDeduction> embargos = new ArrayList<>();
 				
-				for (Deduction e : draft.getEmbargos())
+				for (Deduction embargo : draft.getEmbargos())
 				{
-					@SuppressWarnings("unchecked")
-					T embargo = (T) new IDeduction() {
-						
-						@Override
-						public DeductionType getType() {
-							return DeductionType.values()[e.getType().ordinal()];
-						}
-						
-						@Override
-						public String getName() {
-							return e.getName();
-						}
-						
-						@Override
-						public String getDescription() {
-							return e.getDescription();
-						}
-						
-						@Override
-						public double getAmount() {
-							return e.getAmount();
-						}
-						
-						@Override
-						public String getExpression() {
-							return e.getExpression();
-						}
-					};
-					
+						addDeductionToList(embargos, embargo);		
 				}
 				
-				return embargos;
+				return (Collection<T>) embargos;
 			}
 			
 
