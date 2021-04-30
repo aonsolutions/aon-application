@@ -1,13 +1,24 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
+import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
+
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.Cost.CSVCCommand;
+import com.esferalia.aon.gwt.payroll.client.Cost.ExcelCommand;
+import com.esferalia.aon.gwt.payroll.client.Cost.ExcelCompleteCommand;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -20,10 +31,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
@@ -293,6 +306,178 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		public void eraseOnChange(int row, int col) {}
 	}
 	
+	// ----------------------------------------------- ScheduledCommand (DefinitionMenu)
+	
+	class NonWorkingCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			EmployeeCalendarNonWorkingDialog nonWorkingDialog = new EmployeeCalendarNonWorkingDialog(
+					employeeCalendarDraftObject.getNonWorkingDays()) {
+				
+				@Override
+				protected void onAccept() {
+					employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
+					onChange();
+					changeYear(0);
+				}
+			};
+			
+			nonWorkingDialog.center();
+			nonWorkingDialog.show();
+		}
+	}
+	
+	class HourCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			initHourDialog();
+		}
+	}
+	
+	class ShowHourCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			definitionMenu.getShowHourMenuItem().setStyleName("aon-MenuItemCheckYes", showHours);
+			definitionMenu.getShowHourMenuItem().addStyleName(style.aonCheck());
+			
+			showHours = !showHours;
+			
+			if (showHours) {
+				showHoursRows();	
+			} else {
+				hideHoursRows();
+			}
+		}
+	}
+	
+	class DefinitionMenu extends ContextMenu {
+				
+		private MenuItem nonWorkingMenuItem = null;
+		private MenuItem hourMenuItem = null;
+		private MenuItemSeparator separator;
+		private MenuItem showHourMenuItem = null;
+		
+		public DefinitionMenu() {
+			
+			nonWorkingMenuItem = addItem("Definir semana laboral", new NonWorkingCommand(), 
+					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			nonWorkingMenuItem.ensureDebugId("nonWorkingMenuItem");
+			
+			hourMenuItem = addItem("Definir horas semanales", new HourCommand(), 
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			hourMenuItem.ensureDebugId("hourMenuItem");
+			
+			separator = addSeparator();
+			
+			showHourMenuItem = addItem("Ocultar horas", new ShowHourCommand(), 
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			showHourMenuItem.ensureDebugId("showHourMenuItem");
+		}
+
+		public MenuItem getNonWorkingMenuItem() {
+			return nonWorkingMenuItem;
+		}
+
+		public MenuItem getHourMenuItem() {
+			return hourMenuItem;
+		}
+
+		public MenuItem getShowHourMenuItem() {
+			return showHourMenuItem;
+		}
+		
+		public void hideSeparator() {
+			separator.setVisible(false);
+		}
+		
+		public void showSeparator() {
+			separator.setVisible(true);
+		}
+		
+	}
+	
+	// ----------------------------------------------- ScheduledCommand (UtilityMenu)
+	
+	class EraseEventCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			initDatesDialog(DayType.NOTYPEDAY);
+		}
+	}
+	
+	class UndoAllCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			initUndoAll();
+		}
+	}
+	
+	class ResetMenuCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AonDialog dialog = new AonDialog("RESETEAR", new HTML(String.valueOf("\u00BF")+"RESETEAR CALENDARIO con los valores INICIALES? Se BORRARAN todos los cambios realizados."));
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept() {
+					employeeCalendarDraftObject.resetCalendarInfo(
+							s -> {
+								// Init save and undo all
+								onSaved();
+								changeYear(0);
+							}, f -> {}
+					);
+				}
+			});
+		}
+	}
+	
+	class UtilityMenu extends ContextMenu {
+				
+		private MenuItem eraseEventMenuItem = null;
+		private MenuItem undoAllMenuItem = null;
+		private MenuItem resetMenuItem = null;
+		
+		public UtilityMenu() {
+			
+			eraseEventMenuItem = addItem("Eliminar valores modificados", new EraseEventCommand(), 
+					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			eraseEventMenuItem.ensureDebugId("eraseEventMenuItem");
+			
+			undoAllMenuItem = addItem("Restaurar últimos valores guardados", new UndoAllCommand(), 
+					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			undoAllMenuItem.ensureDebugId("undoAllMenuItem");
+			
+			addSeparator();
+			
+			resetMenuItem = addItem("Resetear calendario", new ResetMenuCommand(), 
+					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			resetMenuItem.ensureDebugId("resetMenuItem");
+		}
+
+		public MenuItem getEraseEventMenuItem() {
+			return eraseEventMenuItem;
+		}
+
+		public MenuItem getUndoAllMenuItem() {
+			return undoAllMenuItem;
+		}
+
+		public MenuItem getResetMenuItem() {
+			return resetMenuItem;
+		}
+		
+	}
+	
 	// ----------------------------------------------------------------------------------------------------
 	//											UI FIELDS
 	// ----------------------------------------------------------------------------------------------------
@@ -324,38 +509,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		String freeDayStyle();
 		// Out of contract
 		String outOfContractStyle();
+		String cmd_btn();
 	}
 	
-	// ---------------------------- MenuItem (UiField)
-
 	@UiField
-	MenuItem nonWorkingMenuItem;
-	
-	@UiField
-	MenuItem hourMenuItem;
-	
-	@UiField
-	MenuItem defintionMenuItemSeparator;
-	
-	@UiField
-	MenuItem showHourMenuItem;
-	
-	@UiField
-	MenuItem eraseEventMenuItem;
-	
-	@UiField
-	MenuItem undoAllMenuItem;
-	
-	@UiField
-	MenuItem resetMenuItem;
-	
-	// ---------------------------- Save / Reset
-	
-	@UiField
-	Button undoAllButton;
-	
-	@UiField
-	Button saveButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	// ---------------------------- Change Year (UiField)
 	
@@ -428,16 +586,29 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private int month;
 	private int year = new Date().getYear();
 	
+	private DefinitionMenu definitionMenu;
+	private UtilityMenu utilityMenu;
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton undoAllButton;
+	private AonToolbarButton saveButton;
+	private AonToolbarButton definitionButton;
+	private AonToolbarButton utilityButton;
+	
 	public EmployeeCalendarDraftNew() {
+		toolbar = getToolbarPanel();
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
 		this.yearLabel.setText((year + 1900)+"");
 		
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		definitionMenu = new DefinitionMenu();
+		utilityMenu = new UtilityMenu();
+		
 		// Add contextMenu
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
-		// Inicializamos menu item
-		initMenuItem();
 	}
 
 	// ----------------------------------------------------------------------------------------------------
@@ -456,112 +627,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//											MENU ITEM
-	// ----------------------------------------------------------------------------------------------------
-	
-	private void initMenuItem() {
-		// Set working and nonworking days
-		nonWorkingMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				EmployeeCalendarNonWorkingDialog nonWorkingDialog = new EmployeeCalendarNonWorkingDialog(
-						employeeCalendarDraftObject.getNonWorkingDays()) {
-					
-					@Override
-					protected void onAccept() {
-						employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
-						onChange();
-						changeYear(0);
-					}
-				};
-				
-				nonWorkingDialog.center();
-				nonWorkingDialog.show();
-			}
-		});
-		
-		hourMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initHourDialog();
-			}
-		});
-		
-		// Show hours menuItem
-		showHourMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				showHourMenuItem.setStyleName("aon-MenuItemCheckYes", showHours);
-				showHourMenuItem.addStyleName(style.aonCheck());
-				
-				showHours = !showHours;
-				
-				if (showHours) {
-					showHoursRows();	
-				} else {
-					hideHoursRows();
-				}
-			}
-		});
-		
-		eraseEventMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.NOTYPEDAY);
-			}
-		});
-		
-		undoAllMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initUndoAll();
-			}
-		});
-		
-		resetMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				AonDialog dialog = new AonDialog("RESETEAR", new HTML(String.valueOf("\u00BF")+"RESETEAR CALENDARIO con los valores INICIALES? Se BORRARAN todos los cambios realizados."));
-				dialog.confirm(new AonAcceptDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-					
-					@Override
-					public void onAccept() {
-						employeeCalendarDraftObject.resetCalendarInfo(
-								s -> {
-									// Init save and undo all
-									onSaved();
-									changeYear(0);
-								}, f -> {}
-						);
-					}
-				});
-			}
-		});
-	}
 	
 	// ----------------------------------------------------------------------------------------------------
 	//											UI HANDLERS
 	// ----------------------------------------------------------------------------------------------------
-	
-	@UiHandler("undoAllButton")
-	public void onundoAllButtonClick(ClickEvent event) {
-		initUndoAll();
-	}
-
-	@UiHandler("saveButton")
-	public void onSaveButtonClick(ClickEvent event) {
-		this.employeeCalendarDraftObject.saveCalendarInfo(
-				s -> {
-					onSaved();
-					changeYear(0);
-				},
-				f -> {}
-		);
-	}
 	
 	@UiHandler("lastYearButton")
 	public void onLastYearButtonClick(ClickEvent event) {
@@ -710,24 +779,24 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Set fulltime journey
 		if(this.employeeCalendarDraftObject.isFullTimeJourney()) {
 			hideHoursRows();
-			hideElement(showHourMenuItem.getElement());
-			hideElement(hourMenuItem.getElement());
+			hideElement(definitionMenu.getShowHourMenuItem().getElement());
+			hideElement(definitionMenu.getHourMenuItem().getElement());
 			hideElement(hourButton.getElement());
-			hideElement(defintionMenuItemSeparator.getElement());
+			definitionMenu.hideSeparator();
 			extraHoursButton.setText("H. Extras");
-			nonWorkingMenuItem.getElement().getStyle().clearDisplay();
-			hourMenuItem.getElement().getStyle().setDisplay(Display.NONE);
+			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().clearDisplay();
+			definitionMenu.getHourMenuItem().getElement().getStyle().setDisplay(Display.NONE);
 			
 		} else {
 			this.showHours = true;
 			showHoursRows();
-			showElement(showHourMenuItem.getElement());
-			showElement(hourMenuItem.getElement());
+			showElement(definitionMenu.getShowHourMenuItem().getElement());
+			showElement(definitionMenu.getHourMenuItem().getElement());
 			showElement(hourButton.getElement());
-			showElement(defintionMenuItemSeparator.getElement());
+			definitionMenu.showSeparator();
 			extraHoursButton.setText("H. Complementarias");
-			nonWorkingMenuItem.getElement().getStyle().setDisplay(Display.NONE);
-			hourMenuItem.getElement().getStyle().clearDisplay();
+			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().setDisplay(Display.NONE);
+			definitionMenu.getHourMenuItem().getElement().getStyle().clearDisplay();
 		}
 		
 		// Set agrarian contract
@@ -1531,5 +1600,67 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 		menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
 	    menu.show();
+	}
+	
+	// ----------------------------------------------- Toolbar
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("Calendario");
+		
+		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll());
+		undoAllButton.addClickHandler(e -> {
+			onUndoAll(e);
+		});
+		toolbar.add(undoAllButton);
+		
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.addClickHandler(e -> {
+			onSave(e);
+		});
+		toolbar.add(saveButton);
+		
+		definitionButton = new AonToolbarButton( "Definicion", AON.CSS.aonIconEditCalendar() );
+		definitionButton.addClickHandler(e -> {
+			onDefinition(e);
+		});
+		toolbar.add(definitionButton);
+		
+		utilityButton = new AonToolbarButton( "Utilidades", AON.CSS.aonIconSettings() );
+		utilityButton.addClickHandler(e -> {
+			onUtility(e);
+		});
+		toolbar.add(utilityButton);
+		
+		return toolbar;
+
+	}
+	
+	// ----------------------------------------------- Toolbar.Methods
+
+	private void onUndoAll(ClickEvent e) {
+		initUndoAll();
+	}
+	
+	private void onSave(ClickEvent e) {
+		this.employeeCalendarDraftObject.saveCalendarInfo(
+				s -> {
+					onSaved();
+					changeYear(0);
+				},
+				f -> {}
+		);
+	}
+	
+	private void onDefinition(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		definitionMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		definitionMenu.show();
+	}
+	
+	private void onUtility(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		utilityMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		utilityMenu.show();
 	}
 }
