@@ -56,10 +56,10 @@ const TAX_PERIOD  = {
 };
 
 const TAX_ADMIN = {
-  ALAVA:"Araba/Alava",
-  BIZKAIA:"Bizkaia",
-  GIPUZKOA:"Gipuzkoa",
-  NAVARRA:"Navarra",
+  ALAVA:"ALAVA",
+  BIZKAIA:"BIZKAIA",
+  GIPUZKOA:"GIPUZKOA",
+  NAVARRA:"NAVARRA",
   COMMON_TERRITORY:"Territorio Común",
   UNKNOWN:"Otro"
 }
@@ -84,6 +84,13 @@ const TAX_TYPE = {
   PAYBACK:"A devolver", // Banco
   PAYBACK_CCT:"Devolución a anotar en CCT"  // Nada
 }
+
+export const CONST_FISCAL = {
+  DEPOSIT: "DEPOSIT",
+  BANK: "BANK",
+  PAYBACK: "PAYBACK"
+}
+
 
 export const TAX_ENUMS = {
   TAX_MODEL_NUMBER, TAX_MODEL_TEXT, TAX_PERIOD, TAX_ADMIN, TAX_STATUS, TAX_TYPE

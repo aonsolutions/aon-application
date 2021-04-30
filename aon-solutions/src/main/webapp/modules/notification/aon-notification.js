@@ -14,7 +14,7 @@ import { CONSTANT, EVENT } from "../../environments/environments.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { TYPE_USER } from "./NotificationEnums.js";
+import { TYPE_USER, NOTIFICATION_TABS, badgeUpdate } from "./NotificationEnums.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -65,7 +65,12 @@ export class AonNotification extends AonElement {
     this.aonNotifyIconEl = document.querySelector("aon-notification-icon");
   }
 
+  getDur() {
+    return this.dur;  
+  }
+
   async build() {
+    this.eventListener();
     if (this.isMobile()) { 
       this.paintMobile();
     } else {
@@ -77,6 +82,12 @@ export class AonNotification extends AonElement {
     scrollInfinite(elementScroll , async()=>{
       await this.loadMore();
     })
+  }
+    
+  eventListener(){
+    window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ()=>{
+			this.notificationView();
+		});
   }
 
   paintDesk() {
@@ -91,18 +102,7 @@ export class AonNotification extends AonElement {
         this.changeTabs(detail.position);
       }
     });
-    aonTabs.setButtons([
-      {
-        name: "Notificaciones",
-        id: "notification",
-        icon: "notifications",
-      },
-      {
-        name: "Solicitudes",
-        id: "messenger",
-        icon: "assignment",
-      }
-    ]);
+    aonTabs.setButtons(NOTIFICATION_TABS);
 
     this.appendChild(aonTabs);
     this.appendChild(this.createContentDiv());
@@ -120,7 +120,7 @@ export class AonNotification extends AonElement {
       const idUl = this.AON_NOTIFICATION+"Ul";
       createUl(idUl).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
-      if(this.dur.isEnterprise() || this.dur.isAdmin()) {
+      if(!this.getDur().isEmployee()) {
         this.createButtonFloat();
       }
       
@@ -317,16 +317,7 @@ export class AonNotification extends AonElement {
       aonNotify.changeBadge();
       const aonTabs = this.getElement(this.AON_TABS);
       if (aonTabs) {
-        aonTabs.updateBadge([
-          {
-            id: "notification",
-            badge: count.notification,
-          },
-          {
-            id: "messenger",
-            badge: count.messenger,
-          },
-        ]);
+        aonTabs.updateBadge(badgeUpdate(count));
       }
     }
   }

@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { disabledForm, handleError, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
-import { PAYROLL_VIEWS } from "../PayrollEnums.js";
+import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 
@@ -151,7 +151,14 @@ export class AonMovementsList extends AonElement {
       });
       this.applicationParentEl._movements = data;
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      error = handleError(error);
+      if(error &&  EXCEPTION_MESSAGE[error.message]){
+        error.message =  EXCEPTION_MESSAGE[error.message];
+      }
+      if(!this.isMobile()){
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
+      }
+      this.applicationEl.getToast().start({...error});
     }
     return data;
   }

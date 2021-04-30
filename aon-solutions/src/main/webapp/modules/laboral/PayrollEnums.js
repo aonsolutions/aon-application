@@ -96,3 +96,7 @@ export const PAYROLL_VIEWS = {
   AON_ALTA_DIRECTA: "aonAltaDirecta",
   AON_COMPANY_COSTS_LIST: "aon-company-costs-list"
 }
+
+export const EXCEPTION_MESSAGE = {
+  "CertificateNotFoundException":"Agregue un certificado para conectarse a la Seguridad social"
+}

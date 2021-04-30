@@ -214,7 +214,7 @@ export class AonMobileMenu extends AonElement {
           permission = dur.isDocumental();
           break;
         case PAYROLL.app:
-          permission = dur.isPayroll();
+          permission = dur.isPayroll() || dur.isComunica();
           break;
         case COMUNICA.app:
           permission = dur.isComunica();

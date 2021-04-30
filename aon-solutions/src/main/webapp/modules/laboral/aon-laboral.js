@@ -13,6 +13,8 @@ import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
+import { MSG } from "../../environments/environments.js";
+import { AonApplication } from "../../components/aon-application.js";
 
 class AonLaboral extends AonElement {
 
@@ -45,27 +47,28 @@ class AonLaboral extends AonElement {
   build() {
     this.paintView();
     this.buildToolbar();
-    if(this.isEmployee()){
+    if(this.isEmployee() && !this.getDur().isComunica()){
       this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
-    } else {
+    } else if(this.getDur().isPayroll()) {
       this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
+    } else if(this.getDur().isComunica() ){
+      this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
     }
-
   }
 
   paintView(){
-    this.innerHTML = /*html*/`<aon-application id="${this.AON_LABORAL}" title="LABORAL"></aon-application>`;
+    this.createApplication(this.AON_LABORAL, MSG.PAYROLL, new AonApplication());
     this.applicationEl = this.getApplication();
   }
 
   buildToolbar(){
     let laboralOptions = [];
     let conf = [];
-    if(!this.isMobile()){
+    // if(this.isComunica()){
       let paysheet = PayrollOptions.PAYSHEET;
       paysheet.fn = () => this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
       laboralOptions.push(paysheet);
-    }
+    // }
     if(!this.isEmployee()){
 
       let contract = PayrollOptions.AON_CONTRACT;
@@ -90,7 +93,7 @@ class AonLaboral extends AonElement {
       laboralOptions.push(aon_comunica);
     }
 
-    this.applicationEl.addSidenavOptions('LABORAL', laboralOptions);
+    this.applicationEl.addSidenavOptions(MSG.PAYROLL, laboralOptions);
 
     if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;

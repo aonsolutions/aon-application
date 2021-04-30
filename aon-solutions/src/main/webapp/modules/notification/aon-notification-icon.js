@@ -1,4 +1,3 @@
-import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import {AonElement} from '../../components/AonElement.js';
 import { CONSTANT, EVENT } from '../../environments/environments.js';
@@ -6,6 +5,7 @@ import { FirebaseService } from '../../services/firebaseService.js';
 import { getTotalNotification } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { AonNotification } from './aon-notification.js';
+import { createBadge, createSpan } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 
@@ -16,8 +16,7 @@ export class AonNotificationIcon extends AonElement {
         return [CONSTANT.BADGE];
     }
  
-    attributeChangedCallback(name, oldValue, newValue) {
-    }
+    attributeChangedCallback(name, oldValue, newValue) {}
 
 	constructor () {
 		super();
@@ -37,29 +36,24 @@ export class AonNotificationIcon extends AonElement {
 
     build(){
         this.append(this.getView());
-        this.getTotalNotification();
     }
 
 
     getView(){
-        const notificationSpan = this.createElement("span");
-        notificationSpan.id = this.AON_NOTIFICATION_ICON;
         const aonIconButton = new AonIconButton();
-        // aonIconButton.noHover = "true";
         aonIconButton.id = "aonHeaderNotificationButton";
         aonIconButton.icon = "notifications";
+        const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON});
         notificationSpan.appendChild(aonIconButton);
-        return notificationSpan;
+        return notificationSpan.element;
     }
 
     async changeBadge(){
         const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
         const total = this.getTotalCount();
-        const badge = this.getElement(this.BADGE)  || this.createElement("span");
-        badge.id = this.BADGE;
+        const badge = this.getElement(this.BADGE)  ||  createBadge(this.BADGE).element;
         if(total && total > 0){
             badge.textContent = total;
-            badge.style = /**/`position: absolute; top: 22px;right: 3px;padding: 1px 4px;border-radius: 50%;background: red;color: white;font-size: 10px;font-weight: 800;`;
             notificationSpan.appendChild(badge);   
         } else {
             badge.remove();
@@ -67,15 +61,16 @@ export class AonNotificationIcon extends AonElement {
     }
 
     observerListener(){
-		window.addEventListener('userAuth', ()=>{
+		window.addEventListener(EVENT.USER_AUTH, ()=>{
 			this.initializeFB();
+            this.getTotalNotification();
 		});
 
-        window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ({detail})=>{
+        window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ()=>{
 			this.getTotalNotification();
 		});
 
-        this.addEventListener('click', (ev)=>this.goAonNotification());
+        this.addEventListener(EVENT.CLICK, ()=>this.goAonNotification());
 	}
 
 
@@ -92,7 +87,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-                    let aonModule = document.querySelector('aon-module');
+                    let aonModule = document.querySelector(TAG.AON_MODULE);
 					if(aonModule) aonModule.saveTokenFcm(token);
 				}
 			} 
@@ -100,15 +95,13 @@ export class AonNotificationIcon extends AonElement {
   	}
 
     async goAonNotification(){
-        if(!this.isBeta()) return true;
-        const aonNotification = new AonNotification();
-        let data = [];
         try {
+            if(!this.isBeta()) return true;
+            const aonNotification = new AonNotification();
             this.rootPanel(aonNotification);
         } catch(e){
             console.log(e);
         }
-        return data;
     }
 
     async getTotalNotification(){
@@ -120,25 +113,6 @@ export class AonNotificationIcon extends AonElement {
 
     getTotalCount(){
         return Object.keys(this.COUNT).reduce((acc, value) => acc + this.COUNT[value], 0);
-    }
-
-
-    showNotificationTest(data){
-        if(data){
-            console.log("data", data);
-            const id = 'aonDialogNotify';
-            const dialog = this.getElement(id) || new AonDialog();
-            dialog.id = id;
-            if(dialog){ this.appendChild(dialog);}
-            dialog.clear();
-            dialog.setContentHTML(data.body);
-            if (!this.isMobile()) dialog.width = '400px';
-            dialog.setTitle(data.title);
-            dialog.open();
-            dialog.addAcceptAction(() => {
-                this.goAonNotification();
-            });
-        }
     }
 
 }

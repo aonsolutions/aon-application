@@ -3,7 +3,7 @@ import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
 import { formatNumber, handleError, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
-import { TAX_ENUMS } from "../FiscalEnums.js";
+import { CONST_FISCAL, TAX_ENUMS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
@@ -371,18 +371,19 @@ export class AonTax extends AonElement {
 
   getPathImg(administration){
       const path = "assets/img/";
+      const {TAX_ADMIN} = TAX_ENUMS;
       let src = "aeat.png";
       switch(administration){
-        case "ALAVA":
+        case TAX_ADMIN.ALAVA:
           src = "aeat_alava.png";
           break;
-        case "BIZKAIA":
+        case TAX_ADMIN.BIZKAIA:
           src = "aeat_biskaia.png";
           break;
-        case "GIPUZKOA":
+        case TAX_ADMIN.GIPUZKOA:
           src = "aeat_gipuzcoa.png";
           break;
-        case "NAVARRA":
+        case TAX_ADMIN.NAVARRA:
           src = "aeat_navarra.png";
           break;
       }
@@ -396,11 +397,11 @@ export class AonTax extends AonElement {
       let ibanHidden = true;
       let nrcHidden  = true;
       switch(type){
-        case "DEPOSIT":
+        case CONST_FISCAL.DEPOSIT:
           ibanHidden = nrcHidden = false;
         break;
-        case "BANK":
-        case "PAYBACK":
+        case CONST_FISCAL.BANK:
+        case CONST_FISCAL.PAYBACK:
           ibanHidden = false;
         break;
       }

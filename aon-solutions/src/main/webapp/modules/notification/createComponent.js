@@ -2,12 +2,12 @@ import { TAG } from "../../environments/environments.js";
 import { newComponent } from "../../services/utils.js";
 
 
-const createDiv = (properties)=> newComponent({
+export const createDiv = (properties)=> newComponent({
   type: TAG.DIV,
   ...properties
 });
 
-const createSpan = (properties)=> newComponent({
+export const createSpan = (properties)=> newComponent({
   type: TAG.SPAN,
   ...properties
 });
@@ -85,8 +85,7 @@ export const createButtonClose = () => newComponent({
 });
 
 
-export const createSpanFloat = () => newComponent({
-  type: TAG.SPAN,
+export const createSpanFloat = () => createSpan({
   id: "aonNotificationFloatSpan",
   styles:{
     position: "fixed",
@@ -99,4 +98,19 @@ export const createForm  = (id="form") => newComponent({
   type:TAG.FORM,
   id,
   action: "#"
+});
+
+export const createBadge = (id) => createSpan({
+  id,
+  styles:{
+    position: "absolute", 
+    top: "22px",
+    right: "3px",
+    padding: "1px 4px",
+    borderRadius: "50%",
+    background: "red",
+    color: "white",
+    fontSize: "10px",
+    fontWeight: 800,
+  }
 });
