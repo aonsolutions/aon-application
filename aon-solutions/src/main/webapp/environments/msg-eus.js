@@ -47,6 +47,7 @@ export const COMPONENTS = 'Osagaiak';
 export const CONCEPT = 'Kontzeptua';
 export const CONCEPTS = 'Kontzeptuak';
 export const CONFIDENTIAL = 'Konfidentziala';
+export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
@@ -145,6 +146,8 @@ export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = '190 Eredua';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+export const MY_DATA = 'Nire Datuak';
+export const MY_USER = 'Nire Erabiltzailea';
 
 // ----- N
 

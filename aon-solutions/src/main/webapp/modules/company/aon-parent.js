@@ -145,7 +145,7 @@ export class AonParent extends AonElement {
 		}
 
 		if(q && q.active) {
-			value = f.active;
+			value = f.active && (f.parentId || f.type !== 'CONSULTANCY');
 		}
 
 		if(q && q.inactive) {
@@ -153,11 +153,11 @@ export class AonParent extends AonElement {
 		}
 
 		if(q && q.shared) {
-			value = f.shared;getParentInfo
+			value = f.shared;
 		}
 
 		if(q && q.entorno) {
-			value = !f.parentId;
+			value = !f.parentId && f.type === 'CONSULTANCY';
 		}
 
 		if(q && q.despacho) {
@@ -258,9 +258,10 @@ export class AonParent extends AonElement {
 		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 		aonHeaderCompanyList.style.display = 'block';
 
-		let aonShowMenu = document.getElementById('aonShowMenu');
-		aonShowMenu.style.display = 'block';
-
+		if(company.parentId || company.type !== 'CONSULTANCY'){
+			let aonShowMenu = document.getElementById('aonShowMenu');
+			aonShowMenu.style.display = 'block';
+		}
 		let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
 		aonHeaderHelp.style.display = 'block';
 
@@ -284,6 +285,7 @@ export class AonParent extends AonElement {
 		this.clearElementById('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init();
+
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
 			getUserAppRole().then(user => {

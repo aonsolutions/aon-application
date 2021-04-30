@@ -47,6 +47,7 @@ export const COMPONENTS = 'Compoñentes';
 export const CONCEPT = 'Concepto';
 export const CONCEPTS = 'Conceptos';
 export const CONFIDENTIAL = 'Confidencial';
+export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
@@ -145,6 +146,8 @@ export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de Renda. Autoliquidación.';
 export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de rendas. Resumo anual.';
+export const MY_DATA = 'Os Meus Datos';
+export const MY_USER = 'O Meu Usuario';
 
 // ----- N
 

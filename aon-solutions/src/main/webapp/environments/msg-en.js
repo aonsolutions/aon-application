@@ -47,6 +47,7 @@ export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
 export const CONFIDENTIAL = 'Confidential';
+export const CONFIGURATION = 'Configuration';
 export const CONTACT = 'Contact';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
@@ -145,6 +146,8 @@ export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
+export const MY_DATA = 'My Data';
+export const MY_USER = 'My User';
 
 // ----- N
 

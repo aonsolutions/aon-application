@@ -47,6 +47,7 @@ export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concepte';
 export const CONCEPTS = 'Conceptes';
 export const CONFIDENTIAL = 'Confidencial';
+export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
 export const CONTACTS = 'Contactes';
 export const CONTRACT = 'Contractar';;
@@ -145,6 +146,8 @@ export const MODEL_111 = 'Model 111';
 export const MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
 export const MODEL_190 = 'Model 190';
 export const MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;
+export const MY_DATA = 'Les Meves Dades';
+export const MY_USER = 'Mi Usuari';
 
 // ----- N
 

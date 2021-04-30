@@ -76,6 +76,7 @@ export const COMUNICA = "Comunic@";
 export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
+export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONTACT = MSG.CONTACT;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTRACT = MSG.CONTRACT;
@@ -175,6 +176,9 @@ export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
 export const MODEL_190 = MSG.MODEL_190;
 export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
+export const MY_DATA = MSG.MY_DATA;
+export const MY_USER = MSG.MY_USER;
+
 
 // ----- N
 

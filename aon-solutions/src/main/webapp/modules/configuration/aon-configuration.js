@@ -90,13 +90,13 @@ export class AonConfiguration extends AonElement {
 
     let userOptions = [
       {
-        name: MSG.USER_DATA,
+        name: MSG.MY_DATA,
         icon: "person",
         fn: () => this.buildPersonal(),
       },
     ];
     aonConfiguration.addSidenavOptions(
-      MSG.USER.toUpperCase(),
+      MSG.MY_USER.toUpperCase(),
       userOptions
     );
 
@@ -145,6 +145,10 @@ export class AonConfiguration extends AonElement {
   buildPersonal() {
     getAuth().then((user) => {
       let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+
+      let toolbar = this.getElement(aonConfiguration.TOOLBAR);
+		  toolbar.setAttribute('option', MSG.MY_DATA);
+      
       aonConfiguration.removeToolbarOptions();
       aonConfiguration.setContentHTML(
         '<aon-user id="aonUserPersonal" showPassword="true" onlyAuth="true" autosave="true"><aon-user>'

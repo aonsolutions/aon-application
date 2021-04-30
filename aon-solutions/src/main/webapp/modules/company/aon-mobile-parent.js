@@ -45,11 +45,11 @@ export class AonMobileParent extends AonElement {
   		}
 
   		if(q && q.active) {
-  			value = f.active;
+  			value = f.active  && (f.parentId || f.type !== 'CONSULTANCY');
   		}
 
   		if(q && q.inactive) {
-  			value = !f.active;
+  			value = !f.active && f.type === 'CONSULTANCY';
   		}
 
   		if(q && q.shared) {
