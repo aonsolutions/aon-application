@@ -47,6 +47,7 @@ export class AonBasicTable extends AonElement {
     td.colSpan = colspan || '1';
     td.appendChild(elem);
     tr.appendChild(td);
+    return td;
   }
 
   addRow() {

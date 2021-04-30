@@ -176,6 +176,15 @@ export class Invoice {
     } else this.service = false;
   }
   
+  getPaymethod() {
+    return this.paymethod
+  }
+
+  setPaymethod(paymethod) {
+    this.paymethod = paymethod;    
+    this.calculateFinances();
+  }
+
   isEmitida() {
     return this.type.toLowerCase() === 'emitida';
   }
@@ -327,7 +336,6 @@ export class Invoice {
   }
 
   setTax(tax, i) {
-    console.log(JSON.stringify(tax));
     this.taxes[i] = this.calculateTax(tax);
     this.calculateTotalFromTax();
     this.calculateWithholdingFromTax();
@@ -337,6 +345,8 @@ export class Invoice {
     if(TaxType.IRPF === tax.type) 
       this.withholding = false;
     this.taxes.splice(i, 1);
+    this.calculateTotalFromTax();
+    this.calculateWithholdingFromTax();
   }
 
   calculateWithholdingFromTax() {
@@ -428,6 +438,123 @@ export class Invoice {
       this.taxes[0] = tax;
 		}
   }
+
+  addDetail() {
+    let detail = {
+      description: '',
+      product: undefined,
+      quantity: 1.0,
+      price: 0.0,
+      discount: 0.0,
+      amount: 0.0,
+      withholding: this.withholding,
+      category: this.category,
+      prepayment: false,
+      percentage: 21.0, 
+      quota: 0.0,
+      surcharge: this.isSurcharge() ? 5.2 : 0.0, 
+      surcharge_quota: 0.0
+     };
+     this.details.push(detail);
+     this.calculateTaxFromDetail();
+  }
+
+  deleteDetail(detail, i) {
+    this.details.splice(i, 1);
+    this.calculateTaxFromDetail();
+  }
+
+  setDetail(detail, i) {  
+    this.details[i] = this.calculateDetail(detail);
+    this.calculateTaxFromDetail();
+  }
+
+  calculateDetail(detail){
+      let amount = round(Number(detail.quantity) * Number(detail.price));
+			amount = amount - amount * (detail.discount / 100);
+      detail.amount = round(amount);
+      if(!detail.prepayment && detail.percentage) {
+        detail.quota = round(detail.amount / 100 * detail.percentage);
+        detail.surcharge = this.isSurcharge() ? getSurchargeByVat(detail.percentage) : 0.0;
+        detail.surcharge_quota = round(detail.amount / 100 * detail.surcharge);
+      } else {
+        detail.percentage = undefined;
+        detail.quota = 0.0;
+        detail.surcharge = 0.0;
+        detail.surcharge_quota = 0.0;
+      }
+      return detail;
+  }
+
+  calculateTaxFromDetail() {
+    this.taxes = []
+    
+    this.details.forEach( (detail, i) => {
+      if(!detail.prepayment || detail.prepayment === CONSTANT.FALSE) {
+        if(this.taxes.filter(f => f.percentage === detail.percentage).length > 0) {
+            this.taxes.forEach((tax, i) => {
+            if(tax.percentage === detail.percentage){
+             tax.base = tax.base + detail.amount;
+             tax.quota = tax.quota + detail.quota;
+             tax.surcharge_quota = tax.surcharge_quota + detail.surcharge_quota;
+             this.taxes[i] = tax;
+            }
+          });
+        } else {
+          let tax = {
+            tax: TaxType.IVA,
+            type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,
+            percentage: detail.percentage,
+            base: detail.amount,
+            quota: detail.quota,
+            surcharge: detail.surcharge,
+            surcharge_quota: detail.surcharge_quota
+          };
+          this.taxes.push(tax);
+        }
+      }
+    });  
+    this.calculateTotalFromDetail();
+    this.calculateWithholdingFromTax();
+  }
+  
+  calculateTotalFromDetail() {
+    let total = 0.0;
+    this.details.forEach( detail => {
+      total = total + detail.amount + detail.quota + detail.surcharge_quota;
+    });  
+    this.total = total;
+  }
+
+  calculateFinances() {
+    if(this.finances.length === 0) {
+      let finance = {
+          due_date: this.date,
+          paymethod: this.paymethod ? this.paymethod : 'CASH',
+          amount: this.total,
+          iban: ''
+      };		
+      this.finances.push(finance);
+    } 
+  }
+
+  addFinance() {
+    let finance = {
+      due_date: this.date,
+      paymethod: 'CASH',
+      amount: 0.0,
+      iban: ''
+     };
+     this.finances.push(finance);
+  }
+
+  setFinance(finance, i) {
+   this.finances[i] = finance;
+  }
+
+  deleteFinance(finance, i) {
+    this.finances.splice(i, 1);
+  }
 }
 
 export class InvoiceTax {
@@ -455,5 +582,8 @@ export class InvoiceDetail {
 }
 
 export class InvoiceFinance {
-
+  due_date;
+  paymethod;
+  amount;
+  iban;
 }

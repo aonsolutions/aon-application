@@ -120,7 +120,7 @@ export class AonSelect extends AonElement {
       this.buildOptions(options.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
     });
     input.addIconButton('arrow_drop_down', () => {
-      if(!this.hasAttribute(CONSTANT.READONLY)) {
+      if(!this.isReadonly()) {
         let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
         this.buildOptions(options);
       }
@@ -213,6 +213,11 @@ export class AonSelect extends AonElement {
 
   getDisabled(){
     return this.disabled == "true";
+  }
+
+  isReadonly() {
+    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+      && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 }
 if(!window.customElements.get('aon-select')){

@@ -33,7 +33,6 @@ export const TaxIVAPercentage = [
 ];
 
 export const TaxVATPercentage = [
-  {value:undefined, name:'-'},
   {value:21.0, name:'21%'},
   {value:10.0, name:'10%'},
   {value:4.0, name:'4%'},
