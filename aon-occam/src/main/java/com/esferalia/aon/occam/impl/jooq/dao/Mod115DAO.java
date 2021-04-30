@@ -580,6 +580,7 @@ public class Mod115DAO extends FiscalModelDAO {
 	}
 
 	public static Mod115 markAsCustomerCheck(AONContext ctx,Mod115 mod115) {
+		mod115 = FiscalModelDAO.finish(ctx, mod115);
 		mod115.setStatus(FiscalStatus.CUSTOMER_CHECK);
 		mod115 = saveMod115(ctx, mod115);
 		return mod115;

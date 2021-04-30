@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.json.FiscalModelJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -37,7 +38,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
@@ -118,77 +118,110 @@ public class FiscalServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject markAsFinished(AonApiData api) {
-		AONContext ctx = null;
-		try {
+		try ( final AONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			JSONObject params = api.getData();
 			Integer id = JsonUtils.getInteger(params , IJsonNames.ID);
 			String iban = JsonUtils.getString(params , IJsonNames.IBAN);
+			String bankAlias = JsonUtils.getString(params , IJsonNames.BANK_ALIAS);
+			String bankBIC = JsonUtils.getString(params , IJsonNames.BIC);
 			FiscalModelType type = FiscalModelType.safeValueOf(JsonUtils.getString(params , IJsonNames.MODEL));
 			String typ = JsonUtils.getString(params , IJsonNames.TYPE);
 			if (AonStringUtils.isNotBlank(typ)) {
 				FiscalModelDeclarationType dec = FiscalModelDeclarationType.valueOf(typ);
-				if (type == FiscalModelType.M303) {
-					Mod303 model = Mod303DAO.getMod303(ctx, id);
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+				IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
+
+					@Override
+					public void visitM111() {
+						Mod111 model = Mod111DAO.getMod111(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+							model.getFinance().setBankAlias(bankAlias);
+							model.getFinance().setBic(bankBIC);
+						}
+						Mod111DAO.markAsFinished(ctx, model); 
 					}
-					Mod303DAO.markAsFinished(ctx, model);
-				} else if (type == FiscalModelType.M111) {
-					Mod111 model = Mod111DAO.getMod111(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+					
+					@Override
+					public void visitM115() {
+						Mod115 model = Mod115DAO.getMod115(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod115DAO.markAsFinished(ctx, model); 
 					}
-					Mod111DAO.markAsFinished(ctx, model); 
-				} else if (type == FiscalModelType.M115) {
-					Mod115 model = Mod115DAO.getMod115(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+
+					@Override
+					public void visitM123() {
+						Mod123 model = Mod123DAO.getMod123(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod123DAO.markAsFinished(ctx, model); 
 					}
-					Mod115DAO.markAsFinished(ctx, model); 
-				} else if (type == FiscalModelType.M123) {
-					Mod123 model = Mod123DAO.getMod123(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+
+					@Override
+					public void visitM130() {
+						Mod130 model = Mod130DAO.getMod130(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod130DAO.markAsFinished(ctx, model); 
 					}
-					Mod123DAO.markAsFinished(ctx, model); 
-				} else if (type == FiscalModelType.M130) {
-					Mod130 model = Mod130DAO.getMod130(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+
+					@Override
+					public void visitM131() {
+						Mod131 model = Mod131DAO.getMod131(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod131DAO.markAsFinished(ctx, model); 
 					}
-					Mod130DAO.markAsFinished(ctx, model); 
-				} else if (type == FiscalModelType.M131) {
-					Mod131 model = Mod131DAO.getMod131(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+
+					@Override
+					public void visitM202() {
+						Mod202 model = Mod202DAO.getMod202(ctx, id);	
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod202DAO.markAsFinished(ctx, model); 
 					}
-					Mod131DAO.markAsFinished(ctx, model); 
-				} else if (type == FiscalModelType.M202) {
-					Mod202 model = Mod202DAO.getMod202(ctx, id);	
-					model.setDeclarationType(dec);
-					if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
-						BankAccount ba = new BankAccount( iban );
-						model.getFinance().setBankAccount(ba);
+
+					@Override
+					public void visitM303() {
+						Mod303 model = Mod303DAO.getMod303(ctx, id);
+						model.setDeclarationType(dec);
+						if (AonStringUtils.isNotBlank(iban) && model.getFinance() != null) {
+							BankAccount ba = new BankAccount( iban );
+							model.getFinance().setBankAccount(ba);
+						}
+						Mod303DAO.markAsFinishedFromAPI(ctx, model);
 					}
-					Mod202DAO.markAsFinished(ctx, model); 
-				}			
+					
+					@Override public void visitM347() {}
+					@Override public void visitM349() {}
+					@Override public void visitM390() {}
+					@Override public void visitM390HF() {}
+					@Override public void visitM180() {}
+					@Override public void visitM184() {}
+					@Override public void visitM190() {}
+					@Override public void visitM193() {}
+					@Override public void visitM200() {}
+				}; 
+				type.visit(visitor);
 			}
 			return new JSONObject().put("status", "OK"); 
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 }

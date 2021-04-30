@@ -552,6 +552,7 @@ public class Mod123DAO extends FiscalModelDAO {
 	}
 
 	public static Mod123 markAsCustomerCheck(AONContext ctx,Mod123 mod123) {
+		mod123 = FiscalModelDAO.finish(ctx, mod123);
 		mod123.setStatus(FiscalStatus.CUSTOMER_CHECK);
 		mod123 = saveMod123(ctx, mod123);
 		return mod123;

@@ -485,6 +485,11 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = FiscalModelDAO.finish(ctx, mod303);
 		return saveMod303(ctx, mod303);
 	}
+	// -------------------------------------------------------------------- UTIL
+	public static Mod303 markAsFinishedFromAPI(AONContext ctx,Mod303 mod303) {
+		mod303 = FiscalModelDAO.finish(ctx, mod303);
+		return (Mod303) saveOnlyMod303(ctx, mod303);
+	}
 	
 	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
 		mod303.setDeclarationType( (String) null);
@@ -505,6 +510,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 markAsCustomerCheckMod303(AONContext ctx,Mod303 mod303) {
+		mod303 = FiscalModelDAO.finish(ctx, mod303);
 		mod303.setStatus(FiscalStatus.CUSTOMER_CHECK);
 		mod303 = saveMod303(ctx, mod303);
 		return mod303;
