@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.payroll.util;
 
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
@@ -155,7 +156,7 @@ public class DraftPayrollBuilder {
 					System.out.println("(DraftPayrollBuilder :: 155) " + d.getDescription() + " : " + d.getAmount() + " : INDEDUCTION " + d.getName());
 					
 					try {
-						String desc = d.getDescription().replaceAll(".*(\\d+\\.+\\d+).*","$1");
+						String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
 						System.out.println("(DraftPayrollBulder :: 159) " + desc);
 						percent = Double.parseDouble(desc);
 					} catch (NumberFormatException ignored) {}
