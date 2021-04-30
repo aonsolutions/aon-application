@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,14 +33,17 @@ public abstract class AonExpandButton extends Composite {
 	
 	public AonExpandButton(String toolTip, String iconStyle) {
 		initWidget(uiBinder.createAndBindUi(this));
-		setStyleName(AON.CSS.aonButton());
+		setStyleName(AON.CSS.aonExpandPanel());
 		addStyleName(AON.CSS.aonToolbarButton());
+		getElement().getStyle().setWidth(46, Unit.PX);
 		createExpandButton(toolTip, iconStyle);
 	}
 	
 	private void createExpandButton(String toolTip, String iconStyle) {
 		innerButton = new AonToolbarButton(toolTip, iconStyle);
+		innerButton.removeStyleName(AON.CSS.aonButton());
 		innerButton.removeStyleName(AON.CSS.aonToolbarButton());
+		innerButton.addStyleName(AON.CSS.aonExpandButton());
 		innerButton.addStyleName(style.innerButton());
 		innerButton.addClickHandler(e -> {
 			onDefaultClick(e);
@@ -47,7 +51,9 @@ public abstract class AonExpandButton extends Composite {
 		mainButton.add(innerButton);
 		
 		dropdownButton = new AonToolbarButton("", AON.CSS.aonIconDropDown());
+		dropdownButton.removeStyleName(AON.CSS.aonButton());
 		dropdownButton.removeStyleName(AON.CSS.aonToolbarButton());
+		dropdownButton.addStyleName(AON.CSS.aonExpandButton());
 		dropdownButton.addStyleName(style.footerButton());
 		dropdownButton.addClickHandler(e -> {
 			onExpandClick(e);
