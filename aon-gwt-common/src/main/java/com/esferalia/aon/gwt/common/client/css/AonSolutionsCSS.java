@@ -15,6 +15,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_drive")
 	String aonIconDrive();
 	
+	@ClassName("aon_icon_edit_calendar")
+	String aonIconEditCalendar();
+	
+	@ClassName("aon_icon_settings")
+	String aonIconSettings();
+	
 	@ClassName("aon_icon_filter")
 	String aonIconFilter();
 	
@@ -633,6 +639,12 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_button")
 	String aonButton();
+	
+	@ClassName("aon_expand_panel")
+	String aonExpandPanel();
+	
+	@ClassName("aon_expand_button")
+	String aonExpandButton();
 
 	@ClassName("aon_loader")
 	String aonLoader();

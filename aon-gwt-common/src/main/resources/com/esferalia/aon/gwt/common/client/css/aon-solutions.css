@@ -11,6 +11,10 @@
 .aon_icon_email { background-image: iconEmail;}
 @url iconDrive aonIconDrive;
 .aon_icon_drive { background-image: iconDrive;}
+@url iconEditCalendar aonIconEditCalendar;
+.aon_icon_edit_calendar { background-image: iconEditCalendar;}
+@url iconSettings aonIconSettings;
+.aon_icon_settings { background-image: iconSettings;}
 @url iconFilter aonIconFilter;
 .aon_icon_filter { background-image: iconFilter;}
 @url iconDropDown aonIconDropDown;
@@ -861,6 +865,56 @@
  	background-color: #EEE;
 }
 .aon_button:disabled {
+	opacity: 0.2;
+}
+.aon_expand_panel {
+	flex-shrink: 0;
+	border-radius: 50%;
+	-webkit-border-radius: none;
+	-moz-border-radius: 50%;
+	box-sizing: border-box;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+	outline: 0 !important;
+	border: none;
+	overflow: visible;	
+	display: inline-block;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: inherit;
+	padding-left: 10px;
+}
+
+.aon_expand_panel:hover, .aon_button:focus{
+ 	background-color: #EEE;
+}
+.aon_expand_panel:disabled {
+	opacity: 0.2;
+}
+.aon_expand_button {
+	flex-shrink: 0;
+	-webkit-border-radius: none;
+	box-sizing: border-box;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+	outline: 0 !important;
+	border: none;
+	overflow: visible;	
+	display: inline-block;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: inherit;
+	padding-left: 10px;
+}
+.aon_expand_button:disabled {
 	opacity: 0.2;
 }
 .aon_custom_dialog {
