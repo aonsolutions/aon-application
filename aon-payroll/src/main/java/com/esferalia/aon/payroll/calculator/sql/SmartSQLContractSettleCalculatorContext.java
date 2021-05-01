@@ -5,6 +5,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
@@ -23,12 +24,14 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -45,6 +48,7 @@ import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
@@ -135,13 +139,15 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		if ( redefined )
 			return Collections.emptyList();
 
-		Result<AgreementExtraRecord> extras = dslCtx
+		Result<Record> extras = dslCtx
 		.select()
 		.from(CONTRACT)
 		.innerJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
 		.innerJoin(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
+		.leftJoin(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
 		.where(CONTRACT.ID.eq(getId()))
-		.fetchInto(AGREEMENT_EXTRA)
+		.fetch()
+//		.fetchInto(AGREEMENT_EXTRA)
 		;
 		
 		Date contractStartDate = getContractStartate();
@@ -157,131 +163,140 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		
 		for ( int i = 0; i < extras.size(); i++ ) {
 			
-			int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
+			AgreementExtraRecord extra = extras.get(i).into(AGREEMENT_EXTRA);
 			
-			AgreementExtraRecord extra = extras.get(i);
+			try {
 			
-			Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
-			
-//			if ( extraStartDate.after(settleEndDate))  
-//				continue;  // Nothing to calculate
-			while ( !extraStartDate.after(settleEndDate )) {
-			
-				Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
-				Date extraEndDate  = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
-	
-				if ( extraIssueDate.before(settleEndDate)
-					 && extraIssueDate.after(contractStartDate) ) {
-					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
-					if ( extraStartDate.after(settleEndDate))  
-						break;  // Nothing to calculate
-				} else if (extraEndDate.before(settleEndDate)  ) {
-					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
-					if ( extraStartDate.after(settleEndDate))  
-						break;  // Nothing to calculate
-				}
+				int year = AonDateUtils.get(settleEndDate, Calendar.YEAR );
 				
+				Date extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
 				
-				// TODO: Extract to method ?
-				SQLExtraSalaryCalculatorContext extraCtx = 
-						new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
-				if ( !extraCtx.next() )
-					break;
+	//			if ( extraStartDate.after(settleEndDate))  
+	//				continue;  // Nothing to calculate
+				while ( !extraStartDate.after(settleEndDate )) {
 				
-				List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
-				
-				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
-					@Override
-					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
-							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
-						SystemPayment extraPayment = new SystemPayment();
-						
-						if ( payment instanceof IContractPayment )
-							extraPayment.setId(((IContractPayment)payment).getId());
-						
-						extraPayment.setType(PaymentType.CRA_0000);
-						extraPayment.setSalaryType(SalaryType.SETTLE);
-						extraPayment.setStartDate(startDate);
-						extraPayment.setEndDate(endDate);
-						extraPayment.setPaymentConcept(autoGenratedConcept);
-	
-						extraPayment.setDescription(description);
-						extraPayment.setExpression(String.format(Locale.US, "/*hideable*/%f", amount));
-						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
-						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
-						
-						extraPayments.add( extraPayment );
-						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+					Date extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+					Date extraEndDate  = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
+		
+					if ( extraIssueDate.before(settleEndDate)
+						 && extraIssueDate.after(contractStartDate) ) {
+						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+						if ( extraStartDate.after(settleEndDate))  
+							break;  // Nothing to calculate
+					} else if (extraEndDate.before(settleEndDate)  ) {
+						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+						if ( extraStartDate.after(settleEndDate))  
+							break;  // Nothing to calculate
 					}
 					
 					
-				}) {
-					@Override
-					protected void resolvePayment(IContractPayment contractPayment, Date start, Date end,
-							Date issueDate, ExpressionContext expressionContext, TaxCalculator taxCalculator,
-							QuoteCalculator quoteCalculator, List<Period> leavePeriods, List<Period> strikePeriods)
-							throws AonException {
+					// TODO: Extract to method ?
+					SQLExtraSalaryCalculatorContext extraCtx = 
+							new SQLExtraSalaryCalculatorContext(getConnection(), extra.getId(), year, settleEndDate, getChargeDate(), criteria) ;
+					if ( !extraCtx.next() )
+						break;
+					
+					List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
+					
+					Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
+						@Override
+						public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+								Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+							SystemPayment extraPayment = new SystemPayment();
+							
+							if ( payment instanceof IContractPayment )
+								extraPayment.setId(((IContractPayment)payment).getId());
+							
+							extraPayment.setType(PaymentType.CRA_0000);
+							extraPayment.setSalaryType(SalaryType.SETTLE);
+							extraPayment.setStartDate(startDate);
+							extraPayment.setEndDate(endDate);
+							extraPayment.setPaymentConcept(autoGenratedConcept);
+		
+							extraPayment.setDescription(description);
+							extraPayment.setExpression(String.format(Locale.US, "/*hideable*/%f", amount));
+							extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
+							extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
+							
+							extraPayments.add( extraPayment );
+							super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+						}
 						
-						DelegateContractPayment delegatePayment = new DelegateContractPayment(contractPayment) {
-							@Override
-							public SalaryType getSalaryType() {
-
-								if ( getType() == PaymentType.CRA_0004)
-									return SalaryType.EXTRA;
-								
-								return super.getSalaryType();
-							}
-						};
 						
-						super.resolvePayment(delegatePayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
-								leavePeriods, strikePeriods);
-					}
-				}.calculate(extraCtx);
-				
-				if ( extraPayments.isEmpty()  )
-					break;
-				
-				
-				
-				SalaryRecord record = 
-				dslCtx
-				.select()
-				.from(SALARY)
-				.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
-				.where(SALARY.CONTRACT.eq(getId()))
-				.and(SALARY.ID.notIn(calculatedExtras))
-				.and(SALARY.TYPE.eq((byte)salary.getType().ordinal()))
-				.and(SALARY.END_DATE.eq(new java.sql.Date(salary.getEndDate().getTime())))
-				.and(SALARY.START_DATE.eq(new java.sql.Date(salary.getStartDate().getTime())))
-				.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
-				.fetchAnyInto(SALARY)
-				;
-				
-				
-				if ( record == null ) {
-					record = 
-						dslCtx
-						.select()
-						.from(SALARY)
-						.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
-						.where(SALARY.CONTRACT.eq(getId()))
-						.and(SALARY.ID.notIn(calculatedExtras))
-						.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
-						.and(SALARY_PAYMENT.AMOUNT.gt(0.00))
-						.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
-						.and(DSL.year(SALARY.ISSUE_DATE).eq(DSL.year(new java.sql.Date(extraIssueDate.getTime()))))
-						.and(DSL.month(SALARY.ISSUE_DATE).eq(DSL.month(new java.sql.Date(extraIssueDate.getTime()))))
-						.fetchAnyInto(SALARY)
-							;
+					}) {
+						@Override
+						protected void resolvePayment(IContractPayment contractPayment, Date start, Date end,
+								Date issueDate, ExpressionContext expressionContext, TaxCalculator taxCalculator,
+								QuoteCalculator quoteCalculator, List<Period> leavePeriods, List<Period> strikePeriods)
+								throws AonException {
+							
+							DelegateContractPayment delegatePayment = new DelegateContractPayment(contractPayment) {
+								@Override
+								public SalaryType getSalaryType() {
+	
+									if ( getType() == PaymentType.CRA_0004)
+										return SalaryType.EXTRA;
+									
+									return super.getSalaryType();
+								}
+							};
+							
+							super.resolvePayment(delegatePayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
+									leavePeriods, strikePeriods);
+						}
+					}.calculate(extraCtx);
+					
+					if ( extraPayments.isEmpty()  )
+						break;
+					
+					
+					
+					SalaryRecord record = 
+					dslCtx
+					.select()
+					.from(SALARY)
+					.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+					.where(SALARY.CONTRACT.eq(getId()))
+					.and(SALARY.ID.notIn(calculatedExtras))
+					.and(SALARY.TYPE.eq((byte)salary.getType().ordinal()))
+					.and(SALARY.END_DATE.eq(new java.sql.Date(salary.getEndDate().getTime())))
+					.and(SALARY.START_DATE.eq(new java.sql.Date(salary.getStartDate().getTime())))
+					.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
+					.fetchAnyInto(SALARY)
+					;
+					
+					
 					if ( record == null ) {
-						extrasPayments.addAll(extraPayments);
-						extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+						record = 
+							dslCtx
+							.select()
+							.from(SALARY)
+							.innerJoin(SALARY_PAYMENT).on(SALARY.ID.eq(SALARY_PAYMENT.SALARY))
+							.where(SALARY.CONTRACT.eq(getId()))
+							.and(SALARY.ID.notIn(calculatedExtras))
+							.and(SALARY.TYPE.eq((byte)SalaryType.SALARY.ordinal()))
+							.and(SALARY_PAYMENT.AMOUNT.gt(0.00))
+							.and(SALARY_PAYMENT.DESCRIPTION.eq(extraPayments.get(0).getDescription()))
+							.and(DSL.year(SALARY.ISSUE_DATE).eq(DSL.year(new java.sql.Date(extraIssueDate.getTime()))))
+							.and(DSL.month(SALARY.ISSUE_DATE).eq(DSL.month(new java.sql.Date(extraIssueDate.getTime()))))
+							.fetchAnyInto(SALARY)
+								;
+						if ( record == null ) {
+							extrasPayments.addAll(extraPayments);
+							extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+						}
+					} else { 
+						calculatedExtras.add(record.getId());
 					}
-				} else { 
-					calculatedExtras.add(record.getId());
+					
+					extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
 				}
-				
-				extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+			} catch (DateFormatException e) {
+				AgreementPaymentRecord extraPayment = extras.get(i).into(AGREEMENT_PAYMENT);
+				extrasPayments.add(newExtraDateErrPayment(e.getMessage(), extraPayment.getDescription()));
+			} catch (Exception e) {
+				AgreementPaymentRecord extraPayment = extras.get(i).into(AGREEMENT_PAYMENT);
+				extrasPayments.add(newExtraErrPayment(extraPayment.getDescription()));
 			}
 		}
 		
@@ -487,6 +502,41 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		return extraPayment;
 	}
 	
+	private IContractPayment newExtraErrPayment(String message) {
+
+		SystemPayment extraPayment = new SystemPayment();
+		
+		extraPayment.setType(PaymentType.CRA_0000);
+		extraPayment.setSalaryType(SalaryType.SETTLE);
+		extraPayment.setStartDate(getStart());
+		extraPayment.setEndDate(getEnd());
+
+		extraPayment.setExpression(String.format(Locale.US, "HIDE(\""
+				+"<div>Error en la paga extra %s. Por favor, rev\u00edsela.</div>"
+				+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
+				+ "\")", 
+				message ));
+		return extraPayment;
+	}
+
+	private IContractPayment newExtraDateErrPayment(String date,String message) {
+
+		SystemPayment extraPayment = new SystemPayment();
+		
+		extraPayment.setType(PaymentType.CRA_0000);
+		extraPayment.setSalaryType(SalaryType.SETTLE);
+		extraPayment.setStartDate(getStart());
+		extraPayment.setEndDate(getEnd());
+
+		extraPayment.setExpression(String.format(Locale.US, "HIDE(\""
+				+"<div>Fecha '%s' err\u00f3nea en la paga extra %s. Por favor, rev\u00edsela.</div>"
+				+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\");"
+				+ "\")", 
+				date,
+				message ));
+		return extraPayment;
+	}
+
 	private static Date getStartDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
 //		calendar.set(Calendar.HOUR, 0);

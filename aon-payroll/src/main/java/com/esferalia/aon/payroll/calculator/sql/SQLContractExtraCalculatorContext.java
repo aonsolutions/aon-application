@@ -672,6 +672,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+		public DateFormatException(String s) {
+			super(s);
+		}
+
 	}
 
 	public static interface AgreementExtraCallback {

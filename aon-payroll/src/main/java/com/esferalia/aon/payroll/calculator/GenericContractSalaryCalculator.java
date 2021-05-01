@@ -68,6 +68,7 @@ import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.YesExtraException;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -126,6 +127,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	
 	static final String CONSTANT_PAY_MSG = "Revise el concepto <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?."
 			;
+	private static final String EXTRA_DATE_ERROR = "<div>Fecha '%s' err\u00f3nea en la paga extra %s. Por favor, rev\u00edsela.</div>"
+			+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>";
 	
 	
 	private static interface INamedContractPayment extends IContractPayment{
@@ -1422,7 +1425,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					} catch ( YesExtraException e ) {
 						tax = e.getTax();
 						resultValue = e.getTax();
-					}
+					} catch ( DateFormatException e ) {
+						tax = 0.00;
+						onCheckError(
+						String.format(
+						EXTRA_DATE_ERROR,
+						e.getMessage(),
+						contractPayment.getDescription())
+						);
+					} 
 					String description = null;
 					try {
 						description = expressionContext.evalTemplate(contractPayment.getDescription(), resultStart,

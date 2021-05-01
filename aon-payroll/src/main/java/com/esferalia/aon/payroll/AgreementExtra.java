@@ -32,8 +32,8 @@ public class AgreementExtra extends AgreementExtraDB  {
 		
 		Matcher matcher = AGREEMENT_DATE_PATTERN.matcher(string);
 		
-		if ( !matcher.matches() ) {
-			throw new  DateFormatException();
+		if ( !matcher.find() ) {
+			throw new  DateFormatException(string);
 		}
 
 		String days = matcher.group(1);

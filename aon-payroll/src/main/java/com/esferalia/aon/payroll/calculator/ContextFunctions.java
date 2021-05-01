@@ -27,6 +27,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -667,7 +668,8 @@ public class ContextFunctions {
 	public static Calendar parseExtraDate(String str, Date date) {
 		str = AonStringUtils.trim(str);
 		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
-		matcher.matches();
+		if ( !matcher.find() ) 
+			throw new DateFormatException(str);
 		
 		
 		Calendar calendar = Calendar.getInstance();
