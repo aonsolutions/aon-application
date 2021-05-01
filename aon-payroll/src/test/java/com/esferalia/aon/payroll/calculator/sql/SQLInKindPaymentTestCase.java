@@ -179,10 +179,12 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		Salary salary = calculator.calculate(ctx);
 		
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getName() + " = " + p.getAmount() ));
-
-		assertEquals( (double) ( 1150.00 ) /2, (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 ) /2, (double) salary.getRemuneration(), DELTA);
-		assertEquals( (double) ( 1150.00 ) /2, (double) salary.getTotalLiquid(), DELTA);
+		
+		int days = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH) - 15  ; 
+		
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getTotalPayment(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getTotalLiquid(), DELTA);
 
 
 		addPayment(aonContext, contract, "SALARIO EN ESPECIE", "1.62 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0013);
@@ -197,12 +199,12 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getName() + " = " + p.getAmount() ));
 		
 
-		assertEquals( (double) ( 1150.00 + 1.62 ) / 2, (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 ) / 2, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 + 1.62 ) * days / 30, (double) salary.getTotalPayment(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getRemuneration(), DELTA);
 		
 		
-		assertEquals( 1.62 / 2, (double) salary.getTotalDeduction(), DELTA);
-		assertEquals( (double) ( 1150.00 ) / 2 , (double) salary.getTotalLiquid(), DELTA);
+		assertEquals( 1.62 * days / 30, (double) salary.getTotalDeduction(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30 , (double) salary.getTotalLiquid(), DELTA);
 
 		addPayment(aonContext, contract, "SALARIO EN ESPECIE", "33.33 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0013);
 		
@@ -216,12 +218,12 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 		salary.getSalaryPayments().forEach(p -> System.out.println(p.getName() + " = " + p.getAmount() ));
 		
 
-		assertEquals( (double) ( 1150.00 + 1.62 + 33.33 ) / 2, (double) salary.getTotalPayment(), DELTA);
-		assertEquals( (double) ( 1150.00 ) / 2, (double) salary.getRemuneration(), DELTA);
+		assertEquals( (double) ( 1150.00 + 1.62 + 33.33 ) * days / 30, (double) salary.getTotalPayment(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getRemuneration(), DELTA);
 		
 		
-		assertEquals( ( 1.62 + 33.33 ) / 2, (double) salary.getTotalDeduction(), DELTA);
-		assertEquals( (double) ( 1150.00 ) / 2 , (double) salary.getTotalLiquid(), DELTA);
+		assertEquals( ( 1.62 + 33.33 ) * days / 30, (double) salary.getTotalDeduction(), DELTA);
+		assertEquals( (double) ( 1150.00 ) * days / 30, (double) salary.getTotalLiquid(), DELTA);
 
 	}
 
