@@ -130,6 +130,17 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	private static final String EXTRA_DATE_ERROR = "<div>Fecha '%s' err\u00f3nea en la paga extra %s. Por favor, rev\u00edsela.</div>"
 			+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>";
 	
+	private static final Collection<String> CONCEPTS = new ArrayList<String>() {
+		{
+			add("ANTIGUEDAD");
+			add("PLUS_SALARIAL");
+			add("PLUS_EXTRA_SALARIAL");
+			add("A_CUENTA_CONVENIO");
+			add("GARANTIZADO");
+			add("MEJORA");
+		}
+	};
+	
 	
 	private static interface INamedContractPayment extends IContractPayment{
 		public String getSurName();
@@ -583,6 +594,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						undefPayments.add(undefPayment);
 					} else {
 						undefPayment.onUndefinedData(this);
+						addResult(expressionContext, contractPayment.getName(), start, end, 0.00);
+						addResult(expressionContext, contractPayment.getSurName(), start, end, 0.00);
 					}
 				}
 				paymentsVars.add(contractPayment.getName());
@@ -612,6 +625,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					willBeDefined.addAll(paymentsVars); // ??? Why?
 					willBeDefined.add(undefPayment.getName());
 					willBeDefined.add(undefPayment.getSurName());
+					continue;
+				}
+				if (undefPayment.willBeDefined(CONCEPTS)) {
 					continue;
 				}
 				// clean undefined ...
@@ -649,6 +665,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 						if (++undefined >= undefPayments.size())
 							break; // we've already eval all undef payments
+					} if (undefPayment.willBeDefined(CONCEPTS)) {
+						undefPayments.add(undefPayment);
+						for ( String name : e.getVariableNames() )
+							addResult(expressionContext, name, start, end, 0.00);
 					} else {
 						undefPayment.onUndefinedData(this);
 						paymentsVars.remove(undefPayment.getName());

@@ -2254,6 +2254,128 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testUndefPaymentsII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "1200.00 * DIAS_TRABAJADOS /DIAS_MES + K";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "1200.00 * DIAS_TRABAJADOS /DIAS_MES  + K";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				}
+				);
+
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+		addPayment(aonContext, contract, conceptP, String.format("1200.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		// Payment with same name that it's var :-(
+		PaymentConceptRecord conceptK = addConcept(aonContext, "K");
+		addPayment(aonContext, contract, conceptK, String.format("K * 5"));
+		//addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "K", "100");
+		
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+
+	}
+	
+	@Test
+	public void testUndefPaymentsIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "1200.00 * DIAS_TRABAJADOS /DIAS_MES + PLUS_SALARIAL";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "1200.00 * DIAS_TRABAJADOS /DIAS_MES  + PLUS_SALARIAL";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				}
+				);
+
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+		addPayment(aonContext, contract, conceptP, String.format("1200.00 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		// Payment with same name that it's var :-(
+		
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1200.00, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(String.format("%s",ContextVariable.CGC_BASE), 1200.00 + (1200.00*2/12), salary.getCommonBase(), DELTA);
+
+	}
+	
+
+	@Test
 	public void testAutoProrrationI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
