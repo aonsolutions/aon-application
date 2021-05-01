@@ -68,7 +68,6 @@ export class AonRegistry extends AonElement {
     let doc = new AonSuggestion();
     doc.id = this.DOCUMENT;
     doc.title = MSG.NIF;
-    doc.value = this.registry.document;
     doc.readonly = this.isReadonly();
     doc.addEventListener(EVENT.CHANGE, () => {
       this.registry.document = doc.value;
@@ -92,7 +91,8 @@ export class AonRegistry extends AonElement {
 			}
     });
     span1.appendChild(doc);
-
+    doc.value = this.registry.document;
+    
     let span2 = this.createElement(TAG.SPAN);
     span2.style.width="75%";
     div.appendChild(span2);
@@ -100,7 +100,6 @@ export class AonRegistry extends AonElement {
     name.id = this.NAME;
     name.name = CONSTANT.NAME;
     name.title = MSG.BUSINESS_NAME;
-    name.value = this.registry.name;
     name.readonly = this.isReadonly();
     name.addEventListener(EVENT.CHANGE, () => {
       this.registry.name = name.value;
@@ -118,6 +117,7 @@ export class AonRegistry extends AonElement {
       }
     });
     span2.appendChild(name);
+    name.value = this.registry.name;
 
 		let options = this.createElement('div');
 		options.id = this.OPTIONS;
@@ -154,7 +154,7 @@ export class AonRegistry extends AonElement {
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
           this.setRegistry(options[i].registry);
-          this.dispatchEvent(new Event(EVENT.CHANGE));
+          this.dispatchEvent(new Event(EVENT.SELECT));
         });
         ul.appendChild(li);
       }
@@ -178,6 +178,10 @@ export class AonRegistry extends AonElement {
     }
   }
 
+  getRegistry() {
+    return this.registry;
+  }
+
   setRegistry(registry) { 
     this.registry = registry;
     if(this.DOCUMENT && this.NAME && this.ADDRESS) {
@@ -190,6 +194,8 @@ export class AonRegistry extends AonElement {
         let data = {registry: registry.id};
         getRegistryAddress(data).then(ra => {
            address.buildAddressValue(ra);
+           this.registry.address = ra;
+           this.dispatchEvent(new Event(EVENT.CHANGE));
         });
       }
     }

@@ -144,6 +144,7 @@ public interface IJsonNames {
 	String INVOICE_TYPE_UNDEDUCTIBLE = "invoiceTypeUndeductible";
 	String IRPF = "irpf";
 	String IRPF_PARAMS = "irpfParams";
+	String ITEM = "item";
 	// ---------------------------------------------------------------------------------------------	[J] 
 	String JOURNAL = "journal";
 	// ---------------------------------------------------------------------------------------------	[K] 
@@ -223,6 +224,7 @@ public interface IJsonNames {
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
 	String RECTIFICATION = "rectification";
+	String RECTIFIED = "rectified";
 	String REFERENCE_CODE = "referenceCode";
 	String REFERENCE = "reference";
 	String REGISTRY_ID = "registryId";
@@ -275,13 +277,17 @@ public interface IJsonNames {
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";
-	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
+	String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";
 	String WITHHOLDING = "withholding";
+	String WITHHOLDING_FARMER = "withholding_farmer";
+	String WITHHOLDING_PERCENTAGE = "withholding_percentage";
+	String WITHHOLDING_QUOTA = "withholding_quota";
+	String WITHHOLDING_TYPE = "withholding_type";
 	String WORKPLACE_IDS = "workplaceIds";
 	// ---------------------------------------------------------------------------------------------	[Y]
 	String YEAR = "year";

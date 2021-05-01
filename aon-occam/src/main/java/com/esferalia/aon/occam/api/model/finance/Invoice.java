@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -32,6 +33,8 @@ public class Invoice implements Serializable, HasAudit {
 	private RectificationType rectificationType;
 	private SecurityLevel securityLevel;
 	private Integer rectificationInvoice;
+
+	private Registry registryData;
 	private Integer registry;
 	private String registryDocument;
 	private DocumentType registryDocumentType;
@@ -190,6 +193,15 @@ public class Invoice implements Serializable, HasAudit {
 		this.registry = registry;
 		return this;
 	}
+	
+	public Registry getRegistryData() {
+		return registryData;
+	}
+	public Invoice setRegistryData(Registry registryData) {
+		this.registryData = registryData;
+		return this;
+	}
+	
 	public String getRegistryDocument() {
 		return registryDocument;
 	}

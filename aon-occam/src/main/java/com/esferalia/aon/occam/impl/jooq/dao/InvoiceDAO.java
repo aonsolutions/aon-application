@@ -876,7 +876,6 @@ public class InvoiceDAO {
 				: insert(ctx, invoicingGroup) ;
 	}
 	
-	
 	public static LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate){
 		Field<Integer> orderedType = getOrderedType();
 		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);
@@ -981,6 +980,11 @@ public class InvoiceDAO {
 			.findFirst()
 			.orElse(0);
 		return ++next;
+	}
+	
+	public static Invoice accept(AONContext ctx, Invoice invoice) {
+		//TODO 
+		return invoice;
 	}
 	
 	public static Invoice insert(AONContext ctx, Invoice invoice) {

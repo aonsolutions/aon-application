@@ -4,19 +4,25 @@ import java.io.Serializable;
 
 public enum TaxType implements Serializable {
 
-	  UNKNOWN (" ---- ")
-	, VAT("I.V.A.")
-	, RETENTION("I.R.P.F.")
+	  UNKNOWN (" ---- ", "")
+	, VAT("I.V.A.", "IVA")
+	, RETENTION("I.R.P.F.", "IRPF")
 	;
 
 	private String name;
+	private String name2;
 
-	private TaxType(String name) {
+	private TaxType(String name, String name2) {
 		this.name = name;
+		this.name2 = name2;
 	}
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getName2() {
+		return name2;
 	}
 
 	public byte value() {
@@ -35,6 +41,14 @@ public enum TaxType implements Serializable {
 		if (i < 0 || i >= TaxType.values().length)
 			return null;
 		return TaxType.values()[i];
+	}
+	
+	public static TaxType safeValueOf( String str ) {
+		for (TaxType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str) || rs.getName2().equalsIgnoreCase(str))
+				return rs;
+		}
+		return UNKNOWN;
 	}
 
 }

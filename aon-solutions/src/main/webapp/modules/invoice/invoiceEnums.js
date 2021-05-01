@@ -4,6 +4,14 @@ import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 import { IRPF } from "../../environments/msg-en.js";
 
 
+export const InvoiceStatus = {
+  INBOX: 'inbox',
+  REJECTED: 'rejected',
+  DRAFT: 'draft',
+  PENDING: 'pending',
+  SCORED: 'scored'
+}
+
 export const TaxType = {
   IVA: 'IVA',
   IVA_RE: 'IVA_RE',

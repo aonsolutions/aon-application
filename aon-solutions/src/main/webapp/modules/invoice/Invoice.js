@@ -439,21 +439,33 @@ export class Invoice {
 		}
   }
 
+  getWitholdingTax() {
+    let tax = {};
+    this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(r=> {
+      tax = r;
+    });
+    return tax;
+  }
+
   addDetail() {
+    let wh = this.getWitholdingTax();
     let detail = {
       description: '',
-      product: undefined,
+      item: undefined,
       quantity: 1.0,
       price: 0.0,
       discount: 0.0,
       amount: 0.0,
-      withholding: this.withholding,
       category: this.category,
       prepayment: false,
       percentage: 21.0, 
       quota: 0.0,
       surcharge: this.isSurcharge() ? 5.2 : 0.0, 
-      surcharge_quota: 0.0
+      surcharge_quota: 0.0,
+      withholding: this.withholding,
+      withholding_type: wh.type,
+      withholding_percentage: wh.percentage,
+      withholding_quota: 0.0, 
      };
      this.details.push(detail);
      this.calculateTaxFromDetail();

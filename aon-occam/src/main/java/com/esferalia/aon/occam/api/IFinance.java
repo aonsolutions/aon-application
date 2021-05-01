@@ -46,6 +46,7 @@ public interface IFinance {
 	// 	****************************************
 	// 	**************************** INVOICE ***
 	// 	****************************************
+	Invoice acceptInvoice(AONContext ctx, Invoice invoice);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
 	InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail);

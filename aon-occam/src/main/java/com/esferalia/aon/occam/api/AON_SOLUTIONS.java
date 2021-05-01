@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
@@ -69,6 +71,10 @@ public class AON_SOLUTIONS {
 	
 	private static INotification getNotification() {
 		return new NotificationImpl();
+	}
+	
+	private static IFinance getFinance() {
+		return new FinanceImpl();
 	}
 
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
@@ -542,4 +548,36 @@ public class AON_SOLUTIONS {
 		return total;
 	}
 	
+	
+	// ----- INVOICE - ACCEPT INVOICE
+	
+	public static JSONObject acceptInvoice(Domain domain, User user, JSONObject json) {
+		return acceptInvoice(domain.getName(), domain.getId(), user.getLogin(), json);
+	}
+	
+	public static JSONObject acceptInvoice(Domain domain, String login, JSONObject json) {
+		return acceptInvoice(domain.getName(), domain.getId(), login, json);
+	}
+	
+	public static JSONObject acceptInvoice(String domainName, Integer domainId, String login, JSONObject json) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			Invoice invoice = InvoiceJSON.fromJSON(json);
+			invoice = getFinance().acceptInvoice(ctx, invoice);
+			return InvoiceJSON.toJSON(invoice);
+		}
+	}
+	
+	public static Invoice acceptInvoice(Domain domain, User user, Invoice invoice) {
+		return acceptInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice);
+	}
+	
+	public static Invoice acceptInvoice(Domain domain, String login, Invoice invoice) {
+		return acceptInvoice(domain.getName(), domain.getId(), login, invoice);
+	}
+	
+	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().acceptInvoice(ctx, invoice);
+		}
+	}
 }

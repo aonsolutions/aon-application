@@ -36,5 +36,22 @@ public enum WithholdingType implements Serializable {
 			return null;
 		return WithholdingType.values()[i];
 	}
+	
+	public static WithholdingType safeValueOf(String str) {
+		if("IRPF_PROF".equalsIgnoreCase(str)) {
+			return PROFESSIONAL;
+		}
+		if("IRPF_ALQ".equalsIgnoreCase(str)) {
+			return MOVABLE_CAPITAL;
+		}
+		if("IRPF_AGRI".equalsIgnoreCase(str)) {
+			return FARMER;
+		}
+		for (WithholdingType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getDescription().equalsIgnoreCase(str))
+				return rs;
+		}
+		return PROFESSIONAL;
+	}
 }
 

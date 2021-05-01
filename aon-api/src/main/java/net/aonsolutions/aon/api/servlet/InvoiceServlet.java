@@ -159,8 +159,28 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	@Override
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API INVOICE SERVLET - PUT METHOD");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+			case "/":
+				response(req, resp, setInvoice(api.getDomain(), api.getUser().getLogin(), api.getData()));
+				break;
+			case "/accept":
+				response(req, resp, acceptInvoice(api));
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - DELETE METHOD");
+		LOGGER.info("AON API INVOICE SERVLET - DELETE METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
@@ -342,6 +362,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		AON.rawdocDelete(domain.getName(), domain.getId(), login, 
 			f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getIdProperty().in(idsArray)));
+	}
+	
+	public static JSONObject acceptInvoice(AonApiData api) {
+		return AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), api.getData());
 	}
 	
 	public static JSONObject setInvoice(Domain domain, String login, JSONObject json) {

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoiceAccounts } from '../../services/service.js';
+import { getDomainUserRoles, getInvoiceAccounts, insertInvoice } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -191,6 +191,7 @@ export class AonNewInvoice extends AonElement {
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
@@ -203,6 +204,9 @@ export class AonNewInvoice extends AonElement {
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.COMMENT, () => this.addInvoiceComment());
+		}
+		if(!this.autosave){
+			invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
@@ -397,7 +401,11 @@ export class AonNewInvoice extends AonElement {
 		registry.setRegistry(this.invoice.getRegistry());
 		registry.readonly = this.invoice.isReadonly();
 		registry.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setRegistry(registry.value);
+			this.invoice.setRegistry(registry.getRegistry());
+			if(this.autosave) this.save();
+		});
+		registry.addEventListener(EVENT.SELECT, () => {
+			this.invoice.setRegistry(registry.getRegistry());
 			if(this.autosave) this.save();
 		});
 		table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');
@@ -674,7 +682,7 @@ export class AonNewInvoice extends AonElement {
 		});
 
 		description.addEventListener(EVENT.CHANGE, () => {
-			
+			this.details[i].description = description.value;
 		});
 		
 		description.addEventListener(EVENT.SELECT,() => {
@@ -755,6 +763,7 @@ export class AonNewInvoice extends AonElement {
 		vat.title = '%IVA';
 		vat.options = JSON.stringify(TaxIVAPercentage);
 		vat.addEventListener(EVENT.SELECT, () => {
+			console.log(vat.value);
 			detail.percentage = vat.value;
 			this.invoice.setDetail(detail, i);
 			this.reload();
@@ -994,6 +1003,18 @@ export class AonNewInvoice extends AonElement {
 		} else return MSG.INVOICE_RECEIVED;
 	}
 
+	save() {
+		insertInvoice(this.getInvoice())
+			.then(r => {
+				this.getInvoice().id = r.id;
+				this.getApplication().getToast().start({
+					type: CONSTANT.SUCCESS,
+					message: MSG.SAVED_DATA
+				});
+			})
+			.catch(e => this.showError(e));
+	}
+
 	back() {
 		this.getApplication().getParent().aonInvoiceList();
 	}
@@ -1007,7 +1028,7 @@ export class AonNewInvoice extends AonElement {
 		const top  = rect.top + y;
 		const left = rect.left + x;
 
-		let d = document.getElementById(this.getApplication().getOptionDialog());
+		let d = this.getApplication().getOptionDialog();
 		let rectify = ACTION.RECTIFY;
 		rectify.fn = () => this.rectifyInvoice();
 		let duplicate = ACTION.DUPLICATE;
@@ -1059,6 +1080,31 @@ export class AonNewInvoice extends AonElement {
 			this.getApplication().getParent().aonInvoice(invoice.type, invoice);
 		}
 	}
+
+	acceptInvoice() {
+		acceptInvoice(this.getInvoice()).then(r => {
+			this.invoice.createInvoice(r);
+			this.reload();
+		}).catch(e => this.showError(e));
+	}
+
+	recordInvoice() {
+		if(this.invoice.isSelfconta()){
+			recordSelfconta(this.getInvoice())
+				.then(r => this.back())
+				.catch(e => this.showError(e));
+		}	else {
+				let aonInvoice = this.getElement('aonInvoice');
+				let d = document.getElementById(aonInvoice.DIALOG);
+				d.clear();
+				if(!this.isMobile())d.width = '400px';
+				d.setTitle(MSG.RECORD_INVOICE);
+				d.setContentHTML('Esta opción está en desarrollo...');
+				d.addAcceptAction(() => {});
+				d.open();
+		}
+	}
+
 
 	rejectInvoice() {
 		let d = document.getElementById(this.getApplication().getDialog());

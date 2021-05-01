@@ -118,4 +118,8 @@ export class AonElement extends HTMLElement{
     this.TIME_ACTION = tm;
   }
 
+  showError(e) {
+			let toast = this.getElement(this.getApplication().TOAST);
+			toast.start(JSON.parse(e));    
+  }
 }
