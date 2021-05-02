@@ -108,10 +108,10 @@
     $F{salary}.getDeductions().getIrpf().getAmount()/$F{salary}.getIrpfBase()):0.0)]]></variableExpression>
 	</variable>
 	<variable name="totalDeduction" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{salary}.getTotalDeduction() + $V{salaryInKind}]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getTotalDeduction()]]></variableExpression>
 	</variable>
 	<variable name="totalPayment" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{salary}.getTotalPayment() + $V{salaryInKind}]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
 	<variable name="DoubleFormater" class="java.text.DecimalFormat" resetType="None">
 		<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></variableExpression>

@@ -81,10 +81,10 @@
 		<variableExpression><![CDATA[$F{salary}.getPayments().getSalaryInKind().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="totalPayment" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{salary}.getTotalPayment() + $V{salaryInKind}]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
 	<variable name="totalDeduction" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{salary}.getTotalDeduction() + $V{salaryInKind}]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getTotalDeduction()]]></variableExpression>
 	</variable>
 	<variable name="printedLines" class="java.lang.Integer">
 		<variableExpression><![CDATA[$V{supplements}.size()]]></variableExpression>
