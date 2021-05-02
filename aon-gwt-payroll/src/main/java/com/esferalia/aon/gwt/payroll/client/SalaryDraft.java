@@ -4555,13 +4555,15 @@ public class SalaryDraft extends ResizeComposite
 			String styles[] = eventStyles.get(Event.Type.WARNING);
 
 			StyleToggleButton itemButton = getPaymentButton((UndefinedPaymentVariable) variable, styles[0], styles[1]);
-			itemButton.setTabIndex(Short.MAX_VALUE);
-			valuePanel.add(itemButton);
-			// not show payments of variables at 'to' ...
-			itemButton.setValue(
-			(variable.getScope().compareTo(Scope.CONTRACT) >= 0) 
-			|| (show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0), true);
-			itemButton.ensureDebugId("item-button-" + debugName );
+			if ( itemButton  != null ) {
+				itemButton.setTabIndex(Short.MAX_VALUE);
+				valuePanel.add(itemButton);
+				// not show payments of variables at 'to' ...
+				itemButton.setValue(
+				(variable.getScope().compareTo(Scope.CONTRACT) >= 0) 
+				|| (show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0), true);
+				itemButton.ensureDebugId("item-button-" + debugName );
+			}
 		} else if (variable instanceof UndefinedDeductionVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
 
