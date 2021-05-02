@@ -25,12 +25,15 @@ import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -49,6 +52,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -63,6 +67,49 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 	interface CalendarDraftUiBinder extends UiBinder<Widget, CalendarDraft> {}
 
+	// ----------------------------------------------- ScheduledCommand (DefinitionMenu)
+	
+	class AddEventCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			if(null != datePickerDateSelected)
+				onEnterKeyPressAction(datePickerDateSelected);
+		}
+	}
+	
+	class DeleteEventCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			if(null != datePickerDateSelected)
+				onSuprKeyPressAction(datePickerDateSelected);
+		}
+	}
+	
+	class DayMenu extends ContextMenu {
+				
+		private MenuItem deleteEventMenuItem = null;
+		private MenuItem addEventMenuItem = null;
+		
+		public DayMenu() {
+			
+			addEventMenuItem = addItem("A\u00F1dir festivo", new AddEventCommand(), 
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addEventMenuItem.ensureDebugId("addEventMenuItem");
+			
+			deleteEventMenuItem = addItem("Eliminar festivo", new DeleteEventCommand(), 
+					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			deleteEventMenuItem.ensureDebugId("hourMenuItem");
+			
+		}
+
+		public void hideDeleteMenuItem(boolean visible) {
+			deleteEventMenuItem.setVisible(visible);
+		}
+		
+	}
+	
 	// ----------------------------------------------- CssResource 
 	
 	interface Style extends CssResource {
@@ -99,6 +146,8 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 
 		@ClassName("not-work")
 		String notWork();
+		
+		String cmd_btn();
 	}
 	
 	// ----------------------------------------------- WeekDay 
@@ -194,6 +243,8 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	
 	private boolean isCollapsed = false;
 	
+	private DayMenu dayMenu;
+	
 	private AonToolbar toolbar;
 	private AonToolbarButton collapseButton;
 	private AonToolbarButton saveButton;
@@ -209,6 +260,7 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		toolbar = getToolbarPanel();
 		initWidget(uiBinder.createAndBindUi(this));
 		mainPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dayMenu = new DayMenu();
 	}
 
 	// ----------------------------------------------- UiHandlers
@@ -294,7 +346,17 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	@Override
 	public void onValueChangeEvent(Date date) {
 		this.datePickerDateSelected = date;	
-		deleteButton.setVisible(calendarDraftObjectData.canDeleteMyHoliday(date));
+		deleteButton.setEnabled(calendarDraftObjectData.canDeleteMyHoliday(date));
+	}
+	
+	@Override
+	public void onContextMenu(ContextMenuEvent event, Date date) {
+		if(calendarDraftObjectData.isDefaultHoliday(date))
+			return;
+		NativeEvent nativeEvent = event.getNativeEvent();
+		dayMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		dayMenu.hideDeleteMenuItem(calendarDraftObjectData.canDeleteMyHoliday(date));
+		dayMenu.show();
 	}
 	
 	@Override
@@ -687,11 +749,6 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		
 		AonToolbar toolbar = new AonToolbar("Calendario Laboral");
 		
-		collapseButton = new AonToolbarButton( "", AON.CSS.aonIconMenu() );
-		collapseButton.addClickHandler(e -> {
-			onCollapse(e);
-		});
-		toolbar.add(collapseButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> {
@@ -699,24 +756,12 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		});
 		toolbar.add(saveButton);
 		
-		addEvent = new AonToolbarButton( "A\u00F1dir Festivo", AON.CSS.aonIconAdd());
-		addEvent.addClickHandler(e -> {
-			onAddEvent(e);
-		});
-		toolbar.add(addEvent);
-		
-		workDays = new AonToolbarButton( "D\u00EDas Laborables", AON.CSS.aonIconRestore() );
+		workDays = new AonToolbarButton( "D\u00EDas Laborables", AON.CSS.aonIconEditCalendar() );
 		workDays.addClickHandler(e -> {
 			onWorkDays(e);
 		});
+		workDays.setVisible(false);
 		toolbar.add(workDays);
-		
-		deleteButton = new AonToolbarButton( "Eliminar", AON.CSS.aonIconDelete() );
-		deleteButton.addClickHandler(e -> {
-			onDelete(e);
-		});
-		deleteButton.setVisible(false);
-		toolbar.add(deleteButton);
 		
 		Label holidayLabel = new Label("Festivos");
 		holidayLabel.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -733,6 +778,25 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 		});
 		toolbar.add(holidayList);
 		
+		addEvent = new AonToolbarButton( "A\u00F1dir Festivo", AON.CSS.aonIconEditCalendar());
+		addEvent.addClickHandler(e -> {
+			onAddEvent(e);
+		});
+		toolbar.add(addEvent);
+		
+		deleteButton = new AonToolbarButton( "Eliminar", AON.CSS.aonIconDelete() );
+		deleteButton.addClickHandler(e -> {
+			onDelete(e);
+		});
+		deleteButton.setEnabled(false);
+		toolbar.add(deleteButton);
+		
+		collapseButton = new AonToolbarButton( "", AON.CSS.aonIconVisibilityOff());
+		collapseButton.addClickHandler(e -> {
+			onCollapse(e);
+		});
+		toolbar.add(collapseButton);
+		
 		return toolbar;
 	
 	}
@@ -740,10 +804,15 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	// ----------------------------------------------- Toolbar.Methods
 	
 	private void onCollapse(ClickEvent e) {
-		if(isCollapsed)
+		if(isCollapsed) {
 			centerPanel.setWidgetSize(leyend, 190);
-		else
+			collapseButton.removeStyleName(AON.CSS.aonIconVisibility());
+			collapseButton.addStyleName(AON.CSS.aonIconVisibilityOff());
+		}else {
 			centerPanel.setWidgetSize(leyend, 0);
+			collapseButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+			collapseButton.addStyleName(AON.CSS.aonIconVisibility());
+		}
 		isCollapsed = !isCollapsed;
 		centerPanel.animate(500);
 	}
@@ -848,8 +917,9 @@ public class CalendarDraft extends Composite implements CalendarDraftObjectData.
 	}
 
 	private void onDelete(ClickEvent e) {
+//		Window.alert("getDateSelected() : " + getDateSelected());
 		calendarDraftObjectData.deleteHoliday(getDateSelected());
-		deleteButton.setVisible(false);
+		deleteButton.setEnabled(false);
 	}
 	
 }

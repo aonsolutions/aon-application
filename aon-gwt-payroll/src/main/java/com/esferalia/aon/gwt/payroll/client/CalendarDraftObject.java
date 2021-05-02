@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CalendarDraftObject implements Calendar.Listener {
@@ -21,6 +22,8 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public interface Listener {
 
 		void onValueChangeEvent(Date date);
+		
+		void onContextMenu(ContextMenuEvent event, Date date);
 		
 		void onSuprPressEvent(Date date);
 		
@@ -36,9 +39,14 @@ public class CalendarDraftObject implements Calendar.Listener {
 
 	@Override
 	public void onValueChangeEvent(Date date) {
-		
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(date);
+	}
+	
+	@Override
+	public void onContextMenu(ContextMenuEvent event, Date date) {
+		for (Listener listener : listeners)
+			listener.onContextMenu(event, date);
 	}
 	
 	@Override

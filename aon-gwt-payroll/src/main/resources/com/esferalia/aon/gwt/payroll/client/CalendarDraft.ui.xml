@@ -94,6 +94,13 @@
 		margin-top: 50px;
 		background-color: transparent !important;
 	}
+	
+	.cmd_btn{
+		background-position: center left;
+		background-repeat: no-repeat;
+		padding-left: 25px !important;
+		background-size: contain;
+	}
 
 	</ui:style>
 

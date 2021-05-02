@@ -8,8 +8,9 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarCSS;
 import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.shared.CustomDatePicker;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -23,11 +24,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class Calendar extends ResizeComposite implements
-		ValueChangeHandler<Date>, KeyDownHandler {
+		ValueChangeHandler<Date>, ContextMenuHandler, KeyDownHandler {
 	
 	public interface Listener {
 
 		void onValueChangeEvent(Date date);
+		
+		void onContextMenu(ContextMenuEvent event, Date date);
 		
 		void onSuprPressEvent(Date date);
 		
@@ -77,6 +80,7 @@ public class Calendar extends ResizeComposite implements
 		table.setStylePrimaryName(CALENDAR_CSS.aonCalendar());
 		simpleSelected = new SimpleSelectedState();
 		initWidget(table);
+//		table.addDomHandler(this, ContextMenuEvent.getType());
 	}
 
 	public void addListener(Listener listener) {
@@ -122,6 +126,7 @@ public class Calendar extends ResizeComposite implements
 			datePicker.setYearArrowsVisible(false);
 			datePicker.addValueChangeHandler(this);			
 			datePicker.addKeyDownHandler(this);
+			datePicker.addDomHandler(this, ContextMenuEvent.getType());
 			datePicker.sinkEvents(Event.ONKEYDOWN);
 			table.setWidget(row, col, datePicker);
 			CalendarUtil.addMonthsToDate(date, 1);
@@ -155,16 +160,25 @@ public class Calendar extends ResizeComposite implements
 	private Date getDateSelected() {
 		return this.dateSelected;
 	}
+	
 
 	@Override
-	public void onValueChange(ValueChangeEvent<Date> event) {
-				
+	public void onValueChange(ValueChangeEvent<Date> event) {		
 		this.dateSelected = event.getValue();		
-		
 		for (Listener listener : listeners)
 			listener.onValueChangeEvent(dateSelected);
 	}
-
+	
+	@Override
+	public void onContextMenu(ContextMenuEvent event) {
+		if(null != this.dateSelected) {
+			event.preventDefault();
+			event.stopPropagation();
+			
+			for (Listener listener : listeners)
+				listener.onContextMenu(event, dateSelected);
+		}
+	}
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
@@ -211,4 +225,5 @@ public class Calendar extends ResizeComposite implements
 		initTable();
 		super.onAttach();
 	}
+
 }
