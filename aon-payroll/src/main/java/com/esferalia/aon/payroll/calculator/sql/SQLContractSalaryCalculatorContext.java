@@ -1043,8 +1043,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		protected double getActiveDays(Period p) {
 			try {
 				double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, p.getStart(), p.getEnd())
-						.stream().map( v -> (Number) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v.doubleValue() ))
-						;
+				.stream()
+				.map ( v -> v.getValue(v.getPeriod()) )
+				.filter( v -> (v != null) && (v instanceof Number ))
+				.collect(Collectors.summingDouble( v -> ((Number) v).doubleValue() ))
+				;
 				return activeDays;
 			} catch (Throwable t ) {
 				return 0.00;
@@ -2196,8 +2199,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date start  = AonDateUtils.getFirstDayOfMonth(p.getStart());
 		Date end  = AonDateUtils.getLastDayOfMonth(p.getStart()); //AonDateUtils.add(p.getStart(), DAY_OF_MONTH,-1);
 		
-		double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end)
-		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
+		double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end).stream()
+		.map ( v -> v.getValue(v.getPeriod()) )
+		.filter( v -> ( v != null ) && ( v instanceof Number ))
+		.collect(Collectors.summingDouble( v -> ((Number) v).doubleValue() ))
 		;
 
 		if (activeDays > 0.00 )
