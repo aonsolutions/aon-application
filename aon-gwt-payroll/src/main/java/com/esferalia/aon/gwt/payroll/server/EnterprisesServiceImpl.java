@@ -41,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
+import com.esferalia.aon.gwt.payroll.jooq.JooqComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
@@ -66,6 +67,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
@@ -141,11 +143,11 @@ import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
 import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
+import solutions.aon.seg.social.SistemaREDSecondaryUser;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.object.SecondaryUser;
-import solutions.aon.seg.social.SistemaREDSecondaryUser;
 import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -2986,6 +2988,34 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	protected static Date toSqlDate(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+
+	@Override
+	public ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String domainName, String userLogin) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			return JooqComunicaEnterpriseSettings.getComunicaEnterpriseSettings(connection, domainId, userId);
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setComunicaEnterpriseSettings(String domainName, String userLogin, ComunicaEnterpriseSettings comunicaEnterpriseSettings) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			JooqComunicaEnterpriseSettings.setComunicaEnterpriseSettings(connection, domainId, userId, comunicaEnterpriseSettings);
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

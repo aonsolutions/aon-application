@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
@@ -506,6 +507,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void hasCertificateSEPE(AsyncCallback<Boolean> asyncCallback) {
 		enterprisesServiceAsync.hasCertificateSEPE(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void getComunicaEnterpriseSettings(AsyncCallback<ComunicaEnterpriseSettings> asyncCallback) {
+		enterprisesServiceAsync.getComunicaEnterpriseSettings(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void setComunicaEnterpriseSettings(ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setComunicaEnterpriseSettings(getCurrentDomainName(), getCurrentUser(), comunicaEnterpriseSettings, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

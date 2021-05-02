@@ -355,24 +355,4 @@ public class JooqWorkplace {
 		return payMethods;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

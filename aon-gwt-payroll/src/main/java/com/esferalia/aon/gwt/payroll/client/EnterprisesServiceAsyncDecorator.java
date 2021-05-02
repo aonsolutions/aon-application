@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
@@ -805,6 +806,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void hasCertificateSEPE(String domainName, String currentUser, AsyncCallback<Boolean> callback) {
 		AON.start();
 		enterprisesServiceAsync.hasCertificateSEPE(domainName, currentUser, new AsyncCallbackWrapper<Boolean>(callback));
+	}
+
+	@Override
+	public void getComunicaEnterpriseSettings(String domainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> callback) {
+		AON.start();
+		enterprisesServiceAsync.getComunicaEnterpriseSettings(domainName, currentUser, new AsyncCallbackWrapper<ComunicaEnterpriseSettings>(callback));
+	}
+
+	@Override
+	public void setComunicaEnterpriseSettings(String domainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setComunicaEnterpriseSettings(domainName, currentUser, comunicaEnterpriseSettings, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

@@ -4,7 +4,9 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class JooqMainCCC {
 
@@ -188,12 +191,35 @@ public class JooqMainCCC {
 					.where(ENTERPRISE_CCC.ID.eq(cccId))
 					.execute();
 			}else {
-				dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
-					.values(domainId, cccInfo.getCcc(), cccInfo.getType(), cccInfo.getActivityId(), geozoneId)
-					.execute();
+				if(null == cccInfo.getActivityId()  || cccInfo.getActivityId() == -1)
+					insertCompleteComunicaCCC(dslContext, domainId, geozoneId, cccInfo);
+				else
+					dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
+						.values(domainId, cccInfo.getCcc(), cccInfo.getType(), cccInfo.getActivityId(), geozoneId)
+						.execute();
 			}
 		}
 
+	}
+
+	private static void insertCompleteComunicaCCC(DSLContext dslContext, Integer domainId, Integer geozoneId, CCCInfo cccInfo) {
+		Record enterpriseRecord = dslContext.select().from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
+		Integer enterpriseId = enterpriseRecord.get(ENTERPRISE.REGISTRY);
+		
+		Record enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
+			.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
+			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterpriseId)
+			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "Actividad " + cccInfo.getGeozone())
+			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
+			.returning(ENTERPRISE_ACTIVITY.ID)
+			.fetchOne();
+		
+		Integer enterpriseActivityId = enterpriseActivityRecord.get(ENTERPRISE_ACTIVITY.ID);
+		
+		dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
+			.values(domainId, cccInfo.getCcc(), cccInfo.getType(), enterpriseActivityId, geozoneId)
+			.execute();
+			
 	}
 
 }

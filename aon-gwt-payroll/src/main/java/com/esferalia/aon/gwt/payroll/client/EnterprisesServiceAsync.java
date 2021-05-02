@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
@@ -185,6 +186,7 @@ public interface EnterprisesServiceAsync {
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	void hasCertificateSEPE(String currentDomainName, String currentUser, AsyncCallback<Boolean> asyncCallback);
 	void getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback);
-	
+	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
+	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	
 }

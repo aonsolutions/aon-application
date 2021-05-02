@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
@@ -285,5 +286,10 @@ public interface EnterprisesService extends RemoteService {
 	String getDeleteCCCMessage(String currentDomainName, ArrayList<Integer> cccIds);
 
 	List<ITEmployee> getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId);
+
+	ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String currentDomainName, String currentUser);
+
+	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser,
+			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
 	
 }
