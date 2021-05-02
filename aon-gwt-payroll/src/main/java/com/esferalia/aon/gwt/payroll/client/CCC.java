@@ -177,9 +177,9 @@ public abstract class CCC extends ResizeComposite {
 		cccDataTableHeader.setWidget(row, 4, blank);
 	}
 	
-	private void calculateScrollPanelHeight() {
+	public void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight - 550) + "px");
+		scrollPanel.setHeight((clientHeight/7) + "px");
 	}
 	
 	public void setDialogHeight() {
@@ -508,12 +508,9 @@ public abstract class CCC extends ResizeComposite {
 	private ListBox createActivitiesListBox() {
 		ListBox activities = new ListBox();
 		
-		Set<Entry<Integer, String>> activitySet = getActivities();
-		if(null == activitySet)
-			activities.addItem("", "-1");
-		else
-			for(Entry<Integer, String> entry : getActivities())
-				activities.addItem(entry.getValue(), entry.getKey().toString());
+		activities.addItem("-", "-1");
+		for(Entry<Integer, String> entry : getActivities())
+			activities.addItem(entry.getValue(), entry.getKey().toString());
 		
 		activities.addStyleName("aon-selectOneMenu");
 		activities.getElement().getStyle().setWidth(98, Unit.PCT);

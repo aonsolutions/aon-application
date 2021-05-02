@@ -2,8 +2,10 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -168,6 +170,12 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		}
 			
 		return completeCCC;
+	}
+	
+	public Set<Entry<Integer, String>> getActivities(){
+		HashMap<Integer, String> activities = new HashMap<Integer, String>();
+		activities.put(activityInfo.getId(), activityInfo.getDescription());
+		return activities.entrySet();
 	}
 
 }
