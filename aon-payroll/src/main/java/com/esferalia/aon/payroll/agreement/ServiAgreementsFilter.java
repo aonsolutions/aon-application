@@ -80,7 +80,7 @@ public class ServiAgreementsFilter {
 					} catch (ParseException e) {}
 		            
 		           
-		            serviAgreementsMap.put(ssCode.trim() + " - " + agreement.trim() + " (" + scope.trim() + " - " + territory.trim() + ")", serviCode);
+		            serviAgreementsMap.put(ssCode.trim() + " - " + agreement.trim() + " [" + scope.trim() + " - " + territory.trim() + "]", serviCode);
 		        }
 			}
 		}
@@ -98,6 +98,43 @@ public class ServiAgreementsFilter {
 			String entrySSNumber = entry.getKey().split(" - ")[0].trim();
 			if(AonStringUtils.equalsIgnoreCase(entrySSNumber, ssNumber))
 				return entry.getValue();
+		}
+		return null;
+	}
+	
+	public static String getServiAgreementDescription(String ssNumber) {
+		Map<String, String> serviAgreementMap = getServiAgreementsMap(true);
+		for(Entry<String, String> entry : serviAgreementMap.entrySet()) {
+			String entrySSNumber = entry.getKey().split(" - ")[0].trim();
+			
+			if(AonStringUtils.equalsIgnoreCase(entrySSNumber, ssNumber)) {
+				String entryDescription = entry.getKey().split(" - ")[1].trim();
+				entryDescription = entryDescription.split(" (")[0].trim();
+				return entryDescription;
+			}
+		}
+		return null;
+	}
+	
+	public static String getServiAgreementSSNumberByKey(String key) {
+		Map<String, String> serviAgreementMap = getServiAgreementsMap(true);
+		for(Entry<String, String> entry : serviAgreementMap.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), key)) {
+				String entrySSNumber = entry.getKey().split(" - ")[0].trim();
+				return entrySSNumber;
+			}
+		}
+		return null;
+	}
+	
+	public static String getServiAgreementDescriptionByKey(String key) {
+		Map<String, String> serviAgreementMap = getServiAgreementsMap(true);
+		for(Entry<String, String> entry : serviAgreementMap.entrySet()) {
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), key)) {
+				String entryDescription = entry.getKey().split(" - ")[1].trim();
+				entryDescription = entryDescription.split(" (")[0].trim();
+				return entryDescription;
+			}
 		}
 		return null;
 	}
