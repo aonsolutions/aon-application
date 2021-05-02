@@ -123,11 +123,14 @@ public class MainEntryPoint implements EntryPoint {
 			MainDigitalCertificatesObject mainDigitalCertificatesObject = new MainDigitalCertificatesObject();
 			MainDigitalCertificates mainDigitalCertificates = new MainDigitalCertificates();
 			mainDigitalCertificates.onModuleLoad(mainDigitalCertificatesObject);
-		} else if (entryPoint
-				.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
+		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
 			MainCCCObject mainCCCObject = new MainCCCObject();
 			MainCCC mainCCC = new MainCCC();
 			mainCCC.onModuleLoad(mainCCCObject);
+		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
+			MainConfigComunicaObject mainConfigComunicaObject = new MainConfigComunicaObject();
+			MainConfigComunica mainConfigComunica = new MainConfigComunica();
+			mainConfigComunica.onModuleLoad(mainConfigComunicaObject);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();

@@ -18,6 +18,7 @@ public interface Constants {
 	public static final String MAIN_IT_ENTRY_POINT = "MainIT";
 	public static final String MAIN_DIGITAL_CERTIFICATES_ENTRY_POINT = "MainDigitalCertificates";
 	public static final String MAIN_CCC_ENTRY_POINT = "MainCCC";
+	public static final String MAIN_CONFIG_COMUNICA_ENTRY_POINT = "MainConfigComunica";
 	public static final String ACTIVITY_SUMMARY_ENTRY_POINT = "ActivitySummary";
 	
 	public static final String MODULE_ENTRY_POINT = "module";	
