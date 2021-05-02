@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class AonCompany implements Serializable {
@@ -77,7 +78,11 @@ public class AonCompany implements Serializable {
 			.put("parent",getDomain().isParent())
 			.put("shared", isShared())
 			.put("parentId",getDomain().getParentId())
-			.put("maxDefinedUsers", getDomain().getMaxDefinedUsers());
+			.put("maxDefinedUsers", getDomain().getMaxDefinedUsers())
+			.put("withholding", getCompany().isWithholding())
+			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, getCompany().isVatAccrualPayment())
+			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge());
+		
 		
 		return json;
 	}

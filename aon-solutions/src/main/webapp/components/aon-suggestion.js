@@ -179,6 +179,10 @@ export class AonSuggestion extends AonElement {
       div.classList.remove('is-visible');
     }
   }
+
+  focus() {
+    this.getElement(this.INPUT).focus();
+  }
 }
 if(!window.customElements.get('aon-suggestion')){
   window.customElements.define('aon-suggestion', AonSuggestion);

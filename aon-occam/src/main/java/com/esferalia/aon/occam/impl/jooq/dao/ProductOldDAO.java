@@ -148,6 +148,8 @@ public class ProductOldDAO {
 		@Override public Property<Integer> getPackMeasurementTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_MEASUREMENT_TAG);}
 		@Override public Property<Integer> getStockUnitTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.STOCK_UNIT_TAG);}
 		
+		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
+		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
 	}
 	
 	protected static class BrandPropertiesDAO implements BrandProperties {

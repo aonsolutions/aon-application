@@ -5,15 +5,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.ItemJSON;
+import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
@@ -28,6 +33,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -37,6 +44,8 @@ import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
+import com.esferalia.aon.occam.impl.jooq.Product2Impl;
+import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
@@ -77,6 +86,10 @@ public class AON_SOLUTIONS {
 		return new FinanceImpl();
 	}
 
+	private static IProduct2 getProduct() {
+		return new Product2Impl();
+	}
+	
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
 		AONContext ctx = null;
 		try {
@@ -578,6 +591,40 @@ public class AON_SOLUTIONS {
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().acceptInvoice(ctx, invoice);
+		}
+	}
+	
+	// ----- PRODUCT - GET PRODUCT
+
+	public static JSONArray getProducts(Domain domain, User user, ProductFilter filter) {
+		return getProducts(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static JSONArray getProducts(Domain domain, String login, ProductFilter filter) {
+		return getProducts(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static JSONArray getProducts(String domainName, Integer domainId, String login, ProductFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			Stream<Product> products = getProduct().getProductStream(ctx, filter);
+			return ProductJSON.toJSON(products);
+		}
+	}
+	
+	// ----- PRODUCT - GET PRODUCT
+
+	public static JSONArray getItems(Domain domain, User user, ItemFilter filter) {
+		return getItems(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static JSONArray getItems(Domain domain, String login, ItemFilter filter) {
+		return getItems(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static JSONArray getItems(String domainName, Integer domainId, String login, ItemFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			Stream<Item> items = getProduct().getItemStream(ctx, filter);
+			return ItemJSON.toJSON(items);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
-import { CONSTANT, CSS } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import './aon-icon-button.js';
 
 
@@ -119,7 +119,7 @@ export class AonNumber extends AonElement {
             this.getElement(this.getAttribute('id') + 'Input').setAttribute(CONSTANT.DISABLED, this.isDisabled());
         }
 
-        if (CONSTANT.READONLY === name) {
+        if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
             if (this.isReadonly())
                 this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
             else this.getElement(this.INPUT).removeAttribute(CONSTANT.READONLY);
@@ -168,9 +168,9 @@ export class AonNumber extends AonElement {
         label.style.marginBottom = '0px';
         label.style.width = '100%';
 
-        let input = document.createElement('input');
+        let input = document.createElement(TAG.INPUT);
         input.required = true;//this.getAttribute(CONSTANT.REQUIRED);
-        input.id = this.getAttribute('id') + 'Input';
+        input.id = this.INPUT;
         input.name = this.getAttribute(CONSTANT.NAME);
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
         input.type = 'text';
@@ -182,31 +182,31 @@ export class AonNumber extends AonElement {
         if (this.isDisabled())
             input.disabled = true;
 
-        input.addEventListener('keypress', (ev) => {
+        input.addEventListener(EVENT.KEYPRESS, (ev) => {
             let keyChar = String.fromCharCode(ev.which || ev.keyCode);
             let reg = new RegExp(/[^0-9]/g);
             if (this.format) reg = new RegExp(/[^0-9\.,]/g);
             if (reg.test(keyChar)) ev.preventDefault();
-            this.dispatchEvent(new Event('keypress'));
+            this.dispatchEvent(new Event(EVENT.KEYPRESS));
         });
 
-        input.addEventListener('focus', ({ target }) => {
+        input.addEventListener(EVENT.FOCUS, ({ target }) => {
             let value = target.value;
             if (value) input.value = this.onFocus(value);
             input.select();
-            this.dispatchEvent(new Event('focus'));
+            this.dispatchEvent(new Event(EVENT.FOCUS));
         });
 
-        input.addEventListener('blur', ({ target }) => {
+        input.addEventListener(EVENT.BLUR, ({ target }) => {
             let value = target.value;
             if (value) {
                 let newValue = this.onBlur(value);
                 this.value = this.onFocus(newValue);
             }
-            this.dispatchEvent(new Event('blur'));
+            this.dispatchEvent(new Event(EVENT.BLUR));
         });
 
-        input.addEventListener('change', ({ target }) => {
+        input.addEventListener(EVENT.CHANGE, ({ target }) => {
             let value = target.value;
             if (value) {
                 let newValue = this.onBlur(value);
@@ -216,7 +216,7 @@ export class AonNumber extends AonElement {
 
         label.appendChild(input);
 
-        let span = document.createElement('span');
+        let span = document.createElement(TAG.SPAN);
         span.id = this.DESCRIPTION;
         span.className = CSS.AON_INPUT_LABEL;
         span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
@@ -292,6 +292,10 @@ export class AonNumber extends AonElement {
 
     setDisabled(disabled) {
         this.setAttribute(CONSTANT.DISABLED, disabled);
+    }
+
+    focus(){
+        this.getElement(this.INPUT).focus();
     }
 }
 if(!window.customElements.get('aon-number')){

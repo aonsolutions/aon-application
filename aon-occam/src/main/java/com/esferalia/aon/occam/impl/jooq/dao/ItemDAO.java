@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -67,6 +68,9 @@ public class ItemDAO {
 		@Override public Property<Integer> getPackMeasurementTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_MEASUREMENT_TAG);}
 		@Override public Property<Integer> getStockUnitTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.STOCK_UNIT_TAG);}
 		
+		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
+		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+
 	}
 
 	public static Item get(AONContext ctx, ItemFilter filter){
@@ -84,6 +88,8 @@ public class ItemDAO {
 			.select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+			.where(ITEM_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new ItemFiller());
 	}
 	
@@ -208,6 +214,7 @@ public class ItemDAO {
 				.setPackMeasurementTag(new Tag().setId(r.getValue(ITEM.PACK_MEASUREMENT_TAG)))
 				.setPackUnits(r.getValue(ITEM.PACK_UNITS))
 				.setPackUnitsTag(new Tag().setId(r.getValue(ITEM.PACK_UNITS_TAG)))
+				.setPrice(r.getValue(ITEM.PRICE))
 				.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
 				.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
 				.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))

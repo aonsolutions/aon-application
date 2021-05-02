@@ -217,7 +217,11 @@ export class AonSelect extends AonElement {
 
   isReadonly() {
     return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
-      && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+      && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
+
+  focus() {
+    this.getElement(this.INPUT).focus();
   }
 }
 if(!window.customElements.get('aon-select')){

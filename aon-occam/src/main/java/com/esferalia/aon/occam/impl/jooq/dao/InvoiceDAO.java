@@ -983,7 +983,10 @@ public class InvoiceDAO {
 	}
 	
 	public static Invoice accept(AONContext ctx, Invoice invoice) {
-		//TODO 
+		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
+		InvoiceAutoComplete.completeInvoice(ctx, aonCtx, invoice);
+		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
+		insert(ctx, aonCtx, invoice);
 		return invoice;
 	}
 	
@@ -1073,6 +1076,7 @@ public class InvoiceDAO {
 	}
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
+
 		if(invoice.getDetails() != null) {
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				insertDetail(ctx, config, invoice, detail);

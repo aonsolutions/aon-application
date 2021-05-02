@@ -1,13 +1,15 @@
 export const BLUR = 'blur';
 export const CHANGE = 'change';
 export const CLICK = 'click';
-export const KEYUP = 'keyup';
-export const SELECT = 'select';
 export const DRAGOVER = 'dragover';
 export const DRAGENTER = 'dragenter';
 export const DRAGLEAVE = 'dragleave';
 export const DROP = 'drop';
+export const FOCUS = 'focus';
+export const KEYPRESS = 'keypress';
+export const KEYUP = 'keyup';
 export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
+export const SELECT = 'select';
 export const USER_AUTH = 'userAuth';

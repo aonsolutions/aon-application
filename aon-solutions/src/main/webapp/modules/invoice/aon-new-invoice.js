@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoiceAccounts, insertInvoice } from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -27,12 +27,13 @@ import { Paymethods } from '../../services/paymethod.js';
 import { DIV } from '../../environments/aonTag.js';
 import { Transactions } from '../../services/transaction.js';
 import { getTaxPercentageOption, getTaxTypeName, TaxIRPFPercentage, TaxIVAPercentage, TaxType, TaxVATPercentage } from './invoiceEnums.js';
+import { getItems} from '../../services/productService.js';
 
 export class AonNewInvoice extends AonElement {
 
 	invoice;
 	dur;
-
+	focusId;
 	TOOLBAR;
 	GENERAL
 	GENERAL_CARD;
@@ -88,7 +89,7 @@ export class AonNewInvoice extends AonElement {
 		this.GENERAL = this.DATA + 'General';
 		this.GENERAL_CARD = this.GENERAL + CONSTANT.CARD.initCap();
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
-		this.COMMENTS_CARD = this.DATA + 'CommentsCard';
+		this.COMMENT_CARD = this.DATA + 'CommentsCard';
 		this.FILE = this.id + 'File';
 		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
 
@@ -170,11 +171,22 @@ export class AonNewInvoice extends AonElement {
 	build() {
 		this.buildToolbar();
 		this.buildContent();
+		this.focus();
 	}
 
 	reload(){
 		this.clear();
 		this.build();
+	}
+
+	setFocus(focusId) {
+		this.focusId = focusId; 
+	}
+
+	focus() {
+		console.log(this.focusId);
+		if(this.focusId)
+			this.getElement(this.focusId).focus();	
 	}
 
 	buildToolbar() {
@@ -187,27 +199,39 @@ export class AonNewInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.NEXT, () => this.nextInvoice());
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
-		invoiceToolbar.addButton('Options', 'more_vert', (e) => this.more(e));
+		if(this.getInvoice().isInbox() || this.getInvoice().isPending() || this.getInvoice().isScored()){
+			invoiceToolbar.addButton2(ACTION.DUPLICATE, () => this.duplicateInvoice());
+			invoiceToolbar.addButton2(ACTION.RECTIFY, () => this.rectifyInvoice());			
+		//	invoiceToolbar.addButton('Options', 'more_vert', (e) => this.more(e));
+			invoiceToolbar.addSeparator();
+		}
 
-		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
+		if(this.getInvoice().isInbox()&& this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
+		
+		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()) {
+			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addSeparator();
+		}
+
 		if(this.getInvoice().isRejected()) {
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isDraft()) {
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeInvoice());
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
-		} else if(this.getInvoice().isInbox()){
+		} else if(this.getInvoice().isInbox() || this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.COMMENT, () => this.addInvoiceComment());
-		}
-		if(!this.autosave){
-			invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
-		}
+			if(!this.autosave && this.getInvoice().isInbox()){
+				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
+			}
+		} 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
@@ -217,9 +241,11 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	buildContent() {
+		let form = this.createElement(TAG.FORM);
+		this.appendChild(form);
 		let div = this.createElement(TAG.DIV);
 		div.className = CSS.AON_FLEX;
-		this.appendChild(div);
+		form.appendChild(div);
 
 		let data = this.createElement(TAG.DIV);
 		data.id = this.DATA;
@@ -247,11 +273,30 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	buildCommentCard(parent) {
+		let hasComment = this.invoice.comments && this.invoice.comments.length > 0;
+
 		let card = new AonCard();
 		card.id = this.COMMENT_CARD;
 		card.title = MSG.COMMENTS;
-		card.className = CSS.AON_NONE;
+		if(!hasComment) card.className = CSS.AON_NONE;
 		parent.appendChild(card);
+
+		card.setContentHTML('');
+		card.setBackground('#ffc');
+
+		if(hasComment) {
+			let ul = this.createElement(TAG.UL);
+			ul.style.width = '100%';
+			card.setContent(ul);
+			this.invoice.comments.forEach((item, i) => {
+				if(item.reason) {
+					let li = this.createElement(TAG.LI);
+					li.style.backgrounColor = 'transparent !important';
+					li.innerHTML = item.reason;
+					ul.appendChild(li);
+				}
+			});
+		}
 	}
 
 	buildGeneralCard(parent) {
@@ -301,12 +346,12 @@ export class AonNewInvoice extends AonElement {
 			rectified.id = this.RECTIFIED;
 			rectified.title = MSG.RECTIFIED;
 			rectified.readonly = this.invoice.isReadonly();
-			rectified.checked = this.invoice.isRectified();
 			div.appendChild(rectified);
 			rectified.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setRectified(rectified.checked);
 			});
-			
+			rectified.checked = this.invoice.isRectified();
+			 
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
@@ -364,14 +409,14 @@ export class AonNewInvoice extends AonElement {
 		let date = new AonDate();
 		date.id = this.DATE;
 		date.title = MSG.DATE;
-		date.value = this.invoice.date;
-		// date.readonly = this.invoice.isReadonly();
+
+		date.readonly = this.invoice.isReadonly();
 		date.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
-
+		date.value = this.invoice.date;
 		// ----- TOTAL
 
 		let total = new AonNumber();
@@ -381,6 +426,7 @@ export class AonNewInvoice extends AonElement {
 		total.decimals = "2";
 		total.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setTotal(total.value);
+			this.setFocus(total.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -437,16 +483,17 @@ export class AonNewInvoice extends AonElement {
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
 		paymethod.options = JSON.stringify(Paymethods);
-		if(this.invoice.finances.length === 1) {
-			paymethod.value = this.invoice.finances[0].paymethod;
-		}
-		// paymethod.readonly = this.invoice.isReadonly();
+		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setPaymethod(paymethod.value);
+			this.setFocus(paymethod.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
+		if(this.invoice.finances.length === 1) {
+			paymethod.value = this.invoice.finances[0].paymethod;
+		}
 	}	
 
 	buildTaxCard(parent) {
@@ -485,6 +532,7 @@ export class AonNewInvoice extends AonElement {
 		surcharge.readonly = this.invoice.isReadonly();
 		surcharge.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setSurcharge(surcharge.checked);
+			this.setFocus(surcharge.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -499,6 +547,7 @@ export class AonNewInvoice extends AonElement {
 		farmer.readonly = this.invoice.isReadonly();
 		farmer.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholdingFarmer(farmer.checked);
+			this.setFocus(farmer.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -535,6 +584,7 @@ export class AonNewInvoice extends AonElement {
 			addButton.title = MSG.ADD_TAX;
 			addButton.icon = MATERIAL_ICONS.ADD;
 			addButton.addEventListener('click', () => {
+				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 				this.invoice.addTax();
 				this.reload();
 				if(this.autosave) this.save();
@@ -565,7 +615,8 @@ export class AonNewInvoice extends AonElement {
 		taxesTable.addRow(); // ----- ROW i
 
 		// ----- TAX TYPE
-		
+
+		tax.type = tax.type || tax.tax;
 		let taxType = new AonInput();
 		taxType.id = this.TAX_TYPE + i;
 		taxType.description = MSG.TYPE;
@@ -574,7 +625,7 @@ export class AonNewInvoice extends AonElement {
 		taxType.value = getTaxTypeName(tax.type);
 
 		// ----- TAX PERCENT
-		
+
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '%';
@@ -630,6 +681,7 @@ export class AonNewInvoice extends AonElement {
 			taxDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 			taxDelete.addEventListener(EVENT.CLICK, () => {
 				this.invoice.deleteTax(tax, i);
+				this.setFocus(undefined);
 				this.reload();
 				if(this.autosave) this.save();
 			});
@@ -661,6 +713,7 @@ export class AonNewInvoice extends AonElement {
 			addButton.title = MSG.ADD_DETAIL;
 			addButton.icon = MATERIAL_ICONS.ADD;
 			addButton.addEventListener(EVENT.CLICK, () => {
+				this.setFocus(this.DETAIL_DESCRIPTION + this.invoice.details.length);
 				this.invoice.addDetail();
 				this.reload();
 				if(this.autosave) this.save();
@@ -678,15 +731,30 @@ export class AonNewInvoice extends AonElement {
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
 		description.addEventListener(EVENT.KEYUP, () => {
-
+			if(description.value.length > 2) {
+				let data = { value: description.value};
+				getItems(data).then(r => {
+					description.buildOptions(r.map(r => {return {
+						name: r.name,
+						value: r.id,
+						item: r};}));
+				}).catch(e => this.showError(e));
+			  } 
 		});
 
 		description.addEventListener(EVENT.CHANGE, () => {
-			this.details[i].description = description.value;
+			this.invoice.details[i].description = description.value;
+			this.setFocus(this.DETAIL_QUANTITY + i);
 		});
 		
-		description.addEventListener(EVENT.SELECT,() => {
-
+		description.addEventListener(EVENT.SELECT,(e) => {
+			console.log(e.detail);
+			detail.description = e.detail.name; 
+			detail.item = e.detail.item;
+			detail.price = e.detail.item.price;
+			this.invoice.setDetail(detail, i);
+			this.setFocus(this.DETAIL_DESCRIPTION + i);
+			this.reload();
 		});
 
 		let td = table.addCell(description);
@@ -704,6 +772,7 @@ export class AonNewInvoice extends AonElement {
 		quantity.addEventListener(EVENT.CHANGE, () => {
 			detail.quantity = quantity.value;
 			this.invoice.setDetail(detail, i);
+			this.setFocus(this.DETAIL_PRICE + i);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -721,6 +790,7 @@ export class AonNewInvoice extends AonElement {
 		price.addEventListener(EVENT.CHANGE, () => {
 			detail.price = price.value;
 			this.invoice.setDetail(detail, i);
+			this.setFocus(this.DETAIL_DISCOUNT + i);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -738,6 +808,7 @@ export class AonNewInvoice extends AonElement {
 		discount.addEventListener(EVENT.CHANGE, () => {
 			detail.discount = discount.value;
 			this.invoice.setDetail(detail, i);
+			this.setFocus(this.DETAIL_VAT + i);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -762,6 +833,8 @@ export class AonNewInvoice extends AonElement {
 		vat.id = this.DETAIL_VAT + i;
 		vat.title = '%IVA';
 		vat.options = JSON.stringify(TaxIVAPercentage);
+		if(detail.prepayment === undefined) detail.prepayment = false;
+		vat.readonly = this.invoice.isReadonly() || detail.prepayment;
 		vat.addEventListener(EVENT.SELECT, () => {
 			console.log(vat.value);
 			detail.percentage = vat.value;
@@ -770,7 +843,7 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(vat);
-		vat.readonly = this.invoice.isReadonly() || detail.prepayment;
+		detail.percentage = detail.percentage || detail.vat;
 		if(detail.percentage) vat.value = detail.percentage;
 		// ----- DETAIL OPTIONS
 
@@ -791,6 +864,7 @@ export class AonNewInvoice extends AonElement {
 			detailDelete.title = MSG.DELETE_DETAIL;
 			detailDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 			detailDelete.addEventListener(EVENT.CLICK, () => {
+				this.setFocus(undefined);
 				this.invoice.deleteDetail(detail, i);
 				this.reload();
 				if(this.autosave) this.save();
@@ -902,6 +976,7 @@ export class AonNewInvoice extends AonElement {
 			addButton.title = MSG.ADD_FINANCE;
 			addButton.icon = MATERIAL_ICONS.ADD;
 			addButton.addEventListener('click', () => {
+				this.setFocus(this.FINANCE_DUE_DATE + this.invoice.finances.length);
 				this.invoice.addFinance();
 				this.reload();
 				if(this.autosave) this.save();
@@ -921,11 +996,13 @@ export class AonNewInvoice extends AonElement {
 		date.readonly = this.invoice.isReadonly();
 		date.addEventListener(EVENT.CHANGE, () => {
 			finance.due_date = date.value;
+			this.setFocus(date.id);
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(date);
 		date.value = finance.due_date;
+		
 		// ----- FINANCE PAYMETHOD
 
 		let paymethod = new AonSelect();
@@ -935,6 +1012,7 @@ export class AonNewInvoice extends AonElement {
 		paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
+			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
 			finance.paymethod = paymethod.value;
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
@@ -954,14 +1032,15 @@ export class AonNewInvoice extends AonElement {
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
-			
+			this.setFocus(this.FINANCE_AMOUNT + i);
 		});
 		
 		bankAccount.addEventListener(EVENT.SELECT,() => {
-
+			this.setFocus(this.FINANCE_AMOUNT + i);
 		})
 		
 		table.addCell(bankAccount);
+		finance.bank_account = finance.bank_account || finance.iban;
 		bankAccount.value = finance.bank_account;
 
 		// ----- FINANCE AMOUNT
@@ -973,8 +1052,9 @@ export class AonNewInvoice extends AonElement {
 		amount.decimals = "2";
 		amount.readonly = this.invoice.isReadonly();
 		amount.addEventListener(EVENT.SELECT, () => {
+			this.setFocus(this.FINANCE_AMOUNT + i);
 			finance.amount = amount.value;
-			this.invoice.setFinance(detail, i);
+			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
 		table.addCell(amount);
@@ -1069,14 +1149,21 @@ export class AonNewInvoice extends AonElement {
 
 	previousInvoice() {
 		let invoice = getPreviousInvoice();
-		if(invoice) {
-			this.getApplication().getParent().aonInvoice(invoice.type, invoice);
-		}
+		this.changeInvoice(invoice);
 	}
 
 	nextInvoice() {
 		let invoice = getNextInvoice();
-		if(invoice) {
+		this.changeInvoice(invoice);
+	}
+
+	changeInvoice(invoice) {
+		if(invoice && !invoice.details){
+			getInvoice(invoice.id).then((inv) => {
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoice(invoice.type, inv);
+			});
+		} else if(invoice)  {
 			this.getApplication().getParent().aonInvoice(invoice.type, invoice);
 		}
 	}
@@ -1107,7 +1194,7 @@ export class AonNewInvoice extends AonElement {
 
 
 	rejectInvoice() {
-		let d = document.getElementById(this.getApplication().getDialog());
+		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.REJECT_INVOICE);
@@ -1157,7 +1244,7 @@ export class AonNewInvoice extends AonElement {
 
 	removeInvoice() {
 		deleteInvoices([this.getInvoice().id]).then(() => {
-			let d = document.getElementById(this.getApplication().getDialog());
+			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.DELETE_FOREVER);

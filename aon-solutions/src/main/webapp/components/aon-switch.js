@@ -135,6 +135,10 @@ export class AonSwitch extends AonElement {
     return this.hasAttribute(CONSTANT.CHECKED) && this.getAttribute(CONSTANT.CHECKED)
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.CHECKED)
   }
+
+  focus() {
+    this.getElement(this.INPUT).focus();
+  }
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);

@@ -1096,7 +1096,9 @@ public class BidoqRequest {
 			JSONObject dtl = new JSONObject();
 			JSONObject detail = details.getJSONObject(key);
 			String account = calculateAccount(detail.optString("account"));
-			Boolean prepayment = "5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4));
+			Boolean prepayment = false;
+			if(account.length() > 4)
+				prepayment = "5600".equals(account.substring(0, 4)) || "5660".equals(account.substring(0, 4));
 			dtl.put("account", account);
 			dtl.put("description", detail.optString("description"));
 			dtl.put("quantity",detail.optDouble("quantity"));
@@ -1173,6 +1175,7 @@ public class BidoqRequest {
 				fnnc.put("amount", finance.optDouble("amount"));
 				fnnc.put("due_date", finance.optString("due_date"));
 				fnnc.put("iban", finance.optString("iban"));
+				fnnc.put("bank_account", finance.optString("iban"));
 				fnnc.put("paymethod", getTediPaymethod(finance.optString("paymethod")));
 
 				if(finance.opt("account") != null) {

@@ -73,6 +73,14 @@ public class JsonUtils {
 			throw new AonCoreException("Formato incorrecto de fecha");
 		} 
 	}
+	
+	public static String getDateJSON(Date date) {
+		if (date != null) {
+			return FORMATTER.format(date);
+		}
+		return null;
+	}
+	
 	public static JSONObject putDate(JSONObject json, String key , Date date) {
 		if (date != null) {
 			String value = FORMATTER.format(date);

@@ -30,6 +30,13 @@ public class InvoiceBreakdownJSON {
 				.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA));
 	}
 	
+	public static JSONArray toJSON(LinkedList<InvoiceBreakdown> breakdown) {
+		JSONArray array = new JSONArray();
+		breakdown.stream().forEach(tax -> array.put(toJSON(tax)));
+		return array;
+	}
+	
+	
 	public static JSONObject toJSON(InvoiceBreakdown breakdown) {
 		return new JSONObject()
 				.put(IJsonNames.TAX, breakdown.getTaxType().getName2())

@@ -346,6 +346,11 @@ export class AonDate extends AonElement {
     if (d <= 9) d = d.toString().padStart(2, "0");
     return d;
   }
+
+  focus() {
+    this.getElement(this.INPUT).focus();
+  }
+
 }
 if(!window.customElements.get('aon-date')){
   window.customElements.define('aon-date',  AonDate);

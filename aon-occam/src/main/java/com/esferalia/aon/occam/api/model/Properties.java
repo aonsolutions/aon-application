@@ -226,6 +226,8 @@ public interface Properties {
 		Property<Double> getPackMeasurementProperty();
 		Property<Integer> getPackMeasurementTagProperty();
 		Property<Integer> getStockUnitTagProperty();
+		Property<String> getProductCodeProperty();
+		Property<String> getProductNameProperty();
 	}
 	
 	public interface ItemAddInfoProperties {

@@ -31,6 +31,7 @@ public interface IJsonNames {
 	String BALANCE = "balance";
 	String BALANCES = "balances";
 	String BALANCING_ACCOUNT = "balancingAccount";
+	String BANK_ACCOUNT = "bank_account";
 	String BANK_ALIAS = "bankAlias";
 	String BASE = "base";
 	String BATCHED = "batched";
@@ -199,6 +200,7 @@ public interface IJsonNames {
 	String PARENT_ID = "parentId";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
+	String PAYMETHOD = "paymethod";
 	String PENDING = "pending";
 	String PERCENTAGE = "percentage";
 	String PERCENT = "percent";
@@ -247,6 +249,7 @@ public interface IJsonNames {
 	String SELLER_IDS = "sellerIds";
 	String SENDER = "sender";
 	String SERIES = "series";
+	String SERIE = "serie";
 	String SERVICE = "service";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";

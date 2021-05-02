@@ -1,7 +1,9 @@
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, TAG } from '../environments/environments.js';
 import {AonElement} from './AonElement.js';
 
 export class AonCheckbox extends AonElement {
+
+	INPUT;
 
 	static get observedAttributes() {
 		return [CONSTANT.VALUE];
@@ -70,7 +72,12 @@ export class AonCheckbox extends AonElement {
 	}
 
 	connectedCallback () {
+		this.initialize();
 		this.appendChild(this.build());
+	}
+
+	initialize() {
+		this.INPUT = this.id + CONSTANT.INPUT.initCap();
 	}
 
 	build() {
@@ -79,9 +86,8 @@ export class AonCheckbox extends AonElement {
 			this.style.display = 'none';
 		}
 
-		let input = this.createElement('input');
-		input.setAttribute(CONSTANT.ID, this.getAttribute(CONSTANT.ID) + 'Input');
-
+		let input = this.createElement(TAG.INPUT);
+		input.id = this.INPUT;
 		input.name = this.name;
 
 		input.setAttribute('type', 'checkbox');
@@ -110,6 +116,10 @@ export class AonCheckbox extends AonElement {
 
 	getValue() {
 		return this.value && this.value === 'true';
+	}
+
+	focus() {
+		this.getElement(this.INPUT).focus();
 	}
 }
 if(!window.customElements.get('aon-checkbox')){

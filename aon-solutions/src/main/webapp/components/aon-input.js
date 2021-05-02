@@ -419,6 +419,10 @@ export class AonInput extends AonElement {
       label.appendChild(div_load);
     } else if (!valor && div_load) div_load.remove();
   }
+
+  focus() {
+    this.getElement(this.INPUT).focus();
+  }
 }
 if(!window.customElements.get(TAG.AON_INPUT)){
   window.customElements.define(TAG.AON_INPUT, AonInput);

@@ -45,6 +45,8 @@ export * from './fiscalService.js';
 
 export * from './accountingService.js';
 
+export * from './productService.js';
+
 export const clear = () => {
   clearCompanyService();
   clearRegistryService();

@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -66,6 +67,12 @@ public class InvoiceDetailJSON {
 		}
 		
 		return detail;
+	}
+	
+	public static JSONArray toJSON(LinkedList<InvoiceDetail> details) {
+		JSONArray array = new JSONArray();
+		details.stream().forEach(detail -> array.put(toJSON(detail)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(InvoiceDetail detail) {

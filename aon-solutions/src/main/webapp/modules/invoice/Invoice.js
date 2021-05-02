@@ -6,6 +6,7 @@ import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
 export class Invoice {
 
   id;
+  domain;
   type;
   series;
   serie;
@@ -37,6 +38,7 @@ export class Invoice {
   rectified; // boolean | rectificativa
 
   constructor(type) {
+    this.domain = localStorage.getItem('aon_domain_id');
     this.type = type || 'emitida';
     this.series = '';
     this.number = '';
@@ -78,11 +80,17 @@ export class Invoice {
     this.status = 'inbox';
     this.comments = [];
     this.selfconta = false;
+
+    let company = JSON.parse(localStorage.getItem('company'));
+    this.surcharge = company.surcharge;
+    this.vat_accrual_payment = company.vat_accrual_payment;
+    this.withholding = false; //this.isEmitida() ? company.withholding : false;
   }
 
   createInvoice(invoice) {
     if(invoice) {
       this.id = invoice.id || undefined;
+      this.domain = invoice.domain || localStorage.getItem('aon_domain_id');
       this.series = invoice.series || '';
       this.serie = invoice.serie && invoice.serie !== CONSTANT.UNDEFINED ? invoice.serie : '';
       this.number = invoice.number || '';
@@ -129,6 +137,16 @@ export class Invoice {
       this.file = invoice.file || undefined;
       this.comments = invoice.comments || [];
       this.selfconta = invoice.selfconta || false;
+
+      let company = JSON.parse(localStorage.getItem('company'));
+
+      this.service = invoice.service || false;// boolean | servicio
+      this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
+      this.investment = invoice.investment || false; // boolean | bienes de inversion
+      this.withholding_farmer = invoice.withholding_farmer || false; // boolean | regimen agrario
+      this.vat_accrual_payment = invoice.vat_accrual_payment || company.vat_accrual_payment; // boolean | criterio de caja
+      this.surcharge = invoice.surcharge || company.surcharge;
+      this.rectified = invoice.rectified || false;
     }
   }
 
@@ -213,12 +231,20 @@ export class Invoice {
     return this.status.toLowerCase() === 'trash' || this.status.toLowerCase() === 'draft';
   }
 
+  isPending() {
+    return this.status.toLowerCase() === 'pending';
+  }
+
+  isScored() {
+    return this.status.toLowerCase() === 'scored';
+  }
+
   isAccounting() {
     return this.status.toLowerCase() === 'scored' || this.status.toLowerCase() === 'accounting';
   }
 
   isReadonly() {
-    return false;
+    return this.isScored() || this.isPending() || this.isAccounting();
   }
 
   isService() {
@@ -448,6 +474,7 @@ export class Invoice {
   }
 
   addDetail() {
+    console.log("AA - " + this.isWithholding());
     let wh = this.getWitholdingTax();
     let detail = {
       description: '',
@@ -462,12 +489,13 @@ export class Invoice {
       quota: 0.0,
       surcharge: this.isSurcharge() ? 5.2 : 0.0, 
       surcharge_quota: 0.0,
-      withholding: this.withholding,
-      withholding_type: wh.type,
-      withholding_percentage: wh.percentage,
+      withholding: this.isWithholding(),
+      withholding_type: this.isWithholding() ? wh.type : undefined,
+      withholding_percentage: this.isWithholding() ? wh.percentage : undefined,
       withholding_quota: 0.0, 
      };
      this.details.push(detail);
+     console.log("bb - " + this.isWithholding());
      this.calculateTaxFromDetail();
   }
 
