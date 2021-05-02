@@ -1,0 +1,106 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.WorkplaceComunica.MyStyle">
+	
+		.widthAll{
+			width: 100%;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.flexCenter{
+			display: flex;
+			justify-content: center;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+		
+		.flexEvenly{
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+		
+		.styleBorder{
+			width: 100%;
+			max-width: 900px;
+			border: 1px solid black;
+		}
+		
+		.tittle{
+			position: relative;
+			top: -0.7em;
+			left: 20px;
+			width: 130px;
+			padding: 0 5px;
+			background-color: white;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		.container{
+			width: 100%;
+			padding: 5px;
+		}
+		
+		.gridStyle{
+			width: 100%;
+			max-width: 875px;
+		}
+		
+		.scrollStyle {
+			width: 100%;
+			max-width: 875px;
+		}
+		
+		.headerStyle{
+			font-weight: bold;
+			padding-left: 5px;
+		}
+		
+		.footerToolbar{
+			display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		    padding: 5px;
+		    border-top: 1px solid;
+			padding-bottom: 0;
+			margin-top: 10px;
+		}
+		
+		.footerOptionsToolbar{
+			display: flex;
+		    align-items: center;
+		}
+	
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="workplaceHTMLPanel">
+   		<g:VerticalPanel styleName="{style.styleBorder}">
+    	<g:Label styleName='{style.tittle}'>Centro de trabajo</g:Label>
+	    	<g:HTMLPanel styleName="{style.widthAll}">
+	    		<g:VerticalPanel styleName="{style.container}">
+	    			<g:Grid ui:field="workplaceDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+	    			<g:HTMLPanel>
+	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;"/>
+	    			</g:HTMLPanel>
+		    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+		    			<g:Grid ui:field="workplaceDataTable" styleName="{style.gridStyle}"></g:Grid>
+		    		</g:ScrollPanel>
+		    		<g:HTMLPanel styleName="{style.footerToolbar}">
+		    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>
+		    		</g:HTMLPanel>
+	    		</g:VerticalPanel>
+	    	</g:HTMLPanel>
+	    </g:VerticalPanel>
+   	</g:HTMLPanel>
+</ui:UiBinder> 
+
