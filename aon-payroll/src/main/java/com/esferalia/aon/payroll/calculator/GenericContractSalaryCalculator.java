@@ -665,7 +665,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 						if (++undefined >= undefPayments.size())
 							break; // we've already eval all undef payments
-					} if (undefPayment.willBeDefined(CONCEPTS)) {
+					} else if (undefPayment.willBeDefined(CONCEPTS)) {
 						undefPayments.add(undefPayment);
 						for ( String name : e.getVariableNames() )
 							addResult(expressionContext, name, start, end, 0.00);
