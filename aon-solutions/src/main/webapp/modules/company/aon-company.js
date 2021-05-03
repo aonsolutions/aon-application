@@ -14,6 +14,8 @@ import {AonCompanyList} from "./aon-company-list.js";
 import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
+import { GENERAL_INFORMATION } from '../../environments/msg.js';
+import { handleError } from '../../services/utils.js';
 
 export class AonCompany extends AonElement {
 
@@ -207,12 +209,12 @@ export class AonCompany extends AonElement {
 	save() {
 		saveCompany(this.company).then(cp => {
 			this.company.id = cp.id;
-			this.getElement(aonApplication.TOAST).start({
+			this.getApplication().getToast().start({
 			 	type: 'success',
 			 	message: 'Datos Guardados Correctamente'
 		 	});
 		}).catch(error => {
-			this.getElement(aonApplication.TOAST).start(JSON.parse(e));
+			this.getApplication().getToast().start(handleError(error));
 		});
 	}
 
