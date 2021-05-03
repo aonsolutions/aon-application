@@ -10,7 +10,8 @@ import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { AonEventList } from "./time-control/event/aon-event-list.js";
 import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
-import "../../components/aon-application.js";
+import { AonApplication } from "../../components/aon-application.js";
+import { MSG } from "../../environments/environments.js";
 
 
 export class AonSignin extends AonElement {
@@ -55,14 +56,14 @@ export class AonSignin extends AonElement {
     if(this.isEmployee()){
       const weekDayObj = getWeekDayObj();
       this._filter = { 
-        period: "this_week",
+        period: SigninSidenav.PERIOD.THIS_WEEK.id,
         group:"DAY",
         startDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekFirst) ),
         endDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekLast) )
       };
     } else {
       this._filter = { 
-        period: "today",
+        period: SigninSidenav.PERIOD.TODAY.id,
         group:"DAY",
         startDate: formatDateOrigin(new Date()),
         endDate: formatDateOrigin(new Date())
@@ -70,9 +71,7 @@ export class AonSignin extends AonElement {
     }
   }
   paintView() {
-    this.innerHTML = `
-			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>
-    `;
+    this.createApplication(this.AON_SIGNIN, MSG.TIMECONTROL, new AonApplication());
     this.applicationEl = this.getApplication();
   }
   
@@ -80,7 +79,7 @@ export class AonSignin extends AonElement {
     const options = [
       {
         ...SigninSidenav.PRESENCE,
-        fn: () => this.showView( SIGNIN_VIEWS.AON_PRESENCE_LIST)
+        fn: () => this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
       },
       {
         ...SigninSidenav.LOCATION,
@@ -92,24 +91,25 @@ export class AonSignin extends AonElement {
       delete options[1];
     } 
 
-    this.applicationEl.addSidenavOptions("Control horario", options);
+    this.applicationEl.addSidenavOptions(MSG.TIMECONTROL, options);
 
+    const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
     const options2 = [
       {
-        ...SigninSidenav.PERIOD.TODAY,
-        fn: () => this.setDataFilter({period:"today"})
+        ...TODAY,
+        fn: () => this.setDataFilter({period:TODAY.id})
       },
       {
-        ...SigninSidenav.PERIOD.YESTERDAY,
-        fn: () =>this.setDataFilter({period:"yesterday"})
+        ...YESTERDAY,
+        fn: () =>this.setDataFilter({period:YESTERDAY.id})
       },
       {
-        ...SigninSidenav.PERIOD.THIS_WEEK,
-        fn: () =>this.setDataFilter({period:"this_week"})
+        ...THIS_WEEK,
+        fn: () =>this.setDataFilter({period:THIS_WEEK.id})
       },
       {
-        ...SigninSidenav.PERIOD.THIS_MONTH,
-        fn: (e) => this.setDataFilter({period:"this_month"})
+        ...THIS_MONTH,
+        fn: (e) => this.setDataFilter({period:THIS_MONTH.id})
       }
     ];
     

@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setValueName, serializeForm, waitEl, handleError } from "../../../../services/utils.js";
+import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
 import { URL_MAP } from "../../../../environments/constants.js";
@@ -217,10 +217,10 @@ export class AonLocationAdd extends AonElement {
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
-        this.applicationEl.getToast().start({ message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS });
+        this.showToast({ message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS });
         if (id) { setValueName("id", id); }
       } catch (error) {
-        this.applicationEl.getToast().start(handleError(error));
+        this.showToast(error);
       }
       this.applicationEl.stopLoading();
     }
@@ -232,10 +232,10 @@ export class AonLocationAdd extends AonElement {
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
-        this.applicationEl.getToast().start({ message: MSG.DELETED_DATA });
+        this.showToast({ message: MSG.DELETED_DATA });
         this.back();
       } catch (error) {
-        this.applicationEl.getToast().start(handleError(error));
+        this.showToast(error);
       }
       this.applicationEl.stopLoading();
     });

@@ -1,5 +1,5 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { setValueName, serializeForm, formatDateOrigin, handleError, disabledForm } from '../../../services/utils.js';
+import { setValueName, serializeForm, formatDateOrigin, disabledForm } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { PAYROLL_VIEWS } from '../PayrollEnums.js';
@@ -633,11 +633,11 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
-            this.applicationEl.getToast().start({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
-            this.applicationEl.getToast().start(handleError(error));
+            this.showToast(error);
         }
         this.applicationEl.stopLoading();
     }
@@ -653,11 +653,11 @@ export class AonAltaDirecta extends AonElement {
         }
         try {
             await postUpdateCto(cto_new);
-            this.applicationEl.getToast().start({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
+            this.showToast({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
-            this.applicationEl.getToast().start(handleError(error));
+            this.showToast(error);
         }
         this.applicationEl.stopLoading();
     }
@@ -681,7 +681,7 @@ export class AonAltaDirecta extends AonElement {
                     this.disabledCardTrabajor(true);
                 }
             } catch (error) {
-                this.applicationEl.getToast().start(handleError(error));
+                this.showToast(error);
             }
             nss_sugges.loading(false);
         }

@@ -17,7 +17,7 @@ import '../../components/aon-dialog-menu.js';
 
 import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
-import { getReader, handleError } from '../../services/utils.js';
+import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
 import * as GWT from "../../gwt/gwt.js";
 
@@ -293,17 +293,15 @@ export class AonInvoicePanel extends AonElement {
 					fn: () => {
 						let aonApplication = this.getApplication();
 						aonApplication.confirmDialog("Importar", "Desea importar las facturas?", async() => {
-							let toast = aonApplication.getToast();
 							aonApplication.startLoading();
 							try {
 								await selfconta();
-								toast.start({
+								this.showToast({
 									type: 'success',
 									message: 'Datos Importados. Revisa las facturas rechazadas.'
 								});
 							} catch (error) {
-								error = handleError(error);
-								toast.start(error);
+								this.showToast(error);
 							}
 							aonApplication.stopLoading();
 						});

@@ -1,5 +1,5 @@
 import {webkitRequestMobile} from '../services/service.js';
-import { TAG } from "../environments/environments.js";
+import { CONSTANT, TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
@@ -119,7 +119,20 @@ export class AonElement extends HTMLElement{
   }
 
   showError(e) {
-			let toast = this.getElement(this.getApplication().TOAST);
-			toast.start(JSON.parse(e));    
+      this.showToast(JSON.parse(e))    
+  }
+
+  /**
+   * 
+   * @param {string or obj, obj = {message, type}} error error del catch 
+   * @returns obj{message, type}
+   */
+  showToast(obj) {
+    if(typeof obj === "string")  obj = JSON.parse(obj);
+    if(!obj.type) obj.type = CONSTANT.PRIMARY;
+    const toast = this.getElement(this.getApplication().TOAST);
+    if(toast){
+      toast.start(obj);    
+    }
   }
 }

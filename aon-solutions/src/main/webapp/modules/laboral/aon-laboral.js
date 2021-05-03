@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { handleError, setValueName } from "../../services/utils.js";
+import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -122,7 +122,7 @@ class AonLaboral extends AonElement {
     try {
       await getSalaryPdf(data);
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
     }
 		this.applicationEl.stopLoading();
   }
@@ -175,7 +175,7 @@ class AonLaboral extends AonElement {
       const { document: ipf, startDate: fecha } = data;
       await getContratoPdf({ ipf, fecha });
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));;
+      this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }
@@ -186,13 +186,13 @@ class AonLaboral extends AonElement {
 			const { regime, ctaCti, nss, fra } = data;
 			await getTA({ regime, ctaCti, nss, fra }); // open pdf
 		} catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
 		this.applicationEl.stopLoading();
 	}
 
   anularCondition(situation, fra) {
-		const date_prev = new Date.addDay(-2);
+		const date_prev = new Date().addDay(-2);
 		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
 		// (situation.indexOf(sit) > -1) &&
 		return (date_prev.getTime() <= new Date(fra).getTime());
@@ -204,7 +204,7 @@ class AonLaboral extends AonElement {
 			const { regime, ctaCti, nss, fra } = data;
 			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
 		} catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }
@@ -214,11 +214,11 @@ class AonLaboral extends AonElement {
         this.applicationEl.startLoading();
         try {
           await postDeleteMov(data);
-          this.applicationEl.getToast().start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
+          this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
           if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
           this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
         } catch (error) {
-          this.applicationEl.getToast().start(handleError(error));
+          this.showToast(error);
         }
       this.applicationEl.stopLoading();
     });

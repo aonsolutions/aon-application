@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
 
-import { getCompanyOne, getCompanyMedia, saveCompany } from "../../services/service.js";
+import { getCompanyOne, saveCompany } from "../../services/service.js";
 
 
 import '../../components/aon-address.js';
@@ -15,7 +15,6 @@ import {CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { GENERAL_INFORMATION } from '../../environments/msg.js';
-import { handleError } from '../../services/utils.js';
 
 export class AonCompany extends AonElement {
 
@@ -209,12 +208,12 @@ export class AonCompany extends AonElement {
 	save() {
 		saveCompany(this.company).then(cp => {
 			this.company.id = cp.id;
-			this.getApplication().getToast().start({
-			 	type: 'success',
-			 	message: 'Datos Guardados Correctamente'
-		 	});
+			this.showToast({
+				type: 'success',
+				message: 'Datos Guardados Correctamente'
+			});
 		}).catch(error => {
-			this.getApplication().getToast().start(handleError(error));
+			this.showToast(error);
 		});
 	}
 

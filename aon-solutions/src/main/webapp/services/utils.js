@@ -1,9 +1,5 @@
 import { AON_TAGS } from "../environments/aonTag.js";
-import { CONSTANT } from "../environments/environments.js";
-
-const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-
-const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+import { DAYS, MONTHS } from "../environments/msg.js";
 
 export const getReader = (file) => {
   return new Promise((resolve) => {
@@ -142,7 +138,7 @@ export const setDateTimestamp = (d) => {
 
 export const dayStr = (date) => {
   const now = new Date();
-  let day = days[date.getDay()];
+  let day = DAYS[date.getDay()];
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
     if(date.getDay() === now.getDay()){
       day = "hoy";
@@ -164,7 +160,7 @@ export const setDateTimestampDay = (d)=> setDateTpDay(new Date(d)) +" " + setTim
 export const setFullDate = (d) => {
   const date = new Date(d);
   const dayText = dayStr(date);
-  const monthText = months[date.getMonth()];
+  const monthText = MONTHS[date.getMonth()];
   return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
 }
 
@@ -178,13 +174,13 @@ export const setTime = (date)=> {
 export const getDayMonth = (date) => {
   const d = new Date(date);
   const day = addZero(d.getDate(), 2);
-  const month = months[d.getMonth()];
+  const month = MONTHS[d.getMonth()];
   return day + '-' + month;
 }
 
 export const geMonthYear = (date) => {
   const d = new Date(date)
-  const month = months[d.getMonth()];
+  const month = MONTHS[d.getMonth()];
   return month+". "+ d.getFullYear();
 }
 
@@ -200,18 +196,6 @@ export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, local
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   if(simbolo) { options.style = 'currency'; options.currency = simbolo;  }
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
-}
-
-/**
- * 
- * @param {string or obj} error error del catch 
- * @returns obj{message, type}
- */
-export const handleError = (error)=>{
-  if(typeof error === "string") error = JSON.parse(error);
-  let {message, type} = error;
-  type = type || CONSTANT.PRIMARY;
-  return {message, type};
 }
 
 /**

@@ -5,8 +5,7 @@ import {
   sortBy,
   waitEl,
   geMonthYear,
-  setValueName,
-  handleError
+  setValueName
 } from "../../../services/utils.js";
 import {
   getWorkplaceCCCs,
@@ -284,7 +283,7 @@ export class AonCompanyCostsList extends AonElement {
     try {
       await getCompanyCostsExcel({ ...filter });
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
     }
     this.applicationEl.stopLoading();
   }

@@ -10,7 +10,6 @@ import {bidoq} from  '../../services/bidoq.js';
 import {AonSelect} from '../../components/aon-select.js';
 import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
-import { handleError } from '../../services/utils.js';
 import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
@@ -387,7 +386,7 @@ export class AonDocumental extends AonElement {
     aonDocumentById(id) {
       getDocument(id)
         .then(doc => this.aonDocument(doc))
-        .catch(error =>this.getApplication().getToast().start(handleError(error)));
+        .catch(error =>this.showToast(error));
     }
 
     aonDocument(doc) {

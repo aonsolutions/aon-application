@@ -6,7 +6,6 @@ import {
   getReportAffiliateInAlta,
   getReportAffiliateInMovPrev,
 } from "../../../../services/service.js";
-import { handleError } from "../../../../services/utils.js";
 import { PAYROLL_VIEWS } from "../../PayrollEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
@@ -161,7 +160,7 @@ export class AonCtaList extends AonElement {
       const { ccc, cccRegimeCode: regimen } = data;
       await getCertCorriente({ ccc, regimen }); // open pdf
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }
@@ -172,7 +171,7 @@ export class AonCtaList extends AonElement {
       const { ccc, cccRegimeCode: regimen } = data;
       await getReportAffiliateInAlta({ ccc, regimen }); // open pdf
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }
@@ -183,7 +182,7 @@ export class AonCtaList extends AonElement {
       const { ccc, cccRegimeCode: regimen } = data;
       await getReportAffiliateInMovPrev({ ccc, regimen }); // open pdf
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }

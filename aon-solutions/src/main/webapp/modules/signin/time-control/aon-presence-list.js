@@ -1,12 +1,12 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
-import { handleError, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { AonSwitch } from "../../../components/aon-switch.js";
+// import { AonSwitch } from "../../../components/aon-switch.js";
 import { MSG } from "../../../environments/environments.js";
 
 
@@ -231,7 +231,7 @@ export class AonPresenceList extends AonElement {
       const endDate = startYear+"-12-31"; 
 			await getTimeControlExcel({startDate, endDate}); 
 		} catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
 		}
 		this.applicationEl.stopLoading();
 	}

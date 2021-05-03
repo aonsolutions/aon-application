@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, handleError, setDate } from "../../../services/utils.js";
+import { disabledForm, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
@@ -151,14 +151,15 @@ export class AonMovementsList extends AonElement {
       });
       this.applicationParentEl._movements = data;
     } catch (error) {
-      error = handleError(error);
+      if(typeof error === "string") error = JSON.parse(error);
       if(error &&  EXCEPTION_MESSAGE[error.message]){
         error.message =  EXCEPTION_MESSAGE[error.message];
       }
       if(!this.isMobile()){
         this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
       }
-      this.applicationEl.getToast().start({...error});
+
+      this.showToast(error);
     }
     return data;
   }

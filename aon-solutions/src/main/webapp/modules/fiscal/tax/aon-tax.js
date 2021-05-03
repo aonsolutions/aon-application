@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
-import { formatNumber, handleError, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
+import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
 import { CONST_FISCAL, TAX_ENUMS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -416,9 +416,9 @@ export class AonTax extends AonElement {
       const form = {...resp,...this.getFormValues()};
       await setModelStatus(form);
       await this.getTable(); //reload
-      this.applicationEl.getToast().start({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
+      this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
-      this.applicationEl.getToast().start(handleError(error));
+      this.showToast(error);
     }
     dialog.close();
     this.applicationEl.stopLoading();

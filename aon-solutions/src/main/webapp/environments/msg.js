@@ -318,3 +318,29 @@ export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca';
 // ----- Y
 
 // ----- Z
+
+
+//-------------DAYS
+const SUNDAY = "domingo";
+const MONDAY = "lunes";
+const TUESDAY = "martes";
+const WEDNESDAY = "miercoles";
+const THURSDAY = "jueves";
+const FRIDAY = "viernes";
+const SATURDAY = "sabado";
+export const DAYS = [SUNDAY, MONDAY, TUESDAY,WEDNESDAY, THURSDAY, FRIDAY, SATURDAY];
+
+//-------------MONTHS
+const JANUARY   = "enero";
+const FEBRUARY  = "febrero";
+const MARCH     = "marzo";
+const APRIL     = "abril";
+const MAY       = "mayo";
+const JUNE      = "junio";
+const JULY      = "julio";
+const AUGUST    = "agosto";
+const SEPTEMBER = "septiembre";
+const OCTOBER   = "octubre";
+const NOVEMBER  = "noviembre";
+const DECEMBER  = "diciembre";
+export const MONTHS = [JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER];
