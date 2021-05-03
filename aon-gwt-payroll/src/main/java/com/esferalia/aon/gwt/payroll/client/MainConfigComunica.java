@@ -11,15 +11,12 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementComunicaInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunicaInfo;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainConfigComunica extends MainEntryPoint{
@@ -117,26 +114,26 @@ public class MainConfigComunica extends MainEntryPoint{
 
 	interface MyStyle extends CssResource {
 		String container();
-		String widthAll();
-		String flexColumn();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	ScrollPanel scrollPanel;
+	TabLayoutPanel tabLayOutPanel;
 	
-	@UiField
-	HTMLPanel centerContainer;
+	@UiField (provided = true)
+	WorkplaceComunica workplaceComunicaWidget;
+	
+	@UiField (provided = true)
+	CCC cccWidget;
+	
+	@UiField (provided = true)
+	AgreementComunica agreementComunicaWidget;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private MainConfigComunicaObject mainConfigComunicaObject;
-	
-	private WorkplaceComunica workplaceComunicaWidget;
-	private CCC cccWidget;
-	private AgreementComunica agreementComunicaWidget;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
@@ -158,15 +155,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
 		
-		scrollPanel.setHeight((Window.getClientHeight() - 130) + "px");
-		
-		centerContainer.add(workplaceComunicaWidget);
-		centerContainer.add(cccWidget);
-		centerContainer.add(agreementComunicaWidget);
-		
-		centerContainer.addStyleName(style.widthAll());
-		centerContainer.addStyleName(style.flexColumn());
-		scrollPanel.getElement().getStyle().setMarginTop(40, Unit.PX);
+		tabLayOutPanel.setAnimationDuration(1000);
 	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------

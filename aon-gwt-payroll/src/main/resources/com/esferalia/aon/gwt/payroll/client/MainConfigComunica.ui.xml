@@ -3,9 +3,10 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
-	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainConfigComunica.MyStyle">
+		
 		.container{
 			margin: 0 10px;
 		}
@@ -14,17 +15,41 @@
 			width: 100%;
 		}
 		
-		.flexColumn{
-			display: flex;
-			flex-direction: column;
+		.mt10{
+			margin-top: 10px;
 		}
+		
+		.mt50{
+			margin-top: 50px;
+			padding: 0px 1.5em;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll}">
-				<g:HTMLPanel ui:field="centerContainer"></g:HTMLPanel>
-			</g:ScrollPanel>
+			<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
+				<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
+					<g:tab>
+				    	<g:header size='7'>Centro de trabajo</g:header>
+			    		<g:HTMLPanel styleName="{style.mt10}">
+			    			<aon:WorkplaceComunica ui:field="workplaceComunicaWidget"/>
+			    		</g:HTMLPanel>
+				  	</g:tab>
+				  	<g:tab>
+				    	<g:header size='7'>Actividad / CCC</g:header>
+			    		<g:HTMLPanel styleName="{style.mt10}">
+			    			<aon:CCC ui:field="cccWidget"/>
+			    		</g:HTMLPanel>
+				  	</g:tab>
+				  	<g:tab>
+				    	<g:header size='7'>Convenio</g:header>
+			    		<g:HTMLPanel styleName="{style.mt10}">
+			    			<aon:AgreementComunica ui:field="agreementComunicaWidget"/>
+			    		</g:HTMLPanel>
+				  	</g:tab>
+				</g:TabLayoutPanel>
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

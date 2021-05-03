@@ -110,7 +110,7 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 	
 	private void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight/7) + "px");
+		scrollPanel.setHeight((clientHeight/3) + "px");
 	}
 	
 	private void setColumnWidth() {
