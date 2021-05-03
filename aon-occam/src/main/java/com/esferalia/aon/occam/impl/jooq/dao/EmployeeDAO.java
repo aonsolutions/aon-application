@@ -34,8 +34,11 @@ import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
+import org.jooq.Record2;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
@@ -188,7 +191,17 @@ public class EmployeeDAO {
 		
 	}
 	
-	private static  WorkplaceRecord getWorpPlace(DSLContext dslContext, Integer domainId, Integer enterpriseActivityId, Employee employee) {
+	private static  WorkplaceRecord getWorpPlace(DSLContext dslContext, Integer domainId, Integer enterpriseActivityId, Employee employee)
+	{
+		Field<Integer> CONTRACTS_COUNT = DSL.field("contracts_count", Integer.class);
+		Field<Integer> CONTRACTS_WORKPLACE = DSL.field("contracts_workplace", Integer.class);
+		
+		Table<Record2<Integer, Integer>> CONTRACTS = 
+		DSL.select(
+		DSL.count().as(CONTRACTS_COUNT)
+		,CONTRACT.WORKPLACE.as(CONTRACTS_WORKPLACE))
+		.from(CONTRACT).groupBy(CONTRACT.WORKPLACE).asTable("CONTRACTS");
+	
 		return 
 		dslContext
 		.select()
@@ -196,25 +209,32 @@ public class EmployeeDAO {
 		.innerJoin(PAYROLL_WORKPLACE).onKey()
 		.innerJoin(RADDRESS).onKey()
 		.innerJoin(GEOZONE).onKey()
+		.leftJoin(CONTRACTS).on(WORKPLACE.ID.eq(CONTRACTS_WORKPLACE))
 		.where(WORKPLACE.DOMAIN.eq(domainId))
 		.and(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
 		.and(GEOZONE.CODE.eq(employee.getCcc().substring(0,2)))
-		.fetchOptionalInto(WORKPLACE)
+		.orderBy(CONTRACTS_COUNT.desc())
+		.fetchStreamInto(WORKPLACE).findFirst()
 		.orElseGet(() ->
 			dslContext
 			.select()
 			.from(WORKPLACE)
 			.innerJoin(PAYROLL_WORKPLACE).onKey()
+			.leftJoin(CONTRACTS).on(WORKPLACE.ID.eq(CONTRACTS_WORKPLACE))
 			.where(WORKPLACE.DOMAIN.eq(domainId))
 			.and(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
-			.fetchOptionalInto(WORKPLACE)
+			.orderBy(CONTRACTS_COUNT.desc())
+			.fetchStreamInto(WORKPLACE).findFirst()
 			.orElseGet(() ->
 				dslContext
 				.select()
 				.from(WORKPLACE)
 				.innerJoin(PAYROLL_WORKPLACE).onKey()
+				.leftJoin(CONTRACTS).on(WORKPLACE.ID.eq(CONTRACTS_WORKPLACE))
 				.where(WORKPLACE.DOMAIN.eq(domainId))
-				.fetchAnyInto(WORKPLACE)
+				.orderBy(CONTRACTS_COUNT.desc())
+				.fetchStreamInto(WORKPLACE).findFirst()
+				.orElse(null)
 			)
 		);
 		
