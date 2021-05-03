@@ -127,24 +127,6 @@ export const formatDate = (d) => {
 
 export const setDate = (date) => formatDate(date);
 
-export const addDays = (date, day) => {
-  let result = new Date(date);
-  result.setDate(result.getDate() + day);
-  return result;
-}
-
-export const addMonth = (date, month) => {
-  let result = new Date(date);
-  result.setMonth( result.getMonth()  + month);
-  return result;
-}
-
-export const addYear = (date, year) => {
-  let result = new Date(date);
-  result.setFullYear( result.getFullYear() + year);
-  return result;
-}
-
 export const formatDateOrigin = (d) => {
   let date = new Date(d);
   const day = addZero(date.getDate(), 2);
@@ -164,7 +146,7 @@ export const dayStr = (date) => {
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
     if(date.getDay() === now.getDay()){
       day = "hoy";
-    } else if(date.getDay() === addDays(now, -1).getDay()){
+    } else if(date.getDay() === now.addDay(-1).getDay()){
       day = "ayer";
     }
   }

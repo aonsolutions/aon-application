@@ -73,10 +73,17 @@ export const CONTRACT_OPTIONS = {
   TA:{
     name: "Obtener TA",
     aonIcon: "aon_ta",
+    id: 'Ta'
   },
   IDC:{
     name: 'Obtener IDC',
     aonIcon: 'aon_idc',
+    id: 'Idc',
+  },
+  DELETE:{
+    id: 'Delete',
+    name: 'Anular',
+    icon: 'delete_forever',
   }
 };
 

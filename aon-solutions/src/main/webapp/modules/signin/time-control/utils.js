@@ -1,4 +1,4 @@
-import { addDays, setTime, timePaser } from "../../../services/utils.js";
+import { setTime, timePaser } from "../../../services/utils.js";
 
 export const StringTwoLetters = (str) => {
   let newStr = "";
@@ -27,7 +27,7 @@ export const dateCustomDayHour = (d) => {
     let day = null;
     if(date.getDay() === now.getDay()){
       day = "hoy";
-    } else if(date.getDay() === addDays(now, -1).getDay()){
+    } else if(date.getDay() === now.addDay(-1).getDay()){
       day = "ayer";
     }
     if(day) return firstLetters(day)+", "+ setTime(date);

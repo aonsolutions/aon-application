@@ -1,13 +1,6 @@
 import { post, get, remove, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { addDays, formatDateOrigin} from "./utils.js";
-
-export const firstDayWeek = (d) => {
-  let result = new Date(d);
-  return result.getDate() - result.getDay() + 1; 
-}
-
-export const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
+import { formatDateOrigin} from "./utils.js";
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
@@ -72,22 +65,16 @@ export const getGroups = (data) =>
     resolve(jsonValues);
   });
 
-export const getWeekDayObj = () => {
-  const now = new Date();
-  const dayWeekFirst = firstDayWeek(now);
-  const dayWeekLast = lastDayWeek(now);
-  return {
-    now,
-    dayWeekFirst,
-    dayWeekLast
-  }
-}
+export const getWeekDayObj = () =>  ({
+    now: new Date(),
+    dayWeekFirst: new Date().getFirstDayOfWeek().getDate(),
+    dayWeekLast: new Date().getLastDayOfWeek().getDate()
+});
 
 export const getPeriod = (data) => {
-  const weekDayObj = getWeekDayObj();
-  const now = weekDayObj.now;
-  const dayWeekFirst = weekDayObj.dayWeekFirst;
-  const dayWeekLast = weekDayObj.dayWeekLast;
+  const {now, dayWeekFirst, dayWeekLast} = getWeekDayObj(); 
+  const year = now.getFullYear();
+  const month = now.getMonth();
   let jsonValues = [
     {
       name: "Hoy",
@@ -98,8 +85,8 @@ export const getPeriod = (data) => {
     {
       name: "Ayer",
       value: "yesterday",
-      startDate: formatDateOrigin(addDays(now, -1)),
-      endDate: formatDateOrigin(addDays(now, -1))
+      startDate: formatDateOrigin( new Date().addDay(-1)),
+      endDate: formatDateOrigin(new Date().addDay(-1))
     },
     {
       name: "Semana actual",
@@ -116,26 +103,26 @@ export const getPeriod = (data) => {
     {
       name: "Mes actual",
       value: "this_month",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth(), 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
+      startDate: formatDateOrigin(new Date(year, month, 1)),
+      endDate: formatDateOrigin(new Date(year, month + 1, 0))
     },
     {
       name: "Mes anterior",
       value: "last_month",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth()-1) + 1, 0))
+      startDate: formatDateOrigin(new Date(year, (month -1), 1)),
+      endDate: formatDateOrigin(new Date(year, (month-1) + 1, 0))
     },
     {
       name: "Año actual",
       value: "this_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0))
+      startDate: formatDateOrigin(new Date(year, 0, 1)),
+      endDate: formatDateOrigin(new Date(year, 12, 0))
     },
     {
       name: "Año anterior",
       value: "last_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear()-1, 0, 1)),
-      endDate:formatDateOrigin(new Date(now.getFullYear()-1, 12, 0))
+      startDate: formatDateOrigin(new Date(year-1, 0, 1)),
+      endDate:formatDateOrigin(new Date(year-1, 12, 0))
     },
     {
       name: "Personalizado",

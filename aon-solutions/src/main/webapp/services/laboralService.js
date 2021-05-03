@@ -1,6 +1,6 @@
 import { get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { addMonth, formatDateOrigin } from "./utils.js";
+import { formatDateOrigin } from "./utils.js";
 
 export const getEmployeeSalaries = (data) =>
   get(`${API_URL}/contract/employee/salaries`, data);
@@ -52,7 +52,7 @@ export const getPeriodLaboral = (data) => {
         jsonValues.push({
           name: "Segundo trimestre",
           value: "second_quarterly",
-          startDate: formatDateOrigin(addMonth(firstDayOfYear, +3)),
+          startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+3)),
           endDate:formatDateOrigin(endDate),
         });
         endDate = lastDayOfMonth(firstDayOfYear, +8);
@@ -60,7 +60,7 @@ export const getPeriodLaboral = (data) => {
           jsonValues.push({
             name: "Tercer trimestre",
             value: "third_quarterly",
-            startDate: formatDateOrigin(addMonth(firstDayOfYear, +6)),
+            startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+6)),
             endDate:formatDateOrigin(endDate),
           });
           endDate = lastDayOfMonth(firstDayOfYear, +11);
@@ -68,7 +68,7 @@ export const getPeriodLaboral = (data) => {
             jsonValues.push({
               name: "Cuarto trimestre",
               value: "fourth_quarterly",
-              startDate: formatDateOrigin(addMonth(firstDayOfYear, +9)),
+              startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+9)),
               endDate:formatDateOrigin(endDate),
             });
           }
@@ -97,6 +97,6 @@ export const getPeriodLaboral = (data) => {
 };
 
 const lastDayOfMonth = (d, monthNumber) =>{
-  let newDate = addMonth(d, monthNumber);
+  let newDate = new Date(d).addMonth(monthNumber);
   return new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0);
 }

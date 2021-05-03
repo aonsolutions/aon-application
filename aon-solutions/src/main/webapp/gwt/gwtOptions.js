@@ -1,8 +1,9 @@
-import { MSG } from '../environments/environments.js';
+import { MSG } from '../environments/environments.js'; 
 
 export const GWT_FISCAL = 'aon_gwt_fiscal';
 export const GWT_AIO = 'aon_gwt_aio';
 export const GWT_PAYROLL = 'aon_gwt_payroll';
+
 
 export const CUSTOMER = {
   name: MSG.CUSTOMERS,
@@ -27,7 +28,6 @@ export const ACCOUNTING_PERIOD = {
   module: GWT_FISCAL,
   entryPoint: 'AccountingPeriodModule'
 };
-
 
 export const ACCOUNT_ENTRY = {
   module: GWT_FISCAL,
@@ -99,6 +99,11 @@ export const PAYROLL_TRASH = {
   entryPoint: 'MainTrash'
 };
 
+export const CONFIGURATION_COMUNICA = {
+  module: GWT_PAYROLL,
+  entryPoint: 'MainConfigComunica'
+}
+
 export const FINANCE = {
   module: GWT_FISCAL,
   entryPoint: 'Finance'
@@ -118,6 +123,12 @@ export const MAIN_DIGITAL_CERTIFICATES = {
   module: GWT_PAYROLL,
   entryPoint: 'MainDigitalCertificates'
 };
+
+export const MAIN_CCC = {
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCCC'
+};
+
 
 export const SECURITY_MANAGEMENT = {
   module: GWT_AIO,

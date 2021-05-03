@@ -1,8 +1,6 @@
-import { post, get, openFile } from "./request.js";
+import { post } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { addMonth, formatDateOrigin } from "./utils.js";
 
-// export const saveLocation = (data) => post(`${API_URL}/location`, data);
 export const getAccounting = (data) => post(`${API_URL}/accounting/pyg`, data);
 export const getPeriods = (data) => post(`${API_URL}/accounting/periods`, data);
 
