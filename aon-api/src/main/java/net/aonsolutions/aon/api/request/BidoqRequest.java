@@ -116,6 +116,8 @@ public class BidoqRequest {
 		System.out.println("***** " + document + " *****");
 		
 		JSONObject json = getSelfcontaInvoices(document);
+		saveImportation(domain, user, json.toString().getBytes());
+	
 		JSONObject ingresos = json.getJSONObject("ingresos");
 		ingresos.keySet().stream().forEach(key -> {
 			JSONObject invoice = ingresos.getJSONObject(key);
@@ -1082,6 +1084,9 @@ public class BidoqRequest {
 				comments.put(comment2);
 			}
 		}
+		if(error.contains("Ya existe una factura")) {
+			json.put("status", "draft");
+		}
 		json.put("comments", comments);
 		
 		JSONArray dtls = new JSONArray();
@@ -1433,4 +1438,11 @@ public class BidoqRequest {
 		AON.rawdocDelete(domain.getName(), domain.getId(), user.getLogin(), tiId);
 		return ai;
 	}
+	
+	private static void saveImportation(Domain domain, User user, byte[] data) {
+		SaveImportation si = new SaveImportation(domain, user, data);
+		si.start();
+	}
+	
+
 }
