@@ -27,7 +27,6 @@ import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record14;
-import org.jooq.Record6;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
@@ -432,8 +430,16 @@ public class InvoiceDAO {
 	public static Invoice getFullInvoice(AONContext ctx, Integer id) {
 		Invoice invoice = getInvoice(ctx, id);
 		if(invoice != null) {
+			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
+			invoice.setRegistryAddressData(RegistryAddressDAO.get(ctx, invoice.getRegistryAddress()));			
 			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id) )
 					.collect(Collectors.toCollection(LinkedList::new)));
+			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
+				invoice.getDetails().get(i).setInvoiceTaxes(
+					getInvoiceTaxStreamFromDetail(ctx, invoice.getDetails().get(i).getId())
+					.collect(Collectors.toCollection(LinkedList::new)));
+			}
+			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
 					.collect(Collectors.toCollection(LinkedList::new))
 					);
@@ -441,7 +447,6 @@ public class InvoiceDAO {
 		}
 		return invoice;
 	}
-	
 	
 	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
 		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE,  INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
@@ -452,18 +457,27 @@ public class InvoiceDAO {
 				.groupBy(INVOICE_TAX.TAX_TYPE, INVOICE_TAX.PERCENTAGE)
 				.fetch().stream().map(new InvoiceTaxFiller());
 	}
+	
+	public static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
+		return ctx.getDslContext().select()
+			.from(INVOICE_TAX)
+			.where(INVOICE_TAX.DOMAIN.eq(ctx.getDomainId())
+					.and(INVOICE_TAX.INVOICE_DETAIL.eq(id)))
+			.fetch().stream().map(new InvoiceTaxFiller());
+	}
 
-	private static class InvoiceTaxFiller  implements Function<Record6<Byte, Double, BigDecimal, BigDecimal, BigDecimal, BigDecimal>,InvoiceTax> {
+	private static class InvoiceTaxFiller  implements Function<Record, InvoiceTax> {
 
 		@Override
-		public InvoiceTax apply(Record6<Byte, Double, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record) {
+		public InvoiceTax apply(Record record) {
 			return new InvoiceTax()
-					.setTaxType(TaxType.values()[record.value1()])
-					.setPercentage(record.value2())
-					.setBase(record.value3().doubleValue())
-					.setSurcharge(record.value4().doubleValue())
-					.setQuota(record.value5().doubleValue())
-					.setSurchargeQuota(record.value6().doubleValue());	
+					.setTaxType(TaxType.values()[record.getValue(INVOICE_TAX.TAX_TYPE)])
+					.setPercentage(record.getValue(INVOICE_TAX.PERCENTAGE))
+					.setBase(record.getValue(INVOICE_TAX.BASE))
+					.setSurcharge(record.getValue(INVOICE_TAX.SURCHARGE))
+					.setQuota(record.getValue(INVOICE_TAX.QUOTA))
+					.setSurchargeQuota(record.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+					.setWithholdingType(WithholdingType.safeValueOf(record.getValue(INVOICE_TAX.WITHHOLDING_TYPE)));	
 		}
 		
 	}

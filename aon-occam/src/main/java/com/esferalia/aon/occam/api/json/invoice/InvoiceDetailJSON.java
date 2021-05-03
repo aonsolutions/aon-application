@@ -82,13 +82,13 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.ID, detail.getId())
 				.put(IJsonNames.DOMAIN, detail.getDomain())
 				.put(IJsonNames.DESCRIPTION, detail.getDescription())
-				.put(IJsonNames.ITEM, detail.getItem().getId())
+				.put(IJsonNames.ITEM, detail.getItem() != null? detail.getItem().getId(): null)
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
 				.put(IJsonNames.DISCOUNT, detail.getDiscountExpression());
 		
-
+		
 		detail.getInvoiceTaxes().stream().forEach(tax -> {
 			if(TaxType.VAT.equals(tax.getTaxType())) {
 				json.put(IJsonNames.PERCENTAGE, tax.getPercentage())

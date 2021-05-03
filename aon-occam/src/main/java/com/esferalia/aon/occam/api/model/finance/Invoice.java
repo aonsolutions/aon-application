@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -41,6 +42,7 @@ public class Invoice implements Serializable, HasAudit {
 	private Country registryDocumentCountry;
 	private String registryName;
 	private Integer registryAddress;		//**
+	private RegistryAddress registryAddressData;
 	private StreetType addressStreetType;	//**
 	private String address;					//**
 	private String addressNumber;			//**
@@ -235,6 +237,13 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setRegistryAddress(Integer registryAddress) {
 		this.registryAddress = registryAddress;
+		return this;
+	}
+	public RegistryAddress getRegistryAddressData() {
+		return registryAddressData;
+	}
+	public Invoice setRegistryAddressData(RegistryAddress registryAddressData) {
+		this.registryAddressData = registryAddressData;
 		return this;
 	}
 	public StreetType getAddressStreetType() {

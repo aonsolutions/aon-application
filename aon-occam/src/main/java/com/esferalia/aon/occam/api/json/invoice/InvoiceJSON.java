@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -26,9 +27,9 @@ public class InvoiceJSON {
 		Registry registry = getType(json.optString(IJsonNames.TYPE)).equals(InvoiceType.SALES) 
 				? RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER))
 				: RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER));
-//		RegistryAddress raddress = getType(json.optString(IJsonNames.TYPE)).equals(InvoiceType.SALES) 
-//				? RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER).optJSONObject(IJsonNames.ADDRESS))
-//				: RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER).optJSONObject(IJsonNames.ADDRESS));
+		RegistryAddress raddress = getType(json.optString(IJsonNames.TYPE)).equals(InvoiceType.SALES) 
+				? RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER).optJSONObject(IJsonNames.ADDRESS))
+				: RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER).optJSONObject(IJsonNames.ADDRESS));
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -54,7 +55,8 @@ public class InvoiceJSON {
 				.setRegistryDocumentCountry(registry.getDocumentCountry())
 				.setRegistryDocumentType(registry.getDocumentType())
 				.setRegistryName(registry.getName())
-//				.setRegistryAddress(raddress.getId())
+				.setRegistryAddress(raddress.getId())
+				.setRegistryAddressData(raddress)
 //				.setAddress(raddress.getAddress())
 //				.setAddressGeozone(raddress.getGeozone())
 //				.setAddressNumber(raddress.getNumber())
@@ -70,7 +72,9 @@ public class InvoiceJSON {
 	public static JSONObject toJSON(Invoice invoice) {
 		
 		String date = TediJSONUtils.formatDate(invoice.getIssueDate());
-		return new JSONObject()
+		InvoiceStatus status = InvoiceStatus.safeValueOf(invoice.getStatus());
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.STATUS, status.name().toLowerCase())
 			.put(IJsonNames.ID, invoice.getId())
 			.put(IJsonNames.DOMAIN, invoice.getDomain())
 			.put(IJsonNames.SERIES, invoice.getSeries())
@@ -94,8 +98,11 @@ public class InvoiceJSON {
 			.put(IJsonNames.TAXES, InvoiceBreakdownJSON.toJSON(invoice.getBreakdown()))
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()));
-
-				
+		
+		if(invoice.getRegistryAddressData() != null)
+			json.optJSONObject(IJsonNames.REGISTRY)
+			.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(invoice.getRegistryAddressData()));
+		return json;
 	}
 	
 	

@@ -169,6 +169,7 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	build() {
+		this.clear();
 		this.buildToolbar();
 		this.buildContent();
 		this.focus();
@@ -206,7 +207,7 @@ export class AonNewInvoice extends AonElement {
 			invoiceToolbar.addSeparator();
 		}
 
-		if(this.getInvoice().isInbox()&& this.getDur().isInvoiceManager()) {
+		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
@@ -1213,12 +1214,41 @@ export class AonNewInvoice extends AonElement {
 					reason: ta.value
 				};
 				this.invoice.comments.push(comment);
-				this.buildComments();
 			}
 			this.invoice.status = CONSTANT.REFUSED;
+			this.build();
 			this.save();
-			if(!this.isMobile())
-				this.buildInvoiceToolbar();
+		});
+
+		let ta = this.getElement('commentTextArea');
+		ta.style.outline = 'none';
+		ta.style.width = '100%';
+		ta.style.height = '100px';
+		d.open();
+	}
+
+	addInvoiceComment() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ADD_COMMENT);
+		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
+		d.addAcceptAction(() => {
+			let ta = this.getElement('commentTextArea');
+			let dt = new Date()
+			let m = dt.getMonth() + 1;
+			let month = m < 10 ? '0' + m : m;
+			let dateStr = dt.getDay() + '/' + month  + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+			let comment = {
+				date: dateStr,
+				user: '',
+				status: this.getCommentStatus(),
+				reason: ta.value
+			};
+			this._invoice.comments.push(comment);
+			this.save();
+			this.build();
 		});
 
 		let ta = this.getElement('commentTextArea');
