@@ -36,6 +36,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod123.Model123;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Model123ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
+import com.esferalia.aon.gwt.fiscal.client.mod131.Model131ModuleOptions;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
@@ -633,7 +635,67 @@ public class ModelMatrix extends MainEntryPoint {
 			@Override public void visitM190() {}
 			@Override public void visitM184() {}
 			@Override public void visitM180() {}
-			@Override public void visitM131() {}
+			
+			@Override 
+			public void visitM131() {
+				LOGGER.info("Before visitM131");
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+				try {
+					Model131 model131 = new Model131();
+					Model131ModuleOptions options = new Model131ModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(aonData.getDomain().getName());
+					options.setDomain( model.getDomain() );
+					options.setUser(aonData.getUser().getLogin());
+					options.setAonData(aonData);
+					options.setFiscalModelId( id );
+					options.setEmbedded(true);
+					options.setBackButtonVisible(true);
+					options.setExternalCallback( new ModuleCallback() {
+						
+						@Override
+						public void onRemove(IAccountEntryWrapper removed) {
+							hide();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {}
+						
+						@Override
+						public void onExit() {
+							hide();
+						}
+						
+						@Override
+						public void onChange(IAccountEntryWrapper changed) {
+							hide();
+						}
+						
+						private void hide() {
+							entryDialog.hide();
+							entryDialog.clear();
+						}
+					});
+					entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+						
+						@Override
+						public void onClose(CloseEvent<PopupPanel> event) {
+							entryDialog.clear();
+						}
+					});
+					model131.onModuleLoad( options );
+					entryDialog.center();
+					entryDialog.show();
+				} catch (Throwable t) {
+					Window.alert("Error inesperado! [" + t.getMessage() + "]");
+				}
+			}
 			
 			@Override 
 			public void visitM130() {

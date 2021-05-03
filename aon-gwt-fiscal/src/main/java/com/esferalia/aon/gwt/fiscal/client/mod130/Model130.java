@@ -818,22 +818,30 @@ public class Model130 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		if (!isDirty()) {
-			cancel();
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancel();
+			}
 		} else {
-			cancelButton.setEnabled(false);
-			ConfirmDialog cd = new ConfirmDialog();
-			cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
-
-				@Override
-				public void onAccept() {
-					cancel();
-				}
-
-				@Override
-				public void onCancel() {
-					cancelButton.setEnabled(true);
-				}
-			});
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancelButton.setEnabled(false);
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
+	
+					@Override
+					public void onAccept() {
+						cancel();
+					}
+	
+					@Override
+					public void onCancel() {
+						cancelButton.setEnabled(true);
+					}
+				});
+			}
 		}
 	}
 	
