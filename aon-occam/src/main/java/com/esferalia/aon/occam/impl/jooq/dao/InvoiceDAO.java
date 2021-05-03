@@ -984,7 +984,7 @@ public class InvoiceDAO {
 	
 	public static Invoice accept(AONContext ctx, Invoice invoice) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
-		InvoiceAutoComplete.completeInvoice(ctx, aonCtx, invoice);
+		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		insert(ctx, aonCtx, invoice);
 		return invoice;
@@ -1114,6 +1114,7 @@ public class InvoiceDAO {
 			.returning(INVOICE_DETAIL.ID)
 			.fetchOne();
 		detail.setId(record.getValue(INVOICE_DETAIL.ID));
+		detail.setInvoice(invoice);
 		ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
 		afterInsertDetail(ctx, config, invoice, detail);
 	}

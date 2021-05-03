@@ -32,7 +32,8 @@ public class FinanceJSON {
 	
 	public static JSONArray toJSON(LinkedList<Finance> finances) {
 		JSONArray array = new JSONArray();
-		finances.stream().forEach(finance -> array.put(toJSON(finance)));
+		if(finances != null) 
+			finances.stream().forEach(finance -> array.put(toJSON(finance)));
 		return array;
 	}
 	

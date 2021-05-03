@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -38,6 +39,7 @@ public class InvoiceDetailJSON {
 			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
+			.setSource(InvoiceSource.API)
 			.setInvoiceTaxes(new LinkedList<InvoiceTax>());
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
@@ -83,7 +85,9 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.ITEM, detail.getItem().getId())
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
+				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
 				.put(IJsonNames.DISCOUNT, detail.getDiscountExpression());
+		
 
 		detail.getInvoiceTaxes().stream().forEach(tax -> {
 			if(TaxType.VAT.equals(tax.getTaxType())) {

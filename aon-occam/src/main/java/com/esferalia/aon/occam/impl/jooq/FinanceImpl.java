@@ -49,6 +49,12 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- INVOICE
 	
 	@Override
+	public Invoice getFullInvoice(AONContext ctx, Integer id){
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getFullInvoice(ctx, id));
+	}
+	
+	@Override
 	public Invoice acceptInvoice(AONContext ctx, Invoice invoice){
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.accept(ctx, invoice));

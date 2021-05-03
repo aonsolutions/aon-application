@@ -296,6 +296,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		AonParser parser = new AonParser();
 		TediInvoice invoice = parser.aon2Tedi(domain, login, id);
 		return TediInvoiceJSON.toJSON(invoice);
+		//return AON_SOLUTIONS.getInvoice(domain, login, id);
 	}
 	
 	private static JSONArray getInvoices(Domain domain, String login, InvoiceFilter filter) {

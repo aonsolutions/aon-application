@@ -4,15 +4,26 @@ import java.util.Date;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -157,9 +168,102 @@ public class InvoiceAutoComplete {
 			}
 		}
 	};
+	
+	/**
+	 * Aseguramos el nombre del titular de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
+		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
+			if(inv.getRegistryData().getId() == null) {
+				if(InvoiceType.SALES.equals(inv.getType())) {
+					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
+							f.getDomainProperty().eq(inv.getDomain())
+							.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Customer());
+					if(c.getId() != null) {
+						inv.setRegistry(c.getId());
+					} else {
+						c = CustomerDAO.save(ctx.getContext(), (Customer) inv.getRegistryData());
+						if(c.getId() != null) {
+							inv.setRegistry(c.getId());
+						}
+					}
+				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
+					Supplier s = SupplierDAO.getStream(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+					.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Supplier());
+					if(s.getId() != null) {
+						inv.setRegistry(s.getId());
+					} else {
+						s = SupplierDAO.save(ctx.getContext(), (Supplier) inv.getRegistryData());
+						if(s.getId() != null) {
+							inv.setRegistry(s.getId());
+						}
+					}
+				} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
+						|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
+					Creditor c = CreditorDAO.getStream(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Creditor());
+					if(c.getId() != null) {
+						inv.setRegistry(c.getId());
+					} else {
+						c = CreditorDAO.save(ctx.getContext(), (Creditor) inv.getRegistryData());
+						if(c.getId() != null) {
+							inv.setRegistry(c.getId());
+						}
+					}
+				}
+			} else inv.setRegistry(inv.getRegistryData().getId());
+		}
+	};
+	
+	/**
+	 * Aseguramos el nombre del titular de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
+		inv.getDetails().stream().forEach(detail -> {
+			if(detail.getWorkPlace() == null) {
+				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
+			}
+			if(detail.getAccount() == null && detail.getAccountCode() != null) {
+				Account acc = AccountDAO.get(ctx.getContext(), detail.getAccountCode());
+				if(acc.getId() != null) {
+					detail.setAccount(acc.getId());
+					detail.setAccountDescription(acc.getDescription());
+				}
+			}
+		});
+	};
 
+	/**
+	 * Aseguramos el nombre del titular de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
+		if(inv.getScope() == null || inv.getScope().getId() == null) {
+			Integer scope;
+			User user = SecurityDAO.getUser(ctx.getContext());	
+			Scope s = SecurityDAO.getUserScopeStream(ctx.getContext(), user.getId(), f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
+			
+			if(s == null) {
+				Integer[] scopes = SecurityDAO.getUserScopes(ctx.getContext(), user.getId());
+				if(scopes != null && scopes.length > 0)
+					scope = scopes[0];
+				else {
+					s = SecurityDAO.getScopeStream(ctx.getContext(),  f ->
+						f.getDomainProperty().eq(inv.getDomain())).findFirst().orElse(null);
+					if(s == null) {
+						s = SecurityDAO.insertScope(ctx.getContext(), new Scope()
+							.setDescription("GENERAL")
+							.setDomain(inv.getDomain()));
+					}
+					scope = s.getId();
+				}
+			} else scope = s.getId();
+			inv.setScope(new Scope().setId(scope));
+		}
+	};
+	
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
-		
 		COMPLETE_SALES_SERIES
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
@@ -169,6 +273,23 @@ public class InvoiceAutoComplete {
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
+		.accept(inv, new AonConfigurationContext(ctx,config));
+
+	}
+	
+	public static void completeInvoice2(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
+		COMPLETE_SALES_SERIES
+		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
+		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
+		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
+		.andThen(COMPLETE_TAX_DATE)
+		.andThen(COMPLETE_RECTIFICATION_TYPE)
+		.andThen(COMPLETE_REGISTRY_DATA)
+		.andThen(ENSURE_REGISTRY_DATA)
+		.andThen(COMPLETE_ACTIVITY)
+		.andThen(COMPLETE_FIRST_FINANCE)
+		.andThen(COMPLETE_DETAILS)
+		.andThen(COMPLETE_SCOPE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}

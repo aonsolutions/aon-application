@@ -750,7 +750,7 @@ export class AonNewInvoice extends AonElement {
 		description.addEventListener(EVENT.SELECT,(e) => {
 			console.log(e.detail);
 			detail.description = e.detail.name; 
-			detail.item = e.detail.item;
+			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);

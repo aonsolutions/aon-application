@@ -10,7 +10,6 @@ public class RegistryJSON {
 
 
 	public static Registry fromJSON(JSONObject json) {
-		
 		return new Registry() 
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(DomainJSON.fromJSON(json.optJSONObject(IJsonNames.DOMAIN)))
@@ -29,12 +28,12 @@ public class RegistryJSON {
 			.put(IJsonNames.ID, registry.getId())
 			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(registry.getDomain()))
 			.put(IJsonNames.DOCUMENT, registry.getDocument())
-			.put(IJsonNames.DOCUMENT_COUNTRY, registry.getDocumentCountry().getIso2())
-			.put(IJsonNames.DOCUMENT_TYPE, registry.getDocumentType().name())
+			.put(IJsonNames.DOCUMENT_COUNTRY, registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2(): null)
+			.put(IJsonNames.DOCUMENT_TYPE, registry.getDocumentType() != null ? registry.getDocumentType().name(): null)
 			.put(IJsonNames.NAME, registry.getName())
 			.put(IJsonNames.ALIAS, registry.getAlias())
 			.put(IJsonNames.LEGAL_PERSON, registry.isLegalPerson())
-			.put(IJsonNames.NATIONALITY, registry.getNationality().getIso2())
+			.put(IJsonNames.NATIONALITY, registry.getNationality() != null ? registry.getNationality().getIso2() : null)
 			.put(IJsonNames.CONFIDENTIAL, registry.isConfidential());
 	}
 }
