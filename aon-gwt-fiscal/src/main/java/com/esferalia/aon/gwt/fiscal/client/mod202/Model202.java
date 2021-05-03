@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod202;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -29,15 +30,21 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -68,6 +75,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model202 extends MainEntryPoint {
 
+	private static final Logger LOGGER = Logger.getLogger(Model202.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	final static int IDENTIFICATION_TAB = 0;
 	final static int LIQUIDATION_TAB = 1;
 	final static int FISCAL_INFORMATION_TAB = 2;
@@ -91,10 +103,11 @@ public class Model202 extends MainEntryPoint {
 	public static interface IMod202Declaration extends IsWidget {
 		LinkedList<Pair<String, String>> getInformationLinks();
 		void calculateAndRefresh(IFiscalModelCallback<Mod202> callback);
+		HandlerRegistration addAttachHandler(Handler handler);
 	}
 	
 	private Mod202 currentMod;
-	private AonData aonData;
+	private Model202ModuleOptions options;
 	private boolean dirty;
 
 	@UiField
@@ -251,44 +264,49 @@ public class Model202 extends MainEntryPoint {
 
 	};
 	
-
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-
-			@Override public void onFailure(Throwable caught) {}
 			
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model202ModuleOptions options = new Model202ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
 			}
 			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
 		});
 	}
+	private Model202ModuleOptions getOptions() {
+		if (this.options == null) {
+			this.options = new Model202ModuleOptions();
+		}
+		return this.options;
+	}
 	
-	public void onModuleLoad(AonData aonData) {
+	public void onModuleLoad(Model202ModuleOptions options) {
+		this.options = options;
 		AON.ensureInjected();
-		this.aonData = aonData;
-
+		
 		Mod202ServiceAsync serviceRaw = GWT.create(Mod202Service.class);
 		SERVICE = new Mod202ServiceAsyncDecorator(serviceRaw);
 
 		table = new FiscalModelTable<Mod202>(new Mod202SelectionHandler(), new FiscalModelProvidesKey<Mod202>());
 
 		Widget ui = MODEL_202_BINDER.createAndBindUi(this);
-
-		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
-		});
-
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		
+		if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
+
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
@@ -306,8 +324,49 @@ public class Model202 extends MainEntryPoint {
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+//		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+//		root.add(ui);
+		getOptions().getParentWidget().add(ui);
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model111 new Model");
+			newModel(getOptions().getNewModel()); 
+		} else {
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+			LOGGER.info("Model111 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				openFootPanelIfNeeded();
+			}
+		});
+	}
+
+	private void onSelect(Integer id ) {
+		LOGGER.info("OnSelect Model202 with a ID: " + getOptions().getFiscalModelId());
+		SERVICE.getMod202(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod202>() {
+					@Override
+					public void onSuccess(Mod202 selected) {
+						if (selected == null) {
+							LOGGER.info("onSuccess Model202 with a NULL selected Model ID: ");
+							showErrorMessage(AON.MSG.unableToFindDeclaration());
+						} else {
+							LOGGER.info("onSuccess Model202 with a ID: " + selected.getId());
+							select(selected);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
 	}
 
 	class Mod202SelectionHandler implements SelectionChangeEvent.Handler {
@@ -344,15 +403,10 @@ public class Model202 extends MainEntryPoint {
 		styleDirtyLabel();
 	}
 	
-	public AonData getAonData() {
-		return this.aonData;
-	}
-
 	private void refreshToolbarState() {
-		
 		boolean updatable = (currentMod.getYear()>= 2017);
-		
-		newButton.setVisible(!currentMod.isNew());
+		LOGGER.info("Model202 refreshToolbarState! ");
+		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
 		saveButton.setVisible(updatable && !currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
 		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
@@ -490,6 +544,24 @@ public class Model202 extends MainEntryPoint {
 //			}
 		}
 		if (declaration != null) {
+			declaration.addAttachHandler(new Handler() {
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if (event.isAttached() ) {
+						
+						Scheduler.get().scheduleDeferred(new Command() {
+							public void execute() {
+								LOGGER.info("Declaration Attached!");
+								tabPanel.selectTab(LIQUIDATION_TAB);
+								int i = deckPanel.getWidgetIndex(formPanel);
+								deckPanel.showWidget(i);
+								cleanErrorMessage();
+								refreshToolbarState();
+							}
+						});		
+					}
+				}
+			});
 			declarationContainer.setWidget( declaration );
 			infoContainer.setWidget( getInformationPanel(declaration.getInformationLinks()) );
 		} else {
@@ -742,6 +814,28 @@ public class Model202 extends MainEntryPoint {
 				});
 	}		
 		
+	private void newModel(Mod202 newModel) {
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
+				new AsyncCallback<Mod202>() {
+					@Override
+					public void onSuccess(Mod202 m202) {
+						currentMod = m202;
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						showNewDeclarationPopup();
+						newButton.setEnabled(true);
+					}
+
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						newButton.setEnabled(true);
+					}
+				});
+	}
+
 	private void showNewDeclarationPopup() {
 		Model202NewDeclarationPopup newDialog = new Model202NewDeclarationPopup(
 			new FiscalModelCallback() {
@@ -783,22 +877,30 @@ public class Model202 extends MainEntryPoint {
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		if (!isDirty()) {
-			cancel();
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancel();
+			}
 		} else {
-			cancelButton.setEnabled(false);
-			ConfirmDialog cd = new ConfirmDialog();
-			cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
-
-				@Override
-				public void onAccept() {
-					cancel();
-				}
-
-				@Override
-				public void onCancel() {
-					cancelButton.setEnabled(true);
-				}
-			});
+			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
+				this.options.getExternalCallback().onExit();
+			} else {
+				cancelButton.setEnabled(false);
+				ConfirmDialog cd = new ConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
+	
+					@Override
+					public void onAccept() {
+						cancel();
+					}
+	
+					@Override
+					public void onCancel() {
+						cancelButton.setEnabled(true);
+					}
+				});
+			}
 		}
 	}
 	
@@ -1008,7 +1110,7 @@ public class Model202 extends MainEntryPoint {
 				
 			}
 			
-		},getAonData());
+		},getOptions().getAonData());
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}
