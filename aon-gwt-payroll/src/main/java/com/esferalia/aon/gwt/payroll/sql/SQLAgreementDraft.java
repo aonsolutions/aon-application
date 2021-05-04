@@ -380,6 +380,8 @@ public class SQLAgreementDraft {
 					+ AgreementLevelDataColumns.START_DATE + " <= ? "  + " AND "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
 					+ AgreementLevelDataColumns.DOMAIN + " IN (" + domainsParams + ")"
+					+ " ORDER BY " + SQLConstants.AGREEMENT_LEVEL_DATA
+					+ "." + AgreementLevelDataColumns.START_DATE
 					);
 
 			stmt.setInt(1, agreementId);
