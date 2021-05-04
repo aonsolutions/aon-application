@@ -8,11 +8,12 @@ import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { TAG } from "../../../environments/environments.js";
+import { EVENT, TAG } from "../../../environments/environments.js";
+import { MSG, CONSTANT } from '../../../environments/environments.js';
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { MSG, CONSTANT } from '../../../environments/environments.js';
+
 export class AonTax extends AonElement {
   TABLE_ID;
   BANKS;
@@ -89,7 +90,7 @@ export class AonTax extends AonElement {
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs(PRESENCE_FILTER);
-    aonFilter.addEventListener("applyFilter", ({ detail }) => {
+    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({ detail }) => {
       if (detail) {
         console.log(detail);
       }
@@ -98,7 +99,7 @@ export class AonTax extends AonElement {
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
 
-    periodEl.addEventListener("change", ({ detail }) => {
+    periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
       if (detail) {
         const { startDate, endDate } = detail;
         setValueName("startDate", startDate);
@@ -106,10 +107,10 @@ export class AonTax extends AonElement {
       }
     });
 
-    this.getElement("startDate").addEventListener("change", (ev) => {
+    this.getElement("startDate").addEventListener(EVENT.CHANGE, (ev) => {
       periodEl.value = "personalized";
     });
-    this.getElement("endDate").addEventListener("change", (ev) => {
+    this.getElement("endDate").addEventListener(EVENT.CHANGE, (ev) => {
       periodEl.value = "personalized";
     });
   }
@@ -281,7 +282,7 @@ export class AonTax extends AonElement {
     span.textContent = "Acepto los datos reflejados";
     checkBox.id = this.DIALOG_CHECKBOX;
     checkBox.description = span.outerHTML;
-    checkBox.addEventListener('change', ({target})=>{
+    checkBox.addEventListener(EVENT.CHANGE, ({target})=>{
       if(target.checked) buttonAccept.disabled = false;
       else buttonAccept.disabled = true;
     })
@@ -326,7 +327,7 @@ export class AonTax extends AonElement {
   }
 
   eventData(resp){
-    this.getElement('switchDni').addEventListener('change', ({ target }) => {
+    this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
         let nrc = this.getElement("nrc");
         if(nrc) nrc.disabled = !target.checked;
         if(!target.checked) nrc.value ="";

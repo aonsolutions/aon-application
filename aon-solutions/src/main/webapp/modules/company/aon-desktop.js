@@ -5,7 +5,7 @@ import {bidoq} from  '../../services/bidoq.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
-
+import { MSG } from '../../environments/environments.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 
@@ -19,7 +19,7 @@ import '../accounting/aon-accounting.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
 
-import { MSG } from '../../environments/environments.js';
+
 
 export class AonDesktop extends AonElement {
 
@@ -284,8 +284,11 @@ export class AonDesktop extends AonElement {
 			case Apps.FISCAL.app:
 				rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
+			case Apps.COMUNICA.app:
+				rootPanel(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
+				break;
 			case Apps.PAYROLL.app:
-				rootPanel('<aon-laboral></aon-laboral>');
+				rootPanel(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
 				break;
 			case Apps.INVOICE.app:
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
@@ -315,8 +318,10 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isAccounting();
 		else if(Apps.FISCAL.app === app.app)
 			return this.getDur().isFiscal();
+		else if(Apps.COMUNICA.app === app.app)
+			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal() ) && !this.getDur().isPayroll();
 		else if(Apps.PAYROLL.app === app.app)
-			return this.getDur().isPayroll() || this.getDur().isComunica();
+			return this.getDur().isPayroll();
 		else if(Apps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if(Apps.TIMECONTROL.app === app.app)

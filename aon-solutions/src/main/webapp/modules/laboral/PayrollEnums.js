@@ -69,6 +69,7 @@ export const CONTRACT_OPTIONS = {
   CONTRACT:{
     name: "Contrato",
     aonIcon: "aon_cto",
+    id:"aon_cto"
   },
   TA:{
     name: "Obtener TA",

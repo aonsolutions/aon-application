@@ -3,6 +3,7 @@ import {getContracts} from "../../../services/service.js";
 import { setDate } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
+import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
 
 export class AonContractList extends AonElement {
   TABLE_ID;
@@ -24,7 +25,7 @@ export class AonContractList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonContractList";
+    this.id = this.id || PAYROLL_VIEWS.AON_CONTRACT_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
@@ -78,18 +79,15 @@ export class AonContractList extends AonElement {
   getOptions(res) {
     return [
       {
-        name: "Contrato",
-        aonIcon: "aon_cto",
+        ...CONTRACT_OPTIONS.CONTRACT,
         fn: (el) => this.applicationParentEl.getContratoPdf(res, el),
       },
       {
-        name: "Obtener TA",
-        aonIcon: "aon_ta",
+        ...CONTRACT_OPTIONS.TA,
         fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
       },
 			{
-				name: 'Obtener IDC',
-				aonIcon: 'aon_idc',
+        ...CONTRACT_OPTIONS.IDC,
 				fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
 			}
     ];

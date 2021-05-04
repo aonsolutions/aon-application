@@ -1,10 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
-import '../../components/aon-application.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { MSG } from '../../environments/environments.js';
 import { FiscalOptions, FISCAL_VIEWS} from "./FiscalEnums.js";
 import { AonTax } from './tax/aon-tax.js';
+import { AonApplication } from '../../components/aon-application.js';
 class AonFiscal extends AonElement {
 	AON_FISCAL;
   dur;
@@ -35,7 +35,7 @@ class AonFiscal extends AonElement {
       }
 
       paintView(){
-        this.innerHTML = /*html*/`<aon-application id="${this.AON_FISCAL}" title="${MSG.FISCAL}"></aon-application>`;
+        this.createApplication(this.AON_FISCAL, MSG.FISCAL, new AonApplication())
         this.applicationEl = this.getApplication();
       }
 

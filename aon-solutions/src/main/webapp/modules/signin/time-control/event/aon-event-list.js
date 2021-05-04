@@ -12,9 +12,9 @@ import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-
+import { EVENT, MSG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
-import { MSG } from "../../../../environments/environments.js";
+
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -123,7 +123,7 @@ export class AonEventList extends AonElement {
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs(EVENT_LIST_FILTER);
-    aonFilter.addEventListener("applyFilter", ({detail}) => {
+    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({detail}) => {
       if(detail) this.applicationParentEl.setDataFilter(detail);
     });
 
@@ -133,7 +133,7 @@ export class AonEventList extends AonElement {
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriod());
 
-    periodEl.addEventListener('change', ({detail}) => {
+    periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         const {startDate, endDate} = detail;
         setValueName('startDate', startDate);
@@ -141,10 +141,10 @@ export class AonEventList extends AonElement {
       }
     });
 
-    this.getElement("startDate").addEventListener("change",(ev)=>{
+    this.getElement("startDate").addEventListener(EVENT.CHANGE,(ev)=>{
       periodEl.value = "personalized";
     });
-    this.getElement("endDate").addEventListener("change",(ev)=>{
+    this.getElement("endDate").addEventListener(EVENT.CHANGE,(ev)=>{
       periodEl.value = "personalized";
     });
   }

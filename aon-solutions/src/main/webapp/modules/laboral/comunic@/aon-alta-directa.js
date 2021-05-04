@@ -3,7 +3,7 @@ import { setValueName, serializeForm, formatDateOrigin, disabledForm } from '../
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { PAYROLL_VIEWS } from '../PayrollEnums.js';
-import { CONSTANT, MSG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
 import '../../../components/aon-number.js';
@@ -12,7 +12,6 @@ import '../../../components/aon-suggestion.js';
 import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
-
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -252,27 +251,27 @@ export class AonAltaDirecta extends AonElement {
 
     eventListener() {
         let aonAltaDirectaSubmit = this.getElement(`${this.id}Submit`);
-        if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener('click', () => this.formSubmit());
+        if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener(EVENT.CLICK, () => this.formSubmit());
 
-        this.getElement('centro_trabajo').addEventListener('change', (e) => this.listCuentaCotizacion(e));
+        this.getElement('centro_trabajo').addEventListener(EVENT.CHANGE, (e) => this.listCuentaCotizacion(e));
 
-        this.getElement('ctaCti').addEventListener('change', ({ detail }) => {
+        this.getElement('ctaCti').addEventListener(EVENT.CHANGE, ({ detail }) => {
             this.getElement('regimen').setAttribute('value', detail.cccRegimeCode);
         });
 
-        this.getElement(`${this.id}Nss`).addEventListener('change', ({ target }) => {
+        this.getElement(`${this.id}Nss`).addEventListener(EVENT.CHANGE, ({ target }) => {
             this.comprobarNss(target.value);
         });
 
-        this.getElement('type_cto').addEventListener('change', (e) => this.selectTipoContrato(e));
+        this.getElement('type_cto').addEventListener(EVENT.CHANGE, (e) => this.selectTipoContrato(e));
 
-        this.getElement('tipo_jornada').addEventListener('change', (e) => this.selectTipojornada(e));
+        this.getElement('tipo_jornada').addEventListener(EVENT.CHANGE, (e) => this.selectTipojornada(e));
 
-        this.getElement('horas_convenio').addEventListener('change', () => this.calculoCoef());
+        this.getElement('horas_convenio').addEventListener(EVENT.CHANGE, () => this.calculoCoef());
 
-        this.getElement('horas').addEventListener('change', () => this.calculoCoef());
+        this.getElement('horas').addEventListener(EVENT.CHANGE, () => this.calculoCoef());
 
-        this.getElement('switchDni').addEventListener('change', ({ target }) => {
+        this.getElement('switchDni').addEventListener(EVENT.CHANGE, ({ target }) => {
             let div_apellidos = this.getElement('div_apellidos');
             let nss = this.getElement(`${this.id}Nss`);
             let dni = this.getElement(`${this.id}Dni`);
@@ -284,11 +283,11 @@ export class AonAltaDirecta extends AonElement {
             nss.removeIcon();
         });
 
-        this.getElement('coefparcial').addEventListener('change', (e) => this.calculoHoras());
+        this.getElement('coefparcial').addEventListener(EVENT.CHANGE, (e) => this.calculoHoras());
 
-        this.getElement('iconSegSocial').addEventListener('click', (e) => this.getNaf());
+        this.getElement('iconSegSocial').addEventListener(EVENT.CLICK, (e) => this.getNaf());
 
-        this.getElement(`${this.id}IconReset`).addEventListener('click', (e) => this.disabledCardTrabajor(false));
+        this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, (e) => this.disabledCardTrabajor(false));
     }
 
 
@@ -431,7 +430,7 @@ export class AonAltaDirecta extends AonElement {
 
     suggestionDni() {
         const searchSuggestion = this.getElement(`${this.id}Dni`);
-        searchSuggestion.addEventListener('keyup', async ({ target: { value } }) => {
+        searchSuggestion.addEventListener(EVENT.KEYUP, async ({ target: { value } }) => {
             const dni = value.toString().toUpperCase();
             if (dni.length > 2) {
                 const resp = await getPersonas(dni);

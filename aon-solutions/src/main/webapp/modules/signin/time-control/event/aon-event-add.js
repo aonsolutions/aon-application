@@ -16,7 +16,7 @@ import {
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { MSG } from "../../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
@@ -92,7 +92,7 @@ export class AonEventAdd extends AonElement {
     this.applicationEl.removeToolbarOptions();
 
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
-    aonCardEvent.setContentHTML(`
+    aonCardEvent.setContentHTML( /*html*/`
             <div class="aonCol-sm-6 aonCol-md-3">
              <aon-input name="name" id="name" description="Nombre" type="text"></aon-input>
             </div>
@@ -140,7 +140,7 @@ export class AonEventAdd extends AonElement {
 
   eventListener() {
     let location = this.getElement("location");
-    location.addEventListener("change", ({ detail }) => {
+    location.addEventListener(EVENT.CHANGE, ({ detail }) => {
       if (detail && detail.coordinates) {
         const coordinates = detail.coordinates;
         setValueName(
@@ -151,7 +151,7 @@ export class AonEventAdd extends AonElement {
     });
 
     let aonSubmit = this.getElement(`${this.id}Submit`);
-    if (aonSubmit) aonSubmit.addEventListener("click", () => this.save());
+    if (aonSubmit) aonSubmit.addEventListener(EVENT.CLICK, () => this.save());
   }
 
   buildToolbar() {
@@ -161,7 +161,7 @@ export class AonEventAdd extends AonElement {
       if(!this.applicationParentEl.isEmployee()){
         toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
       }
-      toolbarEl.title = "Edición";
+      toolbarEl.title = MSG.EDIT;
     } else {
       toolbarEl.title = "Registro";
     }
@@ -248,10 +248,9 @@ export class AonEventAdd extends AonElement {
       }
       this.showToast({
         message: MSG.SAVED_DATA,
-        type: "success",
-        delay: 3000,
+        type: CONSTANT.SUCCESS,
+        delay: 999999,
       });
-      this.applicationEl.getToast().start();
     } catch (error) {
       this.showToast(error);
     }
@@ -259,7 +258,7 @@ export class AonEventAdd extends AonElement {
   }
 
   delete() {
-    this.applicationEl.confirmDialog("Eliminar", "Estas seguro de eliminarlo?", async()=>{
+    this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM}lo?`, async()=>{
       const data = this.getFormValues();
       this.applicationEl.startLoader();
       try {

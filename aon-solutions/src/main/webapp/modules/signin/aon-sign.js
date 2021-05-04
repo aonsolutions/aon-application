@@ -4,6 +4,7 @@ import {getPosition} from '../../services/maps.js';
 import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
+import { EVENT } from '../../environments/environments.js';
 
 export class AonSign extends AonElement {
 
@@ -67,7 +68,7 @@ export class AonSign extends AonElement {
           name: c.company
         }
       }));
-      select.addEventListener('change', () => {
+      select.addEventListener(EVENT.CHANGE, () => {
         this._taskHolder = select.value;
         getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
       });
@@ -102,7 +103,7 @@ export class AonSign extends AonElement {
         button.style.width = "60%";
         button.style.borderRadius = "12px";
       }
-      button.addEventListener('click', () => this.saveTimeCtrl('in'));
+      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
 	}
@@ -121,7 +122,7 @@ export class AonSign extends AonElement {
         button.style.width = "60%";
         button.style.borderRadius = "12px";
       }
-      button.addEventListener('click', () => this.saveTimeCtrl('in'));
+      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('in'));
       content.appendChild(button);
     }
 	}
@@ -138,7 +139,7 @@ export class AonSign extends AonElement {
       button.style.width = '100px';
       button.style.padding = '1rem 1rem';
       button.innerHTML = 'SALIDA';
-      button.addEventListener('click', () => this.saveTimeCtrl('out'));
+      button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
       content.appendChild(button);
   
       let button2 = this.createElement('button');
@@ -148,7 +149,7 @@ export class AonSign extends AonElement {
       button2.style.width = '100px';
       button2.style.padding = '1rem 1rem';
       button2.innerHTML = 'PAUSA';
-      button2.addEventListener('click', () => this.saveTimeCtrl('pause'));
+      button2.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('pause'));
       content.appendChild(button2);
     }
  

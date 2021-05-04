@@ -18,11 +18,12 @@ import {
   PAYROLL_FILTER,
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
+import { pieChar, addLegend} from "./pieChar.js";
+import { EVENT, MSG } from "../../../environments/environments.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { pieChar, addLegend} from "./pieChar.js";
-import { MSG } from "../../../environments/environments.js";
+
 
 export class AonCompanyCostsList extends AonElement {
   TABLE_ID;
@@ -96,7 +97,7 @@ export class AonCompanyCostsList extends AonElement {
       PAYROLL_FILTER[0],
       ...PRESENCE_FILTER,
     ]);
-    aonFilter.addEventListener("applyFilter", ({ detail }) => {
+    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({ detail }) => {
       if (detail) {
         this.applicationParentEl.setDataFilter(detail);
       }
@@ -117,7 +118,7 @@ export class AonCompanyCostsList extends AonElement {
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
     // if(filter && filter.period) periodEl.value = filter.period;
-    periodEl.addEventListener("change", ({ detail }) => {
+    periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
       if (detail) {
         const { startDate, endDate } = detail;
         setValueName("startDate", startDate);
@@ -127,11 +128,11 @@ export class AonCompanyCostsList extends AonElement {
     // ----------PERIOD END ------------
     let startDateEl = this.getElement("startDate");
     startDateEl.addEventListener(
-      "change",
+      EVENT.CHANGE,
       (ev) => (periodEl.value = "personalized")
     );
     let endDateEl =this.getElement("endDate");
-    endDateEl.addEventListener("change",(ev) => (periodEl.value = "personalized") );
+    endDateEl.addEventListener(EVENT.CHANGE,(ev) => (periodEl.value = "personalized") );
   }
 
   async getTable() {

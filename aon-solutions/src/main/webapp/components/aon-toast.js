@@ -1,4 +1,5 @@
 import { CONSTANT } from '../environments/environments.js';
+import { setStyles } from '../services/utils.js';
 import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {
@@ -23,6 +24,18 @@ export class AonToast extends AonElement {
 		this.innerHTML = `
 			<div id="${this.DIV}" class="aonToast"></div>
 		`;
+		setStyles(this, {
+			position: "absolute",
+			bottom: "10%",
+			minWidth: "250px",
+			maxWidth: "300px",
+			marginLeft: "auto",
+			marginRight: "auto",
+			left: 0,
+			right: 0,
+			textAlign: "center",
+			zIndex: 99
+		});
 	}
 
 	start(options) {
@@ -31,9 +44,9 @@ export class AonToast extends AonElement {
 		let color = '#333';
 
 		if (!delay) delay = 3000;
-		if (type === 'error') color = '#f44336';
-		else if (type === 'success') color = '#4CAF6E';
-		else if (type === 'primary') color = '#2196f3';
+		if (type === CONSTANT.ERROR) color = '#f44336';
+		else if (type === CONSTANT.SUCCESS) color = '#4CAF6E';
+		else if (type === CONSTANT.PRIMARY) color = '#2196f3';
 		// if(position && "top" === position){
 		// 	toast.style.top = "10%";
 		// } else {

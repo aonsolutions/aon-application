@@ -129,7 +129,6 @@ export class AonElement extends HTMLElement{
    */
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);
-    if(!obj.type) obj.type = CONSTANT.PRIMARY;
     const toast = this.getElement(this.getApplication().TOAST);
     if(toast){
       toast.start(obj);    

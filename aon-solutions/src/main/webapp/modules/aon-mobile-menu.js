@@ -9,6 +9,7 @@ import {
   closeSession
 } from "../services/service.js";
 
+import { EVENT, MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
    PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
 
@@ -19,7 +20,6 @@ import "./laboral/aon-laboral.js";
 import "./fiscal/aon-fiscal.js";
 import "./messenger/aon-messenger.js";
 
-import { MATERIAL_ICONS } from '../environments/environments.js';
 
 export class AonMobileMenu extends AonElement {
 
@@ -55,10 +55,10 @@ export class AonMobileMenu extends AonElement {
   }
 
   eventListener(){
-    window.addEventListener('userAuth', ()=>{
+    window.addEventListener(EVENT.USER_AUTH, ()=>{
       this.build();
 		});
-    window.addEventListener('resize', () => {
+    window.addEventListener(EVENT.RESIZE, () => {
       this.reload();
     });
 
@@ -118,7 +118,7 @@ export class AonMobileMenu extends AonElement {
         apps.push(this.getAppInfo(app));
       }
     });
-
+    
     apps.forEach((app, i) => {
       if(count >= 4 && apps.length > 4) {
         options.push(app);
@@ -190,7 +190,7 @@ export class AonMobileMenu extends AonElement {
     if(app.aonIcon) {
       button.aonIcon = app.aonIcon;
     }
-    button.addEventListener("click", app.fn);
+    button.addEventListener(EVENT.CLICK, app.fn);
     span.appendChild(button);
     if(app.aonIcon) {
       this.getElement(button.BUTTON).style.bottom = '5px';
@@ -213,11 +213,11 @@ export class AonMobileMenu extends AonElement {
         case DOCUMENTAL.app:
           permission = dur.isDocumental();
           break;
-        case PAYROLL.app:
-          permission = dur.isPayroll() || dur.isComunica();
-          break;
         case COMUNICA.app:
-          permission = dur.isComunica();
+          permission = (dur.isComunicaManager() || dur.isComunicaPortal() ) && !dur.isPayroll()
+          break;
+        case PAYROLL.app:
+          permission = dur.isPayroll();
           break;
         case TIMECONTROL.app:
           permission = dur.isTimecontrol();
@@ -246,11 +246,17 @@ export class AonMobileMenu extends AonElement {
         icon: MATERIAL_ICONS.FOLDER,
         fn: () => rootPanel("<aon-documental></aon-documental>")
       };
+    else if(COMUNICA.app === app.app)
+      return {
+        name: app.title,
+        aonIcon: "aon_seg_social",
+        fn: () =>rootPanel(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`)
+      };
     else if(PAYROLL.app === app.app)
       return {
         name: app.title,
         aonIcon: "aon_seg_social",
-        fn: () => rootPanel("<aon-laboral></aon-laboral>"),
+        fn: () => rootPanel(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`),
       };
     else if(TIMECONTROL.app === app.app)
       return {

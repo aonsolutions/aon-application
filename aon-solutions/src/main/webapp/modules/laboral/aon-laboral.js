@@ -11,7 +11,7 @@ import { AonMovements } from "./comunic@/aon-movements.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
-import { MSG } from "../../environments/environments.js";
+import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { CONTRACT_OPTIONS } from "./PayrollEnums.js";
 import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
@@ -26,6 +26,19 @@ class AonLaboral extends AonElement {
 	_roles;
 	MOVEMENTS;
 	_movements;
+
+  static get observedAttributes() {
+    return [CONSTANT.TITLE];
+  }
+
+  get title() {
+    return this.getAttribute(CONSTANT.TITLE);
+  }
+
+  set title(title) {
+    this.setAttribute(CONSTANT.TITLE, title);
+  }
+
   constructor () {
     super();
   }
@@ -40,6 +53,7 @@ class AonLaboral extends AonElement {
 
   initialize(){
     this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
+    this.title = this.title || MSG.PAYROLL;
   }
 
   getDur() {
@@ -49,17 +63,17 @@ class AonLaboral extends AonElement {
   build() {
     this.paintView();
     this.buildToolbar();
-    if(this.isEmployee() && !this.getDur().isComunica()){
+    if(this.isEmployee() && !this.isComunica()){
       this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
     } else if(this.isComunicaNotPayroll() ){
       this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
-    } else if(this.getDur().isPayroll()) {
+    } else if(this.isPayroll()) {
       this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
     }
   }
 
   paintView(){
-    this.createApplication(this.AON_LABORAL, MSG.PAYROLL, new AonApplication());
+    this.createApplication(this.AON_LABORAL, this.title, new AonApplication());
     this.applicationEl = this.getApplication();
   }
 
@@ -210,7 +224,7 @@ class AonLaboral extends AonElement {
   }
 
   async deleteMov(data, el) {
-    this.applicationEl.confirmDialog("Anular movimiento", `Estas seguro de anular el movimiento de ${data.name} ?`, async() => {
+    this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
         this.applicationEl.startLoading();
         try {
           await postDeleteMov(data);
@@ -307,8 +321,12 @@ class AonLaboral extends AonElement {
     return !this.getDur().isPayrollManager() && !this.getDur().isPayrollPortal();
   }
 
+  isPayroll(){
+    return this.getDur().isPayroll();
+  }
+
   isComunicaNotPayroll(){
-    return this.isComunica() && !this.getDur().isPayroll();
+    return this.isComunica() && !this.isPayroll();
   }
 }
 window.customElements.define('aon-laboral', AonLaboral);

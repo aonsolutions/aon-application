@@ -4,6 +4,7 @@ import { getMovements, getEmployee } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
+import { AON_SWITCH } from "../../../environments/aonTag.js";
 
 
 export class AonMovementsList extends AonElement {
@@ -108,7 +109,7 @@ export class AonMovementsList extends AonElement {
         resp = { ...resp, prev, situation };
         if (aonAltaDirecta) {
           disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
-          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, "aon-switch")
+          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH)
           aonAltaDirecta.data = resp;
         }
       }

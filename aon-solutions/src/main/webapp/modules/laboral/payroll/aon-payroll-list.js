@@ -6,7 +6,7 @@ import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { MSG } from '../../../environments/environments.js';
+import { EVENT, MSG } from '../../../environments/environments.js';
 import * as ACTION from '../../actions.js';
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
@@ -93,7 +93,7 @@ export class AonPayrollList extends AonElement {
       ...PAYROLL_FILTER,
       ...PRESENCE_FILTER
     ]);
-    aonFilter.addEventListener("applyFilter", ({detail}) => {
+    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({detail}) => {
       if(detail)this.applicationParentEl.setDataFilter(detail);
     });
 
@@ -101,7 +101,7 @@ export class AonPayrollList extends AonElement {
     let workplaces = await getWorkplaceCCCs();
     let workplaceEl = this.getElement("workplace");
     workplaceEl.options = JSON.stringify( workplaces.map(({workplace})=> ({ name: workplace.description, value: workplace.id})) );
-    workplaceEl.addEventListener('change', ({detail}) => {
+    workplaceEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail) this.getEmployees(detail);
     });
     // ----------WORKPLACES END ------------
@@ -110,7 +110,7 @@ export class AonPayrollList extends AonElement {
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
-    periodEl.addEventListener('change', ({detail}) => {
+    periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         const {startDate, endDate} = detail;
         setValueName('startDate', startDate);
@@ -119,8 +119,8 @@ export class AonPayrollList extends AonElement {
     });
      // ----------PERIOD END ------------
 
-    this.getElement("startDate").addEventListener("change", (ev)=>periodEl.value = "personalized");
-    this.getElement("endDate").addEventListener("change", (ev)=>periodEl.value = "personalized");
+    this.getElement("startDate").addEventListener(EVENT.CHANGE, (ev)=>periodEl.value = "personalized");
+    this.getElement("endDate").addEventListener(EVENT.CHANGE, (ev)=>periodEl.value = "personalized");
   }
 
   async getTable() {

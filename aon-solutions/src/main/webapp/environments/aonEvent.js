@@ -13,3 +13,5 @@ export const MOUSEOVER = 'mouseover';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const SELECT = 'select';
 export const USER_AUTH = 'userAuth';
+export const APPLY_FILTER = 'applyFilter';
+export const RESIZE = 'resize';
