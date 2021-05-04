@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, formatDateOrigin, disabledForm } from '../../../services/utils.js';
-import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
+import { getPersonas, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
@@ -142,7 +142,7 @@ export class AonAltaDirecta extends AonElement {
             </div>
         `
         );
-        const buttonSubmit = this.isMobile() ? /*html*/`<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit"></div></div>` : '';
+        const buttonSubmit = this.isMobile() ? /*html*/`<div id="${this.id}DivSubmit" style="text-align: center;"></div>` : '';
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
         aonContratoCard.setContentHTML(
            /*html*/`
@@ -158,17 +158,17 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
                 </div>
-                <div class="aonCol-sm-12 aonCol-md-12" id="div_parcial" hidden>
-                    <div class="aonCol-sm-3">
+                <div id="div_parcial" hidden>
+                    <div class="aonCol-xs-6 aonCol-sm-3">
                         <aon-select id="tipo_jornada" name="tipo_jornada" title="Tipo de jornada"></aon-select>
                     </div>
-                    <div class="aonCol-sm-3">
+                    <div class="aonCol-xs-6 aonCol-sm-3">
                         <aon-number id="horas_convenio" name="horas_convenio"  description="Horas convenio" format="true" decimals="2"></aon-number>
                     </div>
-                    <div class="aonCol-sm-3">
+                    <div class="aonCol-xs-6 aonCol-sm-3">
                         <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
                     </div>
-                    <div class="aonCol-sm-3">
+                    <div class="aonCol-xs-6 aonCol-sm-3">
                         <aon-number name="coefparcial" id="coefparcial" description="Coef. Parcial"></aon-number>
                     </div>
                 </div>
@@ -186,7 +186,7 @@ export class AonAltaDirecta extends AonElement {
 
         if (this.isMobile()){
             this.getElement(`${this.id}DivSubmit`)
-                .innerHTML = /*html*/`<button class="aonButton" type="button" id="${this.id}Submit">Comunicar</button>`;
+                .innerHTML = /*html*/`<button class="aonButton" style="margin-top: 10px;" type="button" id="${this.id}Submit">Comunicar</button>`;
         }
         this.addSpanDecimal();
         this.getElement(`${this.id}Dni`).disabled = true;
@@ -328,13 +328,11 @@ export class AonAltaDirecta extends AonElement {
 
         //seleccionar workplace;
         const centro_trabajo = this.getElement('centro_trabajo');
-        if (centro_trabajo && centro_trabajo.options) {
+        const workplaceInput = this.getElement('centro_trabajoInput');
+        if (centro_trabajo && workplaceInput && centro_trabajo.options) {
             const options = JSON.parse(centro_trabajo.options);
-            const { workplace } = options.find((r, index) => r.ccc.some(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti) === true);
-            if (workplace) {
-                const workplaceInput = this.getElement('centro_trabajoInput');
-                if (workplaceInput && workplace.description) workplaceInput.value = workplace.description;
-            }
+            const {name:nameWp} = options.find((r) => r.cccs.some(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti) === true);
+            if (nameWp) workplaceInput.value = nameWp;
         }
 
         //seleccionar ccc;
@@ -345,20 +343,8 @@ export class AonAltaDirecta extends AonElement {
         const type_cto = document.querySelector('#type_cto > aon-input');
         if (obj.type_cto && type_cto && !type_cto.value) {
             type_cto.value = obj.type_cto;
-        } else {
-            //seleccionamos por tipo de cuenta
-            if (centro_trabajo && centro_trabajo.options) {
-                const options = JSON.parse(centro_trabajo.options);
-                for (const property in options) {
-                    if (property && options[property]) {
-                        let { type } = options[property].ccc.find(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti);
-                        if (type) {
-                            this.selectTypeCto(type);
-                            break;
-                        }
-                    }
-                }
-            }
+        } else { //seleccionamos por tipo de cuenta si no tiene tipo de contrato
+            this.selecCto(centro_trabajo, obj);
         }
 
         //calculo horas
@@ -402,6 +388,21 @@ export class AonAltaDirecta extends AonElement {
             else if ("diaria" == value) hr = 8;
             this.getElement("horas_convenio").value = hr;
             this.calculoCoef();
+        }
+    }
+
+    selecCto(centro_trabajo, {regimen, ctaCti}){
+        if (centro_trabajo && centro_trabajo.options) {
+            const options = JSON.parse(centro_trabajo.options);
+            for (const property in options) {
+                if (property && options[property] && options[property].cccs) {
+                    const res  = options[property].cccs.find(({cccRegimeCode, ccc}) => cccRegimeCode === regimen && ccc === ctaCti);
+                    if (res && res.type) {
+                        this.selectTypeCto(res.type);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -452,24 +453,41 @@ export class AonAltaDirecta extends AonElement {
     async listCentroTrabajo() {
         let centro_trabajo = this.getElement('centro_trabajo');
         try {
-            const resp = await getWorkplaceCCCs();
-            let centros = resp.filter(r => r.ccc && r.ccc.length > 0);
-            centro_trabajo.options = JSON.stringify(
-                centros.map((r, index) => {
-                    return {
-                        ...r,
-                        name: `${r.workplace.description}`,
-                        value: index
-                    }
+            const resp = await getCccForActivity();
+            if(resp && resp.cccs){
+                const groupedGeozone = this.groupBy(resp.cccs, ccc => ccc.geozone);
+                let geozones = [];
+                groupedGeozone.forEach((v,k)=>{
+                    geozones.push({
+                        cccs:v,
+                        name:k,
+                        value:k
+                    });
                 })
-            );
+                centro_trabajo.options = JSON.stringify(geozones);
+            }
         } catch (error) { }
+    }
+
+    groupBy(list, keyGetter) {
+        const map = new Map();
+        for(let it in list){
+            const item = list[it];
+            const key = keyGetter(item);
+            const collection = map.get(key);
+            if (!collection) {
+                map.set(key, [item]);
+            } else {
+                collection.push(item);
+            }
+        }
+        return map;
     }
 
     listCuentaCotizacion({ detail }) {
         if (detail) {
             try {
-                let { ccc: cccs } = detail;
+                const { cccs } = detail;
                 let ctaCti = this.getElement('ctaCti');
                 ctaCti.options = JSON.stringify(
                     cccs.map(r => {
@@ -520,15 +538,16 @@ export class AonAltaDirecta extends AonElement {
         let convenio = this.getElement('convenio');
         try {
             const resp = await getConvenios();
-            convenio.options = JSON.stringify(
-                resp.map(r => {
-                    return {
-                        ...r,
-                        name: `${r.name}`,
-                        value: r.value
-                    }
-                })
-            );
+            const options = resp.map(r => {
+                return {
+                    ...r,
+                    name: `${r.name}`,
+                    value: r.value
+                }
+            });
+            convenio.options = JSON.stringify(options);
+            if(options && options[0] && options[0].value)
+                convenio.value = options[0].value;
         } catch (error) { }
     }
 

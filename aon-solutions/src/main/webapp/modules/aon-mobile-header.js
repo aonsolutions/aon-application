@@ -48,7 +48,7 @@ export class AonMobileHeader extends AonElement {
 		this.innerHTML = /*html*/`
 			<div id="aonHeaderWeb" class="aonMobileHeader" >
 				<span>
-					<img id="aonMobileLogo" class="aonLogo" width="230px" />
+					<img id="aonMobileLogo" class="aonLogo" />
 				</span>
 				<span id="aonHeaderNotification" class="aonMobileHeaderButton" style="right: 15%;">
 					<aon-notification-icon></aon-notification-icon>
@@ -178,8 +178,11 @@ export class AonMobileHeader extends AonElement {
 			aonLogo.src = 'assets/ayudat-logo2.png';
 		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
 			aonLogo.src = 'assets/ayudat-logo3.png';
-//			aonLogo.style.top = '0px';
-		} else aonLogo.src = 'assets/aon-logo2.png';
+		} else {
+			aonLogo.src = 'assets/aon-logo3.svg';
+			aonLogo.style.top = "23px";
+			aonLogo.style.width = "105px";
+		}
 		aonLogo.addEventListener('click', () => {
 			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 		});

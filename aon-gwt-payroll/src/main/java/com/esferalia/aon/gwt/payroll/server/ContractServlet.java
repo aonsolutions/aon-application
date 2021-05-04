@@ -22,7 +22,9 @@ import org.richfaces.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
+import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
+import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
@@ -94,6 +96,9 @@ public class ContractServlet extends AonApiHttpServlet {
 					break;
 				case "/company/costs":
 					response(req, resp, getCompanyCosts(req, api));
+					break;
+				case "/ccc/activity":
+					response(req, resp, getCccForActivity( api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -275,6 +280,16 @@ public class ContractServlet extends AonApiHttpServlet {
 		return date;
 	}
 	
+	private Object getCccForActivity(AonApiData api) throws SQLException {
+		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
+		MainCCCInfo mainCccInfo = JooqMainCCC.getMainCCCInfo(conn, api.getDomain().getId(), api.getUser().getId());
+
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String jsonInString = gjson.toJson(mainCccInfo);
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		return new JSONObject();
+	}
+	
 	private SalaryInfoFilter getFilter(AonApiData api) {
 		SalaryInfoFilter filter = new SalaryInfoFilter();
 		
@@ -288,4 +303,5 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 		return filter;
 	}
+
 }

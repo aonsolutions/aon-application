@@ -30,23 +30,23 @@ export class AonEventAdd extends AonElement {
   START_DATE
   TASK_HOLDER;
   static get observedAttributes() {
-    return ["data"];
+    return [CONSTANT.DATA];
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get data() {
-    return JSON.parse(this.getAttribute("data"));
+    return JSON.parse(this.getAttribute(CONSTANT.DATA));
   }
 
   set data(value) {
-    if (value) this.setAttribute("data", JSON.stringify(value));
+    if (value) this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
   }
 
   constructor() {

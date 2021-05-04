@@ -2,9 +2,10 @@ import { AonElement } from "../../../components/AonElement.js";
 import { disabledForm, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
+import { AON_SWITCH } from "../../../environments/aonTag.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
-import { AON_SWITCH } from "../../../environments/aonTag.js";
+
 
 
 export class AonMovementsList extends AonElement {
@@ -159,7 +160,6 @@ export class AonMovementsList extends AonElement {
       if(!this.isMobile()){
         this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
       }
-
       this.showToast(error);
     }
     return data;

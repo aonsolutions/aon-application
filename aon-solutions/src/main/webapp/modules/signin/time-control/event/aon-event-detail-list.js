@@ -148,10 +148,10 @@ export class AonEventDetailList extends AonElement {
       }
     });
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE, (ev) => {
+    this.getElement("startDate").addEventListener(EVENT.CHANGE, () => {
       periodEl.value = "personalized";
     });
-    this.getElement("endDate").addEventListener(EVENT.CHANGE, (ev) => {
+    this.getElement("endDate").addEventListener(EVENT.CHANGE, () => {
       periodEl.value = "personalized";
     });
   }

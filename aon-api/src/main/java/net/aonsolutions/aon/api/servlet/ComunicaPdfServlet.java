@@ -68,6 +68,10 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 					LOGGER.info("GET-COPY-BASIC");
 					PDF = getReportAffiliateInMovPrev(api);
 					break;
+				case "/get-idc-ccc":
+					LOGGER.info("GET-IDC-CCC");
+					PDF = getIdcCcc(api);
+					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
 			} 
@@ -153,6 +157,16 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().getString("regimen");
 		String ccc = api.getParams().getString("ccc");
 	    return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	}
+	
+	private byte[] getIdcCcc(AonApiData api) throws Exception {
+		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+		String regimen = api.getParams().getString("regimen");
+		String ccc = api.getParams().getString("ccc");
+		Date fecha = Toolkit.parseDate(api.getParams().getString("fecha"), "yyyy-MM-dd");
+		
+	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, fecha);	
 	}
 
 	private Certificate getCert(AonApiData api, String typeCert) throws Exception {

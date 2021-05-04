@@ -11,3 +11,5 @@ export const getCopyBasicPdf = (data) => openFile(`${API_URL}/comunica/pdf/get-c
 export const getCompanyCosts = (data) => get(`${API_URL}/contract/company/costs`, data);
 
 export const getCompanyCostsExcel = (data) => openFile(`${API_URL}/contract/company/costs/excel`, data);
+
+export const getCccForActivity = (data) => get(`${API_URL}/contract/ccc/activity`, data);

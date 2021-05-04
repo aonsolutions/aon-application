@@ -3,7 +3,7 @@ import { API_URL } from "../environments/environments.js";
 
 export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
-export const getMovements = (data) =>  get(`${API_URL}/comunica/movements`);
+export const getMovements = (data) =>  get(`${API_URL}/comunica/movements`, data);
 
 export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
@@ -14,6 +14,8 @@ export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
 export const getReportAffiliateInAlta = (data) => openFile(`${API_URL}/comunica/pdf/get-report-affiliate-in-alta`, data);
 
 export const getReportAffiliateInMovPrev = (data) => openFile(`${API_URL}/comunica/pdf/get-report-affiliate-in-mov-prev`, data);
+
+export const getIdcCcc = (data) => openFile(`${API_URL}/comunica/pdf/get-idc-ccc`, data);
 
 export const getIDC = (data) =>
   openFile(`${API_URL}/comunica/pdf/get-idc`, data);
@@ -236,39 +238,39 @@ export const getAllTipoCtz = () =>
         regimen: "0111",
       },
       {
-        id: 2,
-        name: "Aprendizaje",
-        value: 2,
-        regimen: "0111",
-      },
-      {
         id: 3,
-        name: "Asimilados",
+        name: "Comercio",
         value: 3,
         regimen: "0111",
       },
       {
         id: 4,
-        name: "Becarios",
+        name: "Asimilados",
         value: 4,
         regimen: "0111",
       },
       {
         id: 5,
-        name: "Emp. hogar",
+        name: "Becarios",
         value: 5,
-        regimen: "0138",
+        regimen: "0111",
       },
       {
         id: 6,
-        name: "Agrarios",
+        name: "Emp. hogar",
         value: 6,
-        regimen: "0163",
+        regimen: "0138",
       },
       {
         id: 7,
-        name: "Artistas",
+        name: "Cuenta ajena",
         value: 7,
+        regimen: "0163",
+      },
+      {
+        id: 8,
+        name: "Artistas",
+        value: 8,
         regimen: "0112",
       },
     ];

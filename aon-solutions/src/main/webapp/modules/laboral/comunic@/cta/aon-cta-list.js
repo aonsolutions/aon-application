@@ -1,14 +1,16 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import {
   getCertCorriente,
-  getWorkplaceCCCs,
   getTipoCtz,
   getReportAffiliateInAlta,
   getReportAffiliateInMovPrev,
+  getCccForActivity,
+  getIdcCcc,
 } from "../../../../services/service.js";
 import { PAYROLL_VIEWS } from "../../PayrollEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
+import { formatDateOrigin } from "../../../../services/utils.js";
 
 
 export class AonCtaList extends AonElement {
@@ -119,34 +121,29 @@ export class AonCtaList extends AonElement {
         aonIcon: "aon_seg_social",
         fn: (el) => this.getReportAffiliateInMovPrev(res, el),
       },
+      {
+        name: "IDC",
+        aonIcon: "aon_seg_social",
+        fn: (el) => this.getIdcCcc(res, el),
+      },
     ];
   }
 
   async getData() {
-    let cuentas = [];
+    let data = [];
     try {
-      const workplaces = await getWorkplaceCCCs();
-      for (const workplace in workplaces) {
-        const cccs = workplaces[workplace].ccc;
-        if (cccs)
-          for (const ccc in cccs) {
-            let cuenta = cccs[ccc];
-            let exists = cuentas.some(
-              (el) =>
-                el.ccc === cuenta.ccc &&
-                el.cccRegimeCode === cuenta.cccRegimeCode
-			);
-            if (!exists) {
-              cuenta["tipo"] = await this.getTipo(cuenta.type);
-              cuentas.push(cuenta);
-            }
+      const resp = await getCccForActivity();
+      if(resp && resp.cccs){
+          for (const key in resp.cccs) {
+            let ctaCti = resp.cccs[key];
+            ctaCti["tipo"] = await this.getTipo(ctaCti.type);
+            data.push(ctaCti);
           }
       }
     } catch (e) {
       console.log(e);
     }
-
-    return cuentas;
+    return data;
   }
 
   async getTipo(data) {
@@ -187,5 +184,16 @@ export class AonCtaList extends AonElement {
     this.applicationEl.stopLoading();
   }
   
+  async getIdcCcc(data, el) {
+    this.applicationEl.startLoading();
+    try {
+      const { ccc, cccRegimeCode: regimen } = data;
+      const fecha = formatDateOrigin( new Date());
+      await getIdcCcc({ ccc, regimen, fecha }); // open pdf
+    } catch (error) {
+      this.showToast(error);
+		}
+    this.applicationEl.stopLoading();
+  }
 }
 window.customElements.define("aon-cta-list", AonCtaList);
