@@ -329,16 +329,16 @@ public abstract class AgreementComunica extends ResizeComposite {
 	}
 
 	private void onAddNewAgreement(ClickEvent e) {
-		if(0 != agreementDataTable.getRowCount()) {
-			SuggestBox descriptionSB = (SuggestBox) agreementDataTable.getWidget(0, 0);
-			String description = descriptionSB.getValue();
-			TextBox ssNumberTB = (TextBox) agreementDataTable.getWidget(0, 1);
-			String ssNumber = ssNumberTB.getValue();
-			if(AonStringUtils.isNotBlank(description) && AonStringUtils.isNotBlank(ssNumber)) {
-				this.newId = insertNewRow(this.newId);
-			}
-		}else
-			this.newId = insertNewRow(this.newId);
+//		if(0 != agreementDataTable.getRowCount()) {
+//			SuggestBox descriptionSB = (SuggestBox) agreementDataTable.getWidget(0, 0);
+//			String description = descriptionSB.getValue();
+//			TextBox ssNumberTB = (TextBox) agreementDataTable.getWidget(0, 1);
+//			String ssNumber = ssNumberTB.getValue();
+//			if(AonStringUtils.isNotBlank(description) && AonStringUtils.isNotBlank(ssNumber)) {
+//				this.newId = insertNewRow(this.newId);
+//			}
+//		} else
+		this.newId = insertNewRow(this.newId);
 	}
 
 }
