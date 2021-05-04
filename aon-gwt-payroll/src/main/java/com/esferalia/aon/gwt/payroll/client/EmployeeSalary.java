@@ -20,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -172,7 +173,9 @@ public class EmployeeSalary extends Composite {
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
+		
 		mainContainer.add(salaryTable);
+//		mainContainer.setHeight((Window.getClientHeight() - 150) + "px");
 		
 		salaryTable.setEmployeeView();
 		salaryTable.sortTableByStartDate();
@@ -529,7 +532,7 @@ public class EmployeeSalary extends Composite {
 
 	}
 
-	private void onDelete(ClickEvent e) {
+	public void onDelete(ClickEvent e) {
 		employeeSalaryObject.deleteSalaries(
 				salaryTable.getSelectedSalaries(), 
 				s -> {
@@ -539,11 +542,11 @@ public class EmployeeSalary extends Composite {
 		);
 	}
 
-	private void onPDF(ClickEvent e) {
+	public void onPDF(ClickEvent e) {
 		onPDF("salary", "salaries");
 	}
 	
-	private void onPDFSettle(ClickEvent e) {
+	public void onPDFSettle(ClickEvent e) {
 		onPDF("settle", "settleLetter");
 	}
 	
@@ -580,15 +583,15 @@ public class EmployeeSalary extends Composite {
 	  return window.btoa(a);
 	}-*/;
 
-	private void onPublish(ClickEvent e) {
+	public void onPublish(ClickEvent e) {
 		onPublish("drive");
 	}
 
-	private void onBidoqPublish(ClickEvent e) {
+	public void onBidoqPublish(ClickEvent e) {
 		onPublish("bidoq");
 	}
 
-	private void onEmail(ClickEvent e) {
+	public void onEmail(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		contextMenu.show();
@@ -636,6 +639,13 @@ public class EmployeeSalary extends Composite {
 				);
 			}
 		};
+	}
+	
+	// -------------------------------------------------- ContrataEmployee.Methods
+	
+	public void hideToolbar(){
+		dockLayoutPanel.remove(toolbar);
+		filterSalaryPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 	
 }

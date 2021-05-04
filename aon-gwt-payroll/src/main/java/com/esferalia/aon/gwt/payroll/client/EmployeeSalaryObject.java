@@ -18,7 +18,8 @@ public class EmployeeSalaryObject {
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
-	private Employee employee;
+	private Integer employeeId;
+	private String fullname;
 	
 	private List<SalaryInfo> employeeSalaries;
 	
@@ -30,15 +31,16 @@ public class EmployeeSalaryObject {
 		super();
 	}
 
-	public EmployeeSalaryObject(Employee employee) {
-		this.employee = employee;
+	public EmployeeSalaryObject(Integer employeeId, String fullname) {
+		this.employeeId = employeeId;
+		this.fullname = fullname;
 		this.filter = new SalaryInfoFilter();
 		this.emailStatus = "";
 	}
 	
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
-		filter.setEmployeeId(employee.getId());
+		filter.setEmployeeId(this.employeeId);
 		
 		employeesService.getSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
@@ -95,7 +97,7 @@ public class EmployeeSalaryObject {
 	}
 	
 	public String getEmployeeName(){
-		return this.employee.getFullname();
+		return this.fullname;
 	}
 	
 	public List<SalaryInfo> getEmployeeSalaries() {

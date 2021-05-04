@@ -1471,7 +1471,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		employeeItem.ensureDebugId(getId(employee));
 
 		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee);
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 		
