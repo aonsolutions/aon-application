@@ -1289,6 +1289,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				for (String key : contextDescriptorPayments.getVariables()){
 					if(!contextDescriptorPayments.getList(key).isEmpty()){
 						for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
+							
+							System.out.println("CTX Payments  : " + key + ", Type : " + variable.getType() + ", Scope : " + variable.getScope());
+							
 							if (Number.class != variable.getType())
 								continue;
 							if (null == variable.getScope())
@@ -4159,7 +4162,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			}
 
+//			for(String key : contextDescriptor.getVariables())
+//				for(VariableDescriptor var : contextDescriptor.getList(key))
+//					System.out.println("CONTEXT :"+key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
+//					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
 
+			
 			return contextDescriptor;
 
 		} catch (SQLException e) {

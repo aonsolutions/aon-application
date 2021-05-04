@@ -69,6 +69,9 @@ public class EmployeeEventsData implements Serializable {
 	
 	private Date contractStartDate;
 	private Date contractEndDate;
+	
+	private ArrayList<String> employeeContractVariables;
+	
 	// ------------------------------- CONSTRUCTOR
 	
 	public EmployeeEventsData() {
@@ -127,6 +130,14 @@ public class EmployeeEventsData implements Serializable {
 	
 	public Date getContractEndDate() {
 		return this.contractEndDate;
+	}
+	
+	public ArrayList<String> getEmployeeContractVariables() {
+		return employeeContractVariables;
+	}
+
+	public void setEmployeeContractVariables(ArrayList<String> employeeContractVariables) {
+		this.employeeContractVariables = employeeContractVariables;
 	}
 	
 	// ------------------- ADD EVENT DATA

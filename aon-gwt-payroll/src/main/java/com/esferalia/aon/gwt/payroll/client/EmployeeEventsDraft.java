@@ -13,7 +13,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -27,21 +29,19 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
@@ -96,6 +96,98 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 	}
 	
+	// ----------------------------------------------- ScheduledCommand (See)
+	
+	class CalendarVariablesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			seeMenu.getCalendarVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
+			seeMenu.getCalendarVariablesMenuItem().addStyleName(style.aonCheck());
+			
+			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			variablesToShow = 2;
+			
+			fillCellsEvents(); 
+		}
+	}
+	
+	class EditableVariablesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			seeMenu.getEditableVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
+			seeMenu.getEditableVariablesMenuItem().addStyleName(style.aonCheck());
+			
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			variablesToShow = 1;
+			
+			fillCellsEvents(); 
+		}
+	}
+	
+	class AllVariablesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			seeMenu.getAllVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAllVariablesMenuItem().addStyleName(style.aonCheck());
+			
+			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			variablesToShow = 0;
+			
+			fillCellsEvents(); 
+		}
+	}
+	
+	class SeeMenu extends ContextMenu {
+				
+		private MenuItem calendarVariablesMenuItem = null;
+		private MenuItem editableVariablesMenuItem = null;
+		private MenuItem allVariablesMenuItem = null;
+		
+		public SeeMenu() {
+			
+			calendarVariablesMenuItem = addItem("Variables del calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			calendarVariablesMenuItem.ensureDebugId("calendarVariablesMenuItem");
+			
+			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
+			
+			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
+			
+		}
+
+		public MenuItem getCalendarVariablesMenuItem() {
+			return calendarVariablesMenuItem;
+		}
+
+		public MenuItem getEditableVariablesMenuItem() {
+			return editableVariablesMenuItem;
+		}
+
+		public MenuItem getAllVariablesMenuItem() {
+			return allVariablesMenuItem;
+		}
+		
+	}
+	
 	// ----------------------------------------------- UiField 
 	
 	@UiField
@@ -114,6 +206,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String onChange();
 		String setBlockVariableStyle();
 		String bgcWhite();
+		String aonCheck();
+		String widthMenuItem();
+		String cmd_btn();
 	}
 	
 	@UiField
@@ -137,10 +232,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
 	
-	private HashMap<String,CheckBox> showVariablesMap = new HashMap<String,CheckBox>();
 	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
 	
+	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS
+	
 	private int year = DateUtils.getYear();
+	
+	private SeeMenu seeMenu;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton undoAllButton;
@@ -156,6 +254,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		seeMenu = new SeeMenu();
 		
 		initializeTable();
 		
@@ -245,7 +345,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		Integer actualYear = DateUtils.getYear();
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,
 				r -> { 
-					fillCellsEvents(); 
+					initializeVariablesToShow();
 				},t -> {});
 	}
 	
@@ -256,30 +356,21 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			eventsGrid.removeRow(i);
 	}
 
+	private void initializeVariablesToShow() {
+		this.variablesToShow = 1;
+		seeMenu.getEditableVariablesMenuItem().getScheduledCommand().execute();
+	}
+	
 	private void fillCellsEvents() {
-		
-		ArrayList<String> list = new ArrayList<String>();
-		
-		Storage storage = Storage.getLocalStorageIfSupported();
-		
-		if (null != storage){
-			String stringList = storage.getItem("NO_MOSTRAR");
-			if(null != stringList){
-				String[] arrayList = stringList.split(",");
-				
-				for(int i = 0; i < arrayList.length; i++)
-					list.add(arrayList[i]);
-			}
-		}
+		clearEventsGrid();
 		
 		//Crear nuevas filas con las variables dadas
-		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-			createVariableRow(var, list);
-		}
+		for(String var : employeeEventsDraft.getEmployeeContractVariables(getVariablesToShow()))
+			createVariableRow(var);
 		
 	}
 	
-    private void createVariableRow(String var, ArrayList<String> list) {
+    private void createVariableRow(String var) {
     	Integer actualYear = Integer.parseInt(yearLabel.getText());
     	Integer actualMonth = 0;
     	
@@ -406,20 +497,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			actualMonth++;
 		}
 		
-		if(list.contains(var))
-			eventsGrid.getRowFormatter().addStyleName(newRow, style.ocultarFila());
-		else
-			eventsGrid.getRowFormatter().removeStyleName(newRow, style.ocultarFila());
-		
 	}
     
     // ----------------------------------------------- EmployeeEventsDraft.Auxiliar Methods
     
-    private Integer calculateRowByVariableName(String var) {
-    	return variablesRow.get(var);
-	}
-	
-	private boolean checkBlockVariables(int row) {
+   private boolean checkBlockVariables(int row) {
 		Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
 		if(element == null)
 			return false;
@@ -503,8 +585,20 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				nextYearButton.setEnabled(true);
 			}
 			
-			clearEventsGrid();
 			fillCellsEvents();
+		}
+	}
+	
+	public ArrayList<String> getVariablesToShow(){
+		switch (variablesToShow) {
+			case 0:
+				return employeeEventsDraft.getAllVariables();
+			case 1:
+				return employeeEventsDraft.getAgreementVariables();
+			case 2:
+				return employeeEventsDraft.getCalendarVariables();
+			default:
+				return new ArrayList<String>();
 		}
 	}
 	
@@ -572,40 +666,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		    menu.show();
 		}
 	}
-
-	// ----------------------------------------------- LocalStorage
-	
-	protected ArrayList<String> getVariablesLocalStorage() {
-		ArrayList<String> list = new ArrayList<String>();
-		
-		Storage storage = Storage.getLocalStorageIfSupported();
-		
-		if (null != storage){
-			String stringList = storage.getItem("NO_MOSTRAR");
-			if(null != stringList){
-				String[] arrayList = stringList.split(",");
-				
-				for(int i = 0; i < arrayList.length; i++)
-					list.add(arrayList[i]);
-			}
-			
-		}
-		
-		return list;
-	}
-	
-	private void setVariablesLocalStorage(ArrayList<String> variablesLocalStore) {
-		Storage storage = Storage.getLocalStorageIfSupported();
-		
-		if(null != storage){
-			String noShowVar = "";
-			for(String var : variablesLocalStore)
-				noShowVar += var+",";
-			
-			storage.removeItem("NO_MOSTRAR");
-			storage.setItem("NO_MOSTRAR", noShowVar);
-		}
-	}
 	
 	// ----------------------------------------------- Toolbar
 	
@@ -665,9 +725,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		openNewValueDialog(null);
 	}
 	
-	private void onVisibility(ClickEvent e) {
-		createEmployeeCheckBoxDialog();	
-	}
+//	private void onVisibility(ClickEvent e) {
+//		createEmployeeCheckBoxDialog();	
+//	}
 	
 	private void initUndoAllDialog() {
 		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
@@ -678,7 +738,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			@Override
 			public void onAccept() {
-				clearEventsGrid();
+				//clearEventsGrid();
 				Integer actualYear = DateUtils.getYear(new Date());
 				employeeEventsDraft.initializeDBEventsVariables(
 						actualYear,
@@ -719,49 +779,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		inputDialog.center();
 	}
 	
-	private void createEmployeeCheckBoxDialog() {
-		EmployeeCheckBoxDialog checkBoxDialog = new EmployeeCheckBoxDialog(){
-			@Override
-			protected void onAccept() {
-				ArrayList<String> variablesLocalStore = new ArrayList<String>();
-				
-				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-					 
-					CheckBox check = showVariablesMap.get(var);
-					 Integer row = calculateRowByVariableName(var);
-					 UIObject.ensureDebugId(eventsGrid.getRowFormatter().getElement(row), "row_"+row);
-					 
-					 if(check.getValue())
-						 eventsGrid.getRowFormatter().removeStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
-					 else{
-						 eventsGrid.getRowFormatter().addStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
-						 variablesLocalStore.add(var);
-					 }
-				}
-				
-				setVariablesLocalStorage(variablesLocalStore);	
-			}
-		};
-		
-		createShowVariablesDialog(checkBoxDialog);
-		checkBoxDialog.show();
-		checkBoxDialog.center();
-	}
-	
-	private void createShowVariablesDialog(EmployeeCheckBoxDialog checkBoxDialog) {
-		ArrayList<String> list = getVariablesLocalStorage();
-		
-		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-			CheckBox checkBox = new CheckBox();
-			
-			if(list.contains(var))
-				checkBox.setValue(false);
-			else
-				checkBox.setValue(true);
-			
-			showVariablesMap.put(var, checkBox);
-			checkBoxDialog.addNewCheckBox(var, checkBox);
-		}
+	private void onVisibility(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		seeMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		seeMenu.show();
 	}
 	
 }

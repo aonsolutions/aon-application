@@ -129,6 +129,7 @@ public class JooqEmployeeEvents {
 		
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
 		Map<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>>(); 
+		ArrayList<String> employeeFilterContractVariables = new ArrayList<String>();
 		
 		// ----------------------------------- CONTRACT PERIOD
 		
@@ -202,6 +203,12 @@ public class JooqEmployeeEvents {
 						  .and(CONTRACT_DATA.NAME.eq(variableName))
 						  .fetch();
 				
+				try {
+					checkVariableIfComplexExpression(variableEmployeeInfo);
+				} catch (Exception e) {
+					continue;
+				}
+				
 				for(Record r: variableEmployeeInfo){
 					Quartet<java.util.Date, java.util.Date, String, String> quarterVariableEmployeeInfo = new Quartet<java.util.Date, java.util.Date, String, String>();
 					
@@ -227,15 +234,23 @@ public class JooqEmployeeEvents {
 			}
 			
 			employeeVariablesEvents.put(name, varibaleList);
+			
+			employeeFilterContractVariables.add(name);
 		}		
 
 		// ------------------------------------------------- SOLUCION ---------------------------------------------------------		
 		
 		employeeInfoVariablesEvents.setContractEventsList(employeeVariablesEvents);
+		employeeInfoVariablesEvents.setEmployeeContractVariables(employeeFilterContractVariables);
 		
 		return employeeInfoVariablesEvents;
 	}
 	
+	private static void checkVariableIfComplexExpression(Result<Record> variableEmployeeInfo) {
+		for(Record record : variableEmployeeInfo)
+			Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+	}
+
 	private static String getCoefficientVariable(String name) {
 		switch (name) {
 		case "DIAS_AUSENCIA":

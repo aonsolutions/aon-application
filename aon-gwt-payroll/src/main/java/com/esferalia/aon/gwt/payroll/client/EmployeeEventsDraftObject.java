@@ -43,6 +43,7 @@ public class EmployeeEventsDraftObject {
 	// ----------------------------------------------- initCalendarVariables 
 
 	private void initCalendarVariables() {
+		calendarVariables.clear();
 		calendarVariables.add("DIAS_TRABAJADOS");
 		calendarVariables.add("DIAS_VACACIONES");
 		calendarVariables.add("DIAS_INACTIVIDAD");
@@ -58,6 +59,20 @@ public class EmployeeEventsDraftObject {
 	public ArrayList<String> getCalendarVariables() {
 		return this.calendarVariables;
 	}
+	
+	public ArrayList<String> getAllVariables() {
+		return this.employeeContractVariables;
+	}
+
+	public ArrayList<String> getAgreementVariables() {
+		ArrayList<String> agreementVars = new ArrayList<String>();
+		for(String var : employeeContractVariables)
+			if(!isCalendarVariable(var))
+				agreementVars.add(var);
+		
+		return agreementVars;
+	}
+
 
 	// ----------------------------------------------- EmployeeEventsDraftObject.Methods
 	
@@ -71,6 +86,36 @@ public class EmployeeEventsDraftObject {
 	
 	public EmployeeCalendarDraftObject getEmployeeCalendar() {
 		return this.employeeCalendar;
+	}
+	
+	public ArrayList<String> getEmployeeContractVariables(ArrayList<String> variablesToShow) {
+		// Filter variables list
+		ArrayList<String> filterVariablesList = new ArrayList<String>();
+		
+		// Contract Type
+		if(employeeEventsData.getTC2() != "\"421\"") {
+			filterVariablesList.add("HORAS_FORMACION_PRESENCIAL");
+			filterVariablesList.add("HORAS_FORMACION_DISTANCIA");
+			filterVariablesList.add("HORAS_TUTORIA");
+			filterVariablesList.add("BONIFICACION_TUTORIA");
+		}
+		
+		// Fulltime Journey
+		if(isFullJourney())
+			filterVariablesList.add("HORAS_COMPLEMENTARIAS");
+		else
+			filterVariablesList.add("HORAS_EXTRAS");
+		
+		// Result List
+		ArrayList<String> result = new ArrayList<String>();
+		
+		for(String var : variablesToShow) {
+			if(filterVariablesList.contains(var))
+				continue;
+			result.add(var);
+		}
+		
+		return result;
 	}
 	
 	public ArrayList<String> getEmployeeContractVariables() {
@@ -104,17 +149,6 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	public Boolean isCalendarVariable(String var) {
-		calendarVariables.add("DIAS_TRABAJADOS");
-		calendarVariables.add("DIAS_VACACIONES");
-		calendarVariables.add("DIAS_INACTIVIDAD");
-		calendarVariables.add("DIAS_AUSENCIA");
-		calendarVariables.add("DIAS_HUELGA");
-		calendarVariables.add("DIAS_ERE");
-		calendarVariables.add("DIAS_ERE_FZA");
-		calendarVariables.add("DIAS_ERE_FZA_EXON");
-		calendarVariables.add("HORAS_COMPLEMENTARIAS");
-		calendarVariables.add("HORAS_EXTRAS");
-		
 		return calendarVariables.contains(var);
 	}
 	
@@ -204,6 +238,7 @@ public class EmployeeEventsDraftObject {
 			@Override
 			public void onSuccess(EmployeeEventsData resultEmployeeEventsData) {
 				employeeEventsData = resultEmployeeEventsData;
+				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
 				success.accept(resultEmployeeEventsData);
 			}

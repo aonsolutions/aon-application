@@ -64,6 +64,8 @@
 			font-family: Arial, Helvetica, sans-serif !important;
 			font-size: 11px !important;
 			padding: 3px;
+			min-width: 100px;
+			text-align: left !important;
 		}
 
 		.firstHeadStyleHide {
@@ -148,6 +150,22 @@
 		.bgcWhite{
 			background-color: white;
 		}	
+		
+		.aonCheck{
+			background-position: 0.1rem !important;
+		}
+		
+		.widthMenuItem{
+			display: inline-block;
+			min-width: 130px !important;
+		}
+		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
 		
 	</ui:style>
 
