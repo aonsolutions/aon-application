@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBac
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
@@ -89,8 +88,8 @@ public class Model3032020AEAT extends Model303Base {
 	final Mod303ServiceAsync MOD303Service = GWT.create(Mod303Service.class);
 
 	
-	public Model3032020AEAT(Mod303 mod303,Model303Callback callback, AonData aonData) {
-		super(mod303,callback, aonData);
+	public Model3032020AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
@@ -109,7 +108,7 @@ public class Model3032020AEAT extends Model303Base {
 		if (getCallback().getMod303().isLastPeriod()) {
 			paintLastPeriodInformationTab(tabPanel);
 		}
-		paintAdministrationTab(tabPanel);
+		paintAdministrationTab(tabPanel,options);
 		
 		if (mod303.isFinished() || mod303.isSent()) {
 			tabPanel.selectTab(RESULT_TAB);
@@ -242,7 +241,7 @@ public class Model3032020AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {	
+	private void paintAdministrationTab(TabLayoutPanel tabPanel,Model303ModuleOptions options) {	
 		FlowPanel panel = new FlowPanel();
 				
 		FlowPanel formContainer = new FlowPanel();
@@ -274,14 +273,14 @@ public class Model3032020AEAT extends Model303Base {
 
 		panel.add(formContainer);
 	
-		FlowPanel administrationPanel = getAdministrationPanel(); 
+		FlowPanel administrationPanel = getAdministrationPanel(options); 
 		panel.add(administrationPanel);
 		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
 	}
 		
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model303ModuleOptions options) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -405,7 +404,7 @@ public class Model3032020AEAT extends Model303Base {
 		});
 		p3.add(button3);
 		
-		if(getAonData().isBetaEnabled()) {
+		if(options.getAonData().isBetaEnabled()) {
 			CheckBox testMode = new CheckBox();
 			testMode.setValue(false);
 			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
@@ -845,7 +844,7 @@ public class Model3032020AEAT extends Model303Base {
 		activityTable.setRowData(getCallback().getMod303().getActivityList());
 	}
 	
-	protected void save() {
+	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
 			@Override public void onFailure(Throwable caught) {}
 			@Override
@@ -853,7 +852,7 @@ public class Model3032020AEAT extends Model303Base {
 				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
 				activityTable.setRowData(getCallback().getMod303().getActivityList());
 			}
-		});
+		},options);
 	}
 
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {

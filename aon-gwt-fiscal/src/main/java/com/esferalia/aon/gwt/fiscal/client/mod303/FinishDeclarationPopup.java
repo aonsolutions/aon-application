@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
@@ -61,7 +60,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 	final protected FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final Mod303 mod303 ,final AonData aonData, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	public FinishDeclarationPopup(final Mod303 mod303 ,final Model303ModuleOptions options, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
@@ -189,7 +188,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 		});
 		flowPanel.add(acceptButton);
 		
-		if (aonData != null && aonData.isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
+		if (options != null && options.getAonData().isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
 			Button customerCheckButton = new Button();
 			customerCheckButton.setStyleName(AON.AON_CSS.aonConfirmDialogCustomerCheckButton());
 			customerCheckButton.addStyleName(AON.AON_CSS.aonMarginLeft());

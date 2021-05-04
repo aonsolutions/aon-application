@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
@@ -131,7 +130,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private Mod303 mod303;
 	private Model303BaseCallback callback;
 	private API API;
-	private AonData aonData;
 	private Boolean test = false;
 	private EnumMap<Mod303Key,DoubleBox> fieldsMap;
 	private boolean dirty;
@@ -189,11 +187,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
 
 	
-	public Model303Base(Mod303 mod303,Model303Callback cbk, AonData aonData) {
+	public Model303Base(Mod303 mod303,Model303Callback cbk, Model303ModuleOptions options) {
 		super(Unit.PX);
-		select( mod303 );
+		select( mod303 , options);
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(options), 25);
 		
 		SimplePanel headerPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(headerPanel, this.mod303 );
@@ -202,10 +200,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		SimplePanel declarationHeaderPanel = new SimplePanel();
 		paintDeclarationHeaderTable(declarationHeaderPanel);
 		addNorth(declarationHeaderPanel , 45);
-		this.aonData = aonData;
-		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
+		
+		this.API = new API(GWT.getModuleBaseURL(), options.getAonData().getMd5(),
+				options.getAonData().getDomain().getName(), options.getAonData().getDomain().getId(),
+				options.getAonData().getUser().getLogin());
 		fieldsMap = new EnumMap<>(Mod303Key.class);
 		this.callback = new Model303BaseCallback(cbk);
 		
@@ -225,10 +223,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return API;
 	}
 	
-	public AonData getAonData() {
-		return aonData;
-	}
-	
 	public Boolean getTest() {
 		return test;
 	}
@@ -237,7 +231,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		this.test = test;
 	}
 
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model303ModuleOptions options) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -281,12 +275,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				save();
+				save(options);
 			}
 		});
 		buttonContainer.add(saveButton);
 		
 		cancelButton.setText(AON.MSG.cancelAction());
+		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
@@ -301,7 +298,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 						@Override
 						public void onAccept() {
-							callback.onCancel();
+							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+								options.getExternalCallback().onExit();
+							} else {
+								callback.onCancel();
+							}
 						}
 
 						@Override
@@ -310,7 +311,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						}
 					});
 				} else {
-					callback.onCancel();
+					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+						options.getExternalCallback().onExit();
+					} else {
+						callback.onCancel();
+					}
 				}
 			}
 		});
@@ -337,7 +342,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				onFinalize();
+				onFinalize(options);
 			}
 		});
 		buttonContainer.add(markAsFinishedButton);
@@ -350,7 +355,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				markAsSent();
+				markAsSent(options);
 			}
 		});
 		buttonContainer.add(markAsSentButton);
@@ -363,7 +368,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				reopenDeclaration();
+				reopenDeclaration( options );
 			}
 		});
 		buttonContainer.add(markAsPendingButton);
@@ -418,20 +423,20 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return toolbarPanel;
 	}
 	
-	protected void select( Mod303 mod303) {
+	protected void select( Mod303 mod303, Model303ModuleOptions options) {
 		setMod303(mod303);
-		refreshToolbarState();
+		refreshToolbarState( options );
 		styleStatusLabel(mod303);
 	}
-	protected void selectAndPopulate( Mod303 mod303) {
-		select(mod303);
+	protected void selectAndPopulate( Mod303 mod303,Model303ModuleOptions options) {
+		select(mod303,options);
 		populate(mod303);
 	}
 	
-	private void refreshToolbarState() {
+	private void refreshToolbarState(Model303ModuleOptions options) {
 		deleteButton.setVisible(!mod303.isNew());
 		auditButton.setVisible(!mod303.isNew());
-		newButton.setVisible(!mod303.isNew());
+		newButton.setVisible(!mod303.isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!mod303.isFinished() && !mod303.isSent());
 		deleteButton.setVisible(!mod303.isFinished() && !mod303.isSent());
@@ -970,10 +975,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			dirtyPanel.add(adjLabel);
 		}
 	}
-	protected void save() {
-		save(null);
+	protected void save(Model303ModuleOptions options) {
+		save(null,options);
 	}
-	protected void save(AsyncCallback<Mod303> cbk) {
+	protected void save(AsyncCallback<Mod303> cbk,Model303ModuleOptions options) {
 		saveButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -986,7 +991,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.SERVICE.save(callback.getDomainName(), callback.getUser(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						saveButton.setEnabled(true);
 						if (cbk != null) cbk.onSuccess(result);
@@ -1030,15 +1035,15 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 	}
 	
-	private void onFinalize() {
+	private void onFinalize( Model303ModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		Model303.SERVICE.initializeForFinish(callback.getDomainName(), callback.getUser(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
-						showFinalizePopup( getAonData() );
+						selectAndPopulate(result,options);
+						showFinalizePopup( options );
 						markAsFinishedButton.setEnabled(true);
 					}
 	
@@ -1050,25 +1055,25 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				});
 	}
 	
-	private void showFinalizePopup(final AonData aonData) {
-		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, aonData, getCallback(), new FinishDeclarationPopupCallback() {
+	private void showFinalizePopup(final Model303ModuleOptions options) {
+		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, options, getCallback(), new FinishDeclarationPopupCallback() {
 			@Override
 			public void onCancel() {}
 			
 			@Override
 			public void onAccept() {
-				finish();
+				finish(options);
 			}
 			@Override
 			public void onCustomerCheck() {
-				markAsCustomerCheck();
+				markAsCustomerCheck( options );
 			}
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}
 	
-	private void markAsCustomerCheck() {
+	private void markAsCustomerCheck( Model303ModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -1081,7 +1086,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.SERVICE.markAsCustomerCheck(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
@@ -1096,7 +1101,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				});
 	}
 
-	private void finish() {
+	private void finish(Model303ModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -1109,7 +1114,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.SERVICE.markAsFinished(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
@@ -1123,7 +1128,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					}
 				});
 	}
-	private void reopenDeclaration() {
+	private void reopenDeclaration(Model303ModuleOptions options) {
 		markAsPendingButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -1136,7 +1141,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		Model303.SERVICE.markAsPending(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
@@ -1151,13 +1156,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				});
 	}
 	
-	private void markAsSent() {
+	private void markAsSent(Model303ModuleOptions options) {
 		markAsSentButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		Model303.SERVICE.markAsSent(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						markAsSentButton.setEnabled(true);
 					}
 

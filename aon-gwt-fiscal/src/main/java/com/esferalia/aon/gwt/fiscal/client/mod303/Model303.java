@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -14,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,6 +34,11 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model303 extends MainEntryPoint {
+
+	private static final Logger LOGGER = Logger.getLogger(Model303.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
@@ -64,13 +72,9 @@ public class Model303 extends MainEntryPoint {
 	@UiField
 	SimpleLayoutPanel aeatPanel;
 	
-	AonData aonData;
+	private Model303ModuleOptions options;
 	Model303Table model303Table;
 
-	public AonData getAonData() {
-		return aonData;
-	}
-	
 	protected interface IModel303Callback {
 		public String getDomainName();
 		public String getUser();
@@ -137,22 +141,36 @@ public class Model303 extends MainEntryPoint {
 
 	};
 	
-
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
+			
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model303ModuleOptions options = new Model303ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
 			}
 		});
 	}
+	private Model303ModuleOptions getOptions() {
+		if (this.options == null) {
+			this.options = new Model303ModuleOptions();
+		}
+		return this.options;
+	}
 	
-	public void onModuleLoad(AonData aonData) {
-		this.aonData = aonData;
+	public void onModuleLoad(Model303ModuleOptions options) {
+		this.options = options;
 		AON.ensureInjected();
 
 		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
@@ -164,16 +182,6 @@ public class Model303 extends MainEntryPoint {
 		html.setWidth("100%");
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
-		
-		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
-		});
 		
 		model303Table = new Model303Table(new Model303Callback());
 		model303Table.addSelectionHandler(new SelectionHandler<Mod303>() {
@@ -187,8 +195,65 @@ public class Model303 extends MainEntryPoint {
 		declarationContainer.setWidget(model303Table);
 		model303Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+		getOptions().getParentWidget().add(ui);
+		if (getOptions().getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model303 with a ID: " + getOptions().getFiscalModelId());
+			onSelect(getOptions().getFiscalModelId());
+		} else if (getOptions().getNewModel() != null ) {
+			LOGGER.info("Access to Model303 new Model");
+			newModel(getOptions().getNewModel()); 
+		} else {
+			model303Table.refresh();;
+			LOGGER.info("Model303 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				openFootPanelIfNeeded();
+			}
+		});
+	}
+
+	private void newModel(Mod303 newModel) {
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
+				new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 m303) {
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						showNewDeclarationPopup( m303 );
+					}
+
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+
+	private void onSelect(Integer id ) {
+		LOGGER.info("OnSelect Model303 with a ID: " + getOptions().getFiscalModelId());
+		SERVICE.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 selected) {
+						if (selected == null) {
+							LOGGER.info("onSuccess Model303 with a NULL selected Model ID: ");
+							showErrorPanel(AON.MSG.unableToFindDeclaration());
+						} else {
+							LOGGER.info("onSuccess Model303 with a ID: " + selected.getId());
+							select(selected);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
 	}
 
 	private void onSelectionChange(SelectionEvent<Mod303> event) {
@@ -216,34 +281,34 @@ public class Model303 extends MainEntryPoint {
 		if (selected.isAEAT()) {
 			
 			if (selected.getYear() >= 2021) {
-				declarationContainer.setWidget( new Model3032021AEAT(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032021AEAT(selected,new Model303Callback(), getOptions()));
 			}
 			else if (selected.getYear() < 2018) {
-				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getOptions()));
 			} else if ((selected.getYear() >= 2018 && selected.getYear() < 2020) 
 				|| (selected.getYear() == 2020 && !selected.isLastPeriod()))  {
-				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback(), getOptions()));
 			} else {
-				declarationContainer.setWidget( new Model3032020AEAT(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032020AEAT(selected,new Model303Callback(), getOptions()));
 			}
 			
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));	
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getOptions()));	
 			} else { 
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getOptions()));
 			}
 		} else if (selected.isAraba()) {
 			if (selected.getYear() < 2019) {
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getAonData()));	
+				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getOptions()));	
 			} else {
-				declarationContainer.setWidget( new Model3032019ARABA(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032019ARABA(selected,new Model303Callback(), getOptions()));
 			}
 		} else if (selected.isGipuzkoa()) {
 			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getAonData()));	
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getOptions()));	
 			} else {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getAonData()));
+				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getOptions()));
 			}
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
