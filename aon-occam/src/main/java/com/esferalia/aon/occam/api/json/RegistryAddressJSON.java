@@ -27,8 +27,8 @@ public class RegistryAddressJSON {
 			.put(IJsonNames.MAIN, address.isMain())
 			.put(IJsonNames.ADDRESS, address.getFullAddress())
 			.put(IJsonNames.CITY, address.getCity())
-			.put(IJsonNames.PROVINCE, address.getChild().getName())
-			.put(IJsonNames.COUNTRY, address.getParent().getCode())
+			.put(IJsonNames.PROVINCE, address.getChild() != null ? address.getChild().getName(): null)
+			.put(IJsonNames.COUNTRY, address.getParent() != null ? address.getParent().getCode() : null)
 			.put(IJsonNames.POSTAL_CODE, address.getZip())
 			.put(IJsonNames.ZIP, address.getZip());
 	}

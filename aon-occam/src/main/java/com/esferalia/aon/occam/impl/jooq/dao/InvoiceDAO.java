@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -353,6 +354,9 @@ public class InvoiceDAO {
 				,SCOPE.DESCRIPTION
 				, INVOICE_DETAIL.ID
 				,PRODUCT.CATEGORY
+				,ACCOUNT.ID
+				,ACCOUNT.CODE
+				,ACCOUNT.DESCRIPTION
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -371,6 +375,8 @@ public class InvoiceDAO {
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
+			.leftOuterJoin(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
+			.leftOuterJoin(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
@@ -435,9 +441,10 @@ public class InvoiceDAO {
 			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id) )
 					.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
-				invoice.getDetails().get(i).setInvoiceTaxes(
-					getInvoiceTaxStreamFromDetail(ctx, invoice.getDetails().get(i).getId())
-					.collect(Collectors.toCollection(LinkedList::new)));
+				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, invoice.getDetails().get(i).getId())
+				.collect(Collectors.toCollection(LinkedList::new));
+				
+				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
 			}
 			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
@@ -461,8 +468,7 @@ public class InvoiceDAO {
 	public static Stream<InvoiceTax> getInvoiceTaxStreamFromDetail(AONContext ctx, Integer id) {
 		return ctx.getDslContext().select()
 			.from(INVOICE_TAX)
-			.where(INVOICE_TAX.DOMAIN.eq(ctx.getDomainId())
-					.and(INVOICE_TAX.INVOICE_DETAIL.eq(id)))
+			.where(INVOICE_TAX.INVOICE_DETAIL.eq(id))
 			.fetch().stream().map(new InvoiceTaxFiller());
 	}
 
@@ -544,6 +550,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(record.getValue(INVOICE.RNAME))
+				.setRegistryAddress(record.getValue(INVOICE.RADDRESS))
 				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				.setActivity(record.getValue(INVOICE.ACTIVITY))	
 				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
@@ -693,7 +700,11 @@ public class InvoiceDAO {
 				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
 				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
-				.setWarehouseName(record.getValue(WAREHOUSE.NAME));
+				.setWarehouseName(record.getValue(WAREHOUSE.NAME))
+				.setAccount(record.getValue(ACCOUNT.ID))
+				.setAccountCode(record.getValue(ACCOUNT.CODE))
+				.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION))
+				;
 		}
 		
 	}
@@ -996,11 +1007,13 @@ public class InvoiceDAO {
 		return ++next;
 	}
 	
-	public static Invoice accept(AONContext ctx, Invoice invoice) {
+	public static Invoice accept(AONContext ctx, Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
-		insert(ctx, aonCtx, invoice);
+		invoice = insert(ctx, aonCtx, invoice);
+		if(rawdocId != null) 
+			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);
 		return invoice;
 	}
 	

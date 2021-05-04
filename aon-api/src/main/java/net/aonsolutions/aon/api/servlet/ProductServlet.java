@@ -104,9 +104,9 @@ public class ProductServlet extends AonApiHttpServlet {
 		return AON_SOLUTIONS.getItems(api.getDomain(), api.getUser(), f -> 
 			f.getDomainProperty().eq(api.getDomain().getId())
 			.and(
-				f.getDescriptionProperty().like(value)
-				.or(f.getProductCodeProperty().like(value))
-				.or(f.getProductNameProperty().like(value))
+				f.getDescriptionProperty().like("%" + value + "%")
+				.or(f.getProductCodeProperty().like("%" + value + "%"))
+				.or(f.getProductNameProperty().like("%" + value + "%"))
 			));
 	}
 	

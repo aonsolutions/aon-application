@@ -15,26 +15,27 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-import es.translogia.tedi.ewok.IConstants;
 import es.translogia.tedi.json.TediJSONUtils;
 
 public class InvoiceJSON {
 
 	public static Invoice fromJSON(JSONObject json) {
 		Date date = TediJSONUtils.parseDate(json.optString("date"));
-		Registry registry = getType(json.optString(IJsonNames.TYPE)).equals(InvoiceType.SALES) 
+		String category = json.optString(IJsonNames.CATEGORY);
+		InvoiceType type = getType(json.optString(IJsonNames.TYPE), category);
+		Registry registry = InvoiceType.SALES.equals(type) 
 				? RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER))
 				: RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER));
-		RegistryAddress raddress = getType(json.optString(IJsonNames.TYPE)).equals(InvoiceType.SALES) 
+		RegistryAddress raddress = InvoiceType.SALES.equals(type)  
 				? RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER).optJSONObject(IJsonNames.ADDRESS))
 				: RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER).optJSONObject(IJsonNames.ADDRESS));
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-				.setType(getType(json.optString(IJsonNames.TYPE)))
-				.setSeries(json.optString(IJsonNames.SERIES))
+				.setType(type)
+				.setSeries(json.optString(IJsonNames.SERIE))
 				.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
 				.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
 				.setReferenceCode(json.optString(IJsonNames.REFERENCE_CODE))
@@ -70,11 +71,13 @@ public class InvoiceJSON {
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {
-		
 		String date = TediJSONUtils.formatDate(invoice.getIssueDate());
-		InvoiceStatus status = InvoiceStatus.safeValueOf(invoice.getStatus());
+		InvoiceStatus status = invoice.getStatus() != null 
+				? InvoiceStatus.safeValueOf(invoice.getStatus())
+				: InvoiceStatus.PENDING; 
+		
 		JSONObject json = new JSONObject()
-				.put(IJsonNames.STATUS, status.name().toLowerCase())
+			.put(IJsonNames.STATUS, status.name().toLowerCase())
 			.put(IJsonNames.ID, invoice.getId())
 			.put(IJsonNames.DOMAIN, invoice.getDomain())
 			.put(IJsonNames.SERIES, invoice.getSeries())
@@ -82,8 +85,8 @@ public class InvoiceJSON {
 			.put(IJsonNames.NUMBER, invoice.getNumber())
 			.put(IJsonNames.DATE, date) //invoice.getIssueDate())
 			.put(IJsonNames.REFERENCE, invoice.getReferenceCode())
-			.put(IJsonNames.TYPE, invoice.getType().name())
-			.put(IJsonNames.TRANSACTION, invoice.getTransaction().name())
+			.put(IJsonNames.TYPE, invoice.getType().getTediName())
+			.put(IJsonNames.TRANSACTION, invoice.getTransaction().getTediName())
 			.put(IJsonNames.INVESTMENT, invoice.isInvestment())
 			.put(IJsonNames.SERVICE, invoice.isService())
 			.put(IJsonNames.WITHHOLDING, invoice.isWithholding())
@@ -99,21 +102,30 @@ public class InvoiceJSON {
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()));
 		
-		if(invoice.getRegistryAddressData() != null)
-			json.optJSONObject(IJsonNames.REGISTRY)
-			.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(invoice.getRegistryAddressData()));
+		if(invoice.getDetails() != null && invoice.getDetails().size() > 0) {
+			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());
+		}
+			
+		if(invoice.getRegistryAddressData() != null) {
+			JSONObject address = RegistryAddressJSON.toJSON(invoice.getRegistryAddressData());
+			JSONObject registry = InvoiceType.SALES.equals(invoice.getType()) 
+					? json.optJSONObject(IJsonNames.RECEIVER)
+					: json.optJSONObject(IJsonNames.SENDER);
+			registry.put(IJsonNames.ADDRESS, address);
+		}
 		return json;
 	}
 	
 	
-	private static InvoiceType getType(String t) {
-		if("emitida".equalsIgnoreCase(t))
+	private static InvoiceType getType(String t, String account) {
+		if("emitida".equalsIgnoreCase(t)) {
 			return InvoiceType.SALES;
-		else if("recibida".equalsIgnoreCase(t))
-			return InvoiceType.PURCHASE;
-		else if("ticket".equalsIgnoreCase(t)){
+		} else if("ticket".equalsIgnoreCase(t)){
 			return InvoiceType.UNDEDUCTIBLE;
-		}
-		return InvoiceType.PURCHASE;
+		} else if("recibida".equalsIgnoreCase(t) 
+				&& !AonStringUtils.isBlank(account) 
+				&& "60".equals(account.substring(0, 2))) {
+			return InvoiceType.PURCHASE;
+		} else return InvoiceType.EXPENSES;
 	}
 }

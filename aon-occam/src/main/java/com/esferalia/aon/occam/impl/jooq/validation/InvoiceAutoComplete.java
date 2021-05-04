@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO.DetailKey;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -222,12 +223,19 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
 		inv.getDetails().stream().forEach(detail -> {
+
+			detail.setDomain(inv.getDomain());
+			
+			for(Integer i = 0;  i< detail.getInvoiceTaxes().size() ; i++ ) {
+				detail.getInvoiceTaxes().get(i).setDomain(inv.getDomain());
+			}
+			
 			if(detail.getWorkPlace() == null) {
 				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
 			}
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
 				Account acc = AccountDAO.get(ctx.getContext(), detail.getAccountCode());
-				if(acc.getId() != null) {
+				if(acc != null && acc.getId() != null) {
 					detail.setAccount(acc.getId());
 					detail.setAccountDescription(acc.getDescription());
 				}

@@ -139,6 +139,14 @@ export class AonSwitch extends AonElement {
   focus() {
     this.getElement(this.INPUT).focus();
   }
+
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    let input = this.getElement(this.INPUT);
+    if (disabled){
+      input.setAttribute(CONSTANT.DISABLED, disabled);
+    } else input.removeAttribute(CONSTANT.DISABLED); 
+  } 
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);

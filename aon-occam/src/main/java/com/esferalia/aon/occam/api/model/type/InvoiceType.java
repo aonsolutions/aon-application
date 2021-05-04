@@ -21,7 +21,7 @@ public enum InvoiceType implements Serializable  {
 			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
 				visitor.visitPurchase(invoice);
 			}
-		}),
+		}, "recibida"),
 	SALES("Ventas"
 		,new IInvoiceTypeVisitorWalker() {
 			@Override
@@ -34,7 +34,7 @@ public enum InvoiceType implements Serializable  {
 			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
 				visitor.visitSales(invoice);
 			}
-		}),
+		}, "emitida"),
 	EXPENSES("Gastos"
 		,new IInvoiceTypeVisitorWalker() {
 			@Override
@@ -47,7 +47,7 @@ public enum InvoiceType implements Serializable  {
 			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
 				visitor.visitExpenses(invoice);
 			}
-		}),
+		}, "recibida"),
 	UNDEDUCTIBLE("Gt.NO Ded"
 		,new IInvoiceTypeVisitorWalker() {
 			@Override
@@ -60,7 +60,7 @@ public enum InvoiceType implements Serializable  {
 			public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {
 				visitor.visitUndeductible(invoice);
 			}
-		})
+		}, "ticket")
 	;
 
 	public interface IInvoiceTypeVisitorWalker {
@@ -74,12 +74,14 @@ public enum InvoiceType implements Serializable  {
 	private String description;
 	private IInvoiceTypeVisitorWalker invoiceWalker;
 	private IAccountingInvoiceTypeVisitorWalker accountingInvoiceWalker;
+	private String tediName;
 	
 	private InvoiceType(String description,IInvoiceTypeVisitorWalker walker
-			,IAccountingInvoiceTypeVisitorWalker accountingInvoiceWalker) {
+			,IAccountingInvoiceTypeVisitorWalker accountingInvoiceWalker, String tediName) {
 		this.description = description;
 		this.invoiceWalker = walker;
 		this.accountingInvoiceWalker = accountingInvoiceWalker;
+		this.tediName = tediName;
 	}
 
 	public byte value() {
@@ -89,6 +91,11 @@ public enum InvoiceType implements Serializable  {
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getTediName() {
+		return tediName;
+	}
+	
 	public void visit(Invoice invoice, IInvoiceTypeVisitor visitor) {
 		invoiceWalker.visit(invoice,visitor);
 	}

@@ -104,9 +104,7 @@ export class AonIconButton extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
     if (CONSTANT.DISABLED === name) {
-      document
-        .getElementById(this.getAttribute("id") + "IconButton")
-        .setAttribute(CONSTANT.DISABLED, newValue);
+      this.getElement(this.BUTTON).disabled = newValue;
     }
 
     if (CONSTANT.VISIBLE === name) {
@@ -236,6 +234,11 @@ export class AonIconButton extends AonElement {
   clear() {
     this.innerHTML = '';
   }
+
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    this.getElement(this.BUTTON).disabled = newValue;
+  } 
 }
 if(!window.customElements.get('aon-icon-button')){
   window.customElements.define("aon-icon-button", AonIconButton);

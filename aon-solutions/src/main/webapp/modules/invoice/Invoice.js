@@ -181,6 +181,7 @@ export class Invoice {
   setTotal(total){
     this.total = total;
     this.calculateTaxFromTotal();
+    this.calculateFinances();
   }
 
   getCategory() {
@@ -192,6 +193,11 @@ export class Invoice {
     if(category.substring(0, 3) === '705'){
       this.service = true;
     } else this.service = false;
+
+    this.details.forEach((detail, i) => {
+        detail.category = category;
+        this.details[i] = detail;
+    }); 
   }
   
   getPaymethod() {
@@ -205,6 +211,10 @@ export class Invoice {
 
   isEmitida() {
     return this.type.toLowerCase() === 'emitida';
+  }
+
+  isNacional() {
+    return this.transaction === 'NAC';
   }
 
   isSelfconta() {
@@ -310,6 +320,17 @@ export class Invoice {
 
   setTransaction(transaction) {
     this.transaction = transaction;
+    if(this.isEmitida() && !this.isNacional()){
+      this.surcharge = false;
+      this.withholding = false;
+      this.withholding_farmer = false;
+      this.taxes = [];
+      this.details.forEach((detail,i) => {
+        detail.percentage = undefined;
+        detail.vat = undefined;
+        detail[i] = this.calculateDetail(detail);
+      });
+    }
   }
 
   getRegistry() {
@@ -427,6 +448,7 @@ export class Invoice {
       total = total + round(Number(tax.base) + Number(tax.quota) + Number(tax.surcharge_quota));
     });
     this.total = round(Number(total));
+    this.calculateFinances();
   }
 
   calculateTax(tax) {
@@ -440,7 +462,9 @@ export class Invoice {
   }
 
   calculateTaxFromTotal() {
-    if (this.taxes.length === 0) {
+    if(this.isEmitida() && !this.isNacional()){
+      this.taxes = [];
+    } else if (this.taxes.length === 0) {
       let div = this.isSurcharge() ? 1.262 : 1.21;
 			let tax = {
 				tax: TaxType.IVA,
@@ -564,24 +588,44 @@ export class Invoice {
       total = total + detail.amount + detail.quota + detail.surcharge_quota;
     });  
     this.total = total;
+    this.calculateFinances();
   }
 
   calculateFinances() {
     if(this.finances.length === 0) {
+      if(!this.paymethod) this.paymethod = 'CASH';
       let finance = {
           due_date: this.date,
-          paymethod: this.paymethod ? this.paymethod : 'CASH',
+          paymethod: this.paymethod,
           amount: this.total,
           iban: ''
       };		
       this.finances.push(finance);
+    } else if(this.finances.length === 1) {
+      this.finances[0].amount = this.total; 
+    } else if(this.finances.length > 1) {
+      let financeTotal = 0.0;
+      this.finances.forEach(finance => {
+        financeTotal = financeTotal + Number(finance.amount);
+      });
+      if(this.total != financeTotal) {
+        let bankAccount = this.finances[0].bank_account;
+        let finance = {
+          due_date: this.date,
+          paymethod: this.paymethod,
+          bank_account: bankAccount,
+          amount: Number(this.total) - Number(financeTotal)
+        };
+        this.finances.push(finance);
+      }
     } 
   }
-
+  
   addFinance() {
+    if(!this.paymethod) this.paymethod = 'CASH';
     let finance = {
       due_date: this.date,
-      paymethod: 'CASH',
+      paymethod: this.paymethod,
       amount: 0.0,
       iban: ''
      };

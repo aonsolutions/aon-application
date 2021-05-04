@@ -215,6 +215,12 @@ export class AonSelect extends AonElement {
     return this.disabled == "true";
   }
 
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    let input = this.getElement(this.INPUT);
+    input.disabled = disabled; 
+  } 
+  
   isReadonly() {
     return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
       && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);

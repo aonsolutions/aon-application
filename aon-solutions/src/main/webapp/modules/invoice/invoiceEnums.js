@@ -4,6 +4,15 @@ import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 import { IRPF } from "../../environments/msg-en.js";
 
 
+export const Transactions = [
+  {value: 'NAC', name: 'Nacional'},
+  {value: 'INTR', name: 'Intracomunitaria'},
+  {value: 'EXTR', name: 'Extracomunitaria'},
+  {value: 'CCM', name: 'Canarias, Ceuta y Melilla'},
+  {value: 'ISP', name: 'I.S.P.'},
+];
+
+
 export const InvoiceStatus = {
   INBOX: 'inbox',
   REJECTED: 'rejected',
@@ -20,6 +29,14 @@ export const TaxType = {
   IRPF_PROF: 'IRPF_PROF',
   IRPF_ALQ: 'IRPF_ALQ',
   IRPF_AGRI: 'IRPF_AGRI'
+};
+
+export const WithholdingType = {
+  PROFESSIONAL: CONSTANT.PROFESSIONAL ,
+  RENTING: CONSTANT.RENTING,
+  MOVABLE_CAPITAL: CONSTANT.MOVABLE_CAPITAL,
+  FARMER: CONSTANT.FARMER,
+  TRANSPORT_OPERATOR: CONSTANT.TRANSPORT_OPERATOR
 };
 
 export const TaxVatType = [

@@ -29,13 +29,12 @@ public enum InvoiceStatus implements Serializable {
 		return InvoiceStatus.values()[i];
 	}
 	
-	public static InvoiceStatus safeValueOf(String value) {
-		if(value != null) {
-			try {
-				return valueOf(value);
-			} catch (Exception e) {}
+	public static InvoiceStatus safeValueOf( String str) {
+		for (InvoiceStatus rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
+				return rs;
 		}
-		return null;
+		return PENDING;
 	}
 	
 }

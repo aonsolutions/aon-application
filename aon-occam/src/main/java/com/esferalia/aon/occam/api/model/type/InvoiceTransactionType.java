@@ -3,26 +3,27 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceTransactionType implements Serializable {
 
-	NATIONAL ("Nacional")
+	NATIONAL ("Nacional", "NAC")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitNational();} },
-	INTRACOMMUNITY("Intracomunitaria")
+	INTRACOMMUNITY("Intracomunitaria", "INTR")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitIntracommunity();} },
-	EXTRACOMMUNITY("Extracomunitaria")
+	EXTRACOMMUNITY("Extracomunitaria", "EXTR")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitExtracommunity();} },
-	CAN_CEU_MEL("Canarias, Ceuta y Melilla")
+	CAN_CEU_MEL("Canarias, Ceuta y Melilla", "CCM")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitCanCeuMel();} },
-	OTHER_ISP("I.S.P.")
+	OTHER_ISP("I.S.P.", "ISP")
 		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitOtherISP();} },
 	;
 	
 	private String description;
+	private String tediName;
 	
-	private InvoiceTransactionType(String description) {
+	private InvoiceTransactionType(String description, String tediName) {
 		this.description = description;
+		this.tediName = tediName;
 	}
 
 	public byte value() {
@@ -31,6 +32,10 @@ public enum InvoiceTransactionType implements Serializable {
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getTediName() {
+		return tediName;
 	}
 
 	public static InvoiceTransactionType safeValueOf( Byte i ) {
@@ -44,23 +49,16 @@ public enum InvoiceTransactionType implements Serializable {
 	}
 
 	public static InvoiceTransactionType safeValueOf( String str) {
-		if (AonStringUtils.isBlank(str)) return NATIONAL;
-		if("NAC".equalsIgnoreCase(str) || NATIONAL.name().equalsIgnoreCase(str) || NATIONAL.getDescription().equalsIgnoreCase(str)) {
-			return NATIONAL;
-		} else if("INTR".equalsIgnoreCase(str) || INTRACOMMUNITY.name().equalsIgnoreCase(str) || INTRACOMMUNITY.getDescription().equalsIgnoreCase(str)) {
-			return INTRACOMMUNITY;
-		} else if("EXTR".equalsIgnoreCase(str) || EXTRACOMMUNITY.name().equalsIgnoreCase(str) || EXTRACOMMUNITY.getDescription().equalsIgnoreCase(str)) {
-			return EXTRACOMMUNITY;
-		} else if("CCM".equalsIgnoreCase(str) || CAN_CEU_MEL.name().equalsIgnoreCase(str) || CAN_CEU_MEL.getDescription().equalsIgnoreCase(str)) {
-			return CAN_CEU_MEL;
-		} else if("ISP".equalsIgnoreCase(str) || OTHER_ISP.name().equalsIgnoreCase(str) || OTHER_ISP.getDescription().equalsIgnoreCase(str)) {
-			return OTHER_ISP;
-		} 
+		for (InvoiceTransactionType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getTediName().equalsIgnoreCase(str) || rs.getDescription().equalsIgnoreCase(str))
+				return rs;
+		}
 		return NATIONAL;
 	}
 
 	
 	public void visit(IInvoiceTransactionTypeVisitor visitor) {
+		
 	}
 
 }

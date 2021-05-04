@@ -12,7 +12,7 @@ public class InvoiceDetail implements Serializable {
 	private static final long serialVersionUID = 7597157186868662372L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	
 	private Invoice invoice;
 	private Integer investAsset;
@@ -49,10 +49,10 @@ public class InvoiceDetail implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public InvoiceDetail setDomain(int domain) {
+	public InvoiceDetail setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}

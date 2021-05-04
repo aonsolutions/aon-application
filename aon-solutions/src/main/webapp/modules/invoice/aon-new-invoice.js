@@ -520,6 +520,7 @@ export class AonNewInvoice extends AonElement {
 		// transaction.readonly = this.invoice.isReadonly();
 		transaction.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setTransaction(transaction.value);
+			this.reload();
 			if(this.autosave) this.save();
 		});
 		table.addCell(transaction, '2');
@@ -529,7 +530,6 @@ export class AonNewInvoice extends AonElement {
 		let surcharge = new AonSwitch();
 		surcharge.id = this.SURCHARGE;
 		surcharge.title = MSG.SURCHARGE_RE;
-		surcharge.checked = this.invoice.isSurcharge();
 		surcharge.readonly = this.invoice.isReadonly();
 		surcharge.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setSurcharge(surcharge.checked);
@@ -538,13 +538,18 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(surcharge);
+		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			this.invoice.setSurcharge(false);
+			surcharge.setDisabled(true);
+		}
+		surcharge.checked = this.invoice.isSurcharge();
 		
+
 		// ----- WITHHOLDING FARMER
 
 		let farmer = new AonSwitch();
 		farmer.id = this.WITHHOLDING_FARMER;
 		farmer.title = MSG.WITHHOLDING_FARMER;
-		farmer.checked = this.invoice.isWithholdingFarmer();
 		farmer.readonly = this.invoice.isReadonly();
 		farmer.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholdingFarmer(farmer.checked);
@@ -553,12 +558,21 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(farmer);
+		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			this.invoice.setWithholdingFarmer(false);
+			farmer.setDisabled(true);
+		}
+		farmer.checked = this.invoice.isWithholdingFarmer();
 
 		// ----- TAXES
 		
 		let taxesTable = new AonBasicTable();
 		taxesTable.id = this.TAX_TABLE2;
 		card.addContent(taxesTable);
+
+		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			this.invoice.taxes = [];
+		}
 
 		for(let i = 0; i < this.invoice.taxes.length; i++) {
 			let tax = this.invoice.taxes[i];
@@ -577,6 +591,7 @@ export class AonNewInvoice extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
 		
+		
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
 
@@ -584,6 +599,7 @@ export class AonNewInvoice extends AonElement {
 			addButton.id = this.TAX_ADD;
 			addButton.title = MSG.ADD_TAX;
 			addButton.icon = MATERIAL_ICONS.ADD;
+			
 			addButton.addEventListener('click', () => {
 				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 				this.invoice.addTax();
@@ -591,6 +607,9 @@ export class AonNewInvoice extends AonElement {
 				if(this.autosave) this.save();
 			});
 			div.appendChild(addButton);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+				addButton.setDisabled(true);
+			}
 		}
 		
 		// ----- WITHHOLDING
@@ -602,7 +621,6 @@ export class AonNewInvoice extends AonElement {
 			irpf.style.position = 'absolute';
 		irpf.style.marginTop = '10px';
 		irpf.style.marginLeft = '10px';
-		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked); 
@@ -610,6 +628,11 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		div.appendChild(irpf);
+		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			this.invoice.setWithholding(false);
+			irpf.setDisabled(true);
+		}
+		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 	}
 
 	printTax(taxesTable, tax, i) {
@@ -844,6 +867,11 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(vat);
+		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			detail.percentage = undefined;
+			detail.vat = undefined;
+			vat.setDisabled(true);
+		}
 		detail.percentage = detail.percentage || detail.vat;
 		if(detail.percentage) vat.value = detail.percentage;
 		// ----- DETAIL OPTIONS
@@ -1034,11 +1062,13 @@ export class AonNewInvoice extends AonElement {
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
 			this.setFocus(this.FINANCE_AMOUNT + i);
+			finance.bank_account = bankAccount.value;
+			this.invoice.setFinance(finance, i);
 		});
 		
-		bankAccount.addEventListener(EVENT.SELECT,() => {
-			this.setFocus(this.FINANCE_AMOUNT + i);
-		})
+		// bankAccount.addEventListener(EVENT.SELECT,() => {
+		// 	this.setFocus(this.FINANCE_AMOUNT + i);
+		// })
 		
 		table.addCell(bankAccount);
 		finance.bank_account = finance.bank_account || finance.iban;
@@ -1052,7 +1082,7 @@ export class AonNewInvoice extends AonElement {
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
 		amount.readonly = this.invoice.isReadonly();
-		amount.addEventListener(EVENT.SELECT, () => {
+		amount.addEventListener(EVENT.CHANGE, () => {
 			this.setFocus(this.FINANCE_AMOUNT + i);
 			finance.amount = amount.value;
 			this.invoice.setFinance(finance, i);
@@ -1070,6 +1100,7 @@ export class AonNewInvoice extends AonElement {
 			financeDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
 			financeDelete.addEventListener(EVENT.CLICK, () => {
 				this.invoice.deleteFinance(finance, i);
+				this.reload();
 				if(this.autosave) this.save();
 			});
 			table.addCell(financeDelete);

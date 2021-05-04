@@ -591,7 +591,7 @@ public class AON_SOLUTIONS {
 	public static JSONObject acceptInvoice(String domainName, Integer domainId, String login, JSONObject json) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = InvoiceJSON.fromJSON(json);
-			invoice = getFinance().acceptInvoice(ctx, invoice);
+			invoice = getFinance().acceptInvoice(ctx, invoice, invoice.getId());
 			return InvoiceJSON.toJSON(invoice);
 		}
 	}
@@ -606,7 +606,7 @@ public class AON_SOLUTIONS {
 	
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice);
+			return getFinance().acceptInvoice(ctx, invoice, null);
 		}
 	}
 	

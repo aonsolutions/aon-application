@@ -28,8 +28,8 @@ public class InvoiceDetailJSON {
 	
 	public static InvoiceDetail fromJSON(JSONObject json) {
 		InvoiceDetail detail =  new InvoiceDetail()
-			.setId(JsonUtils.getInt(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
+			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setDescription(json.optString(IJsonNames.DESCRIPTION))
 			.setItem(new OldItem().setId(JsonUtils.getInteger(json, IJsonNames.ITEM)))
 			.setAccountCode(json.optString(IJsonNames.CATEGORY))
@@ -86,7 +86,8 @@ public class InvoiceDetailJSON {
 				.put(IJsonNames.QUANTITY, detail.getQuantity())
 				.put(IJsonNames.PRICE, detail.getPrice())
 				.put(IJsonNames.AMOUNT, detail.getTaxableBase())
-				.put(IJsonNames.DISCOUNT, detail.getDiscountExpression());
+				.put(IJsonNames.DISCOUNT, detail.getDiscountExpression())
+				.put(IJsonNames.CATEGORY, detail.getAccountCode());
 		
 		
 		detail.getInvoiceTaxes().stream().forEach(tax -> {
@@ -105,7 +106,7 @@ public class InvoiceDetailJSON {
 		
 		return json;
 	}
-	
+
 	private static String getWT(WithholdingType type) {
 		if(WithholdingType.FARMER.equals(type)) return "IRPF_AGRI"; 
 		else if(WithholdingType.MOVABLE_CAPITAL.equals(type)) return "IRPF_ALQ";
