@@ -249,7 +249,7 @@ export class AonEventAdd extends AonElement {
       this.showToast({
         message: MSG.SAVED_DATA,
         type: CONSTANT.SUCCESS,
-        delay: 999999,
+        delay: 3000,
       });
     } catch (error) {
       this.showToast(error);
