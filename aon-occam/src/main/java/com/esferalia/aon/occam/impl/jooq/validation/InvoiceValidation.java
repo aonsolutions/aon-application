@@ -159,13 +159,13 @@ public class InvoiceValidation {
 	};
 	
 	/**
-	 * Si el año de la factura no es anterior en cinco años al actual.
+	 * Si el año de la factura no es anterior en diez años al actual.
 	 */
-	public static BiConsumer<Invoice,AonConfigurationContext> CHECK_FIVE_YEARS  = (inv,ctx) -> {
+	public static BiConsumer<Invoice,AonConfigurationContext> CHECK_TEN_YEARS  = (inv,ctx) -> {
 		int thisYear = AonDateUtils.getYear(new Date());
 		int invoiceYear = AonDateUtils.getYear(inv.getIssueDate());
-		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
-			throw new AonCoreException(AonError.INVOICE_FIVE_YEARS.getMessage());
+		if (invoiceYear < (thisYear-10) || invoiceYear > (thisYear+1)) {
+			throw new AonCoreException(AonError.INVOICE_TEN_YEARS.getMessage());
 		}
 	};
 	
@@ -242,7 +242,7 @@ public class InvoiceValidation {
 			.andThen(DUPLICATED_SERIES_NUMBER)
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)
-			.andThen(CHECK_FIVE_YEARS)
+			.andThen(CHECK_TEN_YEARS)
 			.andThen(CHECK_FINANCES)
 			.accept(inv, new AonConfigurationContext(ctx,config));
 
