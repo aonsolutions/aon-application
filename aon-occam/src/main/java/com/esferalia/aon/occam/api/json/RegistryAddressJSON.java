@@ -8,6 +8,9 @@ import com.esferalia.aon.occam.api.model.type.Country;
 public class RegistryAddressJSON {
 
 	public static RegistryAddress fromJSON(JSONObject json) {
+		if(json == null) {
+			return new RegistryAddress();
+		}
 		return new RegistryAddress()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(json.optInt(IJsonNames.DOMAIN))

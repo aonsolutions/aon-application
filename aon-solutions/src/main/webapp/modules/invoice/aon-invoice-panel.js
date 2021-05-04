@@ -20,6 +20,7 @@ import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
 import * as GWT from "../../gwt/gwt.js";
+import { AonProductList } from '../product/aon-product-list.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -177,10 +178,17 @@ export class AonInvoicePanel extends AonElement {
 					fn: () => {this.aonInvoicePrint()}
 				}
 			];
+
 			if(this.getDur().isAlpha()){
 				settingOptions.push({
+					name: MSG.PRODUCTS,
+					icon: MATERIAL_ICONS.LOCAL_MALL,
+					fn: () => {this.aonProductList()}
+				});
+
+				settingOptions.push({
 					name: MSG.SII_TICKETBAI,
-					icon: 'settings',
+					icon: MATERIAL_ICONS.SETTING,
 					fn: () => {}
 				})
 			}
@@ -230,6 +238,13 @@ export class AonInvoicePanel extends AonElement {
 	aonInvoicePrint() {
 		aonInvoice.setContentHTML(`<aon-invoice-print></aon-invoice-print>`)
 	}
+
+	aonProductList() {
+		let productList = new  AonProductList();
+		productList.id = this.id + 'ProductList';
+		aonInvoice.setContent(productList);
+	}
+
 
 	addInvoice() {
 		let aonInvoice = this.getElement('aonInvoice');

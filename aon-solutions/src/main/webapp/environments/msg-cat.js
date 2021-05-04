@@ -38,6 +38,7 @@ export const CANCEL = 'Cancel·lar';
 export const CATEGORY = 'Categoria';
 export const CATEGORIES = 'Categories';
 export const CITY = 'Ciudad';
+export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
 export const COMPANIES = 'Empreses';
@@ -178,6 +179,8 @@ export const PRICE = 'Preu';
 export const PRINT_INVOICE = 'Imprimir Factura';
 export const PRINTING_INVOICES = 'Impressió de Factures';
 export const PROCESSED_MOVEMENT = "El alta se ha procesado procesado correctamente";
+export const PRODUCT = 'Producte';
+export const PRODUCTS = 'Productes';
 export const PROVINCE = 'Provincia';
 
 // ----- Q

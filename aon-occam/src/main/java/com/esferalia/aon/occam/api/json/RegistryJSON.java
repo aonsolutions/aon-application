@@ -10,6 +10,10 @@ public class RegistryJSON {
 
 
 	public static Registry fromJSON(JSONObject json) {
+		if(json == null) {
+			return new Registry();
+		}
+		
 		return new Registry() 
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(DomainJSON.fromJSON(json.optJSONObject(IJsonNames.DOMAIN)))

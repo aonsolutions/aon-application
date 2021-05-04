@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -25,8 +26,19 @@ public class JsonUtils {
 		}
 		return value;
 	}
+	
 	public static String getString(JSONObject json, String key ) {
 		return json.optString(key,null);
+	}
+	
+	public static JSONObject getJSONObject(JSONObject json, String key) {
+		return json != null && json.opt(key) != null 
+				? json.optJSONObject(key) 
+				: new JSONObject();
+	}
+	
+	public static JSONArray getJSONArray(JSONObject json, String key) {
+		return json.opt(key) != null ? json.optJSONArray(key) : new JSONArray();
 	}
 	
 	public static Boolean getBoolean(JSONObject json, String key ) {
@@ -56,7 +68,7 @@ public class JsonUtils {
 	}
 	
 	public static Integer getInteger(JSONObject json, String key ) {
-		return AonNumberUtils.toInteger(  json.optNumber(key, null)); 
+		return AonNumberUtils.toInteger(json.optNumber(key, null)); 
 	}
 	
 	public static Integer getInt(JSONObject json, String key ) {

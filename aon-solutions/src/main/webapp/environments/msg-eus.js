@@ -38,6 +38,7 @@ export const CANCEL = 'Ezeztatu';
 export const CATEGORY = 'Kategoria';
 export const CATEGORIES = 'Kategoriak';
 export const CITY = 'Hiria';
+export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
 export const COMPANIES = 'Enpresak';
@@ -178,6 +179,8 @@ export const PRICE = 'Prezioa';
 export const PRINT_INVOICE = 'Faktura Inprimatu';
 export const PRINTING_INVOICES = 'Fakturen Inprimazioa';
 export const PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
+export const PRODUCT = 'Produktua';
+export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
 
 // ----- Q

@@ -66,6 +66,7 @@ export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
 export const CATEGORIES = MSG.CATEGORIES;
 export const CITY = MSG.CITY;
+export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
 export const COMPANIES = MSG.COMPANIES;
@@ -210,6 +211,8 @@ export const PRICE = MSG.PRICE;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
 export const PRINTING_INVOICES = MSG.PRINTING_INVOICES;
 export const PROCESSED_MOVEMENT = MSG.PROCESSED_MOVEMENT;
+export const PRODUCT = MSG.PRODUCT;
+export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
 
 // ----- Q

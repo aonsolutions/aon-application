@@ -29,13 +29,10 @@ export class AonTable extends AonElement {
 
   constructor() {
     super();
-    this.columns = [];
-    this.THEADER = this.id + "TableHeader";
-    this.TBODY = this.id + "TableBody";
-    this.selected = [];
   }
 
   connectedCallback() {
+    this.initialize();
     this.innerHTML = `
 				<aon-dialog-menu id="${this.getId() + "aonDialogAddOption"}" ></aon-dialog-menu>
 				<table class="aonTable">
@@ -93,6 +90,12 @@ export class AonTable extends AonElement {
     });
   }
 
+  initialize() {
+    this.columns = [];
+    this.THEADER = this.id + "TableHeader";
+    this.TBODY = this.id + "TableBody";
+    this.selected = [];
+  }
   deselectAll() {
     document.querySelectorAll("aon-checkbox").forEach((item, i) => {
       if (item.getValue()) {

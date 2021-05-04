@@ -25,12 +25,13 @@ public class InvoiceJSON {
 		Date date = TediJSONUtils.parseDate(json.optString("date"));
 		String category = json.optString(IJsonNames.CATEGORY);
 		InvoiceType type = getType(json.optString(IJsonNames.TYPE), category);
-		Registry registry = InvoiceType.SALES.equals(type) 
-				? RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER))
-				: RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER));
-		RegistryAddress raddress = InvoiceType.SALES.equals(type)  
-				? RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.RECEIVER).optJSONObject(IJsonNames.ADDRESS))
-				: RegistryAddressJSON.fromJSON(json.optJSONObject(IJsonNames.SENDER).optJSONObject(IJsonNames.ADDRESS));
+
+		JSONObject registryJSON = InvoiceType.SALES.equals(type) 
+				? JsonUtils.getJSONObject(json, IJsonNames.RECEIVER)
+				: JsonUtils.getJSONObject(json, IJsonNames.SENDER);
+		Registry registry = RegistryJSON.fromJSON(registryJSON);
+		JSONObject addressJSON = JsonUtils.getJSONObject(registryJSON, IJsonNames.ADDRESS);
+		RegistryAddress raddress = RegistryAddressJSON.fromJSON(addressJSON);
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -65,8 +66,8 @@ public class InvoiceJSON {
 //				.setAddressStreetType(raddress.getStreetType())
 //				.setAddressTown(raddress.getCity())
 //				.setAddressZIP(raddress.getZip())
-				.setBreakdown(InvoiceBreakdownJSON.fromJSON(json.optJSONArray(IJsonNames.TAXES)))
-				.setDetails(InvoiceDetailJSON.fromJSON(json.optJSONArray(IJsonNames.DETAILS)));
+				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
+				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)));
 				//.setFinances(FinanceJSON.fromJSON(json.optJSONArray(IJsonNames.FINANCES)));
 	}
 	

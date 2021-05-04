@@ -36,6 +36,7 @@ export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CHECKED = 'checked';
+export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
@@ -163,6 +164,7 @@ export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
 export const SHOW_FILE = 'showFile';
+export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
 

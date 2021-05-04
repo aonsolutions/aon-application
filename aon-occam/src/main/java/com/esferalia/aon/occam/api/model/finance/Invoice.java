@@ -21,7 +21,7 @@ public class Invoice implements Serializable, HasAudit {
 	private static final long serialVersionUID = 8897444490096530091L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private Integer activity; 				//**
 	private String epigraph;
 	private Integer investAsset;			//**
@@ -94,10 +94,10 @@ public class Invoice implements Serializable, HasAudit {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public Invoice setDomain(int domain) {
+	public Invoice setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}

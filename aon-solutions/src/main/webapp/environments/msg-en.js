@@ -38,6 +38,7 @@ export const CANCEL = 'Cancel';
 export const CATEGORY = 'Category';
 export const CATEGORIES = 'Categories';
 export const CITY = 'City';
+export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const COMPANIES = 'Companies';
@@ -178,6 +179,8 @@ export const PRICE =  'Price';
 export const PRINT_INVOICE = 'Print Invoice';
 export const PRINTING_INVOICES = 'Printing Invoices';
 export const PROCESSED_MOVEMENT = "The discharge has been processed successfully";
+export const PRODUCT = 'Product';
+export const PRODUCTS = 'Products';
 export const PROVINCE = 'Province';
 
 // ----- Q

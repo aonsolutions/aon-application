@@ -96,7 +96,7 @@ public class ProductServlet extends AonApiHttpServlet {
 	private JSONArray getProducts(AonApiData api) {
 		String value = api.getParams().optString("value");
 		return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> 
-			f.getCodeProperty().like(value).or(f.getNameProperty().like(value)));
+				f.getDomainProperty().eq(api.getDomain().getId()));
 	}
 	
 	private JSONArray getItems(AonApiData api) {
