@@ -38,11 +38,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -327,6 +329,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- UiFields
 	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String flex();
+	}
+	
+	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -344,6 +354,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField (provided = true)
 	ContractBonusUI contractBonusUI;
+	
+	@UiField (provided = true)
+	EmployeeSalary employeeSalary;
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -393,7 +406,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private ContrataEmployeeObject contrataEmployeeObject;
 	
 	private AonToolbar toolbar;
+
 	private AonToolbarButton listEmployees;
+	private HTMLPanel employeeContractButtons;
 	private AonToolbarButton saveContract;
 	private AonToolbarButton deleteContract;
 	private AonToolbarButton exportContract;
@@ -406,6 +421,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton downloadPDF;
 	private ListBox zoomListBox;
 	private int zoom;
+	
+	// EmployeeSalary
+	private HTMLPanel employeeSalaryButtons;
+	private AonToolbarButton deleteButton;
+	private AonToolbarButton pdfButton;
+	private AonToolbarButton pdfSettleButton;
+	private AonToolbarButton publishButton;
+	private AonToolbarButton bidoqPublishButton;
+	private AonToolbarButton email;
 	
 	private boolean hasCertificateSEPE;
 	
@@ -461,11 +485,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		};
 		
+		employeeSalary = new EmployeeSalary();
+		employeeSalary.hideToolbar();
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
+		showContractButtons();
 		setDefaultEmployeeView();
 		showEmployee();		
 		initZoomList();
@@ -557,12 +585,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			switch (itemIdx) {
 			case 0:
 				contrataEmployeeObject.getEmployeeContract(s -> {
+					showContractButtons();
 					this.setContrataEmployeeObject(this.contrataEmployeeObject, s);
 				}, f -> {});
 				break;
 			case 1:
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractButtons();
 					contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
@@ -571,10 +601,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 						contrataEmployeeObject.getContractSpecificData(su -> {
 							exportContract.getElement().getStyle().clearDisplay();
+							showContractButtons();
 							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						}, f -> {});
 					else {
 						exportContract.getElement().getStyle().clearDisplay();
+						showContractButtons();
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					}
 				}, f -> {});
@@ -582,19 +614,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			case 3:
 				contrataEmployeeObject.getContractClauses(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractButtons();
 					contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			case 4:
 				contrataEmployeeObject.getContractAttachments(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractButtons();
 					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			case 5:
 				getContractBonus(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractButtons();
 					contractBonusUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
+			case 6:
+				contrataEmployeeObject.getEmployeeSalaryObject(employeeSalaryObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showSalariesButtons();
+					employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
 				}, f -> {});
 				break;
 			default:
@@ -878,6 +920,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			tabLayOutPanel.getTabWidget(1).setVisible(true);
 	}
 	
+	private void showSalariesButtons() {
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(true);
+	}
+	
+	private void showContractButtons() {
+		employeeContractButtons.setVisible(true);
+		employeeSalaryButtons.setVisible(false);
+	}
+	
 	// ------------------------------------------------- Toolbar panel
 	
 	private AonToolbar getToolbarPanel() {
@@ -893,6 +945,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		toolbar.add(listEmployees);
 		
+		employeeContractButtons = new HTMLPanel("");
+		employeeContractButtons.addStyleName(style.flex());
+		
 		saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveContract.setAccessKey('G');
 		saveContract.addClickHandler(new ClickHandler() {
@@ -901,7 +956,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onSaveContract(event);
 			}
 		});
-		toolbar.add(saveContract);
+		employeeContractButtons.add(saveContract);
 		
 		deleteContract = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		deleteContract.setAccessKey('D');
@@ -911,7 +966,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onDeleteContract(event);
 			}
 		});
-		toolbar.add(deleteContract);
+		employeeContractButtons.add(deleteContract);
 		
 		exportContract = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconPdf() );
 		exportContract.setAccessKey('E');
@@ -921,7 +976,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onExportContract(event);
 			}
 		});
-		toolbar.add(exportContract);
+		employeeContractButtons.add(exportContract);
 		
 		afi = new AonToolbarButton( "Cambios AFI", AON.CSS.aonIconTgssAfi() );
 		afi.setAccessKey('A');
@@ -931,7 +986,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onAFI(event);
 			}
 		});
-		toolbar.add(afi);
+		employeeContractButtons.add(afi);
 		
 		ta = new AonToolbarButton( "Duplicados de Documentos TA", AON.CSS.aonIconTgssTa() );
 		ta.setAccessKey('T');
@@ -941,7 +996,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onTA(event);
 			}
 		});
-		toolbar.add(ta);
+		employeeContractButtons.add(ta);
 		
 		idc = new AonToolbarButton( "Informe de Cotizaci" + String.valueOf("\u00F3") + "n IDC", AON.CSS.aonIconTgssIdc() );
 		idc.setAccessKey('I');
@@ -951,7 +1006,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onIDC(event);
 			}
 		});
-		toolbar.add(idc);
+		employeeContractButtons.add(idc);
 		
 		cbc = new AonToolbarButton( "Copia B" + String.valueOf("\u00E1") + "sica", AON.CSS.aonIconSepeCbc() );
 		cbc.addClickHandler(new ClickHandler() {
@@ -960,7 +1015,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onCBC(event);
 			}
 		});
-		toolbar.add(cbc);
+		employeeContractButtons.add(cbc);
 		
 		cto = new AonToolbarButton( "Copia Contrato", AON.CSS.aonIconSepeCto() );
 		cto.addClickHandler(new ClickHandler() {
@@ -969,7 +1024,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onCTO(event);
 			}
 		});
-		toolbar.add(cto);
+		employeeContractButtons.add(cto);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
 		closePDF.setAccessKey('I');
@@ -979,7 +1034,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onClosePDF(event);
 			}
 		});
-		toolbar.add(closePDF);
+		employeeContractButtons.add(closePDF);
 		
 		initZoomList();
 		zoomListBox.addChangeHandler(e -> {
@@ -988,7 +1043,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
 			pdfViewer.scale(zoom / 100.00);
 		});
-		toolbar.add(zoomListBox);
+		employeeContractButtons.add(zoomListBox);
 		
 		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
 		downloadPDF.setAccessKey('D');
@@ -998,8 +1053,54 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onDownloadPDF(event);
 			}
 		});
-		toolbar.add(downloadPDF);
+		employeeContractButtons.add(downloadPDF);
 		
+		toolbar.add(employeeContractButtons);
+		
+		// EmployeeSalary
+		
+		employeeSalaryButtons = new HTMLPanel("");
+		employeeSalaryButtons.addStyleName(style.flex());
+		
+		deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		deleteButton.addClickHandler(e -> {
+			employeeSalary.onDelete(e);
+		});
+		employeeSalaryButtons.add(deleteButton);
+		
+		pdfButton = new AonToolbarButton( AON.MSG.printPDF(), AON.CSS.aonIconPdf());
+		pdfButton.addClickHandler(e -> {
+			employeeSalary.onPDF(e);
+		});	
+		employeeSalaryButtons.add(pdfButton);
+		
+		pdfSettleButton = new AonToolbarButton( "Carta Finiquito", AON.CSS.aonIconPdf());
+		pdfSettleButton.addClickHandler(e -> {
+			employeeSalary.onPDFSettle(e);
+		});	
+		pdfSettleButton.setVisible(false);
+		employeeSalaryButtons.add(pdfSettleButton);
+		
+		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
+		publishButton.addClickHandler(e -> {
+			employeeSalary.onPublish(e);
+		});	
+		employeeSalaryButtons.add(publishButton);
+		
+		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
+		bidoqPublishButton.addClickHandler(e -> {
+			employeeSalary.onBidoqPublish(e);
+		});	
+		bidoqPublishButton.setVisible(false);
+		employeeSalaryButtons.add(bidoqPublishButton);
+		
+		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
+		email.addClickHandler(e -> {
+			employeeSalary.onEmail(e);
+		});	
+		employeeSalaryButtons.add(email);
+		
+		toolbar.add(employeeSalaryButtons);
 		
 		return toolbar;
 

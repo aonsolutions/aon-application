@@ -307,6 +307,11 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success, Consumer<Throwable> failure) {
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
+		success.accept(employeeSalaryObject);
+	}
+	
 	public void setContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		List<ContractAttach> contractAttachments = employeeContractData.getContractAttachments();
