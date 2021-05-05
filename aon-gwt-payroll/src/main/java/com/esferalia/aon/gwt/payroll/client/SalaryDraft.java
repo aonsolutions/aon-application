@@ -22,9 +22,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -110,7 +107,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
@@ -2418,8 +2414,6 @@ public class SalaryDraft extends ResizeComposite
 		String issueLabel();
 
 		String issueTextBox();
-		
-		String container();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2428,8 +2422,6 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
 	@UiField
 	ScrollPanel scrollPanel;
 	@UiField
@@ -2441,6 +2433,10 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Viewer pdfViewer;
 
+	@UiField
+	ListBox zoomListBox;
+	@UiField
+	SalarySelect salarySelect;
 	@UiField
 	FlexTable contextTable;
 	@UiField
@@ -2523,11 +2519,52 @@ public class SalaryDraft extends ResizeComposite
 	Label dbTotalDeductionLabel;
 
 	@UiField
+	Button acceptButton;
+	@UiField
+	Button salaryButton;
+	@UiField
+	Button settleButton;
+
+	@UiField
+	Button fxButton;
+
+	@UiField
+	Button undoButton;
+	@UiField
+	Button redoButton;
+	@UiField
+	Button undoAllButton;
+
+
+	@UiField
+	CheckBox tgssCheck;
+	@UiField
+	CheckBox costsCheck;
+	@UiField
+	CheckBox eventsCheck;
+	@UiField
+	CheckBox dbSalaryCheck;
+
+	@UiField
+	Button closePreviewButton;
+	@UiField
+	Button irpfPreviewButton;
+	@UiField
+	Button printPreviewButton;
+	
+
+	@UiField
 	MyStyle style;
 
 	@UiField
 	HorizontalPanel timeRulePanel;
 	
+	@UiField
+	Button saveButton;
+
+	@UiField
+	ListBox settlePreviewListBox;
+
 	private int zoom;
 	private Scope scope;
 	private List<HasVisibility> dbUIObjects;
@@ -2559,35 +2596,11 @@ public class SalaryDraft extends ResizeComposite
 //	private boolean dummies = false;
 //	private MenuItem dummiesMenuItem;
 	
-	private AonToolbar toolbar;
-	private AonToolbarButton acceptButton;
-	private AonToolbarButton salaryButton;
-	private AonToolbarButton settleButton;
-	private AonToolbarButton printPreviewButton;
-	private AonToolbarButton irpfPreviewButton;
-	private SalarySelect salarySelect;
-	private ListBox zoomListBox;
-	private AonToolbarButton saveButton;
-	private AonToolbarButton closePreviewButton;
-	private AonToolbarButton fxButton;
-	private AonToolbarButton undoAllButton;
-	private AonToolbarButton undoButton;
-	private AonToolbarButton redoButton;
-	private CheckBox tgssCheck; 
-	private CheckBox costsCheck;
-	private CheckBox dbSalaryCheck;
-	private CheckBox eventsCheck;
-	private ListBox settlePreviewListBox; 
-	
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.MONTH_ABBR);
 
 	public SalaryDraft() {
-		toolbar = getToolbarPanel();
 		initWidget(binder.createAndBindUi(this));
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		dockLayoutPanel.addStyleName(style.container());
-		
 		initPaymentsTable();
 		initPrintPreview();
 		scope = Scope.CONTRACT;
@@ -2595,7 +2608,9 @@ public class SalaryDraft extends ResizeComposite
 		showDraft();
 
 		zoom = Constants.DEFAULT_ZOOM;
+		initEvents();
 		initEventsStyles(style);
+		initSalaryDb();
 		export2JS(this);
 	}
 	
@@ -2679,6 +2694,11 @@ public class SalaryDraft extends ResizeComposite
 //	void onPrintButtonClick(ClickEvent event) {
 //		pdfViewer.print();
 //	}
+
+	@UiHandler("irpfPreviewButton")
+	void onIrpfPreviewClick(ClickEvent event) {
+		irpfPrint();
+	}
 
 	@UiHandler("totalLiquidLabel")
 	void onLiquidChanges(ChangeEvent event) {
@@ -2858,6 +2878,11 @@ public class SalaryDraft extends ResizeComposite
 		Double totalPayment = salaryDraftObject.getTotalPayment();
 		totalPaymentsLabel
 				.setText(String.valueOf(NumberUtils.isNotValid(totalPayment) ? 0.00 : AON.round(totalPayment)));
+	}
+	
+	@UiHandler("settlePreviewListBox")
+	void onSettlePreviewChange(ChangeEvent event) {
+		printSettle();
 	}
 
 	private void setDbVisible(boolean visible) {
@@ -3234,9 +3259,106 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	
-	
+	@UiHandler("fxButton")
+	void onFxHelperMouseDown(MouseDownEvent event) {
+		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
+		fxDialog.setExpression(fxhasValue.getValue());
+		fxDialog.center();
+		fxDialog.show();
 
+		fxDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				((Focusable) fxhasValue).setFocus(true);
+				if (fxDialog.isAccepted()) {
+					fxhasValue.setValue(fxDialog.getExpression());
+					for (Variable var : fxDialog.getVariables()) {
+						var.setScope(Scope.SALARY);
+						var.setImplicit(false);
+						var.setStartDate(SalaryDraft.this.salaryDraftObject.getStartDate());
+						var.setEndDate(SalaryDraft.this.salaryDraftObject.getEndDate());
+						SalaryDraft.this.salaryDraftObject.addDraftVariable(var);
+					}
+				}
+			}
+		});
+	}
+
+
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent event) {
+		salaryDraftObject.save(this);
+	}
+
+	@UiHandler("settleButton")
+	void onSettleButtonClick(ClickEvent event) {
+		salaryDraftObject.emitSalary(this);
+	}
+	
+	@UiHandler("salaryButton")
+	void onSalaryButtonClick(ClickEvent event) {
+
+		salaryDraftObject.save(new CalculateCallback() {
+
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+			}
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+			}
+		});
+			
+//		salaryDraftObject.saveITData(new CalculateCallback() {
+//			@Override
+//			public Calculate getCalculate() {
+//				return SalaryDraft.this.getCalculate();
+//			}
+//
+//			@Override
+//			public void onCalculateSucces(SalaryDraftObject object) {
+//				
+//				salaryDraftObject.save(new CalculateCallback() {
+//
+//					@Override
+//					public Calculate getCalculate() {
+//						return SalaryDraft.this.getCalculate();
+//					}
+//					@Override
+//					public void onCalculateSucces(SalaryDraftObject object) {
+//						SalaryDraft.this.onCalculateSucces(object); // TODO:
+//																	// It's
+//																	// necessary
+//																	// ?
+//						SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+//					}
+//
+//					@Override
+//					public void onCalculateFailure(Throwable throwable) {
+//						SalaryDraft.this.onCalculateFailure(throwable);
+//					}
+//				});
+//			}
+//
+//			@Override
+//			public void onCalculateFailure(Throwable throwable) {
+//				SalaryDraft.this.onCalculateFailure(throwable);
+//			}
+//		});
+	}
+
+	@UiHandler("tgssCheck")
+	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
+		showTimeRulePanel();
+		showDbTimeRulePanel();
+	}
 
 	private void syncSalarySelect() {
 		salaryDraftObject.getExtras(new AsyncCallback<List<Extra>>() {
@@ -3247,6 +3369,27 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onSuccess(List<Extra> extras) {
 				salarySelect.setExtras(extras);
+			}
+		});
+	}
+
+	private void initSalaryDb() {
+		dbSalaryCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				setDbVisible(event.getValue());
+			}
+		});
+		dbUIObjects = new LinkedList<HasVisibility>();
+	}
+
+	private void initEvents() {
+		eventsCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				eventsTable.setVisible(event.getValue());
+				eventsTableSpace.setVisible(eventsTable.isVisible());
+				showPaymentsEvents(eventsTable.isVisible());
 			}
 		});
 	}
@@ -3283,13 +3426,60 @@ public class SalaryDraft extends ResizeComposite
 		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN, myStyle.textWarn() });
 	}
 
+	// -------------------------------------------------------------------------
+	@UiHandler("undoButton")
+	void onUndoButtonClick(ClickEvent event) {
+		salaryDraftObject.undo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		salaryDraftObject.clearDrafts();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+
+	@UiHandler("redoButton")
+	void onRedoButtonClick(ClickEvent event) {
+		salaryDraftObject.redo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+
+	@UiHandler("costsCheck")
+	void onCostsCheckChange(ValueChangeEvent<Boolean> event) {
+		showCosts();
+//		if ( isCostsVisible()) 
+//			salaryDraftObject.synchronize(this);
+	}
 	
-	
-	
+	@UiHandler("saveButton")
+	void onDownloadClick(ClickEvent event) {
+		String fileName = 
+				salaryDraftObject.getEmployeeName() + " " 
+				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
+				+".pdf";
+		pdfViewer.download(fileName);
+	}
 
 	// -------------------------------------------------------------------------
 
 	private void initPrintPreview() {
+		printPreviewButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				printPreview();
+			}
+		});
+
+		closePreviewButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				showDraft();
+			}
+		});
+
 		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
 			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
 		int selectedIndex = zoomListBox.getItemCount();
@@ -6293,256 +6483,6 @@ public class SalaryDraft extends ResizeComposite
 			LOGGER.log(Level.INFO, message);
 	}
 
-	// ------------------------------------------------- Toolbar -----------------------------------------------------
-	
-	private AonToolbar getToolbarPanel() {
 
-		AonToolbar toolbar = new AonToolbar("N" + String.valueOf("\u00F3") + "minas");
-
-		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(e -> {
-			onUndoAll(e);
-		});	
-		undoAllButton.ensureDebugId("undoAllButton");
-		toolbar.add(undoAllButton);
-		
-		undoButton = new AonToolbarButton( "Deshacer", AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(e -> {
-			onUndo(e);
-		});	
-		undoButton.ensureDebugId("undoButton");
-		toolbar.add(undoButton);
-		
-		redoButton = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(e -> {
-			onRedo(e);
-		});	
-		redoButton.ensureDebugId("redoButton");
-		toolbar.add(redoButton);
-		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(e -> {
-			onAccept(e);
-		});	
-		acceptButton.ensureDebugId("acceptButton");
-		acceptButton.setEnabled(false);
-		toolbar.add(acceptButton);
-		
-		salaryButton = new AonToolbarButton( "Emitir nomina", AON.CSS.aonIconAccept() );
-		salaryButton.addClickHandler(e -> {
-			onSalary(e);
-		});	
-		salaryButton.ensureDebugId("salaryButton");
-		toolbar.add(salaryButton);
-
-		settleButton = new AonToolbarButton( "Emitir finiquito", AON.CSS.aonIconAccept() );
-		settleButton.addClickHandler(e -> {
-			onSettle(e);
-		});	
-		settleButton.ensureDebugId("settleButton");
-		settleButton.setVisible(false);
-		toolbar.add(settleButton);
-		
-		fxButton = new AonToolbarButton( "FX", AON.CSS.aonIconFx() );
-		fxButton.addClickHandler(e -> {
-			onFx(e);
-		});	
-		fxButton.ensureDebugId("fxButton");
-		fxButton.setEnabled(false);
-		toolbar.add(fxButton);
-		
-		tgssCheck = new CheckBox("SILTRA"); 
-		tgssCheck.addValueChangeHandler(e -> {
-			onTgssCheckChange(e);
-		});
-		tgssCheck.ensureDebugId("tgssCheck");
-		tgssCheck.setValue(false);
-		toolbar.add(tgssCheck);
-		
-		costsCheck = new CheckBox("COSTES Y BONIF."); 
-		costsCheck.addValueChangeHandler(e -> {
-			onCostsCheckChange(e);
-		});
-		costsCheck.ensureDebugId("costsCheck");
-		costsCheck.setValue(false);
-		toolbar.add(costsCheck);
-		
-		dbSalaryCheck = new CheckBox("DIFERENCIAS"); 
-		dbSalaryCheck.addValueChangeHandler(e -> {
-			onDbSalaryCheckChange(e);
-		});
-		dbSalaryCheck.ensureDebugId("dbSalaryCheck");
-		dbSalaryCheck.setValue(false);
-		toolbar.add(dbSalaryCheck);
-		
-		dbUIObjects = new LinkedList<HasVisibility>();
-		
-		eventsCheck = new CheckBox("AVISOS Y NOTIF."); 
-		eventsCheck.addValueChangeHandler(e -> {
-			onEventsCheckChange(e);
-		});
-		eventsCheck.ensureDebugId("eventsCheck");
-		eventsCheck.setValue(false);
-		toolbar.add(eventsCheck);
-		
-		printPreviewButton = new AonToolbarButton( "Vista preliminar", AON.CSS.aonIconPdf() );
-		printPreviewButton.addClickHandler(e -> {
-			onPrintPreview(e);
-		});	
-		printPreviewButton.ensureDebugId("printPreviewButton");
-		toolbar.add(printPreviewButton);
-		
-		irpfPreviewButton = new AonToolbarButton( "IRPF", "aon-icon-irpfPreview");
-		irpfPreviewButton.addClickHandler(e -> {
-			onIRPFPreview(e);
-		});	
-		irpfPreviewButton.ensureDebugId("irpfPreviewButton");
-		toolbar.add(irpfPreviewButton);
-
-		salarySelect = new SalarySelect();
-		toolbar.add(salarySelect);
-		
-		zoomListBox = new ListBox();
-		toolbar.add(zoomListBox);
-		
-		saveButton = new AonToolbarButton( "Descargar", AON.CSS.aonIconPdf() );
-		saveButton.addClickHandler(e -> {
-			onSave(e);
-		});	
-		saveButton.ensureDebugId("saveButton");
-		toolbar.add(saveButton);
-		
-		closePreviewButton = new AonToolbarButton( "Cerrar preliminar", AON.CSS.aonIconClose() );
-		closePreviewButton.addClickHandler(e -> {
-			onClosePreview(e);
-		});	
-		closePreviewButton.ensureDebugId("closePreviewButton");
-		toolbar.add(closePreviewButton);
-		
-		settlePreviewListBox = new ListBox(); 
-		settlePreviewListBox.addItem("ESTANDAR", SalaryDraft.JASPER);
-		settlePreviewListBox.addItem("CARTA (&Beta;)", SalaryDraft.LETTER);
-		settlePreviewListBox.addChangeHandler(e -> {
-			onSettlePreviewLBChange(e);
-		});
-		settlePreviewListBox.ensureDebugId("settlePreviewListBox");
-		settlePreviewListBox.setVisible(false);
-		toolbar.add(settlePreviewListBox);
-		
-		return toolbar;
-
-	}
-
-	public void onUndoAll(ClickEvent e) {
-		salaryDraftObject.clearDrafts();
-		salaryDraftObject.calculate(SalaryDraft.this);
-	}
 	
-	public void onUndo(ClickEvent e) {
-		salaryDraftObject.undo();
-		salaryDraftObject.calculate(SalaryDraft.this);
-	}
-
-	public void onRedo(ClickEvent e) {
-		salaryDraftObject.redo();
-		salaryDraftObject.calculate(SalaryDraft.this);
-	}
-	
-	public void onAccept(ClickEvent e) {
-		salaryDraftObject.save(this);
-	}
-	
-	public void onSalary(ClickEvent e) {
-		salaryDraftObject.save(new CalculateCallback() {
-
-			@Override
-			public Calculate getCalculate() {
-				return SalaryDraft.this.getCalculate();
-			}
-			@Override
-			public void onCalculateSucces(SalaryDraftObject object) {
-				SalaryDraft.this.onCalculateSucces(object);
-				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
-			}
-
-			@Override
-			public void onCalculateFailure(Throwable throwable) {
-				SalaryDraft.this.onCalculateFailure(throwable);
-			}
-		});
-	}
-	
-	public void onSettle(ClickEvent e) {
-		salaryDraftObject.emitSalary(this);
-	}
-	
-	public void onFx(ClickEvent e) {
-		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
-		fxDialog.setExpression(fxhasValue.getValue());
-		fxDialog.center();
-		fxDialog.show();
-
-		fxDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				((Focusable) fxhasValue).setFocus(true);
-				if (fxDialog.isAccepted()) {
-					fxhasValue.setValue(fxDialog.getExpression());
-					for (Variable var : fxDialog.getVariables()) {
-						var.setScope(Scope.SALARY);
-						var.setImplicit(false);
-						var.setStartDate(SalaryDraft.this.salaryDraftObject.getStartDate());
-						var.setEndDate(SalaryDraft.this.salaryDraftObject.getEndDate());
-						SalaryDraft.this.salaryDraftObject.addDraftVariable(var);
-					}
-				}
-			}
-		});
-	}
-	
-	private void onTgssCheckChange(ValueChangeEvent<Boolean> e) {
-		showTimeRulePanel();
-		showDbTimeRulePanel();
-	}
-	
-	private void onCostsCheckChange(ValueChangeEvent<Boolean> e) {
-		showCosts();
-	}
-
-	private void onDbSalaryCheckChange(ValueChangeEvent<Boolean> e) {
-		setDbVisible(e.getValue());
-	}
-
-	private void onEventsCheckChange(ValueChangeEvent<Boolean> e) {
-		eventsTable.setVisible(e.getValue());
-		eventsTableSpace.setVisible(eventsTable.isVisible());
-		showPaymentsEvents(eventsTable.isVisible());
-	}
-	
-	public void onPrintPreview(ClickEvent e) {
-		printPreview();
-	}
-	
-	public void onIRPFPreview(ClickEvent e) {
-		irpfPrint();
-	}
-
-	public void onSave(ClickEvent e) {
-		String fileName = 
-				salaryDraftObject.getEmployeeName() + " " 
-				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
-				+".pdf";
-		pdfViewer.download(fileName);
-	}
-	
-	public void onClosePreview(ClickEvent e) {
-		showDraft();
-	}
-	
-	public void onSettlePreviewLBChange(ChangeEvent e) {
-		printSettle();
-	}
-	
-	
-
 }
