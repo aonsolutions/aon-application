@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -107,7 +108,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -2414,6 +2417,8 @@ public class SalaryDraft extends ResizeComposite
 		String issueLabel();
 
 		String issueTextBox();
+		
+		String container();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2422,6 +2427,11 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final Binder binder = GWT.create(Binder.class);
 
+	@UiField
+	FlowPanel toolbar;
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
 	@UiField
 	ScrollPanel scrollPanel;
 	@UiField
@@ -2606,6 +2616,8 @@ public class SalaryDraft extends ResizeComposite
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
+		
+		dockLayoutPanel.addStyleName(style.container());
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
@@ -6483,6 +6495,217 @@ public class SalaryDraft extends ResizeComposite
 			LOGGER.log(Level.INFO, message);
 	}
 
+	// -------------------------------------------------- ContrataEmployee.Init & Setters
 
+	public void initPrintPreview(ListBox zoomListBox) {
+        this.zoomListBox = zoomListBox;
+        for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
+                zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+        int selectedIndex = zoomListBox.getItemCount();
+        for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
+                zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+        zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
+        zoomListBox.setSelectedIndex(selectedIndex);
+        zoomListBox.addChangeHandler(new ChangeHandler() {
+
+                @Override
+                public void onChange(ChangeEvent event) {
+                        int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
+                        String text = SalaryDraft.this.zoomListBox.getItemText(index);
+                        SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
+                        pdfViewer.scale(zoom / 100.00);
+                }
+        });
+        
+	}
 	
+	public void setUndoAllButton(AonToolbarButton undoSalaryAllButton) {
+		this.undoAllButton = undoSalaryAllButton;
+	}
+	
+	public void setUndoButton(AonToolbarButton undoButton) {
+		this.undoButton = undoButton;
+	}
+
+	public void setRedoButton(AonToolbarButton redoButton) {
+		this.redoButton = redoButton;
+	}
+
+	public void setAcceptButton(AonToolbarButton acceptButton) {
+		this.acceptButton = acceptButton;
+	}
+
+	public void setSalaryButton(AonToolbarButton salaryButton) {
+		this.salaryButton = salaryButton;
+	}
+
+	public void setSettleButton(AonToolbarButton settleButton) {
+		this.settleButton = settleButton;
+	}
+
+	public void setFxButton(AonToolbarButton fxButton) {
+		this.fxButton = fxButton;
+	}
+
+	public void setPrintPreviewButton(AonToolbarButton printPreviewButton) {
+		this.printPreviewButton = printPreviewButton;
+	}
+
+	public void setIrpfPreviewButton(AonToolbarButton irpfPreviewButton) {
+		this.irpfPreviewButton = irpfPreviewButton;
+	}
+
+	public void setSaveButton(AonToolbarButton saveButton) {
+		this.saveButton = saveButton;
+	}
+
+	public void setClosePreviewButton(AonToolbarButton closePreviewButton) {
+		this.closePreviewButton = closePreviewButton;
+	}
+	
+	public void setSalarySelect(SalarySelect salarySelect) {
+		this.salarySelect = salarySelect;
+		salarySelect.addListener(this);
+	}
+	
+	public void setSettlePreviewListBox(ListBox settlePreviewListBox) {
+		this.settlePreviewListBox = settlePreviewListBox;
+	}
+	
+	public void setTgssCheck(CheckBox tgssCheck) {
+		this.tgssCheck = tgssCheck;
+	}
+	
+	public void setCostsCheck(CheckBox costsCheck) {
+		this.costsCheck = costsCheck;
+	}
+	
+	public void setDBSalaryCheck(CheckBox dbSalaryCheck) {
+		this.dbSalaryCheck = dbSalaryCheck;
+	}
+	
+	public void setEvenstCheck(CheckBox eventsCheck) {
+		this.eventsCheck = eventsCheck;
+		initEvents();
+	}
+	
+	// -------------------------------------------------- ContrataEmployee.Methods
+	
+	public void onUndoAll(ClickEvent e) {
+		salaryDraftObject.clearDrafts();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+	
+	public void onUndo(ClickEvent e) {
+		salaryDraftObject.undo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+	
+	public void onRedo(ClickEvent e) {
+		salaryDraftObject.redo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+	
+	public void onAccept(ClickEvent e) {
+		salaryDraftObject.save(this);
+	}
+	
+	public void onSalary(ClickEvent e) {
+		salaryDraftObject.save(new CalculateCallback() {
+	
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				SalaryDraft.this.salaryDraftObject.emitSalary(SalaryDraft.this);
+			}
+	
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+			}
+		});
+	}
+	
+	public void onSettle(ClickEvent e) {
+		salaryDraftObject.emitSalary(this);
+	}
+	
+	public void onFx(ClickEvent e) {
+		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
+		fxDialog.setExpression(fxhasValue.getValue());
+		fxDialog.center();
+		fxDialog.show();
+	
+		fxDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				((Focusable) fxhasValue).setFocus(true);
+				if (fxDialog.isAccepted()) {
+					fxhasValue.setValue(fxDialog.getExpression());
+					for (Variable var : fxDialog.getVariables()) {
+						var.setScope(Scope.SALARY);
+						var.setImplicit(false);
+						var.setStartDate(SalaryDraft.this.salaryDraftObject.getStartDate());
+						var.setEndDate(SalaryDraft.this.salaryDraftObject.getEndDate());
+						SalaryDraft.this.salaryDraftObject.addDraftVariable(var);
+					}
+				}
+			}
+		});
+	}
+	
+	public void onTgssCheckChange(ValueChangeEvent<Boolean> e) {
+		showTimeRulePanel();
+		showDbTimeRulePanel();
+	}
+	
+	public void onCostsCheck2Change(ValueChangeEvent<Boolean> e) {
+		showCosts();
+	}
+	
+	public void onDbSalaryCheckChange(ValueChangeEvent<Boolean> e) {
+		setDbVisible(e.getValue());
+	}
+	
+	public void onEventsCheckChange(ValueChangeEvent<Boolean> e) {
+		eventsTable.setVisible(e.getValue());
+		eventsTableSpace.setVisible(eventsTable.isVisible());
+		showPaymentsEvents(eventsTable.isVisible());
+	}
+	
+	public void onPrintPreview(ClickEvent e) {
+		printPreview();
+	}
+	
+	public void onIRPFPreview(ClickEvent e) {
+		irpfPrint();
+	}
+	
+	public void onSave(ClickEvent e) {
+		String fileName = 
+				salaryDraftObject.getEmployeeName() + " " 
+				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
+				+".pdf";
+		pdfViewer.download(fileName);
+	}
+	
+	public void onClosePreview(ClickEvent e) {
+		showDraft();
+	}
+	
+	public void onSettlePreviewLBChange(ChangeEvent e) {
+		printSettle();
+	}
+	
+	// -------------------------------------------------- ContrataEmployee.Methods
+	
+	public void hideToolbar(){
+		dockLayoutPanel.remove(toolbar);
+		scrollPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+	}
+
 }

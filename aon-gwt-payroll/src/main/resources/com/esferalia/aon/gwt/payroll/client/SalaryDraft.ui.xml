@@ -265,6 +265,12 @@
 		@external aon-icon-rowSelector-Parent;
 		@external aon-icon-rowSelector-Changed;
 		
+		.container{
+			width: 100%;
+			min-width: 600px;
+			height: 100%;
+		}
+		
 	</ui:style>
 
 
@@ -273,7 +279,7 @@
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="72">
 
-			<g:FlowPanel>
+			<g:FlowPanel ui:field="toolbar">
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
@@ -367,7 +373,7 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor}">
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor} {style.container}">
 				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 					<g:DeckPanel ui:field="deckPanel">
 						<g:VerticalPanel ui:field="draftPanel" width="auto">
