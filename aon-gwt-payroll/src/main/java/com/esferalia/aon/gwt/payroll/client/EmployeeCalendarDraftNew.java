@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
-import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
-
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -11,15 +8,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.client.Cost.CSVCCommand;
-import com.esferalia.aon.gwt.payroll.client.Cost.ExcelCommand;
-import com.esferalia.aon.gwt.payroll.client.Cost.ExcelCompleteCommand;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -34,6 +29,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -510,12 +506,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Out of contract
 		String outOfContractStyle();
 		String cmd_btn();
+		String container();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
 	// ---------------------------- Change Year (UiField)
+	
+	@UiField
+	HTMLPanel yearPanel;
 	
 	@UiField
 	Button lastYearButton;
@@ -602,6 +602,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.yearLabel.setText((year + 1900)+"");
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addStyleName(style.container());
 		
 		definitionMenu = new DefinitionMenu();
 		utilityMenu = new UtilityMenu();
@@ -1638,11 +1639,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	// ----------------------------------------------- Toolbar.Methods
 
-	private void onUndoAll(ClickEvent e) {
+	public void onUndoAll(ClickEvent e) {
 		initUndoAll();
 	}
 	
-	private void onSave(ClickEvent e) {
+	public void onSave(ClickEvent e) {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s -> {
 					onSaved();
@@ -1652,15 +1653,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		);
 	}
 	
-	private void onDefinition(ClickEvent e) {
+	public void onDefinition(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		definitionMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		definitionMenu.show();
 	}
 	
-	private void onUtility(ClickEvent e) {
+	public void onUtility(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		utilityMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		utilityMenu.show();
+	}
+	
+	// -------------------------------------------------- ContrataEmployee.Methods
+	
+	public void hideToolbar(){
+		dockLayoutPanel.remove(toolbar);
+		yearPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 }

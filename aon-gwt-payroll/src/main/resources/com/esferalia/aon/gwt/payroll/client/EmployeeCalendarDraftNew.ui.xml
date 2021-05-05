@@ -281,14 +281,20 @@
 			display: flex;
 			flex-direction: column;
 		}
+		
+		.container{
+			width: 100%;
+			min-width: 600px;
+			height: 100%;
+		}
 
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel styleName="{style.flexColumn}">  
+			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
 			    
-				<g:HTMLPanel styleName="{style.yearPanel}">
+				<g:HTMLPanel ui:field="yearPanel" styleName="{style.yearPanel}">
 					<g:Button
 						styleName="{style.optionButtons}"
 						ui:field="lastYearButton"> &#60; </g:Button>
@@ -559,7 +565,7 @@
 						</g:row>
 					</g:Grid>
 				</g:ScrollPanel>
-			</g:HTMLPanel>
+			</g:VerticalPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
