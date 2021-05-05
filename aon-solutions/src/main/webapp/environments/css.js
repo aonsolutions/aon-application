@@ -94,6 +94,8 @@ export const AON_SHOW_MENU = 'aonShowMenu';
 export const AON_COMPANY_LOGO = 'aonCompanyLogo';
 export const AON_COMPANY_LOGO_SPAN = 'aonCompanyLogoSpan';
 export const AON_COMPANY_LOGO_IMG = 'aonCompanyLogoImg';
+export const CONTINUE_LINED = 'continueLined';
+export const MATERIAL_SCROLL = 'materialScroll';
 
 // aon-toast.css
 
@@ -246,3 +248,25 @@ export const AON_COL_XS_OFFSET_12 = 'aonCol-xs-offset-12';
 export const AON_COL_SM_OFFSET_12 = 'aonCol-sm-offset-12';
 export const AON_COL_MD_OFFSET_12 = 'aonCol-md-offset-12';
 export const AON_COL_LG_OFFSET_12 = 'aonCol-lg-offset-12';
+
+// aon-css-utils
+export const CENTER_FLEX = "centerFlex";
+export const FLEX_ROW = "flexRow";
+export const FLEX_COLUMN = "flexColumn";
+export const FLEX_JUSTIFY_CENTER = "flexJustifyCenter";
+export const FLEX_JUSTIFY_START = "flexJustifyStart";
+export const FLEX_JUSTIFY_END = "flexJustifyEnd";
+export const FLEX_JUSTIFY_BETWEEN = "flexJustifyBetween";
+export const FLEX_JUSTIFY_AROUND = "flexJustifyAround";
+export const FLEX_ALIGN_CENTER = "flexAlignCenter";
+export const NO_COPY = "noCopy";
+export const NO_SCROLLBAR = "noScrollbar";
+export const NO_FOCUS = "noFocus";
+
+
+/**
+ * Name to CSS variable conversion.
+ * @param {string} name - the variable name
+ * @returns valid CSS variable expression.
+ */
+export const variable = (name) => {return "var(" + name + ")";}

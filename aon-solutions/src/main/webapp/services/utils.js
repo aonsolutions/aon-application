@@ -52,6 +52,28 @@ export const waitEl = (selector)=> new Promise((resolve,reject)=>{
   }, 100); // check every 100ms
 });
 
+
+/**
+ * 
+ * @param {string} selector selector html
+ * @returns element
+ */
+ export const waitChildEl = (parent,selector)=> new Promise((resolve,reject)=>{
+  let i = 0;
+  let element = null;
+  let interval = setInterval(()=> {
+    i++;
+    element = parent.querySelector(selector);
+    if (element) {
+      clearInterval(interval);
+      resolve(element);
+    } else if(i >= 100){ // 10 seg
+      clearInterval(interval);
+      reject("Element empty");
+    }
+  }, 100); // check every 100ms
+});
+
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
 export const round = (value) => decimalAdjust('round', value, -2);
@@ -289,6 +311,7 @@ export const setAttributes = (element, attributes) =>{
   if(element && attributes) 
       for (const key in attributes)  
           element.setAttribute(key,attributes[key]);
+
   return element;
 }
 
@@ -301,6 +324,7 @@ export const setDataset = (element,dataset) => {
   if(element && dataset) 
       for (const key in dataset) 
           element.dataset[key] = dataset[key];
+  
   return element;
 }
 
@@ -313,6 +337,7 @@ export const setEvents =(element,events) => {
   if(element && events) 
       for (const key in events)  
           element.addEventListener(key,events[key]);
+
   return element;
 }
 
@@ -325,6 +350,7 @@ export const setStyles = (element,styles) => {
   if(element && styles) 
     for (const key in styles)  
       element.style[key] = styles[key];  
+
   return element;
 }
 
@@ -337,4 +363,5 @@ export const setClasses = (element,classes) => {
   if(element && classes) 
     classes.forEach(cl => element.classList.add(cl));
   return element;
+
 }

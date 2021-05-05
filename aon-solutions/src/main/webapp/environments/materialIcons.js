@@ -101,6 +101,13 @@ export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
 export const FOLDER = 'folder';
+export const FORMAT_INDENT_INCREASE = "format_indent_increase";
+export const FORMAT_ITALIC = "format_italic";
+export const FORMAT_BOLD = "format_bold";
+export const FORMAT_LIST_BULLETED = "format_list_bulleted";
+
+//
+export const INSERT_DRIVE_FILE = "insert_drive_file";
 
 // ----- K
 
@@ -110,6 +117,7 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 // ----- L
 
 export const LOCAL_MALL = 'local_mall';
+export const LINK = "link";
 
 // ----- M
 
@@ -139,3 +147,4 @@ export const TUNE = 'tune';
 // ----- V
 
 export const VISIBILITY = 'visibility';
+export const VISIBILITY_OFF = 'visibility_off';

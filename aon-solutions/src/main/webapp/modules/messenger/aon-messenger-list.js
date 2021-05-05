@@ -31,6 +31,13 @@ export class AonMessengerList extends AonElement {
   });
   }
 
+  disconnectedCallback() {
+    if (this.getApplication()){
+      this.getApplication().removeFloatOption();
+      this.getApplication().removeToolbarOptions();
+    } 
+  }
+
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
     this.TOOLBAR = this.id + "Toolbar";
@@ -64,17 +71,19 @@ export class AonMessengerList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    if(this.dur.isAlpha())
+    if(this.isBeta())
       this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => {
-        const chat = new AonMessengerChat();
-        this.applicationEl.setContent(chat);
-      } );
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    } );
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
   }
 
   buildToolbarMobile(){
-    this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationEl.development() );
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () =>this.applicationEl.development());
+    this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
+      const chat = new AonMessengerChat();
+      this.applicationEl.setContent(chat);
+    });
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
   }
 
 
@@ -103,7 +112,9 @@ export class AonMessengerList extends AonElement {
         aonTable.removeRows();
         resp.map((res) => {
           const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-          aonTable.addRow({...res, dateParse}, (el) => {});
+          aonTable.addRow({...res, dateParse}, (el) => {
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{id: res.id});
+          });
         });
       } catch (e) {
         console.log(e);
@@ -125,7 +136,7 @@ export class AonMessengerList extends AonElement {
             subtitle: dateParse,
           };
           aonTable.addLi(options, idx, (el) => {
-            console.log(el);
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{id: res.id});
           });
         });
       } catch (e) {

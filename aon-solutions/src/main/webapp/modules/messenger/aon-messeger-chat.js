@@ -1,10 +1,29 @@
 import { AonElement } from "../../components/AonElement.js";
-import { newComponent } from "../../services/utils.js";
-import { MESSENGER_VIEWS } from "./MessengerEnums.js";
+import { CONSTANT, CSS } from "../../environments/environments.js";
+import { newComponent, setStyles } from "../../services/utils.js";
+import { SigninSidenav } from "../signin/signinEnums.js";
+import { createMainView, createMobileMainView } from "./createComponents.js";
+import { buildChat, buildMobileChat } from "./messenger-chat.js";
+import { buildDesktopWritter } from "./messenger-writter.js";
+import { MESSENGER_COMPONENTS, MESSENGER_VIEWS } from "./MessengerEnums.js";
 
 export class AonMessengerChat extends AonElement {
+  
+  static get observedAttributes() {
+    return [CONSTANT.DATA];
+  }
+  
   constructor() {
     super();
+  }
+
+  get data() {
+    const content = this.getAttribute(CONSTANT.DATA) || "{}"; 
+    return JSON.parse(content);
+  }
+
+  set data(data){
+    this.setAttribute(CONSTANT.DATA,JSON.stringify(data));
   }
 
   connectedCallback() {
@@ -19,37 +38,131 @@ export class AonMessengerChat extends AonElement {
   }
 
   async build() {
-    this.paintView();
-    await this.getChat();
+    const data = await this.getData();
+    this.paintView(data);
   }
 
-  async getData() {}
+  paintView(data) {
 
-  paintView() {
-    let innerHTML = ``;
-    let aonTableHtml = "";
-    if (this.isMobile()) this.getApplication().development();
-    else this.paintDesktop();
+    console.info(data);
+    if (this.isMobile()) this.paintMobile(data);
+    else this.paintDesktop(data);
+
+    const lined = document.querySelector(".continueLined");
+    if (lined)
+      lined.style.setProperty("--height", lined.scrollHeight + "px");
+
   }
 
-  async getChat(idDivAppend = undefined) {}
+  async getData() {
 
-  paintDesktop() {
-    const mainView = newComponent({
-      type: "div",
+    if(this.data && this.data.id){
+      const data = {
+        type: 0,
+        id: "1001237",
+        author: "akrck02@gmail.com",
+        title: "Creación y borrado de IT en condiciones extracurriculares de acuerdo al convenio vigente y el estatuto de los trabajadores y tal",
+        for: "Laboral",
+        content: [
+          {
+            type: "message",
+            sender: "Emisor",
+            message: "Hola, las <i>bajas de IT deben </i> ser notificadas en <b>Laboral</b>. Ejemplo : <br><br><li>Ejemplo 1.</li> <li>Ejemplo 2.</li> ",
+            date:  new Date(2020,23,4),
+            attach: [
+              {
+                name: "File.docx"
+              }
+            ]
+          },
+          {
+            type: "message",
+            sender: "Receptor",
+            message: "Oh! Gracias. ¿Como se eliminan?",
+            date:  new Date(2020,23,4),
+          },
+          {
+            type: "action",
+            action: "move",
+            message: "Esta solicitud se movió a Laboral",
+          },
+          {
+            type: "message",
+            sender: "Emisor",
+            message: "Con el botón de borrar.",
+            date : new Date(2020,23,4),
+            attach: [
+              {
+                name: "File1.docx"
+              },
+              {
+                name: "File2.docx"
+              },
+              {
+                name: "File3.docx"
+              }
+            ]
+          },
+          {
+            type: "action",
+            action: "close",
+            message: "La solicitud se cerró.",
+          },
+        ]
+      }
+      this.data = data;
+      return data;
+
+    }
+
+    const clean = {
+      type: 0,
+      id: "00000",
+      author: "",
+      title: undefined,
+      for: "Laboral",
+      content: []
+    }
+    this.data = clean;
+
+    return clean;
+  }
+
+  paintDesktop(data) {
+    const mainView = createMainView();
+    const writter = newComponent({
+      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
       styles: {
-        transition: ".5s",
-        display: "flex",
-        "flex-direction": "column",
-        opacity: 0,
-        "margin-top": "-5vh",
-        padding: "40px",
-        "justify-content": "center",
-      },
+        width: "50%",
+        height: '80%',
+        minWidth: "400px",
+        maxWidth: "600px",
+        paddingTop: '5vh',
+        paddingRight: '20px',
+        paddingLeft: '60px',
+        top: 0
+      }
     });
-    this.buildDesktopWritter(mainView);
-    this.buildDesktopChat(mainView);
-    this.appendChild(mainView.element);
+
+    const chat = newComponent({
+      classes: [CSS.FLEX_ROW],
+      styles: {
+        width: "50%",
+        height: '90%',
+        minWidth: "400px",
+        maxWidth: "600px",
+        paddingTop: '5vh',
+        paddingRight: '40px',
+        paddingLeft: '40px',
+      }
+    });
+
+    buildDesktopWritter(writter, data);
+    buildChat(chat, data);
+
+    writter.appendTo(mainView.element);
+    chat.appendTo(mainView.element);
+    mainView.appendTo(this);
 
     setTimeout(() => {
       mainView.element.style.opacity = 1;
@@ -57,305 +170,40 @@ export class AonMessengerChat extends AonElement {
     }, 100);
   }
 
-  buildDesktopWritter(parent) {
-    const fontColor = "#787878";
-
-    const title = newComponent({
-      type: "aon-title",
-      text: "Solicitud #1",
+  paintMobile(data) {
+    this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
+      this.applicationEl.removeFloatOption();
+      setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex",});
+      setTimeout(() => {
+        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
+          zIndex : 9,
+          opacity : 1,
+          left : 0,
+        });
+  
+      }, 100);
+    } );
+    const mainView = createMobileMainView();
+    const chat = newComponent({
+      classes: [CSS.FLEX_ROW],
       styles: {
-        "font-size": "2em",
-        color: fontColor,
-      },
-    });
-
-    const subtitleDiv = newComponent({
-      type: "div",
-      styles: {
-        display: "flex",
-        "flex-direction": "row",
-        "padding-top": "10px",
-        "padding-bottom": "10px",
         width: "100%",
-        "max-width": "550px",
-      },
+        height: '100%',
+        maxWidth: "600px",
+        paddingRight: '20px',
+        paddingLeft: '20px',
+      }
     });
 
-    const subtitle = newComponent({
-      type: "input",
-      attributes: {
-        type: "text",
-        placeholder: "Escriba su titulo aqui...",
-      },
-      styles: {
-        "font-size": "1.5em",
-        border: "none",
-        width: "100%",
-      },
-    });
+    buildMobileChat(chat, data);
+    chat.appendTo(mainView.element);
+    mainView.appendTo(this);
 
-    const edit = newComponent({
-      type: "i",
-      text: "edit",
-      classes: ["material-icons"],
-      styles: {
-        "font-size": "1.5em",
-        color: fontColor,
-        cursor: "pointer",
-      },
-    });
-
-    const receiverDiv = newComponent({
-      type: "div",
-      classes: ["flexRow", "flexAlignCenter"],
-      styles: {
-        "margin-bottom": "5px",
-      },
-    });
-
-    const receiverTitle = newComponent({
-      type: "span",
-      text: "Para: ",
-      styles: {
-        "font-size": "1.5em",
-        "padding-right": "5px",
-        color: fontColor,
-      },
-    });
-
-    const receiverSelect = newComponent({
-      type: "select",
-      text: "<option>Laboral</option>",
-      styles: {
-        "box-shadow": "0px 0px 2px rgba(0,0,0,.5)",
-        border: "none",
-        color: "#A9A9A9",
-        "border-radius": "3px",
-        background: "#fff",
-        padding: "7px",
-        "margin-left": "5px",
-        width: "80%",
-        "max-width": "200px",
-        "border-radius": "3px",
-      },
-    });
-
-    const writter = newComponent({
-      type: "aon-writter",
-      classes: ["flexColumn"],
-      styles: {
-        "min-width": "500px",
-        "max-width": "600px",
-        width: "100%",
-        height: "300px",
-        "box-shadow": "0px 0px 2px rgba(0,0,0,.5)",
-        "margin-top": "20px",
-      },
-    });
-
-    const bar = this.buildWritterBar();
-
-    const textarea = newComponent({
-      type: "textarea",
-      styles: {
-        border: "none",
-        padding: "10px",
-        height: "100%",
-        width: "100%",
-        color: fontColor,
-        "border-radius": "3px",
-        resize: "no-resize",
-      },
-    });
-
-    const sendBar = newComponent({
-      type: "div",
-      classes: ["flexRow"],
-      styles: {
-        "max-width": "600px",
-      },
-    });
-
-    const upload = newComponent({
-      type: "div",
-      classes: ["flexRow", "flexJustifyEnd", "flexAlignCenter"],
-      styles: {
-        "padding-top": "15px",
-        cursor: "pointer",
-      },
-    });
-
-    const uploadIcon = newComponent({
-      type: "i",
-      text: "file_upload",
-      classes: ["material-icons"],
-      styles: {
-        "font-size": "2.5em",
-        color: "var(--materialBlue)",
-        cursor: "pointer",
-      },
-    });
-
-    const uploadText = newComponent({
-      type: "span",
-      text: "Agregar un archivo",
-      classes: ["flexRow", "flexJustifyEnd", "flexAlignCenter"],
-      styles: {
-        "font-size": "1.2em",
-        "font-weight": "300",
-        color: "var(--materialBlue)",
-        "padding-left": "10px",
-        height: "100%",
-      },
-    });
-
-    const sendButtonWrapper = newComponent({
-      type: "div",
-      classes: ["flexRow", "flexJustifyEnd", "flexAlignCenter"],
-      styles: {
-        "padding-top": "15px",
-        width: "100%",
-      },
-    });
-
-    const sendButton = newComponent({
-      type: "button",
-      text: "Enviar",
-      classes: [
-        "materialButton",
-        "flexRow",
-        "flexJusfityCenter",
-        "flexAlignCenter",
-      ],
-      styles: {
-        transition: ".25s",
-        padding: "13px",
-        "min-width": "105px",
-        "min-height": "35px",
-        "font-size": "1.2em",
-        background: "var(--materialBlue)",
-        "box-shadow": "0px 2px 4px rgba(0,0,0,.15)",
-        border: "none",
-        margin: "10px",
-        "border-radius": "3px",
-        color: "#fff",
-      },
-    });
-
-    const sendIcon = newComponent({
-      type: "i",
-      text: "send",
-      classes: ["material-icons"],
-      styles: {
-        "font-size": "1.2em",
-        color: "white",
-        "justify-self": "flex-end",
-        cursor: "pointer",
-        "padding-left": "15%",
-      },
-    });
-
-    subtitle.appendTo(subtitleDiv.element);
-    edit.appendTo(subtitleDiv.element);
-
-    receiverTitle.appendTo(receiverDiv.element);
-    receiverSelect.appendTo(receiverDiv.element);
-
-    bar.appendTo(writter.element);
-    textarea.appendTo(writter.element);
-
-    uploadIcon.appendTo(upload.element);
-    uploadText.appendTo(upload.element);
-    upload.appendTo(sendBar.element);
-
-    sendIcon.appendTo(sendButton.element);
-    sendButton.appendTo(sendButtonWrapper.element);
-    sendButtonWrapper.appendTo(sendBar.element);
-
-    //main elements append
-    title.appendTo(parent.element);
-    subtitleDiv.appendTo(parent.element);
-    receiverDiv.appendTo(parent.element);
-    writter.appendTo(parent.element);
-    sendBar.appendTo(parent.element);
-  }
-
-  buildDesktopChat(parent) {
-    //not yet implemented
-  }
-
-  /**
-   * Builds the writter bar
-   * @returns Bar Object
-   */
-  buildWritterBar() {
-    const bar = newComponent({
-      type: "toolbar",
-      classes: ['aonWritterBar','flexRow','flexAlignCenter','flexJustifyBetween'],
-    });
-
-    const textFormat = newComponent({
-      classes: ['textFormat','flexRow','flexJustifyStart','flexAlignCenter'],
-    });
-
-    const bold = newComponent({
-      text: "format_bold",
-      classes: ['icon',"material-icons"],
-    });
-
-    const italic = newComponent({
-      text: "format_italic",
-      classes: ['icon',"material-icons"],
-    });
-
-    const otherOptions = newComponent({
-      classes: ['otherOptions','flexRow','flexAlignCenter','flexJustifyEnd'],
-    });
-
-    const indentDecrease = newComponent({
-      text: "format_indent_decrease",
-      classes: ['icon',"material-icons"],
-    });
-
-    const indentIncrease = newComponent({
-      text: "format_indent_increase",
-      classes: ['icon',"material-icons"],
-    });
-
-
-    const listNumbered = newComponent({
-      text: "format_list_numbered",
-      classes: ['icon',"material-icons"],
-    });
-
-    const list = newComponent({
-      text: "format_list_bulleted",
-      classes: ['icon',"material-icons"],
-    });
-
-    const link = newComponent({
-      text: "link",
-      classes: ['icon',"material-icons"],
-    });
-
-    const attach = newComponent({
-      text: "attach_file",
-      classes: ['icon',"material-icons"],
-    });
-
-    bold.appendTo(textFormat.element);
-    italic.appendTo(textFormat.element);
-
-    attach.appendTo(otherOptions.element);
-    link.appendTo(otherOptions.element);
-    indentDecrease.appendTo(otherOptions.element);
-    indentIncrease.appendTo(otherOptions.element);
-    listNumbered.appendTo(otherOptions.element);
-    list.appendTo(otherOptions.element);
-
-    textFormat.appendTo(bar.element);
-    otherOptions.appendTo(bar.element);
-    return bar;
+    setTimeout(() => {
+      mainView.element.style.opacity = 1;
+      mainView.element.style.marginTop = 0;
+    }, 100);
   }
 }
+
 window.customElements.define("aon-messenger-chat", AonMessengerChat);

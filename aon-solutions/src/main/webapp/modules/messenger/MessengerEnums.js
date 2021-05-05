@@ -24,3 +24,17 @@ export const MESSENGER_VIEWS = {
     AON_MESSENGER_LIST: "aonMessengerList",
     AON_MESSENGER_CHAT: "aonMessengerChat",
 }
+
+
+export const MESSENGER_COMPONENTS = {
+    WRITTER : "writter",
+    MESSAGE : "message",
+}
+
+export const MESSENGER_MODES = {
+    DEMO : "demo",
+    PRODUCTION : "production",
+    TEST : "test",
+}
+
+export const MESSENGER_MODE = MESSENGER_MODES.DEMO;

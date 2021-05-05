@@ -30,14 +30,32 @@
     justify-content: space-between;
 }
 
+.flexJustifyAround{
+    justify-content: space-around;
+}
+
 .flexAlignCenter{
     align-items: center;
 }
 
-:root{
-    --materialBlue : #2F80ED;
-}
-
 .materialButton:hover{
     border-radius:  50px !important;
+}
+
+.noCopy, .noCopy * {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
+}
+
+.noScrollbar::-webkit-scrollbar {
+    width: 0px; 
+    display: none;
+    background: transparent; 
+}
+
+
+.noFocus:focus{
+    outline: none;
 }
