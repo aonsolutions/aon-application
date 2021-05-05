@@ -15,18 +15,19 @@ import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
-import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, EVENT } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
 import * as GWT from "../../gwt/gwt.js";
 import { AonProductList } from '../product/aon-product-list.js';
+import * as OPTION from './InvoiceOptions.js';
 
 export class AonInvoicePanel extends AonElement {
 
 	dur;
-	selected;
-	_filter;
+	selectedOption;
+	filter;
 
 	INVOICE;
 	INPUT_FILE;
@@ -63,7 +64,7 @@ export class AonInvoicePanel extends AonElement {
 		this.INVOICE = 'aonInvoice';
 		this.INPUT_FILE = this.INVOICE + 'InputFile';
 		this.INPUT_CAMERA = 'aonMobileMenuCameraInput';// this.INVOICE + 'InputCamera';
-		this._filter = {
+		this.filter = {
 			status: 'inbox',
 			page: 0,
 			per_page: 50
@@ -100,97 +101,45 @@ export class AonInvoicePanel extends AonElement {
 
 		this.appendChild(input);
 
-		let pendingOptions = [
-			{
-				name: MSG.INBOX,
-				icon: 'inbox',
-				fn: () => this.aonInvoiceList({status:'inbox'})
-			},
-			{
-				name: MSG.REJECTEDS,
-				icon: 'report',
-				fn: () => this.aonInvoiceList({status:'refused'})
-			},
-			{
-				name: MSG.TRASH,
-				icon: 'delete',
-				fn: () => this.aonInvoiceList({status:'trash'})
-			}
+		aonInvoice.addEventListener(EVENT.SELECT, (e) => {
+			this.selectOption(e.detail);
+		})
+
+		let pendingOptions = [ 
+			OPTION.RAWDOC_INBOX,
+			OPTION.RAWDOC_REJECT, 
+			OPTION.RAWDOC_DRAFT
 		];
 		aonInvoice.addSidenavOptions(MSG.PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
-
+		
 		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
-			let budgetOptions = [
-				{
-					name: MSG.PENDINGS,
-					icon: 'pending_actions',
-					fn: () => {}
-				}
-			];
+			let budgetOptions = [ OPTION.OFFER ];
 			aonInvoice.addSidenavOptions(MSG.BUDGETS.toUpperCase(), budgetOptions);
 		}
 
 		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
 			let invoiceOptions = [
-				{
-					name: MSG.ISSUEDS,
-					icon: 'unarchive',
-					fn: () => this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50})
-				},
-				{
-					name: MSG.RECEIVEDS,
-					icon: 'archive',
-					fn: () => this.aonInvoiceList({status:'accounting', type:'purchase,expenses', page:1, per_page: 50})
-				},
-				{
-					name: MSG.TICKETS,
-					icon: 'receipt',
-					fn: () => this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50})
-				}
+				OPTION.INVOICE_ISSUED,
+				OPTION.INVOICE_RECEIVED, 
+				OPTION.INVOICE_TICKET
 			];
+				
 			aonInvoice.addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
 
 			if(!this.isMobile()) {
 				let contactOptions = [
-					{
-						name: MSG.CUSTOMERS,
-						icon: MATERIAL_ICONS.CONTACT_PAGE,
-						fn: () => GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT)
-					},
-					{
-						name: MSG.SUPPLIERS,
-						icon: MATERIAL_ICONS.CONTACT_PAGE,
-						fn: () => GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT)
-					},
-					{
-						name: MSG.CREDITORS,
-						icon: MATERIAL_ICONS.CONTACT_PAGE,
-						fn: () => GWT.load(GWT.CREDITOR, this.getApplication().CONTENT)
-					}
+					OPTION.REGISTRY_CUSTOMER,
+					OPTION.REGISTRY_SUPPLIER,
+					OPTION.REGISTRY_CREDITOR
 				];
 				aonInvoice.addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
 			}
 
-			let settingOptions = [
-				{
-					name: MSG.PRINTING_INVOICES,
-					icon: 'print',
-					fn: () => {this.aonInvoicePrint()}
-				}
-			];
+			let settingOptions = [ OPTION.CONFIGURATION_PRINT ];
 
 			if(this.getDur().isAlpha()){
-				settingOptions.push({
-					name: MSG.PRODUCTS,
-					icon: MATERIAL_ICONS.LOCAL_MALL,
-					fn: () => {this.aonProductList()}
-				});
-
-				settingOptions.push({
-					name: MSG.SII_TICKETBAI,
-					icon: MATERIAL_ICONS.SETTING,
-					fn: () => {}
-				})
+				settingOptions.push(OPTION.PRODUCT);
+				settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 			}
 			aonInvoice.addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
 		}
@@ -210,13 +159,13 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	search(value) {
-		this._filter.description = value;
+		this.filter.description = value;
 		this.aonInvoiceList();
 	}
 
 	aonInvoiceList(filter) {
-		filter = filter || this._filter;
-		this._filter = filter;
+		filter = filter || this.filter;
+		this.filter = filter;
 		let invoiceList = document.getElementById('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
@@ -263,46 +212,22 @@ export class AonInvoicePanel extends AonElement {
 
 		let d = document.getElementById('aonDialogAddOption');
 
-		let options = [{
-				name: 'Recibidas',
-				icon: 'archive',
-				fn: () => this.aonInvoice('recibida')
-			}, {
-				name: 'Tickets/Justificantes',
-				icon: 'receipt',
-				fn: () => this.aonInvoice('ticket')
-			}];
-
-		if(this.getDur().isAlpha()) {
-			options = [{
-					name: 'Emitidas',
-					icon: 'unarchive',
-					fn: () => this.aonInvoice('emitida')
-				}, {
-					name: 'Recibidas',
-					icon: 'archive',
-					fn: () => this.aonInvoice('recibida')
-				}, {
-					name: 'Tickets/Justificantes',
-					icon: 'receipt',
-					fn: () => this.aonInvoice('ticket')
-				}];
-		}
+		options = [{
+			name: 'Emitidas',
+			icon: 'unarchive',
+			fn: () => this.aonInvoice('emitida')
+		}, {
+			name: 'Recibidas',
+			icon: 'archive',
+			fn: () => this.aonInvoice('recibida')
+		}, {
+			name: 'Tickets/Justificantes',
+			icon: 'receipt',
+			fn: () => this.aonInvoice('ticket')
+		}];
 
 		if(localStorage.getItem('aon_domain_name').includes('ayudat')) {
-			options = [{
-					name: 'Emitidas',
-					icon: 'unarchive',
-					fn: () => this.aonInvoice('emitida')
-				}, {
-					name: 'Recibidas',
-					icon: 'archive',
-					fn: () => this.aonInvoice('recibida')
-				}, {
-					name: 'Tickets/Justificantes',
-					icon: 'receipt',
-					fn: () => this.aonInvoice('ticket')
-				}, {
+			options.push({
 					name: 'Importación Selfconta',
 					icon: 'import_export',
 					fn: () => {
@@ -321,7 +246,7 @@ export class AonInvoicePanel extends AonElement {
 							aonApplication.stopLoading();
 						});
 					}
-				}];
+				});
 		}
 
 		if(this.isMobile()) {
@@ -398,7 +323,10 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
 				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
-		} else if(this.getDur().isAlpha()){
+		} else if(this.getDur().isAlpha() || type === 'emitida' 
+				|| (invoice && invoice.status === 'pending') 
+				|| (invoice && invoice.status === 'scored')
+				|| (invoice && invoice.status === 'accounting')){
 			let ni = new AonNewInvoice();
 			ni.setInvoice(invoice);
 			aonInvoice.setContent(ni);
@@ -406,6 +334,55 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice).replaceAll("'", "")}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);
+		}
+	}
+
+	selectOption(option) {
+		if(option) {
+			this.selectedOption = option;
+
+			switch(option.id){
+			case OPTION.RAWDOC_INBOX.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX});
+				break;
+			case OPTION.RAWDOC_REJECT.id:
+				this.aonInvoiceList({status: CONSTANT.REFUSED});
+				break;
+			case OPTION.RAWDOC_DRAFT.id:
+				this.aonInvoiceList({status: CONSTANT.TRASH});
+				break;
+			case OPTION.INVOICE_ISSUED.id:
+				this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50});
+				break;
+			case OPTION.INVOICE_RECEIVED.id:
+				this.aonInvoiceList({status:'accounting', type:'purchase,expenses', page:1, per_page: 50});
+				break;
+			case OPTION.INVOICE_TICKET.id:
+				this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50});
+				break;
+			case OPTION.REGISTRY_CUSTOMER.id:
+				GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT);
+				break;
+			case OPTION.REGISTRY_SUPPLIER.id:
+				GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT);
+				break;
+			case OPTION.REGISTRY_CREDITOR.id:
+				GWT.load(GWT.CREDITOR, this.getApplication().CONTENT);
+				break;
+			case OPTION.OFFER.id:
+				break;
+			case OPTION.PRODUCT.id:
+				this.aonProductList();
+				break;
+			case OPTION.CONFIGURATION_PRINT.id:
+				this.aonInvoicePrint();
+				break;
+			case OPTION.CONFIGURATION_SII_TBAI.id:
+				break;
+			default:
+				this.aonInvoiceList({status: CONSTANT.INBOX});
+				break;
+			}
 		}
 	}
 

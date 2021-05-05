@@ -40,6 +40,8 @@ export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONFIGURATION_PRINT = 'configurationPrint';
+export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 
@@ -89,6 +91,9 @@ export const INBOX = 'inbox';
 export const INPUT = 'input';
 export const INVESTMENT = 'investment';
 export const INVOICE = 'invoice';
+export const INVOICE_ISSUED = 'invoiceIssued';
+export const INVOICE_RECEIVED = 'invoiceReceived';
+export const INVOICE_TICKET = 'invoiceTicket'; 
 
 // ----- J
 
@@ -110,6 +115,7 @@ export const NUMBER = 'number';
 
 // ----- O
 
+export const OFFER = 'offer';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
@@ -125,6 +131,7 @@ export const PREPAYMENT = 'prepayment';
 export const PREVIOUS = 'previous';
 export const PRICE = 'price';
 export const PRIMARY = "primary";
+export const PRODUCT = "product";
 
 // ----- Q
 
@@ -132,7 +139,9 @@ export const QUANTITY = 'quantity';
 export const QUOTA = 'quota';
 
 // ----- R
-
+export const RAWDOC_DRAFT = 'rawdocDraft';
+export const RAWDOC_INBOX = 'rawdocInbox';
+export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const REQUIRED = 'required';
 export const RECORD = 'record';
@@ -143,6 +152,10 @@ export const RECTIFY_INVOICE = 'rectifyInvoice';
 export const REFERENCE = 'reference';
 export const REFUSED = 'refused';
 export const REGISTRY = 'registry';
+export const REGISTRY_CREDITOR = 'registryCreditor';
+export const REGISTRY_CUSTOMER = 'registryCustomer';
+export const REGISTRY_SUPPLIER = 'registrySupplier';
+export const REGISTRY_TARGET = 'registryTarget';
 export const REJECT = 'reject';
 export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';

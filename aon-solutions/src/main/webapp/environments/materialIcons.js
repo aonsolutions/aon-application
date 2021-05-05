@@ -28,6 +28,7 @@ export const ANDROID = 'android';
 export const ANNOUNCEMENT = 'announcement';
 export const API = 'api';
 export const APP_BLOCKING = 'app_blocking';
+export const ARCHIVE = 'archive';
 export const ARROW_BACK = 'arrow_back';
 export const ARROW_CIRCLE_DOWN = 'arrow_circle_down';
 export const ARROW_CIRCLE_UP = 'arrow_circle_up';
@@ -109,6 +110,14 @@ export const FORMAT_LIST_BULLETED = "format_list_bulleted";
 //
 export const INSERT_DRIVE_FILE = "insert_drive_file";
 
+// ----- G
+
+// ----- H
+
+// ----- I
+
+export const INBOX = 'inbox';
+
 // ----- K
 
 export const KEYBOARD_ARROW_LEFT = 'keyboard_arrow_left';
@@ -125,10 +134,13 @@ export const MORE_VERT = 'more_vert';
 
 // ----- P
 
+export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
+export const PRINT = 'print';
 
 // ----- R
 
+export const RECEIPT = 'receipt';
 export const REMOVE_CIRCLE = 'remove_circle';
 export const REPORT = 'report';
 export const ROOM = 'room';
@@ -143,6 +155,10 @@ export const SWAP_CALLS = 'swap_calls';
 // ----- T
 
 export const TUNE = 'tune';
+
+// ----- U
+
+export const UNARCHIVE = 'unarchive';
 
 // ----- V
 

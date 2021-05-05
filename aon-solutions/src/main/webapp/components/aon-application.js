@@ -422,7 +422,8 @@ export class AonApplication extends AonElement {
         li.style.backgroundColor = "#ddd";
         let toolbar = this.getElement(this.TOOLBAR);
         toolbar.setAttribute("option", option.name);
-        option.fn();
+        if(option.fn) option.fn();
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: option }));
         if (this.isMobile()) {
           this.closeSidenav();
         }
@@ -466,7 +467,7 @@ export class AonApplication extends AonElement {
     let toolbar = this.getElement(this.TOOLBAR);
     toolbar.addSearchButton();
     toolbar.addEventListener("search", (event) => {
-      this.dispatchEvent(new CustomEvent("search", { detail: event.detail }));
+      this.dispatchEvent(new CustomEvent(EVENT.SEARCH, { detail: event.detail }));
     });
   }
 

@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.api.servlet.documental;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -119,6 +121,13 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		Integer[] scopes = null;
 		try {
 			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
+			if(api.getUser().getDomain().equals(api.getDomain().getParentId())) {
+				Integer[] scopes2 = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						r -> r.getDomainProperty().eq(api.getDomain().getId())).map(r -> r.getId()).toArray(Integer[]::new);
+				for (Integer sc : scopes2) {
+					scopes[scopes.length] = sc;
+				}
+			}
 		} catch (Exception e) {
 			scopes = null;
 		}

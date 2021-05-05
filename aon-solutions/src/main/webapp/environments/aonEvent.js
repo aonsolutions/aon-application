@@ -11,6 +11,7 @@ export const KEYUP = 'keyup';
 export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
+export const SEARCH = 'search';
 export const SELECT = 'select';
 export const USER_AUTH = 'userAuth';
 export const APPLY_FILTER = 'applyFilter';

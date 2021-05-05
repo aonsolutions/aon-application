@@ -216,8 +216,8 @@ export class AonNewInvoice extends AonElement {
 		
 		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-			invoiceToolbar.addSeparator();
+			//invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
+			//invoiceToolbar.addSeparator();
 		}
 
 		if(this.getInvoice().isRejected()) {
@@ -226,7 +226,7 @@ export class AonNewInvoice extends AonElement {
 		} else if(this.getInvoice().isDraft()) {
 			invoiceToolbar.addButton2(ACTION.DELETE_FOREVER, () => this.removeInvoice());
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
-		} else if(this.getInvoice().isInbox() || this.getInvoice().isPending()){
+		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 			invoiceToolbar.addButton2(ACTION.COMMENT, () => this.addInvoiceComment());
 			if(!this.autosave && this.getInvoice().isInbox()){
