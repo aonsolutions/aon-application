@@ -16,8 +16,8 @@ public class Model1802017NAVARRA extends Model180Base {
 
 	private static final int PERCEPTORS_TAB = 1;
 
-	public Model1802017NAVARRA(Mod180 mod180,Model180Callback cbk,Integer selectedIndex) {
-		super(mod180, cbk);
+	public Model1802017NAVARRA(Mod180 mod180, Model180ModuleOptions options,Model180Callback cbk,Integer selectedIndex) {
+		super(mod180, options, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -27,15 +27,15 @@ public class Model1802017NAVARRA extends Model180Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintPerceptorsTab(tabPanel, selectedIndex);
-		paintAdministrationTab(cbk,tabPanel);
+		paintAdministrationTab(options,cbk,tabPanel);
 		
 		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 
-	private void paintAdministrationTab(Model180Callback cbk,TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model180ModuleOptions options, Model180Callback cbk,TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options, cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod180().getAdministration())));
 	}
