@@ -193,7 +193,6 @@ public class Model303 extends MainEntryPoint {
 		});
 		
 		declarationContainer.setWidget(model303Table);
-		model303Table.refresh();
 		
 		getOptions().getParentWidget().add(ui);
 		if (getOptions().getFiscalModelId() != null ) {

@@ -224,7 +224,7 @@ public class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHa
 	
 	private Model390HFCellTable table;
 	
-	public Model390HFTable(Model390HFCallback cbk) {
+	public Model390HFTable(Model390HFModuleOptions options, Model390HFCallback cbk) {
 		table = new Model390HFCellTable(new FiscalModelProvidesKey<Mod390HF>());
 		if (table.getSelectionModel() != null) {
 			table.getSelectionModel().addSelectionChangeHandler(new com.google.gwt.view.client.SelectionChangeEvent.Handler() {
@@ -239,7 +239,7 @@ public class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHa
 			
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model390HF.MOD_SERVICE.getMod390HFs(Model390HF.getCurrentDomainName(), Model390HF.getCurrentDomain(),
+				Model390HF.MOD_SERVICE.getMod390HFs(options.getDomainName(), options.getDomain(),options.getUser(),
 						new AsyncCallback<LinkedList<Mod390HF>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod390HF> result) {
@@ -254,7 +254,7 @@ public class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHa
 			}
 		});
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.addNorth(getToolbarPanel(cbk), 25);
+		tableDockLayout.addNorth(getToolbarPanel(cbk, options), 25);
 		ScrollPanel tablePanel = new ScrollPanel();
 		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		tablePanel.add(table);
@@ -272,7 +272,7 @@ public class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHa
 	}
 	
 	
-	private Widget getToolbarPanel(Model390HFCallback cbk) {
+	private Widget getToolbarPanel(Model390HFCallback cbk, Model390HFModuleOptions options) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -303,7 +303,7 @@ public class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHa
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				cbk.onNew();
+				cbk.onNew( options );
 			}
 		});
 		buttonContainer.add(newButton);

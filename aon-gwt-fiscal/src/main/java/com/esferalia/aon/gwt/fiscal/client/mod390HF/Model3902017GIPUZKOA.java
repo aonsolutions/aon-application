@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOARScript1;
@@ -36,8 +37,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class Model3902017GIPUZKOA extends Model390HFBase {
 	
-	public Model3902017GIPUZKOA(Mod390HF mod303,Model390HFCallback callback) {
-		super(mod303,callback);
+	public Model3902017GIPUZKOA(Mod390HF mod303,Model390HFModuleOptions options,Model390HFCallback callback) {
+		super(mod303,options,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -47,12 +48,12 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
-		paintGeneralRegimenTab(tabPanel);
-		paintResultTab(tabPanel);
-		paintAdditionalDataTab(tabPanel);
-		paintSpecificOperationsTab(tabPanel);
+		paintGeneralRegimenTab(options,tabPanel);
+		paintResultTab(options,tabPanel);
+		paintAdditionalDataTab(options,tabPanel);
+		paintSpecificOperationsTab(options,tabPanel);
 		paintExtraTab(tabPanel);
-		paintAdministrationTab(tabPanel);
+		paintAdministrationTab(options,tabPanel);
 		
 	}
 
@@ -94,7 +95,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 	
-	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
+	private void paintGeneralRegimenTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
@@ -113,14 +114,14 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, "140px");
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902017GIPUZKOARScript1.values(),8);
+		paintDeclaration(options,table,Model3902017GIPUZKOARScript1.values(),8);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
 		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintResultTab(TabLayoutPanel tabPanel) {
+	private void paintResultTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -135,10 +136,10 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.AON_CSS.aonIconModel()));
-		paintDeclaration(table,Model3902017GIPUZKOAResultScript.values(),3);
+		paintDeclaration(options,table,Model3902017GIPUZKOAResultScript.values(),3);
 	}
 
-	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
+	private void paintAdditionalDataTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -166,10 +167,10 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render("Inf. Adicional", AON.AON_CSS.aonIconCompanyData()));
-		paintDeclaration(table,Model3902017GIPUZKOAAdditionalDataScript.values(),10);
+		paintDeclaration(options,table,Model3902017GIPUZKOAAdditionalDataScript.values(),10);
 	}
 	
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		//FlowPanel panel = getInformationPanel();
 		//tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod390HF().getAdministration())));
 		
@@ -186,7 +187,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		
-		FlowPanel administrationPanel = getAdministrationPanel(); 
+		FlowPanel administrationPanel = getAdministrationPanel(options); 
 		panel.add(administrationPanel);
 		
 		FlowPanel informationPanel = getInformationPanel();
@@ -195,7 +196,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod390HF().getAdministration())));
 	}
 	
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model390HFModuleOptions options) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -235,7 +236,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod390HF().isFinished() || getMod390HF().isSent()) {
-					submitForm(DOWNLOAD_FILE_ACTION);
+					submitForm(options,DOWNLOAD_FILE_ACTION);
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -250,7 +251,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		return panel;
 	}
 	
-	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
+	private void paintSpecificOperationsTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel specificOpDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -270,7 +271,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, TAB_TEMPLATE.render("Vol. Oper. / Op. Especif.", AON.AON_CSS.aonIconCompanyData()));
-		paintDeclaration(table,Model3902017GIPUZKOASpecificOperationsScript.values(),4);
+		paintDeclaration(options,table,Model3902017GIPUZKOASpecificOperationsScript.values(),4);
 	}
 	
 

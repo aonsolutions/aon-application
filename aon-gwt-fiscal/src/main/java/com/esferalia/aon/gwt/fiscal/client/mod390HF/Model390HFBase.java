@@ -76,8 +76,8 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		public void onCancel() {
 			this.callback.onCancel();
 		}
-		public void onNew() {
-			this.callback.onNew();
+		public void onNew(Model390HFModuleOptions options) {
+			this.callback.onNew(options);
 		}
 		public void showBreakdownPanel(String htmlText) {
 			this.callback.showBreakdownPanel(htmlText);
@@ -137,7 +137,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model390HF.FISCAL_SERVICE.mathExpression(expression,callback);
+			Model390HF.impl.mathExpression(expression,callback);
 		}
 	};
 	
@@ -148,18 +148,18 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
 
 	
-	public Model390HFBase(Mod390HF mod390,Model390HFCallback cbk) {
+	public Model390HFBase(Mod390HF mod390,Model390HFModuleOptions options, Model390HFCallback cbk) {
 		super(Unit.PX);
-		select( mod390 );
+		select( mod390 , options);
 		
-		addNorth(getToolbarPanel(), 25);
+		addNorth(getToolbarPanel(options), 25);
 		
 		SimplePanel headerPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(headerPanel, this.mod390 );
 		addNorth(headerPanel, 65);
 		
 		SimplePanel declarationHeaderPanel = new SimplePanel();
-		paintDeclarationHeaderTable(declarationHeaderPanel);
+		paintDeclarationHeaderTable(declarationHeaderPanel,options);
 		addNorth(declarationHeaderPanel , 45);
 
 		fieldsMap = new EnumMap<>(Mod390Key.class);
@@ -178,7 +178,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		this.mod390 = mod390;
 	}
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model390HFModuleOptions options) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -208,7 +208,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				callback.onNew();
+				callback.onNew(options);
 			}
 		});
 		buttonContainer.add(newButton);
@@ -222,12 +222,15 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				save();
+				save(options);
 			}
 		});
 		buttonContainer.add(saveButton);
 		
 		cancelButton.setText(AON.MSG.cancelAction());
+		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
@@ -242,7 +245,11 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 
 						@Override
 						public void onAccept() {
-							callback.onCancel();
+							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+								options.getExternalCallback().onExit();
+							} else {
+								callback.onCancel();
+							}
 						}
 
 						@Override
@@ -251,7 +258,11 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 						}
 					});
 				} else {
-					callback.onCancel();
+					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+						options.getExternalCallback().onExit();
+					} else {
+						callback.onCancel();
+					}
 				}
 			}
 		});
@@ -265,7 +276,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				delete();
+				delete(options);
 			}
 		});
 		buttonContainer.add(deleteButton);
@@ -278,7 +289,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				onFinalize();
+				onFinalize(options);
 			}
 		});
 		buttonContainer.add(markAsFinishedButton);
@@ -291,7 +302,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				markAsSent();
+				markAsSent(options);
 			}
 		});
 		buttonContainer.add(markAsSentButton);
@@ -304,7 +315,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				reopenDeclaration();
+				reopenDeclaration(options);
 			}
 		});
 		buttonContainer.add(markAsPendingButton);
@@ -323,7 +334,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 							
 							@Override
 							public void onAccept() {
-								submitForm(MODEL390HF_PRINT);
+								submitForm(options,MODEL390HF_PRINT);
 							}
 			
 							@Override
@@ -332,7 +343,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 							}
 						});
 				} else {
-					submitForm(MODEL390HF_PRINT);
+					submitForm(options,MODEL390HF_PRINT);
 				}
 			}
 		});
@@ -355,20 +366,22 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		return toolbarPanel;
 	}
 	
-	protected void select( Mod390HF mod390) {
+	protected void select( Mod390HF mod390, Model390HFModuleOptions options) {
 		setMod390HF(mod390);
-		refreshToolbarState();
+		refreshToolbarState( options );
 		styleStatusLabel(mod390);
 	}
-	protected void selectAndPopulate( Mod390HF mod390) {
-		select(mod390);
+	protected void selectAndPopulate( Mod390HF mod390, Model390HFModuleOptions options) {
+		select(mod390,options);
 		populate(mod390);
 	}
 	
-	private void refreshToolbarState() {
+	private void refreshToolbarState( Model390HFModuleOptions options) {
 		deleteButton.setVisible(!mod390.isNew());
 		auditButton.setVisible(!mod390.isNew());
 		newButton.setVisible(!mod390.isNew());
+		newButton.setVisible(!mod390.isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
+
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!mod390.isFinished() && !mod390.isSent());
 		deleteButton.setVisible(!mod390.isFinished() && !mod390.isSent());
@@ -384,7 +397,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				(mod390.getStatus() == FiscalStatus.FINISHED));
 	}
 
-	protected void paintDeclarationHeaderTable(SimplePanel panel) {
+	protected void paintDeclarationHeaderTable(SimplePanel panel,Model390HFModuleOptions options) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -471,7 +484,8 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						mod390.setComments(event.getValue());
 						styleCommentsButton();
-						Model390HF.MOD_SERVICE.saveComments(Model390HF.getCurrentDomainName(), mod390, new AsyncCallback<Mod390HF>() {
+						
+						Model390HF.MOD_SERVICE.saveComments(options.getDomainName(),options.getUser(), mod390, new AsyncCallback<Mod390HF>() {
 							@Override
 							public void onSuccess(Mod390HF result) {
 								toast.hide();
@@ -527,16 +541,16 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected void paintAdditionalData(FlexTable table) {
 		
 	}
-	protected void paintDeclaration(FlexTable table, IModelScript<Mod390Key>[] script, int colsNumber) {
+	protected void paintDeclaration(Model390HFModuleOptions options,FlexTable table, IModelScript<Mod390Key>[] script, int colsNumber) {
 		if (table.getRowCount() > 0) {
 			table.removeAllRows();
 		}
-		paintScript(table, script, colsNumber);
+		paintScript(options,table, script, colsNumber);
 	}
 	
-	protected void paintScript(FlexTable table, IModelScript<Mod390Key>[] script, int colsNumber) {
+	protected void paintScript(Model390HFModuleOptions options,FlexTable table, IModelScript<Mod390Key>[] script, int colsNumber) {
 		for (IModelScript<Mod390Key> ms : script) {
-			paintRow(table,ms,colsNumber);	
+			paintRow(options,table,ms,colsNumber);	
 		}
 	}
 
@@ -552,7 +566,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		return ++col;
 	}
 
-	protected void paintRow(FlexTable table,IModelScript<Mod390Key> script, int colsNumber) {
+	protected void paintRow(Model390HFModuleOptions options,FlexTable table,IModelScript<Mod390Key> script, int colsNumber) {
 		if (script.hasGraphicParticularity()) {
 			paintParticularyRow(table,script);		
 		} else {
@@ -568,10 +582,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 						col = paintEmptyCol(table,row, col, 2);
 					} else {
 						col = paintBox(table, row, col, key );
-						col = paintField(table, row, col, script, key );
+						col = paintField(options,table, row, col, script, key );
 					}
 				}
-				paintInfoCol(table,row,col,script);	
+				paintInfoCol(options,table,row,col,script);	
 			}
 		}
 	}
@@ -611,10 +625,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		return ++col;
 	}
 	
-	protected int paintField(FlexTable table, int row, int col, IModelScript<Mod390Key> script, final Mod390Key key) {
-		return paintField(table, row, col, key, script.getFieldSize(key), script.isEnabled( key ));
+	protected int paintField(Model390HFModuleOptions options,FlexTable table, int row, int col, IModelScript<Mod390Key> script, final Mod390Key key) {
+		return paintField(options,table, row, col, key, script.getFieldSize(key), script.isEnabled( key ));
 	}
-	protected int paintField(FlexTable table, int row, int col, final Mod390Key key, int fieldSize, boolean enabled) {
+	protected int paintField(Model390HFModuleOptions options,FlexTable table, int row, int col, final Mod390Key key, int fieldSize, boolean enabled) {
 		final FiscalModelDetail det1 = this.mod390.ensureDetail(key);
 		final DoubleBox input = new DoubleBox(fieldSize);
 		input.setResolver(resolver);
@@ -628,7 +642,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				if (input.getValue() == null) input.setValue(0.0,false);
 				mod390.ensureDetail(key).setAmount(input.getValue());
 				if (input.isEnabled()) {
-					calculateAndRefresh();
+					calculateAndRefresh(options);
 				}
 				markAsDirty();
 			}
@@ -751,7 +765,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		return groupPanel;
 	}
 
-	private void paintInfoCol(FlexTable table, int row, int col, final IModelScript<Mod390Key> script) {
+	private void paintInfoCol(Model390HFModuleOptions options,FlexTable table, int row, int col, final IModelScript<Mod390Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
@@ -777,7 +791,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					Model390HF.MOD_SERVICE.getInfo(Model390HF.getCurrentDomainName(),Model390HF.getCurrentDomain(),
+					Model390HF.MOD_SERVICE.getInfo(options.getDomainName(),options.getDomain(),options.getUser(),
 							mod390,script, infoKey,new AsyncCallback<String>() {
 
 								@Override
@@ -809,8 +823,8 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		}
 	}
 	
-	public void calculateAndRefresh(AsyncCallback<Mod390HF> cbk) {
-		Model390HF.MOD_SERVICE.calculate(Model390HF.getCurrentDomainName(),this.mod390,
+	public void calculateAndRefresh(Model390HFModuleOptions options, AsyncCallback<Mod390HF> cbk) {
+		Model390HF.MOD_SERVICE.calculate(options.getDomainName(),options.getUser(),this.mod390,
 				new AsyncCallback<Mod390HF>() {
 
 					@Override
@@ -828,8 +842,8 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			);	
 	}
 
-	public void calculateAndRefresh() {
-		calculateAndRefresh(null);
+	public void calculateAndRefresh(Model390HFModuleOptions options) {
+		calculateAndRefresh(options,null);
 	}
 	
 	private void identificationLabelChanged() {
@@ -871,10 +885,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			dirtyPanel.add(adjLabel);
 		}
 	}
-	protected void save() {
-		save(null);
+	protected void save(Model390HFModuleOptions options) {
+		save(null,options);
 	}
-	protected void save(AsyncCallback<Mod390HF> cbk) {
+	protected void save(AsyncCallback<Mod390HF> cbk,Model390HFModuleOptions options) {
 		saveButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -884,10 +898,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model390HF.MOD_SERVICE.save(Model390HF.getCurrentDomainName(), this.mod390, new AsyncCallback<Mod390HF>() {
+		Model390HF.MOD_SERVICE.save(options.getDomainName(),options.getUser(), this.mod390, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						saveButton.setEnabled(true);
 						if (cbk != null) cbk.onSuccess(result);
@@ -902,14 +916,14 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				});
 	}
 	
-	private void delete() {
+	private void delete(Model390HFModuleOptions options) {
 		deleteButton.setEnabled(false);
 		ConfirmDialog cd = new ConfirmDialog();
 		cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
 
 			@Override
 			public void onAccept() {
-				Model390HF.MOD_SERVICE.delete(Model390HF.getCurrentDomainName(),mod390, new AsyncCallback<Void>() {
+				Model390HF.MOD_SERVICE.delete(options.getDomainName(),options.getUser(),mod390, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
@@ -931,15 +945,15 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		});
 	}
 	
-	private void onFinalize() {
+	private void onFinalize(Model390HFModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model390HF.MOD_SERVICE.initializeForFinish(Model390HF.getCurrentDomainName(),mod390,
+		Model390HF.MOD_SERVICE.initializeForFinish(options.getDomainName(),options.getUser(),mod390,
 				new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						selectAndPopulate(result);
-						showFinalizePopup();
+						selectAndPopulate(result,options);
+						showFinalizePopup(options);
 						markAsFinishedButton.setEnabled(true);
 					}
 	
@@ -951,21 +965,21 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				});
 	}
 	
-	private void showFinalizePopup() {
-		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod390, getCallback(), new FinishDeclarationPopupCallback() {
+	private void showFinalizePopup(Model390HFModuleOptions options) {
+		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod390, options, getCallback(), new FinishDeclarationPopupCallback() {
 			@Override
 			public void onCancel() {}
 			
 			@Override
 			public void onAccept() {
-				finish();
+				finish(options);
 			}
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}
 	
-	private void finish() {
+	private void finish(Model390HFModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -975,10 +989,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model390HF.MOD_SERVICE.markAsFinished(Model390HF.getCurrentDomainName(), mod390, new AsyncCallback<Mod390HF>() {
+		Model390HF.MOD_SERVICE.markAsFinished(options.getDomainName(),options.getUser(), mod390, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod390);
@@ -992,7 +1006,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					}
 				});
 	}
-	private void reopenDeclaration() {
+	private void reopenDeclaration(Model390HFModuleOptions options) {
 		markAsPendingButton.setEnabled(false);
 		callback.cleanErrorPanel();
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -1002,10 +1016,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model390HF.MOD_SERVICE.markAsPending(Model390HF.getCurrentDomainName(), mod390, new AsyncCallback<Mod390HF>() {
+		Model390HF.MOD_SERVICE.markAsPending(options.getDomainName(),options.getUser(), mod390, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
 						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod390);
@@ -1020,13 +1034,13 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				});
 	}
 	
-	private void markAsSent() {
+	private void markAsSent(Model390HFModuleOptions options) {
 		markAsSentButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model390HF.MOD_SERVICE.markAsSent(Model390HF.getCurrentDomainName(), mod390, new AsyncCallback<Mod390HF>() {
+		Model390HF.MOD_SERVICE.markAsSent(options.getDomainName(),options.getUser(), mod390, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						selectAndPopulate(result);
+						selectAndPopulate(result,options);
 						markAsSentButton.setEnabled(true);
 					}
 
@@ -1181,12 +1195,12 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		return panel;
 	}
 
-	protected void submitForm(String action) {
+	protected void submitForm(Model390HFModuleOptions options,String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod390Hidden.setValue(String.valueOf(getMod390HF().getId()));
-		domainIdHidden.setValue(String.valueOf(Model390HF.getCurrentDomain()));
-		domainNameHidden.setValue(Model390HF.getCurrentDomainName());
-		userHidden.setValue(Model390HF.getCurrentUser());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
+		userHidden.setValue(options.getUser());
 		diskForm.submit();
 	}
 

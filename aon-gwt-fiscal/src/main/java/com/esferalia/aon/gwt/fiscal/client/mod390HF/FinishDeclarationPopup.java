@@ -58,7 +58,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 	final protected FlexTable tab = new FlexTable();
 	protected int row = 0;
 
-	public FinishDeclarationPopup(final Mod390HF mod390, final IModel390HFCallback callback,
+	public FinishDeclarationPopup(final Mod390HF mod390, Model390HFModuleOptions options, final IModel390HFCallback callback,
 			FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
@@ -86,9 +86,8 @@ public class FinishDeclarationPopup extends CustomDialog {
 			tab.setWidget(row, 1, new Label(mod390.getDeclarationType().getDescription()));
 			row++;
 		} else {
-			final CreditorBox creditorBox = new CreditorBox(Model390HF.getCurrentDomainName(),
-					Model390HF.getCurrentDomain(),Model390HF.getCurrentUser());
-			final IbanTextBox iban = new IbanTextBox(new EnterpriseSuggestOracle<Mod390HF>(callback));
+			final CreditorBox creditorBox = new CreditorBox(options.getDomainName(),options.getDomain(),options.getUser());
+			final IbanTextBox iban = new IbanTextBox(new EnterpriseSuggestOracle<Mod390HF>(options,callback));
 
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
@@ -222,15 +221,17 @@ public class FinishDeclarationPopup extends CustomDialog {
 
 	private static class EnterpriseSuggestOracle<T extends FiscalModel> extends MultiWordSuggestOracle {
 		private IModel390HFCallback modelCallback;
+		private Model390HFModuleOptions options;
 
-		private EnterpriseSuggestOracle(final IModel390HFCallback modelCallback) {
+		private EnterpriseSuggestOracle(Model390HFModuleOptions options, final IModel390HFCallback modelCallback) {
 			super();
+			this.options = options;
 			this.modelCallback = modelCallback;
 		}
 
 		@Override
 		public void requestSuggestions(final Request request, final Callback callback) {
-			commonService.getCompanyBanks(Model390HF.getCurrentDomainName(), Model390HF.getCurrentDomain(),Model390HF.getCurrentUser(),
+			commonService.getCompanyBanks(this.options.getDomainName(), this.options.getDomain(),this.options.getUser(),
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {

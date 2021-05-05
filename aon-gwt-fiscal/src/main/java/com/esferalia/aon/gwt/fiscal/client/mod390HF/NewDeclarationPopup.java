@@ -36,13 +36,13 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private ListBox defaultVatRegime = new ListBox();
 	private DoubleBox prorate = new DoubleBox(7);
 	
-	public NewDeclarationPopup(final Mod390HF mod303 ,final Model390HFCallback callback) {
+	public NewDeclarationPopup(Model390HFModuleOptions options,final Mod390HF mod390 ,final Model390HFCallback callback) {
 		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
 		FlexTable tab = new FlexTable();
-		populate(mod303);
+		populate(mod390);
 
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
@@ -65,17 +65,17 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				mod303.setAdministration( admonList.getValue() );
-				Model390HF.MOD_SERVICE.declarationChanged(Model390HF.getCurrentDomainName(),Model390HF.getCurrentDomain(),mod303,
+				mod390.setAdministration( admonList.getValue() );
+				Model390HF.MOD_SERVICE.declarationChanged(options.getDomainName(),options.getDomain(),options.getUser(),mod390,
 						new AsyncCallback<Mod390HF>() {
 							@Override
 							public void onSuccess(Mod390HF result) {
-								replacement.setVisible(mod303.isReplacementDeclarationAvailable());
-								complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+								replacement.setVisible(mod390.isReplacementDeclarationAvailable());
+								complementary.setVisible(mod390.isComplementaryDeclarationAvailable());
 								defaultVatRegimeLabel.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
 								defaultVatRegime.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
-								mod303.setPeriod(result.getPeriod());
-								mod303.ensureDetail(result.getProrateKey()).setAmount(result.getProratePercent());
+								mod390.setPeriod(result.getPeriod());
+								mod390.ensureDetail(result.getProrateKey()).setAmount(result.getProratePercent());
 								populate(result);
 							}
 			
@@ -100,7 +100,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				mod303.setYear(yearBox.getValue());
+				mod390.setYear(yearBox.getValue());
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
@@ -113,7 +113,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		prorate.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorate.getValue());
+				mod390.ensureDetail(mod390.getProrateKey()).setAmount(prorate.getValue());
 			}
 		});
 		tab.setWidget(row, 1, prorate);
@@ -125,14 +125,14 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				mod303.setComplementary(complementary.getValue());
+				mod390.setComplementary(complementary.getValue());
 				replacement.setEnabled(!complementary.getValue());
 				if (complementary.getValue()) {
 					replacement.setValue(false);
 				}
 			}
 		});
-		complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
+		complementary.setVisible(mod390.isComplementaryDeclarationAvailable());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, complementary);
@@ -144,14 +144,14 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				mod303.setReplacement(replacement.getValue());
+				mod390.setReplacement(replacement.getValue());
 				complementary.setEnabled(!replacement.getValue());
 				if (replacement.getValue()) {
 					complementary.setValue(false);
 				}
 			}
 		});
-		replacement.setVisible(mod303.isReplacementDeclarationAvailable());
+		replacement.setVisible(mod390.isReplacementDeclarationAvailable());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
@@ -159,12 +159,12 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		
 		// SIN ACTIVIDAD
 		withoutActivity.setText(AON.MSG.withoutActivity());
-		withoutActivity.setValue(mod303.isWithoutActivity());
+		withoutActivity.setValue(mod390.isWithoutActivity());
 		withoutActivity.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				mod303.setWithoutActivity(withoutActivity.getValue());
+				mod390.setWithoutActivity(withoutActivity.getValue());
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
@@ -187,7 +187,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onAccept(mod303);
+				callback.onAccept(mod390);
 			}
 		});
 		buttonsPanel.add(acceptButton);

@@ -21,109 +21,89 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	// ---------------------------------------------------------------MODELO 303
 
 	@Override
-	public void getMod390HF(String domainName, int domain, int id,
-			AsyncCallback<Mod390HF> callback) {
+	public void getMod390HF(String domainName, int domain, String user, int id, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.getMod390HF(domainName, domain, id, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
+		fsa.getMod390HF(domainName, domain, user, id, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 
 	@Override
-	public void getMod390HFs(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod390HF>> callback) {
+	public void getMod390HFs(String domainName, int domain, String user, AsyncCallback<LinkedList<Mod390HF>> callback) {
 		AON.start();
-		fsa.getMod390HFs(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod390HF>>(callback));
+		fsa.getMod390HFs(domainName, domain, user, new AsyncCallbackWrapper<LinkedList<Mod390HF>>(callback));
 	}
 
 	@Override
-	public void calculate(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
+	public void calculate(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.calculate(domainName, mod303,
-				new AsyncCallbackWrapper<Mod390HF>(callback));
+		fsa.calculate(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 
 	@Override
-	public void save(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
+	public void save(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.save(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
-	}
-	
-	@Override
-	public void saveComments(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.saveComments(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
+		fsa.save(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 
 	@Override
-	public void initializeForFinish(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
+	public void saveComments(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.initializeForFinish(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
-	}
-	
-	@Override
-	public void markAsFinished(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.markAsFinished(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
-	}
-	
-	@Override
-	public void markAsPending(String domainName, Mod390HF mod303,
-			AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.markAsPending(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(
-				callback));
+		fsa.saveComments(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, int currentDomain,
-			Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+	public void initializeForFinish(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.initialize(domainName, currentDomain,mod303,new AsyncCallbackWrapper<Mod390HF>(callback));
+		fsa.initializeForFinish(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
+	}
+
+	@Override
+	public void markAsFinished(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsFinished(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
+	}
+
+	@Override
+	public void markAsPending(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsPending(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
+	}
+
+	@Override
+	public void initialize(String domainName, int domain, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.initialize(domainName, domain, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 
 	}
 
 	@Override
-	public void create(String domainName, int currentDomain,
-			Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+	public void create(String domainName, int domain, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.create(domainName, currentDomain, mod303,new AsyncCallbackWrapper<Mod390HF>(callback));
+		fsa.create(domainName, domain, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 
 	}
 
 	@Override
-	public void declarationChanged(String domainName, int domain, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+	public void declarationChanged(String domainName, int domain, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.declarationChanged(domainName, domain, mod303,new AsyncCallbackWrapper<Mod390HF>(callback));
+		fsa.declarationChanged(domainName, domain, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 
 	@Override
-	public void delete(String domainName, Mod390HF mod303,
-			AsyncCallback<Void> callback) {
+	public void delete(String domainName, String user, Mod390HF mod303, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, mod303, new AsyncCallbackWrapper<Void>(
-				callback));
-	}
-	@Override
-	public void getInfo(String domainName, int domain, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey,
-			AsyncCallback<String> callback) {
-		AON.start();
-		fsa.getInfo(domainName, domain, mod303, script, infoKey,new AsyncCallbackWrapper<String>(callback));
-		
+		fsa.delete(domainName, user, mod303, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void markAsSent(String domainName, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+	public void getInfo(String domainName, int domain, String user, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.markAsSent(domainName, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
+		fsa.getInfo(domainName, domain, user, mod303, script, infoKey, new AsyncCallbackWrapper<String>(callback));
+
+	}
+
+	@Override
+	public void markAsSent(String domainName, String user, Mod390HF mod303, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsSent(domainName, user, mod303, new AsyncCallbackWrapper<Mod390HF>(callback));
 	}
 }

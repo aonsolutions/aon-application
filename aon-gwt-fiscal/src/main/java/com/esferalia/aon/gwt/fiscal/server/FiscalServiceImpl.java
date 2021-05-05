@@ -273,8 +273,8 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			Mod3902015ServiceImpl.getInstance().changeStatus(domainName, user, mod390, FiscalStatus.FINISHED);
 		} else if(FiscalModelType.M390_HF.equals(model.getModel())) {
 			Mod390HF mod390 = FISCAL.getMod390HF(domainName, domainId, user, model.getId());
-			mod390 = Mod390HFServiceImpl.getInstance().initializeForFinish(domainName, mod390);
-			Mod390HFServiceImpl.getInstance().markAsFinished(domainName, mod390);
+			mod390 = Mod390HFServiceImpl.getInstance().initializeForFinish(domainName, user, mod390);
+			Mod390HFServiceImpl.getInstance().markAsFinished(domainName, user, mod390);
 		}
 	}
 }

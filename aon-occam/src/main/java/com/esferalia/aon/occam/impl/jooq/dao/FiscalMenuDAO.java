@@ -97,7 +97,9 @@ public class FiscalMenuDAO {
 				}
 				@Override 
 				public void visitM390HF() {
-					Mod390HFDAO.getMod390HFs(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+					Mod390HFDAO.getMod390HFs(ctx, domain.getId(), p -> getFilter(p, params))
+						.peek(mod -> mod.setModel( FiscalModelType.M390_HF))
+						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM180() {

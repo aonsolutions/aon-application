@@ -30,8 +30,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class Model3902017ARABA extends Model390HFBase {
 	
-	public Model3902017ARABA(Mod390HF mod303,Model390HFCallback callback) {
-		super(mod303,callback);
+	public Model3902017ARABA(Mod390HF mod303,Model390HFModuleOptions options,Model390HFCallback callback) {
+		super(mod303,options,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -41,10 +41,10 @@ public class Model3902017ARABA extends Model390HFBase {
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
-		paintGeneralRegimenTab(tabPanel);
-		paintResultTab(tabPanel);
-		paintAdditionalDataTab(tabPanel);
-		paintAdministrationTab(tabPanel);
+		paintGeneralRegimenTab(options,tabPanel);
+		paintResultTab(options,tabPanel);
+		paintAdditionalDataTab(options,tabPanel);
+		paintAdministrationTab(options,tabPanel);
 		
 	}
 
@@ -119,7 +119,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
 	}
 	
-	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
+	private void paintGeneralRegimenTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
@@ -138,9 +138,9 @@ public class Model3902017ARABA extends Model390HFBase {
 		table.getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, "140px");
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902017ARABARScript1.values(),8);
+		paintDeclaration(options,table,Model3902017ARABARScript1.values(),8);
 		
-		paintScript(table,Model3902017ARABAScript2.values() ,8);
+		paintScript(options,table,Model3902017ARABAScript2.values() ,8);
 		
 		container.add(table);
 		
@@ -148,7 +148,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private void paintResultTab(TabLayoutPanel tabPanel) {
+	private void paintResultTab(Model390HFModuleOptions options, TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -163,10 +163,10 @@ public class Model3902017ARABA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.AON_CSS.aonIconModel()));
-		paintDeclaration(table,Model3902017ARABAResultScript.values(),3);
+		paintDeclaration(options,table,Model3902017ARABAResultScript.values(),3);
 	}
 
-	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
+	private void paintAdditionalDataTab(Model390HFModuleOptions options,TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -187,10 +187,10 @@ public class Model3902017ARABA extends Model390HFBase {
 		
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.AON_CSS.aonIconCompanyData()));
-		paintDeclaration(table,Model3902017ARABAAdditionalDataScript.values(),3);
+		paintDeclaration(options,table,Model3902017ARABAAdditionalDataScript.values(),3);
 	}
 	
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model390HFModuleOptions options, TabLayoutPanel tabPanel) {
 		//FlowPanel panel = getInformationPanel();
 		//tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod390HF().getAdministration())));
 		
@@ -207,7 +207,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		formContainer.add(diskForm);
 		panel.add(formContainer);
 		
-		FlowPanel administrationPanel = getAdministrationPanel(); 
+		FlowPanel administrationPanel = getAdministrationPanel(options); 
 		panel.add(administrationPanel);
 		
 		FlowPanel informationPanel = getInformationPanel();
@@ -216,7 +216,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod390HF().getAdministration())));
 	}
 	
-	protected FlowPanel getAdministrationPanel() {
+	protected FlowPanel getAdministrationPanel(Model390HFModuleOptions options) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -256,7 +256,7 @@ public class Model3902017ARABA extends Model390HFBase {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod390HF().isFinished() || getMod390HF().isSent()) {
-					submitForm(DOWNLOAD_FILE_ACTION);
+					submitForm(options,DOWNLOAD_FILE_ACTION);
 				} else {
 					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}

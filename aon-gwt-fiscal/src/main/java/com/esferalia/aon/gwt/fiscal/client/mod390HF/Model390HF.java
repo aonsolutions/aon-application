@@ -1,19 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390HF;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -32,11 +35,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model390HF extends MainEntryPoint {
 
+	private static final Logger LOGGER = Logger.getLogger(Model390HF.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
 
-	protected static FiscalServiceAsync FISCAL_SERVICE;
 	protected static Mod390HFServiceAsync MOD_SERVICE;
+	protected static final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Mod390HFBinder extends UiBinder<Widget, Model390HF> {
 	}
@@ -66,7 +74,7 @@ public class Model390HF extends MainEntryPoint {
 
 		public void onAccept(Mod390HF mod390);
 		public void onCancel();
-		public void onNew();
+		public void onNew(Model390HFModuleOptions options);
 		public void showBreakdownPanel(String htmlText);
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
@@ -82,8 +90,8 @@ public class Model390HF extends MainEntryPoint {
 		public void onCancel() {
 			cancel();
 		}
-		public void onNew() {
-			Model390HF.this.onNew();
+		public void onNew(Model390HFModuleOptions options) {
+			Model390HF.this.onNew(options);
 		}
 		public void showBreakdownPanel(String htmlText) {
 			Model390HF.this.showBreakdownPanel(htmlText);
@@ -104,17 +112,61 @@ public class Model390HF extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
-
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		LOGGER.info("Access to onModuleLoad");
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				LOGGER.info("Access to onModuleLoad: aonData get");
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model390HFModuleOptions options = new Model390HFModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
+		});
+	}
+	
+	public void onModuleLoad(Model390HFModuleOptions options) {
+		LOGGER.info("Access to onModuleLoad with options");
+		AON.ensureInjected();
 
 		Mod390HFServiceAsync modServiceRaw = GWT.create(Mod390HFService.class);
 		MOD_SERVICE = new Mod390HFServiceAsyncDecorator(modServiceRaw);
 
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 
+		model390Table = new Model390HFTable(options, new Model390HFCallback());
+		model390Table.addSelectionHandler(new SelectionHandler<Mod390HF>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Mod390HF> event) {
+				onSelectionChange(event, options);
+			}
+		});
+		
+		declarationContainer.setWidget(model390Table);
+		
+		options.getParentWidget().add(ui);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model390HF with a ID: " + options.getFiscalModelId());
+			onSelect(options.getFiscalModelId(),options);
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model390HF new Model");
+			newModel(options.getNewModel(),options); 
+		} else {
+			model390Table.refresh();
+			LOGGER.info("Model390HF setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
 		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
@@ -122,33 +174,57 @@ public class Model390HF extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
-		
-		model390Table = new Model390HFTable(new Model390HFCallback());
-		model390Table.addSelectionHandler(new SelectionHandler<Mod390HF>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod390HF> event) {
-				onSelectionChange(event);
-			}
-		});
-		
-		declarationContainer.setWidget(model390Table);
-		model390Table.refresh();
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
 	}
 
-	private void onSelectionChange(SelectionEvent<Mod390HF> event) {
+	private void newModel(Mod390HF newModel,Model390HFModuleOptions options) {
+		MOD_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(),newModel,
+				new AsyncCallback<Mod390HF>() {
+					@Override
+					public void onSuccess(Mod390HF m390HF) {
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						showNewDeclarationPopup( m390HF, options );
+					}
+
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+
+	private void onSelect(Integer id,Model390HFModuleOptions options) {
+		LOGGER.info("OnSelect Model390HF with a ID: " + options.getFiscalModelId());
+		MOD_SERVICE.getMod390HF(options.getDomainName(),options.getDomain(),options.getUser(), id , new AsyncCallback<Mod390HF>() {
+					@Override
+					public void onSuccess(Mod390HF selected) {
+						if (selected == null) {
+							LOGGER.info("onSuccess Model390HF with a NULL selected Model ID: ");
+							showErrorPanel(AON.MSG.unableToFindDeclaration());
+						} else {
+							LOGGER.info("onSuccess Model390HF with a ID: " + selected.getId());
+							select(selected,options);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
+	}
+
+	private void onSelectionChange(SelectionEvent<Mod390HF> event,Model390HFModuleOptions options) {
 		Mod390HF sel = event.getSelectedItem();
-		MOD_SERVICE.getMod390HF(getCurrentDomainName(), getCurrentDomain(),
+		MOD_SERVICE.getMod390HF(options.getDomainName(),options.getDomain(),options.getUser(),
 				sel.getId(), new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF selected) {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected);
+							select(selected,options);
 						}
 					}
 
@@ -159,29 +235,29 @@ public class Model390HF extends MainEntryPoint {
 				});
 	}
 	
-	private void select(Mod390HF selected) {
+	private void select(Mod390HF selected,Model390HFModuleOptions options) {
 		cleanErrorPanel();
 		if (selected.isBizkaia() && selected.getYear() >= 2017) {
-			declarationContainer.setWidget( new Model3902017BIZKAIA(selected,new Model390HFCallback()));
+			declarationContainer.setWidget( new Model3902017BIZKAIA(selected,options,new Model390HFCallback()));
 		} else if (selected.isAraba() && selected.getYear() >= 2017) {
-			declarationContainer.setWidget( new Model3902017ARABA(selected,new Model390HFCallback()));
+			declarationContainer.setWidget( new Model3902017ARABA(selected,options,new Model390HFCallback()));
 		} else if (selected.isGipuzkoa() && selected.getYear() >= 2017) {
-			declarationContainer.setWidget( new Model3902017GIPUZKOA(selected,new Model390HFCallback()));
+			declarationContainer.setWidget( new Model3902017GIPUZKOA(selected,options,new Model390HFCallback()));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
 
-	private void onNew() {
+	private void onNew(Model390HFModuleOptions options) {
 		cleanErrorPanel();
-		MOD_SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),null,
+		MOD_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(),null,
 				new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF m390) {
 						cleanBreakdownPanel();
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup(m390);
+						showNewDeclarationPopup(m390,options);
 					}
 
 					@Override
@@ -190,8 +266,9 @@ public class Model390HF extends MainEntryPoint {
 					}
 				});
 	}
-	private void showNewDeclarationPopup(Mod390HF m390) {
-		NewDeclarationPopup<Mod390HF> newDialog = new NewDeclarationPopup<Mod390HF>( m390,
+	
+	private void showNewDeclarationPopup(Mod390HF m390,Model390HFModuleOptions options) {
+		NewDeclarationPopup<Mod390HF> newDialog = new NewDeclarationPopup<Mod390HF>( options, m390,
 			new Model390HFCallback() {
 
 					@Override
@@ -204,12 +281,12 @@ public class Model390HF extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						MOD_SERVICE.create(getCurrentDomainName(),getCurrentDomain(),mod390,
+						MOD_SERVICE.create(options.getDomainName(),options.getDomain(),options.getUser(),mod390,
 								new AsyncCallback<Mod390HF>() {
 									@Override
 									public void onSuccess(Mod390HF m390) {
 										popup.hide();
-										select(m390);
+										select(m390,options);
 									}
 
 									@Override
