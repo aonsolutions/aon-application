@@ -38,6 +38,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -209,10 +210,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String aonCheck();
 		String widthMenuItem();
 		String cmd_btn();
+		String container();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	HTMLPanel yearPanel;
 	
 	@UiField
 	Label yearLabel;
@@ -254,6 +259,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addStyleName(style.container());
 		
 		seeMenu = new SeeMenu();
 		
@@ -707,11 +713,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	// ----------------------------------------------- Toolbar.Methods
 
-	private void onUndo(ClickEvent e) {
+	public void onUndo(ClickEvent e) {
 		initUndoAllDialog();
 	}
 	
-	private void onSave(ClickEvent e) {
+	public void onSave(ClickEvent e) {
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
 					changeYear(0);
@@ -721,7 +727,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				t -> {});
 	}
 	
-	private void onNewValue(ClickEvent e) {
+	public void onNewValue(ClickEvent e) {
 		openNewValueDialog(null);
 	}
 	
@@ -779,10 +785,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		inputDialog.center();
 	}
 	
-	private void onVisibility(ClickEvent e) {
+	public void onVisibility(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		seeMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		seeMenu.show();
+	}
+
+	// -------------------------------------------------- ContrataEmployee.Methods
+	
+	public void hideToolbar(){
+		dockLayoutPanel.remove(toolbar);
+		yearPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 	
 }

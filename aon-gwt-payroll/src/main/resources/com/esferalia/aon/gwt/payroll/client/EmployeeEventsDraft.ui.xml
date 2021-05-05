@@ -167,15 +167,21 @@
 			background-size: contain;
 		}
 		
+		.container{
+			width: 100%;
+			min-width: 600px;
+			height: 100%;
+		}
+		
 	</ui:style>
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel styleName="{style.flexColumn}">
+			<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
 
-				<g:HTMLPanel styleName="{style.yearPanel}">
+				<g:HTMLPanel ui:field="yearPanel" styleName="{style.yearPanel}">
 					<g:Button
 						styleName="{style.optionButtons}"
 						ui:field="lastYearButton"> &#60; </g:Button>
