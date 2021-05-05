@@ -159,6 +159,30 @@
 							    		<a:EmployeeSalary ui:field="employeeSalary"/>
 							    	</g:HTMLPanel>
 							  	</g:tab>
+							  	<g:tab>
+							    	<g:customHeader size='7'>
+							      		<g:Label>Calendario</g:Label>
+							    	</g:customHeader>
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<a:EmployeeCalendarDraftNew ui:field="employeeCalendar" />
+							    	</g:HTMLPanel>
+							  	</g:tab>
+							  	<g:tab>
+							    	<g:customHeader size='7'>
+							      		<g:Label>Incidencias</g:Label>
+							    	</g:customHeader>
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<a:EmployeeEventsDraft ui:field="employeeEvents" />
+							    	</g:HTMLPanel>
+							  	</g:tab>
+							  	<g:tab>
+							    	<g:customHeader size='7'>
+							      		<g:Label>Borrador</g:Label>
+							    	</g:customHeader>
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<a:SalaryDraft ui:field="salaryDraft" />
+							    	</g:HTMLPanel>
+							  	</g:tab>
 							 </g:TabLayoutPanel>
 							 <g:ScrollPanel ui:field="scrolledPDFPanel" styleName="{style.p5} {style.center}">
 							 	<p:Viewer styleName="reset" ui:field='pdfViewer' />

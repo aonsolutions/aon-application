@@ -42,6 +42,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -358,6 +359,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField (provided = true)
 	EmployeeSalary employeeSalary;
 	
+	@UiField (provided = true)
+	EmployeeCalendarDraftNew employeeCalendar;
+	
+	@UiField (provided = true)
+	EmployeeEventsDraft employeeEvents;
+	
+	@UiField (provided = true)
+	SalaryDraft salaryDraft;
+	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
@@ -431,6 +441,41 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
 	
+	// EmployeeCalendar
+	private HTMLPanel employeeCalendarButtons;
+	private AonToolbarButton undoAllButton;
+	private AonToolbarButton saveButton;
+	private AonToolbarButton definitionButton;
+	private AonToolbarButton utilityButton;
+	
+	// EmployeeEvents
+	private HTMLPanel employeeEventsButtons;
+	private AonToolbarButton undoAllEventsButton;
+	private AonToolbarButton saveEventsButton;
+	private AonToolbarButton newValueButton;
+	private AonToolbarButton visibilityButton;
+	
+	// SalaryDraft
+	private HTMLPanel salaryDraftButtos;
+	private AonToolbarButton acceptButton;
+	private AonToolbarButton salaryButton;
+	private AonToolbarButton settleButton;
+	private AonToolbarButton printPreviewButton;
+	private AonToolbarButton irpfPreviewButton;
+	private SalarySelect salarySelect;
+	private ListBox zoomSalaryListBox;
+	private AonToolbarButton saveSalaryButton;
+	private AonToolbarButton closePreviewButton;
+	private AonToolbarButton fxButton;
+	private AonToolbarButton undoSalaryAllButton;
+	private AonToolbarButton undoButton;
+	private AonToolbarButton redoButton;
+	private CheckBox tgssCheck; 
+	private CheckBox costsCheck;
+	private CheckBox dbSalaryCheck;
+	private CheckBox eventsCheck;
+	private ListBox settlePreviewListBox; 
+	
 	private boolean hasCertificateSEPE;
 	
 	// ------------------------------------------------- Constructor
@@ -487,6 +532,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeSalary = new EmployeeSalary();
 		employeeSalary.hideToolbar();
+		
+		employeeCalendar = new EmployeeCalendarDraftNew();
+		employeeCalendar.hideToolbar();
+		
+		employeeEvents = new EmployeeEventsDraft();
+		employeeEvents.hideToolbar();
+		
+		salaryDraft = new SalaryDraft();
+		salaryDraft.hideToolbar();
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -637,6 +691,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalariesButtons();
 					employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
+				}, f -> {});
+				break;
+			case 7:
+				contrataEmployeeObject.getEmployeeCalendarObject(employeeCalendarObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showCalendarButtons();
+					employeeCalendar.setEmployeeCalendarDraftObject(employeeCalendarObject);
+				}, f -> {});
+				break;
+			case 8:
+				contrataEmployeeObject.getEmployeeEventsObject(employeeEventsObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showEventsButtons();
+					employeeEvents.setEmployeeEventsDraftObject(employeeEventsObject);
+				}, f -> {});
+				break;
+			case 9:
+				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showSalaryDraftButtons();
+					salaryDraft.setSalaryDraftObject(salaryDraftObject);
 				}, f -> {});
 				break;
 			default:
@@ -921,12 +996,42 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showSalariesButtons() {
-		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(true);
+		employeeContractButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeEventsButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
 	}
 	
 	private void showContractButtons() {
 		employeeContractButtons.setVisible(true);
+		employeeSalaryButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeEventsButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+	}
+	
+	private void showCalendarButtons() {
+		employeeCalendarButtons.setVisible(true);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		employeeEventsButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+	}
+	
+	private void showEventsButtons() {
+		employeeEventsButtons.setVisible(true);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+	}
+	
+	private void showSalaryDraftButtons() {
+		salaryDraftButtos.setVisible(true);
+		employeeEventsButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 	}
 	
@@ -1101,6 +1206,221 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.add(email);
 		
 		toolbar.add(employeeSalaryButtons);
+		
+		// EmployeeCalendar
+		
+		employeeCalendarButtons = new HTMLPanel("");
+		employeeCalendarButtons.addStyleName(style.flex());
+		
+		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll());
+		undoAllButton.addClickHandler(e -> {
+			employeeCalendar.onUndoAll(e);
+		});
+		employeeCalendarButtons.add(undoAllButton);
+		
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.addClickHandler(e -> {
+			employeeCalendar.onSave(e);
+		});
+		employeeCalendarButtons.add(saveButton);
+		
+		definitionButton = new AonToolbarButton( "Definicion", AON.CSS.aonIconEditCalendar() );
+		definitionButton.addClickHandler(e -> {
+			employeeCalendar.onDefinition(e);
+		});
+		employeeCalendarButtons.add(definitionButton);
+		
+		utilityButton = new AonToolbarButton( "Utilidades", AON.CSS.aonIconSettings() );
+		utilityButton.addClickHandler(e -> {
+			employeeCalendar.onUtility(e);
+		});
+		employeeCalendarButtons.add(utilityButton);
+		
+		toolbar.add(employeeCalendarButtons);
+		
+		// EmployeeEvents
+		
+		employeeEventsButtons = new HTMLPanel("");
+		employeeEventsButtons.addStyleName(style.flex());
+		
+		undoAllEventsButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
+		undoAllEventsButton.addClickHandler(e -> {
+			employeeEvents.onUndo(e);
+		});
+		employeeEventsButtons.add(undoAllEventsButton);
+		
+		saveEventsButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveEventsButton.addClickHandler(e -> {
+			employeeEvents.onSave(e);
+		});
+		employeeEventsButtons.add(saveEventsButton);
+		
+		newValueButton = new AonToolbarButton( "Nuevo valor", AON.CSS.aonIconAdd() );
+		newValueButton.addClickHandler(e -> {
+			employeeEvents.onNewValue(e);
+		});
+		employeeEventsButtons.add(newValueButton);
+		
+		visibilityButton = new AonToolbarButton( "Visualizaci\u00F3n", AON.CSS.aonIconVisibility() );
+		visibilityButton.addClickHandler(e -> {
+			employeeEvents.onVisibility(e);
+		});
+		employeeEventsButtons.add(visibilityButton);
+		
+		toolbar.add(employeeEventsButtons);
+		
+		// SalaryDrat
+		
+		salaryDraftButtos = new HTMLPanel("");
+		salaryDraftButtos.addStyleName(style.flex());
+		
+		undoSalaryAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
+		undoSalaryAllButton.addClickHandler(e -> {
+			salaryDraft.onUndoAll(e);
+		});	
+		undoSalaryAllButton.ensureDebugId("undoAllButton");
+		salaryDraft.setUndoAllButton(undoSalaryAllButton);
+		salaryDraftButtos.add(undoSalaryAllButton);
+		
+		undoButton = new AonToolbarButton( "Deshacer", AON.CSS.aonIconUndo() );
+		undoButton.addClickHandler(e -> {
+			salaryDraft.onUndo(e);
+		});	
+		undoButton.ensureDebugId("undoButton");
+		salaryDraft.setUndoButton(undoButton);
+		salaryDraftButtos.add(undoButton);
+		
+		redoButton = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
+		redoButton.addClickHandler(e -> {
+			salaryDraft.onRedo(e);
+		});	
+		redoButton.ensureDebugId("redoButton");
+		salaryDraft.setRedoButton(redoButton);
+		salaryDraftButtos.add(redoButton);
+		
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(e -> {
+			salaryDraft.onAccept(e);
+		});	
+		acceptButton.ensureDebugId("acceptButton");
+		acceptButton.setEnabled(false);
+		salaryDraft.setAcceptButton(acceptButton);
+		salaryDraftButtos.add(acceptButton);
+		
+		salaryButton = new AonToolbarButton( "Emitir nomina", AON.CSS.aonIconAccept() );
+		salaryButton.addClickHandler(e -> {
+			salaryDraft.onSalary(e);
+		});	
+		salaryButton.ensureDebugId("salaryButton");
+		salaryDraft.setSalaryButton(salaryButton);
+		salaryDraftButtos.add(salaryButton);
+
+		settleButton = new AonToolbarButton( "Emitir finiquito", AON.CSS.aonIconAccept() );
+		settleButton.addClickHandler(e -> {
+			salaryDraft.onSettle(e);
+		});	
+		settleButton.ensureDebugId("settleButton");
+		settleButton.setVisible(false);
+		salaryDraft.setSettleButton(settleButton);
+		salaryDraftButtos.add(settleButton);
+		
+		fxButton = new AonToolbarButton( "FX", AON.CSS.aonIconFx() );
+		fxButton.addClickHandler(e -> {
+			salaryDraft.onFx(e);
+		});	
+		fxButton.ensureDebugId("fxButton");
+		fxButton.setEnabled(false);
+		salaryDraft.setFxButton(fxButton);
+		salaryDraftButtos.add(fxButton);
+		
+		tgssCheck = new CheckBox("SILTRA"); 
+		tgssCheck.addValueChangeHandler(e -> {
+			salaryDraft.onTgssCheckChange(e);
+		});
+		tgssCheck.ensureDebugId("tgssCheck");
+		tgssCheck.setValue(false);
+		salaryDraft.setTgssCheck(tgssCheck);
+		salaryDraftButtos.add(tgssCheck);
+		
+		costsCheck = new CheckBox("COSTES Y BONIF."); 
+		costsCheck.addValueChangeHandler(e -> {
+			salaryDraft.onCostsCheck2Change(e);
+		});
+		costsCheck.ensureDebugId("costsCheck");
+		costsCheck.setValue(false);
+		salaryDraft.setCostsCheck(costsCheck);
+		salaryDraftButtos.add(costsCheck);
+		
+		dbSalaryCheck = new CheckBox("DIFERENCIAS"); 
+		dbSalaryCheck.addValueChangeHandler(e -> {
+			salaryDraft.onDbSalaryCheckChange(e);
+		});
+		dbSalaryCheck.ensureDebugId("dbSalaryCheck");
+		dbSalaryCheck.setValue(false);
+		salaryDraft.setDBSalaryCheck(dbSalaryCheck);
+		salaryDraftButtos.add(dbSalaryCheck);
+		
+		eventsCheck = new CheckBox("AVISOS Y NOTIF."); 
+		eventsCheck.addValueChangeHandler(e -> {
+			salaryDraft.onEventsCheckChange(e);
+		});
+		eventsCheck.ensureDebugId("eventsCheck");
+		eventsCheck.setValue(false);
+		salaryDraft.setEvenstCheck(eventsCheck);
+		salaryDraftButtos.add(eventsCheck);
+		
+		printPreviewButton = new AonToolbarButton( "Vista preliminar", AON.CSS.aonIconPdf() );
+		printPreviewButton.addClickHandler(e -> {
+			salaryDraft.onPrintPreview(e);
+		});	
+		printPreviewButton.ensureDebugId("printPreviewButton");
+		salaryDraft.setPrintPreviewButton(printPreviewButton);
+		salaryDraftButtos.add(printPreviewButton);
+		
+		irpfPreviewButton = new AonToolbarButton( "IRPF", "aon-icon-irpfPreview");
+		irpfPreviewButton.addClickHandler(e -> {
+			salaryDraft.onIRPFPreview(e);
+		});	
+		irpfPreviewButton.ensureDebugId("irpfPreviewButton");
+		salaryDraft.setIrpfPreviewButton(irpfPreviewButton);
+		salaryDraftButtos.add(irpfPreviewButton);
+
+		salarySelect = new SalarySelect();
+		salaryDraft.setSalarySelect(salarySelect);
+		salaryDraftButtos.add(salarySelect);
+		
+		zoomSalaryListBox = new ListBox();
+		salaryDraft.initPrintPreview(zoomSalaryListBox);
+		salaryDraftButtos.add(zoomListBox);
+		
+		saveSalaryButton = new AonToolbarButton( "Descargar", AON.CSS.aonIconPdf() );
+		saveSalaryButton.addClickHandler(e -> {
+			salaryDraft.onSave(e);
+		});	
+		saveSalaryButton.ensureDebugId("saveButton");
+		salaryDraft.setSaveButton(saveSalaryButton);
+		salaryDraftButtos.add(saveSalaryButton);
+		
+		closePreviewButton = new AonToolbarButton( "Cerrar preliminar", AON.CSS.aonIconClose() );
+		closePreviewButton.addClickHandler(e -> {
+			salaryDraft.onClosePreview(e);
+		});	
+		closePreviewButton.ensureDebugId("closePreviewButton");
+		salaryDraft.setClosePreviewButton(closePreviewButton);
+		salaryDraftButtos.add(closePreviewButton);
+		
+		settlePreviewListBox = new ListBox(); 
+		settlePreviewListBox.addItem("ESTANDAR", SalaryDraft.JASPER);
+		settlePreviewListBox.addItem("CARTA (&Beta;)", SalaryDraft.LETTER);
+		settlePreviewListBox.addChangeHandler(e -> {
+			salaryDraft.onSettlePreviewLBChange(e);
+		});
+		settlePreviewListBox.ensureDebugId("settlePreviewListBox");
+		settlePreviewListBox.setVisible(false);
+		salaryDraft.setSettlePreviewListBox(settlePreviewListBox);
+		salaryDraftButtos.add(settlePreviewListBox);
+		
+		toolbar.add(salaryDraftButtos);
 		
 		return toolbar;
 

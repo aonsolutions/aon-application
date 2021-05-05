@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -23,8 +24,11 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.TreeItem;
 
 public class ContrataEmployeeObject {
 	
@@ -310,6 +314,42 @@ public class ContrataEmployeeObject {
 	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success, Consumer<Throwable> failure) {
 		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
 		success.accept(employeeSalaryObject);
+	}
+	
+	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success, Consumer<Throwable> failure) {
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), contractData.getStartDate(), contractData.getEndDate(), employeesService);
+		success.accept(employeeCalendarDraftObject);
+	}
+	
+	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success, Consumer<Throwable> failure) {
+		EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(contractData.getContractId());
+		success.accept(employeeEventsDraftObject);
+	}
+	
+	public void getSalaryDraftObject(Consumer<SalaryDraftObject> success, Consumer<Throwable> failure) {
+		employeesService.getEmployee(contractData.getContractId(), new AsyncCallback<Employee>() {
+			@Override
+			public void onSuccess(Employee employee) {
+				Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()), employee.getEndDate());
+				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+				Date issueDate = endDate;
+
+				SalaryDraft salaryDraft = new SalaryDraft();
+				salaryDraft.setEmployee(employee);
+				salaryDraft.setStartDate(startDate);
+				salaryDraft.setEndDate(endDate);
+				salaryDraft.setIssueDate(issueDate);
+				salaryDraft.setType(Type.SALARY);
+
+				SalaryDraftObject salaryDraftObject = new SalaryDraftObject(salaryDraft, employeesService);
+				success.accept(salaryDraftObject);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
 	}
 	
 	public void setContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
