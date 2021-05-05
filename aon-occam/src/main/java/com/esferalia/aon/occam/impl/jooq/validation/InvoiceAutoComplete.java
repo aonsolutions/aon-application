@@ -50,6 +50,17 @@ public class InvoiceAutoComplete {
 	
 	
 	/**
+	 * Se rellena el dominio.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DOMAIN = (inv,ctx) -> {
+		if(inv.getDomain() == null) {
+			inv.setDomain(ctx.getContext().getDomainId());
+		}
+	};
+
+	
+	
+	/**
 	 * Se rellena el número de referencia para las facturas de ventas.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SALES_SERIES = (inv,ctx) -> {
@@ -272,7 +283,8 @@ public class InvoiceAutoComplete {
 	};
 	
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
-		COMPLETE_SALES_SERIES
+		COMPLETE_DOMAIN
+		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
@@ -282,11 +294,11 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
-
 	}
 	
 	public static void completeInvoice2(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
-		COMPLETE_SALES_SERIES
+		COMPLETE_DOMAIN
+		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_SERIES)
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
