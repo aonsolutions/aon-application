@@ -4,7 +4,7 @@ import { AonMessengerList } from './aon-messenger-list.js';
 import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 import '../../components/aon-application.js';
 import { setClasses } from '../../services/utils.js';
-import { AonMessengerChat } from './aon-messeger-chat.js';
+//import { AonMessengerChat } from './aon-messeger-chat.js';
 
 class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -22,12 +22,12 @@ class AonMessenger extends AonElement {
 	}
 
  	build() {
-		 this.paintView();
-		 this.applicationEl = this.getApplication();
-		 this.applicationParentEl = this.getApplicationParent();
-		 this.buildToolbar();
-		 this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-		//this.rootPanel(new AonMessengerAyudat()); //DELETE 
+		 //this.paintView();
+		 //this.applicationEl = this.getApplication();
+		 //this.applicationParentEl = this.getApplicationParent();
+		 //this.buildToolbar();
+		// this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		this.rootPanel(new AonMessengerAyudat()); //DELETE 
 	}
 
 	paintView(){
