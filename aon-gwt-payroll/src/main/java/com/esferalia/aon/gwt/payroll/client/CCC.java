@@ -526,7 +526,7 @@ public abstract class CCC extends ResizeComposite {
 		cccRegime.addItem("Representantes de comercio", "3");
 		cccRegime.addItem("Asimilados R.General", "4");
 		cccRegime.addItem("Becarios", "5");
-		cccRegime.addItem("Emploead@s de hogar", "6");
+		cccRegime.addItem("Emplead@s de hogar", "6");
 		cccRegime.addItem("Trabajadores cuenta ajena agrarios", "7");
 		cccRegime.addItem("Artistas", "8");
 		
