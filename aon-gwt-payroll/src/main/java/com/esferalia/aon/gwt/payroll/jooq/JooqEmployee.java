@@ -1177,6 +1177,9 @@ public class JooqEmployee {
 				alias = BankEntities.getBankEntity(codeBank);
 			}
 			
+			if(alias.length() > 25)
+				alias = alias.substring(0, 24);
+			
 			if(!findRBankRecord.isEmpty()) {
 				rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
 				
