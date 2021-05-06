@@ -17,8 +17,8 @@ public class Model193AEAT extends Model193Base {
 
 	private static final int PERCEPTORS_TAB = 1;
 
-	public Model193AEAT(Mod193 mod193,Model193Callback cbk,Integer selectedIndex) {
-		super(mod193, cbk);
+	public Model193AEAT(Model193ModuleOptions options,Mod193 mod193,Model193Callback cbk,Integer selectedIndex) {
+		super(options, mod193, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -28,15 +28,15 @@ public class Model193AEAT extends Model193Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintPerceptorsTab(tabPanel, selectedIndex);
-		paintAdministrationTab(cbk, tabPanel);
+		paintAdministrationTab(options, cbk, tabPanel);
 		
 		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 
-	private void paintAdministrationTab(Model193Callback cbk, TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model193ModuleOptions options,Model193Callback cbk, TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options, cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod193().getAdministration())));
 	}
