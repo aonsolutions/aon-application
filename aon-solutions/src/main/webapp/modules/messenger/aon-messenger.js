@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { MessengerOptions, MESSENGER_VIEWS } from './MessengerEnums.js';
-import { AonMessengerList } from './aon-messenger-list.js';
+//import { AonMessengerList } from './aon-messenger-list.js';
 import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 import '../../components/aon-application.js';
 import { setClasses } from '../../services/utils.js';
@@ -54,11 +54,11 @@ class AonMessenger extends AonElement {
           if(!this.getElement(view)){
             switch(view){
               case MESSENGER_VIEWS.AON_MESSENGER_LIST:
-                aonView = new AonMessengerList();
+                //aonView = new AonMessengerList();
                 break;
-			  case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
-				aonView = new AonMessengerChat();
-				break;
+		case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
+		//aonView = new AonMessengerChat();
+		break;
             }
             if(aonView){
               aonView.id = view;
