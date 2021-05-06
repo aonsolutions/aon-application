@@ -116,6 +116,10 @@
 		    		<g:Label>[45] GASTOS MANUTENCION DIARIO</g:Label>
 		    	</g:HTMLPanel>
 		    	<g:HTMLPanel styleName="{style.flex}">
+		    		<g:CheckBox ui:field="maintenanceForeingComplementCB"/>
+		    		<g:Label>[46] GASTOS MANUTENCION EXTRANJERO DIARIO</g:Label>
+		    	</g:HTMLPanel>
+		    	<g:HTMLPanel styleName="{style.flex}">
 		    		<g:CheckBox ui:field="locomotionComplementCB"/>
 		    		<g:Label>[50] GASTOS LOCOMOCIÓN SIN JUSTIFICANTE</g:Label>
 		    	</g:HTMLPanel>

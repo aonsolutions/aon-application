@@ -41,11 +41,12 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		PLUS_EXTRA_SALARIAL_DIARIO_LABORABLES(null, "PLUS_XS_DIARIO * DIAS_EFECTIVOS"),
 		PLUS_EXTRA_SALARIAL_FIJO(null, "FRACCIONAR(PLUS_XS_FIJO)"),
 		
-		RETRIBUCION_EN_ESPECIE(null, "IMPORTE_ESPECIE"),
+		RETRIBUCION_EN_ESPECIE("0013 RETRIBUCI\u00D3N EN ESPECIE", "IMPORTE_ESPECIE"),
 		COMPLEMENTO_PERSONAL_DE_ANTIGUEDAD(null, "IMPORTE_ANTIGUEDAD"),
-		GASTOS_PERNOCTA_DIARIO(null, "G_PERNOCTA * DIAS_PERNOCTA"),
-		GASTOS_MANUTENCION_DIARIO(null, "G_MANUTENCION * DIAS_MANUNTECION"),
-		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE(null, "IMPORTE_KMS * KMS"),
+		GASTOS_PERNOCTA_DIARIO("0043 GASTOS PERNOCTA ", "G_PERNOCTA * DIAS_PERNOCTA"),
+		GASTOS_MANUTENCION_DIARIO("0045 GASTOS MANUTENCI\u00D3N ", "G_MANUTENCION * DIAS_MANUNTECION"),
+		GASTOS_MANUTENCION_EXTRANJERO_DIARIO("0046 GASTOS MANUTENCI\u00D3N EXTRANJERO ", "G_MANUTENCION_EXT * DIAS_MANUNTECION_EXT"),
+		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE("0050 GASTOS LOCOMOCI\u00D3N SIN JUSTIFICANTE ", "IMPORTE_KMS * KMS"),
 		
 		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL"),
 		PAGA_EXTRA_BENEFICIOS("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL")
@@ -150,6 +151,9 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	
 	@UiField
 	CheckBox maintenanceComplementCB;
+	
+	@UiField
+	CheckBox maintenanceForeingComplementCB;
 	
 	@UiField
 	CheckBox locomotionComplementCB;
@@ -283,6 +287,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(antiquityComplementCB, "[40] COMPLEMENTO PERSONAL DE ANTIGUEDAD"));
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(overnightComplementCB, "[43] GASTOS PERNOCTA DIARIO"));
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(maintenanceComplementCB, "[45] GASTOS MANUTENCION DIARIO"));
+		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(maintenanceForeingComplementCB, "[46] GASTOS MANUTENCION EXTRANJERO DIARIO"));
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(locomotionComplementCB, "[50] GASTOS LOCOMOCION SIN JUSTIFICANTE"));
 		
 		this.salaryExtrasCBs = new ArrayList<Pair<CheckBox, String>>();
