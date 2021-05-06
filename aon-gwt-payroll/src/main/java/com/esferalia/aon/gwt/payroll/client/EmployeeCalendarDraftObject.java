@@ -22,14 +22,12 @@ public class EmployeeCalendarDraftObject {
 	// EmployeeCalendarInfo
 	private EmployeeCalendarInfo employeeCalendarInfo;
 	
-	public EmployeeCalendarDraftObject(Integer contractId, Date startDate, Date endDate, DomainEmployeesServiceAsync employeesService) {
+	public EmployeeCalendarDraftObject(Integer contractId, DomainEmployeesServiceAsync employeesService) {
 		// DomainEmployeesServiceAsync
 		this.employeesService = employeesService;
 		
 		// Default data
 		this.contractId = contractId;
-		this.startDate = startDate;
-		this.endDate = endDate;
 	}
 	
 	
@@ -48,6 +46,8 @@ public class EmployeeCalendarDraftObject {
 			@Override
 			public void onSuccess(EmployeeCalendarInfo employeeCalendarInfoDB) {
 				employeeCalendarInfo = employeeCalendarInfoDB;
+				startDate = employeeCalendarInfo.getContractStartDate();
+				endDate = employeeCalendarInfo.getContractEndDate();
 				success.accept(employeeCalendarInfoDB);
 			}
 			

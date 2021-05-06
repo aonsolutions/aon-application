@@ -12,6 +12,8 @@ public class EmployeeCalendarInfo implements Serializable {
 	
 	private Boolean fullTimeJourney;
 	private Boolean agrarianContract;
+	private Date contractStartDate;
+	private Date contractEndDate;
 	
 	HashMap<Date, String> monthExtraHoursMap;
 	
@@ -110,6 +112,22 @@ public class EmployeeCalendarInfo implements Serializable {
 	public EmployeeCalendarInfo setPartialityDaysType(CalendarDaysType partialityDaysType) {
 		this.partialityDaysType = partialityDaysType;
 		return this;
+	}
+
+	public Date getContractStartDate() {
+		return contractStartDate;
+	}
+
+	public void setContractStartDate(Date contractStartDate) {
+		this.contractStartDate = contractStartDate;
+	}
+
+	public Date getContractEndDate() {
+		return contractEndDate;
+	}
+
+	public void setContractEndDate(Date contractEndDate) {
+		this.contractEndDate = contractEndDate;
 	}
 	
 }

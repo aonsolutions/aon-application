@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -24,15 +25,18 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
@@ -315,7 +319,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				protected void onAccept() {
 					employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
 					onChange();
-					changeYear(0);
+					changeYear();
 				}
 			};
 			
@@ -359,17 +363,17 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		public DefinitionMenu() {
 			
 			nonWorkingMenuItem = addItem("Definir semana laboral", new NonWorkingCommand(), 
-					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			nonWorkingMenuItem.ensureDebugId("nonWorkingMenuItem");
 			
 			hourMenuItem = addItem("Definir horas semanales", new HourCommand(), 
-					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			hourMenuItem.ensureDebugId("hourMenuItem");
 			
 			separator = addSeparator();
 			
 			showHourMenuItem = addItem("Ocultar horas", new ShowHourCommand(), 
-					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			showHourMenuItem.ensureDebugId("showHourMenuItem");
 		}
 
@@ -429,7 +433,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							s -> {
 								// Init save and undo all
 								onSaved();
-								changeYear(0);
+								changeYear();
 							}, f -> {}
 					);
 				}
@@ -449,7 +453,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			eraseEventMenuItem.ensureDebugId("eraseEventMenuItem");
 			
-			undoAllMenuItem = addItem("Restaurar últimos valores guardados", new UndoAllCommand(), 
+			undoAllMenuItem = addItem("Restaurar \u00FAltimos valores guardados", new UndoAllCommand(), 
 					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			undoAllMenuItem.ensureDebugId("undoAllMenuItem");
 			
@@ -512,21 +516,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
-	// ---------------------------- Change Year (UiField)
-	
 	@UiField
-	HTMLPanel yearPanel;
-	
-	@UiField
-	Button lastYearButton;
-	
-	@UiField
-	Button nextYearButton;
-	
-	@UiField
-	Label yearLabel;
+	VerticalPanel mainContainer;
 	
 	// ---------------------------- Calendar (UiField)
+	
+	@UiField
+	ScrollPanel scrollInfo;
 	
 	@UiField
 	Grid calendarGrid;
@@ -584,7 +580,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private boolean showHours;
 	private int month;
-	private int year = new Date().getYear();
+	private int year = DateUtils.getYear();
 	
 	private DefinitionMenu definitionMenu;
 	private UtilityMenu utilityMenu;
@@ -594,15 +590,17 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private AonToolbarButton saveButton;
 	private AonToolbarButton definitionButton;
 	private AonToolbarButton utilityButton;
+	private ListBox yearLB;
 	
 	public EmployeeCalendarDraftNew() {
 		toolbar = getToolbarPanel();
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
-		this.yearLabel.setText((year + 1900)+"");
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
+		
+		scrollInfo.setHeight((Window.getClientHeight() - 220) + "px");
 		
 		definitionMenu = new DefinitionMenu();
 		utilityMenu = new UtilityMenu();
@@ -610,6 +608,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Add contextMenu
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
+	}
+	
+	public void setContrataEmployeeCalendarHeight(){
+		scrollInfo.setHeight((Window.getClientHeight() - 290) + "px");
 	}
 
 	// ----------------------------------------------------------------------------------------------------
@@ -622,7 +624,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.employeeCalendarDraftObject.initCalendarInfo(s -> {
 			// Init save and undo all
 			onSaved();
-			
+			initializeYearLB(this.yearLB);
+			hideYearLBOptions();
+			setSelectedValueLB(yearLB, (year+1900)+"");
 			initCalendar();
 		}, f -> {});
 		
@@ -632,16 +636,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	// ----------------------------------------------------------------------------------------------------
 	//											UI HANDLERS
 	// ----------------------------------------------------------------------------------------------------
-	
-	@UiHandler("lastYearButton")
-	public void onLastYearButtonClick(ClickEvent event) {
-		changeYear(-1);
-	}
-
-	@UiHandler("nextYearButton")
-	public void onNextYearButtonClick(ClickEvent event) {
-		changeYear(1);
-	}
 	
 	@UiHandler("calendarGrid")
 	public void onCalendarClick(ClickEvent event) {
@@ -1040,10 +1034,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private boolean isOutOfContractPeriod(Date date) {
 		Date newEndDate = this.employeeCalendarDraftObject.getContractEndDate();
 		if(null == newEndDate) {
-			Integer nextYear = new Date().getYear() + 1;
+			Integer nextYear = new Date().getYear() + 2;
 			newEndDate = new Date(nextYear, 11, 31);
 		}
-		return date.before(this.employeeCalendarDraftObject.getContractStartDate()) || date.after(newEndDate);
+		
+		Date startDate = DateUtils.copyDateOnly(this.employeeCalendarDraftObject.getContractStartDate());
+		
+		return date.before(startDate) || date.after(newEndDate);
 	}
 	
 	private boolean isOutOfContractView(Date date) {
@@ -1091,31 +1088,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	//										CHANGE YEAR EVENT
 	// ----------------------------------------------------------------------------------------------------
 	
-	private void changeYear(int changeYear) {
-		this.year += changeYear;
-		
-		Date endOfNewYear = new Date(this.year, 11, 31);
-		
-		if(isOutOfContractView(endOfNewYear)) {
-			this.year -= changeYear;
-		} else {
-			this.yearLabel.setText((year + 1900)+"");
-			
-			int actualYear = new Date().getYear();
-			
-			if(actualYear - year == 1) {
-				lastYearButton.setEnabled(false);
-				nextYearButton.setEnabled(true);
-			}else if (actualYear - year == -1) {
-				lastYearButton.setEnabled(true);
-				nextYearButton.setEnabled(false);
-			} else {
-				lastYearButton.setEnabled(true);
-				nextYearButton.setEnabled(true);
-			}
-			
-			initCalendar();	
-		}
+	private void changeYear() {
+		this.year = Integer.parseInt(this.yearLB.getSelectedValue()) - 1900;
+		initCalendar();
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -1311,7 +1286,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			protected void onAccept() {
 				cleanSelectedDates();
 				onChange();
-				changeYear(0);
+				changeYear();
 			}
 		};
 		
@@ -1349,13 +1324,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private void addDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		employeeCalendarDraftObject.addDayType(startDate, endDate, dayType, expression);
 		onChange();
-		changeYear(0);
+		changeYear();
 	}
 	
 	private void addPartialityDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		employeeCalendarDraftObject.addPartialityDayType(startDate, endDate, dayType, expression);
 		onChange();
-		changeYear(0);
+		changeYear();
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -1527,6 +1502,35 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	private void hideYearLBOptions() {
+		ArrayList<Integer> idxsToDelete = new ArrayList<Integer>();
+		for(int i=0; i<this.yearLB.getItemCount(); i++) {
+			Integer year = Integer.parseInt(this.yearLB.getValue(i));
+			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
+			if(isOutOfContractPeriod(lastDayOfYear)) {
+				idxsToDelete.add(i);
+			}
+		}
+		hideOptionYearLB(idxsToDelete);
+	}
+	
+	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
+		for(Integer idx : idxsToDelete)
+			this.yearLB.removeItem(idx);
+	}
+
 	// ----------------------------------------------------------------------------------------------------
 	//											CONTEXT MENU
 	// ----------------------------------------------------------------------------------------------------
@@ -1633,11 +1637,40 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		});
 		toolbar.add(utilityButton);
 		
+		this.yearLB = new ListBox();
+		toolbar.add(this.yearLB);
+		
 		return toolbar;
 
 	}
-	
+
 	// ----------------------------------------------- Toolbar.Methods
+	
+	public void setYearLB(ListBox yearLB) {
+		this.yearLB = yearLB;
+	}
+	
+	public void initializeYearLB(ListBox yearLB) {
+		year = DateUtils.getYear();
+		
+		yearLB.clear();
+		
+		Integer yearAux = DateUtils.getYear();
+		Integer previusYear = year - 1;
+		Integer nextYear = year + 1;
+		
+		yearLB.addItem(nextYear.toString(), nextYear.toString());
+		yearLB.addItem(yearAux.toString(), yearAux.toString());
+		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		
+		yearLB.addChangeHandler(e -> {
+			changeYear();
+		});
+		
+		setSelectedValueLB(yearLB, year+"");
+		year = year - 1900;
+		
+	}
 
 	public void onUndoAll(ClickEvent e) {
 		initUndoAll();
@@ -1647,7 +1680,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s -> {
 					onSaved();
-					changeYear(0);
+					changeYear();
 				},
 				f -> {}
 		);
@@ -1669,6 +1702,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
-		yearPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 }

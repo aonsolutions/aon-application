@@ -578,6 +578,9 @@ public class JooqEmployeeCalendarNew {
 		
 		EmployeeCalendarInfo employeeCalendarInfo = new EmployeeCalendarInfo();
 		
+		employeeCalendarInfo.setContractStartDate(contractStartDate);
+		employeeCalendarInfo.setContractEndDate(contractEndDate);
+		
 		calendarHours.initMapDaysHour();
 		calendarDaysType.initMapDaysDayType();
 		partialityDaysType.initMapDaysDayType();
