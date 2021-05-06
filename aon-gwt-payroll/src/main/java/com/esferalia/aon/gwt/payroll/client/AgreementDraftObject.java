@@ -628,9 +628,7 @@ public class AgreementDraftObject {
 						undoManager.discardAll();
 						agreementDraft.clearDrafts();
 
-						callback.onCalculateSucces(AgreementDraftObject.this);
-//						calculate(callback);
-
+						calculate(callback);
 					}
 
 					@Override
