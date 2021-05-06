@@ -447,6 +447,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton saveButton;
 	private AonToolbarButton definitionButton;
 	private AonToolbarButton utilityButton;
+	private ListBox yearLB;
 	
 	// EmployeeEvents
 	private HTMLPanel employeeEventsButtons;
@@ -535,6 +536,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeCalendar = new EmployeeCalendarDraftNew();
 		employeeCalendar.hideToolbar();
+		employeeCalendar.setContrataEmployeeCalendarHeight();
 		
 		employeeEvents = new EmployeeEventsDraft();
 		employeeEvents.hideToolbar();
@@ -1235,6 +1237,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			employeeCalendar.onUtility(e);
 		});
 		employeeCalendarButtons.add(utilityButton);
+		
+		yearLB = new ListBox();
+		employeeCalendar.initializeYearLB(yearLB);
+		employeeCalendar.setYearLB(yearLB);
+		employeeCalendarButtons.add(yearLB);
 		
 		toolbar.add(employeeCalendarButtons);
 		

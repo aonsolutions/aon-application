@@ -317,7 +317,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success, Consumer<Throwable> failure) {
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), contractData.getStartDate(), contractData.getEndDate(), employeesService);
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
 		success.accept(employeeCalendarDraftObject);
 	}
 	
