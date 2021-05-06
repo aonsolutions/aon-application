@@ -69,7 +69,7 @@ export const RAWDOC_INBOX = {
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
     name: MSG.PRODUCTS,
-    icon: MATERIAL_ICONS.PENDING_ACTIONS
+    icon: MATERIAL_ICONS.LOCAL_MALL
   }
 
   export const CONFIGURATION_PRINT = {

@@ -423,7 +423,7 @@ export class AonApplication extends AonElement {
         let toolbar = this.getElement(this.TOOLBAR);
         toolbar.setAttribute("option", option.name);
         if(option.fn) option.fn();
-        this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: option }));
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
         if (this.isMobile()) {
           this.closeSidenav();
         }

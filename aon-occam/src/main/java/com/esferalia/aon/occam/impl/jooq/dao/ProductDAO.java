@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.util.function.Function;
@@ -71,12 +72,13 @@ public class ProductDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
 	}
 
-	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {
+	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {		
 		return ctx.getDslContext()
 				.select()
 				.from(PRODUCT)
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
-				.where(PRODUCT_PROPERTIES.getConditions(filter));
+				.where(PRODUCT_PROPERTIES.getConditions(filter))
+				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
 	
 	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter) {

@@ -22,6 +22,8 @@ import * as ACTION from '../actions.js';
 import * as GWT from "../../gwt/gwt.js";
 import { AonProductList } from '../product/aon-product-list.js';
 import * as OPTION from './InvoiceOptions.js';
+import { AonInvoicePrint } from './aon-invoice-print.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -32,19 +34,27 @@ export class AonInvoicePanel extends AonElement {
 	INVOICE;
 	INPUT_FILE;
 	INPUT_CAMERA;
+	PRODUCT_LIST;
+
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
+
+	set id(id) {
+		this.setAttribute(CONSTANT.ID, id);
+	}
 
 	get status() {
-		return this.getAttribute('status');
+		return this.getAttribute(CONSTANT.STATUS);
 	}
 
 	set status(status) {
-		this.setAttribute('status', status);
+		this.setAttribute(CONSTANT.STATUS, status);
 	}
 
 	constructor () {
 		super();
 	}
-
 
 	connectedCallback () {
 		this.initialize();
@@ -64,18 +74,26 @@ export class AonInvoicePanel extends AonElement {
 		this.INVOICE = 'aonInvoice';
 		this.INPUT_FILE = this.INVOICE + 'InputFile';
 		this.INPUT_CAMERA = 'aonMobileMenuCameraInput';// this.INVOICE + 'InputCamera';
+		this.PRODUCT_LIST = this.id + 'ProductList';
+		this.status = this.status || CONSTANT.INBOX;
 		this.filter = {
-			status: 'inbox',
+			status: this.status || CONSTANT.INBOX,
 			page: 0,
 			per_page: 50
-		};
+		}
+		this.option = CONSTANT.REFUSED === this.status
+			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX; 
 	}
 
 	getDur(){
 		return this.dur;
 	}
 
-  build(){
+	getFilter() {
+		return this.filter;
+	}
+
+	build(){
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
@@ -92,75 +110,98 @@ export class AonInvoicePanel extends AonElement {
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
 		} else {
-			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
-			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
-
-			aonInvoice.addSearchOption();
-      		aonInvoice.addEventListener('search', (event) => this.search(event.detail));
+			this.buildToolbarOptions();
 		}
 
 		this.appendChild(input);
+		this.buildSidenavOptions();
+		this.selectOption(this.option);
+	}
 
-		aonInvoice.addEventListener(EVENT.SELECT, (e) => {
+	buildToolbarOptions(){
+		let toolbar = this.getElement(aonInvoice.TOOLBAR);
+		toolbar.removeButtons();
+		if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
+			// TODO
+		} else {
+			this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
+			this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+		}
+		this.getApplication().addSearchOption();
+		this.getApplication().addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+	}
+
+ 	buildSidenavOptions() {
+		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		})
+		this.buildRawdocOptions();
+		this.buildOfferOptions();
+		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
+			this.buildInvoiceOptions();
+			this.buildRegistryOptions();
+			this.buildSettingOptions();
+		}
+	}
 
+	buildRawdocOptions() {
 		let pendingOptions = [ 
 			OPTION.RAWDOC_INBOX,
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
 		];
-		aonInvoice.addSidenavOptions(MSG.PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
-		
+		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
+	}
+
+	buildInvoiceOptions() {
+		let invoiceOptions = [
+			OPTION.INVOICE_ISSUED,
+			OPTION.INVOICE_RECEIVED, 
+			OPTION.INVOICE_TICKET
+		];
+			
+		this.getApplication().addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
+	}
+
+	buildOfferOptions() {
 		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
 			let budgetOptions = [ OPTION.OFFER ];
-			aonInvoice.addSidenavOptions(MSG.BUDGETS.toUpperCase(), budgetOptions);
+			this.getApplication().addSidenavOptions(MSG.BUDGETS.toUpperCase(), budgetOptions);
 		}
+	}
 
-		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
-			let invoiceOptions = [
-				OPTION.INVOICE_ISSUED,
-				OPTION.INVOICE_RECEIVED, 
-				OPTION.INVOICE_TICKET
+	buildRegistryOptions() {
+		if(!this.isMobile()) {
+			let contactOptions = [
+				OPTION.REGISTRY_CUSTOMER,
+				OPTION.REGISTRY_SUPPLIER,
+				OPTION.REGISTRY_CREDITOR
 			];
-				
-			aonInvoice.addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
-
-			if(!this.isMobile()) {
-				let contactOptions = [
-					OPTION.REGISTRY_CUSTOMER,
-					OPTION.REGISTRY_SUPPLIER,
-					OPTION.REGISTRY_CREDITOR
-				];
-				aonInvoice.addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
-			}
-
-			let settingOptions = [ OPTION.CONFIGURATION_PRINT ];
-
-			if(this.getDur().isAlpha()){
-				settingOptions.push(OPTION.PRODUCT);
-				settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
-			}
-			aonInvoice.addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
+			this.getApplication().addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
 		}
+	}
 
-		let filter = {status:'inbox'};
+	buildSettingOptions() {
+		let settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
 
-		if(this.hasAttribute('status')) {
-			filter = {status: this.getAttribute('status')};
+		if(this.getDur().isAlpha()){
+			// settingOptions.push(OPTION.PRODUCT);
+			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 		}
+		this.getApplication().addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
+	}
 
-		if(!this.isMobile()){
-			let toolbar = this.getElement(aonInvoice.TOOLBAR);
-			if(filter.status === 'inbox') toolbar.setAttribute('option', MSG.INBOX);
-			else if(filter.status === 'refused') toolbar.setAttribute('option', MSG.REJECTEDS);
-		}
-		this.aonInvoiceList(filter);
+	add(){
+
 	}
 
 	search(value) {
-		this.filter.description = value;
-		this.aonInvoiceList();
+		if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
+			this.aonProductList({value});
+		} else {
+			this.filter.description = value;
+			this.aonInvoiceList();
+		}
 	}
 
 	aonInvoiceList(filter) {
@@ -185,15 +226,19 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoicePrint() {
-		aonInvoice.setContentHTML(`<aon-invoice-print></aon-invoice-print>`)
+		this.getApplication().setContent(new AonInvoicePrint());
 	}
 
-	aonProductList() {
-		let productList = new  AonProductList();
-		productList.id = this.id + 'ProductList';
-		aonInvoice.setContent(productList);
+	aonProductList(filter) {
+		let productList = this.getElement(this.PRODUCT_LIST);
+		if(productList) {
+			productList.setFilter(filter);
+		} else {
+			productList = new AonProductList();
+			productList.id = this.PRODUCT_LIST;	
+			aonInvoice.setContent(productList);
+		}
 	}
-
 
 	addInvoice() {
 		let aonInvoice = this.getElement('aonInvoice');
@@ -212,7 +257,7 @@ export class AonInvoicePanel extends AonElement {
 
 		let d = document.getElementById('aonDialogAddOption');
 
-		options = [{
+		let options = [{
 			name: 'Emitidas',
 			icon: 'unarchive',
 			fn: () => this.aonInvoice('emitida')
@@ -283,8 +328,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoiceFile() {
-		let el = this.getElement(this.INPUT_FILE);
-		el.click();
+		this.getElement(this.INPUT_FILE).click();
 	}
 
 	preview(files) {
@@ -339,8 +383,10 @@ export class AonInvoicePanel extends AonElement {
 
 	selectOption(option) {
 		if(option) {
+			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+			toolbar.option = option.name;
 			this.selectedOption = option;
-
+			this.buildToolbarOptions();
 			switch(option.id){
 			case OPTION.RAWDOC_INBOX.id:
 				this.aonInvoiceList({status: CONSTANT.INBOX});

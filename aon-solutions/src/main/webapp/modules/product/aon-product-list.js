@@ -60,7 +60,7 @@ export class AonProductList extends AonElement {
 	}
 
 	setFilter(filter) {
-		this.filter;
+		this.filter = filter;
 		this.init();
 	}
 }
