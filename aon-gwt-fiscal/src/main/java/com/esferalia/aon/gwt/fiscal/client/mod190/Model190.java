@@ -1,17 +1,24 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,6 +38,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class Model190 extends MainEntryPoint {
+	private static final Logger LOGGER = Logger.getLogger(Model190.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+	
 	public static final ProvidesKey<Mod190Detail> MOD190_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod190Detail>() {
 		@Override
 		public Object getKey(Mod190Detail det) {
@@ -42,6 +54,7 @@ public class Model190 extends MainEntryPoint {
 	private final static int BREAKDOWN_TAB = 1;
 	
 	static Model190ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Model190Binder extends UiBinder<Widget, Model190> {}
 	private static final Model190Binder MODEL_190_BINDER = GWT.create(Model190Binder.class);
@@ -50,14 +63,10 @@ public class Model190 extends MainEntryPoint {
 
 		void onAccept(Mod190 mod190);
 		void onCancel();
-		void onSelect(Mod190 mod190, Integer selectedIndex);
+		void onSelect(Model190ModuleOptions options,Mod190 mod190, Integer selectedIndex);
 		void showError(String msg);
 		void cleanErrorPanel();
-		void onNew();
-		String getDomainName();
-		int getDomain();
-		String getUser();
-		
+		void onNew(Model190ModuleOptions options);
 	}
 	protected class Model190Callback implements IModel190Callback {
 		
@@ -70,12 +79,12 @@ public class Model190 extends MainEntryPoint {
 			cancel();
 		}
 		@Override
-		public void onSelect(Mod190 mod190, Integer selectedIndex) {
-			select(mod190, selectedIndex);
+		public void onSelect(Model190ModuleOptions options, Mod190 mod190, Integer selectedIndex) {
+			select(options,mod190, selectedIndex);
 		}
 		@Override
-		public void onNew() {
-			newModel();
+		public void onNew(Model190ModuleOptions options) {
+			newModel(options);
 		}
 		@Override
 		public void cleanErrorPanel() {
@@ -85,18 +94,6 @@ public class Model190 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model190.this.showErrorPanel(msg);
 		}
-		@Override
-		public int getDomain() {
-			return getCurrentDomain();
-		}
-		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
-		}
-		@Override
-		public String getUser() {
-			return getCurrentUser();	
-		};
 	};
 
 	@UiField
@@ -124,6 +121,27 @@ public class Model190 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model190ModuleOptions options = new Model190ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
+		});
+	}
+	
+	public void onModuleLoad(Model190ModuleOptions options) {
 		AON.ensureInjected();
 
 		Model190ServiceAsync serviceRaw = GWT.create(Model190Service.class);
@@ -131,33 +149,61 @@ public class Model190 extends MainEntryPoint {
 
 		Widget ui = MODEL_190_BINDER.createAndBindUi(this);
 
-		model190Table = new Model190Table(new Model190Callback());
+		model190Table = new Model190Table(options, new Model190Callback());
 		model190Table.addSelectionHandler(new SelectionHandler<Mod190>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod190> event) {
-				onSelectionChange(event);
+				onSelectionChange(options,event);
 			}
 		});
 		
 		declarationContainer.setWidget(model190Table);
-		model190Table.refresh();
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+
+		options.getParentWidget().add(ui);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model190 with a ID: " + options.getFiscalModelId());
+			onSelect(options,options.getFiscalModelId());
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model190 new Model");
+			newModel(options, options.getNewModel().getYear()); 
+		} else {
+			model190Table.refresh();
+			LOGGER.info("Model190 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
 
 	}
 
-	private void onSelectionChange(SelectionEvent<Mod190> event) {
+	private void onSelect(Model190ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model190 with a ID: " + options.getFiscalModelId());
+		SERVICE.getMod190(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod190>() {
+			@Override
+			public void onSuccess(Mod190 selected) {
+				if (selected == null) {
+					showErrorPanel(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(options, selected, null);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+
+	private void onSelectionChange(Model190ModuleOptions options,SelectionEvent<Mod190> event) {
 		Mod190 sel = event.getSelectedItem();
-		SERVICE.getMod190(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
+		SERVICE.getMod190(options.getDomainName(), options.getUser(), options.getDomain(),
 				sel.getId(), new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 selected) {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected, null);
+							select(options,selected, null);
 						}
 					}
 
@@ -169,31 +215,35 @@ public class Model190 extends MainEntryPoint {
 	}
 	
 
-	private void select(Mod190 selected, Integer selectedIndex) {
+	private void select(Model190ModuleOptions options,Mod190 selected, Integer selectedIndex) {
 		cleanErrorPanel();
 		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model190AEAT(selected,new Model190Callback(),selectedIndex));
+			declarationContainer.setWidget( new Model190AEAT(options, selected,new Model190Callback(),selectedIndex));
 		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model190ARABA(selected,new Model190Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model190ARABA(options, selected,new Model190Callback(),selectedIndex));			
 		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model190BIZKAIA(selected,new Model190Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model190BIZKAIA(options, selected,new Model190Callback(),selectedIndex));			
 		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model190GIPUZKOA(selected,new Model190Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model190GIPUZKOA(options, selected,new Model190Callback(),selectedIndex));			
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
 
-	private void newModel() {
+	private void newModel(Model190ModuleOptions options) {
+		newModel(options, 2020);
+	}
+
+	private void newModel(Model190ModuleOptions options, int year) {
 		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2020,
+		SERVICE.initialize(options.getDomainName(), options.getUser(),options.getDomain(), year,
 				new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 m190) {
 						cleanBreakdownPanel();
 						tabLayout.selectTab(BREAKDOWN_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup(m190);
+						showNewDeclarationPopup(options,m190);
 					}
 
 					@Override
@@ -277,7 +327,7 @@ public class Model190 extends MainEntryPoint {
 		}
 	}
 	
-	private void showNewDeclarationPopup(Mod190 model) {
+	private void showNewDeclarationPopup(Model190ModuleOptions options, Mod190 model) {
 		NewDeclarationPopup newDialog = new NewDeclarationPopup( model,
 			new Model190Callback() {
 
@@ -291,12 +341,12 @@ public class Model190 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.save(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),model,
+						SERVICE.save(options.getDomainName(), options.getUser(),options.getDomain(),model,
 								new AsyncCallback<Mod190>() {
 									@Override
 									public void onSuccess(Mod190 model) {
 										popup.hide();
-										select(model, null);
+										select(options,model, null);
 									}
 
 									@Override

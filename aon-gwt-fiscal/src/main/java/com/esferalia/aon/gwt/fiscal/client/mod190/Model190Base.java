@@ -76,8 +76,8 @@ abstract class Model190Base extends DockLayoutPanel {
 			cbk.onCancel();
 		}
 		@Override	
-		public void onSelect(Mod190 mod190, Integer selectedIndex) {
-			cbk.onSelect(mod190, selectedIndex);
+		public void onSelect(Model190ModuleOptions options,Mod190 mod190, Integer selectedIndex) {
+			cbk.onSelect(options, mod190, selectedIndex);
 		}
 		@Override
 		public void showError(String msg) {
@@ -88,20 +88,8 @@ abstract class Model190Base extends DockLayoutPanel {
 			cbk.cleanErrorPanel();
 		}
 		@Override
-		public void onNew() {
-			cbk.onNew();
-		}
-		@Override
-		public String getDomainName() {
-			return cbk.getDomainName();
-		}
-		@Override
-		public String getUser() {
-			return cbk.getUser();
-		}
-		@Override
-		public int getDomain() {
-			return cbk.getDomain();
+		public void onNew(Model190ModuleOptions options) {
+			cbk.onNew(options);
 		}
 	}
 	
@@ -136,11 +124,11 @@ abstract class Model190Base extends DockLayoutPanel {
 	
 	private IModel190Detail detailManager;
 	
-	public Model190Base(Mod190 mod190,Model190Callback cbk) {
+	public Model190Base(Model190ModuleOptions options,Mod190 mod190,Model190Callback cbk) {
 		super(Unit.PX);
-		select( mod190 );
+		select( options, mod190 );
 		
-		addNorth(getToolbarPanel(cbk), 25);
+		addNorth(getToolbarPanel(options,cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod190 );
@@ -148,7 +136,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
+		headerPanel.setWidget( getDeclarationHeaderTable(options, cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model190BaseCallback(cbk);
@@ -183,13 +171,13 @@ abstract class Model190Base extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 	}
-	protected void select( Mod190 mod190) {
+	protected void select(Model190ModuleOptions options, Mod190 mod190) {
 		setMod190(mod190);
-		refreshToolbarState();
+		refreshToolbarState( options );
 	}
 
 	
-	private Widget getToolbarPanel(Model190Callback cbk) {
+	private Widget getToolbarPanel(Model190ModuleOptions options,Model190Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -219,7 +207,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				callback.onNew();
+				callback.onNew(options);
 			}
 		});
 		buttonContainer.add(newButton);
@@ -243,12 +231,12 @@ abstract class Model190Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model190.SERVICE.save(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
+				Model190.SERVICE.save(options.getDomainName(), options.getUser(), options.getDomain(),
 						getMod190(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
 								popup.hide();
-								callback.onSelect(result, detailManager.getSelectedPerceptorIndex() );
+								callback.onSelect(options, result, detailManager.getSelectedPerceptorIndex() );
 							}
 
 							@Override
@@ -262,6 +250,9 @@ abstract class Model190Base extends DockLayoutPanel {
 		buttonContainer.add(saveButton);
 		
 		cancelButton.setText(AON.MSG.cancelAction());
+		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
@@ -276,7 +267,11 @@ abstract class Model190Base extends DockLayoutPanel {
 
 						@Override
 						public void onAccept() {
-							callback.onCancel();
+							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+								options.getExternalCallback().onExit();
+							} else {
+								callback.onCancel();
+							}
 						}
 
 						@Override
@@ -285,7 +280,11 @@ abstract class Model190Base extends DockLayoutPanel {
 						}
 					});
 				} else {
-					callback.onCancel();
+					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+						options.getExternalCallback().onExit();
+					} else {
+						callback.onCancel();
+					}
 				}
 			}
 		});
@@ -305,7 +304,7 @@ abstract class Model190Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model190.SERVICE.delete(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), getMod190(), new AsyncCallback<Void>() {
+						Model190.SERVICE.delete(options.getDomainName(), options.getUser(), options.getDomain(), getMod190(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -338,10 +337,10 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.FINISHED, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod190(), FiscalStatus.FINISHED, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
-						callback.onSelect(result , detailManager.getSelectedPerceptorIndex() );
+						callback.onSelect(options, result , detailManager.getSelectedPerceptorIndex() );
 					}
 
 					@Override
@@ -363,10 +362,10 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.SENT, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod190(), FiscalStatus.SENT, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
-						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
+						callback.onSelect(options, result, detailManager.getSelectedPerceptorIndex());
 					}
 
 					@Override
@@ -388,10 +387,10 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model190.SERVICE.changeStatus(cbk.getDomainName(), cbk.getUser(), getMod190(), FiscalStatus.PENDING, new AsyncCallback<Mod190>() {
+				Model190.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod190(), FiscalStatus.PENDING, new AsyncCallback<Mod190>() {
 					@Override
 					public void onSuccess(Mod190 result) {
-						callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
+						callback.onSelect(options, result, detailManager.getSelectedPerceptorIndex());
 					}
 
 					@Override
@@ -422,7 +421,7 @@ abstract class Model190Base extends DockLayoutPanel {
 							
 					@Override
 					public void onAccept() {
-						Model190.SERVICE.duplicateNextYear(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(), 
+						Model190.SERVICE.duplicateNextYear(options.getDomainName(), options.getUser(), options.getDomain(), 
 								mod190.getId(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
@@ -468,7 +467,7 @@ abstract class Model190Base extends DockLayoutPanel {
 							
 							@Override
 							public void onAccept() {
-								submitForm(cbk,MODEL190_DRAFT);
+								submitForm(options,MODEL190_DRAFT);
 							}
 			
 							@Override
@@ -477,7 +476,7 @@ abstract class Model190Base extends DockLayoutPanel {
 							}
 						});
 				} else {
-					submitForm(cbk,MODEL190_DRAFT);
+					submitForm(options,MODEL190_DRAFT);
 				}
 			}
 		});
@@ -504,12 +503,12 @@ abstract class Model190Base extends DockLayoutPanel {
 		dialog.show(getMod190());
 	}
 	
-	protected void submitForm(Model190Callback cbk, String action) {
+	protected void submitForm(Model190ModuleOptions options,String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod190Hidden.setValue(String.valueOf(getMod190().getId()));
-		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
-		domainNameHidden.setValue(cbk.getDomainName());
-		userHidden.setValue(cbk.getDomainName());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
+		userHidden.setValue(options.getDomainName());
 		diskForm.submit();
 	}
 	
@@ -544,8 +543,8 @@ abstract class Model190Base extends DockLayoutPanel {
 		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 	}
 
-	private void refreshToolbarState() {
-		newButton.setVisible(!getMod190().isNew());
+	private void refreshToolbarState(Model190ModuleOptions options) {
+		newButton.setVisible(!getMod190().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod190().isFinished() && !getMod190().isSent());
 		deleteButton.setVisible(!getMod190().isNew() && !getMod190().isFinished() && !getMod190().isSent());
 		cancelButton.setVisible(true);
@@ -706,7 +705,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private Widget getDeclarationHeaderTable(Model190Callback cbk) {
+	private Widget getDeclarationHeaderTable(Model190ModuleOptions options,Model190Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -773,7 +772,7 @@ abstract class Model190Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod190().setComments(event.getValue());
 						styleCommentsButton();
-						Model190.SERVICE.saveComments(cbk.getDomainName(), cbk.getUser(), getMod190(), new AsyncCallback<Mod190>() {
+						Model190.SERVICE.saveComments(options.getDomainName(), options.getUser(), getMod190(), new AsyncCallback<Mod190>() {
 							@Override
 							public void onSuccess(Mod190 result) {
 								toast.hide();
@@ -847,7 +846,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel(Model190Callback cbk) {
+	protected FlowPanel getAdministrationPanel(Model190ModuleOptions options,Model190Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -887,7 +886,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod190().isFinished() || getMod190().isSent()) {
-					submitForm(cbk,MODEL190_FILE);
+					submitForm(options,MODEL190_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -912,7 +911,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		button3.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				submitForm(cbk,MODEL190_PRINT);
+				submitForm(options,MODEL190_PRINT);
 			}
 		});
 		p3.add(button3);
@@ -952,7 +951,7 @@ abstract class Model190Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod190().isFinished() || getMod190().isSent()) {
-					submitForm(cbk,MODEL190_CERTIFICATE_PRINT);
+					submitForm(options,MODEL190_CERTIFICATE_PRINT);
 				} else {
 					getCallback().showError("Para imprimir los certificados, debe finalizar la confecci\u00F3n del modelo.");
 				}

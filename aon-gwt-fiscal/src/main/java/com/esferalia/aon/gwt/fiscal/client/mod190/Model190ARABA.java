@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Model190ARABA extends Model190Base {
 	private static final int PERCEPTORS_TAB = 1;
 
-	public Model190ARABA(Mod190 mod190,Model190Callback cbk,Integer selectedIndex) {
-		super(mod190, cbk);
+	public Model190ARABA(Model190ModuleOptions options,Mod190 mod190,Model190Callback cbk,Integer selectedIndex) {
+		super(options,mod190, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -27,15 +27,15 @@ public class Model190ARABA extends Model190Base {
 		
 		paintDeclarationTab(tabPanel);
 		paintPerceptorsTab(tabPanel, selectedIndex);
-		paintAdministrationTab(cbk, tabPanel);
+		paintAdministrationTab(options,cbk, tabPanel);
 		
 		tabPanel.selectTab(PERCEPTORS_TAB, false);
 		
 	}
 
-	private void paintAdministrationTab(Model190Callback cbk, TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model190ModuleOptions options,Model190Callback cbk, TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options,cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod190().getAdministration())));
 	}

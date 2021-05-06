@@ -246,7 +246,7 @@ public class Mod200 implements IFiscalModel, HasAudit {
 	}
 	@Override
 	public Period getPeriod() {
-		return null;
+		return Period.YEAR;
 	}
 
 }
