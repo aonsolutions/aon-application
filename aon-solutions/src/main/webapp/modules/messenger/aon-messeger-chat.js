@@ -2,9 +2,9 @@ import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, CSS } from "../../environments/environments.js";
 import { newComponent, setStyles } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
-import { createMainView, createMobileMainView } from "./createComponents.js";
-import { buildChat, buildMobileChat } from "./messenger-chat.js";
-import { buildDesktopWritter } from "./messenger-writter.js";
+// import { createMainView, createMobileMainView } from "./createComponents.js";
+// import { buildChat, buildMobileChat } from "./messenger-chat.js";
+// import { buildDesktopWritter } from "./messenger-writter.js";
 import { MESSENGER_COMPONENTS, MESSENGER_VIEWS } from "./MessengerEnums.js";
 
 export class AonMessengerChat extends AonElement {
