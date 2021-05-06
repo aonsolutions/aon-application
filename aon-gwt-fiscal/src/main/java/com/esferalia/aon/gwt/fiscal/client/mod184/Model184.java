@@ -1,18 +1,27 @@
 package com.esferalia.aon.gwt.fiscal.client.mod184;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180ModuleOptions;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -33,6 +42,11 @@ import com.google.gwt.view.client.ProvidesKey;
 
 public class Model184 extends MainEntryPoint {
 
+	private static final Logger LOGGER = Logger.getLogger(Model184.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	public static final ProvidesKey<Mod184Income> MOD184_INCOME_PROVIDES_KEY = new ProvidesKey<Mod184Income>() {
 		@Override
 		public Object getKey(Mod184Income det) {
@@ -50,22 +64,18 @@ public class Model184 extends MainEntryPoint {
 	private final static int BREAKDOWN_TAB = 1;
 	
 	static Model184ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Model184Binder extends UiBinder<Widget, Model184> {}
 	private static final Model184Binder MODEL_184_BINDER = GWT.create(Model184Binder.class);
 
 	protected static interface IModel184Callback{
-
 		void onAccept(Mod184 mod184);
 		void onCancel();
-		void onSelect(Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex);
+		void onSelect(Model184ModuleOptions options,Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex);
 		void showError(String msg);
 		void cleanErrorPanel();
-		void onNew();
-		String getDomainName();
-		String getUser();
-		int getDomain();
-		
+		void onNew(Model184ModuleOptions options);
 	}
 	
 	protected class Model184Callback implements IModel184Callback {
@@ -79,12 +89,12 @@ public class Model184 extends MainEntryPoint {
 			cancel();
 		}
 		@Override
-		public void onSelect(Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex) {
-			select(mod184, selectedIncomeIndex,selectedPartnerIndex,tabIndex);
+		public void onSelect(Model184ModuleOptions options,Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex) {
+			select(options,mod184, selectedIncomeIndex,selectedPartnerIndex,tabIndex);
 		}
 		@Override
-		public void onNew() {
-			newModel();
+		public void onNew(Model184ModuleOptions options) {
+			newModel(options);
 		}
 		@Override
 		public void cleanErrorPanel() {
@@ -94,18 +104,6 @@ public class Model184 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model184.this.showErrorPanel(msg);
 		}
-		@Override
-		public int getDomain() {
-			return getCurrentDomain();
-		}
-		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
-		}
-		@Override
-		public String getUser() {
-			return getCurrentUser();	
-		};
 	};
 
 	@UiField
@@ -133,6 +131,27 @@ public class Model184 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model184ModuleOptions options = new Model184ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
+		});
+	}
+	
+	public void onModuleLoad(Model184ModuleOptions options) {
 		AON.ensureInjected();
 
 		Model184ServiceAsync serviceRaw = GWT.create(Model184Service.class);
@@ -140,33 +159,61 @@ public class Model184 extends MainEntryPoint {
 
 		Widget ui = MODEL_184_BINDER.createAndBindUi(this);
 
-		model184Table = new Model184Table(new Model184Callback());
+		model184Table = new Model184Table(options,new Model184Callback());
 		model184Table.addSelectionHandler(new SelectionHandler<Mod184>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod184> event) {
-				onSelectionChange(event);
+				onSelectionChange(options, event);
 			}
 		});
 		
 		declarationContainer.setWidget(model184Table);
-		model184Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
+		options.getParentWidget().add(ui);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model184 with a ID: " + options.getFiscalModelId());
+			onSelect(options,options.getFiscalModelId());
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model184 new Model");
+			newModel(options, options.getNewModel().getYear()); 
+		} else {
+			model184Table.refresh();
+			LOGGER.info("Model184 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
 
 	}
+	
+	private void onSelect(Model184ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model184 with a ID: " + options.getFiscalModelId());
+		SERVICE.getMod184(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod184>() {
+			@Override
+			public void onSuccess(Mod184 selected) {
+				if (selected == null) {
+					showErrorPanel(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(options, selected, null, null, null);
+				}
+			}
 
-	private void onSelectionChange(SelectionEvent<Mod184> event) {
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+
+	private void onSelectionChange(Model184ModuleOptions options, SelectionEvent<Mod184> event) {
 		Mod184 sel = event.getSelectedItem();
-		SERVICE.getMod184(getCurrentDomainName(),getCurrentUser(), getCurrentDomain(),
+		SERVICE.getMod184(options.getDomainName(),options.getUser(), options.getDomain(),
 				sel.getId(), new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 selected) {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected, null, null, null);
+							select(options, selected, null, null, null);
 						}
 					}
 
@@ -178,33 +225,37 @@ public class Model184 extends MainEntryPoint {
 	}
 	
 
-	private void select(Mod184 selected, Integer selectedIncomeIndex, Integer selectedPartnerIndex,Integer tabIndex) {
+	private void select(Model184ModuleOptions options,Mod184 selected, Integer selectedIncomeIndex, Integer selectedPartnerIndex,Integer tabIndex) {
 		cleanErrorPanel();
 		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model184AEAT(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
+			declarationContainer.setWidget( new Model184AEAT(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model184ARABA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
+			declarationContainer.setWidget( new Model184ARABA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model184BIZKAIA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
+			declarationContainer.setWidget( new Model184BIZKAIA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model184GIPUZKOA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
+			declarationContainer.setWidget( new Model184GIPUZKOA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model184NAVARRA(selected,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
+			declarationContainer.setWidget( new Model184NAVARRA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
+		
+	private void newModel(Model184ModuleOptions options) {
+		newModel(options, 2020 );
+	}
 
-	private void newModel() {
+	private void newModel(Model184ModuleOptions options, int year) {
 		cleanErrorPanel();
-		SERVICE.initializeMod184(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(), 2020,
+		SERVICE.initializeMod184(options.getDomainName(),options.getUser(),options.getDomain(), year,
 				new AsyncCallback<Mod184>() {
 					@Override
 					public void onSuccess(Mod184 m184) {
 						cleanBreakdownPanel();
 						tabLayout.selectTab(BREAKDOWN_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup(m184);
+						showNewDeclarationPopup(options, m184);
 					}
 
 					@Override
@@ -291,7 +342,7 @@ public class Model184 extends MainEntryPoint {
 		}
 	}
 	
-	private void showNewDeclarationPopup(Mod184 model) {
+	private void showNewDeclarationPopup(Model184ModuleOptions options, Mod184 model) {
 		NewDeclarationPopup newDialog = new NewDeclarationPopup( model,
 			new Model184Callback() {
 
@@ -305,12 +356,12 @@ public class Model184 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod184(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),model,
+						SERVICE.saveMod184(options.getDomainName(),options.getUser(),options.getDomain(),model,
 								new AsyncCallback<Mod184>() {
 									@Override
 									public void onSuccess(Mod184 model) {
 										popup.hide();
-										select(model, null, null, null);
+										select(options, model, null, null, null);
 									}
 
 									@Override

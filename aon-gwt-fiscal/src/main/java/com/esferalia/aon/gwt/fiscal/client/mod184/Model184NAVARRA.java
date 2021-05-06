@@ -18,8 +18,8 @@ public class Model184NAVARRA extends Model184Base {
 
 	private static final int ENTITY_TAB = 1;
 
-	public Model184NAVARRA(Mod184 mod184,Model184Callback cbk,Integer selectedIncomeIndex,Integer selectedPartnerIndex,Integer tabIndex ) {
-		super(mod184, cbk);
+	public Model184NAVARRA(Mod184 mod184,Model184ModuleOptions options,Model184Callback cbk,Integer selectedIncomeIndex,Integer selectedPartnerIndex,Integer tabIndex ) {
+		super(options,mod184, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -31,7 +31,7 @@ public class Model184NAVARRA extends Model184Base {
 		paintEntityTab(tabPanel);
 		paintIncomeTab(tabPanel, selectedIncomeIndex);
 		paintPartnersTab(tabPanel, selectedPartnerIndex);
-		paintAdministrationTab(cbk, tabPanel);
+		paintAdministrationTab(options,cbk, tabPanel);
 		
 		tabPanel.addSelectionHandler( new SelectionHandler<Integer>() {
 			@Override
@@ -48,9 +48,9 @@ public class Model184NAVARRA extends Model184Base {
 	
 	}
 
-	private void paintAdministrationTab(Model184Callback cbk, TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model184ModuleOptions options,Model184Callback cbk, TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options,cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod184().getAdministration())));
 	}

@@ -61,9 +61,6 @@ public class Model180 extends MainEntryPoint {
 
 	protected static interface IModel180Callback{
 		void onAccept(Mod180 mod180);
-//		int getDomain();
-//		String getUser();
-//		String getDomainName();
 		void onCancel();
 		void onSelect(Model180ModuleOptions options, Mod180 mod180, Integer selectedIndex);
 		void showError(String msg);
@@ -96,18 +93,6 @@ public class Model180 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model180.this.showErrorPanel(msg);
 		}
-//		@Override
-//		public String getDomainName() {
-//			return getCurrentDomainName();
-//		}
-//		@Override
-//		public String getUser() {
-//			return getCurrentUser();
-//		}
-//		@Override
-//		public int getDomain() {
-//			return getCurrentDomain();
-//		}
 	};
 
 	@UiField
@@ -192,7 +177,7 @@ public class Model180 extends MainEntryPoint {
 	}
 
 	private void onSelect(Model180ModuleOptions options, Integer id ) {
-		LOGGER.info("OnSelect Model111 with a ID: " + options.getFiscalModelId());
+		LOGGER.info("OnSelect Model180 with a ID: " + options.getFiscalModelId());
 		SERVICE.getMod180(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod180>() {
 			@Override
 			public void onSuccess(Mod180 selected) {
