@@ -126,8 +126,6 @@ public class SalaryDraftBuilder
 		StringBuffer description = new StringBuffer(); 
 		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
 		
-		
-		
 		if ( itemStart == null  || itemEnd == null ) {
 			return description.toString();
 		}
@@ -138,21 +136,8 @@ public class SalaryDraftBuilder
 		}
 		
 		if (itemStart.equals(itemEnd)) {
-			String format = "dd/MM " + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
+			String format = "dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : "/yyyy");
 			String formatted = description.append(" ").append(formatDate(itemStart, format).orElse("")).toString();
-			return formatted;
-		}
-
-		if (itemStart.getMonth() == itemEnd.getMonth()) {
-			String format = "dd";
-			String formatted = 
-					description.append(" ")
-					.append(formatDate(itemStart, format).orElse(""))
-					.append(" - ")
-					.append(formatDate(itemEnd, format).orElse(""))
-					.append(" de " + formatDate(itemStart, "MMMM").orElse(""))
-					.toString();
-			
 			return formatted;
 		}
 
@@ -618,7 +603,7 @@ public class SalaryDraftBuilder
 			Map<String, ITimedVariable<?>> context) {
 
 		addContext(context);
-
+		
 		Payment draftPayment = newPayment((IContractPayment) payment);
 		// override calculated ...
 		draftPayment.setAmount(amount);
@@ -627,7 +612,6 @@ public class SalaryDraftBuilder
 		draftPayment.setDescription(description );
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
-		draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()) );
 		
 
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
@@ -635,11 +619,14 @@ public class SalaryDraftBuilder
 		// TODO: por que falla el type??
 		draftPayment.setType(getPaymentType(payment.getType()));
 
-		if (compositePayment != null)
+		if (compositePayment != null) {
 			compositePayment.addChild(draftPayment);
-		else
+			compositePayment.setDescription(draftPayment.getDescription());
+		}else {
 			salaryDraft.addPayment(draftPayment);
-
+		}
+		draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		
 	}
 
 	@Override
@@ -1189,7 +1176,7 @@ public class SalaryDraftBuilder
 				CompositePayment composite = new CompositePayment();
 				
 				composite.setConceptId(payment.getConceptId());
-				//composite.setDescription(payment.getDescription());
+				//composite.setDescription(payment.getDescription().replaceAll("", ""));
 				composite.setExpression(payment.getExpression());
 				composite.setIrpfExpression(payment.getIrpfExpression());
 				composite.setQuoteExpression(payment.getQuoteExpression());
@@ -1197,8 +1184,8 @@ public class SalaryDraftBuilder
 				payments.set(i, composite);
 				return composite;
 
-			}
-		}
+			}  
+		}   
 		return null;
 	}
 
