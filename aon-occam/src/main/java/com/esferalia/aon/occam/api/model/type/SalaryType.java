@@ -69,7 +69,11 @@ public enum SalaryType {
 		default E visitL13(SalaryType type) { return visitSettle(type); };
 	}
 
-
+	
 
 	abstract <E> E accept( TypeVisitor<E> visitor); 
+	
+	public byte value() {
+		return (byte) ordinal();
+	}
 }

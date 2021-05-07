@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_PAYMENT_SALARY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -22,6 +23,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
 import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,19 +31,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Cursor;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 import org.jooq.TableField;
+import org.jooq.impl.DSL;
 import org.jooq.lambda.Seq;
 
-import com.esferalia.aon.jooq.tables.Raddress;
-import com.esferalia.aon.jooq.tables.RdirStaff;
-import com.esferalia.aon.jooq.tables.Registry;
-import com.esferalia.aon.jooq.tables.SalaryData;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryDeductionRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -52,7 +61,8 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.Settle;
-import com.esferalia.aon.occam.api.model.registry.RDirStaff;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -248,15 +258,17 @@ public class SalaryDAO {
 		.fetchLazy();
 		//@formatter:on
 		
+		//@formatter:off
 		Cursor<Record> embargoCursor = 
-				ctx.getDslContext()
-				.select()
-				.from(SALARY)
-				.join(SALARY_EMBARGO)
-				.onKey()
-				.where(conditions)
-				.orderBy(SALARY_EMBARGO.SALARY)
-				.fetchLazy();
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_EMBARGO)
+		.onKey()
+		.where(conditions)
+		.orderBy(SALARY_EMBARGO.SALARY)
+		.fetchLazy();
+		//@formatter:on
 
 		BackIterator<Record> paymentIter = new BackIterator<>(paymentCursor.iterator());
 		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
@@ -795,6 +807,232 @@ public class SalaryDAO {
 
 	}
 	
+	
+	public static Collection<Salary> saveSalaries(AONContext ctx, Integer domainId, Collection<Salary> salaries ) {
+		salaries.forEach( salary -> {
+			removeSalary(ctx, domainId, salary);
+			SalaryRecord salaryRecord = insertSalary(ctx, domainId, salary);
+			salary.setId(salaryRecord.getId());
+		});
+		return salaries;
+	}
+
+	public static void deleteSalaries(AONContext ctx, SalaryFilter filter) {
+		
+		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
+		
+		SelectConditionStep<Record1<Integer>> salariesSelect = 
+		DSL
+		.select(SALARY.ID)
+		.from(SALARY)
+		.where(conditions);
+
+		ctx.getDslContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect)).execute();
+		ctx.getDslContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect)).execute();
+		ctx.getDslContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salariesSelect)).execute();
+		ctx.getDslContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salariesSelect)).execute();
+		ctx.getDslContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salariesSelect)).execute();
+		ctx.getDslContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salariesSelect)).execute();
+		
+		ctx.getDslContext().delete(SALARY).where(conditions).execute();
+	}
+	
+	private static void removeSalary(AONContext ctx, Integer domainId, Salary salary ) {
+		List<Integer> salaryIds = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.where(SALARY.DOMAIN.eq(domainId))
+		.and(SALARY.CCC.eq(salary.getEnterpriseCCC()))
+		.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(salary.getEmployeeSSNumber()))
+		.and(SALARY.START_DATE.le(toSql(salary.getEndDate())))
+		.and(SALARY.END_DATE.ge(toSql(salary.getStartDate())))
+		.and(SALARY.TYPE.eq(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class)))
+		.fetch(SALARY.ID);
+
+		ctx.getDslContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salaryIds)).execute();
+		ctx.getDslContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(salaryIds)).execute();
+		ctx.getDslContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salaryIds)).execute();
+		ctx.getDslContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salaryIds)).execute();
+		ctx.getDslContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salaryIds)).execute();
+		ctx.getDslContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salaryIds)).execute();
+		
+		ctx.getDslContext().delete(SALARY).where(SALARY.ID.in(salaryIds)).execute();
+	}
+
+	private static SalaryRecord insertSalary(AONContext ctx, Integer domainId, Salary salary ) {
+		
+		InsertSetStep<SalaryRecord> salaryInsert = 
+		ctx.getDslContext().insertInto(SALARY);
+		
+			
+		ContractRecord contractRecord = 
+		getContract(ctx, domainId, salary)
+		//TODO: EmployeeNotFoundException 
+		.orElseThrow( () -> new IllegalArgumentException("") ); 
+		
+		SalaryRecord salaryRecord = 
+		getSalaryRecord(salary);
+		salaryRecord.setDomain(contractRecord.getDomain());
+		salaryRecord.setContract(contractRecord.getId());
+		
+		salaryRecord = 
+		salaryInsert.set(salaryRecord).returning().fetchOptional()
+		//TODO: SalaryNotFoundException 
+		.orElseThrow( () -> new IllegalArgumentException("") );
+		
+		int id = salaryRecord.getId();
+		int domain = salaryRecord.getDomain();
+		
+		List<SalaryCostRecord> costRecords = toList(salary.getCosts(), cost -> getSalaryCostRecord(domain, id, cost));
+		insert(costRecords, ctx.getDslContext().insertInto(SALARY_COST));
+		
+		List<SalaryDeductionRecord> deductionRecords = toList(salary.getDeductions(), deduction -> getSalaryDeductionRecord(domain, id, deduction));
+		insert(deductionRecords, ctx.getDslContext().insertInto(SALARY_DEDUCTION));
+
+		List<SalaryPaymentRecord> paymentRecords = toList(salary.getPayments(), payment -> getSalaryPaymentRecord(domain, id, payment));
+		insert(paymentRecords, ctx.getDslContext().insertInto(SALARY_PAYMENT));
+		
+		List<SalaryDataRecord> dataRecords = salary.getContextData().entrySet().stream()
+		.flatMap(entry -> toList(entry.getValue(), d -> getSalaryDataRecord(domain, id, entry.getKey(), d)).stream())
+		.collect(Collectors.toList());		
+		insert(dataRecords, ctx.getDslContext().insertInto(SALARY_DATA));
+		
+		return salaryRecord;
+	}
+	
+	private static <R extends Record > void insert(List<R> records, InsertSetStep<R> insert ) {
+		if  ( records.isEmpty() )
+			return;
+		
+		int last = records.size() -1;
+		
+		for(int i = 0; i < last; i++ )
+			insert = insert.set(records.get(i)).newRecord();
+		
+		insert.set(records.get(last)).execute();
+	}
+	
+
+	private static Optional<ContractRecord> getContract(AONContext ctx, Integer domainId, Salary salary) {
+		return 
+		ctx.getDslContext()
+		.select()
+		.from(CONTRACT)
+		.innerJoin(PERSON).onKey()
+		.innerJoin(ENTERPRISE_CCC).onKey()
+		.where(CONTRACT.DOMAIN.eq(domainId))
+		.and(ENTERPRISE_CCC.CCC.eq(salary.getEnterpriseCCC()))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(salary.getEmployeeSSNumber()))
+		.and(CONTRACT.START_DATE.le(toSql(salary.getEndDate())))
+		.and(CONTRACT.END_DATE.ge(toSql(salary.getStartDate())).or(CONTRACT.END_DATE.isNull()))
+		.fetchOptionalInto(CONTRACT);
+	}
+	
+	private static SalaryRecord getSalaryRecord(Salary salary) {
+		SalaryRecord record  = new SalaryRecord();
+		
+		
+		//record.setSsRegime(0);																					// not null & default 0
+		record.setTimeUnits(0);	 																					// not null & without default value
+		record.setRegistration(666); 																				// not null & without default value
+		
+		record.setStartDate(toSql(salary.getStartDate()));															// not null & without default value
+		record.setEndDate(toSql(salary.getEndDate()));																// not null & without default value
+		record.setIssueDate(toSql(salary.getIssueDate()));															// not null & without default value
+		record.setChargeDate(toSql(salary.getIssueDate()));															// not null & without default value
+
+		record.setCcc(salary.getEnterpriseCCC());																	// default null	
+		record.setEnterpriseName(salary.getEnterpriseName());														// default null
+		record.setEnterpriseAddress(salary.getEnterpriseAddress());													// default null
+		record.setEnterpriseDocument(salary.getEnterpriseDocument());												// default null
+		
+		record.setEmployeeName(salary.getEmployeeName());															// default null
+		record.setCategory(salary.getEmployeeCategory());															// default null
+		record.setQuoteGroup(salary.getEmployeeQuoteGroup());														// default null	
+		record.setSeniorityDate(toSql(salary.getEmployeeSeniorityDate()));											// default null
+		record.setEmployeeDocument(salary.getEmployeeDocument());													// default null
+		record.setSocialSecurityNumber(salary.getEmployeeSSNumber());												// default null
+		
+		record.setIrpfBase(Optional.ofNullable(salary.getIrpfBase()).orElse(0.00));									// not null & default 0						
+		record.setMoneyIrpfBase(Optional.ofNullable(salary.getMoneyIrpfBase()).orElse(0.00));						// not null & default 0
+		record.setInkindIrpfBase(Optional.ofNullable(salary.getInkindIrpfBase()).orElse(0.00));						// not null & default 0
+
+		record.setProExtBase(Optional.ofNullable(salary.getExtraProrationBase()).orElse(0.00));						// not null & default 0
+		record.setCgcBase(Optional.ofNullable(salary.getCommonContingenciesBase()).orElse(0.00));					// not null & default 0
+		record.setCgpBase(Optional.ofNullable(salary.getProfessionalContingenciesBase()).orElse(0.00));				// not null & default 0
+
+		record.setTotalIrpf(Optional.ofNullable(salary.getTotalIrpf()).orElse(0.00));								// not null & default 0
+		record.setRemuneration(Optional.ofNullable(salary.getRemuneration()).orElse(0.00));							// not null & default 0
+		record.setTotalLiquid(Optional.ofNullable(salary.getTotalLiquid()).orElse(0.00));							// not null & default 0
+		record.setTotalDeduction(Optional.ofNullable(salary.getTotalDeduction()).orElse(0.00));						// not null & default 0	
+		record.setTotalEnterprise(Optional.ofNullable(salary.getTotalEnterprise()).orElse(0.00));					// not null & default 0
+		record.setTotalPayment(Optional.ofNullable(salary.getTotalPayment()).orElse(0.00));							// not null & default 0	
+		record.setSocialSecurityContributions(Optional.ofNullable(salary.getTotalSSContributions()).orElse(0.00));	// not null & default 0
+
+		record.setType(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class));
+		
+		return record;
+		
+	}
+	
+	private static SalaryDataRecord getSalaryDataRecord(Integer domain, Integer salary, String name, Salary.ContextData data) {
+		SalaryDataRecord record = new SalaryDataRecord();
+		
+		record.setDomain(domain);
+		record.setSalary(salary);
+		record.setName(name);
+		record.setExpression(data.getExpression());
+		record.setStartDate(toSql(data.getStartDate()));
+		record.setEndDate(toSql(data.getEndDate()));
+		
+		return record;
+	}
+
+	private static SalaryCostRecord getSalaryCostRecord(Integer domain, Integer salary, Salary.Cost cost) {
+		SalaryCostRecord record = new SalaryCostRecord();
+		
+		record.setDomain(domain);
+		record.setSalary(salary);
+		record.setAmount(cost.getAmount());
+		record.setDescription(cost.getDescription());
+		record.setType(value(cost.getCostType(), DeductionType.class));
+		
+		return record;
+	}
+	
+	private static SalaryDeductionRecord getSalaryDeductionRecord(Integer domain, Integer salary, Salary.Deduction deduction) {
+		SalaryDeductionRecord record = new SalaryDeductionRecord();
+		
+		record.setDomain(domain);
+		record.setSalary(salary);
+		record.setAmount(deduction.getAmount());
+		record.setDescription(deduction.getDescription());
+		record.setType(value(deduction.getDeductionType(), DeductionType.class));
+		
+		return record;
+	}
+
+	private static SalaryPaymentRecord getSalaryPaymentRecord(Integer domain, Integer salary, Salary.Payment payment) {
+		SalaryPaymentRecord record = new SalaryPaymentRecord();
+		
+		record.setDomain(domain);
+		record.setSalary(salary);
+		record.setQuote(payment.getQuote());
+		//record.setIrpf(payment.getTax());
+		record.setAmount(payment.getAmount());
+		record.setPaymentConcept(payment.getName());
+		record.setExpression(payment.getExpression());
+		record.setDescription(payment.getDescription());
+		record.setType(value(payment.getPaymentType(), PaymentType.class));
+		
+		return record;
+	}
+	
+	private static <T,R> List<R> toList(Collection<T> list, Function<T, R> mapper) {
+		return list.stream().map(mapper).collect(Collectors.toList());
+	}
+
 	private static void fixSalaryData(String name, Salary salary, TableField<SalaryRecord, Double> field,Record record){
 		
 		if ( record.get(field) == null ) 
@@ -819,7 +1057,7 @@ public class SalaryDAO {
 	
 
 	private enum SalaryType {
-		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS;
+		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS, L00;
 
 		byte value() {
 			return (byte) ordinal();
@@ -893,9 +1131,16 @@ public class SalaryDAO {
 		}
 
 		@Override
+		public Property<Boolean> getIsL00Property() {
+			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+					SalaryType.L00.value());
+		}
+
+		@Override
 		public Property<Date> getIssueDateProperty() {
 			return new FilterDAO.DatePropertyDAO(SALARY.ISSUE_DATE);
 		}
+		
 	}
 
 	private static class BackIterator<T> implements Iterator<T> {
@@ -924,5 +1169,21 @@ public class SalaryDAO {
 			next = prev;
 		}
 	}
+	
+	private static java.sql.Date toSql(Date date) {
+		if ( date == null )
+			return null;
+		return new java.sql.Date(date.getTime());
+	}
+	
+	private static <T extends Enum<?>> Byte value(T t, Class<T> clazz){
+		T constants [] = clazz.getEnumConstants();
+		for (byte i = 0; i < constants.length; i++)
+			if ( constants[i] == t )
+				return i;
+		
+		return null;
+	}
+	
 
 }

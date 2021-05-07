@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -2286,6 +2287,11 @@ public class AON {
 	// ********************************* PAYROLL **
 	// ********************************************
 
+	public static void deleteSalaries(AONContext ctx,
+			SalaryFilter filter) {
+		getSalary().deleteSalaries(ctx, filter);
+	}
+
 	public static void saveAgreement(AONContext ctx, Agreement... agreements)
 			throws AonCoreException {
 		getAgreement().save(ctx, agreements);
@@ -2294,6 +2300,11 @@ public class AON {
 	public static Stream<Salary> getSalaries(AONContext ctx,
 			SalaryFilter filter) {
 		return getSalary().getSalaries(ctx, filter, Salary::new);
+	}
+
+	public static Collection<Salary> saveSalaries(AONContext ctx, 
+			Integer domainId, Collection<Salary> salaries) {
+		return getSalary().saveSalaries(ctx, domainId, salaries);
 	}
 
 	public static Stream<Salary> getSalaryData(AONContext ctx,
@@ -2310,6 +2321,7 @@ public class AON {
 			BonusFilter filter) {
 		return getSystem().getAvailableBonus(ctx, filter, Bonus::new);
 	}
+	
 
 	// ********************************************
 	// ************************************* FEE **

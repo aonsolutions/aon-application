@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -28,4 +29,15 @@ public class SalaryImpl implements ISalary {
 			SalaryFilter filter, Supplier<Salary> supplier) {
 		return SalaryDAO.getContractData(ctx, filter, supplier);
 	}
+	
+	@Override
+	public void deleteSalaries(AONContext ctx, SalaryFilter filter) {
+		SalaryDAO.deleteSalaries(ctx, filter);
+	}
+
+	@Override
+	public Collection<Salary> saveSalaries(AONContext ctx, Integer domainId, Collection<Salary> salaries) {
+		return SalaryDAO.saveSalaries(ctx, domainId, salaries);
+	}
+
 }

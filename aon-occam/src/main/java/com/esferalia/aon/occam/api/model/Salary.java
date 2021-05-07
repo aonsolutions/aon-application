@@ -742,6 +742,15 @@ public class Salary implements Serializable {
 		return Collections.unmodifiableList(costs);
 	}
 	
+	public void addCost(
+			DeductionType type,
+			String code,
+			Double amount,
+			String description
+			) {
+		addCost((byte)type.ordinal(), code, description, amount, type);
+	}
+
 	public void addCost(Byte type, String code, String description,
 			Double amount, Byte costType) {
 		addCost(costType, code, description, amount, typeOf(costType, DeductionType.class));
@@ -804,6 +813,11 @@ public class Salary implements Serializable {
 		return Collections.unmodifiableList(deductions);
 	}
 	
+	public void addDeduction(String description,
+			Double amount) {
+		deductions.add(new Deduction(amount, description, null));
+	}
+
 	public void addDeduction(Byte type, String description,
 			Double amount, Byte deductionType) {
 		addDeduction(deductionType, description, amount, typeOf(deductionType, DeductionType.class));
@@ -847,6 +861,14 @@ public class Salary implements Serializable {
 			deduction = new Deduction(amount, description, deductionType);
 		
 		deductions.add(deduction);
+	}
+
+	public void addDeduction(
+			DeductionType type,
+			Double amount,
+			String description
+			) {
+		addDeduction((byte)type.ordinal(), description, amount, type);
 	}
 
 	public Map<String, List<ContextData>> getContextData() {
