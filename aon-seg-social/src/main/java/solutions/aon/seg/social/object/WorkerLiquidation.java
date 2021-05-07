@@ -398,6 +398,239 @@ public class WorkerLiquidation {
 		public void visitTotalLiquidWorkerFee(Float totalLiquidWorkerFee);
 		public void visitTotalLiquidTotalFee(Float totalLiquidTotalFee);
 	}
+	public static class NoopVisitor implements Visitor{
+
+		@Override
+		public void visitNss(String nss) {
+			
+		}
+
+		@Override
+		public void visitCaf(String caf) {
+			
+		}
+
+		@Override
+		public void visitCcBase(Float ccBase) {
+			
+		}
+
+		@Override
+		public void visitCcBusinessFee(Float ccBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitCcWorkerFee(Float ccWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitCcTotalFee(Float ccTotalFee) {
+			
+		}
+
+		@Override
+		public void visitCcLiquidBase(Float ccLiquidBase) {
+			
+		}
+
+		@Override
+		public void visitCcLiquidBusinessFee(Float ccLiquidBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitCcLiquidWorkerFee(Float ccLiquidWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitCcLiquidTotalFee(Float ccLiquidTotalFee) {
+			
+		}
+
+		@Override
+		public void visitItWorkAccidentBase(Float itWorkAccidentBase) {
+			
+		}
+
+		@Override
+		public void visitItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitItWorkAccidentTotalFee(Float itWorkAccidentTotalFee) {
+			
+		}
+
+		@Override
+		public void visitImsWorkAccidentBase(Float imsWorkAccidentBase) {
+			
+		}
+
+		@Override
+		public void visitImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee) {
+			
+		}
+
+		@Override
+		public void visitWorkAccidentLiquidBase(Float workAccidentLiquidBase) {
+			
+		}
+
+		@Override
+		public void visitWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee) {
+			
+		}
+
+		@Override
+		public void visitUnemploymentBase(Float unemploymentBase) {
+			
+		}
+
+		@Override
+		public void visitUnemploymentBusinessFee(Float unemploymentBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitUnemploymentWorkerFee(Float unemploymentWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitUnemploymentTotalFee(Float unemploymentTotalFee) {
+			
+		}
+
+		@Override
+		public void visitFogasaBase(Float fogasaBase) {
+			
+		}
+
+		@Override
+		public void visitFogasaBusinessFee(Float fogasaBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitFogasaWorkerFee(Float fogasaWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitFogasaTotalFee(Float fogasaTotalFee) {
+			
+		}
+
+		@Override
+		public void visitJobTrainingBase(Float jobTrainingBase) {
+			
+		}
+
+		@Override
+		public void visitJobTrainingBusinessFee(Float jobTrainingBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitJobTrainingWorkerFee(Float jobTrainingWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitJobTrainingTotalFee(Float jobTrainingTotalFee) {
+			
+		}
+
+		@Override
+		public void visitGrantsAndBonusesBase(Float grantsAndBonusesBase) {
+			
+		}
+
+		@Override
+		public void visitGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee) {
+			
+		}
+
+		@Override
+		public void visitOtherContributionsLiquidBase(Float otherContributionsLiquidBase) {
+			
+		}
+
+		@Override
+		public void visitOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee) {
+			
+		}
+
+		@Override
+		public void visitTotalLiquidBase(Float totalLiquidBase) {
+			
+		}
+
+		@Override
+		public void visitTotalLiquidBusinessFee(Float totalLiquidBusinessFee) {
+			
+		}
+
+		@Override
+		public void visitTotalLiquidWorkerFee(Float totalLiquidWorkerFee) {
+			
+		}
+
+		@Override
+		public void visitTotalLiquidTotalFee(Float totalLiquidTotalFee) {
+			
+		}
+		
+	}
 	
 	
 	public void accept(Visitor visitor) {
