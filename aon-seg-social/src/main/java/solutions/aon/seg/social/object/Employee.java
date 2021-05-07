@@ -86,7 +86,7 @@ public class Employee {
 			return Optional.empty();
 		}
 	}	
-	public Optional<String> getSex() {return Optional.of(sex);}
+	public Optional<String> getSex() {return Optional.ofNullable(sex);}
 	public Integer getIdent() {return ident;}
 	public String getColec() {return colec;}
 	public String getOcup() {return ocup;}
