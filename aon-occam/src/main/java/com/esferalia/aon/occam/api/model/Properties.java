@@ -1065,6 +1065,16 @@ public interface Properties {
 		Property<Integer> getRattachProperty();
 	}
 	
+	public interface EmployeeProperties{
+		Property<String> getNafProperty();
+		Property<String> getCCCProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+
+		Property<Integer> getDomainProperty();
+
+	}
+
 	public interface ContractProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

@@ -13,6 +13,7 @@ public class Employee implements Serializable{
 	private String phone;
 	private String sex; 
 	
+	private String cif;
 	private String ccc;
 	
 	private String group;
@@ -60,6 +61,15 @@ public class Employee implements Serializable{
 		return this;
 	}
 	
+	public String getCif() {
+		return cif;
+	}
+	
+	public Employee setCif(String cif) {
+		this.cif = cif;
+		return this;
+	}
+
 	public String getRegime() {
 		return regime;
 	}

@@ -20,6 +20,7 @@ import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DET
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
@@ -90,6 +91,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
@@ -144,6 +146,7 @@ import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
+import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
@@ -1078,6 +1081,29 @@ public class PropertiesDAO {
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
 	}
 	
+	protected static class EmployeePropertiesDAO implements EmployeeProperties{
+		
+		protected Select<Record> build(SelectJoinStep<Record> select, EmployeeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(EmployeeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.DOMAIN);}
+		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
+		@Override public Property<String> getCCCProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.START_DATE);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.END_DATE);}
+
+	}
+
 	protected static class ContractPropertiesDAO implements ContractProperties{
 		protected Select<Record> build(SelectJoinStep<Record> select, ContractFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);

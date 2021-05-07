@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
+import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
@@ -63,6 +64,17 @@ public class PAYROLL {
 		}
 	}
 	
+	public static Optional<Employee> getEmployee(String domainName, Integer domainId, String login, EmployeeFilter filter ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getEmployee(ctx, filter);
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
 	
 	// -------------------- CONTRACT
 	

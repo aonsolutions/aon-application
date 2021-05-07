@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
+import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.HasEndDate;
 import com.esferalia.aon.occam.api.model.HasStartDate;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -66,11 +67,51 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.EmployeePropertiesDAO;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EmployeeDAO {
 	
+	
+
+	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
+		
+		
+		return 
+		dslContext
+		.select()
+		.from(CONTRACT)
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+		.innerJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+		.innerJoin(ENTERPRISE_REGISTRY).on(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
+		.where(new EmployeePropertiesDAO().getConditions(filter))
+		.fetchOptional().map( r -> 
+		new Employee()
+		.setCcc(r.get(ENTERPRISE_CCC.CCC))
+		.setCif(r.get(ENTERPRISE_REGISTRY.DOCUMENT))
+
+		.setDni(r.get(REGISTRY.DOCUMENT))
+		.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
+		.setName(r.get(REGISTRY.NAME))
+		.setSex(getSex(r.get(PERSON.GENDER)))
+		.setBirthDate(r.get(PERSON.BIRTH_DATE))
+		
+		.setEmployeeId(r.get(CONTRACT.ID))
+		.setStartDate(r.get(CONTRACT.START_DATE))
+		.setEndDate(r.get(CONTRACT.END_DATE))
+		.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
+		
+		.setWorkplaceId(r.get(WORKPLACE.ID))
+		);
+		
+	}
 
 	public  static Employee addEmployee(AONContext aonContext, String domainName, Employee employee ) {
 		DSLContext dslContext = aonContext.getDslContext();
@@ -234,7 +275,14 @@ public class EmployeeDAO {
 				.where(WORKPLACE.DOMAIN.eq(domainId))
 				.orderBy(CONTRACTS_COUNT.desc())
 				.fetchStreamInto(WORKPLACE).findFirst()
-				.orElse(null)
+				.orElseGet(() -> 
+					dslContext
+					.select()
+					.from(WORKPLACE)
+					.where(WORKPLACE.DOMAIN.eq(domainId))
+					.fetchStreamInto(WORKPLACE).findFirst()
+					.orElse(null)
+				)
 			)
 		);
 		
@@ -295,6 +343,10 @@ public class EmployeeDAO {
 				// No enterprise activity, return new one
 				dslContext
 				.insertInto(ENTERPRISE_ACTIVITY)
+				
+				.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
+				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
+				
 				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
 				.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte) 1)
 				.set(ENTERPRISE_ACTIVITY.ENTERPRISE, getEnterprise(dslContext, domainId).getRegistry())
@@ -329,7 +381,7 @@ public class EmployeeDAO {
 		
 			RegistryRecord registryRecord = insertRegistry.returning().fetchOne();
 			
-			Integer geozoneId = getGeozone(dslContext, domainId, employee.getCcc()).map( g->g.getId()).orElseGet(null);
+			Integer geozoneId = getGeozone(dslContext, domainId, employee.getCcc()).map( g->g.getId()).orElse(null);
 			
 //			SelectConditionStep<Record1<Integer>> geozoneId = 
 //			DSL
@@ -818,6 +870,17 @@ public class EmployeeDAO {
 				
 	}
 	
+	private static String getSex( byte gender) {
+		switch (Gender.safeValueOf(gender)) {
+		case FEMALE:
+			return "F";
+		case MALE:
+			return "M";
+		default:
+			return "";
+		}
+	}
+
 	private static Gender getGender( String sex ) {
 		sex = AonStringUtils.trimToEmpty(sex);
 		sex = AonStringUtils.upperCase(sex);

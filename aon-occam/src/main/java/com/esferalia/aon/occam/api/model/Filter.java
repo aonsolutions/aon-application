@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
@@ -471,6 +472,11 @@ public interface Filter {
 		Filter filter(CategoryProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface EmployeeFilter{
+		Filter filter(EmployeeProperties properties);
+	}
+
 	@FunctionalInterface
 	public interface ContractFilter{
 		Filter filter(ContractProperties properties);
