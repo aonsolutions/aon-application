@@ -19,7 +19,7 @@ public class Model347Declared2014 extends DockLayoutPanel implements IModel347De
 	}
 	private Model347DeclaredTable table;
 	
-	public Model347Declared2014( Model347BaseCallback callback, Integer selectedIndex ) {
+	public Model347Declared2014( Model347ModuleOptions options, Model347BaseCallback callback, Integer selectedIndex ) {
 		super(Unit.PX);
 		table = new Model347DeclaredTable(callback, selectedIndex);
 		addWest(table, 300);
@@ -29,7 +29,7 @@ public class Model347Declared2014 extends DockLayoutPanel implements IModel347De
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod347Declared> event) {
-				Model3472014DeclaredPanel panel = new Model3472014DeclaredPanel(event.getSelectedItem(), new IModel347DeclaredCallback() {
+				Model3472014DeclaredPanel panel = new Model3472014DeclaredPanel(options,event.getSelectedItem(), new IModel347DeclaredCallback() {
 					
 					@Override
 					public void onValueChanged(Mod347Declared declared) {

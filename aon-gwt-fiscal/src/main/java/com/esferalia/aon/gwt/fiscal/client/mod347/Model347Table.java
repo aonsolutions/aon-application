@@ -172,7 +172,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 	
 	private Model347CellTable table;
 	
-	public Model347Table(Model347Callback cbk) {
+	public Model347Table(Model347ModuleOptions options, Model347Callback cbk) {
 		table = new Model347CellTable(new FiscalModelProvidesKey<Mod347>());
 		if (table.getSelectionModel() != null) {
 			table.getSelectionModel().addSelectionChangeHandler(new com.google.gwt.view.client.SelectionChangeEvent.Handler() {
@@ -187,7 +187,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model347.SERVICE.getMod347s(cbk.getDomainName(),cbk.getUser(), cbk.getDomain(),
+				Model347.SERVICE.getMod347s(options.getDomainName(),options.getUser(), options.getDomain(),
 						new AsyncCallback<LinkedList<Mod347>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod347> result) {
@@ -202,7 +202,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 			}
 		});
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.addNorth(getToolbarPanel(cbk), 25);
+		tableDockLayout.addNorth(getToolbarPanel(options,cbk), 25);
 		ScrollPanel tablePanel = new ScrollPanel();
 		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		tablePanel.add(table);
@@ -220,7 +220,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 	}
 	
 	
-	private Widget getToolbarPanel(Model347Callback cbk) {
+	private Widget getToolbarPanel(Model347ModuleOptions options,Model347Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -251,7 +251,7 @@ public class Model347Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				cbk.onNew();
+				cbk.onNew(options);
 			}
 		});
 		buttonContainer.add(newButton);

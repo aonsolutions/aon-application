@@ -68,7 +68,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	
 	private Model347BaseCallback callbackMod347;
 	  
-	public Model3472014DeclaredPanel(Mod347Declared declared, IModel347DeclaredCallback callback, Model347BaseCallback cbk) {
+	public Model3472014DeclaredPanel(Model347ModuleOptions options,Mod347Declared declared, IModel347DeclaredCallback callback, Model347BaseCallback cbk) {
 		
 		callbackMod347 = cbk;
 		
@@ -483,7 +483,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model347.SERVICE.getInfo(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(),
+				Model347.SERVICE.getInfo(options.getDomainName(),options.getUser(),options.getDomain(),
 						   cbk.getMod347(), declared, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
 
 							@Override

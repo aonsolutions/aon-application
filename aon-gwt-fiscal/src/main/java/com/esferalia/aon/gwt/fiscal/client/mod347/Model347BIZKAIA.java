@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model347BIZKAIA extends Model347Base {
 
-	public Model347BIZKAIA(Mod347 mod347, Model347Callback cbk, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
-		super(mod347, cbk);
+	public Model347BIZKAIA(Model347ModuleOptions options, Mod347 mod347, Model347Callback cbk, Integer selectedIndexDeclared, Integer selectedIndexAsset, int tabPanelIndex) {
+		super(options, mod347, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -24,18 +24,18 @@ public class Model347BIZKAIA extends Model347Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintDeclaredTab(tabPanel, selectedIndexDeclared);
+		paintDeclaredTab(options, tabPanel, selectedIndexDeclared);
 		paintAssetsTab(tabPanel, selectedIndexAsset);
-		paintAdministrationTab(cbk,tabPanel);
+		paintAdministrationTab(options,cbk,tabPanel);
 		addTabPanelSelectionHandler(tabPanel);
 		
 		tabPanel.selectTab(tabPanelIndex, true);
 		
 	}
 
-	private void paintAdministrationTab(Model347Callback cbk, TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model347ModuleOptions options, Model347Callback cbk, TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options, cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod347().getAdministration())));
 	}
