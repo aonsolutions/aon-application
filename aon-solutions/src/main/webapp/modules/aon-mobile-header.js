@@ -1,7 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
-
 import {rootPanel} from '../services/gwtLoader.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
@@ -36,12 +35,13 @@ export class AonMobileHeader extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		this.activeTimecontrol = false;
+		
 		this.build();
   }
 
 	initialize() {
 		this.BASE_ID = 'aonHeader';
+		this.activeTimecontrol = false;
 	}
 
 	build() {
@@ -61,21 +61,21 @@ export class AonMobileHeader extends AonElement {
 			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
-		// let aonHeaderWeb = document.getElementById('aonHeaderWeb');
+		// let aonHeaderWeb = this.getElement('aonHeaderWeb');
 		this.buildLogo();
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => {
 				this.timeControlStatus(r);
 			});
 		}
-		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
+		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
 			if(this.activeTimecontrol) {
 				getTimeControl().then(r => {
 					this.timeControlStatus(r);
 					const top  = aonHeaderUserButton.getBoundingClientRect().top;
 					const left = aonHeaderUserButton.getBoundingClientRect().left;
-					let d = document.getElementById('aonHeaderDialogUserOption');
+					let d = this.getElement('aonHeaderDialogUserOption');
 					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
 					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
 					let options = [{
@@ -107,7 +107,7 @@ export class AonMobileHeader extends AonElement {
 			} else {
 				const top  = aonHeaderUserButton.getBoundingClientRect().top;
 				const left = aonHeaderUserButton.getBoundingClientRect().left;
-				let d = document.getElementById('aonHeaderDialogUserOption');
+				let d = this.getElement('aonHeaderDialogUserOption');
 				let options = [{
 					name: 'Configuración',
 					icon: 'settings',
@@ -125,13 +125,13 @@ export class AonMobileHeader extends AonElement {
 
 	timeControlStatus(signin) {
 		this.activeTimecontrol = true;
-		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		let aonUserConnected = this.getElement('aonHeaderUserConnected');
 		if(!aonUserConnected) {
 			aonUserConnected = document.createElement('div');
 			aonUserConnected.id = this.BASE_ID + 'UserConnected';
 			aonUserConnected.className = 'aonConnected';
 
-			let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+			let aonHeaderUserButtonIconButton = this.getElement('aonHeaderUserButtonIconButton');
 			aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
 		}
 
@@ -162,7 +162,7 @@ export class AonMobileHeader extends AonElement {
 
 	aonConfiguration() {
 		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
-		let aonConfiguration = document.getElementById('aon-configuration');
+		let aonConfiguration = this.getElement('aon-configuration');
 		if(this.getAttribute('company')){
 			aonConfiguration.setAttribute('company', this.getAttribute('company'));
 		}
@@ -172,16 +172,17 @@ export class AonMobileHeader extends AonElement {
 	}
 
 	buildLogo() {
-		let aonLogo = document.getElementById('aonMobileLogo');
-
-		if(window.location.href.includes('ayudat')){
+		let aonLogo = this.getElement('aonMobileLogo');
+		const href = window.location.href;       
+		if(href.includes('ayudat')){
 			aonLogo.src = 'assets/ayudat-logo2.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
+		} else if(href.includes('translogia') || href.includes('tedi')){
 			aonLogo.src = 'assets/ayudat-logo3.png';
 		} else {
 			aonLogo.src = 'assets/aon-logo3.svg';
-			aonLogo.style.top = "23px";
-			aonLogo.style.width = "105px";
+			aonLogo.style.top = "21px";
+			aonLogo.style.width = "123px";
+			aonLogo.style.marginLeft = "21px";
 		}
 		aonLogo.addEventListener('click', () => {
 			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
