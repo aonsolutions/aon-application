@@ -1,17 +1,23 @@
 package com.esferalia.aon.gwt.fiscal.client.mod349;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -32,7 +38,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class Model349 extends MainEntryPoint {
-	
+	private static final Logger LOGGER = Logger.getLogger(Model349.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	public static final ProvidesKey<Mod349Detail> MOD349_DETAIL_PROVIDES_KEY = new ProvidesKey<Mod349Detail>() { 
 		 
 		@Override 
@@ -46,24 +56,20 @@ public class Model349 extends MainEntryPoint {
 	private final static int BREAKDOWN_TAB = 1;
 	
 	static Model349ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	interface Model349Binder extends UiBinder<Widget, Model349> {}
 	private static final Model349Binder MODEL_349_BINDER = GWT.create(Model349Binder.class);
 
 	protected static interface IModel349Callback{
-
 		void onAccept(Mod349 mod349);
 		void onCancel();
-		void onSelect(Mod349 mod349, Integer selectedIndex); 
+		void onSelect(Model349ModuleOptions options, Mod349 mod349, Integer selectedIndex); 
 		void showError(String msg);
 		void cleanErrorPanel();
-		void onNew();
+		void onNew(Model349ModuleOptions options);
 		void showBreakdownPanel(String htmlText);
 		void cleanBreakdownPanel();
-		String getDomainName();
-		String getUser();
-		int getDomain();
-		
 	}
 	
 	protected class Model349Callback implements IModel349Callback {
@@ -79,13 +85,13 @@ public class Model349 extends MainEntryPoint {
 		}
 		
 		@Override
-		public void onSelect(Mod349 mod349, Integer selectedIndex) {
-			select(mod349, selectedIndex);
+		public void onSelect(Model349ModuleOptions options,Mod349 mod349, Integer selectedIndex) {
+			select(options,mod349, selectedIndex);
 		} 		
 		
 		@Override
-		public void onNew() {
-			newModel();
+		public void onNew(Model349ModuleOptions options) {
+			newModel(options);
 		}
 		
 		@Override
@@ -107,19 +113,6 @@ public class Model349 extends MainEntryPoint {
 		public void cleanBreakdownPanel() {
 			Model349.this.cleanBreakdownPanel();
 		}
-		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
-		}
-		@Override
-		public String getUser() {
-			return getCurrentUser();
-		}
-		@Override
-		public int getDomain() {
-			return getCurrentDomain();
-		}
-		
 	};
 
 	@UiField
@@ -147,6 +140,27 @@ public class Model349 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model349ModuleOptions options = new Model349ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
+		});
+	}
+	
+	public void onModuleLoad(Model349ModuleOptions options) {
 		AON.ensureInjected();
 
 		Model349ServiceAsync serviceRaw = GWT.create(Model349Service.class);
@@ -154,33 +168,59 @@ public class Model349 extends MainEntryPoint {
 
 		Widget ui = MODEL_349_BINDER.createAndBindUi(this);
 
-		model349Table = new Model349Table(new Model349Callback());
+		model349Table = new Model349Table(options, new Model349Callback());
 		model349Table.addSelectionHandler(new SelectionHandler<Mod349>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod349> event) {
-				onSelectionChange(event);
+				onSelectionChange(options, event);
 			}
 		});
 		
 		declarationContainer.setWidget(model349Table);
-		model349Table.refresh();
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
-
+		options.getParentWidget().add(ui);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model349 with a ID: " + options.getFiscalModelId());
+			onSelect(options,options.getFiscalModelId());
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model349 new Model");
+			newModel(options); 
+		} else {
+			model349Table.refresh();
+			LOGGER.info("Model349 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
 	}
 
-	private void onSelectionChange(SelectionEvent<Mod349> event) {
+	private void onSelect(Model349ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model349 with a ID: " + options.getFiscalModelId());
+		SERVICE.getMod349(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod349>() {
+			@Override
+			public void onSuccess(Mod349 selected) {
+				if (selected == null) {
+					showErrorPanel(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(options, selected, null);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+
+	private void onSelectionChange(Model349ModuleOptions options, SelectionEvent<Mod349> event) {
 		Mod349 sel = event.getSelectedItem();
-		SERVICE.getMod349(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
+		SERVICE.getMod349(options.getDomainName(), options.getUser(), options.getDomain(),
 				sel.getId(), new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 selected) {
 						if (selected == null) {
 							showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
-							select(selected, null);
+							select(options, selected, null);
 						}
 					}
 
@@ -192,33 +232,33 @@ public class Model349 extends MainEntryPoint {
 	}
 	
 
-	private void select(Mod349 selected, Integer selectedIndex) {
+	private void select(Model349ModuleOptions options, Mod349 selected, Integer selectedIndex) {
 		cleanErrorPanel();
 		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model349AEAT(selected,new Model349Callback(),selectedIndex));
+			declarationContainer.setWidget( new Model349AEAT(options, selected,new Model349Callback(),selectedIndex));
 		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model349ARABA(selected,new Model349Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model349ARABA(options, selected,new Model349Callback(),selectedIndex));			
 		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model349BIZKAIA(selected,new Model349Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model349BIZKAIA(options, selected,new Model349Callback(),selectedIndex));			
 		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model349GIPUZKOA(selected,new Model349Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model349GIPUZKOA(options, selected,new Model349Callback(),selectedIndex));			
 		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model349NAVARRA(selected,new Model349Callback(),selectedIndex));			
+			declarationContainer.setWidget( new Model349NAVARRA(options, selected,new Model349Callback(),selectedIndex));			
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
 
-	private void newModel() {
+	private void newModel(Model349ModuleOptions options) {
 		cleanErrorPanel();
-		SERVICE.initializeMod349(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),
+		SERVICE.initializeMod349(options.getDomainName(), options.getUser(), options.getDomain(),
 				new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 m349) {
 						cleanBreakdownPanel();
 						tabLayout.selectTab(BREAKDOWN_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup(m349);
+						showNewDeclarationPopup(options, m349);
 					}
 
 					@Override
@@ -312,7 +352,7 @@ public class Model349 extends MainEntryPoint {
 		breakdownPanel.scrollToTop();
 	}
 	
-	private void showNewDeclarationPopup(Mod349 model) {
+	private void showNewDeclarationPopup(Model349ModuleOptions options, Mod349 model) {
 		NewDeclarationPopup newDialog = new NewDeclarationPopup( model,
 			new Model349Callback() {
 
@@ -326,12 +366,12 @@ public class Model349 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod349(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),model,
+						SERVICE.saveMod349(options.getDomainName(), options.getUser(), options.getDomain(),model,
 								new AsyncCallback<Mod349>() {
 									@Override
 									public void onSuccess(Mod349 model) {
 										popup.hide();
-										select(model,null);
+										select(options, model,null);
 									}
 
 									@Override

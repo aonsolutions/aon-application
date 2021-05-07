@@ -19,7 +19,7 @@ public class Model349Detail extends DockLayoutPanel implements IModel349Detail {
 	}
 	private Model349DetailTable table;
 	
-	public Model349Detail( Model349BaseCallback callback, Integer selectedIndex ) {
+	public Model349Detail(Model349ModuleOptions options, Model349BaseCallback callback, Integer selectedIndex ) {
 		super(Unit.PX);
 		table = new Model349DetailTable(callback, selectedIndex);
 		addWest(table, 300);
@@ -29,7 +29,7 @@ public class Model349Detail extends DockLayoutPanel implements IModel349Detail {
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod349Detail> event) {
-				Model349DetailPanel panel = new Model349DetailPanel( event.getSelectedItem(), new IModel349DetailCallback() {					
+				Model349DetailPanel panel = new Model349DetailPanel( options, event.getSelectedItem(), new IModel349DetailCallback() {					
 					
 					@Override
 					public void onValueChanged(Mod349Detail detail) {

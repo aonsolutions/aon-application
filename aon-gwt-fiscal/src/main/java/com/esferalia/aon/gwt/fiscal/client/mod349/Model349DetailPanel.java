@@ -35,7 +35,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 	}
 	private int tabIndex;
 	
-	public Model349DetailPanel(Mod349Detail detail, IModel349DetailCallback callback, Model349BaseCallback callbackM349) {
+	public Model349DetailPanel(Model349ModuleOptions options, Mod349Detail detail, IModel349DetailCallback callback, Model349BaseCallback callbackM349) {
 		
 		boolean isGipuzkoa = callbackM349.getMod349().isGipuzkoa();
 		boolean isDiffEnabled = callbackM349.getMod349().isDiffEnabled();
@@ -209,7 +209,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model349.SERVICE.getInfo(callbackM349.getDomainName(),callbackM349.getUser(),callbackM349.getDomain(),
+				Model349.SERVICE.getInfo(options.getDomainName(),options.getUser(),options.getDomain(),
 						   callbackM349.getMod349(), detail, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
 
 							@Override
@@ -239,7 +239,7 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				Model349.SERVICE.getInfo(callbackM349.getDomainName(), callbackM349.getUser(), callbackM349.getDomain(),
+				Model349.SERVICE.getInfo(options.getDomainName(), options.getUser(), options.getDomain(),
 						   callbackM349.getMod349(), detail, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
 
 							@Override

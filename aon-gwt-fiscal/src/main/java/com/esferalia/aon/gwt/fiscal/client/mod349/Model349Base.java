@@ -79,8 +79,8 @@ abstract class Model349Base extends DockLayoutPanel {
 			cbk.onCancel();
 		}		
 		@Override
-		public void onSelect(Mod349 mod349, Integer selectedIndex) {
-			cbk.onSelect(mod349, selectedIndex);
+		public void onSelect(Model349ModuleOptions options, Mod349 mod349, Integer selectedIndex) {
+			cbk.onSelect(options, mod349, selectedIndex);
 		}
 		@Override
 		public void showError(String msg) {
@@ -91,8 +91,8 @@ abstract class Model349Base extends DockLayoutPanel {
 			cbk.cleanErrorPanel();
 		}
 		@Override
-		public void onNew() {
-			cbk.onNew();
+		public void onNew(Model349ModuleOptions options) {
+			cbk.onNew(options);
 		}
 		@Override
 		public void showBreakdownPanel(String htmlText) {
@@ -101,18 +101,6 @@ abstract class Model349Base extends DockLayoutPanel {
 		@Override
 		public void cleanBreakdownPanel() {
 			cbk.cleanBreakdownPanel();
-		}
-		@Override
-		public String getDomainName() {
-			return cbk.getDomainName();
-		}
-		@Override
-		public String getUser() {
-			return cbk.getUser();
-		}
-		@Override
-		public int getDomain() {
-			return cbk.getDomain();
 		}
 	}
 	
@@ -145,11 +133,11 @@ abstract class Model349Base extends DockLayoutPanel {
 	
 	private IModel349Detail detailManager; 
 	
-	public Model349Base(Mod349 mod349,Model349Callback cbk) {
+	public Model349Base(Model349ModuleOptions options, Mod349 mod349,Model349Callback cbk) {
 		super(Unit.PX);
-		select( mod349 );
+		select( options, mod349 );
 		
-		addNorth(getToolbarPanel(cbk), 25);
+		addNorth(getToolbarPanel(options, cbk), 25);
 		
 		SimplePanel modelPanel = new SimplePanel();
 		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod349 );
@@ -157,7 +145,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		
 		ScrollPanel headerPanel = new ScrollPanel();
 		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable(cbk));
+		headerPanel.setWidget( getDeclarationHeaderTable(options, cbk));
 		addNorth(headerPanel, 45);
 		
 		this.callback = new Model349BaseCallback(cbk);
@@ -184,13 +172,13 @@ abstract class Model349Base extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 	}
-	protected void select( Mod349 mod349) {
+	protected void select(Model349ModuleOptions options, Mod349 mod349) {
 		setMod349(mod349);
-		refreshToolbarState();
+		refreshToolbarState(options);
 	}
 
 	
-	private Widget getToolbarPanel(Model349Callback cbk) {
+	private Widget getToolbarPanel(Model349ModuleOptions options, Model349Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -221,7 +209,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				callback.onNew();
+				callback.onNew(options);
 			}
 		});
 		buttonContainer.add(newButton);
@@ -245,12 +233,12 @@ abstract class Model349Base extends DockLayoutPanel {
 				popup.setGlassEnabled(true);
 				popup.setAnimationEnabled(true);
 				popup.center();
-				Model349.SERVICE.saveMod349(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(),
+				Model349.SERVICE.saveMod349(options.getDomainName(),options.getUser(),options.getDomain(),
 						getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
 								popup.hide();
-								callback.onSelect(result, detailManager.getSelectedOperatorIndex());
+								callback.onSelect(options, result, detailManager.getSelectedOperatorIndex());
 							}
 
 							@Override
@@ -265,6 +253,9 @@ abstract class Model349Base extends DockLayoutPanel {
 		
 		// Botón Cancelar
 		cancelButton.setText(AON.MSG.cancelAction());
+		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
 		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
@@ -279,7 +270,11 @@ abstract class Model349Base extends DockLayoutPanel {
 
 						@Override
 						public void onAccept() {
-							callback.onCancel();
+							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+								options.getExternalCallback().onExit();
+							} else {
+								callback.onCancel();
+							}
 						}
 
 						@Override
@@ -288,7 +283,11 @@ abstract class Model349Base extends DockLayoutPanel {
 						}
 					});
 				} else {
-					callback.onCancel();
+					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+						options.getExternalCallback().onExit();
+					} else {
+						callback.onCancel();
+					}
 				}
 			}
 		});
@@ -309,7 +308,7 @@ abstract class Model349Base extends DockLayoutPanel {
 
 					@Override
 					public void onAccept() {
-						Model349.SERVICE.deleteMod349(cbk.getDomainName(),cbk.getUser(),cbk.getDomain(), getMod349(), new AsyncCallback<Void>() {
+						Model349.SERVICE.deleteMod349(options.getDomainName(),options.getUser(),options.getDomain(), getMod349(), new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
@@ -343,10 +342,10 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(),getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(),getMod349(), FiscalStatus.FINISHED, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
-						callback.onSelect(result , detailManager.getSelectedOperatorIndex() ); 
+						callback.onSelect(options,result , detailManager.getSelectedOperatorIndex() ); 
 					}
 
 					@Override
@@ -369,10 +368,10 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(), getMod349(), FiscalStatus.SENT, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
-						callback.onSelect(result, detailManager.getSelectedOperatorIndex());
+						callback.onSelect(options,result, detailManager.getSelectedOperatorIndex());
 					}
 
 					@Override
@@ -395,10 +394,10 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				Model349.SERVICE.changeStatusMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
+				Model349.SERVICE.changeStatusMod349(options.getDomainName(),options.getUser(), getMod349(), FiscalStatus.PENDING, new AsyncCallback<Mod349>() {
 					@Override
 					public void onSuccess(Mod349 result) {						
-						callback.onSelect(result, detailManager.getSelectedOperatorIndex());
+						callback.onSelect(options,result, detailManager.getSelectedOperatorIndex());
 					}
 
 					@Override
@@ -439,7 +438,7 @@ abstract class Model349Base extends DockLayoutPanel {
 							
 							@Override
 							public void onAccept() {
-								submitForm(cbk,MODEL349_DRAFT);
+								submitForm(options,MODEL349_DRAFT);
 							}
 			
 							@Override
@@ -448,7 +447,7 @@ abstract class Model349Base extends DockLayoutPanel {
 							}
 						});
 				} else {
-					submitForm(cbk,MODEL349_DRAFT);
+					submitForm(options,MODEL349_DRAFT);
 				}
 			}
 		});
@@ -475,12 +474,12 @@ abstract class Model349Base extends DockLayoutPanel {
 		dialog.show(getMod349());
 	}
 	
-	protected void submitForm(Model349Callback cbk,String action) {
+	protected void submitForm(Model349ModuleOptions options,String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod349Hidden.setValue(String.valueOf(getMod349().getId()));
-		domainIdHidden.setValue(String.valueOf(cbk.getDomain()));
-		domainNameHidden.setValue(cbk.getDomainName());
-		userHidden.setValue(cbk.getUser());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
+		userHidden.setValue(options.getUser());
 		diskForm.submit();
 	}
 	
@@ -542,8 +541,8 @@ abstract class Model349Base extends DockLayoutPanel {
 		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
 	}
 
-	private void refreshToolbarState() {
-		newButton.setVisible(!getMod349().isNew());
+	private void refreshToolbarState(Model349ModuleOptions options) {
+		newButton.setVisible(!getMod349().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod349().isFinished() && !getMod349().isSent());
 		deleteButton.setVisible(!getMod349().isNew() && !getMod349().isFinished() && !getMod349().isSent());
 		cancelButton.setVisible(true);
@@ -725,7 +724,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
 	}
 	
-	private Widget getDeclarationHeaderTable(Model349Callback cbk) {
+	private Widget getDeclarationHeaderTable(Model349ModuleOptions options, Model349Callback cbk) {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -792,7 +791,7 @@ abstract class Model349Base extends DockLayoutPanel {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						getMod349().setComments(event.getValue());
 						styleCommentsButton();
-						Model349.SERVICE.saveCommentsMod349(cbk.getDomainName(),cbk.getUser(), getMod349(), new AsyncCallback<Mod349>() {
+						Model349.SERVICE.saveCommentsMod349(options.getDomainName(),options.getUser(), getMod349(), new AsyncCallback<Mod349>() {
 							@Override
 							public void onSuccess(Mod349 result) {
 								toast.hide();
@@ -866,7 +865,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected FlowPanel getAdministrationPanel(Model349Callback cbk) {
+	protected FlowPanel getAdministrationPanel(Model349ModuleOptions options, Model349Callback cbk) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -905,7 +904,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (getMod349().isFinished() || getMod349().isSent()) {
-					submitForm(cbk,MODEL349_FILE);
+					submitForm(options,MODEL349_FILE);
 				} else {
 					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 				}
@@ -934,7 +933,7 @@ abstract class Model349Base extends DockLayoutPanel {
 				public void onClick(ClickEvent event) {
 					// Servicio de validación y prueba, controlar ejercicio, solo a partir de 2014 (incluido)
 					if (getMod349().getYear() >= 2014) {
-						submitForm(cbk,MODEL349_PRINT);
+						submitForm(options,MODEL349_PRINT);
 					} else {
 						getCallback().showError("Servicio de validaci\u00F3n y prueba no disponible para el ejercicio del modelo.");
 					}
@@ -950,9 +949,9 @@ abstract class Model349Base extends DockLayoutPanel {
 		return panel;
 	}
 
-	protected void paintOperatorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {		
+	protected void paintOperatorsTab(Model349ModuleOptions options, TabLayoutPanel tabPanel, Integer selectedIndex) {		
 		// Evaluar lo diferentes paneles por administraciuon y/o ejercicio.		 
-		detailManager = new Model349Detail( getCallback() , selectedIndex );		
+		detailManager = new Model349Detail( options, getCallback() , selectedIndex );		
 		tabPanel.add( (Widget) detailManager,  TAB_TEMPLATE.render("Relaci\u00F3n de Operaciones", AON.AON_CSS.aonIconInvoice()) ); 
 	}
 

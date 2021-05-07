@@ -16,8 +16,8 @@ public class Model349ARABA extends Model349Base {
 
 	private static final int OPERATORS_TAB = 1;
 	
-	public Model349ARABA(Mod349 mod349,Model349Callback cbk,Integer selectedIndex) {
-		super(mod349, cbk);
+	public Model349ARABA(Model349ModuleOptions options, Mod349 mod349,Model349Callback cbk,Integer selectedIndex) {
+		super(options, mod349, cbk);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -26,16 +26,16 @@ public class Model349ARABA extends Model349Base {
 		add(centerPanel);
 		
 		paintDeclarationTab(tabPanel);
-		paintOperatorsTab(tabPanel, selectedIndex);
-		paintAdministrationTab(cbk,tabPanel);
+		paintOperatorsTab(options, tabPanel, selectedIndex);
+		paintAdministrationTab(options, cbk,tabPanel);
 		
 		tabPanel.selectTab(OPERATORS_TAB, false);	
 		
 	}
 
-	private void paintAdministrationTab(Model349Callback cbk,TabLayoutPanel tabPanel) {
+	private void paintAdministrationTab(Model349ModuleOptions options, Model349Callback cbk,TabLayoutPanel tabPanel) {
 		FlowPanel panel = new FlowPanel();
-		panel.add(getAdministrationPanel(cbk));
+		panel.add(getAdministrationPanel(options, cbk));
 		panel.add(getInformationPanel());
 		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod349().getAdministration())));
 	}
