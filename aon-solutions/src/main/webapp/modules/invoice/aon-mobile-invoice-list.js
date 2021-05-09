@@ -42,7 +42,7 @@ export class AonMobileInvoiceList extends AonElement {
   }
 
   init() {
-    this.getApplication().removeToolbarOptions();
+//    this.getApplication().removeToolbarOptions();
     getInvoices(this.getFilter()).then(invoices => {
       setInvoices(invoices);
       this.innerHTML = '';

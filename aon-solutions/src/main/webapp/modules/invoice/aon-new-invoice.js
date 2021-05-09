@@ -874,6 +874,7 @@ export class AonNewInvoice extends AonElement {
 		}
 		detail.percentage = detail.percentage || detail.vat;
 		if(detail.percentage) vat.value = detail.percentage;
+		
 		// ----- DETAIL OPTIONS
 
 		let detailOptions = new AonIconButton();

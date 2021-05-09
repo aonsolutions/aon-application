@@ -320,6 +320,12 @@ public class FinanceDAO {
 		return invoice;
 	}
 	
+	public static void insertFinances(AONContext ctx, LinkedList<Finance> finances) {
+		for (Finance finance : finances) {
+			insert(ctx, finance);
+		}
+	}
+	
 	
 	// -------------------------------------------------------------
 	// ------ FINANCE --- CALCULO EN FUNCION DE RPAYMETHOD ---------

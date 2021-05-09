@@ -5,6 +5,7 @@ import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 import { AonNewInvoice } from './aon-new-invoice.js';
+import { AonMobileNewInvoice } from './aon-mobile-new-invoice.js';
 
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
@@ -109,10 +110,9 @@ export class AonInvoicePanel extends AonElement {
 
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
-		} else {
-			this.buildToolbarOptions();
 		}
-
+		this.buildToolbarOptions();
+		
 		this.appendChild(input);
 		this.buildSidenavOptions();
 		this.selectOption(this.option);
@@ -121,14 +121,18 @@ export class AonInvoicePanel extends AonElement {
 	buildToolbarOptions(){
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.removeButtons();
-		if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
-			// TODO
-		} else {
-			this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
-			this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+		if(!this.isMobile()) {
+			if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
+				// TODO
+			} else {
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
+				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+			}
 		}
 		this.getApplication().addSearchOption();
-		this.getApplication().addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+		let searchFn = (event) => this.search(event.detail);
+		this.getApplication().removeEventListener(EVENT.SEARCH, searchFn, true);
+		this.getApplication().addEventListener(EVENT.SEARCH, searchFn);
 	}
 
  	buildSidenavOptions() {
@@ -199,8 +203,10 @@ export class AonInvoicePanel extends AonElement {
 		if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
 			this.aonProductList({value});
 		} else {
-			this.filter.description = value;
-			this.aonInvoiceList();
+			if(this.filter.description !== value) {
+				this.filter.description = value;
+				this.aonInvoiceList();
+			}
 		}
 	}
 
@@ -241,6 +247,8 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoice() {
+		let ayudat = localStorage.getItem('aon_domain_name').includes('ayudat');
+
 		let aonInvoice = this.getElement('aonInvoice');
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
 		let button = this.isMobile()
@@ -252,7 +260,7 @@ export class AonInvoicePanel extends AonElement {
 		const left = button.getBoundingClientRect().left;
 
 		if((height - top) < (height / 2)) {
-				top = top - 135;
+				top = top - (ayudat ? 170 : 135);
 		}
 
 		let d = document.getElementById('aonDialogAddOption');
@@ -270,8 +278,7 @@ export class AonInvoicePanel extends AonElement {
 			icon: 'receipt',
 			fn: () => this.aonInvoice('ticket')
 		}];
-
-		if(localStorage.getItem('aon_domain_name').includes('ayudat')) {
+		if(ayudat) {
 			options.push({
 					name: 'Importación Selfconta',
 					icon: 'import_export',
@@ -363,17 +370,17 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoice(type, invoice) {
 		let aonInvoice = this.getApplication();
-		if(this.isMobile()) {
-			aonInvoice.setContentHTML(invoice
-				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
-				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
-		} else if(this.getDur().isAlpha() || type === 'emitida' 
+		if(this.getDur().isAlpha() || type === 'emitida' 
 				|| (invoice && invoice.status === 'pending') 
 				|| (invoice && invoice.status === 'scored')
 				|| (invoice && invoice.status === 'accounting')){
-			let ni = new AonNewInvoice();
+			let ni = this.isMobile() ? new AonMobileNewInvoice() : new AonNewInvoice();
 			ni.setInvoice(invoice);
 			aonInvoice.setContent(ni);
+		} else if(this.isMobile()) {
+			aonInvoice.setContentHTML(invoice
+				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
+				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
 		} else {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice).replaceAll("'", "")}'> </aon-invoice>`

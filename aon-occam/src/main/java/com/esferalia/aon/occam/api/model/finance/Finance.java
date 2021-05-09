@@ -152,7 +152,7 @@ public class Finance implements Serializable, HasAudit {
 		return domain;
 	}
 
-	public Finance setDomain(int domain) {
+	public Finance setDomain(Integer domain) {
 		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain , domain) );
 		this.domain = domain;
 		return this;
@@ -275,6 +275,7 @@ public class Finance implements Serializable, HasAudit {
 	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
+	
 	public String getBankAccountSafeValue() {
 		return bankAccount==null?"":bankAccount.toString();
 	}

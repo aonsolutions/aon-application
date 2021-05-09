@@ -68,8 +68,10 @@ export class AonSearch extends AonElement {
 	}
 
 	build() {
+		
 		let span = this.createElement(TAG.SPAN);
 		span.style.display = 'inline-flex';
+
 		this.appendChild(span);
 		
 		let searchButton = new AonIconButton();
@@ -116,11 +118,27 @@ export class AonSearch extends AonElement {
 
 		searchButton.addEventListener(EVENT.CLICK, () => {
 			if(input.style.display === 'none'){
+				if(this.isMobile()) {
+					this.style.position = 'absolute';
+					this.style.width = '100%';
+					this.style.background = 'white';
+					span.style.width = '100%';
+					advancedButton.style.position = 'absolute';
+					advancedButton.style.right = '0px';		
+				}
 				input.style.display = 'block';
 				advancedButton.style.display = 'block';
 				span.style.borderBottom = '2px solid #002469';
 				input.focus();
 			} else {
+				if(this.isMobile()) {
+					this.style.position = null;
+					this.style.width = null;
+					this.style.background = 'transparent';
+					span.style.width = '100%';
+					advancedButton.style.position = 'absolute';
+					advancedButton.style.right = '0px';		
+				}
 				input.value = '';
 				this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: input.value}));
 				input.style.display = 'none';

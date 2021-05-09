@@ -96,9 +96,9 @@ export class AonHome extends AonElement {
 	showMenu(bool) {
 		if(this.isMobile()) {
 			let rootPanel = this.getElement(this.ROOT_PANEL);
-			rootPanel.style.bottom = bool ? '60px' : '0px';
+			rootPanel.style.bottom = '60px';
 			let aonMobileMenu = this.getElement(this.AON_MOBILE_MENU);
-			if(aonMobileMenu) aonMobileMenu.style.height = bool ? '60px' : '0px';
+			if(aonMobileMenu) aonMobileMenu.style.height = '60px';
 		} else {
 			let aonShowMenu = this.getElement(this.AON_SHOW_MENU);
 			aonShowMenu.style.display = bool ? 'block' : 'none';

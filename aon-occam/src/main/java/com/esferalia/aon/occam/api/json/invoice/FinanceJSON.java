@@ -43,7 +43,8 @@ public class FinanceJSON {
 			.put(IJsonNames.DOMAIN, finance.getDomain())
 			.put(IJsonNames.DUE_DATE, JsonUtils.getDateJSON(finance.getDueDate()))
 			.put(IJsonNames.PAYMETHOD, finance.getPayMethodType().name())
-			.put(IJsonNames.BANK_ACCOUNT, finance.getBankAccount().getIban())
+			.put(IJsonNames.BANK_ACCOUNT, finance.getBankAccount() != null
+				? finance.getBankAccount().getIban() : null)
 			.put(IJsonNames.AMOUNT, finance.getAmount());
 	}
 }

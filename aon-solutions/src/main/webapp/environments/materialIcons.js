@@ -94,6 +94,7 @@ export const DONE = 'done';
 
 // ----- E
 
+export const EDIT = 'edit';
 export const EXTENSION = 'extension';
 
 // ----- F

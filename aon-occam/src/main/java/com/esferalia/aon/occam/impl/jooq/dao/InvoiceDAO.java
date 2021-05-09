@@ -1099,6 +1099,7 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
 		insertDetails(ctx, config, invoice);
+		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		return invoice; 
 	}
 	

@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -21,7 +22,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO.DetailKey;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -253,6 +253,20 @@ public class InvoiceAutoComplete {
 			}
 		});
 	};
+	
+	/**
+	 * Aseguramos el nombre del titular de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_FINANCES = (inv,ctx) -> {
+		inv.getFinances().stream().forEach(finance -> {
+			finance.setDomain(inv.getDomain());
+			finance.setInvoice(inv);
+			finance.setRegistry(inv.getRegistryData());		
+			if(finance.getFinanceStatus() == null) {
+				finance.setFinanceStatus(FinanceStatus.PENDING);
+			}
+		});
+	};
 
 	/**
 	 * Aseguramos el nombre del titular de la factura.
@@ -310,6 +324,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.andThen(COMPLETE_DETAILS)
 		.andThen(COMPLETE_SCOPE)
+		.andThen(COMPLETE_FINANCES)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}
