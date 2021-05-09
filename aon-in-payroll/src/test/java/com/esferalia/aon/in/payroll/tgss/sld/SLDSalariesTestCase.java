@@ -42,7 +42,6 @@ public class SLDSalariesTestCase extends AbstractOccamTest{
 	private static double DELTA = 0.001; 
 
 	@Test
-	@Ignore
 	public void testSaveSalaries() throws IOException, SegSocialException {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/FNMT.p12") ){
 			
