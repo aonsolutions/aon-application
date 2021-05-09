@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.jooq.impl.DSL;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
@@ -41,6 +42,7 @@ public class SLDSalariesTestCase extends AbstractOccamTest{
 	private static double DELTA = 0.001; 
 
 	@Test
+	@Ignore
 	public void testSaveSalaries() throws IOException, SegSocialException {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/FNMT.p12") ){
 			
