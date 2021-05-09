@@ -92,6 +92,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -3255,9 +3256,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 								AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 								AgreementDraft.this.calculate();
 							}else {
-								extra.setIssueDate(event.getValue());
-								AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
-								AgreementDraft.this.calculate();
+								String issueValue = event.getValue();
+								if(matchIssueValue(issueValue)) {
+									issueValue = parseIssueValue(issueValue);
+									extra.setIssueDate(issueValue);
+									AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+									AgreementDraft.this.calculate();
+								} else
+									AgreementDraft.this.calculate();
 							}
 						}
 					});
@@ -3284,52 +3290,58 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					@Override
 					public void onValueChange(ValueChangeEvent<String> event) {
 						Extra newExtra = agreementDraftObject.newDraftExtra();
-						newExtra.setIssueDate(event.getValue());
 						
-						String monthIssueDate = event.getValue().split("/")[1];
-						Integer monthIssue = Integer.parseInt(monthIssueDate);
-						//Check type payPeriod ListBox
-						if(payPeriod.getSelectedIndex() == 0) { // ANUAL
-							if(monthIssue == 12) { //PAGA NAVIDAD
-								newExtra.setStartDate("01/01");
-								newExtra.setEndDate("31/12");
+						String issueValue = event.getValue();
+						if(matchIssueValue(issueValue)) {
+							issueValue = parseIssueValue(issueValue);
+							newExtra.setIssueDate(issueValue);
+							
+							String monthIssueDate = issueValue.split("/")[1];
+							Integer monthIssue = Integer.parseInt(monthIssueDate);
+							//Check type payPeriod ListBox
+							if(payPeriod.getSelectedIndex() == 0) { // ANUAL
+								if(monthIssue == 12) { //PAGA NAVIDAD
+									newExtra.setStartDate("01/01");
+									newExtra.setEndDate("31/12");
+								}
+								if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+									newExtra.setStartDate("01/07 -1");
+									newExtra.setEndDate("30/06");
+								}
+								if(monthIssue == 3) { //PAGA BENEFICIOS
+									newExtra.setStartDate("01/01 -1");
+									newExtra.setEndDate("31/12 -1");
+								}
+							} else { // SEMESTRAL
+								if(monthIssue == 12) { //PAGA NAVIDAD
+									newExtra.setStartDate("01/07");
+									newExtra.setEndDate("31/12");
+								}
+								if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+									newExtra.setStartDate("01/01");
+									newExtra.setEndDate("30/06");
+								}
+								if(monthIssue == 3) { //PAGA BENEFICIOS
+									newExtra.setStartDate("01/01 -1");
+									newExtra.setEndDate("31/12 -1");
+								}
 							}
-							if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-								newExtra.setStartDate("01/07 -1");
-								newExtra.setEndDate("30/06");
+							
+							newExtra.setDomain(payment.getDomain());
+							newExtra.setPaymentId(payment.getId());
+							newExtra.setPaymentDescription(payment.getDescription());
+							newExtra.setAgreementDescription(descriptionTextBox.getValue());
+							
+							if(monthIssue != 3) {
+								payment.setMonth(Short.parseShort((monthIssue -1) + ""));
+								AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 							}
-							if(monthIssue == 3) { //PAGA BENEFICIOS
-								newExtra.setStartDate("01/01 -1");
-								newExtra.setEndDate("31/12 -1");
-							}
-						} else { // SEMESTRAL
-							if(monthIssue == 12) { //PAGA NAVIDAD
-								newExtra.setStartDate("01/07");
-								newExtra.setEndDate("31/12");
-							}
-							if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-								newExtra.setStartDate("01/01");
-								newExtra.setEndDate("30/06");
-							}
-							if(monthIssue == 3) { //PAGA BENEFICIOS
-								newExtra.setStartDate("01/01 -1");
-								newExtra.setEndDate("31/12 -1");
-							}
+							
+							AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
+							AgreementDraft.this.calculate();
 						}
-						
-						newExtra.setDomain(payment.getDomain());
-						newExtra.setPaymentId(payment.getId());
-						newExtra.setPaymentDescription(payment.getDescription());
-						newExtra.setAgreementDescription(descriptionTextBox.getValue());
-						
-						if(monthIssue != 3) {
-							payment.setMonth(Short.parseShort((monthIssue -1) + ""));
-							AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-						}
-						
-						AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
-						AgreementDraft.this.calculate();
 					}
+
 				});
 			}
 			
@@ -3385,6 +3397,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		issueValue.getElement().getParentElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		
 		return descriptionHPanel;
+	}
+	
+	private boolean matchIssueValue(String issueValue) {
+		RegExp issuePattern = RegExp.compile("\\d{2}-*/*\\d{2}");
+		return issuePattern.test(issueValue);
+	}
+	
+	private String parseIssueValue(String issueValue) {
+		issueValue = issueValue.replaceAll("-", "");
+		issueValue = issueValue.replaceAll("/", "");
+		return issueValue.substring(0, 2) + "/" + issueValue.substring(2, 4);
 	}
 
 	private ExtraEditor insertNewExtraRow(int row, SortedSet<Payment> payments) {
