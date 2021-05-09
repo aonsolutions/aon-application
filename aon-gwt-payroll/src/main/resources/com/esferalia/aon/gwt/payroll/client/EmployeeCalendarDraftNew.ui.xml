@@ -422,9 +422,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Febrero</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -442,9 +452,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Abril</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -462,9 +482,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Junio</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -482,9 +512,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Agosto</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -502,9 +542,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Octubre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>
@@ -522,9 +572,19 @@
 								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
+						<g:row styleName="{style.mesesImparesStyle}">
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
+							</g:customCell>
+						</g:row>
 						<g:row>
 							<g:customCell styleName="{style.cabeceraStyle} {style.cursorPointer}">
 								<g:Label>Diciembre</g:Label>
+							</g:customCell>
+						</g:row>
+						<g:row>
+							<g:customCell styleName="{style.cabeceraStyle}">
+								<g:Label></g:Label>
 							</g:customCell>
 						</g:row>
 						<g:row>

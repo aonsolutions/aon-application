@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.CalendarDayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
+import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl.DayHourExtraCompl;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -141,8 +142,16 @@ public class EmployeeCalendarDraftObject {
 		return employeeCalendarInfo.getCalendarHours().getHourByDate(date);
 	}
 	
+	public Double getHourExtraComplByDate(Date date) {
+		return employeeCalendarInfo.getCalendarHoursExtraCompl().getHourByDate(date);
+	}
+	
 	public boolean isCalendarHourIsEmpty() {
 		return employeeCalendarInfo.getCalendarHours().isEmpty();
+	}
+	
+	public boolean isCalendarHourExtraComplIsEmpty() {
+		return employeeCalendarInfo.getCalendarHoursExtraCompl().isEmpty();
 	}
 	
 	public Byte[] getNonWorkingDays() {
@@ -195,5 +204,12 @@ public class EmployeeCalendarDraftObject {
 		this.employeeCalendarInfo.getCalendarHours().getDayHours()[day].addDayHour(dayHour);
 //		Window.alert(this.employeeCalendarInfo.getCalendarHours().getDayHours()[day].toString(dayHour));
 		this.employeeCalendarInfo.getCalendarHours().initMapDaysHour();
+	}
+	
+	public void addDayHourExtraCompl(Date startDate, Date endDate, Double expression) {
+		DayHourExtraCompl dayHourExtraCompl = new DayHourExtraCompl(startDate, endDate, expression);
+		this.employeeCalendarInfo.getCalendarHoursExtraCompl().addDayHourComplementary(dayHourExtraCompl);
+//		Window.alert(this.employeeCalendarInfo.getCalendarHoursExtraCompl().toStringList());
+		this.employeeCalendarInfo.getCalendarHoursExtraCompl().initMapDayHoursComplementary();
 	}
 }

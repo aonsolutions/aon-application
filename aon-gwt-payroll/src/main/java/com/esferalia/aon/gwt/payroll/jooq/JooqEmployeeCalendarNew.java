@@ -13,8 +13,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -28,6 +28,8 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.CalendarDayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
+import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl;
+import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl.DayHourExtraCompl;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -131,6 +133,8 @@ public class JooqEmployeeCalendarNew {
 		HashMap<java.util.Date, String> monthExtraHoursMap = new HashMap<java.util.Date, String>();
 		
 		CalendarHours calendarHours = new CalendarHours();
+		
+		CalendarHoursExtraCompl calendarHoursComplementary = new CalendarHoursExtraCompl();
 		
 		Byte[] nonWorkingDays = new Byte[7];
 		
@@ -270,11 +274,25 @@ public class JooqEmployeeCalendarNew {
 					  .fetch();
 		}
 		
+		List<DayHourExtraCompl> dayHoursComplementary = new ArrayList<DayHourExtraCompl>();
+		
 		for(Record r: monthExtraHoursRecords){
 			java.util.Date startDate = parseDateSqlToUtil(r.get(CONTRACT_DATA.START_DATE));
+			java.util.Date endDate = parseDateSqlToUtil(r.get(CONTRACT_DATA.END_DATE));
+			Double expression = null;
+			try {
+				expression = Double.parseDouble( r.get(CONTRACT_DATA.EXPRESSION));
+			} catch (Exception e) {
+				expression = null;
+			}
 			
-			monthExtraHoursMap.put(startDate, r.get(CONTRACT_DATA.EXPRESSION));
+			dayHoursComplementary.add(new DayHourExtraCompl(startDate, endDate, expression));
+			
+			//TODO: esto si o no hace falta?
+//			calendarHoursComplementary.addDayHourComplementary(new DayHourExtraCompl(startDate, endDate, expression));
 		}
+		
+		calendarHoursComplementary.setDayHoursComplementary(dayHoursComplementary);
 		
 		// ----------------------------------- FESTIVE DAYS AND HOURS BY CALENDAR
 		
@@ -582,6 +600,7 @@ public class JooqEmployeeCalendarNew {
 		employeeCalendarInfo.setContractEndDate(contractEndDate);
 		
 		calendarHours.initMapDaysHour();
+		calendarHoursComplementary.initMapDayHoursComplementary();
 		calendarDaysType.initMapDaysDayType();
 		partialityDaysType.initMapDaysDayType();
 		
@@ -589,6 +608,9 @@ public class JooqEmployeeCalendarNew {
 		
 		calendarHours.setContractStartDate(contractStartDate);
 		calendarHours.setContractEndDate(contractEndDate);
+		
+		calendarHoursComplementary.setContractStartDate(contractStartDate);
+		calendarHoursComplementary.setContractEndDate(contractEndDate);
 		
 		calendarDaysType.setContractStartDate(contractStartDate);
 		calendarDaysType.setContractEndDate(contractEndDate);
@@ -600,6 +622,7 @@ public class JooqEmployeeCalendarNew {
 			.setFullTimeJourney(fullTimeJourney)
 			.setAgrarianContract(agrarianContract)
 			.setCalendarHours(calendarHours)
+			.setCalendarHoursComplementary(calendarHoursComplementary)
 			.setMonthExtraHoursMap(monthExtraHoursMap)
 			.setNonWorkingDays(nonWorkingDays)
 			.setFestiveDaysMap(festiveDaysMap)
@@ -619,6 +642,8 @@ public class JooqEmployeeCalendarNew {
 		HashMap<java.util.Date, String> monthExtraHoursMap = employeeCalendarInfo.getMonthExtraHoursMap();
 		
 		CalendarHours calendarHours = employeeCalendarInfo.getCalendarHours();
+		
+		CalendarHoursExtraCompl calendarHoursComplementary = employeeCalendarInfo.getCalendarHoursExtraCompl();
 		
 		Byte[] nonWorkingDays = employeeCalendarInfo.getNonWorkingDays();
 		
@@ -647,33 +672,24 @@ public class JooqEmployeeCalendarNew {
 					ContextVariable.ADDITIONAL_HOURS.getName()))
 			.execute();
 		
-		for(Entry<java.util.Date, String> entry : monthExtraHoursMap.entrySet()) {
-			String expression = entry.getValue();
+		for(DayHourExtraCompl dayHourComplementary : calendarHoursComplementary.getComplementaryHours()) {
+			Double expression = dayHourComplementary.getValue();
+			Date startDate = parseDateUtilToSql(dayHourComplementary.getStartDate());
+			Date endDate = parseDateUtilToSql(dayHourComplementary.getEndDate());
 			
-			if(null != expression && !AonStringUtils.isEmpty(expression)) {
-				Date startDate = parseDateUtilToSql(entry.getKey());
-				Date endDate = parseDateUtilToSql(DateUtils.getLastDayOfMonth(entry.getKey()));
+			if(null != expression) {
+				String variableName = ContextVariable.ADDITIONAL_HOURS.getName();
+				if(fullTimeJourney) variableName =  ContextVariable.EXTRA_HOURS.getName();
 				
-				if(fullTimeJourney)
-					dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domain)
-						.set(CONTRACT_DATA.CONTRACT, contract)
-						.set(CONTRACT_DATA.NAME, ContextVariable.EXTRA_HOURS.getName())
-						.set(CONTRACT_DATA.EXPRESSION, expression)
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.execute();
-				else
-					dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domain)
-						.set(CONTRACT_DATA.CONTRACT, contract)
-						.set(CONTRACT_DATA.NAME, ContextVariable.ADDITIONAL_HOURS.getName())
-						.set(CONTRACT_DATA.EXPRESSION, expression)
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.execute();
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.CONTRACT, contract)
+					.set(CONTRACT_DATA.NAME, variableName)
+					.set(CONTRACT_DATA.EXPRESSION, expression.toString())
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.execute();
 			}
-			
 		}
 		
 		// ----------------------------------- MODIFY NON WORKING DAYS

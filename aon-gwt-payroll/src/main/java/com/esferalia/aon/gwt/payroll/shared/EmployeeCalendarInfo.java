@@ -25,6 +25,8 @@ public class EmployeeCalendarInfo implements Serializable {
 	
 	CalendarHours calendarHours;
 	
+	CalendarHoursExtraCompl calendarHoursComplementary;
+	
 	CalendarDaysType calendarDaysType;
 	
 	CalendarDaysType partialityDaysType;
@@ -90,9 +92,18 @@ public class EmployeeCalendarInfo implements Serializable {
 	public CalendarHours getCalendarHours() {
 		return calendarHours;
 	}
+	
+	public CalendarHoursExtraCompl getCalendarHoursExtraCompl() {
+		return calendarHoursComplementary;
+	}
 
 	public EmployeeCalendarInfo setCalendarHours(CalendarHours calendarHours) {
 		this.calendarHours = calendarHours;
+		return this;
+	}
+	
+	public EmployeeCalendarInfo setCalendarHoursComplementary(CalendarHoursExtraCompl calendarHoursComplementary) {
+		this.calendarHoursComplementary = calendarHoursComplementary;
 		return this;
 	}
 
