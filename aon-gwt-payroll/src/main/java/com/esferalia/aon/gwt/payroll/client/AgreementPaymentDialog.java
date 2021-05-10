@@ -596,7 +596,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	
 	private Payment getPayment(String suggestionPaymentString) {
 		for (Payment payment : availablePaymens) {
-			if (AonStringUtils.equalsIgnoreCase(suggestionPaymentString, getSuggestionString(payment)))
+			if (AonStringUtils.containsIgnoreCase(getSuggestionString(payment), suggestionPaymentString))
 				return payment;
 		}
 		return null;
