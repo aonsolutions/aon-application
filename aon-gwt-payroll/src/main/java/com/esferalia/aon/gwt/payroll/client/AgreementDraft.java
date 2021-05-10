@@ -3259,11 +3259,56 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 								String issueValue = event.getValue();
 								if(matchIssueValue(issueValue)) {
 									issueValue = parseIssueValue(issueValue);
-									extra.setIssueDate(issueValue);
-									AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
-									AgreementDraft.this.calculate();
-								} else
-									AgreementDraft.this.calculate();
+									if(null == issueValue) {
+										AgreementDraft.this.calculate();
+									} else {
+											
+										extra.setIssueDate(issueValue);
+										
+										String monthIssueDate = issueValue.split("/")[1];
+										Integer monthIssue = Integer.parseInt(monthIssueDate);
+										//Check type payPeriod ListBox
+										if(payPeriod.getSelectedIndex() == 0) { // ANUAL
+											if(monthIssue == 12) { //PAGA NAVIDAD
+												extra.setStartDate("01/01");
+												extra.setEndDate("31/12");
+											}
+											if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+												extra.setStartDate("01/07 -1");
+												extra.setEndDate("30/06");
+											}
+											if(monthIssue == 3) { //PAGA BENEFICIOS
+												extra.setStartDate("01/01 -1");
+												extra.setEndDate("31/12 -1");
+											}
+										} else { // SEMESTRAL
+											if(monthIssue == 12) { //PAGA NAVIDAD
+												extra.setStartDate("01/07");
+												extra.setEndDate("31/12");
+											}
+											if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+												extra.setStartDate("01/01");
+												extra.setEndDate("30/06");
+											}
+											if(monthIssue == 3) { //PAGA BENEFICIOS
+												extra.setStartDate("01/01 -1");
+												extra.setEndDate("31/12 -1");
+											}
+										}
+										
+										if(monthIssue != 3) {
+											payment.setMonth(Short.parseShort((monthIssue -1) + ""));
+											AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+										}
+										
+										AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+										AgreementDraft.this.calculate();
+									}
+										
+//									extra.setIssueDate(issueValue);
+//									AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+//									AgreementDraft.this.calculate();
+								}
 							}
 						}
 					});
@@ -3294,51 +3339,57 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						String issueValue = event.getValue();
 						if(matchIssueValue(issueValue)) {
 							issueValue = parseIssueValue(issueValue);
-							newExtra.setIssueDate(issueValue);
 							
-							String monthIssueDate = issueValue.split("/")[1];
-							Integer monthIssue = Integer.parseInt(monthIssueDate);
-							//Check type payPeriod ListBox
-							if(payPeriod.getSelectedIndex() == 0) { // ANUAL
-								if(monthIssue == 12) { //PAGA NAVIDAD
-									newExtra.setStartDate("01/01");
-									newExtra.setEndDate("31/12");
+							if(null == issueValue) {
+								AgreementDraft.this.calculate();
+							} else {
+								
+								newExtra.setIssueDate(issueValue);
+								
+								String monthIssueDate = issueValue.split("/")[1];
+								Integer monthIssue = Integer.parseInt(monthIssueDate);
+								//Check type payPeriod ListBox
+								if(payPeriod.getSelectedIndex() == 0) { // ANUAL
+									if(monthIssue == 12) { //PAGA NAVIDAD
+										newExtra.setStartDate("01/01");
+										newExtra.setEndDate("31/12");
+									}
+									if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+										newExtra.setStartDate("01/07 -1");
+										newExtra.setEndDate("30/06");
+									}
+									if(monthIssue == 3) { //PAGA BENEFICIOS
+										newExtra.setStartDate("01/01 -1");
+										newExtra.setEndDate("31/12 -1");
+									}
+								} else { // SEMESTRAL
+									if(monthIssue == 12) { //PAGA NAVIDAD
+										newExtra.setStartDate("01/07");
+										newExtra.setEndDate("31/12");
+									}
+									if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
+										newExtra.setStartDate("01/01");
+										newExtra.setEndDate("30/06");
+									}
+									if(monthIssue == 3) { //PAGA BENEFICIOS
+										newExtra.setStartDate("01/01 -1");
+										newExtra.setEndDate("31/12 -1");
+									}
 								}
-								if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-									newExtra.setStartDate("01/07 -1");
-									newExtra.setEndDate("30/06");
+								
+								newExtra.setDomain(payment.getDomain());
+								newExtra.setPaymentId(payment.getId());
+								newExtra.setPaymentDescription(payment.getDescription());
+								newExtra.setAgreementDescription(descriptionTextBox.getValue());
+								
+								if(monthIssue != 3) {
+									payment.setMonth(Short.parseShort((monthIssue -1) + ""));
+									AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 								}
-								if(monthIssue == 3) { //PAGA BENEFICIOS
-									newExtra.setStartDate("01/01 -1");
-									newExtra.setEndDate("31/12 -1");
-								}
-							} else { // SEMESTRAL
-								if(monthIssue == 12) { //PAGA NAVIDAD
-									newExtra.setStartDate("01/07");
-									newExtra.setEndDate("31/12");
-								}
-								if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-									newExtra.setStartDate("01/01");
-									newExtra.setEndDate("30/06");
-								}
-								if(monthIssue == 3) { //PAGA BENEFICIOS
-									newExtra.setStartDate("01/01 -1");
-									newExtra.setEndDate("31/12 -1");
-								}
+								
+								AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
+								AgreementDraft.this.calculate();
 							}
-							
-							newExtra.setDomain(payment.getDomain());
-							newExtra.setPaymentId(payment.getId());
-							newExtra.setPaymentDescription(payment.getDescription());
-							newExtra.setAgreementDescription(descriptionTextBox.getValue());
-							
-							if(monthIssue != 3) {
-								payment.setMonth(Short.parseShort((monthIssue -1) + ""));
-								AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-							}
-							
-							AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
-							AgreementDraft.this.calculate();
 						}
 					}
 
@@ -3407,7 +3458,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private String parseIssueValue(String issueValue) {
 		issueValue = issueValue.replaceAll("-", "");
 		issueValue = issueValue.replaceAll("/", "");
-		return issueValue.substring(0, 2) + "/" + issueValue.substring(2, 4);
+		
+		if(isRealDate(issueValue))
+			return issueValue.substring(0, 2) + "/" + issueValue.substring(2, 4);
+		else
+			return null;
+	}
+
+	private boolean isRealDate(String issueValue) {
+		Integer dayOfMonth = Integer.parseInt(issueValue.substring(0, 2));
+		Integer month = Integer.parseInt(issueValue.substring(2, 4)) - 1;
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(new Date(new Date().getYear(), month, 1));
+		try {
+			Date date = new Date(new Date().getYear(), month, dayOfMonth);
+			if(lastDayOfMonth.getDate() == date.getDate())
+				return true;
+			else 
+				return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private ExtraEditor insertNewExtraRow(int row, SortedSet<Payment> payments) {
