@@ -41,8 +41,6 @@ public abstract class AonExpandButton extends Composite {
 	
 	private void createExpandButton(String toolTip, String iconStyle) {
 		innerButton = new AonToolbarButton(toolTip, iconStyle);
-		innerButton.removeStyleName(AON.CSS.aonButton());
-		innerButton.removeStyleName(AON.CSS.aonToolbarButton());
 		innerButton.addStyleName(AON.CSS.aonExpandButton());
 		innerButton.addStyleName(style.innerButton());
 		innerButton.addClickHandler(e -> {

@@ -892,13 +892,6 @@
 	background-color: inherit;
 	padding-left: 10px;
 }
-
-.aon_expand_panel:hover, .aon_button:focus{
- 	background-color: #EEE;
-}
-.aon_expand_panel:disabled {
-	opacity: 0.2;
-}
 .aon_expand_button {
 	flex-shrink: 0;
 	-webkit-border-radius: none;
