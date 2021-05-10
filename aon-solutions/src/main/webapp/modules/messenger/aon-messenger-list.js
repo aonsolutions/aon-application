@@ -80,8 +80,7 @@ export class AonMessengerList extends AonElement {
 
   buildToolbarMobile(){
     this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
-      const chat = new AonMessengerChat();
-      this.applicationEl.setContent(chat);
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     });
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
   }
