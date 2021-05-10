@@ -153,11 +153,9 @@ public class DraftPayrollBuilder {
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
 				deductions.stream().filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
-					System.out.println("(DraftPayrollBuilder :: 155) " + d.getDescription() + " : " + d.getAmount() + " : INDEDUCTION " + d.getName());
-					
+				
 					try {
 						String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
-						System.out.println("(DraftPayrollBulder :: 159) " + desc);
 						percent = Double.parseDouble(desc);
 					} catch (NumberFormatException ignored) {}
 					
@@ -256,9 +254,6 @@ public class DraftPayrollBuilder {
 				cbb.setIrpfEsp(Optional.ofNullable(salary.getInKindIrpfBase()));
 				cbb.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 				
-				
-				
-				
 				Double common_cont_ap_enterprise = 0d;
 				Double at_ep_ap_enterprise = 0d;
 				Double unemployment_ap_enterprise = 0d;
@@ -267,32 +262,41 @@ public class DraftPayrollBuilder {
 				Double force_majeure_ap_enterprise = 0d;
 				Double no_struct_ap_enterprise = 0d;
 				
+				double atEp[] = new double[] {-1,-1};
+				
 				for (IDeduction c : costs) {
 					
 					Double percentD = null;
+					System.out.println(c.getName() + " : " + c.getDescription());
+					
 					try {
-						percentD = Double.parseDouble(c.getDescription().replaceAll("\\s", "").replaceAll("%", ""));
+						percentD = Double.parseDouble(c.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1"));
 					} catch (NumberFormatException e) {}
 					
 					Optional<Double> percent = Optional.ofNullable(percentD);
-					
-					if (c.getType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal()) {
+					 
+					if (c.getName().equals("CGC_E")) {
 						common_cont_ap_enterprise += c.getAmount();
 						cbb.setCommonContType(percent);
 					}
-					else if (c.getType().ordinal() == DeductionType.PROFESSIONAL_CONTINGENCY.ordinal()) {
+					else if (c.getName().equals("IMS_E")) {
 						at_ep_ap_enterprise += c.getAmount();
-						cbb.setAtEpType(percent);
+						atEp[0] = percentD; 
+						
 					}
-					else if (c.getType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal()) {
+					else if(c.getName().equals("IT_E")) {
+						at_ep_ap_enterprise += c.getAmount();
+						atEp[1] = percentD;					
+					}
+					else if (c.getName().equals("DESMPL_E")) {
 						unemployment_ap_enterprise += c.getAmount();
 						cbb.setUnemploymentType(percent);
 					}
-					else if (c.getType().ordinal() == DeductionType.JOB_TRAINING.ordinal()) {
+					else if (c.getName().equals("FP_E")) {
 						profes_form_ap_enterprise += c.getAmount();
 						cbb.setProfesFormType(percent);
 					}
-					else if (c.getType().ordinal() == DeductionType.FOGASA.ordinal()) {
+					else if (c.getName().equals("FOGASA_E")) {
 						fogasa_ap_enterprise += c.getAmount();
 						cbb.setFogasaType(percent);
 					}
@@ -306,6 +310,9 @@ public class DraftPayrollBuilder {
 					}
 					
 				}
+				
+				if(atEp[0] != -1 || atEp[1] != -1)
+					cbb.setAtEpType(Optional.ofNullable(atEp[0] + atEp[1] == -2 ? -1 : atEp[0] + atEp[1]));
 				
 				cbb.setCommonContApEnterprise(Optional.ofNullable(common_cont_ap_enterprise));
 				cbb.setAtEpApEnterprise(Optional.ofNullable(at_ep_ap_enterprise));
