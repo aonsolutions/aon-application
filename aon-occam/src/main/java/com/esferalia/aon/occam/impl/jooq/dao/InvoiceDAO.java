@@ -1012,6 +1012,7 @@ public class InvoiceDAO {
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		invoice = insert(ctx, aonCtx, invoice);
+		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		if(rawdocId != null) 
 			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);
 		return invoice;
@@ -1099,7 +1100,6 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
 		insertDetails(ctx, config, invoice);
-		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		return invoice; 
 	}
 	
