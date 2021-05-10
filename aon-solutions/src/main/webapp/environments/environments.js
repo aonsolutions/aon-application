@@ -1,5 +1,6 @@
 
 export const API_URL = "ms/api";
+export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
 import * as MSG from './msg.js';
 import * as EVENT from './aonEvent.js';

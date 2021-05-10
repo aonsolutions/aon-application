@@ -113,8 +113,8 @@ export class AonMobileList extends AonElement {
   }
 
   removeAllLi() {
-    let url = this.getElement(this.id + "UL");
-    if (url) url.innerHTML = "";
+    let ul = this.getElement(this.UL);
+    if (ul) ul.innerHTML = "";
   }
 
   createAonDialog() {

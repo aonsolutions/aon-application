@@ -2,10 +2,11 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, getTags, updateFile,
+import { deleteFile, getCategories, getScopes, updateFile,
   getDomainUserRoles, openFileUrl } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-
+import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import * as ACTION from '../actions.js';
 import { AonSelect } from '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
 import '../../components/aon-date.js';
@@ -14,8 +15,6 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import { MSG } from '../../environments/environments.js';
-import * as ACTION from '../actions.js';
 
 export class AonDocument extends AonElement {
 
@@ -96,14 +95,14 @@ export class AonDocument extends AonElement {
   buildData() {
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
-		let table = document.createElement('table');
+		let table = this.createElement(TAG.TABLE);
 		table.style.width = '100%';
 		card.setContent(table);
 
-    let tr = document.createElement('tr');
+    let tr = this.createElement(TAG.TR);
     table.appendChild(tr);
 
-    let tdDate = document.createElement('td');
+    let tdDate = this.createElement(TAG.TD);
     tdDate.setAttribute('colspan', '1');
 		tdDate.innerHTML = `<aon-date id="date" title="${MSG.DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
@@ -115,19 +114,19 @@ export class AonDocument extends AonElement {
       let d = this.document.date.split('/');
       date.setDate(new Date(d[2], d[1] - 1, d[0]));
     }
-    let tdConfidential = document.createElement('td');
+    let tdConfidential = this.createElement(TAG.TD);
     tdConfidential.setAttribute('colspan', '1');
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.CONFIDENTIAL}"></aon-switch>`;
     tr.appendChild(tdConfidential);
     let confidential = this.getElement('confidential');
     confidential.disabled = !this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal();
     confidential.checked = this.document.confidential;
-    confidential.addEventListener('change', () => this.updateConfidential(confidential.checked));
+    confidential.addEventListener(EVENT.CHANGE, () => this.updateConfidential(confidential.checked));
 
-    let tr2 = document.createElement('tr');
+    let tr2 = this.createElement(TAG.TR);
     table.appendChild(tr2);
 
-    let tdName = document.createElement('td');
+    let tdName = this.createElement(TAG.TD);
     tdName.setAttribute('colspan', '2');
 		tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
 		tr2.appendChild(tdName);
@@ -136,13 +135,13 @@ export class AonDocument extends AonElement {
       name.readonly = 'true';
     }
     name.value = this.document.title;
-		name.addEventListener('change', () => this.updateName(name.value));
+		name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
 
-    let tr3 = document.createElement('tr');
+    let tr3 = this.createElement(TAG.TR);
     table.appendChild(tr3);
 
     // CATEGORY
-    let tdCategory = document.createElement('td');
+    let tdCategory = this.createElement(TAG.TD);
     tdCategory.setAttribute('colspan', '1');
     let categorySelect = new AonSelect();
     categorySelect.id = 'category';
@@ -161,11 +160,11 @@ export class AonDocument extends AonElement {
       }));
       if(this.document.category)
         categorySelect.value = this.document.category.id;
-      categorySelect.addEventListener('select', () => this.updateCategory(categorySelect.value));
+      categorySelect.addEventListener(EVENT.SELECT, () => this.updateCategory(categorySelect.value));
     });
 
     // SCOPE
-    let tdScope = document.createElement('td');
+    let tdScope = this.createElement(TAG.TD);
     tdScope.setAttribute('colspan', '1');
     let scopeSelect = new AonSelect();
     scopeSelect.id = 'scope';
@@ -185,14 +184,14 @@ export class AonDocument extends AonElement {
 
       if(this.document.scope)
         scopeSelect.value = this.document.scope.id;
-      scopeSelect.addEventListener('select', () => this.updateScope(scopeSelect.value));
+      scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
     });
 
-    let tr4 = document.createElement('tr');
+    let tr4 = this.createElement(TAG.TR);
     table.appendChild(tr4);
 
     // TAG
-    let tdTag = document.createElement('td');
+    let tdTag = this.createElement(TAG.TD);
     tdTag.setAttribute('colspan', '1');
 
     let tagSelect = new AonSelect();
@@ -203,20 +202,13 @@ export class AonDocument extends AonElement {
     }
     tdTag.appendChild(tagSelect);
     tr4.appendChild(tdTag);
-    getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
-      tagSelect.setOptions(tags.map(c => {
-        return {
-          value: c.id,
-          name: c.name
-        }
-      }));
-      tagSelect.addEventListener('select', (event) => {
-        this.addTag(event.detail);
-        tag.value = '';
-      });
+    tagSelect.addEventListener(EVENT.SELECT, (event) => {
+      this.addTag(event.detail);
+      this.setTagsAvaible();
+      tagSelect.clear();
     });
 
-    let tdType = document.createElement('td');
+    let tdType = this.createElement(TAG.TD);
     tdType.setAttribute('colspan', '1');
 
     let typeSelect = new AonSelect();
@@ -230,66 +222,69 @@ export class AonDocument extends AonElement {
       typeOptions = ASESOR_TYPE_OPTION;
     } else if(this._roles.isDocumentalPortal()){
       typeOptions = ENTERPRISE_TYPE_OPTION;
-    };
+    }
     typeSelect.setOptions(typeOptions);
     tdType.appendChild(typeSelect);
     tr4.appendChild(tdType);
     typeSelect.value = this.document.type;
-    typeSelect.addEventListener('select', () => this.updateType(typeSelect.value));
+    typeSelect.addEventListener(EVENT.SELECT, () => this.updateType(typeSelect.value));
 
-    let tr5 = document.createElement('tr');
+    let tr5 = this.createElement(TAG.TR);
     table.appendChild(tr5);
 
-    let tdTags = document.createElement('td');
-    tdTags.setAttribute('colspan', '2');
-    tdTags.innerHTML = `<table>
-      <tr id='tags'>
 
-      </tr>
-    </table>`;
-    tr5.appendChild(tdTags);
-    this.document.tags.forEach((item, i) => {
+    let containerTags = this.createElement(TAG.DIV);
+    containerTags.style.display = "flex";
+    containerTags.style.flexWrap = "wrap";
+    containerTags.id = "containerTags";
+    card.setContent(containerTags);
+    this.document.tags.forEach((item) => {
       this.addTag(item);
     });
+    //set tags avaibles
+    this.setTagsAvaible();
   }
 
   addTag(tag){
+    let containerTags = this.getElement("containerTags");
     let t = {
       id: tag.id || tag.value,
       name: tag.name
     }
-    let bool = true;
-    this._tags.forEach((item, i) => {
-      if(t.id === item.id || t.id === item.value) {
-        bool = false;
-      }
-    });
-
-    if(bool) {
-      this._tags.push(tag);
-      let td = this.createElement('td');
-      td.id = 'tag' + t.id;
-      td.innerHTML = `
-        <span style="background-color: #eee;padding:3px;"> ${tag.name}</span>
-        <i id='closeTag${t.id}'class="material-icons" style="font-size:1rem;cursor: pointer;">close</i>
-      `;
-      this.getElement('tags').appendChild(td);
-      this.getElement('closeTag' + t.id).addEventListener('click', () => {
-        this._tags.forEach((item, i) => {
-          if(t.id === item.id || t.id === item.value) {
-        		this._tags.splice(i, 1);
-            this.getElement('tag' + t.id).remove();
-            this.save();
-          }
-        });
+    this._tags.push(tag);
+    let divTag = this.createElement(TAG.DIV);
+    divTag.id = 'tag' + t.id;
+    divTag.innerHTML = `
+      <span style="background-color: #eee;padding:3px;"> ${tag.name}</span>
+      <i id='closeTag${t.id}'class="material-icons" style="font-size:1rem;cursor: pointer;">close</i>
+    `;
+    containerTags.appendChild(divTag);
+    this.getElement('closeTag' + t.id).addEventListener(EVENT.CLICK, () => {
+      this._tags.forEach((item, i) => {
+        if(t.id === item.id || t.id === item.value) {
+          this._tags.splice(i, 1);
+          this.getElement('tag' + t.id).remove();
+          this.setTagsAvaible();
+          this.save();
+        }
       });
-      this.save();
-    }
-
+    });
+    this.save();
   }
 
+  setTagsAvaible(){
+    const tagSelect = this.getElement("tag");
+    if(tagSelect){
+      const applicationParent = this.getApplication().getParent();
+      const tags = applicationParent._tags ? applicationParent._tags : [];
+      const newTags = tags.filter(({name}) => !this._tags.some(it=> it.name.includes(name)));
+      tagSelect.setOptions(newTags);
+    }
+  }
+
+
   buildDocumentToolbar() {
-    let aonDocumental = this.getApplication();
+    // let aonDocumental = this.getApplication();
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
@@ -309,8 +304,6 @@ export class AonDocument extends AonElement {
 
   back() {
     let aonDocumental = this.getApplication();
-    //let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
-    //aonDocumentalToolbar.removeButtons();
     aonDocumental.getParent().aonDocumentalList();
   }
 

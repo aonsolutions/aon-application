@@ -13,6 +13,8 @@ export const TABLE = 'table';
 export const TH = 'th';
 export const TR = 'tr';
 export const TD = 'td';
+export const CANVAS = 'canvas';
+
 
 // COMPONENTS
 

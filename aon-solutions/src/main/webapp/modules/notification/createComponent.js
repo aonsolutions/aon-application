@@ -84,7 +84,6 @@ export const createButtonClose = () => newComponent({
   },
 });
 
-
 export const createSpanFloat = () => createSpan({
   id: "aonNotificationFloatSpan",
   styles:{

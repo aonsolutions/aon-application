@@ -8,18 +8,17 @@ import {
   getDomainUserRoles,
   closeSession
 } from "../services/service.js";
-
+import { AonDocumentalAyudat } from "./documental/ayudat/aon-documental-ayudat.js";
+import { AonDocumental } from "./documental/aon-documental.js";
 import { EVENT, MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
    PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
 
-import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import "./laboral/aon-laboral.js";
 import "./fiscal/aon-fiscal.js";
 import "./messenger/aon-messenger.js";
-
 
 export class AonMobileMenu extends AonElement {
 
@@ -244,7 +243,10 @@ export class AonMobileMenu extends AonElement {
       return {
         name: app.title,
         icon: MATERIAL_ICONS.FOLDER,
-        fn: () => rootPanel("<aon-documental></aon-documental>")
+        fn: () => {
+          const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
+				  this.rootPanel(aonDocumental);
+        }
       };
     else if(COMUNICA.app === app.app)
       return {

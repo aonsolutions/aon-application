@@ -1,25 +1,22 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
-import {bidoq} from  '../../services/bidoq.js';
+import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-
 import { MSG } from '../../environments/environments.js';
+import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
+import { AonDocumental } from '../documental/aon-documental.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
-
 import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
-import '../documental/aon-documental.js';
 import '../laboral/aon-laboral.js';
 import '../messenger/aon-messenger.js';
 import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
-
-
 
 export class AonDesktop extends AonElement {
 
@@ -145,7 +142,7 @@ export class AonDesktop extends AonElement {
 				name: 'Bidoq',
 				img: 'assets/apps/bidoq.png',
 				fn: () =>{
-					bidoq().then(r => {
+					getAccessBidoq().then(r => {
 						let data = JSON.parse(r);
 						if(data && data.datos && data.datos.ruta) {
 							open(data.datos.respuesta);
@@ -276,7 +273,8 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
-				rootPanel('<aon-documental></aon-documental>')
+				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
+				this.rootPanel(aonDocumental);
 				break;
 			case Apps.ACCOUNTING.app:
 				rootPanel('<aon-accounting></aon-accounting>');
@@ -303,7 +301,7 @@ export class AonDesktop extends AonElement {
 	}
 
 	development(title) {
-		let aonApplication = document.querySelector('aon-application');
+		let aonApplication = this.getApplication();
 		let d = document.getElementById(aonApplication.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';

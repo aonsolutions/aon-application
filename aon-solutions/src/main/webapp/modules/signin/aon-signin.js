@@ -45,7 +45,7 @@ export class AonSignin extends AonElement {
     return this.dur;
   }
 
-  async build() {
+  build() {
     this.filterInit();
     this.paintView();
     this.buildToolbar();

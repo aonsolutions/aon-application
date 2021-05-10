@@ -126,6 +126,10 @@ export class AonCard extends AonElement {
 	}
 
 
+	getCardTitle2(){
+		return this.getElement(this.TITLE_SECTION2);
+	}
+
 	setContent(el) {
 		this.getElement(this.CONTENT).appendChild(el);
 	}

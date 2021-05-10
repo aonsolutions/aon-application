@@ -486,11 +486,13 @@ export class AonApplication extends AonElement {
   }
 
   removeToolbarOption(option) {
-    this.getElement(this.TOOLBAR).removeButton(option.id);
+    let toolbar = this.getElement(this.TOOLBAR);
+    if(toolbar) toolbar.removeButton(option.id);
   }
 
   removeToolbarOptions() {
-    this.getElement(this.TOOLBAR).removeButtons();
+    let toolbar = this.getElement(this.TOOLBAR);
+    if(toolbar) toolbar.removeButtons();
   }
 
   setContent(element) {

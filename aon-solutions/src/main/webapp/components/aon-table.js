@@ -47,21 +47,8 @@ export class AonTable extends AonElement {
 				</table>
 			`;
 
-    if (this.hasAttribute("selectable")) {
-      let header = this.getElement(this.getId() + "TableHeader");
-      let th = document.createElement("th");
-      th.style.width = "5%";
-      th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
-      header.appendChild(th);
-      let ch = this.getElement("aonTableAllSelection");
-      ch.addEventListener("change", () => {
-        document.querySelectorAll("aon-checkbox").forEach((item, i) => {
-          if (item.value != ch.value) {
-            let it = this.getElement(item.id + "Input");
-            it.click();
-          }
-        });
-      });
+    if (this.hasAttribute("selectable")){
+      this.paintCheckboxHeader();
     }
 
     let tbody = this.getElement(this.TBODY);
@@ -105,7 +92,33 @@ export class AonTable extends AonElement {
     });
   }
 
+
+  paintCheckboxHeader(){
+    const idCheckBox = this.getId()+"checkboxHeader";
+    let header = this.getElement(this.getId() + "TableHeader");
+    if( !this.getElement(idCheckBox)){
+      let th = document.createElement("th");
+      th.id = idCheckBox;
+      th.style.width = "5%";
+      th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
+      header.appendChild(th);
+      let ch = this.getElement("aonTableAllSelection");
+      ch.addEventListener("change", () => {
+        document.querySelectorAll("aon-checkbox").forEach((item, i) => {
+          if (item.value != ch.value) {
+            let it = this.getElement(item.id + "Input");
+            it.click();
+          }
+        });
+      });
+    }
+
+  }
+
   addColumn(name, type, id, width) {
+    if (this.hasAttribute("selectable")) {
+      this.paintCheckboxHeader();
+    }
     let header = this.getElement(this.getId() + "TableHeader");
     let th = document.createElement("th");
     th.innerHTML = name;

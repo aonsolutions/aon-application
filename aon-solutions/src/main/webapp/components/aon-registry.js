@@ -84,7 +84,7 @@ export class AonRegistry extends AonElement {
       if(doc.value.length > 2) {
         let data = { types: this.types, document: doc.value};
 				getRegistries(data).then(r => {
-					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
+					this.buildOptions(r.map((rs) => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
 				});
 			} else {
 				this.closeOptions();
@@ -110,7 +110,7 @@ export class AonRegistry extends AonElement {
         console.log(this.types);
         let data = { types: this.types, name: name.value};
 				getRegistries(data).then(r => {
-					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
+					this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
 				}).catch(e => alert(e));
       } else {
         this.closeOptions();

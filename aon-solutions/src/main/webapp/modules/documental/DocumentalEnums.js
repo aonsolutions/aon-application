@@ -33,3 +33,10 @@ export const ENTERPRISE_TYPE_OPTION = [
 export const EMPLOYEE_TYPE_OPTION = [
   {value: 'employee', name: 'Empleado'}
 ]
+
+export const DOCUMENTAL_VIEWS = {
+  AON_DOCUMENT_AYUDAT:"aonDocumentAyudat",
+  AON_DOCUMENT_MOBILE_AYUDAT:"aonDocumentMobileAyudat",
+  AON_DOCUMENTAL_LIST_AYUDAT:"aonDocumentalListAyudat",
+  AON_DOCUMENTAL_AYUDAT:"aonDocumentalAyudat",
+}

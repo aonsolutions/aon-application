@@ -1,7 +1,6 @@
 import {AonElement} from './AonElement.js';
-
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import './aon-input.js';
-import { CONSTANT } from '../environments/environments.js';
 
 export class AonSelect extends AonElement {
 
@@ -93,7 +92,7 @@ export class AonSelect extends AonElement {
       if(options.length > 0)
         detail =  options.find(v=>  v.value == newValue);
 
-      this.dispatchEvent(new CustomEvent('change',{detail}));
+      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail}));
     }
   }
 
@@ -115,30 +114,30 @@ export class AonSelect extends AonElement {
     if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
       input.setAttribute(CONSTANT.READONLY, true);
     }
-    input.addEventListener('keyup', () => {
-      let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-      this.buildOptions(options.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
+    input.addEventListener(EVENT.KEYUP, () => {
+      const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+      this.buildOptions(optios.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
     });
     input.addIconButton('arrow_drop_down', () => {
       if(!this.isReadonly()) {
-        let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(options);
+        const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+        this.buildOptions(optios);
       }
     });
 
-    input.addEventListener('click', () => {
+    input.addEventListener(EVENT.CLICK, () => {
       if(!this.hasAttribute(CONSTANT.READONLY)) {
-        let options = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(options);
+        const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+        this.buildOptions(optios);
       }
     });
 
     let div = this.getElement(input.DIV);
-    let span = this.createElement('span');
+    let span = this.createElement(TAG.SPAN);
     span.id = input.SPAN;
     div.appendChild(span);
 
-    let options = this.createElement('div');
+    const options = this.createElement(TAG.DIV);
     options.id = this.OPTIONS;
     options.className = 'aonInputListOptions';
     span.appendChild(options);
@@ -153,22 +152,22 @@ export class AonSelect extends AonElement {
 
   buildOptions(options) {
     this.clearElementById(this.OPTIONS);
+    let input = this.getElement(this.INPUT);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
 
     if(options.length === 0) return div;
 
-    let ul = this.createElement('ul');
+    let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     for(let i = 0; i < options.length; i++) {
-      let li = this.createElement('li');
+      let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
       li.innerHTML = options[i].name;
-      li.addEventListener('click', (e) => {
+      li.addEventListener(EVENT.CLICK, (e) => {
         div.classList.remove('is-visible');
         this.value = options[i].value;
-        let input = this.getElement(this.INPUT);
         input.value = options[i].name;
         this._selected = options[i];
         this.dispatchEvent(new CustomEvent('select', {detail: options[i]}));
@@ -177,8 +176,8 @@ export class AonSelect extends AonElement {
     }
     div.appendChild(ul)
 
-    let input = this.getElement(this.INPUT);
-    document.addEventListener('click', function(event) {
+
+    document.addEventListener(EVENT.CLICK, function(event) {
       this.value = this._selected ? this._selected.name : '';
       let isClickInside = input.contains(event.target);
       if(!isClickInside){
@@ -228,6 +227,10 @@ export class AonSelect extends AonElement {
 
   focus() {
     this.getElement(this.INPUT).focus();
+  }
+
+  clear(){
+    this.value = "";
   }
 }
 if(!window.customElements.get('aon-select')){

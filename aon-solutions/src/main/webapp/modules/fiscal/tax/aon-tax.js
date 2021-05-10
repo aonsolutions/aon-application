@@ -19,15 +19,15 @@ export class AonTax extends AonElement {
   BANKS;
   DIALOG_CHECKBOX;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get id() {
@@ -39,7 +39,7 @@ export class AonTax extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if (CONSTANT.FILTER === name) this.getTable();
   }
 
   constructor() {

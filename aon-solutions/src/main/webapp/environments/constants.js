@@ -75,6 +75,7 @@ export const ERROR = "error";
 // ----- F
 
 export const FALSE = 'false';
+export const FILE = 'file';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
 export const FISCAL = 'fiscal';
