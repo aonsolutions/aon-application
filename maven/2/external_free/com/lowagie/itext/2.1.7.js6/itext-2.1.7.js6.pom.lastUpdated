@@ -1,0 +1,15 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon May 10 22:06:45 CEST 2021
+http\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/.lastUpdated=1620677205106
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+http\://download.java.net/maven/2/.error=
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1620677204406
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact com.lowagie\:itext\:pom\:2.1.7.js6 from/to central-repository (https\://mvnrepository.com/repos/central)\: Authorization failed for https\://mvnrepository.com/repos/central/com/lowagie/itext/2.1.7.js6/itext-2.1.7.js6.pom 403 Forbidden
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1620677203796
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1620677119115
+http\://download.java.net/maven/2/.lastUpdated=1620677201954
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1620677196282
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1620677202985
