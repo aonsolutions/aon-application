@@ -47,8 +47,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.BankEntities;
-import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
@@ -665,19 +665,21 @@ public class JooqEmployee {
 		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
 		System.out.println("******************************* CONTRACT = "+contract+" *******************************");
 		
-		//HAS PAYROLL
+		// HAS PAYROLL
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contract))
-					.and(SALARY.TYPE.eq((byte)0))
 					.orderBy(SALARY.END_DATE.desc())
 					.fetch();
 		
 		if(salaryRecords.isEmpty()){
 			contractData.setHasPayroll(false);
 			contractData.setPayrollDate(null);
+			contractData.setSalariesCount(0);
 		}else{
 			contractData.setHasPayroll(true);
 			contractData.setPayrollDate(salaryRecords.get(0).get(SALARY.END_DATE));
+			contractData.setSalariesCount(salaryRecords.size());
+			contractData.setContractSalariesInfo(createSalariesInfo(contractData, salaryRecords));
 		}
 		
 		//CONTRACT TABLE
@@ -934,6 +936,36 @@ public class JooqEmployee {
 		return employeeContractInfo;
 	}
 	
+	private static ArrayList<ContractSalaryInfo> createSalariesInfo(ContractInfo contractData, Result<Record> salaryRecords) {
+		ArrayList<ContractSalaryInfo> contractSalariesInfo = new ArrayList<com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo>();
+		
+		for(Record record : salaryRecords) {
+			ContractSalaryInfo contractSalaryInfo = new ContractSalaryInfo();
+			contractSalaryInfo.setType(getSalaryType(record.get(SALARY.TYPE)));
+			contractSalaryInfo.setStart(record.get(SALARY.START_DATE));
+			contractSalaryInfo.setEnd(record.get(SALARY.END_DATE));
+			contractSalaryInfo.setTotalLiquid(record.get(SALARY.TOTAL_LIQUID));
+			contractSalariesInfo.add(contractSalaryInfo);
+		}
+		
+		return contractSalariesInfo;
+	}
+	
+	private static String getSalaryType(Byte salaryType) {
+		switch (salaryType) {
+		case (byte)0:	
+			return "N" + String.valueOf("\u00F3")  + "mina";
+		case (byte)1:
+			return "Extra";
+		case (byte)2:
+			return "Finiquito";
+		case (byte)3:
+			return "Atraso";
+		default:
+			return "N" + String.valueOf("\u00F3")  + "mina";
+		}
+	}
+	
 	private static EmployeeContractInfo setEmployeeInfoDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
 		
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
@@ -942,6 +974,8 @@ public class JooqEmployee {
 		
 		System.out.println(contractData.toString());
 		System.out.println(employeeData.toString());
+		
+		System.out.println("salaries Count : " + contractData.getSalariesCount());
 		
 		// ------------------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------
@@ -1731,6 +1765,7 @@ public class JooqEmployee {
 		}
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
+		employeeContractInfo.setContractInfo(contractData);
 		return employeeContractInfo;
 	}
 

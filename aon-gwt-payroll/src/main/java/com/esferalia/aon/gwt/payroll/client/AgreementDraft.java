@@ -3468,6 +3468,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private boolean isRealDate(String issueValue) {
 		Integer dayOfMonth = Integer.parseInt(issueValue.substring(0, 2));
 		Integer month = Integer.parseInt(issueValue.substring(2, 4)) - 1;
+		
+		if(dayOfMonth > 31 || month > 11)
+			return false;
+		
 		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(new Date(new Date().getYear(), month, 1));
 		try {
 			Date date = new Date(new Date().getYear(), month, dayOfMonth);
