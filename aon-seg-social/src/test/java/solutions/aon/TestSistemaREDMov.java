@@ -3,7 +3,9 @@ package solutions.aon;
 import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,6 +38,40 @@ public class TestSistemaREDMov {
 			.setContract("401")
 			.build();
 			SistemaREDMov.sendAlta(certificateInputStream, "jg@FNMT", "pkcs12", employee);
+		} catch (NotExistingYetException e) {} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+		} catch (FailingHttpStatusCodeException e) {
+			assertTrue(true);
+		}
+	}
+
+
+	@Test
+	@Ignore
+	public void ipfxnaf() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		    ArrayList<String> nssList = new ArrayList<>();
+		    nssList.add("1231231223");	
+		    Collection<Employee> employee = SistemaREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
+		    System.out.println(employee.toString());
+		} catch (NotExistingYetException e) {} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+		} catch (FailingHttpStatusCodeException e) {
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void nafxipf() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+
+		   Employee employee = SistemaREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "1123H", "123", "PER1232EZ");
+		   System.out.println(employee.getIpf());
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {

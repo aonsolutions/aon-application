@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,14 +15,22 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.ScriptException;
+import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -29,6 +38,7 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -348,35 +358,45 @@ public class SistemaREDMov {
 		if(nssList.size() >= 7) throw new Exception("nss max 7");
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	
+	      webClient.getOptions().setJavaScriptEnabled(true);
+	      webClient.getOptions().setThrowExceptionOnScriptError(false);
+	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
-	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
-	      
+	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
+	 	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
     	  for (int i=0;i<nssList.size();i++) {
-    		   formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i+1))).setValueAttribute(nssList.get(i).substring(0, 10));
+    		  HtmlInput inpt = formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i+1)));
+    		  inpt.setValueAttribute(nssList.get(i).substring(0, 10));
     	  }
-    	  htmlPage = formDatos.getInputByName("SPM.ACC.Consultar").click();
-    	  
-    	  HtmlTable table = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > table");
-    	  String nombre;
-    	  String ipf;
-    	  String nss;
+
     	  ArrayList<Employee> employees = new ArrayList<>();
     	  
-    	  EmployeeBuilder builder = new EmployeeBuilder();
-    	  for (int i = 1; i < table.getRowCount(); i++) {
-    		  nss = table.getRow(i).getCell(1).getTextContent().trim().replaceAll("\u200b", ""); //nss
-    		  ipf = table.getRow(i).getCell(2).getVisibleText().trim().replaceAll("\u200b", "").replaceAll("\\s",""); //ipf
-    		  nombre = table.getRow(i).getCell(3).getTextContent().trim().replaceAll("\u200b", "");
-			  if(!nombre.isEmpty() && !ipf.isEmpty()) {
-					Employee employee = builder
-					.setNss(nss)
-					.setName(nombre)
-					.setIpf(ipf)
-					.build();
-					employees.add(employee);
-			  }
-    	  }
+    	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_3")).click();
+    	  System.out.println();
+    	  if(!pageAux.isHtmlPage()) {
+    		    XmlPage xmlPage = (XmlPage)pageAux;
+    			DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
+    			EmployeeBuilder builder = new EmployeeBuilder();
+				for (DomNode employee : employeesHtml) {
+					String ipf = employee.querySelector("ip9numdoc").getTextContent();
+					if(!ipf.isEmpty()) {
+						String nss = employee.querySelector("na5numsegsocialcompleto").getTextContent().trim();
+						String name = employee.querySelector("nombre_completo").getTextContent().trim();
+						Employee empl = builder
+    					.setNss(nss)
+    					.setName(name)
+    					.setIpf(ipf)
+    					.build();
+    					employees.add(empl);
+					} else {
+						throw new Exception("Sin datos para la consulta");
+					}
+				}
+			} else {
+				htmlPage = (HtmlPage) pageAux;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}
+//    	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
     	  return employees;
 		} 
 	}
@@ -386,15 +406,16 @@ public class SistemaREDMov {
 			String ipf, String apellido1, String apellido2) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	
+	      webClient.getOptions().setJavaScriptEnabled(true);
+	      webClient.getOptions().setThrowExceptionOnScriptError(false);
+	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
 	      Integer ident  = 1; //NIF DEFAULT
 	      if(identity(ipf).equals("6")) ident = 3; // NIE
 
-	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
      
-		  HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident);	
-		  option.click();
+		  ((HtmlOption) formDatos.querySelectorAll("select[name=tipo]>option").get(ident)).click();	
 		  
 		  formDatos.getInputByName("ipf6NumeroDocumento").setValueAttribute(ipf);
 		  formDatos.getInputByName("primerApellido").setValueAttribute(apellido1);
@@ -405,17 +426,30 @@ public class SistemaREDMov {
 			  formDatos.getInputByName("checkApellido2").setChecked(true);
 		  }
 		  
-    	  htmlPage = formDatos.getInputByName("SPM.ACC.Continuar").click();
-    	  handleSegSocialExceptions(htmlPage);
-   
-    	  String nss = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > div:nth-child(4) > div > p > span:nth-child(2)").getTextContent().trim();
-    	  String name = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > div:nth-child(3) > div > p > span:nth-child(2)").getTextContent().trim();
-    	  EmployeeBuilder builder = new EmployeeBuilder();
-    	  Employee employee = builder
-			.setNss(nss)
-			.setName(name)
-			.build();
-    	  return employee;
+		  EmployeeBuilder builder = new EmployeeBuilder();
+	
+	  	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_2")).click();
+	  	  Toolkit.buildFile(pageAux.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
+    	  if(!pageAux.isHtmlPage()) {
+    		    XmlPage xmlPage = (XmlPage)pageAux;
+    		    DomNode employeeHtml = xmlPage.querySelector("usuario_red");
+				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
+	
+				if(!nss.isEmpty()) {
+					String ipf1 = employeeHtml.querySelector("ip6numero_documento").getTextContent();
+					String name = employeeHtml.querySelector("nombre_completo").getTextContent().trim();
+					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
+				    builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
+				} else {
+					throw new Exception("Sin datos para la consulta");
+				}
+
+			} else {
+				htmlPage = (HtmlPage) pageAux;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			}
+
+    	  return builder.build();
 		} 
 	}
 	
@@ -635,4 +669,24 @@ public class SistemaREDMov {
 		}
 		return null;
 	}
+	
+	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
+		return new JavaScriptErrorListener() {
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}
+			
+			@Override
+			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {}
+			
+			@Override
+			public void scriptException(HtmlPage page, ScriptException scriptException) {}
+			
+			@Override
+			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {}
+			
+			@Override
+			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {}
+		};
+	}
+	
 }
