@@ -1,7 +1,7 @@
 import { AonApplication } from '../../../components/aon-application.js';
 import { AonElement } from '../../../components/AonElement.js';
-import { MSG } from '../../../environments/environments.js';
-import { getAccessBidoq, postBidoq, setClienteId, setSessionId } from  '../../../services/bidoqService.js';
+import { CONSTANT, MSG } from '../../../environments/environments.js';
+import { getAccessBidoq, getTypeUserBidoq, postBidoq, setClienteId, setSessionId } from  '../../../services/bidoqService.js';
 import {  DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { AonDocumentAyudat } from './aon-document-ayudat.js';
 import { AonDocumentalListAyudat } from './aon-documental-list-ayudat.js';
@@ -27,16 +27,23 @@ export class AonDocumentalAyudat extends AonElement {
         this.AON_DOCUMENTA_AYUDAT = DOCUMENTAL_VIEWS.AON_DOCUMENTAL_AYUDAT;
     }
 
-    async build() {
+    build() {
         this.paintView();
-        await this.getFolders();
-        await this.getTags();
-        getAccessBidoq().then(res=>{
-            console.log(res);
+        getAccessBidoq().then(async ({datos, message})=>{
+            if(CONSTANT.SUCCESS === message && datos){
+                const {usuarios} = datos;
+                if(usuarios){
+                    setClienteId(usuarios[0].uid);
+                    setSessionId(usuarios[0].sesion);
+                    this.setUsers(usuarios);
+                    await this.getFolders();
+                    await this.getTags();
+                    this.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
+                }
+            }
         }).catch(e=>{
             console.error(e);
         })
-        this.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
     }
 
     paintView(){
@@ -44,13 +51,33 @@ export class AonDocumentalAyudat extends AonElement {
         this.applicationEl = this.getApplication();
     }
 
+    setUsers(users) {
+        try {
+            const usersOptions = users.map((user) => {
+                const typeUser = getTypeUserBidoq(user.tipoID);
+                return {
+                    name: typeUser,
+                    icon: 'person',
+                    fn: () => {
+                        setClienteId(user.uid);
+                        setSessionId(user.sesion);
+                        this.applicationEl.addToolbarTitle(typeUser);
+                        this.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
+                    }
+                }
+            });
+    
+            this.applicationEl.addSidenavOptions('TIPO DE USUARIO', usersOptions);
+            this.applicationEl.dataset['users'] = JSON.stringify(users);
+        } catch (error) {
+            console.error('Ocurrió un error: ' + error.message);
+        }
+    }
+
     async getFolders() {
         try {
-            setClienteId("e688cab2-04fe-44cc-9771-e934ad63f5fb");
-            setSessionId("a0dNR2V2RlhkUlZzLWctTA==");
-            
-            const {datos} = await postBidoq({"method": "carpetas"});
-            if(datos){
+            const {datos, message} = await postBidoq({"method": "carpetas"});
+            if(CONSTANT.SUCCESS === message && datos){
                 const categoryOptions = datos.map((folder) => {
                     const option = {
                         name: folder.carpeta,
@@ -77,8 +104,8 @@ export class AonDocumentalAyudat extends AonElement {
 
     async getTags() {
         try {
-            const {datos} = await postBidoq({method:"tags"});
-            if(datos) {
+            const {message, datos} = await postBidoq({method:"tags"});
+            if(CONSTANT.SUCCESS === message && datos) {
                 const tagsOptions = datos.map((tag) => ({
                     name: tag.tag,
                     icon: 'label',

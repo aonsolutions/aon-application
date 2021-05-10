@@ -3,7 +3,7 @@ import { AonTable } from '../../../components/aon-table.js';
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { postBidoq } from  '../../../services/bidoqService.js';
-import {  getReader, newComponent } from '../../../services/utils.js';
+import {  formatBytes, getReader, newComponent } from '../../../services/utils.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import * as ACTION from '../../actions.js';
 
@@ -78,9 +78,9 @@ export class AonDocumentalListAyudat extends AonElement {
                 this.applicationEl.addFloatOption(ACTION.UPLOAD_FILE, () => input.click());
             } else {
                 this.applicationEl.addToolbarOption2(ACTION.UPLOAD_FILE, () => input.click());
-                this.applicationEl.addSearchOption();
-                this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
             }
+            this.applicationEl.addSearchOption();
+            this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
         }
     }
 
@@ -155,14 +155,13 @@ export class AonDocumentalListAyudat extends AonElement {
         try {
             let filter = this.applicationParentEl._filter;
             filter.method  = "list_docs";
-            console.log("filter>",filter);
             const {datos} = await postBidoq(filter);
             if(datos){
                 data = datos.map(resp =>({
                     ...resp,
                     title: resp.name,
                     dateParse: resp.date,
-                    size:"0 KB"
+                    size: formatBytes(resp.size)
                 }));
             }
         } catch (error) {

@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, getCompanies, getUser, getUserAppRole } from "../../services/service.js";
+import { login, getManifest, rememberPassword, getCompanies, getUser, getUserAppRole, actionMobile } from "../../services/service.js";
 import { rootPanel } from "../../services/gwtLoader.js";
 
 import "../../components/aon-input.js";
@@ -10,13 +10,15 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
-import { MSG } from '../../environments/environments.js'; 
+import { EVENT, MSG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
 
 export class AonLogin extends AonElement {
+  tag;
   constructor() {
     super();
+    this.tag = 0;
   }
 
   connectedCallback() {
@@ -121,15 +123,15 @@ export class AonLogin extends AonElement {
     );
 
     let username = this.getElement("aonLoginUser");
-    username.addEventListener("keyup", (event) => this.onEnter(event));
+    username.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     let password = this.getElement("aonLoginPassword");
-    password.addEventListener("keyup", (event) => this.onEnter(event));
+    password.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
 
     let signin = this.getElement("aonLoginSignin");
-    signin.addEventListener("click", () => this.signin());
+    signin.addEventListener(EVENT.CLICK, () => this.signin());
 
     let aonLoginRemember = this.getElement("aonLoginRemember");
-    aonLoginRemember.addEventListener("click", () =>
+    aonLoginRemember.addEventListener(EVENT.CLICK, () =>
       this.getElement("aonDialogLogin").open()
     );
 
@@ -173,12 +175,25 @@ export class AonLogin extends AonElement {
 
   buildLogo() {
     let logo = document.getElementById("aonLoginLogoImg");
+    let src = "assets/aon-logo.png"; 
     if (window.location.href.includes("ayudat")) {
-      logo.src = "assets/ayudat-logo4.png";
-    } else if (window.location.href.includes("translogia") ||
-        window.location.href.includes("tedi")) {
-      logo.src = "assets/ayudat-logo4.png";
-    } else logo.src = "assets/aon-logo.png";
+      src = "assets/ayudat-logo4.png";
+    } else if (window.location.href.includes("translogia") || window.location.href.includes("tedi")) {
+      src = "assets/ayudat-logo4.png";
+    } else if (window.location.href.includes("aonsolutions.org")){
+     src = "assets/beta-logo.svg";
+    }
+    logo.src = src;
+    logo.addEventListener(EVENT.CLICK, ()=>{
+      this.tag = this.tag + 1;
+      if(this.tag >= 5){
+        actionMobile({
+          action:"setBaseUrl",
+          BASE_URL_MOBILE: "https://aonsolutions.org"
+        });
+        this.tag = 0;
+      }
+		})
   }
 
   signin() {
