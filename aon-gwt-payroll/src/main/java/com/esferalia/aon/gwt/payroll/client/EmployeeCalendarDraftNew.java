@@ -386,14 +386,31 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
-	class ShowHourExtraComplCommand implements ScheduledCommand {
+	class ShowHourExtraCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
-			definitionMenu.getShowHourExtraComplMenuItem().setStyleName("aon-MenuItemCheckYes", showHoursExtraCompl);
-			definitionMenu.getShowHourExtraComplMenuItem().addStyleName(style.aonCheck());
-			
 			showHoursExtraCompl = !showHoursExtraCompl;
+			
+			definitionMenu.getShowHourExtraMenuItem().setStyleName("aon-MenuItemCheckYes", showHoursExtraCompl);
+			definitionMenu.getShowHourExtraMenuItem().addStyleName(style.aonCheck());
+			
+			if (showHoursExtraCompl) {
+				showHoursExtraComplRows();	
+			} else {
+				hideHoursExtraComplRows();
+			}
+		}
+	}
+	
+	class ShowHourComplCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showHoursExtraCompl = !showHoursExtraCompl;
+			
+			definitionMenu.getShowHourComplMenuItem().setStyleName("aon-MenuItemCheckYes", showHoursExtraCompl);
+			definitionMenu.getShowHourComplMenuItem().addStyleName(style.aonCheck());
 			
 			if (showHoursExtraCompl) {
 				showHoursExtraComplRows();	
@@ -409,7 +426,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		private MenuItem hourMenuItem = null;
 		private MenuItemSeparator separator;
 		private MenuItem showHourMenuItem = null;
-		private MenuItem showHourExtraComplMenuItem = null;
+		private MenuItem showHourExtraMenuItem = null;
+		private MenuItem showHourComplMenuItem = null;
 		
 		public DefinitionMenu() {
 			
@@ -427,9 +445,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			showHourMenuItem.ensureDebugId("showHourMenuItem");
 			
-			showHourExtraComplMenuItem = addItem("Ocultar horas complementarias", new ShowHourExtraComplCommand(), 
+			showHourExtraMenuItem = addItem("Mostrar horas extras", new ShowHourExtraCommand(), 
 					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			showHourExtraComplMenuItem.ensureDebugId("showHourExtraComplMenuItem");
+			showHourExtraMenuItem.ensureDebugId("showHourExtraMenuItem");
+			
+			showHourComplMenuItem = addItem("Mostrar horas complementarias", new ShowHourComplCommand(), 
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			showHourComplMenuItem.ensureDebugId("showHourComplMenuItem");
 		}
 
 		public MenuItem getNonWorkingMenuItem() {
@@ -444,16 +466,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			return showHourMenuItem;
 		}
 		
-		public MenuItem getShowHourExtraComplMenuItem() {
-			return showHourExtraComplMenuItem;
+		public MenuItem getShowHourExtraMenuItem() {
+			return showHourExtraMenuItem;
 		}
 		
-		public void setExtraText() {
-			this.showHourExtraComplMenuItem.setText("Ocultar horas extras");
-		}
-		
-		public void setComplementaryText() {
-			this.showHourExtraComplMenuItem.setText("Ocultar horas complementarias");
+		public MenuItem getShowHourComplMenuItem() {
+			return showHourComplMenuItem;
 		}
 		
 		public void hideSeparator() {
@@ -832,19 +850,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Set fulltime journey
 		if(this.employeeCalendarDraftObject.isFullTimeJourney()) {
 			this.showHours = false;
-			this.showHoursExtraCompl = true;
+			this.showHoursExtraCompl = false;
 			
 			hideHoursRows();
-			showHoursExtraComplRows();
-			
-			showElement(definitionMenu.getShowHourExtraComplMenuItem().getElement());
+			hideHoursExtraComplRows();
 			
 			hideElement(definitionMenu.getShowHourMenuItem().getElement());
+			hideElement(definitionMenu.getShowHourComplMenuItem().getElement());
 			hideElement(definitionMenu.getHourMenuItem().getElement());
 			hideElement(hourButton.getElement());
 			definitionMenu.showSeparator();
-			
-			definitionMenu.setExtraText();
 			
 			extraHoursButton.setText("H. Extras");
 			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().clearDisplay();
@@ -852,18 +867,17 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			
 		} else {
 			this.showHours = true;
-			this.showHoursExtraCompl = true;
+			this.showHoursExtraCompl = false;
 			
 			showHoursRows();
-			showHoursExtraComplRows();
+			hideHoursExtraComplRows();
 			
 			showElement(definitionMenu.getShowHourMenuItem().getElement());
-			showElement(definitionMenu.getShowHourExtraComplMenuItem().getElement());
+			showElement(definitionMenu.getShowHourComplMenuItem().getElement());
+			hideElement(definitionMenu.getShowHourExtraMenuItem().getElement());
 			showElement(definitionMenu.getHourMenuItem().getElement());
 			showElement(hourButton.getElement());
 			definitionMenu.showSeparator();
-			
-			definitionMenu.setComplementaryText();
 			
 			extraHoursButton.setText("H. Complementarias");
 			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().setDisplay(Display.NONE);
