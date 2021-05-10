@@ -1055,7 +1055,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons = new HTMLPanel("");
 		employeeContractButtons.addStyleName(style.flex());
 		
-		saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveContract = new AonToolbarButton( AON.MSG.saveAction() + " Contrato", AON.CSS.aonIconSave() );
 		saveContract.setAccessKey('G');
 		saveContract.addClickHandler(new ClickHandler() {
 			@Override
@@ -1065,7 +1065,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		employeeContractButtons.add(saveContract);
 		
-		deleteContract = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		deleteContract = new AonToolbarButton( AON.MSG.deleteAction() + " Contrato", AON.CSS.aonIconDelete() );
 		deleteContract.setAccessKey('D');
 		deleteContract.addClickHandler(new ClickHandler() {
 			@Override
@@ -1075,7 +1075,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		employeeContractButtons.add(deleteContract);
 		
-		exportContract = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconPdf() );
+		exportContract = new AonToolbarButton( AON.MSG.export() + "Contrato", AON.CSS.aonIconPdf() );
 		exportContract.setAccessKey('E');
 		exportContract.addClickHandler(new ClickHandler() {
 			@Override
@@ -1169,13 +1169,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons = new HTMLPanel("");
 		employeeSalaryButtons.addStyleName(style.flex());
 		
-		deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		deleteButton = new AonToolbarButton( "Borrar N\u00F3mina", AON.CSS.aonIconDeleteList() );
 		deleteButton.addClickHandler(e -> {
 			employeeSalary.onDelete(e);
 		});
 		employeeSalaryButtons.add(deleteButton);
 		
-		pdfButton = new AonToolbarButton( AON.MSG.printPDF(), AON.CSS.aonIconPdf());
+		pdfButton = new AonToolbarButton( AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
 		pdfButton.addClickHandler(e -> {
 			employeeSalary.onPDF(e);
 		});	
@@ -1201,7 +1201,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		bidoqPublishButton.setVisible(false);
 		employeeSalaryButtons.add(bidoqPublishButton);
 		
-		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
+		email = new AonToolbarButton(AON.MSG.email() +  " N\u00F3mina", AON.CSS.aonIconEmail());
 		email.addClickHandler(e -> {
 			employeeSalary.onEmail(e);
 		});	
@@ -1220,7 +1220,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		employeeCalendarButtons.add(undoAllButton);
 		
-		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton = new AonToolbarButton( AON.MSG.saveAction() + " Calendario", AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> {
 			employeeCalendar.onSave(e);
 		});
@@ -1256,7 +1256,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		employeeEventsButtons.add(undoAllEventsButton);
 		
-		saveEventsButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveEventsButton = new AonToolbarButton( AON.MSG.saveAction() + " Incidencias", AON.CSS.aonIconSave() );
 		saveEventsButton.addClickHandler(e -> {
 			employeeEvents.onSave(e);
 		});
@@ -1305,7 +1305,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		salaryDraft.setRedoButton(redoButton);
 		salaryDraftButtos.add(redoButton);
 		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction() + " Borrador", AON.CSS.aonIconSave() );
 		acceptButton.addClickHandler(e -> {
 			salaryDraft.onAccept(e);
 		});	
@@ -1314,7 +1314,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		salaryDraft.setAcceptButton(acceptButton);
 		salaryDraftButtos.add(acceptButton);
 		
-		salaryButton = new AonToolbarButton( "Emitir nomina", AON.CSS.aonIconAccept() );
+		salaryButton = new AonToolbarButton( "Emitir nomina", AON.CSS.aonIconEmit() );
 		salaryButton.addClickHandler(e -> {
 			salaryDraft.onSalary(e);
 		});	
@@ -1780,7 +1780,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
 		
-		if(contractData.getSalariesCount() > 0) {
+		if(null != contractData.getSalariesCount() && contractData.getSalariesCount() > 0) {
 			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
 			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
 			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
