@@ -186,7 +186,7 @@ export class AonLogin extends AonElement {
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
-      if(this.tag >= 5){
+      if(this.tag >= 5 && !window.location.href.includes("aonsolutions.org")){
         actionMobile({
           action:"setBaseUrl",
           BASE_URL_MOBILE: "https://aonsolutions.org"
