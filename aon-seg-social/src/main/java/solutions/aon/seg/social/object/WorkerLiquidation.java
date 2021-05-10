@@ -4,56 +4,67 @@ public class WorkerLiquidation {
 	private String nss;
 	private String caf;
 
+	private String ccDescription;
 	private Float ccBase;
 	private Float ccBusinessFee;
 	private Float ccWorkerFee;
 	private Float ccTotalFee;
 	
+	private String ccLiquidDescription;
 	private Float ccLiquidBase;
 	private Float ccLiquidBusinessFee;
 	private Float ccLiquidWorkerFee;
 	private Float ccLiquidTotalFee;
 	
+	private String itWorkAccidentDescription;
 	private Float itWorkAccidentBase;
 	private Float itWorkAccidentBusinessFee;
 	private Float itWorkAccidentWorkerFee;
 	private Float itWorkAccidentTotalFee;
 	
+	private String imsWorkAccidentDescription;
 	private Float imsWorkAccidentBase;
 	private Float imsWorkAccidentBusinessFee;
 	private Float imsWorkAccidentWorkerFee;
 	private Float imsWorkAccidentTotalFee;
 	
+	private String workAccidentLiquidDescription;
 	private Float workAccidentLiquidBase;
 	private Float workAccidentLiquidBusinessFee;
 	private Float workAccidentLiquidWorkerFee;
 	private Float workAccidentLiquidTotalFee;
 	
+	private String unemploymentDescription;
 	private Float unemploymentBase;
 	private Float unemploymentBusinessFee;
 	private Float unemploymentWorkerFee;
 	private Float unemploymentTotalFee;
 	
+	private String fogasaDescription;
 	private Float fogasaBase;
 	private Float fogasaBusinessFee;
 	private Float fogasaWorkerFee;
 	private Float fogasaTotalFee;
 	
+	private String jobTrainingDescription;
 	private Float jobTrainingBase;
 	private Float jobTrainingBusinessFee;
 	private Float jobTrainingWorkerFee;
 	private Float jobTrainingTotalFee;
 	
+	private String grantsAndBonusesDescription;
 	private Float grantsAndBonusesBase;
 	private Float grantsAndBonusesBusinessFee;
 	private Float grantsAndBonusesWorkerFee;
 	private Float grantsAndBonusesTotalFee;
 	
+	private String otherContributionsLiquidDescription;
 	private Float otherContributionsLiquidBase;
 	private Float otherContributionsLiquidBusinessFee;
 	private Float otherContributionsLiquidWorkerFee;
 	private Float otherContributionsLiquidTotalFee;
 	
+	private String totalLiquidDescription;
 	private Float totalLiquidBase;
 	private Float totalLiquidBusinessFee;
 	private Float totalLiquidWorkerFee;
@@ -339,60 +350,286 @@ public class WorkerLiquidation {
 	
 	
 	
+	public void setCcDescription(String ccDescription) {
+		this.ccDescription = ccDescription;
+	}
+	public void setCcLiquidDescription(String ccLiquidDescription) {
+		this.ccLiquidDescription = ccLiquidDescription;
+	}
+	public void setItWorkAccidentDescription(String itWorkAccidentDescription) {
+		this.itWorkAccidentDescription = itWorkAccidentDescription;
+	}
+	public void setImsWorkAccidentDescription(String imsWorkAccidentDescription) {
+		this.imsWorkAccidentDescription = imsWorkAccidentDescription;
+	}
+	public void setWorkAccidentLiquidDescription(String workAccidentLiquidDescription) {
+		this.workAccidentLiquidDescription = workAccidentLiquidDescription;
+	}
+	public void setUnemploymentDescription(String unemploymentDescription) {
+		this.unemploymentDescription = unemploymentDescription;
+	}
+	public void setFogasaDescription(String fogasaDescription) {
+		this.fogasaDescription = fogasaDescription;
+	}
+	public void setJobTrainingDescription(String jobTrainingDescription) {
+		this.jobTrainingDescription = jobTrainingDescription;
+	}
+	public void setGrantsAndBonusesDescription(String grantsAndBonusesDescription) {
+		this.grantsAndBonusesDescription = grantsAndBonusesDescription;
+	}
+	public void setOtherContributionsLiquidDescription(String otherContributionsLiquidDescription) {
+		this.otherContributionsLiquidDescription = otherContributionsLiquidDescription;
+	}
+	public void setTotalLiquidDescription(String totalLiquidDescription) {
+		this.totalLiquidDescription = totalLiquidDescription;
+	}
+	public String getCcDescription() {
+		return ccDescription;
+	}
+	public String getCcBaseDescription() {
+		return "BASE "+getCcDescription();
+	}
+	public String getCcBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getCcDescription();
+	}
+	public String getCcWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getCcDescription();
+	}
+	public String getCcTotalFeeDescription() {
+		return "CUOTA TOTAL "+getCcDescription();
+	}
+	
+	public String getCcLiquidDescription() {
+		return ccLiquidDescription;
+	}
+	public String getCcLiquidBaseDescription() {
+		return "BASE "+getCcLiquidDescription();
+	}
+	public String getCcLiquidBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getCcLiquidDescription();
+	}
+	public String getCcLiquidWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getCcLiquidDescription();
+	}
+	public String getCcLiquidTotalFeeDescription() {
+		return "CUOTA TOTAL "+getCcLiquidDescription();
+	}
+	
+	public String getItWorkAccidentDescription() {
+		return itWorkAccidentDescription;
+	}
+	public String getItWorkAccidentBaseDescription() {
+		return "BASE "+getItWorkAccidentDescription();
+	}
+	public String getItWorkAccidentBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getItWorkAccidentDescription();
+	}
+	public String getItWorkAccidentWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getItWorkAccidentDescription();
+	}
+	public String getItWorkAccidentTotalFeeDescription() {
+		return "CUOTA TOTAL "+getItWorkAccidentDescription();
+	}
+	
+	public String getImsWorkAccidentDescription() {
+		return imsWorkAccidentDescription;
+	}
+	public String getImsWorkAccidentBaseDescription() {
+		return "BASE "+getImsWorkAccidentDescription();
+	}
+	public String getImsWorkAccidentBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getImsWorkAccidentDescription();
+	}
+	public String getImsWorkAccidentWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getImsWorkAccidentDescription();
+	}
+	public String getImsWorkAccidentTotalFeeDescription() {
+		return "CUOTA TOTAL "+getImsWorkAccidentDescription();
+	}
+	
+	public String getWorkAccidentLiquidDescription() {
+		return workAccidentLiquidDescription;
+	}
+	public String getWorkAccidentLiquidBaseDescription() {
+		return "BASE "+getWorkAccidentLiquidDescription();
+	}
+	public String getWorkAccidentLiquidBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getWorkAccidentLiquidDescription();
+	}
+	public String getWorkAccidentLiquidWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getWorkAccidentLiquidDescription();
+	}
+	public String getWorkAccidentLiquidTotalFeeDescription() {
+		return "CUOTA TOTAL "+getWorkAccidentLiquidDescription();
+	}
+	
+	public String getUnemploymentDescription() {
+		return unemploymentDescription;
+	}
+	public String getUnemploymentBaseDescription() {
+		return "BASE "+getUnemploymentDescription();
+	}
+	public String getUnemploymentBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getUnemploymentDescription();
+	}
+	public String getUnemploymentWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getUnemploymentDescription();
+	}
+	public String getUnemploymentTotalFeeDescription() {
+		return "CUOTA TOTAL "+getUnemploymentDescription();
+	}
+	
+	public String getFogasaDescription() {
+		return fogasaDescription;
+	}
+	public String getFogasaBaseDescription() {
+		return "BASE "+getFogasaDescription();
+	}
+	public String getFogasaBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getFogasaDescription();
+	}
+	public String getFogasaWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getFogasaDescription();
+	}
+	public String getFogasaTotalFeeDescription() {
+		return "CUOTA TOTAL "+getFogasaDescription();
+	}
+	
+	public String getJobTrainingDescription() {
+		return jobTrainingDescription;
+	}
+	public String getJobTrainingBaseDescription() {
+		return "BASE "+getJobTrainingDescription();
+	}
+	public String getJobTrainingBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getJobTrainingDescription();
+	}
+	public String getJobTrainingWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getJobTrainingDescription();
+	}
+	public String getJobTrainingTotalFeeDescription() {
+		return "CUOTA TOTAL "+getJobTrainingDescription();
+	}
+	
+	public String getGrantsAndBonusesDescription() {
+		return grantsAndBonusesDescription;
+	}
+	public String getGrantsAndBonusesBaseDescription() {
+		return "BASE "+getGrantsAndBonusesDescription();
+	}
+	public String getGrantsAndBonusesBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getGrantsAndBonusesDescription();
+	}
+	public String getGrantsAndBonusesWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getGrantsAndBonusesDescription();
+	}
+	public String getGrantsAndBonusesTotalFeeDescription() {
+		return "CUOTA TOTAL "+getGrantsAndBonusesDescription();
+	}
+	
+	public String getOtherContributionsLiquidDescription() {
+		return otherContributionsLiquidDescription;
+	}
+	public String getOtherContributionsLiquidBaseDescription() {
+		return "BASE "+getOtherContributionsLiquidDescription();
+	}
+	public String getOtherContributionsLiquidBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getOtherContributionsLiquidDescription();
+	}
+	public String getOtherContributionsLiquidWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getOtherContributionsLiquidDescription();
+	}
+	public String getOtherContributionsLiquidTotalFeeDescription() {
+		return "CUOTA TOTAL "+getOtherContributionsLiquidDescription();
+	}
+	
+	public String getTotalLiquidDescription() {
+		return totalLiquidDescription;
+	}
+	public String getTotalLiquidBaseDescription() {
+		return "BASE "+getTotalLiquidDescription();
+	}
+	public String getTotalLiquidBusinessFeeDescription() {
+		return "CUOTA EMPRESARIAL "+getTotalLiquidDescription();
+	}
+	public String getTotalLiquidWorkerFeeDescription() {
+		return "CUOTA TRABAJADOR "+getTotalLiquidDescription();
+	}
+	public String getTotalLiquidTotalFeeDescription() {
+		return "CUOTA TOTAL "+getTotalLiquidDescription();
+	}
+	
+	
+	
+	
+	
+	
+	
 	public static interface Visitor {
 		public void visitNss(String nss);
 		public void visitCaf(String caf);
 		
+		public void visitCcDescription(String ccDescription);
 		public void visitCcBase(Float ccBase);
 		public void visitCcBusinessFee(Float ccBusinessFee);
 		public void visitCcWorkerFee(Float ccWorkerFee);
 		public void visitCcTotalFee(Float ccTotalFee);
 		
+		public void visitCcLiquidDescription(String ccLiquidDescription);
 		public void visitCcLiquidBase(Float ccLiquidBase);
 		public void visitCcLiquidBusinessFee(Float ccLiquidBusinessFee);
 		public void visitCcLiquidWorkerFee(Float ccLiquidWorkerFee);
 		public void visitCcLiquidTotalFee(Float ccLiquidTotalFee);
 		
+		public void visitItWorkAccidentDescription(String itWorkAccidentDescription);
 		public void visitItWorkAccidentBase(Float itWorkAccidentBase);
 		public void visitItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee);
 		public void visitItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee);
 		public void visitItWorkAccidentTotalFee(Float itWorkAccidentTotalFee);
 		
+		public void visitImsWorkAccidentDescription(String imsWorkAccidentDescription);
 		public void visitImsWorkAccidentBase(Float imsWorkAccidentBase);
 		public void visitImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee);
 		public void visitImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee);
 		public void visitImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee);
 		
+		public void visitWorkAccidentLiquidDescription(String workAccidentLiquidDescription);
 		public void visitWorkAccidentLiquidBase(Float workAccidentLiquidBase);
 		public void visitWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee);
 		public void visitWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee);
 		public void visitWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee);
 		
+		public void visitUnemploymentDescription(String unemploymentDescription);
 		public void visitUnemploymentBase(Float unemploymentBase);
 		public void visitUnemploymentBusinessFee(Float unemploymentBusinessFee);
 		public void visitUnemploymentWorkerFee(Float unemploymentWorkerFee);
 		public void visitUnemploymentTotalFee(Float unemploymentTotalFee);
 		
+		public void visitFogasaDescription(String fogasaDescription);
 		public void visitFogasaBase(Float fogasaBase);
 		public void visitFogasaBusinessFee(Float fogasaBusinessFee);
 		public void visitFogasaWorkerFee(Float fogasaWorkerFee);
 		public void visitFogasaTotalFee(Float fogasaTotalFee);
 		
+		public void visitJobTrainingDescription(String jobTrainingDescription);
 		public void visitJobTrainingBase(Float jobTrainingBase);
 		public void visitJobTrainingBusinessFee(Float jobTrainingBusinessFee);
 		public void visitJobTrainingWorkerFee(Float jobTrainingWorkerFee);
 		public void visitJobTrainingTotalFee(Float jobTrainingTotalFee);
 		
+		public void visitGrantsAndBonusesDescription(String grantsAndBonusesDescription);
 		public void visitGrantsAndBonusesBase(Float grantsAndBonusesBase);
 		public void visitGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee);
 		public void visitGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee);
 		public void visitGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee);
 
+		public void visitOtherContributionsLiquidDescription(String otherContributionsLiquidDescription);
 		public void visitOtherContributionsLiquidBase(Float otherContributionsLiquidBase);
 		public void visitOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee);
 		public void visitOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee);
 		public void visitOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee);
 		
+		public void visitTotalLiquidDescription(String totalLiquidDescription);
 		public void visitTotalLiquidBase(Float totalLiquidBase);
 		public void visitTotalLiquidBusinessFee(Float totalLiquidBusinessFee);
 		public void visitTotalLiquidWorkerFee(Float totalLiquidWorkerFee);
@@ -629,6 +866,72 @@ public class WorkerLiquidation {
 		public void visitTotalLiquidTotalFee(Float totalLiquidTotalFee) {
 			
 		}
+
+		@Override
+		public void visitCcDescription(String ccDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitCcLiquidDescription(String ccLiquidDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitItWorkAccidentDescription(String itWorkAccidentDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitImsWorkAccidentDescription(String imsWorkAccidentDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitWorkAccidentLiquidDescription(String workAccidentLiquidDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitUnemploymentDescription(String unemploymentDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitFogasaDescription(String fogasaDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitJobTrainingDescription(String jobTrainingDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitGrantsAndBonusesDescription(String grantsAndBonusesDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitOtherContributionsLiquidDescription(String otherContributionsLiquidDescription) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visitTotalLiquidDescription(String totalLiquidDescription) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
@@ -638,6 +941,8 @@ public class WorkerLiquidation {
 			visitor.visitNss(this.nss);
 		if((caf!=null)||caf!="")
 			visitor.visitCaf(this.caf);
+		if (ccDescription != null)
+			visitor.visitCcDescription(this.ccDescription);
 		if(ccBase!=null)
 			visitor.visitCcBase(this.ccBase);
 		if(ccBusinessFee!=null)
@@ -647,6 +952,8 @@ public class WorkerLiquidation {
 		if(ccTotalFee!=null)
 			visitor.visitCcTotalFee(this.ccTotalFee);
 		
+		if (ccLiquidDescription != null)
+			visitor.visitCcLiquidDescription(this.ccLiquidDescription);
 		if(ccLiquidBase!=null)
 			visitor.visitCcLiquidBase(this.ccLiquidBase);
 		if(ccLiquidBusinessFee!=null)
@@ -656,6 +963,8 @@ public class WorkerLiquidation {
 		if(ccLiquidTotalFee!=null)
 			visitor.visitCcLiquidTotalFee(this.ccLiquidTotalFee);
 		
+		if (itWorkAccidentDescription != null)
+			visitor.visitItWorkAccidentDescription(this.itWorkAccidentDescription);
 		if(itWorkAccidentBase!=null)
 			visitor.visitItWorkAccidentBase(this.itWorkAccidentBase);
 		if(itWorkAccidentBusinessFee!=null)
@@ -665,6 +974,8 @@ public class WorkerLiquidation {
 		if(itWorkAccidentTotalFee!=null)
 			visitor.visitItWorkAccidentTotalFee(this.itWorkAccidentTotalFee);
 		
+		if (imsWorkAccidentDescription != null)
+			visitor.visitImsWorkAccidentDescription(this.imsWorkAccidentDescription);
 		if(imsWorkAccidentBase!=null)
 			visitor.visitImsWorkAccidentBase(this.imsWorkAccidentBase);
 		if(imsWorkAccidentBusinessFee!=null)
@@ -674,6 +985,8 @@ public class WorkerLiquidation {
 		if(imsWorkAccidentTotalFee!=null)
 			visitor.visitImsWorkAccidentTotalFee(this.imsWorkAccidentTotalFee);
 		
+		if (workAccidentLiquidDescription != null)
+			visitor.visitWorkAccidentLiquidDescription(this.workAccidentLiquidDescription);
 		if(workAccidentLiquidBase!=null)
 			visitor.visitWorkAccidentLiquidBase(this.workAccidentLiquidBase);
 		if(workAccidentLiquidBusinessFee!=null)
@@ -683,6 +996,8 @@ public class WorkerLiquidation {
 		if(workAccidentLiquidTotalFee!=null)
 			visitor.visitWorkAccidentLiquidTotalFee(this.workAccidentLiquidTotalFee);
 		
+		if (unemploymentDescription != null)
+			visitor.visitUnemploymentDescription(this.unemploymentDescription);
 		if(unemploymentBase!=null)
 			visitor.visitUnemploymentBase(this.unemploymentBase);
 		if(unemploymentBusinessFee!=null)
@@ -692,6 +1007,8 @@ public class WorkerLiquidation {
 		if(unemploymentTotalFee!=null)
 			visitor.visitUnemploymentTotalFee(this.unemploymentTotalFee);
 		
+		if (fogasaDescription != null)
+			visitor.visitFogasaDescription(this.fogasaDescription);
 		if(fogasaBase!=null)
 			visitor.visitFogasaBase(this.fogasaBase);
 		if(fogasaBusinessFee!=null)
@@ -701,6 +1018,8 @@ public class WorkerLiquidation {
 		if(fogasaTotalFee!=null)
 			visitor.visitFogasaTotalFee(this.fogasaTotalFee);
 		
+		if (jobTrainingDescription != null)
+			visitor.visitJobTrainingDescription(this.jobTrainingDescription);
 		if(jobTrainingBase!=null)
 			visitor.visitJobTrainingBase(this.jobTrainingBase);
 		if(jobTrainingBusinessFee!=null)
@@ -710,6 +1029,8 @@ public class WorkerLiquidation {
 		if(jobTrainingTotalFee!=null)
 			visitor.visitJobTrainingTotalFee(this.jobTrainingTotalFee);
 		
+		if (grantsAndBonusesDescription != null)
+			visitor.visitGrantsAndBonusesDescription(this.grantsAndBonusesDescription);
 		if(grantsAndBonusesBase!=null)
 			visitor.visitGrantsAndBonusesBase(this.grantsAndBonusesBase);
 		if(grantsAndBonusesBusinessFee!=null)
@@ -719,6 +1040,8 @@ public class WorkerLiquidation {
 		if(grantsAndBonusesTotalFee!=null)
 			visitor.visitGrantsAndBonusesTotalFee(this.grantsAndBonusesTotalFee);
 		
+		if (otherContributionsLiquidDescription != null)
+			visitor.visitOtherContributionsLiquidDescription(this.otherContributionsLiquidDescription);
 		if(otherContributionsLiquidBase!=null)
 			visitor.visitOtherContributionsLiquidBase(this.otherContributionsLiquidBase);
 		if(otherContributionsLiquidBusinessFee!=null)
@@ -728,6 +1051,8 @@ public class WorkerLiquidation {
 		if(otherContributionsLiquidTotalFee!=null)
 			visitor.visitOtherContributionsLiquidTotalFee(this.otherContributionsLiquidTotalFee);
 		
+		if (totalLiquidDescription != null)
+			visitor.visitTotalLiquidDescription(this.totalLiquidDescription);
 		if(totalLiquidBase!=null)
 			visitor.visitTotalLiquidBase(this.totalLiquidBase);
 		if(totalLiquidBusinessFee!=null)
@@ -1019,6 +1344,61 @@ public class WorkerLiquidation {
 				stringBuffer.append(String.format("\tGrants and bonuses - total fee:\"%S\"\n", grantsAndBonusesTotalFee));
 				
 			}
+			@Override
+			public void visitCcDescription(String ccDescription) {
+				stringBuffer.append(String.format("\tCC Description:\"%S\"\n", ccDescription));
+				
+			}
+			@Override
+			public void visitCcLiquidDescription(String ccLiquidDescription) {
+				stringBuffer.append(String.format("\tCC Liquid Description:\"%S\"\n", ccLiquidDescription));
+				
+			}
+			@Override
+			public void visitItWorkAccidentDescription(String itWorkAccidentDescription) {
+				stringBuffer.append(String.format("\tIT Work Accident Description:\"%S\"\n", itWorkAccidentDescription));
+				
+			}
+			@Override
+			public void visitImsWorkAccidentDescription(String imsWorkAccidentDescription) {
+				stringBuffer.append(String.format("\tIMS Work Accident Description:\"%S\"\n", imsWorkAccidentDescription));
+				
+			}
+			@Override
+			public void visitWorkAccidentLiquidDescription(String workAccidentLiquidDescription) {
+				stringBuffer.append(String.format("\tWork Accident Liquid Description:\"%S\"\n", workAccidentLiquidDescription));
+				
+			}
+			@Override
+			public void visitUnemploymentDescription(String unemploymentDescription) {
+				stringBuffer.append(String.format("\tUnemployment Description:\"%S\"\n", unemploymentDescription));
+				
+			}
+			@Override
+			public void visitFogasaDescription(String fogasaDescription) {
+				stringBuffer.append(String.format("\tFogasa Description:\"%S\"\n", fogasaDescription));
+				
+			}
+			@Override
+			public void visitJobTrainingDescription(String jobTrainingDescription) {
+				stringBuffer.append(String.format("\tJob Training Description:\"%S\"\n", jobTrainingDescription));
+				
+			}
+			@Override
+			public void visitGrantsAndBonusesDescription(String grantsAndBonusesDescription) {
+				stringBuffer.append(String.format("\tGrants And Bonuses Description:\"%S\"\n", grantsAndBonusesDescription));
+				
+			}
+			@Override
+			public void visitOtherContributionsLiquidDescription(String otherContributionsLiquidDescription) {
+				stringBuffer.append(String.format("\tOther Contributions Liquid:\"%S\"\n", otherContributionsLiquidDescription));
+				
+			}
+			@Override
+			public void visitTotalLiquidDescription(String totalLiquidDescription) {
+				stringBuffer.append(String.format("\tTotal Liquid Description:\"%S\"\n", totalLiquidDescription));
+				
+			}
 
 
 		});
@@ -1029,56 +1409,67 @@ public class WorkerLiquidation {
 		private String nss;
 		private String caf;
 		
+		private String ccDescription;
 		private Float ccBase;
 		private Float ccBusinessFee;
 		private Float ccWorkerFee;
 		private Float ccTotalFee;
 		
+		private String ccLiquidDescription;
 		private Float ccLiquidBase;
 		private Float ccLiquidBusinessFee;
 		private Float ccLiquidWorkerFee;
 		private Float ccLiquidTotalFee;
 		
+		private String itWorkAccidentDescription;
 		private Float itWorkAccidentBase;
 		private Float itWorkAccidentBusinessFee;
 		private Float itWorkAccidentWorkerFee;
 		private Float itWorkAccidentTotalFee;
 		
+		private String imsWorkAccidentDescription;
 		private Float imsWorkAccidentBase;
 		private Float imsWorkAccidentBusinessFee;
 		private Float imsWorkAccidentWorkerFee;
 		private Float imsWorkAccidentTotalFee;
 		
+		private String workAccidentLiquidDescription;
 		private Float workAccidentLiquidBase;
 		private Float workAccidentLiquidBusinessFee;
 		private Float workAccidentLiquidWorkerFee;
 		private Float workAccidentLiquidTotalFee;
 		
+		private String unemploymentDescription;
 		private Float unemploymentBase;
 		private Float unemploymentBusinessFee;
 		private Float unemploymentWorkerFee;
 		private Float unemploymentTotalFee;
 		
+		private String fogasaDescription;
 		private Float fogasaBase;
 		private Float fogasaBusinessFee;
 		private Float fogasaWorkerFee;
 		private Float fogasaTotalFee;
 		
+		private String jobTrainingDescription;
 		private Float jobTrainingBase;
 		private Float jobTrainingBusinessFee;
 		private Float jobTrainingWorkerFee;
 		private Float jobTrainingTotalFee;
 		
+		private String grantsAndBonusesDescription;
 		private Float grantsAndBonusesBase;
 		private Float grantsAndBonusesBusinessFee;
 		private Float grantsAndBonusesWorkerFee;
 		private Float grantsAndBonusesTotalFee;
 
+		private String otherContributionsLiquidDescription;
 		private Float otherContributionsLiquidBase;
 		private Float otherContributionsLiquidBusinessFee;
 		private Float otherContributionsLiquidWorkerFee;
 		private Float otherContributionsLiquidTotalFee;
 		
+		private String totalLiquidDescription;
 		private Float totalLiquidBase;
 		private Float totalLiquidBusinessFee;
 		private Float totalLiquidWorkerFee;
@@ -1295,65 +1686,121 @@ public class WorkerLiquidation {
 			this.totalLiquidTotalFee=totalLiquidTotalFee;
 			return this;
 		}
+		
 
 		
 		
 		
+		public WorkerLiquidationBuilder setCcDescription(String ccDescription) {
+			this.ccDescription = ccDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setCcLiquidDescription(String ccLiquidDescription) {
+			this.ccLiquidDescription = ccLiquidDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setItWorkAccidentDescription(String itWorkAccidentDescription) {
+			this.itWorkAccidentDescription = itWorkAccidentDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setImsWorkAccidentDescription(String imsWorkAccidentDescription) {
+			this.imsWorkAccidentDescription = imsWorkAccidentDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setWorkAccidentLiquidDescription(String workAccidentLiquidDescription) {
+			this.workAccidentLiquidDescription = workAccidentLiquidDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setUnemploymentDescription(String unemploymentDescription) {
+			this.unemploymentDescription = unemploymentDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setFogasaDescription(String fogasaDescription) {
+			this.fogasaDescription = fogasaDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setJobTrainingDescription(String jobTrainingDescription) {
+			this.jobTrainingDescription = jobTrainingDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setGrantsAndBonusesDescription(String grantsAndBonusesDescription) {
+			this.grantsAndBonusesDescription = grantsAndBonusesDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setOtherContributionsLiquidDescription(String otherContributionsLiquidDescription) {
+			this.otherContributionsLiquidDescription = otherContributionsLiquidDescription;
+			return this;
+		}
+		public WorkerLiquidationBuilder setTotalLiquidDescription(String totalLiquidDescription) {
+			this.totalLiquidDescription = totalLiquidDescription;
+			return this;
+		}
 		public WorkerLiquidation build() {
 			WorkerLiquidation liq=new WorkerLiquidation();
 			liq.nss=this.nss;
 			liq.caf=this.caf;
 			
+			liq.ccDescription = this.ccDescription;
 			liq.ccBase=this.ccBase;
 			liq.ccBusinessFee=this.ccBusinessFee;
 			liq.ccWorkerFee=this.ccWorkerFee;
 			liq.ccTotalFee=this.ccTotalFee;
 			
+			liq.ccLiquidDescription = this.ccLiquidDescription;
 			liq.ccLiquidBase=this.ccLiquidBase;
 			liq.ccLiquidBusinessFee=this.ccLiquidBusinessFee;
 			liq.ccLiquidWorkerFee=this.ccLiquidWorkerFee;
 			liq.ccLiquidTotalFee=this.ccLiquidTotalFee;
 			
+			liq.itWorkAccidentDescription = this.itWorkAccidentDescription;
 			liq.itWorkAccidentBase=this.itWorkAccidentBase;
 			liq.itWorkAccidentBusinessFee=this.itWorkAccidentBusinessFee;
 			liq.itWorkAccidentWorkerFee=this.itWorkAccidentWorkerFee;
 			liq.itWorkAccidentTotalFee=this.itWorkAccidentTotalFee;
 			
+			liq.imsWorkAccidentDescription = this.imsWorkAccidentDescription;
 			liq.imsWorkAccidentBase=this.imsWorkAccidentBase;
 			liq.imsWorkAccidentBusinessFee=this.imsWorkAccidentBusinessFee;
 			liq.imsWorkAccidentWorkerFee=this.imsWorkAccidentWorkerFee;
 			liq.imsWorkAccidentTotalFee=this.imsWorkAccidentTotalFee;
 			
+			liq.workAccidentLiquidDescription = this.workAccidentLiquidDescription;
 			liq.workAccidentLiquidBase=this.workAccidentLiquidBase;
 			liq.workAccidentLiquidBusinessFee=this.workAccidentLiquidBusinessFee;
 			liq.workAccidentLiquidWorkerFee=this.workAccidentLiquidWorkerFee;
 			liq.workAccidentLiquidTotalFee=this.workAccidentLiquidTotalFee;
 			
-			liq.unemploymentBase=this.unemploymentBase;
+			liq.unemploymentDescription = this.unemploymentDescription;
+			liq.unemploymentBase = this.unemploymentBase;
 			liq.unemploymentBusinessFee=this.unemploymentBusinessFee;
 			liq.unemploymentWorkerFee=this.unemploymentWorkerFee;
 			liq.unemploymentTotalFee=this.unemploymentTotalFee;
 			
+			liq.fogasaDescription = this.fogasaDescription;
 			liq.fogasaBase=this.fogasaBase;
 			liq.fogasaBusinessFee=this.fogasaBusinessFee;
 			liq.fogasaWorkerFee=this.fogasaWorkerFee;
 			liq.fogasaTotalFee=this.fogasaTotalFee;
 			
+			liq.jobTrainingDescription = this.jobTrainingDescription;
 			liq.jobTrainingBase=this.jobTrainingBase;
 			liq.jobTrainingBusinessFee=this.jobTrainingBusinessFee;
 			liq.jobTrainingWorkerFee=this.jobTrainingWorkerFee;
 			liq.jobTrainingTotalFee=this.jobTrainingTotalFee;
 			
+			liq.grantsAndBonusesDescription = this.grantsAndBonusesDescription;
 			liq.grantsAndBonusesBase=this.grantsAndBonusesBase;
 			liq.grantsAndBonusesBusinessFee=this.grantsAndBonusesBusinessFee;
 			liq.grantsAndBonusesWorkerFee=this.grantsAndBonusesWorkerFee;
 			liq.grantsAndBonusesTotalFee=this.grantsAndBonusesTotalFee;
 
+			liq.otherContributionsLiquidDescription = this.otherContributionsLiquidDescription;
 			liq.otherContributionsLiquidBase=this.otherContributionsLiquidBase;
 			liq.otherContributionsLiquidBusinessFee=this.otherContributionsLiquidBusinessFee;
 			liq.otherContributionsLiquidWorkerFee=this.otherContributionsLiquidWorkerFee;
 			liq.otherContributionsLiquidTotalFee=this.otherContributionsLiquidTotalFee;
 			
+			liq.totalLiquidDescription = this.totalLiquidDescription;
 			liq.totalLiquidBase=this.totalLiquidBase;
 			liq.totalLiquidBusinessFee=this.totalLiquidBusinessFee;
 			liq.totalLiquidWorkerFee=this.totalLiquidWorkerFee;

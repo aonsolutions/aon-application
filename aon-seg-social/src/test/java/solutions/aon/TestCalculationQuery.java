@@ -273,6 +273,30 @@ public class TestCalculationQuery {
 		}
 	}
 	
+	@Test
+	public void testWorkersCalculationQueryOkWithBonuses() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-10-2020");
+			Map<String,Map<String,WorkerLiquidation>> liq=SistemaREDI.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105577910", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			for (Map<String, WorkerLiquidation> map : liq.values()) {
+				Iterator<String> it=map.keySet().iterator();
+				while(it.hasNext()) {
+					System.out.println(map.get(it.next()));
+				}
+			}
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
 	
 	
 	@Test

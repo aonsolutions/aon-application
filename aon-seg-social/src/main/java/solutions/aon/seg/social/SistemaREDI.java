@@ -1505,6 +1505,8 @@ public class SistemaREDI {
 	private static void workerLiquidationDataType(HtmlTableRow tr, WorkerLiquidationBuilder lb) throws SegSocialException {
 		String innerText=Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
 		if(innerText.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setCcDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setCcBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1515,6 +1517,8 @@ public class SistemaREDI {
 			lb.setCcTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO CONTINGENCIAS COMUNES")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setCcLiquidDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setCcLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1525,6 +1529,8 @@ public class SistemaREDI {
 			lb.setCcLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IT DE ACCIDENTES DE TRABAJO")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setItWorkAccidentDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setItWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1535,6 +1541,8 @@ public class SistemaREDI {
 			lb.setItWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IMS DE ACCIDENTES DE TRABAJO")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setImsWorkAccidentDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setImsWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1545,6 +1553,8 @@ public class SistemaREDI {
 			lb.setImsWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE ACCIDENTES DE TRABAJO")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setWorkAccidentLiquidDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setWorkAccidentLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1555,6 +1565,8 @@ public class SistemaREDI {
 			lb.setWorkAccidentLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("DESEMPLEO")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setUnemploymentDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setUnemploymentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1565,6 +1577,8 @@ public class SistemaREDI {
 			lb.setUnemploymentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("FOGASA")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setFogasaDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setFogasaBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1575,6 +1589,8 @@ public class SistemaREDI {
 			lb.setFogasaTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("FORMACIÓN PROFESIONAL")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setJobTrainingDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setJobTrainingBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1585,6 +1601,8 @@ public class SistemaREDI {
 			lb.setJobTrainingTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE OTRAS COTIZACIONES")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setOtherContributionsLiquidDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setOtherContributionsLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1595,6 +1613,8 @@ public class SistemaREDI {
 			lb.setOtherContributionsLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE TOTALES")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setTotalLiquidDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setTotalLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
@@ -1604,7 +1624,9 @@ public class SistemaREDI {
 			Float nmbr4=cellToFloat(tr.getCell(4));
 			lb.setTotalLiquidTotalFee(nmbr4);
 		}
-		else if(innerText.equalsIgnoreCase("BONIF.Y SUBVENC.CON CARGO AL INEM")) {
+		else if(innerText != null && innerText.contains("BONIF")) {
+			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
+			lb.setGrantsAndBonusesDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));
 			lb.setGrantsAndBonusesBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
