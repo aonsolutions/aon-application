@@ -3,12 +3,15 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import java.util.Date;
 import java.util.function.BiConsumer;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -22,6 +25,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -264,6 +268,19 @@ public class InvoiceAutoComplete {
 			finance.setRegistry(inv.getRegistryData());		
 			if(finance.getFinanceStatus() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
+			}
+			
+			if(finance.getPayMethod() == null && finance.getPayMethodType() != null) {
+				PayMethod pm = PayMethodDAO.get(ctx.getContext(), f -> f.getTypeProperty().eq(finance.getPayMethodType().value()));
+				if(pm == null || pm.getId() == null) {
+					pm = new PayMethod()
+							.setDomain(inv.getDomain())
+							.setName(finance.getPayMethodType().getDescription() + " (Autogenerado)")
+							.setType(finance.getPayMethodType());
+					pm = PayMethodDAO.save(ctx.getContext(), pm);
+				}
+				finance.setPayMethod(pm.getId());
+				finance.setPayMethodName(pm.getName());
 			}
 		});
 	};

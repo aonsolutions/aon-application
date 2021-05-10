@@ -1,4 +1,4 @@
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
 import {AonElement} from './AonElement.js';
 
@@ -64,12 +64,14 @@ export class AonSearch extends AonElement {
 		this.SEARCH_BUTTON = this.id + CONSTANT.SEARCH_BUTTON.initCap();
 		this.SEARCH_INPUT = this.id + CONSTANT.SEARCH_INPUT.initCap();
 		this.ADVANCED_BUTTON = this.id + CONSTANT.ADVANCED_BUTTON.initCap();
-
+		this.OPTIONS = this.id + CONSTANT.OPTIONS.initCap();
+		this.SPAN = this.id + CONSTANT.SPAN.initCap();
 	}
 
 	build() {
 		
 		let span = this.createElement(TAG.SPAN);
+		span.id = this.SPAN;
 		span.style.display = 'inline-flex';
 
 		this.appendChild(span);
@@ -100,17 +102,16 @@ export class AonSearch extends AonElement {
 		advancedButton.id = this.ADVANCED_BUTTON;
 		advancedButton.icon = MATERIAL_ICONS.ARROW_DROP_DOWN;
 		span.appendChild(advancedButton);
-
+	
 		// let advanced = this.createElement('div');
 		// advanced.style.display = 'none';
 		// advanced.className = 'aonDialog';
 		
 		// this.appendChild(advanced);
 
-		// advancedButton.addEventListener(EVENT.CLICK, () => {
-		// 	advanced.
-		// 	advanced.style.display = 'block';
-		// })
+		advancedButton.addEventListener(EVENT.CLICK, () => {
+			this.buildOptions();
+		})
 		
 		input.addEventListener(EVENT.KEYUP, () => {
 			this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: input.value}));
@@ -144,9 +145,41 @@ export class AonSearch extends AonElement {
 				input.style.display = 'none';
 				advancedButton.style.display = 'none';
 				span.style.borderBottom = '0px';
+				this.closeOptions();
 			}
 		});
+
+		let options = this.createElement('div');
+		options.id = this.OPTIONS;
+		options.className = CSS.AON_INPUT_LIST_OPTIONS;
+	    options.style.width = span.clientWidth;
+		this.appendChild(options);
 	}
+
+	buildOptions(options) {
+		this.clearElementById(this.OPTIONS);
+	  	let div = this.getElement(this.OPTIONS);
+		div.style.width = this.getElement(this.SPAN).clientWidth;
+		// div.classList.add('is-visible');
+		// div.innerHTML = 'HOLAA';
+		//   div.appendChild(ul)
+	
+		document.addEventListener('click', function (event) {
+			let isClickInside = this.contains(event.target);
+			if (!isClickInside) {
+				if (div.classList.contains('is-visible')) {
+					div.classList.remove('is-visible');
+				}
+			}
+		});
+	  }
+
+	  closeOptions() {
+		let div = this.getElement(this.OPTIONS);
+		if (div && div.classList.contains('is-visible')) {
+		  div.classList.remove('is-visible');
+		}
+	  }
 }
 if(!window.customElements.get(TAG.AON_SEARCH)){
 	window.customElements.define(TAG.AON_SEARCH, AonSearch);

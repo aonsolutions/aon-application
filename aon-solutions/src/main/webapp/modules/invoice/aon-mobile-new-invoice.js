@@ -54,10 +54,10 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 	}
 
 	buildContent() {
-		let form = this.createElement(TAG.FORM);
-		this.appendChild(form);
+		// let form = this.createElement(TAG.FORM);
+		// this.appendChild(form);
 		let div = this.createElement(TAG.DIV);
-		form.appendChild(div);
+		this.appendChild(div);
 
     	let file = this.createElement(TAG.DIV);
 		file.id  = this.FILE;

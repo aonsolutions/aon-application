@@ -178,6 +178,7 @@ export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
 export const SHOW_FILE = 'showFile';
+export const SPAN = 'span';
 export const STATUS = 'status';
 export const STRING = 'string';
 export const SUCCESS = "success";

@@ -147,6 +147,16 @@ public class PayMethodDAO {
 			.orElse(null);
 	}
 	
+	public static PayMethod get(AONContext ctx, PayMethodFilter filter) {
+		ctx.checkRead();
+		return getSelect(ctx, filter)
+			.fetch()
+			.stream()
+			.map( new PayMethodFiller())
+			.findFirst()
+			.orElse(null);
+	}
+	
 	public static PayMethod save(AONContext ctx, PayMethod payMethod) {
 		ctx.checkWrite();
 		PayMethodAutoComplete.autoComplete(ctx, payMethod);

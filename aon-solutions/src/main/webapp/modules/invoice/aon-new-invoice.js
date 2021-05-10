@@ -242,11 +242,9 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	buildContent() {
-		let form = this.createElement(TAG.FORM);
-		this.appendChild(form);
 		let div = this.createElement(TAG.DIV);
 		div.className = CSS.AON_FLEX;
-		form.appendChild(div);
+		this.appendChild(div);
 
 		let data = this.createElement(TAG.DIV);
 		data.id = this.DATA;
