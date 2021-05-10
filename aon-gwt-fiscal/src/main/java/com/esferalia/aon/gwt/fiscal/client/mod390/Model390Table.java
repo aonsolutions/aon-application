@@ -182,7 +182,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 	
 	private Model390CellTable table;
 	
-	public Model390Table(Model390Callback cbk) {
+	public Model390Table(Model390ModuleOptions options,Model390Callback cbk) {
 		table = new Model390CellTable(new FiscalModelProvidesKey<Mod390>());
 		if (table.getSelectionModel() != null) {
 			table.getSelectionModel().addSelectionChangeHandler(new com.google.gwt.view.client.SelectionChangeEvent.Handler() {
@@ -197,7 +197,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model390.MOD390_SERVICE.getMod390s(Model390.getCurrentDomainName(), Model390.getCurrentDomain(), Model390.getCurrentUser(),
+				Model390.MOD390_SERVICE.getMod390s(options.getDomainName(), options.getDomain(), options.getUser(),
 						new AsyncCallback<LinkedList<Mod390>>() {
 							@Override
 							public void onSuccess(LinkedList<Mod390> result) {
@@ -212,7 +212,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			}
 		});
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.addNorth(getToolbarPanel(cbk), 25);
+		tableDockLayout.addNorth(getToolbarPanel(options,cbk), 25);
 		ScrollPanel tablePanel = new ScrollPanel();
 		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
 		tablePanel.add(table);
@@ -230,7 +230,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 	}
 	
 	
-	private Widget getToolbarPanel(Model390Callback cbk) {
+	private Widget getToolbarPanel(Model390ModuleOptions options,Model390Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -261,7 +261,7 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				cbk.onNew(0);
+				cbk.onNew(options, 0);
 			}
 		});
 		buttonContainer.add(newButton);

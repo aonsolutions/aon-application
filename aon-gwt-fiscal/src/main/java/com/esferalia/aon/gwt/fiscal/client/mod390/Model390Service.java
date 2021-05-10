@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/Mod390")
 public interface Model390Service extends RemoteService {
 
+	Mod390 getMod390(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
 	LinkedList<Mod390> getMod390s(String domainName, Integer domain, String user) throws AonCoreException;
 	Mod390 create(String domainName, int domain, String user, Mod390 mod390) throws AonCoreException;
 	Mod390 initialize(String domainName, int domain, String user, int year);

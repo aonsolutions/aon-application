@@ -6,10 +6,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage.ValidationMessages;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -76,11 +76,10 @@ public class Model3902018 extends DockLayoutPanel  {
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
 	private Hidden userHidden = new Hidden("user");
-	private AonData aonData;
 	private Model390Callback cbk;
-	public Model3902018(Mod390 mod390, final Model390Callback cbk, AonData aonData) {
+	
+	public Model3902018(Model390ModuleOptions options,Mod390 mod390, final Model390Callback cbk) {
 		super(Unit.PX);
-		this.aonData = aonData;
 		this.cbk = cbk;
 		AON.ensureInjected();
 
@@ -103,7 +102,7 @@ public class Model3902018 extends DockLayoutPanel  {
 					if (selected == null) {
 						cbk.showError(AON.MSG.unableToFindDeclaration());
 					} else {
-						select(selected, cbk);
+						select(options,selected, cbk);
 					}
 					popup.hide();
 				}
@@ -120,7 +119,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		}
 	}
 
-	private Widget getToolbar(Mod3902018 m390, Model390Callback cbk) {
+	private Widget getToolbar(Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -143,7 +142,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
 		Button newButton = new Button();
-		newButton.setVisible(!m390.isNew());
+		newButton.setVisible(!m390.isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		newButton.setText(AON.MSG.newAction());
 		newButton.setTitle(newButton.getText());
 		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -153,7 +152,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				cbk.cleanErrorPanel();
-				cbk.onNew(DEFAULT_YEAR);
+				cbk.onNew(options, DEFAULT_YEAR);
 			}
 		});
 		buttonContainer.add(newButton);
@@ -161,7 +160,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		Button saveButton = new Button();
 		saveButton.setVisible(!m390.isFinished() && !m390.isSent());
 		saveButton.setText(AON.MSG.saveAction());
-		saveButton.setTitle(newButton.getText());
+		saveButton.setTitle(saveButton.getText());
 		saveButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		saveButton.addStyleName(AON.AON_CSS.aonIconSave());
 		saveButton.addClickHandler(new ClickHandler() {
@@ -188,7 +187,7 @@ public class Model3902018 extends DockLayoutPanel  {
 							, new AsyncCallback<Mod3902018>() {
 								@Override
 								public void onSuccess(Mod3902018 result) {
-									select(result, cbk);
+									select(options,result, cbk);
 									popup.hide();
 								}
 
@@ -208,15 +207,22 @@ public class Model3902018 extends DockLayoutPanel  {
 
 		Button cancelButton = new Button();
 		cancelButton.setText(AON.MSG.cancelAction());
-		cancelButton.setTitle(newButton.getText());
+		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+			cancelButton.setText(AON.MSG.backAction());
+		}
+		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
 		cancelButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				cbk.cleanErrorPanel();
-				cbk.onCancel();
+				if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+					options.getExternalCallback().onExit();
+				} else {
+					cbk.cleanErrorPanel();
+					cbk.onCancel();
+				}
 			}
 		});
 		buttonContainer.add(cancelButton);
@@ -224,7 +230,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		Button deleteButton = new Button();
 		deleteButton.setVisible(!m390.isNew() && !m390.isFinished() && !m390.isSent());
 		deleteButton.setText(AON.MSG.deleteAction());
-		deleteButton.setTitle(newButton.getText());
+		deleteButton.setTitle(deleteButton.getText());
 		deleteButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		deleteButton.addStyleName(AON.AON_CSS.aonIconDelete());
 		deleteButton.addClickHandler(new ClickHandler() {
@@ -280,7 +286,7 @@ public class Model3902018 extends DockLayoutPanel  {
 				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
-						select(result, cbk);
+						select(options, result, cbk);
 					}
 
 					@Override
@@ -307,7 +313,7 @@ public class Model3902018 extends DockLayoutPanel  {
 				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
-						select(result, cbk);
+						select(options, result, cbk);
 					}
 
 					@Override
@@ -338,7 +344,7 @@ public class Model3902018 extends DockLayoutPanel  {
 				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
-						select(result, cbk);
+						select(options, result, cbk);
 					}
 
 					@Override
@@ -402,7 +408,7 @@ public class Model3902018 extends DockLayoutPanel  {
 	}
 	
 
-	public void select(Mod3902018 m390, Model390Callback cbk) {
+	public void select(Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
 		if ("INVALID".equals(m390.getXmlFormat()) ) {
 			ConfirmDialog cd = new ConfirmDialog();
 			cd.confirm( "La declaraci\u00F3n est\u00E1 creada con un formato anterior al del ejercicio 2018 y es inv\u00E1lida. \u00BFDesea borrarla?"
@@ -433,11 +439,11 @@ public class Model3902018 extends DockLayoutPanel  {
 			});
 		} else {
 			clear();
-			addNorth( getToolbar(m390,cbk), 26 );
+			addNorth( getToolbar(options, m390,cbk), 26 );
 			addNorth( getHeaderPanel(m390,cbk), 60 );
 			addNorth( getDeclarationHeaderTable(m390,cbk) , 40);
 			pagesPanel = new DeckPanel();  
-			addWest( getLinksPanel(m390,cbk), 300 );
+			addWest( getLinksPanel(options, m390,cbk), 300 );
 			ScrollPanel container = new ScrollPanel();
 			container.addStyleName(AON.AON_CSS.aonScrollArea());
 			container.add(pagesPanel);
@@ -447,7 +453,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		}
 	}
 
-	private Widget getLinksPanel(Mod3902018 m390, Model390Callback cbk) {
+	private Widget getLinksPanel(Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
 		IMod3902018CallBack callback = new IMod3902018CallBack() {
 
 			@Override
@@ -506,7 +512,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		linkContainer.add(new WestFocusPanel(AON.MSG.specificOperations(), new Page09(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.prorrata(), new Page10(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.difActivitiesRegime(), new Page11(m390),callback));
-		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, aonData, callback), callback));
+		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, options.getAonData(), callback), callback));
 		container.add(linkContainer);
 		return container;
 	}

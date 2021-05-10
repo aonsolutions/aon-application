@@ -54,6 +54,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HFModuleOptions;
 import com.esferalia.aon.occam.api.json.IJsonNames;
@@ -644,7 +646,68 @@ public class ModelMatrix extends MainEntryPoint {
 		FiscalModelType modelType = FiscalModelType.safeValueByName(model.getModel());
 		IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
 			@Override public void visitM200() {}
-			@Override public void visitM390() {}
+			
+			@Override 
+			public void visitM390() {
+				LOGGER.info("Before visitM390");
+				AonCustomPopup entryDialog = new AonCustomPopup();
+				entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+				entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+				entryDialog.setAnimationEnabled(true);
+				entryDialog.setGlassEnabled(true);
+				entryDialog.setModal(true);
+				entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+				try {
+					Model390 model390 = new Model390();
+					Model390ModuleOptions options = new Model390ModuleOptions();
+					options.setParentWidget(entryDialog);
+					options.setDomainName(aonData.getDomain().getName());
+					options.setDomain( model.getDomain() );
+					options.setUser(aonData.getUser().getLogin());
+					options.setAonData(aonData);
+					options.setFiscalModelId( id );
+					options.setEmbedded(true);
+					options.setBackButtonVisible(true);
+					options.setExternalCallback( new ModuleCallback() {
+						
+						@Override
+						public void onRemove(IAccountEntryWrapper removed) {
+							hide();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {}
+						
+						@Override
+						public void onExit() {
+							hide();
+						}
+						
+						@Override
+						public void onChange(IAccountEntryWrapper changed) {
+							hide();
+						}
+						
+						private void hide() {
+							entryDialog.hide();
+							entryDialog.clear();
+						}
+					});
+					entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+						
+						@Override
+						public void onClose(CloseEvent<PopupPanel> event) {
+							entryDialog.clear();
+						}
+					});
+					LOGGER.info("Before visitM303 model390.onModuleLoad( options )");
+					model390.onModuleLoad( options );
+					entryDialog.center();
+					entryDialog.show();
+				} catch (Throwable t) {
+					Window.alert("Error inesperado! [" + t.getMessage() + "]");
+				}
+			}
 			
 			@Override 
 			public void visitM349() {

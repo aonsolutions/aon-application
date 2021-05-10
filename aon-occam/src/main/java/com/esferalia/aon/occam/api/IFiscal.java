@@ -119,6 +119,7 @@ public interface IFiscal {
 	public Mod184 duplicateNextYearMod184(AONContext ctx, Integer id);
 
 	// 				   		  	MOD390
+	public Mod390 getMod390(AONContext ctx, int domain, Integer id);
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);
 	public Mod390 initialize(AONContext ctx, int year);
 	public Mod390 create(AONContext ctx, Mod390 mod390);

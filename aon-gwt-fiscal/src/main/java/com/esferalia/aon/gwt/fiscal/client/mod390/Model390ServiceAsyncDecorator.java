@@ -16,6 +16,13 @@ public class Model390ServiceAsyncDecorator implements Model390ServiceAsync {
 	}
 
 	@Override
+	public void getMod390(String domainName, Integer domain, String user, Integer id,
+			AsyncCallback<Mod390> callback) {
+		AON.start();
+		fsa.getMod390(domainName, domain, user,id,new AsyncCallbackWrapper<Mod390>(callback));
+	}
+
+	@Override
 	public void getMod390s(String domainName, Integer domain, String user,
 			AsyncCallback<LinkedList<Mod390>> callback) {
 		AON.start();

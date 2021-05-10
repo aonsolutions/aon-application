@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,6 +36,11 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model390 extends MainEntryPoint {
+
+	private static final Logger LOGGER = Logger.getLogger(Model390.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
@@ -68,7 +75,6 @@ public class Model390 extends MainEntryPoint {
 	SimpleLayoutPanel aeatPanel;
 	
 	Model390Table model390Table;
-	private AonData aonData;
 	
 	public class Model390Callback {
 
@@ -78,8 +84,8 @@ public class Model390 extends MainEntryPoint {
 		public void onCancel() {
 			cancel();
 		}
-		public void onNew(int year) {
-			Model390.this.onNew( year );
+		public void onNew(Model390ModuleOptions options, int year) {
+			Model390.this.onNew( options, year );
 		}
 		public void showBreakdownPanel(String htmlText) {
 			Model390.this.showBreakdownPanel(htmlText);
@@ -106,18 +112,26 @@ public class Model390 extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-
-			@Override public void onFailure(Throwable caught) {}
 			
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model390ModuleOptions options = new Model390ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
 			}
 		});
 	}
 	
-	public void onModuleLoad(AonData aonData) {
-		this.aonData = aonData;
+	public void onModuleLoad(Model390ModuleOptions options) {
 		AON.ensureInjected();
 
 		Model390ServiceAsync serviceRaw = GWT.create(Model390Service.class);
@@ -130,8 +144,30 @@ public class Model390 extends MainEntryPoint {
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
 		
+		model390Table = new Model390Table(options,new Model390Callback());
+		model390Table.addSelectionHandler(new SelectionHandler<Mod390>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Mod390> event) {
+				onSelectionChange(options,event);
+			}
+		});
+		
+		declarationContainer.setWidget(model390Table);
+		options.getParentWidget().add(ui);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model390 with a ID: " + options.getFiscalModelId());
+			onSelect(options,options.getFiscalModelId());
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model390 new Model");
+			onNew(options, options.getNewModel().getYear());
+		} else {
+			model390Table.refresh();
+			LOGGER.info("Model390 setting NOTIFICATIONS_TAB");
+			tabLayout.selectTab(NOTIFICATIONS_TAB);
+		}
+		
 		tabLayout.setAnimationDuration(300);
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
@@ -139,33 +175,34 @@ public class Model390 extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
-		
-		model390Table = new Model390Table(new Model390Callback());
-		model390Table.addSelectionHandler(new SelectionHandler<Mod390>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod390> event) {
-				onSelectionChange(event);
-			}
-		});
-		
-		declarationContainer.setWidget(model390Table);
-		model390Table.refresh();
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(ui);
 	}
 
-	public AonData getAonData() {
-		return aonData;
+
+	private void onSelect(Model390ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model390 with a ID: " + options.getFiscalModelId());
+		MOD390_SERVICE.getMod390(options.getDomainName(), options.getDomain(), options.getUser(), id , new AsyncCallback<Mod390>() {
+			@Override
+			public void onSuccess(Mod390 selected) {
+				if (selected == null) {
+					showErrorPanel(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(options, selected);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
 	}
-	
-	private void onSelectionChange(SelectionEvent<Mod390> event) {
+
+	private void onSelectionChange(Model390ModuleOptions options, SelectionEvent<Mod390> event) {
 		Mod390 sel = event.getSelectedItem();
-		select(sel);
+		select(options,sel);
 	}
 	
-	private void select(Mod390 selected) {
+	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
 			if (selected.getYear() == 2013 || selected.getYear() == 2014) {
@@ -173,13 +210,13 @@ public class Model390 extends MainEntryPoint {
 				model3902014.select(selected);
 				declarationContainer.setWidget( model3902014 );
 			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
-				Model3902015 model3902015 = new Model3902015(selected,new Model390Callback(), getAonData());
+				Model3902015 model3902015 = new Model3902015(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902015);
 			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019) {
-				Model3902018 model3902018 = new Model3902018(selected,new Model390Callback(), getAonData());
+				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902018);
 			}  else if (selected.getYear() == 2020) {
-				Model3902018 model3902018 = new Model3902018(selected,new Model390Callback(), getAonData());
+				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902018);
 			} else {
 				showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
@@ -189,16 +226,16 @@ public class Model390 extends MainEntryPoint {
 		}
 	}
 
-	private void onNew(int year) {
+	private void onNew(Model390ModuleOptions options,int year) {
 		cleanErrorPanel();
-		MOD390_SERVICE.initialize(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),year,
+		MOD390_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(),year,
 				new AsyncCallback<Mod390>() {
 					@Override
 					public void onSuccess(Mod390 m390) {
 						cleanBreakdownPanel();
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						showNewDeclarationPopup(m390);
+						showNewDeclarationPopup(options,m390);
 					}
 
 					@Override
@@ -208,7 +245,7 @@ public class Model390 extends MainEntryPoint {
 				});
 	}
 	
-	private void showNewDeclarationPopup(Mod390 m390) {
+	private void showNewDeclarationPopup(Model390ModuleOptions options,Mod390 m390) {
 		cleanErrorPanel();
 		cleanBreakdownPanel();
 		tabLayout.selectTab(INFORMATION_TAB);
@@ -217,7 +254,7 @@ public class Model390 extends MainEntryPoint {
 
 					@Override
 					public void onAccept(Mod390 mod390) {
-						select(m390);
+						select(options,m390);
 
 //						final PopupPanel popup = new PopupPanel(false, true);
 //						Label label = new Label(AON.MSG.processing());

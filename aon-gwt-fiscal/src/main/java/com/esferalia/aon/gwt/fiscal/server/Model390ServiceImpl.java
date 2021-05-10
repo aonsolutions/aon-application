@@ -16,6 +16,11 @@ public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implem
 	private static final long serialVersionUID = 5103358252992734363L;
 
 	@Override
+	public Mod390 getMod390(String domainName, Integer domain, String user, Integer id) {
+		return FISCAL.getMod390(domainName, domain, user, id);
+	}
+
+	@Override
 	public LinkedList<Mod390> getMod390s(String domainName, Integer domain, String user) {
 		return FISCAL.getMod390s(domainName, domain, user);
 	}
