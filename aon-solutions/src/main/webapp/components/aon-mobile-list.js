@@ -4,7 +4,7 @@ import "./aon-icon.js";
 import "./aon-icon-button.js";
 import "./aon-dialog-menu.js";
 
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, TAG } from '../environments/environments.js';
 
 export class AonMobileList extends AonElement {
   UL;
@@ -33,12 +33,16 @@ export class AonMobileList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonMobileList";
-    this.UL = this.id + "UL";
   }
 
   connectedCallback() {
+    this.initialize();
     this.build();
+  }
+
+  initialize() {
+    this.id = this.id || "aonMobileList";
+    this.UL = this.id + "UL";
   }
 
   build() {
@@ -49,7 +53,7 @@ export class AonMobileList extends AonElement {
     ul.className = "list-group";
     this.appendChild(ul);
 
-    let content = this.getElement("aonDocumentalContent");
+    let content = this.getApplication().getContent();
     if (content)
       content.addEventListener("scroll", () => {
         let scrollTop = content.scrollTop;
@@ -150,6 +154,15 @@ export class AonMobileList extends AonElement {
   setFilter(filter) {
     return this.setAttribute("filter", JSON.stringify(filter));
   }
+
+  empty(message) {
+    message = message || 'No hay datos disponibles.';
+    let div = this.createElement(TAG.DIV);
+    div.style.width = '100%';
+    div.style.textAlign = 'center';
+    div.innerHTML = message;
+    this.appendChild(div);
+}
 }
 if(!window.customElements.get('aon-mobile-list')){
   window.customElements.define("aon-mobile-list", AonMobileList);

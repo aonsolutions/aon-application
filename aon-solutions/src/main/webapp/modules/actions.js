@@ -6,6 +6,12 @@ export const ACCEPT = {
     icon: MATERIAL_ICONS.DONE
 }
 
+export const ADD = {
+    id: CONSTANT.ADD.initCap(),
+    name: MSG.ADD,
+    icon: MATERIAL_ICONS.ADD
+};
+
 export const ADD_FILE = {
     id: CONSTANT.ADD_FILE.initCap(),
     name: MSG.ADD_FILE,

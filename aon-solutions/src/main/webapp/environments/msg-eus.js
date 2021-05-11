@@ -6,6 +6,7 @@ export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
 export const ACCOUNTING = 'Kontabilitatea';
 export const ACTIVATE = 'Aktibatu';
+export const ADD = 'Gehitu';
 export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';

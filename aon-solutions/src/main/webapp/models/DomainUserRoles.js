@@ -374,6 +374,14 @@ export class DomainUserRoles {
 		return this.hasApp(App.CONVENIOS) && (this.isAdmin() || this.hasRole(Role.CONVENIOS));
 	}
 
+  hasAon() {
+    return this.hasApp(App.AIO);
+  }
+
+  hasParentAon() {
+    return this.hasParentApp(App.AIO);
+  }
+
   isAon() {
 		return this.hasApp(App.AIO) && (this.isAdmin() || this.hasRole(Role.AON));
 	}

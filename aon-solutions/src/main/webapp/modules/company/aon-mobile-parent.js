@@ -5,7 +5,9 @@ import {rootPanel} from '../../services/gwtLoader.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
 
-import { CSS, EVENT, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { AonSearch } from '../../components/aon-search.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
 
 export class AonMobileParent extends AonElement {
 
@@ -17,12 +19,14 @@ export class AonMobileParent extends AonElement {
   	}
 
   	connectedCallback () {
-      this.initialize();
-			this.init();
+      	this.initialize();
+		this.buildToolbar();
+	 	this.init();
   	}
 
     initialize() {
       this.id = this.id || 'aonParent';
+	  this.PARENT_CONTENT = this.id + 'Content';
     }
 
   	init(filter) {
@@ -75,17 +79,22 @@ export class AonMobileParent extends AonElement {
   		return value;
   	}
 
+	buildToolbar() {
+		let toolbar = new AonToolbar();
+		toolbar.id = this.id + 'Toolbar';
+		toolbar.title = MSG.COMPANIES;
+		this.appendChild(toolbar);
+		toolbar.addSearchButton();
+		toolbar.addEventListener(EVENT.SEARCH, (event) => {
+			this.init({value: event.detail});
+		});
+
+	}
+
    	build(companies) {
-  		let content = this.createElement(TAG.DIV);
-  		let div = this.createElement(TAG.DIV);
-  		div.style.borderBottom = '1px solid #5f6368';
-  		div.style.marginTop = '15px';
-  		div.style.marginLeft = '20px';
-  		div.style.marginRight = '20px';
-  		div.style.paddingBottom = '10px';
-  		div.style.paddingLeft = '16px';
-  		div.innerHTML = 'EMPRESAS';
-  		content.appendChild(div);
+  		let content = this.getElement(this.PARENT_CONTENT) || this.createElement(TAG.DIV);
+		content.id = this.PARENT_CONTENT;
+		this.clearElement(content);
 
   		let ul = this.createElement(TAG.UL);
   		ul.className = 'list-group';

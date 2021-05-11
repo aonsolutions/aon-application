@@ -34,6 +34,7 @@ export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
 export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
+export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
 export const ADD_FILE = MSG.ADD_FILE;

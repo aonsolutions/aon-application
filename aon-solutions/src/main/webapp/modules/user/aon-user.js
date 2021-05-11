@@ -15,6 +15,8 @@ import '../../components/aon-toolbar.js';
 import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
+import { AonMobileUserList } from './aon-mobile-user-list.js';
+import { AonUserList } from './aon-user-list.js';
 
 export class AonUser extends AonElement {
 
@@ -113,16 +115,23 @@ export class AonUser extends AonElement {
 	init() {
 		this.initialize();
 		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-		this.innerHTML = `
-			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-			<div style="display:flex;width:100%;">
-				<div id="aonConfigurationUserDiv" class="aonSubContent" style="width:50%;">
-					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
-					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
+		this.innerHTML = this.isMobile() 
+			? `
+				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
+				<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+				<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
+				<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
+			` 
+			: `
+				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
+				<div style="display:flex;width:100%;">
+					<div id="aonConfigurationUserDiv" class="aonSubContent" style="width:50%;">
+						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+						<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
+					</div>
+					<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
 				</div>
-				<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
-			</div>
-		`;
+			`;
 
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
@@ -267,7 +276,7 @@ export class AonUser extends AonElement {
 
 	buildUserToolbar() {
 		let userToolbar = this.getElement(this.TOOLBAR);
-		if(!this.hasAttribute('showToolbar') || this.isMobile())
+		if(!this.hasAttribute('showToolbar'))
 			userToolbar.style.display = 'none';
 		userToolbar.removeButtons();
 
@@ -455,8 +464,8 @@ export class AonUser extends AonElement {
 	}
 
 	back() {
-		let aonApplication = document.querySelector('aon-application');
-		aonApplication.setContentHTML("<aon-user-list> </aon-user-list>");
+		this.getApplication().setContent( this.isMobile() 
+			? new AonMobileUserList() : new AonUserList());
 	}
 
 	buildAppSelect(app) {
