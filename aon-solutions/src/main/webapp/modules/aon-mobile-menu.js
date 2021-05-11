@@ -10,7 +10,7 @@ import {
 } from "../services/service.js";
 import { AonDocumentalAyudat } from "./documental/ayudat/aon-documental-ayudat.js";
 import { AonDocumental } from "./documental/aon-documental.js";
-import { EVENT, MATERIAL_ICONS, MSG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
    PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
 
@@ -26,11 +26,11 @@ export class AonMobileMenu extends AonElement {
   dur;
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get company() {
@@ -68,7 +68,16 @@ export class AonMobileMenu extends AonElement {
 
 		const height = window.innerHeight;
     window.onresize = ({target})=> {
-			this.style.display = target.innerHeight < height ? "none" : "block";
+      let bottom = "59px";
+      let display = "block";
+      let application = this.getApplication();
+      if(target.innerHeight < height){
+        display = "none";
+        bottom = "1px";
+      } 
+      if(application && application.getContent())
+        application.getContent().style.bottom = bottom;
+      this.style.display = display;
 		}
   }
 
@@ -81,10 +90,9 @@ export class AonMobileMenu extends AonElement {
     const id = this.id + 'Sidenav';
     const sidEl = this.getElement(id);
     if(sidEl)sidEl.remove();
-    let div = document.createElement('div');
+    let div = this.createElement('div');
     div.id = id;
     div.className = 'aonMobileMenu';
-    div.style.backgroundColor = "#fff";
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
     dialogMenu.id = this.id + 'dialogMenu';
@@ -176,29 +184,33 @@ export class AonMobileMenu extends AonElement {
   }
 
   addMenuButton(app) {
-    let menu = this.getElement(`${this.id}Sidenav`);
-    let n = (window.innerWidth / 5 - 40) / 2;
-    let span = document.createElement('span');
-    span.id = this.id + app.name;
-    span.style.top = '10px';
-    span.style.position = 'relative';
-    span.style.marginLeft = n;
-    if(menu.childNodes && menu.childNodes.length < 5){
-      span.style.marginRight = n;
-    }
-    menu.appendChild(span);
-
-    let button = new AonIconButton();
-    button.id = span.id + 'Button';
-    if(app.icon) button.icon = app.icon;
-    if(app.aonIcon) {
-      button.aonIcon = app.aonIcon;
-    }
-    button.addEventListener(EVENT.CLICK, app.fn);
-    span.appendChild(button);
-    if(app.aonIcon) {
-      this.getElement(button.BUTTON).style.bottom = '5px';
-      this.getElement(button.AON_ICON).size = "20";
+    const idSpan = this.id + app.name;
+    let span = this.getElement(idSpan);
+    if(!span){
+      span = this.createElement('span');
+      let menu = this.getElement(`${this.id}Sidenav`);
+      let n = (window.innerWidth / 5 - 40) / 2;
+      span.id = idSpan;
+      span.style.top = '10px';
+      span.style.position = 'relative';
+      span.style.marginLeft = n;
+      if(menu.childNodes && menu.childNodes.length < 5){
+        span.style.marginRight = n;
+      }
+      menu.appendChild(span);
+  
+      let button = new AonIconButton();
+      button.id = span.id + 'Button';
+      if(app.icon) button.icon = app.icon;
+      if(app.aonIcon) {
+        button.aonIcon = app.aonIcon;
+      }
+      button.addEventListener(EVENT.CLICK, app.fn);
+      span.appendChild(button);
+      if(app.aonIcon) {
+        this.getElement(button.BUTTON).style.bottom = '5px';
+        this.getElement(button.AON_ICON).size = "20";
+      }
     }
   }
 

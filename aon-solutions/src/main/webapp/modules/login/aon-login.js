@@ -106,7 +106,7 @@ export class AonLogin extends AonElement {
 				</div>
 			</div>
 
-			<aon-dialog id="aonDialogLogin" width="400px"></aon-dialog>
+			<aon-dialog id="aonDialogLogin"></aon-dialog>
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
 
@@ -131,9 +131,11 @@ export class AonLogin extends AonElement {
     signin.addEventListener(EVENT.CLICK, () => this.signin());
 
     let aonLoginRemember = this.getElement("aonLoginRemember");
-    aonLoginRemember.addEventListener(EVENT.CLICK, () =>
-      this.getElement("aonDialogLogin").open()
-    );
+    aonLoginRemember.addEventListener(EVENT.CLICK, () =>{
+       const dialog = this.getElement("aonDialogLogin");
+       if (!this.isMobile()) dialog.width = '400px';
+       dialog.open()
+    });
 
   }
 
