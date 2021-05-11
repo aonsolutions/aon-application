@@ -917,16 +917,17 @@ public class JooqIT {
 					
 					Date date = null == itPart.getDate() ? null : new Date(itPart.getDate().getTime());
 					
-					dslContext.insertInto(CONTRACT_LEAVE_DETAIL)
-						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, domainId)
-						.set(CONTRACT_LEAVE_DETAIL.TYPE, itPart.getType())
-						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, it.getId())
-						.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, itPart.getCollegeNumber())
-						.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, itPart.getConfirmOrderNumber())
-						.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
-						.set(CONTRACT_LEAVE_DETAIL.DATE, date)
-						.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
-						.execute();
+					if(null != date)
+						dslContext.insertInto(CONTRACT_LEAVE_DETAIL)
+							.set(CONTRACT_LEAVE_DETAIL.DOMAIN, domainId)
+							.set(CONTRACT_LEAVE_DETAIL.TYPE, itPart.getType())
+							.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, it.getId())
+							.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, itPart.getCollegeNumber())
+							.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, itPart.getConfirmOrderNumber())
+							.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
+							.set(CONTRACT_LEAVE_DETAIL.DATE, date)
+							.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
+							.execute();
 				}
 				
 				Integer contractId = itEmployee.getContractInfo().getContractId();
