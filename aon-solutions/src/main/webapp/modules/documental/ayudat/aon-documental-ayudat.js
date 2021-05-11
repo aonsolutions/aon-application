@@ -8,8 +8,11 @@ import { AonDocumentalListAyudat } from './aon-documental-list-ayudat.js';
 import { AonMobileDocumentAyudat } from './aon-mobile-document-ayudat.js';
 
 export class AonDocumentalAyudat extends AonElement {
-    _filter;
     AON_DOCUMENTA_AYUDAT;
+    _filter;
+    _folders;
+    _users;
+    _tags;
     constructor () {
         super();
     }
@@ -29,7 +32,12 @@ export class AonDocumentalAyudat extends AonElement {
 
     build() {
         this.paintView();
-        getAccessBidoq().then(async ({datos, message})=>{
+        this.buildData();
+    }
+
+    async buildData(){
+        this.applicationEl.startLoader();
+        await getAccessBidoq().then(async ({datos, message})=>{
             if(CONSTANT.SUCCESS === message && datos){
                 const {usuarios} = datos;
                 if(usuarios){
@@ -43,9 +51,9 @@ export class AonDocumentalAyudat extends AonElement {
             }
         }).catch(e=>{
             console.error(e);
-        })
+        });
+        this.applicationEl.stopLoader();
     }
-
     paintView(){
         this.createApplication(this.AON_DOCUMENTA_AYUDAT, MSG.DOCUMENTARY, new AonApplication() );
         this.applicationEl = this.getApplication();
@@ -68,7 +76,7 @@ export class AonDocumentalAyudat extends AonElement {
             });
     
             this.applicationEl.addSidenavOptions('TIPO DE USUARIO', usersOptions);
-            this.applicationEl.dataset['users'] = JSON.stringify(users);
+            this._users = users;
         } catch (error) {
             console.error('Ocurrió un error: ' + error.message);
         }
@@ -95,7 +103,7 @@ export class AonDocumentalAyudat extends AonElement {
                 });
         
                 this.applicationEl.addSidenavOptions('CATEGORIAS', categoryOptions);
-                this.applicationEl.dataset['folders'] = JSON.stringify(datos);
+                this._folders = datos;
             }
         } catch (error) {
             console.error('Ocurrió un error: ' + error.message);
@@ -117,7 +125,7 @@ export class AonDocumentalAyudat extends AonElement {
                     }
                 }));
                 this.applicationEl.addSidenavOptions(MSG.TAGS, tagsOptions);
-                this.applicationEl.dataset['tags'] = JSON.stringify(datos);
+                this._tags = datos;
             }
         } catch (error) {
             console.log(error);

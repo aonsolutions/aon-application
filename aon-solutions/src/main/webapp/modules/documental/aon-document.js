@@ -260,14 +260,11 @@ export class AonDocument extends AonElement {
     `;
     containerTags.appendChild(divTag);
     this.getElement('closeTag' + t.id).addEventListener(EVENT.CLICK, () => {
-      this._tags.forEach((item, i) => {
-        if(t.id === item.id || t.id === item.value) {
-          this._tags.splice(i, 1);
-          this.getElement('tag' + t.id).remove();
-          this.setTagsAvaible();
-          this.save();
-        }
-      });
+      this._tags = this._tags.filter(tag => t.id !== tag.id && t.id !== tag.value );
+      const tagEl = this.getElement(`tag${t.id}`);
+      if(tagEl) tagEl.remove();
+      this.setTagsAvaible();
+      this.save();
     });
     this.save();
   }
@@ -308,25 +305,11 @@ export class AonDocument extends AonElement {
   }
 
   next() {
-    let aonDocumental = this.getApplication();
-		let d = document.getElementById(aonDocumental.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.NEXT);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+    this.getApplication().development();
   }
 
   previous() {
-    let aonDocumental = this.getApplication();
-		let d = document.getElementById(aonDocumental.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.PREVIOUS);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+    this.getApplication().development();
   }
 
   send() {

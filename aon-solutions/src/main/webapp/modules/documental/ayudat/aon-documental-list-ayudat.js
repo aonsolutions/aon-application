@@ -3,7 +3,7 @@ import { AonTable } from '../../../components/aon-table.js';
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { postBidoq } from  '../../../services/bidoqService.js';
-import {  formatBytes, getReader, newComponent } from '../../../services/utils.js';
+import {  formatBytes, formatDate, getReader, newComponent } from '../../../services/utils.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import * as ACTION from '../../actions.js';
 
@@ -141,7 +141,7 @@ export class AonDocumentalListAyudat extends AonElement {
                         // ...doc,
                         aonIcon: "aon_file",
                         title: doc.title,
-                        subtitle:  doc.date + ' - ' + doc.size
+                        subtitle:  doc.dateParse + ' - ' + doc.size
                     }, idx, (el) => this.aonEvent(doc));
                 });
             } catch (e) {
@@ -160,7 +160,7 @@ export class AonDocumentalListAyudat extends AonElement {
                 data = datos.map(resp =>({
                     ...resp,
                     title: resp.name,
-                    dateParse: resp.date,
+                    dateParse: formatDate(new Date(resp.date * 1000)),
                     size: formatBytes(resp.size)
                 }));
             }
