@@ -258,7 +258,7 @@
 		<repository>
 			<id>external_free</id>
 			<name>External Free Repository</name>
-			<url>http://aonsolutions.github.io/aon-application/maven/2/external_free</url>
+			<url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -269,7 +269,36 @@
 			</snapshots>
 		</repository>
 
-		<repository>
+                <repository>
+                        <id>central-repository</id>
+                        <name>Central Repository</name>
+                        <layout>default</layout>
+                        <url>https://mvnrepository.com/repos/central</url>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+                <repository>
+                        <id>repo1.maven.org</id>
+                        <name>Central Repository 1</name>
+                        <layout>default</layout>
+                        <url>https://repo1.maven.org/maven2/</url>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+
+		<!--repository>
 			<id>maven2-repository.dev.java.net</id>
 			<name>Java.net Repository for Maven 2</name>
 			<url>http://download.java.net/maven/2</url>
@@ -281,7 +310,7 @@
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
-		</repository>
+		</repository-->
 
 		<repository>
 			<id>jboss-thirdparty-releases</id>
@@ -312,7 +341,7 @@
 			</snapshots>
 		</repository>
 
-		<repository>
+		<!--repository>
 			<id>jasperForge</id>
 			<name>Jasper Forge Repository</name>
 			<layout>default</layout>
@@ -325,7 +354,7 @@
 				<enabled>false</enabled>
 				<updatePolicy>true</updatePolicy>
 			</snapshots>
-		</repository>
+		</repository-->
 
 
 	</repositories>
@@ -356,7 +385,7 @@
 
 		<pluginRepository>
 			<id>aon.external.free</id>
-			<url>http://aonsolutions.github.io/aon-application/maven/2/external_free</url>
+			<url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
