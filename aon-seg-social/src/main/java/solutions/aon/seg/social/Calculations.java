@@ -1,0 +1,402 @@
+package solutions.aon.seg.social;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
+import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaREDI.LiquidationType;
+import solutions.aon.seg.social.SistemaREDI.Regime;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.OutOfServiceException;
+import solutions.aon.seg.social.exception.OutOfServiceMotivation;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDateException;
+import solutions.aon.seg.social.object.Calc;
+import solutions.aon.seg.social.object.Period;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.toolkit.Toolkit;
+
+public class Calculations {
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arrFields);
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			webClient.getOptions().setJavaScriptEnabled(false);
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			try {
+				htmlPage.getElementById("autorizacion0").click();
+				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+			} catch (NullPointerException e) {}
+			htmlPage=SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+			try {
+				SistemaREDI.checkLiquidationExceptions(htmlPage);
+			}catch(NullPointerException | ElementNotFoundException e) {
+				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret= new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
+				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
+				DomNodeList<DomNode> trowList = htmlPage.querySelectorAll("table>tbody>tr:not(.cabecera)");
+				
+				for (int h=0;h<liqList.size();h++) {
+					String liquidationType = Toolkit.removeWeirdCharacters(((HtmlTableRow)trowList.get(h)).getCells().get(3).getVisibleText());
+					Map<String,Map<Period, Map<String, Calc>>> nafMap = new LinkedHashMap<String,Map<Period, Map<String, Calc>>>();
+					HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(h);
+					radio.click();
+					htmlPage=formDatos.getInputByValue("Continuar").click();
+					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+					List<HtmlRadioButtonInput> listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
+					for (int i=0;i<listRadiosWorkers.size();i++) {
+						htmlPage=listRadiosWorkers.get(i).click();
+						htmlPage=formDatos.getInputByValue("Consultar").click();
+						DomNode nafElement = htmlPage.querySelector("abbr[title='Número de afiliación a la Seguridad Social']").getNextSibling();
+						String naf = Toolkit.removeWeirdCharacters(nafElement.getVisibleText());
+						htmlPage = htmlPage.getElementById("SPM.ACC.RELACION_TRAMOS").click();
+						
+						List<DomElement> radios = htmlPage.getElementsByName("TRAMO");
+						
+						Map<Period, Map<String, Calc>> periods = new LinkedHashMap<Period, Map<String,Calc>>();
+						
+						for (int k=0; k<radios.size(); k++) {
+							DomElement rad = radios.get(k);
+							htmlPage = rad.click();
+							htmlPage = htmlPage.getElementById("SPM.ACC.CALCULOS_TRAMO").click();
+							
+							DomNode element = htmlPage.querySelector("div>abbr[title='Número de afiliado.']");
+							element = element.getParentNode();
+							element = element.getNextElementSibling();
+							String fromDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
+							Pattern datePattern = Pattern.compile("\\s*Fecha\\s*(Desde|Hasta)\\s*:\\s*(?<date>(?<day>\\d{1,2})\\/(?<month>\\d{1,2})\\/(?<year>\\d{2,4}))\\s*", Pattern.CASE_INSENSITIVE);
+							DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+							Matcher matcher = datePattern.matcher(fromDateStr);
+							Date fromDate = null;
+							if (matcher.matches()) {
+								try {
+									fromDate = df.parse(matcher.group("date"));
+								} catch (ParseException e1) {}
+							}
+							element = element.getNextElementSibling();
+							String toDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
+							matcher = datePattern.matcher(toDateStr);
+							Date toDate = null;
+							if (matcher.matches()) {
+								try {
+									toDate = df.parse(matcher.group("date"));
+								} catch (ParseException e1) {}
+							}
+							
+							Period period = new Period(fromDate, toDate);
+							
+							HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
+							
+							DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
+							
+							LinkedHashMap<String, Calc> calcs = new LinkedHashMap<String, Calc>();
+							
+							trList.forEach(trNode -> {
+								HtmlTableRow tr = (HtmlTableRow) trNode;
+								List<HtmlTableCell> cells = tr.getCells();
+								
+								String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
+								
+								String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
+								
+								String baseStr = Toolkit.removeWeirdCharacters(cells.get(1).getVisibleText());
+								baseStr = baseStr.replaceAll(regExp, "$1");
+								Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+								
+								String enterpriseStr = Toolkit.removeWeirdCharacters(cells.get(3).getVisibleText());
+								enterpriseStr = enterpriseStr.replaceAll(regExp, "$1");
+								Double enterprise = enterpriseStr != null && !enterpriseStr.isEmpty() ? Double.parseDouble(enterpriseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+								
+								String employeeStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
+								employeeStr = employeeStr.replaceAll(regExp, "$1");
+								Double employee = employeeStr != null && !employeeStr.isEmpty() ? Double.parseDouble(employeeStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+								
+								String totalStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
+								totalStr = totalStr.replaceAll(regExp, "$1");
+								Double total = totalStr != null && !totalStr.isEmpty() ? Double.parseDouble(totalStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+								
+								Calc calc = new Calc(base, enterprise, employee, total);
+								calcs.put(description, calc);
+								
+							});
+							
+							periods.put(period, calcs);
+							
+							htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							radios = htmlPage.getElementsByName("TRAMO");
+						}
+						nafMap.put(naf, periods);
+						
+						htmlPage = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+						
+						htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+						formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+						listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
+					}
+					ret.put(liquidationType, nafMap);
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+					liqList=formDatos.querySelectorAll("input[type='radio']");
+				}
+				return ret;
+			}
+
+			
+		} catch (FailingHttpStatusCodeException e) {
+			String response = e.getResponse().getContentAsString();
+			//response = response.replaceAll("\n", " ");
+			Pattern pattern = Pattern.compile("\\s*<p\\s*class=\"p2\">(?<mensaje>.+?)</p>\\s*", Pattern.DOTALL);
+			Matcher matcher = pattern.matcher(response);
+			ArrayList<String> list = new ArrayList<String>();
+			while(matcher.find()) {
+				list.add(matcher.group("mensaje"));
+			}
+			
+//			for(String match : list) {
+//				System.out.println(match);
+//			}
+			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
+				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
+			} else {
+				StatusCodeException.HandleStatusCodeException(e);
+			}
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (ElementNotFoundException e) {
+			if(e.getAttributeValue() != null && e.getAttributeValue().length() == 4) {
+				try {
+					Integer.parseInt(e.getAttributeValue());
+					throw new InvalidDateException(e.getAttributeValue());
+				} catch (NumberFormatException e1) {
+				}
+			}
+			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
+		}
+		return null;
+	}
+	
+	
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arrFields);
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			webClient.getOptions().setJavaScriptEnabled(false);
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			try {
+				htmlPage.getElementById("autorizacion0").click();
+				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+			} catch (NullPointerException e) {}
+			htmlPage=SistemaREDI.liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+			try {
+				SistemaREDI.checkLiquidationExceptions(htmlPage);
+			}catch(NullPointerException | ElementNotFoundException e) {
+				Map<String, Map<String,Map<Period, Map<String, Calc>>>> ret= new LinkedHashMap<String, Map<String,Map<Period, Map<String, Calc>>>>();
+				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
+				DomNodeList<DomNode> trowList = htmlPage.querySelectorAll("table>tbody>tr:not(.cabecera)");
+				
+				for (int h=0;h<liqList.size();h++) {
+					String liquidationType = Toolkit.removeWeirdCharacters(((HtmlTableRow)trowList.get(h)).getCells().get(3).getVisibleText());
+					Map<String,Map<Period, Map<String, Calc>>> nafMap = new LinkedHashMap<String,Map<Period, Map<String, Calc>>>();
+					HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(h);
+					radio.click();
+					htmlPage=formDatos.getInputByValue("Continuar").click();
+					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					
+					for(String naf : nafs) {
+						DomNodeList<DomNode> rowNodes = htmlPage.querySelectorAll("tbody tr:not([class='cabecera'])");
+						if(!rowNodes.isEmpty()) {
+							Optional<DomNode> row = rowNodes.stream().filter(node -> (Toolkit.removeWeirdCharacters(((HtmlTableRow)node).getCell(1).getVisibleText()).equalsIgnoreCase(naf))).findFirst();
+							if(row.isPresent()) {
+								HtmlTableRow tableRow = (HtmlTableRow) row.get();
+								HtmlRadioButtonInput nafRadio = tableRow.getCell(0).querySelector("input[type='radio']");
+								nafRadio.click();
+							}
+						}
+						else {
+							HtmlInput nafInput = (HtmlInput) htmlPage.getElementById("NAF_TRABAJADOR");
+							nafInput.setValueAttribute(naf);
+						}
+						htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+						
+						if (htmlPage.querySelector("li[title='Error']") == null) {
+							htmlPage = htmlPage.getElementById("SPM.ACC.RELACION_TRAMOS").click();
+
+							
+							List<DomElement> radios = htmlPage.getElementsByName("TRAMO");
+							
+							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<Period, Map<String,Calc>>();
+							for (int i=0; i<radios.size(); i++) {
+								DomElement rad = radios.get(i);
+								htmlPage = rad.click();
+								htmlPage = htmlPage.getElementById("SPM.ACC.CALCULOS_TRAMO").click();
+								
+								DomNode element = htmlPage.querySelector("div>abbr[title='Número de afiliado.']");
+								element = element.getParentNode();
+								element = element.getNextElementSibling();
+								String fromDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
+								Pattern datePattern = Pattern.compile("\\s*Fecha\\s*(Desde|Hasta)\\s*:\\s*(?<date>(?<day>\\d{1,2})\\/(?<month>\\d{1,2})\\/(?<year>\\d{2,4}))\\s*", Pattern.CASE_INSENSITIVE);
+								DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+								Matcher matcher = datePattern.matcher(fromDateStr);
+								Date fromDate = null;
+								if (matcher.matches()) {
+									try {
+										fromDate = df.parse(matcher.group("date"));
+									} catch (ParseException e1) {}
+								}
+								element = element.getNextElementSibling();
+								String toDateStr = Toolkit.removeWeirdCharacters(element.getVisibleText());
+								matcher = datePattern.matcher(toDateStr);
+								Date toDate = null;
+								if (matcher.matches()) {
+									try {
+										toDate = df.parse(matcher.group("date"));
+									} catch (ParseException e1) {}
+								}
+								
+								Period period = new Period(fromDate, toDate);
+								
+								HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
+								
+								DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
+								
+								LinkedHashMap<String, Calc> calcs = new LinkedHashMap<String, Calc>();
+								
+								trList.forEach(trNode -> {
+									HtmlTableRow tr = (HtmlTableRow) trNode;
+									List<HtmlTableCell> cells = tr.getCells();
+									
+									String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
+									
+									String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
+									
+									String baseStr = Toolkit.removeWeirdCharacters(cells.get(1).getVisibleText());
+									baseStr = baseStr.replaceAll(regExp, "$1");
+									Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+									
+									String enterpriseStr = Toolkit.removeWeirdCharacters(cells.get(3).getVisibleText());
+									enterpriseStr = enterpriseStr.replaceAll(regExp, "$1");
+									Double enterprise = enterpriseStr != null && !enterpriseStr.isEmpty() ? Double.parseDouble(enterpriseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+									
+									String employeeStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
+									employeeStr = employeeStr.replaceAll(regExp, "$1");
+									Double employee = employeeStr != null && !employeeStr.isEmpty() ? Double.parseDouble(employeeStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+									
+									String totalStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
+									totalStr = totalStr.replaceAll(regExp, "$1");
+									Double total = totalStr != null && !totalStr.isEmpty() ? Double.parseDouble(totalStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+									
+									Calc calc = new Calc(base, enterprise, employee, total);
+									calcs.put(description, calc);
+									
+								});
+								
+								periods.put(period, calcs);
+								
+								htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
+								radios = htmlPage.getElementsByName("TRAMO");
+							}
+							nafMap.put(naf, periods);
+							
+							htmlPage = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+							
+							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+						}
+						
+						
+					}
+					
+					ret.put(liquidationType, nafMap);
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+					liqList=formDatos.querySelectorAll("input[type='radio']");
+				}
+				return ret;
+			}
+
+			
+		} catch (FailingHttpStatusCodeException e) {
+			String response = e.getResponse().getContentAsString();
+			//response = response.replaceAll("\n", " ");
+			Pattern pattern = Pattern.compile("\\s*<p\\s*class=\"p2\">(?<mensaje>.+?)</p>\\s*", Pattern.DOTALL);
+			Matcher matcher = pattern.matcher(response);
+			ArrayList<String> list = new ArrayList<String>();
+			while(matcher.find()) {
+				list.add(matcher.group("mensaje"));
+			}
+			
+//			for(String match : list) {
+//				System.out.println(match);
+//			}
+			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
+				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
+			} else {
+				StatusCodeException.HandleStatusCodeException(e);
+			}
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (ElementNotFoundException e) {
+			if(e.getAttributeValue() != null && e.getAttributeValue().length() == 4) {
+				try {
+					Integer.parseInt(e.getAttributeValue());
+					throw new InvalidDateException(e.getAttributeValue());
+				} catch (NumberFormatException e1) {
+				}
+			}
+			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+}

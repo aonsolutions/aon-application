@@ -1,6 +1,6 @@
 package solutions.aon;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.junit.Test;
+
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
+import solutions.aon.seg.social.Calculations;
 import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaREDI.LiquidationType;
@@ -21,16 +26,15 @@ import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.InvalidDateException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Liquidation;
+import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.WorkerLiquidation;
-
-import org.junit.Test;
-
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
 public class TestCalculationQuery {
 
@@ -565,15 +569,238 @@ public class TestCalculationQuery {
 	}
 	
 	
+	@Test
+	public void testWorkersCalculationOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			Map<String, Map<String,Map<Period, Map<String, Calc>>>> liq=Calculations.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+//			for (Map<String, WorkerLiquidation> map : liq.values()) {
+//				Iterator<String> it=map.keySet().iterator();
+//				while(it.hasNext()) {
+//					System.out.println(map.get(it.next()));
+//				}
+//			}
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	@Test
+	public void testWorkersCalculationWrongRegime() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			Map<String, Map<String,Map<Period, Map<String, Calc>>>> liq=Calculations.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.ESPECIAL_MAR_GRUPO_1, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+//			for (Map<String, WorkerLiquidation> map : liq.values()) {
+//				Iterator<String> it=map.keySet().iterator();
+//				while(it.hasNext()) {
+//					System.out.println(map.get(it.next()));
+//				}
+//			}
+		} catch (WrongRegimeException e) {
+			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 	
-//	public static void main(String[] args) {
-//		try {
-//		throw new SegSocialException("Aplicación Cerrada temporalmente.", new SegSocialException("La aplicación SLD Cotización se encuentra en estado cerrado. Motivo : La aplicación estará fuera de servicio hasta el día 03/02/2021 a las 12 horas. La fecha prevista para la próxima apertura es: 03/02/2021 12:00."));
-//		} catch ( Exception  e ) {
-//			
-//			System.out.println(e.getMessage() + e.getCause().getMessage());
-//			
-//		}
-//	}
+	@Test
+	public void testWorkersCalculationWrongCCC() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			Map<String, Map<String,Map<Period, Map<String, Calc>>>> liq=Calculations.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105340062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+//			for (Map<String, WorkerLiquidation> map : liq.values()) {
+//				Iterator<String> it=map.keySet().iterator();
+//				while(it.hasNext()) {
+//					System.out.println(map.get(it.next()));
+//				}
+//			}
+		} catch (invalidCccException e) {
+			
+		}  catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationWrongDate() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) +1);
+			d = cal.getTime();
+			Map<String, Map<String,Map<Period, Map<String, Calc>>>> liq=Calculations.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+//			for (Map<String, WorkerLiquidation> map : liq.values()) {
+//				Iterator<String> it=map.keySet().iterator();
+//				while(it.hasNext()) {
+//					System.out.println(map.get(it.next()));
+//				}
+//			}
+		} catch (InvalidDateException e) {
+			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		}
+	}
+
+	
+	@Test
+	public void testWorkersCalculationByCCCandNAFsOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111008520536"));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	@Test
+	public void testWorkersCalculationByCCCandNAFsMultpleNafsOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	@Test
+	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongDate() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-"+(Calendar.getInstance().get(Calendar.YEAR)+2));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (InvalidDateException e) {
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationByCCCandNAFsMultpleNafsDateWithNoData() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2006");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (DataDoesNotExist e) {
+			System.out.println("entra");
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongRegime() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.ESPECIAL_MAR_ASIMILADOS_GRUPO_1, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (WrongRegimeException e) {
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongCCC() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11177534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (invalidCccException e) {
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	
+	@Test
+	public void testWorkersCalculationByCCCandNAFsOriginalCert() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "010019805355", "011001022503", "011005185924"));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 
 }

@@ -885,7 +885,7 @@ public class SistemaREDI {
 	
 	
 	
-	private static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
+	static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, OutOfServiceException {
 //		CCC
@@ -1372,7 +1372,7 @@ public class SistemaREDI {
 
 	
 
-	private static void checkLiquidationExceptions(HtmlPage htmlPage) throws LiquidationDoesNotExist, DataDoesNotExist,
+	static void checkLiquidationExceptions(HtmlPage htmlPage) throws LiquidationDoesNotExist, DataDoesNotExist,
 			WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
 		HtmlDivision divError=(HtmlDivision) htmlPage.getElementById("ARQContenMensaje");
 		if(divError.getVisibleText().toUpperCase().contains("NO EXISTE LIQUIDACIÓN"))
