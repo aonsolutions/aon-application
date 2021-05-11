@@ -69,7 +69,7 @@ export class AonViewer extends AonElement {
 		});
 
 		this.addEventListener(EVENT.MOUSELEAVE, () => {
-			div.style.visibility = 'hidden';
+			// div.style.visibility = 'hidden';
 		});
 
 		if (!this.isMobile())
@@ -90,13 +90,13 @@ export class AonViewer extends AonElement {
 		div.style.right = "2%";
 		div.style.top = "1%";
 		div.style.justifyContent = "space-between";
-		div.style.height = "131px";
+		div.style.height = "80%";
 		let mail = this.createElement(TAG.SPAN);
 		mail.innerHTML = `<aon-icon-button id="aonViewerButtonsDivEmail" icon="email" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(mail);
 
 		let print = this.createElement(TAG.SPAN);
-
+		print.style.marginTop =  "4px";
 		print.innerHTML = `<aon-icon-button id="aonViewerButtonsDivPrint" icon="print" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(print);
 		let printButton = this.getElement('aonViewerButtonsDivPrint');
@@ -105,6 +105,7 @@ export class AonViewer extends AonElement {
 		});
 
 		let download = this.createElement(TAG.SPAN);
+		download.style.marginTop =  "4px";
 		download.innerHTML = `<aon-icon-button id="aonViewerButtonsDivDownload" icon="download" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(download);
 		let downloadButton = this.getElement('aonViewerButtonsDivDownload');
@@ -113,9 +114,7 @@ export class AonViewer extends AonElement {
 
 		if (this.type.includes('pdf')) {
 			let ajustar = this.createElement(TAG.SPAN);
-			ajustar.style.position = 'fixed';
-			ajustar.style.right = '20px';
-			ajustar.style.bottom = '120px';
+			ajustar.style.marginTop =  "auto";
 			ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
 			div.appendChild(ajustar);
 			this.getElement('aonViewerButtonsDivAjustar').addEventListener(EVENT.CLICK, () => {
@@ -127,9 +126,7 @@ export class AonViewer extends AonElement {
 			});
 
 			let zoomPlus = this.createElement(TAG.SPAN);
-			zoomPlus.style.position = 'fixed';
-			zoomPlus.style.right = '20px';
-			zoomPlus.style.bottom = '70px';
+			zoomPlus.style.marginTop = "4px";
 			zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
 			div.appendChild(zoomPlus);
 			this.getElement('aonViewerButtonsDivZoomPlus').addEventListener(EVENT.CLICK, () => {
@@ -141,10 +138,8 @@ export class AonViewer extends AonElement {
 			});
 
 			let zoomMinus = this.createElement(TAG.SPAN)
-			zoomMinus.style.position = 'fixed';
-			zoomMinus.style.right = '20px';
-			zoomMinus.style.bottom = '20px';
 			zoomMinus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomMinus" icon="zoom_out" background="#f1f1f1"></aon-icon-button>`;
+			zoomMinus.style.marginTop = "4px";
 			div.appendChild(zoomMinus);
 			this.getElement('aonViewerButtonsDivZoomMinus').addEventListener(EVENT.CLICK, () => {
 				document.querySelectorAll('canvas').forEach((item, i) => {
@@ -222,7 +217,7 @@ export class AonViewer extends AonElement {
 			},
 			withCredentials: true
 		});
-		loadingTask.promise.then(function (pdf) {
+		loadingTask.promise.then( (pdf) =>  {
 			console.log('PDF loaded');
 			// Fetch the first page
 			// let pageNumber = 1;
@@ -231,7 +226,7 @@ export class AonViewer extends AonElement {
 				canvas.id = 'canvas' + pageNumber;
 				div.appendChild(canvas);
 
-				pdf.getPage(pageNumber).then(function (page) {
+				pdf.getPage(pageNumber).then( (page) =>  {
 					console.log('Page loaded');
 
 					let scale = scalation || 1;
@@ -255,12 +250,12 @@ export class AonViewer extends AonElement {
 						viewport: viewport
 					};
 					let renderTask = page.render(renderContext);
-					renderTask.promise.then(function () {
+					renderTask.promise.then( ()=> {
 						console.log('Page rendered');
 					});
 				});
 			}
-		}, function (reason) {
+		},  (reason)=> {
 			// PDF loading error
 			console.error(reason);
 		});

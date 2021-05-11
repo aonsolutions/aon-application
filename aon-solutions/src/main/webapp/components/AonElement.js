@@ -69,17 +69,17 @@ export class AonElement extends HTMLElement{
   }
 
   clearElementById(id) {
-    const elem = document.getElementById(id);
+    const elem = this.getElement(id);
     this.clearElement(elem);
   }
 
   hideElement(id) {
-    const elem = document.getElementById(id);
+    const elem = this.getElement(id);
     if(elem) elem.style.display = 'none';
   }
 
   showElement(id) {
-    const elem = document.getElementById(id);
+    const elem = this.getElement(id);
     if(elem) elem.style.display = 'block';
   }
 

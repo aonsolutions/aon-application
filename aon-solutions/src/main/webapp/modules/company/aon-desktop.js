@@ -273,7 +273,7 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
-				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
+				const aonDocumental =  new AonDocumental();
 				this.rootPanel(aonDocumental);
 				break;
 			case Apps.ACCOUNTING.app:

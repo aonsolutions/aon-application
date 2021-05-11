@@ -79,7 +79,7 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	buildNotifications(notice) {
-		//let searchDiv = document.createElement('div');
+		//let searchDiv = this.createElement('div');
 		//searchDiv.id = 'aonHeaderCompany';
 		//this.appendChild(searchDiv)
 		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
@@ -120,7 +120,7 @@ export class AonMobileDesktop extends AonElement {
 			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
 		});
 
-		let searchSuggestion = this.getElement(this.SUGGESTION);
+		// let searchSuggestion = this.getElement(this.SUGGESTION);
 
 		if(localStorage.getItem('company')) {
 			let company = JSON.parse(localStorage.getItem('company'));
@@ -149,10 +149,10 @@ export class AonMobileDesktop extends AonElement {
 			});
 		}
 
-		document.addEventListener('click', function(event) {
-			let sg = document.getElementById(this.SUGGESTION);
+		document.addEventListener('click', ({target})=> {
+			let sg = this.getElement(this.SUGGESTION);
 			if(sg) {
-				let isClickInside = sg.contains(event.target);
+				let isClickInside = sg.contains(target);
 				if(!isClickInside){
 					if(localStorage.getItem('company')) {
 						sg.title = 'Empresa Seleccionada';
@@ -194,17 +194,17 @@ export class AonMobileDesktop extends AonElement {
 		// 	menu.reload();
 		// });
 
-		let div = document.createElement('div');
+		let div = this.createElement('div');
 		div.style.paddingBottom = '25px';
 		div.style.borderBottom = '1px solid #ebebeb';
 		this.appendChild(div);
 
-		let titleA = document.createElement('div');
+		let titleA = this.createElement('div');
 		titleA.className = 'aonSidenavTitle';
 		titleA.innerHTML = 'TAREAS PENDIENTES';
 		div.appendChild(titleA);
 
-		let ul = document.createElement('ul');
+		let ul = this.createElement('ul');
 		ul.className = 'aonClip';
 		div.appendChild(ul);
 
@@ -230,38 +230,37 @@ export class AonMobileDesktop extends AonElement {
 		}));
 		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
 
-		let div2 = document.createElement('div');
-
-		let titleB = document.createElement('div');
-		titleB.className = 'aonSidenavTitle';
-		titleB.innerHTML = 'CONTROL HORARIO';
-		div2.appendChild(titleB);
-
-		this.appendChild(div2);
 		getTimeControl().then(r => {
-			let div3 = document.createElement('div');
+			let div2 = this.createElement('div');
+			let titleB = this.createElement('div');
+			titleB.className = 'aonSidenavTitle';
+			titleB.innerHTML = 'CONTROL HORARIO';
+			div2.appendChild(titleB);
+			this.appendChild(div2);
+
+			let div3 = this.createElement('div');
 			div3.style.marginLeft = '25px';
 			div3.innerHTML = '<aon-sign></aon-sign>'
 			this.appendChild(div3);
-			let aonHeader = document.getElementById('aonHeader');
+			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
 
 	}
 
 	buildNotificationsLi(name, icon, count, fn) {
-		let li = document.createElement('li');
+		let li = this.createElement('li');
 		li.className = 'aonAppMenuSidenavList aonOpacity';
 		li.style.height = '40px';
 		li.style.lineHeight = '40px';
 		li.style.borderBottom = '1px solid #ddd';
 
-		let i = document.createElement('i');
+		let i = this.createElement('i');
 		i.className = 'material-icons aonVerticalMiddle';
 		i.innerHTML = icon;
 		li.appendChild(i);
 
-		let span = document.createElement('span');
+		let span = this.createElement('span');
 		span.className = 'aonMenuItemSpan';
 		if(count > 0) {
 			span.innerHTML = name + ' (' + count + ')';
@@ -270,11 +269,11 @@ export class AonMobileDesktop extends AonElement {
 
 		li.appendChild(span);
 
-		let sp = document.createElement('span');
+		let sp = this.createElement('span');
 		sp.style.position = 'absolute';
 		sp.style.right = '0px';
 
-		let i2 = document.createElement('i');
+		let i2 = this.createElement('i');
 		i2.className = 'material-icons aonAvatar';
 		i2.innerHTML = 'keyboard_arrow_right';
 		sp.appendChild(i2);

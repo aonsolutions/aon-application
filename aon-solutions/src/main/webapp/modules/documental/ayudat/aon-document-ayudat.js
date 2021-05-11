@@ -129,7 +129,7 @@ export class AonDocumentAyudat extends AonElement {
     categorySelect.title = MSG.CATEGORY;
     tdCategory.appendChild(categorySelect);
     tr3.appendChild(tdCategory);
-    const categories = JSON.parse(this.applicationEl.dataset.folders);
+    const categories = this.applicationParentEl._folders;
     if(categories){
       categorySelect.setOptions(categories.map(c => {
         return {
@@ -190,13 +190,10 @@ export class AonDocumentAyudat extends AonElement {
       `;
       containerTags.appendChild(divTag);
       this.getElement('closeTag' + id).addEventListener(EVENT.CLICK, () => {
-        this._tags.forEach((item, i) => {
-          if(id === item.id ) {
-            this._tags.splice(i, 1);
-            this.setTagsAvaible();
-            this.getElement('tag' + id).remove();
-          }
-        });
+        this._tags = this._tags.filter(tag => tag.id !== id );
+        const tagEl = this.getElement(`tag${id}`);
+        if(tagEl) tagEl.remove();
+        this.setTagsAvaible();
       });
     }
   }
@@ -215,18 +212,10 @@ export class AonDocumentAyudat extends AonElement {
    this.applicationParentEl.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
   }
 
-  next() {
-    this.applicationEl.development();
-  }
-
-  previous() {
-    this.applicationEl.development();
-  }
-
   setTagsAvaible(){
     const tagSelect = this.getElement("tag");
     if(tagSelect){
-      const tags = JSON.parse(this.applicationEl.dataset.tags);
+      const tags = this.applicationParentEl._tags;
       const newTags = tags.filter(({tagsID}) => !this._tags.some(it=> it.id.includes(tagsID))).map(c => ({value: c.tagsID,name: c.tag}));
       tagSelect.setOptions(newTags);
     }
@@ -293,8 +282,7 @@ export class AonDocumentAyudat extends AonElement {
   }
 
   convertTimeStamp(timestamp){
-    const date = new Date(timestamp * 1000);
-    return setDateTimestamp(date);
+    return setDateTimestamp(new Date(timestamp * 1000));
   }
 
 }
