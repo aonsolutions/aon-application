@@ -3473,11 +3473,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			return false;
 		
 		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(new Date(new Date().getYear(), month, 1));
+		
 		try {
 			Date date = new Date(new Date().getYear(), month, dayOfMonth);
-			if(lastDayOfMonth.getDate() == date.getDate())
+			if(lastDayOfMonth.getDate() == date.getDate() && lastDayOfMonth.getMonth() == date.getMonth())
 				return true;
-			else 
+			else if(lastDayOfMonth.getMonth() == date.getMonth())
+				return true;
+			else
 				return false;
 		} catch (Exception e) {
 			return false;
