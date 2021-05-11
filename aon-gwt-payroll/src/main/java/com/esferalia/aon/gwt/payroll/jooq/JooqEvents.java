@@ -75,6 +75,7 @@ public class JooqEvents {
 					.where(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.END_DATE.isNull()
 							.or(CONTRACT.END_DATE.ge(actualDate)))
+//					.and(CONTRACT.SS_REGIME.ne((byte)3))
 					.orderBy(CONTRACT.ID.desc())
 					.fetch();
 		
@@ -122,7 +123,10 @@ public class JooqEvents {
 								  .orderBy(CONTRACT_DATA.START_DATE.desc())
 								  .fetch();
 						
-						journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+						if(journeyTypeRecords.isEmpty())
+							continue;
+						else
+							journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
 					}
 					
 					employee.setIsFullTime(isFullTimeJourney(journeyTypeEmployee));

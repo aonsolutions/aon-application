@@ -165,7 +165,10 @@ public class JooqEmployeeEvents {
 					  .orderBy(CONTRACT_DATA.START_DATE.desc())
 					  .fetch();
 			
-			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+			if(journeyTypeRecords.isEmpty())
+				journeyTypeEmployee = "false";
+			else
+				journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
 		}
 		
 		employeeInfoVariablesEvents.setFullTimeJourney(isFullTimeJourney(journeyTypeEmployee));
@@ -217,10 +220,14 @@ public class JooqEmployeeEvents {
 					String expression = r.get(CONTRACT_DATA.EXPRESSION);
 					
 					if(isCoefficientVariable(name)) {
-						Integer daysBetween = DateUtils.getDaysBetween(startDate, endDate);
-						daysBetween++;
-						
-						expression = daysBetween.toString();
+						if(null == endDate) {
+							expression = "-1";
+						} else {
+							Integer daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+							daysBetween++;
+							
+							expression = daysBetween.toString();
+						}
 					}
 					
 					quarterVariableEmployeeInfo
