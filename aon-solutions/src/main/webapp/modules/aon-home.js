@@ -75,6 +75,7 @@ export class AonHome extends AonElement {
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
+		rootPanel.className = "rootPanel";
 		this.appendChild(rootPanel);
 	}
 
