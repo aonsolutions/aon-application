@@ -6,6 +6,7 @@ export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidade';
 export const ACTIVATE = 'Activar';
+export const ADD = 'Engadir';
 export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
 export const ADD_FILE = 'Achegar Ficheiro';

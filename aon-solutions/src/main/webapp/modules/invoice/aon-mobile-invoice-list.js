@@ -3,12 +3,15 @@ import {Paymethods} from '../../services/paymethod.js';
 import {getInvoices, getInvoice} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 
-import {setInvoices, setIndex} from './InvoiceCache.js';
+import {setInvoices, addInvoices, setIndex} from './InvoiceCache.js';
 
-import { CONSTANT, MSG } from '../../environments/environments.js'; 
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js'; 
 import { formatNumber } from '../../services/utils.js';
+import { AonMobileList } from '../../components/aon-mobile-list.js';
 
-export class AonMobileInvoiceList extends AonElement {
+export class AonMobileInvoiceList extends AonMobileList {
+  more;
+
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -33,79 +36,70 @@ export class AonMobileInvoiceList extends AonElement {
   }
 
   connectedCallback () {
-    this.build();
+    this.initialize();
+    this.init();
+    this.addEventListener('more', () => {
+      if(this.more)
+        this.loadMore()
+    });
   }
 
+  initialize() {
+    super.initialize();
+    this.more = true;
+  }
 
-  build() {
-    this.init();
+  loadMore() {
+    let filter = this.getFilter();
+    if(filter.page) {
+        filter.page = filter.page + 1;
+        this.setFilter(filter);
+        getInvoices(filter).then(invoices => {
+            addInvoices(invoices);
+            if(invoices.length == 0)
+                this.more = false;
+            invoices.forEach((invoice, i) => this.addRow(invoice, i));
+        });
+    }
   }
 
   init() {
-//    this.getApplication().removeToolbarOptions();
+    this.more = true;
+    this.build();
+
     getInvoices(this.getFilter()).then(invoices => {
       setInvoices(invoices);
-      this.innerHTML = '';
-
-      let ul = this.createElement('ul');
-      ul.id = 'invoiceMobileListUL'
-      ul.className = 'list-group';
-      this.appendChild(ul);
+      if(invoices.length == 0){   
+        this.empty();
+      }
       invoices.forEach((invoice, i) => {
-        ul.appendChild(this.buildLi(invoice, i));
+        this.addRow(invoice, i);
       });
     });
   }
 
-  getInvoiceTitle() {
-		if(this.getFilter().status === 'rejected' || this.getFilter().status === 'refused'){
-			return MSG.REJECTEDS;
-		} else if(this.getFilter().status === 'draft' || this.getFilter().status === 'trash' ) {
-      return MSG.TRASH;
-    } else return MSG.INBOX;
-	}
-
-  buildLi(invoice, index) {
+  addRow(invoice, i) {
     let inv = new Invoice();
     inv.createInvoice(invoice);
 
-    let li = document.createElement('li');
-    li.className = 'aonLi aonAppLi';
-
-    li.addEventListener('click',  () => this.aonInvoice(invoice, i));
-
-    let span = document.createElement('span');
-    span.className = 'aonLiSpan';
-
-    let i = document.createElement('i');
-    i.className = 'material-icons aonAvatar';
-
-    if(inv.isEmitida()) i.innerHTML = 'unarchive';
-    else if(inv.isTicket()) i.innerHTML = 'receipt';
-    else i.innerHTML = 'archive';
+    let icon = MATERIAL_ICONS.ARCHIVE;
+    if(inv.isEmitida()) icon = MATERIAL_ICONS.UNARCHIVE;
+    if(inv.isTicket()) icon = MATERIAL_ICONS.RECEIPT;
 
     if(!inv.name){
       let receiver = inv.receiver && inv.receiver.name && !inv.receiver.name.isEmpty() ? inv.receiver.name.toUpperCase() : 'ACCREEDORES VARIOS';
       let sender =  inv.sender && inv.sender.name && !inv.sender.name.isEmpty() ? inv.sender.name.toUpperCase() : 'PROVEEDORES VARIOS';
       inv.name = inv.isEmitida() ? receiver : sender;
     }
-    let div = document.createElement('div');
-    div.className = 'aonListText';
-    div.innerHTML = inv.name;
 
-    let span3 = document.createElement('span');
-    span3.className = 'aonLiSpanSubtitle';
-
-    span3.innerHTML = inv.getDateStr() + ' - ' + formatNumber(inv.total, 2, "EUR");
-
-    span.appendChild(i);
-    span.appendChild(div);
-    span.appendChild(span3);
-    li.appendChild(span);
-
-    return li;
+    let liValue = {
+        icon,
+        title: inv.name,
+        subtitle: inv.getDateStr() + ' - ' + formatNumber(inv.total, 2, "EUR")
+    }
+    this.addLi(liValue, i, () => this.aonInvoice(invoice, i));
   }
-
+  
   aonInvoice(invoice, i) {
     if(this.getFilter().status !== 'accounting') {
 			setIndex(i);

@@ -79,27 +79,16 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	buildNotifications(notice) {
-		//let searchDiv = this.createElement('div');
+		//let searchDiv = document.createElement('div');
 		//searchDiv.id = 'aonHeaderCompany';
 		//this.appendChild(searchDiv)
 		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
 		let company = JSON.parse(localStorage.getItem('company'));
-		let cDiv = this.createElement(TAG.DIV);
-		cDiv.className = 'aonMobileDesktopCompany';
-
 
 		let cSpan = this.createElement(TAG.SPAN);
 		cSpan.innerHTML = company.name;
 		cSpan.className = 'aonMobileDesktopCompanyName';
-
-		cDiv.appendChild(cSpan);
-		let button = new AonIconButton();
-		button.icon = MATERIAL_ICONS.BUSINESS;
-		button.addEventListener('click', () => {
-			rootPanel('<aon-mobile-parent id="aonParent"></aon-mobile-parent>')
-		});
-		cDiv.appendChild(button);
-		this.appendChild(cDiv);
+		this.appendChild(cSpan);
 
 		let companyDiv = this.createElement(TAG.DIV);
 		companyDiv.style.margin = '10px';
@@ -112,7 +101,7 @@ export class AonMobileDesktop extends AonElement {
 			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
 			let img = this.createElement('img');
 			img.style.maxWidth = '200px';
-			img.style.maxHeight = '70px';
+			img.style.maxHeight = '100px';
 			img.style.position = 'relative';
 			img.src = url;
 			img.onerror = () =>companyDiv.style.display = 'none';

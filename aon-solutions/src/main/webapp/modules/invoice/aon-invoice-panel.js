@@ -25,6 +25,7 @@ import { AonProductList } from '../product/aon-product-list.js';
 import * as OPTION from './InvoiceOptions.js';
 import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
+import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -240,7 +241,7 @@ export class AonInvoicePanel extends AonElement {
 		if(productList) {
 			productList.setFilter(filter);
 		} else {
-			productList = new AonProductList();
+			productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
 			productList.id = this.PRODUCT_LIST;	
 			aonInvoice.setContent(productList);
 		}

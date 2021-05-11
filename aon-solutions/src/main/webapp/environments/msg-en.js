@@ -6,6 +6,7 @@ export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
 export const ACCOUNTING = 'Accounting';
 export const ACTIVATE = 'Activate';
+export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
 export const ADD_FILE = 'Add File';

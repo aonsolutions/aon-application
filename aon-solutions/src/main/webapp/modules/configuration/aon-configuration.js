@@ -14,7 +14,12 @@ import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
 
-import { CONSTANT, MSG } from '../../environments/environments.js';
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { AonUserList } from "../user/aon-user-list.js";
+import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
+import { AonUser } from "../user/aon-user.js";
+
+import * as ACTION from '../actions.js';
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -162,12 +167,14 @@ export class AonConfiguration extends AonElement {
   buildGeneral() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
-    aonConfiguration.setContentHTML(`
-			<div style="display:flex;">
-				<aon-card id="aonConfigurationGeneralCard" style="width:50%;" flex="true" title="Información General"></aon-card>
-				<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" flex="true" title="Información Adicional"></aon-card>
-			</div>
-		`);
+    let div = this.createElement(TAG.DIV);
+    div.style.display = this.isMobile() ? 'block' : 'flex'; 
+    div.innerHTML = `
+        <aon-card id="aonConfigurationGeneralCard" style="width:50%;" flex="true" title="Información General"></aon-card>
+        <aon-card id="aonConfigurationGeneral2Card" style="width:50%;" flex="true" title="Información Adicional"></aon-card>
+      `;
+    aonConfiguration.setContent(div);
+    
     getCompanyOne().then(cp => {
       let card = this.getElement("aonConfigurationGeneralCard");
       card.setContentHTML(`
@@ -212,14 +219,21 @@ export class AonConfiguration extends AonElement {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
 
-    aonConfiguration.addToolbarOption("UserShare", "share", () =>
-      this.buildCreateUser(true)
-    );
-    aonConfiguration.addToolbarOption("UserAdd", "add", () =>
-      this.buildCreateUser(false)
-    );
+    if(this.isMobile()) {
+			aonConfiguration.addFloatOption(ACTION.ADD, () => this.buildCreateUser(false));
+		} else {
+      aonConfiguration.addToolbarOption("UserShare", "share", () =>
+        this.buildCreateUser(true)
+      );
+      aonConfiguration.addToolbarOption("UserAdd", "add", () =>
+        this.buildCreateUser(false)
+      );
+    }
 
-    aonConfiguration.setContentHTML("<aon-user-list> </aon-user-list>");
+    let userList = this.isMobile() 
+        ? new AonMobileUserList() 
+        : new AonUserList();
+    aonConfiguration.setContent(userList);
   }
 
   buildCompanyList() {

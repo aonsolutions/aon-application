@@ -18,7 +18,7 @@ export const TIMECONTROL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: '-',
+  price: ' ', //'-',
   disabled: true
 }
 
@@ -35,7 +35,7 @@ export const ACCOUNTING = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: '75€/mes'
+  price: ' ' // '75€/mes'
 };
 
 export const FISCAL = {
@@ -51,7 +51,7 @@ export const FISCAL = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: '75€/mes'
+  price: ' ' // '75€/mes'
 };
 
 export const PAYROLL = {
@@ -70,7 +70,7 @@ export const PAYROLL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: '90€/mes'
+  price: ' ' // '90€/mes'
 };
 
 export const COMUNICA = {
@@ -90,7 +90,7 @@ export const COMUNICA = {
       name: 'Empleado'
     }],
   apps: [TIMECONTROL],
-  price: '60€/mes'
+  price: ' ' // '60€/mes'
 };
 
 export const DOCUMENTAL = {
@@ -109,7 +109,7 @@ export const DOCUMENTAL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: '-',
+  price: ' ', // '-',
   disabled: true
 };
 
@@ -129,7 +129,7 @@ export const INVOICE = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: '-'
+  price: ' ' //'-'
   ,disabled: true
 };
 
@@ -146,7 +146,7 @@ export const MESSENGER = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: '-',
+  price: ' ', //'-',
   disabled: true
 };
 
@@ -155,7 +155,7 @@ export const TOOLS = {
   title: MSG.TOOLS,
   icon: AON_ICONS.AON_APP,
   color: '#535353',
-  price:'-'
+  price: ' ', //'-'
 };
 
 export const AON_SOLUTIONS = {
@@ -163,7 +163,7 @@ export const AON_SOLUTIONS = {
   title: 'aonSolutions',
   description: 'aonSolutions.',
   logo: '../assets/apps/aon.png',
-  price:'-'
+  price: ' ', //'-'
 };
 
 export const BIDOQ = {
@@ -171,7 +171,7 @@ export const BIDOQ = {
   title: 'Bidoq',
   description: 'Bidoq.',
   logo: '../assets/apps/bidoq.png',
-  price:'-'
+  price: ' ', //'-'
 };
 
 export const ALMA = {
@@ -179,7 +179,7 @@ export const ALMA = {
   title: 'Alma',
   description: 'Alma',
   logo: '../assets/apps/alma.png',
-  price: ''
+  price: ' '
 };
 
 export const OCR = {
@@ -188,7 +188,7 @@ export const OCR = {
   description: 'Gestor OCR.',
   icon: 'aon_app',
   color: '#535353',
-  price: 'Desde 45€/mes'
+  price: ' ', // 'Desde 45€/mes'
 };
 
 export const CONVENIOS = {
@@ -197,7 +197,7 @@ export const CONVENIOS = {
  description: 'Convenios',
  icon: 'aon_app',
  color: '#329905',
- price: 'Desde 45€/mes'
+ price: ' ', // 'Desde 45€/mes'
 };
 
 export const BANK = {
@@ -206,7 +206,7 @@ export const BANK = {
   description: 'Gestor de Bancos.',
   icon: 'aon_app',
   color: '#D38C5B',
-  price: 'Desde 45€/mes'
+  price:  ' ', // 'Desde 45€/mes'
 };
 export const FORMACION = {
   app: 'formacion',
@@ -215,7 +215,7 @@ export const FORMACION = {
   icon: 'ayudat',
   color: '#7792d1',
   moreInfo: 'https://ayudatpymes.com/formacion/formacion-bonificada/',
-  price:'-',
+  price: ' ', //'-',
   disabled: true
 };
 
@@ -226,7 +226,7 @@ export const ACELERA = {
   icon: 'ayudat',
   color: '#ff5c41',
   moreInfo: 'https://ayudatpymes.com/despachos/aceleratudespacho/',
-  price:'-',
+  price: ' ', //'-',
   disabled: true
 };
 
@@ -237,7 +237,7 @@ export const OUTSOURCING = {
   icon: 'ayudat',
   color: '#535353',
   moreInfo: 'https://ayudatpymes.com/despachos/outsourcing/',
-  price:'-',
+  price: ' ', //'-',
   disabled: true
 };
 
@@ -690,7 +690,7 @@ export const AeatFiscalMenu =
       subtitle: ' Portal Asesor | Pack Cotización | Pack Tributación',
       color: 'black',
       apps: [Apps.ACCOUNTING, Apps.FISCAL, Apps.PAYROLL, Apps.COMUNICA, Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER],
-      price: '295€/mes'
+      price: ' ', // '295€/mes'
     },
     PORTAL: {
       app: 'pack_portal',
@@ -699,7 +699,7 @@ export const AeatFiscalMenu =
       subtitle: ' Documental | Horario | Facturas | Mensajería',
       color: '#002469',
       apps: [Apps.DOCUMENTAL, Apps.TIMECONTROL, Apps.INVOICE, Apps.MESSENGER],
-      price: '120€/mes'
+      price: ' ', //'120€/mes'
     },
     PAYROLL: {
       app: 'pack_payroll',
@@ -708,8 +708,8 @@ export const AeatFiscalMenu =
       subtitle: ' Laboral | Comunic@ | Horario',
       color: '#002469',
       apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL],
-      price: '120€/mes'
-    },
+      price: ' ',  //'120€/mes'
+    }, 
     FISCAL_ACCOUNTING: {
       app: 'pack_fiscal_accounting',
       icon: 'aon_app',
@@ -717,7 +717,7 @@ export const AeatFiscalMenu =
       subtitle: ' Fiscal | Contabilidad',
       color: '#002469',
       apps: [Apps.FISCAL, Apps.ACCOUNTING],
-      price: '120€/mes'
+      price: ' ', // '120€/mes'
     }
   };
 

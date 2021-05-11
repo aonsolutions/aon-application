@@ -11,12 +11,12 @@ export class AonUserList extends AonElement {
 	}
 
 	get filter() {
-    return this.getAttribute('filter');
-  }
+    	return this.getAttribute('filter');
+ 	 }
 
-  set filter(filter) {
-    this.setAttribute('filter', filter);
-  }
+	set filter(filter) {
+		this.setAttribute('filter', filter);
+	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('filter' === name) {

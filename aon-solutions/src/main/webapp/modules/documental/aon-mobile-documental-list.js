@@ -32,9 +32,7 @@ export class AonMobileDocumentalList extends AonMobileList {
   }
 
   init() {
-    let application = this.getApplication();
-    let toolbar = this.getElement(application.TOOLBAR);
-    toolbar.removeButtons();
+    this.more = true;
     this.build();
     getDocuments(this.getFilter()).then(documents => {
       documents.forEach((doc, i) => this.addRow(doc, i));

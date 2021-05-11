@@ -6,6 +6,7 @@ export const ACCOUNTED = 'Comptabilitzada';
 export const ACCOUNTEDS = 'Comptabilitzades';
 export const ACCOUNTING = 'Comptabilitat';
 export const ACTIVATE = 'Activar';
+export const ADD = 'Afegir';
 export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
 export const ADD_FILE = 'Adjuntar Fitxer';

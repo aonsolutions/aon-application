@@ -69,7 +69,7 @@ export class AonViewer extends AonElement {
 		});
 
 		this.addEventListener(EVENT.MOUSELEAVE, () => {
-			// div.style.visibility = 'hidden';
+			div.style.visibility = 'hidden';
 		});
 
 		if (!this.isMobile())

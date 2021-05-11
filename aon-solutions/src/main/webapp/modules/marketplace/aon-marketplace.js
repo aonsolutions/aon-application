@@ -42,7 +42,7 @@ export class AonMarketplace extends AonElement {
 	initialize() {
 		this.id = this.id || 'aonMarketplace';
 		this.APP = this.id + 'App';
-		this.apps = [App.AIO];
+		this.apps = [];
 	}
 
 	build(dur) {
@@ -173,6 +173,7 @@ export class AonMarketplace extends AonElement {
 		let contractButton = this.getElement(this.APP + app.app + 'ContractButton');
 		contractButton.innerHTML = contract ? MSG.DEACTIVATE : MSG.ACTIVATE;
 		contractButton.style.opacity = contract ? '0.3' : '1';
+
 		if(contract && !disabled) {
 			this.apps.push(app.app.toUpperCase());
 		} else if(this.apps.includes(app.app.toUpperCase())) {
@@ -254,7 +255,7 @@ export class AonMarketplace extends AonElement {
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasPackFiscalAccounting();
 		else if(App.AIO === app)
-			return true;
+			return dur.hasAon();
 		else return dur.hasApp(app);
 	}
 
@@ -283,8 +284,8 @@ export class AonMarketplace extends AonElement {
 			return dur.hasParentPackPayroll();
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasParentPackFiscalAccounting();
-			else if(App.AIO === app)
-				return true;
+		else if(App.AIO === app)
+			return dur.hasParentAon();
 		else return dur.hasParentApp(app);
 	}
 
@@ -312,7 +313,7 @@ export class AonMarketplace extends AonElement {
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasPackSuite();
 		else if(App.AIO === app)
-			return true;
+			return false;
 		else return false;
 	}
 }

@@ -7,6 +7,7 @@ import '../components/aon-dialog-menu.js';
 import './configuration/aon-configuration.js';
 import './company/aon-mobile-desktop.js';
 import './notification/aon-notification-icon.js';
+import { EVENT } from '../environments/environments.js';
 
 export class AonMobileHeader extends AonElement {
 
@@ -50,11 +51,17 @@ export class AonMobileHeader extends AonElement {
 				<span>
 					<img id="aonMobileLogo" class="aonLogo" />
 				</span>
-				<span id="aonHeaderNotification" class="aonMobileHeaderButton" style="right: 15%;">
-					<aon-notification-icon></aon-notification-icon>
-				</span>
+
 				<span id="aonHeaderUser" class="aonRight20 aonMobileHeaderButton">
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
+				</span>
+
+				<span id="aonHeaderNotification" class="aonRight60 aonMobileHeaderButton">
+					<aon-notification-icon></aon-notification-icon>
+				</span>
+
+				<span id="aonHeaderCompanyList" class="aonRight100 aonMobileHeaderButton" style="display=none">
+					<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
 				</span>
 			</div>
 
@@ -68,6 +75,12 @@ export class AonMobileHeader extends AonElement {
 				this.timeControlStatus(r);
 			});
 		}
+
+		let aonHeaderCompanyListButton = this.getElement('aonHeaderCompanyListButton');
+		aonHeaderCompanyListButton.addEventListener(EVENT.CLICK, () => {
+			rootPanel('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+		});
+
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
 			if(this.activeTimecontrol) {
