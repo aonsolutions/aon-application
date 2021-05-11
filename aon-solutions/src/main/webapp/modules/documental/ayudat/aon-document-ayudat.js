@@ -70,7 +70,7 @@ export class AonDocumentAyudat extends AonElement {
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
-		fileDiv.innerHTML = `<aon-viewer type="${this.getContentType()}" file="${this.data.image}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+		fileDiv.innerHTML = `<aon-viewer type="${this.getContentType()}" file="${encodeURI(this.data.image)}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';

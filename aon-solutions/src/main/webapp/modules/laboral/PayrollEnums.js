@@ -97,7 +97,6 @@ export const PAYROLL_VIEWS = {
   AON_PAYROLL_LIST: "aonPayrollList",
   AON_SEPA_FILES_LIST: "aonSepaFilesList",
   AON_CONTRACT_LIST: "aonContractList",
-  AON_MOVEMENTS: "aonMovements",
   AON_MOVEMENTS_LIST: "aonMovementsList",
   AON_CERT: "aonCert",
   AON_CTA_LIST: "aonCtaList",

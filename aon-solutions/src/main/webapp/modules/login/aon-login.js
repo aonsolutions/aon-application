@@ -175,21 +175,23 @@ export class AonLogin extends AonElement {
 
   buildLogo() {
     let logo = document.getElementById("aonLoginLogoImg");
+    const href = window.location.href;
     let src = "assets/aon-logo.png"; 
-    if (window.location.href.includes("ayudat")) {
+    if (href.includes("ayudat")) {
       src = "assets/ayudat-logo4.png";
-    } else if (window.location.href.includes("translogia") || window.location.href.includes("tedi")) {
+    } else if (href.includes("translogia") || href.includes("tedi")) {
       src = "assets/ayudat-logo4.png";
-    } else if (window.location.href.includes("aonsolutions.org")){
+    } else if (href.includes("aonsolutions.org")){
      src = "assets/beta-logo.svg";
     }
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
-      if(this.tag >= 5 && !window.location.href.includes("aonsolutions.org")){
+      if(this.tag >= 5){
+        let baseUrl = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
         actionMobile({
           action:"setBaseUrl",
-          BASE_URL_MOBILE: "https://aonsolutions.org"
+          BASE_URL_MOBILE: baseUrl
         });
         this.tag = 0;
       }

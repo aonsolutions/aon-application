@@ -7,7 +7,6 @@ import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 import { AonContractList } from "./payroll/aon-contract-list.js";
-import { AonMovements } from "./comunic@/aon-movements.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
@@ -66,7 +65,7 @@ class AonLaboral extends AonElement {
     if(this.isEmployee() && !this.isComunica()){
       this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
     } else if(this.isComunicaNotPayroll() ){
-      this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
+      this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     } else if(this.isPayroll()) {
       this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
     }
@@ -105,7 +104,7 @@ class AonLaboral extends AonElement {
 
     if(this.isComunica()){
       let aon_comunica = PayrollOptions.AON_COMUNICA;
-      aon_comunica.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
+      aon_comunica.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
       laboralOptions.push(aon_comunica);
     }
 
@@ -230,7 +229,7 @@ class AonLaboral extends AonElement {
           await postDeleteMov(data);
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
           if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
-          this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
+          this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
         } catch (error) {
           this.showToast(error);
         }
@@ -279,9 +278,6 @@ class AonLaboral extends AonElement {
             } else {
               GWT.load(GWT.MAIN_CONTRATA, this.applicationEl.CONTENT);
             }
-            break;
-          case PAYROLL_VIEWS.AON_MOVEMENTS:
-            aonView = new AonMovements();
             break;
           case PAYROLL_VIEWS.AON_CERT:
               GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);

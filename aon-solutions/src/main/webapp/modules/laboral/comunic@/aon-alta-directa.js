@@ -681,7 +681,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     back() {
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     }
 
     async getNaf() {

@@ -129,7 +129,7 @@ export class AonApplication extends AonElement {
          <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' :'aonSidenav'}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
-			   <div id="${this.CONTENT}"></div>
+			   <div id="${this.CONTENT}" style="height: 100%;"></div>
       </div>
 			<aon-dialog-menu id="${this.OPTION_DIALOG}"> </aon-dialog-menu>
 			<aon-dialog id="${this.DIALOG}"> </aon-dialog>

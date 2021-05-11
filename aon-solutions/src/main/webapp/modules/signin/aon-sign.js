@@ -94,6 +94,7 @@ export class AonSign extends AonElement {
 		if(content){
       this.clearElement(content);
       let button = this.createElement('button');
+      button.id = this.id+"Entrada";
       button.className = 'aonButton';
       button.style.backgroundColor = '#86D364';
       button.style.padding = '1rem 1rem';
@@ -113,6 +114,7 @@ export class AonSign extends AonElement {
     if(content){
       this.clearElement(content);
       let button = this.createElement('button');
+      button.id = this.id+"Vuelta";
       button.className = 'aonButton';
       button.style.backgroundColor = '#86D364';
       button.style.width = '120px';
@@ -131,8 +133,8 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
-
       let button = this.createElement('button');
+      button.id = this.id+"Salida";
       button.className = 'aonButton';
       button.style.backgroundColor = '#DC4D30';
       button.style.marginRight = '10px';

@@ -53,6 +53,11 @@ export class AonMobileMenu extends AonElement {
     super();
   }
 
+  connectedCallback() {
+    this.initialize();
+    this.eventListener();
+  }
+
   eventListener(){
     window.addEventListener(EVENT.USER_AUTH, ()=>{
       this.build();
@@ -61,11 +66,10 @@ export class AonMobileMenu extends AonElement {
       this.reload();
     });
 
-  }
-
-  connectedCallback() {
-    this.initialize();
-    this.eventListener();
+		const height = window.innerHeight;
+    window.onresize = ({target})=> {
+			this.style.display = target.innerHeight < height ? "none" : "block";
+		}
   }
 
   initialize() {
@@ -80,6 +84,7 @@ export class AonMobileMenu extends AonElement {
     let div = document.createElement('div');
     div.id = id;
     div.className = 'aonMobileMenu';
+    div.style.backgroundColor = "#fff";
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
     dialogMenu.id = this.id + 'dialogMenu';

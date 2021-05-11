@@ -25,7 +25,7 @@ export class AonViewer extends AonElement {
 	}
 
 	get file() {
-		return this.getAttribute(CONSTANT.FILE) ? encodeURI(this.getAttribute(CONSTANT.FILE)) : null;
+		return this.getAttribute(CONSTANT.FILE);
 	}
 
 	set file(file) {
