@@ -110,15 +110,12 @@ export class AonMenu extends AonElement {
     	case Apps.ACCOUNTING.app:
 				if(this.getDur().isAccountingManager()) {
 					this.buildAppMenu(Apps.ACCOUNTING);
-				} else {
-					this.development('Panel Contable');
-				}
+				} else rootPanel('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
 				if(this.getDur().isFiscalManager()) {
 					this.buildAppMenu(Apps.FISCAL);
-				} else this.development('Panel Fiscal');
-
+				} else rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
 				if(this.getDur().isPayrollManager()) {
@@ -339,11 +336,9 @@ export class AonMenu extends AonElement {
 		let launchButton = document.getElementById('aon-menu-sidenav-app-launch-button');
 		launchButton.addEventListener('click', () => {
 			if(Apps.ACCOUNTING.app === app.app) {
-				this.development('Panel Contable');
-				//rootPanel('<aon-contable></aon-contable>');
+				rootPanel('<aon-accounting></aon-accounting>');
 			} else if(Apps.FISCAL.app === app.app) {
-				this.development('Panel Fiscal');
-				//rootPanel('<aon-fiscal></aon-fiscal>');
+				rootPanel('<aon-fiscal></aon-fiscal>');
 			} else if(Apps.PAYROLL.app === app.app) {
 				rootPanel('<aon-laboral></aon-laboral>');
 			}
