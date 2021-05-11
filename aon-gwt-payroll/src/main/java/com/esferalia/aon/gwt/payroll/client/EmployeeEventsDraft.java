@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -217,16 +218,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	HTMLPanel yearPanel;
-	
-	@UiField
-	Label yearLabel;
-	
-	@UiField
-	Button lastYearButton;
-
-	@UiField
-	Button nextYearButton;
+	HTMLPanel mainPanel;
 	
 	@UiField
 	FlexTable eventsGrid;
@@ -250,6 +242,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private AonToolbarButton saveButton;
 	private AonToolbarButton newValueButton;
 	private AonToolbarButton visibilityButton;
+	private ListBox yearLB;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -289,16 +282,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 
 	// ----------------------------------------------- UiHandlers 
-	
-	@UiHandler("lastYearButton")
-	public void onLastYearClick(ClickEvent event) {
-		changeYear(-1);
-	}
-
-	@UiHandler("nextYearButton")
-	public void onNextYearClick(ClickEvent event) {
-		changeYear(1);
-	}
 	
 	@UiHandler("eventsGrid")
 	public void onEventsGridClick(ClickEvent event) {
@@ -345,12 +328,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		clearEventsGrid();
 		
 		this.employeeEventsDraft = employeeEventsDraft;
-		yearLabel.setText(DateUtils.getYear()+"");
 		
 		//Descargar Variables actualizadas
 		Integer actualYear = DateUtils.getYear();
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,
 				r -> { 
+					initializeYearLB(this.yearLB);
+					hideYearLBOptions();
+					setSelectedValueLB(yearLB, (year+1900)+"");
 					initializeVariablesToShow();
 				},t -> {});
 	}
@@ -360,6 +345,69 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private void clearEventsGrid() {
 		for (int i = eventsGrid.getRowCount() - 1; i > 0; i--)
 			eventsGrid.removeRow(i);
+	}
+	
+	public void initializeYearLB(ListBox yearLB) {
+		year = DateUtils.getYear();
+		
+		yearLB.clear();
+		
+		Integer yearAux = DateUtils.getYear();
+		Integer previusYear = year - 1;
+		Integer nextYear = year + 1;
+		
+		yearLB.addItem(nextYear.toString(), nextYear.toString());
+		yearLB.addItem(yearAux.toString(), yearAux.toString());
+		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		
+		yearLB.addChangeHandler(e -> {
+			changeYear();
+		});
+		
+		setSelectedValueLB(yearLB, year+"");
+		year = year - 1900;
+		
+	}
+	
+	private void hideYearLBOptions() {
+		ArrayList<Integer> idxsToDelete = new ArrayList<Integer>();
+		for(int i=0; i<this.yearLB.getItemCount(); i++) {
+			Integer year = Integer.parseInt(this.yearLB.getValue(i));
+			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
+			if(isOutOfContractPeriod(lastDayOfYear)) {
+				idxsToDelete.add(i);
+			}
+		}
+		hideOptionYearLB(idxsToDelete);
+	}
+	
+	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
+		for(Integer idx : idxsToDelete)
+			this.yearLB.removeItem(idx);
+	}
+	
+	private boolean isOutOfContractPeriod(Date date) {
+		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
+		if(null == newEndDate) {
+			Integer nextYear = new Date().getYear() + 2;
+			newEndDate = new Date(nextYear, 11, 31);
+		}
+		
+		Date startDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
+		
+		return date.before(startDate) || date.after(newEndDate);
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 
 	private void initializeVariablesToShow() {
@@ -377,7 +425,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
     private void createVariableRow(String var) {
-    	Integer actualYear = Integer.parseInt(yearLabel.getText());
+//    	Integer actualYear = Integer.parseInt(yearLabel.getText());
     	Integer actualMonth = 0;
     	
     	int newRow = eventsGrid.insertRow(eventsGrid.getRowCount());
@@ -479,7 +527,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			}
 			
-			EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(var, actualMonth, actualYear);
+			EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(var, actualMonth, Integer.parseInt(yearLB.getSelectedItemText()));
 			
 			if (newRow % 2 == 1) {
 				eventCell.removeStyleName(style.bgcWhite());
@@ -518,7 +566,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	private void addEventVar(String variable, String value, Date startDate, Date endDate) {
 		employeeEventsDraft.setValueByMonth(variable, value, startDate, endDate);
-		changeYear(0);
+		changeYear();
 		saveButton.setEnabled(true);
 		undoAllButton.setEnabled(true);
 	}
@@ -542,7 +590,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variable = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
 		
-		Integer actualYear = Integer.parseInt(yearLabel.getText());
+//		Integer actualYear = Integer.parseInt(yearLabel.getText());
 		
 		int colStart = calculateCol(selectedPositions.getSelectedList().get(0));
 		Integer monthStart = calculateMonthByColumn(colStart);
@@ -550,10 +598,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int colEnd = calculateCol(selectedPositions.getSelectedList().get(selectedPositions.getSelectedList().size() - 1));
 		Integer monthEnd = calculateMonthByColumn(colEnd);
 		
-		Date startDate = DateUtils.getDate(monthStart, actualYear);
+		Date startDate = DateUtils.getDate(monthStart, Integer.parseInt(yearLB.getSelectedItemText()));
 		DateUtils.resetTime(startDate);
 		
-		Date endDateAux = DateUtils.getDate(monthEnd, actualYear);
+		Date endDateAux = DateUtils.getDate(monthEnd, Integer.parseInt(yearLB.getSelectedItemText()));
 		Date endDate = DateUtils.getLastDayOfMonth(endDateAux);
 		DateUtils.resetTime(endDate);
 		
@@ -568,31 +616,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		return col-1;
 	}
 
-	private void changeYear(int changeYear) {
-		this.year += changeYear;
-		
-		Date endOfNewYear = DateUtils.getLastDayOfMonth(DateUtils.getDate(11, this.year));
-		
-		if(isOutOfContractView(endOfNewYear)) {
-			this.year -= changeYear;
-		} else {
-			this.yearLabel.setText(year+"");
-			
-			int actualYear = DateUtils.getYear();
-			
-			if(actualYear - year == 1) {
-				lastYearButton.setEnabled(false);
-				nextYearButton.setEnabled(true);
-			}else if (actualYear - year == -1) {
-				lastYearButton.setEnabled(true);
-				nextYearButton.setEnabled(false);
-			} else {
-				lastYearButton.setEnabled(true);
-				nextYearButton.setEnabled(true);
-			}
-			
-			fillCellsEvents();
-		}
+	private void changeYear() {
+		String fullYear = this.yearLB.getSelectedValue();
+		toolbar.setTitle("Incidencias " + fullYear);
+		this.year = Integer.parseInt(fullYear) - 1900;
+		fillCellsEvents();
 	}
 	
 	public ArrayList<String> getVariablesToShow(){
@@ -707,6 +735,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		newValueButton.ensureDebugId("new_value_complemento_i");
 		visibilityButton.ensureDebugId("show_variables_menu_item");
 		
+		this.yearLB = new ListBox();
+		toolbar.add(this.yearLB);
+		
 		return toolbar;
 
 	}
@@ -720,7 +751,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	public void onSave(ClickEvent e) {
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
-					changeYear(0);
+					changeYear();
 					saveButton.setEnabled(false);
 					undoAllButton.setEnabled(false);
 				}, 
@@ -795,7 +826,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
-		yearPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+		mainPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 	
+	public void setYearLB(ListBox yearLB) {
+		this.yearLB = yearLB;
+	}
 }
