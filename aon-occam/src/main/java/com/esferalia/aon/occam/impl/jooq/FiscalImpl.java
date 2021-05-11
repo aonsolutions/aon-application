@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.Mod2002017DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2018.Mod2002018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2019.Mod2002019DAO;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FiscalImpl implements IFiscal {
 
@@ -1060,6 +1061,13 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	// ----------------------------------------------------------- [MODELO 200]
+	@Override
+	public Mod200 getMod200(AONContext ctx, int domain, Integer id) {
+		return Mod200DAO.getMod200s(ctx, domain)
+			.filter(mod-> AonNumberUtils.equals(mod.getId(), id))
+			.findFirst()
+			.orElse(null);
+	}
 	@Override
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domain) {
 		LinkedList<Mod200> list = new LinkedList<Mod200>();

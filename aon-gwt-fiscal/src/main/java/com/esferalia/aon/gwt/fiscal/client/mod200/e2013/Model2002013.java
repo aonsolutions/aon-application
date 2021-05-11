@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.Model200Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.ValidationMessage2013;
 import com.google.gwt.core.client.GWT;
@@ -130,11 +130,14 @@ public class Model2002013 extends ResizeComposite  {
 	Hidden modIdHidden;
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
+	
+	private Model200ModuleOptions options; 
 
 	ErrorPage errorPage;
 	
-	public Model2002013(Model200Callback mod200Callback) {
+	public Model2002013(Model200ModuleOptions options, Model200Callback mod200Callback) {
 		this.mod200Callback = mod200Callback;
+		this.options = options;
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		fillLinkContainer();
@@ -498,8 +501,8 @@ public class Model2002013 extends ResizeComposite  {
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model2002013AccountingFile");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
 		diskForm.submit();
 	}
 
@@ -514,8 +517,8 @@ public class Model2002013 extends ResizeComposite  {
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model2002013File");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
 		diskForm.submit();
 	}
 
@@ -530,8 +533,8 @@ public class Model2002013 extends ResizeComposite  {
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model2002013Print");
 		modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-		domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-		domainNameHidden.setValue(Model200.getCurrentDomainName());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
 		diskForm.submit();
 	}
 

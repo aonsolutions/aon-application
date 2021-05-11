@@ -1,0 +1,22 @@
+package com.esferalia.aon.gwt.fiscal.client.mod200;
+
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
+import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+
+public class Model200ModuleOptions extends  FiscalModelModuleOptions {
+
+	private static final long serialVersionUID = -4243132427760315542L;
+
+	private Mod200 newModel;
+
+	public Mod200 getNewModel() {
+		return newModel;
+	}
+	public Model200ModuleOptions setNewModel(Mod200 newModel) {
+		this.newModel = newModel;
+		return this;
+	}
+	
+	
+	
+}

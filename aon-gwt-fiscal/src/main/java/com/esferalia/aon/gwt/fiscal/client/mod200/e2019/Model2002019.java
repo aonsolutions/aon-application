@@ -11,8 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.Model200Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.ValidationMessage2019;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -122,11 +122,13 @@ public class Model2002019 extends ResizeComposite  {
 	Hidden userHidden;
 
 	ErrorPage errorPage;
+	private Model200ModuleOptions options;
 	
-	public Model2002019(Model200Callback mod200Callback) {
+	public Model2002019(Model200ModuleOptions options, Model200Callback mod200Callback) {
 		
 		this.mod200Callback = mod200Callback;
-		
+		this.options = options;
+
 		Widget ui = binder.createAndBindUi(this);
 		initWidget(ui);
 		
@@ -470,9 +472,9 @@ public class Model2002019 extends ResizeComposite  {
 		
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
         modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-        domainIdHidden.setValue(String.valueOf(Model200.getCurrentDomain()));
-        domainNameHidden.setValue(Model200.getCurrentDomainName());
-        userHidden.setValue(Model200.getCurrentUser());
+        domainIdHidden.setValue(String.valueOf(options.getDomain()));
+        domainNameHidden.setValue(options.getDomainName());
+        userHidden.setValue(options.getUser());
         diskForm.submit();
 		
 	}

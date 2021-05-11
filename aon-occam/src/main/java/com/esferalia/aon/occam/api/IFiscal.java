@@ -280,6 +280,7 @@ public interface IFiscal {
 	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
 	
 	//		  					MOD200 
+	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);
 	// 				   		  MOD200 - 2013
 	public Mod2002013 createMod2002013(AONContext ctx, int year);

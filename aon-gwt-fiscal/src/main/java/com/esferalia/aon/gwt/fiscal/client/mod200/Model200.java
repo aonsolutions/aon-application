@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -39,6 +40,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -56,7 +58,12 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model200 extends MainEntryPoint {
+	private static final Logger LOGGER = Logger.getLogger(Model200.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 	
+	static Mod200ServiceAsync mod200Service;
 	static Mod2002013ServiceAsync mod2002013Service;
 	static Mod2002014ServiceAsync mod2002014Service;
 	static Mod2002015ServiceAsync mod2002015Service;
@@ -71,8 +78,6 @@ public class Model200 extends MainEntryPoint {
 	DeckLayoutPanel deckPanel;
 	SimpleLayoutPanel container;
 	
-	private AonData aonData;
-	
 	public static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
 			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -81,6 +86,14 @@ public class Model200 extends MainEntryPoint {
 		return fiscalService;
 	}
 	
+	public static Mod200ServiceAsync getMod200Service() {
+		if (mod200Service == null) {
+			Mod200ServiceAsync mod200ServiceRaw = GWT.create(Mod200Service.class);
+			mod200Service = new Mod200ServiceAsyncDecorator(mod200ServiceRaw);
+		}
+		return mod200Service;
+	}
+
 	public static Mod2002019ServiceAsync getMod2002019Service() {
 		if (mod2002019Service == null) {
 			Mod2002019ServiceAsync mod2002019ServiceRaw = GWT.create(Mod2002019Service.class);
@@ -148,30 +161,33 @@ public class Model200 extends MainEntryPoint {
 	}
 	
 	@Override
-	public void onModuleLoad() {		
+	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {				
-				onModuleLoad(aonData);
+			public void onSuccess(AonData aonData) {
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				Model200ModuleOptions options = new Model200ModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad( options );
 			}
 			
-			@Override public void onFailure(Throwable caught) {				
+			@Override public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
 			}
 		});
 	}
-
-	public void onModuleLoad(AonData aonData) {
-		
-		this.aonData = aonData;
-		
+	
+	public void onModuleLoad(Model200ModuleOptions options) {
 		AON.ensureInjected();
 
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		deckPanel = new DeckLayoutPanel();
-
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.addNorth(getToolbarPanel(), 25);
+		tableDockLayout.addNorth(getToolbarPanel(options), 25);
 		
 		ScrollPanel tablePanel = new ScrollPanel();
 		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
@@ -189,7 +205,7 @@ public class Model200 extends MainEntryPoint {
 			
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				changeView( tableModel.getLastSelectedObject() );
+				changeView( options, tableModel.getLastSelectedObject() );
 			}
 		});
 		
@@ -197,7 +213,7 @@ public class Model200 extends MainEntryPoint {
 		
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				getFiscalService().getMod200s(getCurrentDomainName(), getCurrentDomain(),
+				getFiscalService().getMod200s(options.getDomainName(), options.getDomain(),
 				new AsyncCallback<LinkedList<Mod200>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod200> result) {
@@ -221,23 +237,46 @@ public class Model200 extends MainEntryPoint {
 		container = new SimpleLayoutPanel();
 		deckPanel.add(container);
 		
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		
-		root.add(deckPanel);
+		options.getParentWidget().add(deckPanel);
+		if (options.getFiscalModelId() != null ) {
+			LOGGER.info("Access to Model200 with a ID: " + options.getFiscalModelId());
+			onSelect(options,options.getFiscalModelId());
+		} else if (options.getNewModel() != null ) {
+			LOGGER.info("Access to Model200 new Model");
+			if (options.getNewModel().getYear() == 2013) new2013(options);
+			else if (options.getNewModel().getYear() == 2014) new2014(options); 
+			else if (options.getNewModel().getYear() == 2015) new2015(options); 
+			else if (options.getNewModel().getYear() == 2016) new2016(options); 
+			else if (options.getNewModel().getYear() == 2017) new2017(options); 
+			else if (options.getNewModel().getYear() == 2018) new2018(options); 
+			else if (options.getNewModel().getYear() == 2019) new2019(options); 
+		} else {
+			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+			LOGGER.info("Model200 setting NOTIFICATIONS_TAB");
+		}
 		
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
+	private void onSelect(Model200ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model200 with a ID: " + options.getFiscalModelId());
+		getMod200Service().getMod200(options.getDomainName(), options.getDomain(), options.getUser(), id , new AsyncCallback<Mod200>() {
+			@Override
+			public void onSuccess(Mod200 selected) {
+				if (selected == null) {
+					Window.alert( "Error al cargar el module" );
+				} else {
+					changeView(options, selected);
+				}
+			}
 
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert( "Error al cargar el module" );
+			}
+		});
+	}
 	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(Model200ModuleOptions options) {
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
 		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -270,12 +309,12 @@ public class Model200 extends MainEntryPoint {
 		new2019.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				new2019();
+				new2019(options);
 			}
 		});
 		buttonContainer.add(new2019);
 		
-		final NewContextMenu newContextMenu = new NewContextMenu();
+		final NewContextMenu newContextMenu = new NewContextMenu( options );
 		final Button newButton = new Button();
 		newButton.setText(AON.MSG.newAction());
 		newButton.setTitle(newButton.getText());
@@ -298,47 +337,47 @@ public class Model200 extends MainEntryPoint {
 	}
 	
 	private class NewContextMenu extends ContextMenu {
-		public NewContextMenu() {
+		public NewContextMenu( Model200ModuleOptions options ) {
 			super.addItem("200", AON.MSG.newSomething("2013"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2013();
+					new2013(options);
 				}
 			});
 			super.addItem("200", AON.MSG.newSomething("2014"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2014();
+					new2014(options);
 				}
 			});
 			super.addItem("200", AON.MSG.newSomething("2015"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2015();
+					new2015(options);
 				}
 			});
 			super.addItem("200", AON.MSG.newSomething("2016"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2016();
+					new2016(options);
 				}
 			});
 			super.addItem("200", AON.MSG.newSomething("2017"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2017();
+					new2017(options);
 				}
 			});
 			super.addItem("200", AON.MSG.newSomething("2018"), new ScheduledCommand() {
 				
 				@Override
 				public void execute() {
-					new2018();
+					new2018(options);
 				}
 			});
 			
@@ -347,15 +386,14 @@ public class Model200 extends MainEntryPoint {
 	}
 
 
-	protected void changeView(Mod200 mod) {
+	protected void changeView(Model200ModuleOptions options, Mod200 mod) {
 		if (mod.getYear() == 2013) {
-			getMod2002013Service().getMod2002013ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002013Service().getMod2002013ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002013>() {
 
 						@Override
 						public void onSuccess(Mod2002013 mod200) {
-							changeView2013(mod200);
+							changeView2013(options, mod200);
 						}
 
 						@Override
@@ -363,13 +401,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2014) {
-			getMod2002014Service().getMod2002014ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002014Service().getMod2002014ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002014>() {
 
 						@Override
 						public void onSuccess(Mod2002014 mod200) {
-							changeView2014(mod200);
+							changeView2014(options, mod200);
 						}
 
 						@Override
@@ -377,13 +414,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2015) {
-			getMod2002015Service().getMod2002015ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002015Service().getMod2002015ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002015>() {
 
 						@Override
 						public void onSuccess(Mod2002015 mod200) {
-							changeView2015(mod200);
+							changeView2015(options, mod200);
 						}
 
 						@Override
@@ -391,13 +427,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2016) {
-			getMod2002016Service().getMod2002016ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002016Service().getMod2002016ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002016>() {
 
 						@Override
 						public void onSuccess(Mod2002016 mod200) {
-							changeView2016(mod200);
+							changeView2016(options, mod200);
 						}
 
 						@Override
@@ -405,13 +440,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2017) {
-			getMod2002017Service().getMod2002017ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002017Service().getMod2002017ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002017>() {
 
 						@Override
 						public void onSuccess(Mod2002017 mod200) {
-							changeView2017(mod200);
+							changeView2017(options, mod200);
 						}
 
 						@Override
@@ -419,13 +453,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2018) {
-			getMod2002018Service().getMod2002018ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002018Service().getMod2002018ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002018>() {
 
 						@Override
 						public void onSuccess(Mod2002018 mod200) {
-							changeView2018(mod200);
+							changeView2018(options, mod200);
 						}
 
 						@Override
@@ -433,13 +466,12 @@ public class Model200 extends MainEntryPoint {
 						}
 					});
 		} else if (mod.getYear() == 2019) {
-			getMod2002019Service().getMod2002019ById(Model200.getCurrentDomainName()
-					, getCurrentDomain(), mod.getId()
+			getMod2002019Service().getMod2002019ById(options.getDomainName(), options.getDomain(), mod.getId()
 					, new AsyncCallback<Mod2002019>() {
 
 						@Override
 						public void onSuccess(Mod2002019 mod200) {
-							changeView2019(mod200);
+							changeView2019(options, mod200);
 						}
 
 						@Override
@@ -453,77 +485,76 @@ public class Model200 extends MainEntryPoint {
 		}
 	}
 
-	private void changeView2013(Mod2002013 mod200) {
-		Mod2002013Object mod200Obj = new Mod2002013Object(getCurrentDomainName(), mod200);
-		Model2002013 model2002013 = new Model2002013( new Model200Callback() );
+	private void changeView2013(Model200ModuleOptions options,Mod2002013 mod200) {
+		Mod2002013Object mod200Obj = new Mod2002013Object(options.getDomainName(), mod200);
+		Model2002013 model2002013 = new Model2002013( options, new Model200Callback() );
 		model2002013.startModel( mod200Obj);
 		container.setWidget(model2002013);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 
-	private void changeView2014(Mod2002014 mod200) {
-		Mod2002014Object mod200Obj = new Mod2002014Object(getCurrentDomainName(), mod200);
-		Model2002014 model2002014 = new Model2002014( new Model200Callback() );
+	private void changeView2014(Model200ModuleOptions options,Mod2002014 mod200) {
+		Mod2002014Object mod200Obj = new Mod2002014Object(options.getDomainName(), mod200);
+		Model2002014 model2002014 = new Model2002014( options, new Model200Callback() );
 		model2002014.startModel( mod200Obj);
 		container.setWidget(model2002014);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 
-	private void changeView2015(Mod2002015 mod200) {
-		Mod2002015Object mod200Obj = new Mod2002015Object(getCurrentDomainName(), mod200);
-		Model2002015 model2002015 = new Model2002015( new Model200Callback() );
+	private void changeView2015(Model200ModuleOptions options,Mod2002015 mod200) {
+		Mod2002015Object mod200Obj = new Mod2002015Object(options.getDomainName(), mod200);
+		Model2002015 model2002015 = new Model2002015( options, new Model200Callback() );
 		model2002015.startModel( mod200Obj );
 		container.setWidget(model2002015);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 
-	private void changeView2016(Mod2002016 mod200) {
-		Mod2002016Object mod200Obj = new Mod2002016Object(getCurrentDomainName(), mod200);
-		Model2002016 model2002016 = new Model2002016( new Model200Callback() );
+	private void changeView2016(Model200ModuleOptions options,Mod2002016 mod200) {
+		Mod2002016Object mod200Obj = new Mod2002016Object(options.getDomainName(), mod200);
+		Model2002016 model2002016 = new Model2002016( options, new Model200Callback() );
 		model2002016.startModel( mod200Obj );
 		container.setWidget(model2002016);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 
-	private void changeView2017(Mod2002017 mod200) {
-		Mod2002017Object mod200Obj = new Mod2002017Object(getCurrentDomainName(), mod200);
-		Model2002017 model2002017 = new Model2002017( new Model200Callback() );
+	private void changeView2017(Model200ModuleOptions options,Mod2002017 mod200) {
+		Mod2002017Object mod200Obj = new Mod2002017Object(options.getDomainName(), mod200);
+		Model2002017 model2002017 = new Model2002017( options, new Model200Callback() );
 		model2002017.startModel( mod200Obj );
 		container.setWidget(model2002017);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 	
-	private void changeView2018(Mod2002018 mod200) {
-		Mod2002018Object mod200Obj = new Mod2002018Object(getCurrentDomainName(), mod200);
-		Model2002018 model2002018 = new Model2002018( new Model200Callback() );
+	private void changeView2018(Model200ModuleOptions options,Mod2002018 mod200) {
+		Mod2002018Object mod200Obj = new Mod2002018Object(options.getDomainName(), mod200);
+		Model2002018 model2002018 = new Model2002018( options, new Model200Callback() );
 		model2002018.startModel( mod200Obj );
 		container.setWidget(model2002018);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 	
-	private void changeView2019(Mod2002019 mod200) {
-		Mod2002019Object mod200Obj = new Mod2002019Object(getCurrentDomainName(), mod200);
-		Model2002019 model2002019 = new Model2002019( new Model200Callback() );
+	private void changeView2019(Model200ModuleOptions options,Mod2002019 mod200) {
+		Mod2002019Object mod200Obj = new Mod2002019Object(options.getDomainName(), mod200);
+		Model2002019 model2002019 = new Model2002019( options, new Model200Callback() );
 		model2002019.startModel( mod200Obj );
 		container.setWidget(model2002019);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
 	
-	protected void new2013() {
-		getMod2002013Service().createMod2002013(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2013
+	protected void new2013(Model200ModuleOptions options) {
+		getMod2002013Service().createMod2002013(options.getDomainName(), options.getDomain(), 2013
 		, new AsyncCallback<Mod2002013>() {
 
 			@Override
 			public void onSuccess(Mod2002013 mod200) {
-				changeView2013(mod200);
+				changeView2013(options,mod200);
 			}
 
 			@Override
@@ -532,14 +563,13 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
-	protected void new2014() {
-		getMod2002014Service().createMod2002014(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2014
+	protected void new2014(Model200ModuleOptions options) {
+		getMod2002014Service().createMod2002014(options.getDomainName(), options.getDomain(), 2014
 		, new AsyncCallback<Mod2002014>() {
 
 			@Override
 			public void onSuccess(Mod2002014 mod200) {
-				changeView2014(mod200);
+				changeView2014(options,mod200);
 			}
 
 			@Override
@@ -547,14 +577,13 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 	}
-	protected void new2015() {
-		getMod2002015Service().createMod2002015(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2015
+	protected void new2015(Model200ModuleOptions options) {
+		getMod2002015Service().createMod2002015(options.getDomainName() , options.getDomain(), 2015
 		, new AsyncCallback<Mod2002015>() {
 
 			@Override
 			public void onSuccess(Mod2002015 mod200) {
-				changeView2015(mod200);
+				changeView2015(options,mod200);
 			}
 
 			@Override
@@ -562,14 +591,13 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 	}
-	protected void new2016() {
-		getMod2002016Service().createMod2002016(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2016
+	protected void new2016(Model200ModuleOptions options) {
+		getMod2002016Service().createMod2002016(options.getDomainName(), options.getDomain(), 2016
 		, new AsyncCallback<Mod2002016>() {
 
 			@Override
 			public void onSuccess(Mod2002016 mod200) {
-				changeView2016(mod200);
+				changeView2016(options,mod200);
 			}
 
 			@Override
@@ -577,14 +605,13 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 	}
-	protected void new2017() {
-		getMod2002017Service().createMod2002017(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2017
+	protected void new2017(Model200ModuleOptions options) {
+		getMod2002017Service().createMod2002017(options.getDomainName(), options.getDomain(), 2017
 		, new AsyncCallback<Mod2002017>() {
 
 			@Override
 			public void onSuccess(Mod2002017 mod200) {
-				changeView2017(mod200);
+				changeView2017(options,mod200);
 			}
 
 			@Override
@@ -593,14 +620,13 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
-	protected void new2018() {
-		getMod2002018Service().createMod2002018(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2018
+	protected void new2018(Model200ModuleOptions options) {
+		getMod2002018Service().createMod2002018(options.getDomainName(), options.getDomain(), 2018
 		, new AsyncCallback<Mod2002018>() {
 
 			@Override
 			public void onSuccess(Mod2002018 mod200) {				
-				changeView2018(mod200);
+				changeView2018(options, mod200);
 			}
 
 			@Override
@@ -609,14 +635,13 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
-	protected void new2019() {
-		getMod2002019Service().createMod2002019(Model200.getCurrentDomainName()
-		, getCurrentDomain(), 2019
+	protected void new2019(Model200ModuleOptions options) {
+		getMod2002019Service().createMod2002019(options.getDomainName(), options.getDomain(), 2019
 		, new AsyncCallback<Mod2002019>() {
 
 			@Override
 			public void onSuccess(Mod2002019 mod200) {				
-				changeView2019(mod200);
+				changeView2019(options, mod200);
 			}
 
 			@Override

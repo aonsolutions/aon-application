@@ -1749,6 +1749,16 @@ public class FISCAL {
 	}
 
 	// ----------------------------------MODELO 200
+	public static Mod200 getMod200(String domainName,int domainId, String user,Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().getMod200(ctx, domainId,id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	public static LinkedList<Mod200> getMod200s(String domainName,int domainId, String user) {
 		AONContext ctx = null;
 		try {
