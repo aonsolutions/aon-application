@@ -455,6 +455,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton saveEventsButton;
 	private AonToolbarButton newValueButton;
 	private AonToolbarButton visibilityButton;
+	private ListBox yearLBEvents;
 	
 	// SalaryDraft
 	private HTMLPanel salaryDraftButtos;
@@ -1273,6 +1274,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			employeeEvents.onVisibility(e);
 		});
 		employeeEventsButtons.add(visibilityButton);
+		
+		yearLBEvents = new ListBox();
+		employeeEvents.initializeYearLB(yearLBEvents);
+		employeeEvents.setYearLB(yearLBEvents);
+		employeeEventsButtons.add(yearLBEvents);
 		
 		toolbar.add(employeeEventsButtons);
 		

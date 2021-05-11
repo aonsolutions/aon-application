@@ -173,23 +173,17 @@
 			height: 100%;
 		}
 		
+		.mt50{
+			margin-top: 50px;
+		}
+		
 	</ui:style>
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
-
-				<g:HTMLPanel ui:field="yearPanel" styleName="{style.yearPanel}">
-					<g:Button
-						styleName="{style.optionButtons}"
-						ui:field="lastYearButton"> &#60; </g:Button>
-					<g:Label styleName="{style.year}" ui:field="yearLabel">2020</g:Label>
-					<g:Button
-						styleName="{style.optionButtons}"
-						ui:field="nextYearButton"> &#62; </g:Button>
-				</g:HTMLPanel>
+			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.container}  {style.mt50}">
 
 				<g:ScrollPanel>
 					<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
