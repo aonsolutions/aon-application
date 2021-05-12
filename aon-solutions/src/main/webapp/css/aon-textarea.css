@@ -64,6 +64,7 @@ aon-textarea pre{
     width: 100%;
     height: 100%;
     color: var(--fontColor);
+    background: var(--aonWhite);
     border-radius : 3px;
    
 }

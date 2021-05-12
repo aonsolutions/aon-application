@@ -229,7 +229,8 @@ export class AonTextArea extends AonElement {
 							classes : [CSS.NO_COPY],
 							text :  this.COMPILE(),
 							styles : {
-								height : '100%'
+								height : '100%',
+								margin : 0
 							}
 						});
 
