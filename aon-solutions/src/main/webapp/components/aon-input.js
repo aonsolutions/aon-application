@@ -259,6 +259,7 @@ export class AonInput extends AonElement {
     label.appendChild(span);
 
     if('password' === this.getAttribute('type') && !this.isDisabled() && !this.isReadonly()){
+      input.autocomplete = 'off';
       let icon = document.createElement('i');
     	icon.setAttribute('id', this.getAttribute('id') + 'Icon');
     	icon.className =  'material-icons';

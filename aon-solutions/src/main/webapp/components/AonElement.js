@@ -97,6 +97,10 @@ export class AonElement extends HTMLElement{
     return document.querySelector(TAG.AON_APPLICATION);
   }
 
+  getModule() {
+    return document.querySelector(TAG.AON_MODULE);
+  }
+
   createApplication(id, title, application) {
     this.appendChild(this.createAonElement(application, id, title));
   }

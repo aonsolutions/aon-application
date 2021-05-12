@@ -87,7 +87,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-                    let aonModule = document.querySelector(TAG.AON_MODULE);
+                    let aonModule = this.getModule();
 					if(aonModule) aonModule.saveTokenFcm(token);
 				}
 			} 

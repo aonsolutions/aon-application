@@ -1,6 +1,6 @@
 import { request, post, get } from "./request.js";
 import { clear } from "./service.js"
-import { API_URL } from "../environments/environments.js";
+import { API_URL, TAG } from "../environments/environments.js";
 
 export const login = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -9,8 +9,6 @@ export const login = (data) => {
         reject(error);
       } else {
         localStorage.setItem("aon_session_id", JSON.parse(token).session_id);
-        document.getElementById("aonLogin").style.display = "none";
-        document.getElementById("aonHome").style.display = "block";
         resolve(token);
       }
     });
@@ -19,9 +17,9 @@ export const login = (data) => {
 
 export const closeSession = () => {
   localStorage.clear();
-  document.getElementById("aonLogin").style.display = "block";
-  document.getElementById("aonHome").style.display = "none";
   clear();
+  let module = document.querySelector(TAG.AON_MODULE);
+  module.buildLogin();
 };
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
