@@ -1,17 +1,16 @@
 package solutions.aon;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
@@ -19,10 +18,8 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import solutions.aon.seg.social.toolkit.Toolkit;
-import solutions.aon.seg.social.*;
+import solutions.aon.seg.social.Paternity;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.PaternityException;
 import solutions.aon.seg.social.exception.PaternityNotFoundException;
@@ -47,11 +44,22 @@ public class TestPaternity {
 	public void testGrabarCertificadoWrongPeriod() {
 		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
-			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("29-10-2020");
-			//Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-3000");
-			LocalDate endDateaux=LocalDate.now();
-			endDateaux.plusYears(2);
-			Date endDate=Date.from(endDateaux.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH, 29);
+			calendar.set(Calendar.MONTH, Calendar.OCTOBER);
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			Date startDate= calendar.getTime();
+			
+			calendar = Calendar.getInstance();
+			calendar.add(Calendar.YEAR, 2);
+			
+			Date endDate= calendar.getTime();
+			
 			assertFalse("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
 		} catch (CertificateNotFoundException e) {
@@ -60,8 +68,6 @@ public class TestPaternity {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			assertTrue(true);
-		} catch (ParseException e) {
-			fail("Date typed wrong");
 		} catch (FileNotFoundException e1) {
 			fail("Certificate file does not exist");
 		} catch (IOException e1) {
