@@ -176,7 +176,7 @@ const setSelectionMarkup = (element, funct, conditions) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildMobileWritter = (parent, data) => {
+export const buildMobileWritter = (parent) => {
        
     const writter = newComponent({
         id : MESSENGER_COMPONENTS.WRITTER,
@@ -226,6 +226,7 @@ export const buildMobileWritter = (parent, data) => {
         color: CSS.variable(COLORS.AON_DARK_GRAY),
         size: "20px"
     });
+
     save.element.style.marginLeft = "10px"
    
     const comment = createText({
@@ -245,7 +246,7 @@ export const buildMobileWritter = (parent, data) => {
 
     const textarea = new AonTextArea();
     setStyles(textarea, {
-        flexDirection: 'column-reverse',
+        flexDirection: 'column',
         height: '100%',
         width: '100%',
         boxShadow: "none",
@@ -270,6 +271,42 @@ export const buildMobileWritter = (parent, data) => {
             justifyContent: "flex-start"
         });
     });
+
+
+    setEvents(save.element,{
+        click : () => {
+
+            const value = textarea.compiledValue;
+            const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+            const data = parent.data;
+            textarea.clear();
+            
+            if(!value || value === "") return;
+            const message = {
+                type: "message",
+                sender: "Tú",
+                message: value,
+                date: new Date()
+            }
+            data.content.push(message);
+
+            appendChatMessage({
+                name: me ? message.sender : "Receptor@email.com",
+                message: message.message,
+                id: "id",
+                date: message.date,
+                attach: message.attach,
+                direction : me ?  RIGHT : LEFT
+            });
+
+            me =! me;
+            parent.data = data;
+
+            hideWritter();
+
+        }
+    });
+
 
     writter.element.appendChild(textarea);
     writter.appendTo(parent.element);
@@ -342,14 +379,26 @@ export const buildTextareaToolbar = (aonTextArea) => {
  * Show the writter with animation
  */
 export const showWritter = () => {
-
+    setTimeout(() => {
+        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
+          zIndex : 9,
+          opacity : 1,
+          left : 0,
+        });
+  
+      }, 100);
 }
 
 /**
  * Hide writter with animation
  */
 export const hideWritter = () => {
-
-
+    setTimeout(() => {
+        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
+          zIndex : -9,
+          opacity : 0,
+        });
+  
+    }, 100);
 }
 

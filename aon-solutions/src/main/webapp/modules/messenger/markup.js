@@ -14,7 +14,7 @@ export const compileHTML = (parent) =>{
     let link = /\[(.+)\]\((.+)\)/gi;
   
     let compiled = textarea.value;
-    compiled = compiled.replaceAll(list, '<li>$1</li>');
+    compiled = compiled.replaceAll(list, '<li style="direction:rtl;">$1</li>');
     compiled = compiled.replaceAll(bold, '<b>$1</b>');
     compiled = compiled.replaceAll(italic, '<i>$1</i>');
     compiled = compiled.replaceAll(link, '<a href="$2">$1</a>');
