@@ -152,7 +152,22 @@
 		.flex{
 			display: flex;
 			align-items: center;
+			gap: 5px;
 		}
+		
+		.flexGrow{
+			flex-grow: 1;
+		}
+		
+		.warningTB{
+			border: 1px solid red;
+		}
+		
+		.noHover{
+		    pointer-events: none !important;
+		    cursor: auto !important;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -208,7 +223,9 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre</g:Label>
 							</td>
 							<td colspan="2">
-								<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:HTMLPanel ui:field="namePanel" styleName="{style.flex}">
+									<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label ui:field="firstSurnameLabel" debugId="firstSurnameLabel"
@@ -237,7 +254,9 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:HTMLPanel ui:field="activityCCCPanel" styleName="{style.flex}">
+									<g:ListBox ui:field="activityCCC" debugId="activityCCC" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								</g:HTMLPanel>
 							</td>
 						</tr>
 						<tr>
@@ -253,7 +272,9 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:HTMLPanel ui:field="workplacePanel" styleName="{style.flex}">
+									<g:ListBox ui:field="workplace" debugId="workplace" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								</g:HTMLPanel>
 							</td>
 						</tr>
 						<tr>
@@ -261,7 +282,9 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
 							</td>
 							<td colspan="6" ui:field="contractTypeNode" debugId="contractTypeNode">
-								<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:HTMLPanel ui:field="contractTypePanel" styleName="{style.flex}">
+									<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								</g:HTMLPanel>
 							</td>
 							<td ui:field="contractFreelancerNode" debugId="contractFreelancerNode" colspan="6">
 								<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance"
@@ -286,7 +309,9 @@
 								<g:Label styleName='{style.requiredColor}'>Fecha inicio</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<g:HTMLPanel ui:field="startDatePanel" styleName="{style.flex}">
+									<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
@@ -438,7 +463,9 @@
 								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>C.P.</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:HTMLPanel ui:field="addressZipPanel" styleName="{style.flex}">
+									<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								</g:HTMLPanel>
 							</td>
 							<td style="width: 8%;">
 								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>  Provincia  </g:Label>
