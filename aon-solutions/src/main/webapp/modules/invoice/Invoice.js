@@ -166,6 +166,14 @@ export class Invoice {
     this.number = number;
   }
 
+  getReference() {
+    return this.reference;
+  }
+
+  setReference(reference) {
+    this.reference = reference;
+  }
+
   getDate() {
     return this.getDate();
   }

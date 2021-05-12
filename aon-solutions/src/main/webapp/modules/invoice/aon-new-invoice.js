@@ -168,6 +168,10 @@ export class AonNewInvoice extends AonElement {
 		this.invoice.createInvoice(invoice);
 	}
 
+	setType(type) {
+		this.setAttribute('type', type);
+	}
+
 	build() {
 		this.clear();
 		this.buildToolbar();

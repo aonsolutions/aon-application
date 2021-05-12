@@ -70,5 +70,23 @@ export class AonUserList extends AonElement {
 		aonUser.setAttribute('user', JSON.stringify(user));
 	}
 
+	setValue(value) {
+		let filter = {
+			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
+		};
+		let table = document.getElementById('aonUserTable');
+		if(table) {
+			getUsers(filter).then(users => {
+				table.removeRows();
+				users.filter(f => 
+					f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
+					|| f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
+				).forEach((user, i) => {
+					table.addRow(user, () => this.aonUser(user));
+				});
+			});
+		}
+	}
+
 }
 window.customElements.define('aon-user-list', AonUserList);

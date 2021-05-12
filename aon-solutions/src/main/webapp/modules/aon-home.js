@@ -1,5 +1,4 @@
 import { AonElement } from '../components/AonElement.js';
-
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonHeader } from './aon-header.js';
 import { AonMenu } from './aon-menu.js';
@@ -39,7 +38,7 @@ export class AonHome extends AonElement {
 		this.AON_SHOW_MENU_BUTTON = 'aonShowMenuButton';
 	}
 
-	build(){
+	build() {
 		let aonShowMenu = this.createElement(TAG.SPAN);
 		aonShowMenu.id = this.AON_SHOW_MENU;
 		aonShowMenu.className = CSS.AON_SHOW_MENU;
