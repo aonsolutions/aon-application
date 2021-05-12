@@ -8,9 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.google.gwt.core.client.GWT;
@@ -34,8 +31,6 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class InvoiceReport extends MainEntryPoint {
 
-	static FiscalServiceAsync fiscalService;
-	
 	interface InvoiceReportBinder extends UiBinder<Widget, InvoiceReport> {
 	}
 
@@ -116,9 +111,6 @@ public class InvoiceReport extends MainEntryPoint {
 		
 		diskForm = new FormPanel("_blank"); 
 		
-		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
-
 		Widget ui = INVOICE_REPORT_BINDER.createAndBindUi(this);
 		
 		entity.addItem( AON.MSG.invoices() );

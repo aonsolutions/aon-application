@@ -23,9 +23,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
@@ -120,7 +117,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
 
 	static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
-	static FiscalServiceAsync FISCAL_SERVICE;
 	static CommonServiceAsync COMMON_SERVICE;
 
 	private AccountEntryModuleOptions options;
@@ -261,8 +257,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
 		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 

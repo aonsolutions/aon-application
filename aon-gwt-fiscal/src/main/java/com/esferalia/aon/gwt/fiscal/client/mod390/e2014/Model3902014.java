@@ -8,9 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ErrorPage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
@@ -63,7 +60,6 @@ public class Model3902014 extends ResizeComposite {
 	private static final Model390Binder MODEL_390_BINDER = GWT.create(Model390Binder.class);
 
 	private Mod3902014 mod390;
-	private FiscalServiceAsync FISCAL_SERVICE;
 	private Mod3902014ServiceAsync MOD390_SERVICE;
 	
 	private Model390Callback mod390CallBack;
@@ -151,9 +147,6 @@ public class Model3902014 extends ResizeComposite {
 		
 		Mod3902014ServiceAsync mod3902014ServiceRaw = GWT.create(Mod3902014Service.class);
 		MOD390_SERVICE = new Mod3902014ServiceAsyncDecorator(mod3902014ServiceRaw);
-		
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		enterpriseSuggest = new EnterpriseSuggestBox(getCurrentDomainName(), getCurrentDomain(), getCurrentUser());
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
