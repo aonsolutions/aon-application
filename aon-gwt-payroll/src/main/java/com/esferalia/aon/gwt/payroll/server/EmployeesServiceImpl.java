@@ -3620,8 +3620,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			EmployeesServiceHelper.calculate(
 					connection,
 					agreementDraft,
-					AonServletUtils.getDomainID(domain),
-					agreementDraft.getDomain());
+					domainId,
+					parentDomainId);
 			
 			Map<String, String> variables = new HashMap<String, String>();
 			
