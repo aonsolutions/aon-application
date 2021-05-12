@@ -39,7 +39,7 @@ public class SLDSalariesTestCase extends AbstractOccamTest{
 
 	@Test
 	public void testSaveSalaries() throws IOException, SegSocialException {
-		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/FNMT.p12") ){
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("/solutions/aon/seg/social/FNMT.p12") ){
 			
 			String ccc = "01105360062";
 			String regimen = "0111";
