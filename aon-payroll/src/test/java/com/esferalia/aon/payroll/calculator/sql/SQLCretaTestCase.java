@@ -39,8 +39,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -5314,39 +5312,33 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											"L13",		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				"L13",		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+
+		trabajadoresTramosOs.flush();
+		
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
 						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 						trabajadoresTramosIs);
 		
+		trabajadoresTramosOs.close();
 		trabajadoresTramosIs.close();
 		
 		
@@ -5482,39 +5474,32 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				"L13",		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+
+		trabajadoresTramosOs.flush();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											"L13",		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
 						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 						trabajadoresTramosIs);
 		
+		trabajadoresTramosOs.close();
 		trabajadoresTramosIs.close();
 		
 		Utils.marshal(trabajadoresTramos, System.out);
@@ -5620,33 +5605,26 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											"L13",		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				"L13",		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+		
+		trabajadoresTramosOs.flush();
+		
+		ByteArrayInputStream  trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
@@ -5654,6 +5632,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 						trabajadoresTramosIs);
 		
 		trabajadoresTramosIs.close();
+		trabajadoresTramosOs.close();
 		
 		
 		Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
@@ -6229,43 +6208,33 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											tipo,		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				tipo,		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+		trabajadoresTramosOs.flush();
 		
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
+
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
 						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
 						trabajadoresTramosIs);
 		
-		
-		
-		
 		trabajadoresTramosIs.close();
+		trabajadoresTramosOs.close();
 		
 		return trabajadoresTramos;
 		
@@ -6292,33 +6261,24 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				tipo,		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+		trabajadoresTramosOs.flush();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											tipo,		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
 				.unmarshal(
@@ -6327,7 +6287,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		
+		trabajadoresTramosOs.close();
 		trabajadoresTramosIs.close();
 		
 		return trabajadoresTramos;
@@ -6445,34 +6405,24 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				"L00",		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									TrabajadoresTramos.generate(connection, 
-											"0000", 	//autorizado, 
-											mes, 		//desdeAnhoMes, 
-											anho , 		//desdeAnho, 
-											mes, 		//hastaMes, 
-											anho , 		//hastaAnho, 
-											mes, 		//ctrlMes, 
-											anho , 		//ctrlAnho, 
-											"L00",		//tipo, 
-											new String[]
-											{
-											"0111" + "" + ccc
-											}, 			//cccs
-											trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
-		
+		trabajadoresTramosOs.flush();
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		
 		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
@@ -6500,27 +6450,19 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		basesIs.close();
 		basesOs.close();
+		trabajadoresTramosIs.close();
+		trabajadoresTramosOs.close();
 		return bases.getLiquidacion().get(0);
 	}
 
 	// -------------------------------------------------------------------------
 	private net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion getLiquidacion (Connection connection, net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		
-		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		Utils.marshal(trabajadoresTramos, trabajadoresTramosOs);
+		trabajadoresTramosOs.flush();
 		
-		new Thread( () ->  {
-								try { 
-									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
-									Utils.marshal(trabajadoresTramos, trabajadoresTramosOs);
-									trabajadoresTramosOs.close();
-								} catch ( JAXBException | IOException e ){
-									throw new AssertException(e.getMessage());
-								} finally {
-									
-								}
-							}
-		).start();
-		
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		
 		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
@@ -6548,6 +6490,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		basesIs.close();
 		basesOs.close();
+		trabajadoresTramosIs.close();
+		trabajadoresTramosOs.close();
 		
 		return bases
 				.getLiquidacion()
