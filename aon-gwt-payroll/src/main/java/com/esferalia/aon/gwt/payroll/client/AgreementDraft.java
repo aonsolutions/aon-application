@@ -600,18 +600,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					// TODO: really need to go server side.
 //					isOnCategoryTab = true;
 					AgreementDraft.this.calculate(getNextFocusCallback());
-//					AgreementDraft.this.calculate();
 				}
 			});
-//			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
-//
-//				@Override
-//				public void onBlur(BlurEvent event) {
-//					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) + 1;
-//					if (salaryTableEditors.size() > next)
-//						salaryTableEditors.get(next).setFocus();
-//				}
-//			});
+			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
+
+				@Override
+				public void onBlur(BlurEvent event) {
+					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) + 1;
+					if (salaryTableEditors.size() > next)
+						salaryTableEditors.get(next).setFocus();
+				}
+			});
 		}
 
 		void hide(boolean hide) {
@@ -632,20 +631,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		CalculateCallback getNextFocusCallback() {
 			return new SuccessCalculateCallback() {
-				
 				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(CategoriesEditor.this);
 
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
-					LevelEditor lastLevelEditor = getLastLevelEditor();
-					if(null != lastLevelEditor) {
-						lastLevelEditor.setFocus();
-						lastLevelEditor.descriptionTextBox.setFocus(true);
-					}
-					
-//					IFocusableEditor editor = getSalaryTableEditorFor(currentIndex + 1);
-//					if (editor != null)
-//						editor.setFocus();
+					IFocusableEditor editor = getSalaryTableEditorFor(currentIndex + 1);
+					if (editor != null)
+						editor.setFocus();
 				}
 			};
 		}
@@ -4267,12 +4259,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private PaymentEditor getLastPaymentEditor() {
 		return paymentEditors.isEmpty() ? null : paymentEditors.get(paymentEditors.size() - 1);
 	}
-	
-	private LevelEditor getLastLevelEditor() {
-		loadCategoryTableEditor();
-		
-		return salaryTableEditors.isEmpty() ? null : (LevelEditor) salaryTableEditors.get(salaryTableEditors.size() - 1);
-	}
 
 	private PaymentEditor getNextPaymentEditorFor(int id) {
 		for (Iterator<PaymentEditor> iterator = paymentEditors.iterator(); iterator.hasNext();) {
@@ -4860,12 +4846,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		});
 		toolbar.add(addPaymentButton);
 		
-		AonToolbarButton paymentWizard = new AonToolbarButton("Creador pagos", AON.CSS.aonIconWizard());
-		paymentWizard.addClickHandler(e -> {
-			AgreementPaymentWizard agreementPaymentWizard = new AgreementPaymentWizard();
-		});
-		toolbar.add(paymentWizard);
-		
 		CheckBox changesCheck = new CheckBox();
 		changesCheck.setText("Cambios");
 		changesCheck.setVisible(false);
@@ -4877,7 +4857,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		undoAllButton.ensureDebugId("undoAllButton");
 		acceptButton.ensureDebugId("acceptButton");
 		printPreviewButton.ensureDebugId("printPreviewButton");
-		paymentWizard.ensureDebugId("paymentWizard");
 		
 		return toolbar;
 	}
