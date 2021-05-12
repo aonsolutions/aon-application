@@ -276,11 +276,10 @@ import aon.sepe.objects.Contract.SexType;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
-import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.Sepe;
@@ -6171,12 +6170,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 			
 			solutions.aon.seg.social.object.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
-			SistemaREDMov.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			SistemaRED.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6196,12 +6195,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 			
 			solutions.aon.seg.social.object.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
-			SistemaREDMov.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			SistemaRED.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6219,7 +6218,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			SistemaREDMov.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss, fecha);
+			SistemaRED.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss, fecha);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6237,7 +6236,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			SistemaREDMov.altaConsolidadaDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss);
+			SistemaRED.altaConsolidadaDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6255,7 +6254,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			SistemaREDMov.cambioGrupCtz(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, grup_ctz, fecha);
+			SistemaRED.cambioGrupCtz(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, grup_ctz, fecha);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6273,7 +6272,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			SistemaREDMov.cambioOcupacion(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, ocup, fecha);
+			SistemaRED.cambioOcupacion(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, ocup, fecha);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6291,7 +6290,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			SistemaREDMov.cambioCatProf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, cat, fecha);
+			SistemaRED.cambioCatProf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, cat, fecha);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);

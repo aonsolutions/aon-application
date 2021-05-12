@@ -15,7 +15,8 @@ import com.esferalia.aon.gwt.payroll.util.SLD;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
 import com.esferalia.aon.occam.api.AONContext;
 
-import solutions.aon.seg.social.SistemaREDI.Regime;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
 @Ignore
 public class SLDTest {
@@ -63,7 +64,7 @@ public class SLDTest {
 					, "123456"
 					, "pkcs12"
 					, "11122534302"
-					, Regime.GENERAL
+					, SistemaRED.Regime.GENERAL
 					, dateFrom
 					, dateTo
 					, "111016467058");
@@ -92,7 +93,7 @@ public class SLDTest {
 					, "123456"
 					, "pkcs12"
 					, "11122534302"
-					, Regime.GENERAL
+					, SistemaRED.Regime.GENERAL
 					, dateFrom
 					, dateTo
 					, "111016467058");

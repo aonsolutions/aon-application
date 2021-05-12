@@ -42,7 +42,7 @@ import solutions.aon.seg.social.object.PaternityCertificate.PaternityCertificate
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class Paternity {
+class Paternity {
 	final static String[] ID_TYPE = { "NIF", "NIE" };
 	// M -> Madre, P -> 'Otro progenitor', A -> Primer adoptante, B -> Segundo
 	// adoptante

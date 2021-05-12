@@ -19,7 +19,6 @@ import org.jooq.Record;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.pdf.template.commons.Deduction;
 import com.esferalia.aon.jooq.tables.Registry;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -32,9 +31,6 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.ibm.icu.util.Calendar;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaREDI.LiquidationType;
-import solutions.aon.seg.social.SistemaREDI.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 
@@ -56,12 +52,12 @@ public class SLD {
 	
 	public static <T extends ISalary> void getSLDCosts(ISalaryBuilder<T> salaryBuilder, DSLContext ctx,
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType,
-			final String ccc, final Regime regime, final Date dateFrom, final Date dateTo) throws SegSocialException {
+			final String ccc, final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo) throws SegSocialException {
 		
 		
 		Map<String, Map<String, WorkerLiquidation>> map = SistemaRED.getWorkersLiquidationsByCCC(certificateInputStream,
-				certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, LiquidationType.TODAS,
-				LiquidationOrigin.TODAS);
+				certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, SistemaRED.LiquidationType.TODAS,
+				SistemaRED.LiquidationOrigin.TODAS);
 
 		Period period = new Period(dateFrom, dateTo);
 
@@ -320,11 +316,11 @@ public class SLD {
 	 */
 	public static <T extends ISalary> void getSLDCostsByNAFs(ISalaryBuilder<T> salaryBuilder, DSLContext ctx,
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType,
-			final String ccc, final Regime regime, final Date dateFrom, final Date dateTo, String... nafs)
+			final String ccc, final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, String... nafs)
 			throws SegSocialException {
 		Map<String, Map<String, WorkerLiquidation>> map = SistemaRED.getWorkersLiquidationsByCCCandNAFs(
 				certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo,
-				LiquidationType.TODAS, LiquidationOrigin.TODAS, nafs);
+				SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, nafs);
 
 		Period period = new Period(dateFrom, dateTo);
 

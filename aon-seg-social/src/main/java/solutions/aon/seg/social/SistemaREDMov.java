@@ -44,7 +44,7 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 
-public class SistemaREDMov {
+class SistemaREDMov {
 
 	//HANDLE THE EXCEPTIONS OF Mov METHOD
 	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,

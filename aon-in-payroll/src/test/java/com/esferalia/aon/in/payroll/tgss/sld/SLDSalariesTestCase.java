@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import org.jooq.impl.DSL;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
@@ -28,11 +27,8 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.github.javafaker.Faker;
 
-import solutions.aon.TestCalculationQuery;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDI;
-import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaREDI.LiquidationType;
+import solutions.aon.seg.social.TestCalculationQuery;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.WorkerLiquidation;
@@ -93,11 +89,11 @@ public class SLDSalariesTestCase extends AbstractOccamTest{
 					"jg@FNMT", 
 					"pkcs12", 
 					ccc, 
-					SistemaREDI.Regime.GENERAL,  
+					SistemaRED.Regime.GENERAL,  
 					from, 
 					to, 
-					LiquidationType.TODAS, 
-					LiquidationOrigin.TODAS);
+					SistemaRED.LiquidationType.TODAS, 
+					SistemaRED.LiquidationOrigin.TODAS);
 			
 			Collection<Salary> salaries = 
 			SLDSalaries.getSLDSalaries(cccWorkersLiquidations, ccc, from, to);

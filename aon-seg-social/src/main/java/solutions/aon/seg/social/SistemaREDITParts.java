@@ -1,7 +1,7 @@
 package solutions.aon.seg.social;
 
 import static java.lang.Integer.parseInt;
-import static solutions.aon.seg.social.SistemaREDITParts.PartType.BAJA;
+import static solutions.aon.seg.social.SistemaRED.PartType.BAJA;
 import static solutions.aon.seg.social.exception.InvalidCertificateException.checkCertificate;
 import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getElConstains;
@@ -65,7 +65,7 @@ import solutions.aon.seg.social.object.It.ItBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class SistemaREDITParts {
+class SistemaREDITParts {
 
 	private static String URL_BASE = "https://w2.seg-social.es/isincaA/inicio.do";
 
@@ -230,53 +230,12 @@ public class SistemaREDITParts {
 			throw new InvalidDataException(errors.getVisibleText());
 	}
 
-	// CONTINGENCIES
-	public enum Contingencies {
-		ENFERMEDAD_COMUN, ACCIDENTE_NO_LABORAL, ACCIDENT_LABORAL, ENFERMEDAD_PROFESIONAL, PERIODOS_OBSERVACION
-	}
-
-	public enum AccidentType {
-		LEVE, GRAVE, MUY_GRAVE
-	}
-
-	// PART TYPE
-	public enum PartType {
-		ALTA, CONFIRMACION, BAJA
-	}
-
-	// CONTRACTS
-	public enum ContractType {
-		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, RESTO_Y_AUTONOMOS
-	}
-
-	public enum SituationEmployee {
-		ACTIVO, PERCEPTOR_DE_DESEMPLEO
-	}
-
-	public enum CauseType {
-		CURACION("01"), FALLECIMIENTO("02"), INSPECCION_MEDICA("03"), PROPUESTA_INVALIDEZ("04"),
-		AGOTAMIENTO_PLAZO("05"), MEJORIA_PERMITE_TRABAJAR("06"), INCOMPARECENCIA("07"), CONTROL_INSS_12_MESES("10"),
-		RECUP_CAPACIDAD_PROF("17"), INCOMP_CTOS_FORM("18"), INICIO_DE_MATERNIDAD("20"),
-		ALTA_MEDICA_INSPECCION_INSS("53"), PROPUESTA_DE_IP_EN_INSS("55"), FALLECIMIENTO_COMUNICADO_DESDE_EL_INSS("56"),
-		ALTA_MATEPSS_ARTICULO_128("57");
-
-		private String value;
-
-		private CauseType(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
 	// REGISTER IT START HANDLE EXCEPTIONS
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias,
-			Optional<String> occupation, Date startdate, ContractType contractType, float baseCot, int cotDays,
-			Optional<Date> fATEP, Optional<AccidentType> accidentType) throws SegSocialException {
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias,
+			Optional<String> occupation, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
+			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency, situationEmployee, licenseNumber, cias,
 				startdate, contractType, baseCot, cotDays });
@@ -300,10 +259,10 @@ public class SistemaREDITParts {
 
 	// REGISTER IT START
 	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias,
-			Optional<String> occupation, Date startdate, ContractType contractType, float baseCot, int cotDays,
-			Optional<Date> fATEP, Optional<AccidentType> accidentType) throws InvalidCertificateException,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias,
+			Optional<String> occupation, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
+			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType) throws InvalidCertificateException,
 			FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -396,8 +355,8 @@ public class SistemaREDITParts {
 
 	// REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
 	public static void registerItConfirmation(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
 			Date fconfirmation, Optional<String> npartConfimation) throws SegSocialException {
 
 		verifyData(new Object[] { regime, ccc, naf, contingency });
@@ -419,14 +378,14 @@ public class SistemaREDITParts {
 
 	// REGISTER IT CONFIRMATION
 	private static void registerItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
 			Date fconfirmation, Optional<String> npartConfimation) throws InvalidCertificateException,
 			FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee,
-					PartType.CONFIRMACION);
+					SistemaRED.PartType.CONFIRMACION);
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("ConfirmacionPartesForm")).orElseThrow();
 
 			String[] fbajaString = dateString(fbaja);
@@ -459,9 +418,9 @@ public class SistemaREDITParts {
 
 	// REGISTER IT END HANDLE EXCEPTIONS
 	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
-			Date falta, Optional<Date> fATEP, Optional<AccidentType> accidentType, CauseType causeType)
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
+			Date falta, Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, SistemaRED.CauseType causeType)
 			throws SegSocialException {
 
 		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency });
@@ -483,15 +442,15 @@ public class SistemaREDITParts {
 
 	// REGISTER IT
 	private static void registerItAltaImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, Contingencies contingency,
-			SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
-			Date falta, Optional<Date> fATEP, Optional<AccidentType> accidentType, CauseType causeType)
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
+			Date falta, Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, SistemaRED.CauseType causeType)
 			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException,
 			InterruptedException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
-			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, PartType.ALTA);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, SistemaRED.PartType.ALTA);
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("AltaPartesForm")).orElseThrow();
 
 			String[] faltaString = dateString(falta);
@@ -544,7 +503,7 @@ public class SistemaREDITParts {
 	}
 
 	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf,
-			Contingencies contingency, SituationEmployee situationEmployee, PartType type)
+			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
 			throws IOException, InvalidDataException {
 
 		HtmlInput regimeIn = htmlPage.querySelector("#regimen");
@@ -617,7 +576,7 @@ public class SistemaREDITParts {
 
 	// remove IT
 	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
-			String regime, String ccc, String naf, PartType partType, Date dateBj, Date dateProcess)
+			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {
 		Toolkit.verifyData(new Object[] { regime, ccc, naf, dateBj });
 		try {
@@ -638,7 +597,7 @@ public class SistemaREDITParts {
 
 	// remove IT
 	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, PartType partType, Date dateBj,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException,
 			InterruptedException, InvalidDataException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -689,7 +648,7 @@ public class SistemaREDITParts {
 
 	// report IT
 	public static byte[] pdfIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
-			String regime, String ccc, String naf, PartType partType, Date dateBj, Date dateProcess)
+			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {
 		verifyData(new Object[] { regime, ccc, naf, dateBj });
 		try {
@@ -703,7 +662,7 @@ public class SistemaREDITParts {
 
 	// report IT
 	private static byte[] pdfItImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, PartType partType, Date dateBj,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -757,7 +716,7 @@ public class SistemaREDITParts {
 
 	// report IT
 	public static ITPart getDataIt(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, PartType partType, Date dateBj,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess) throws SegSocialException {
 		verifyData(new Object[] { regime, ccc, naf, dateBj });
 		try {
@@ -779,7 +738,7 @@ public class SistemaREDITParts {
 
 	// report IT
 	private static ITPart getDataItImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, String naf, PartType partType, Date dateBj,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException,
 			InterruptedException, InvalidDataException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -825,7 +784,7 @@ public class SistemaREDITParts {
 		}
 	}
 
-	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, PartType partType, String fecha)
+	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, String fecha)
 			throws IOException {
 		String anulado = "No";
 		HtmlAnchor next = null;

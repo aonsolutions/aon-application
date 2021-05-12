@@ -21,7 +21,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.exception.SegSocialException; 
 
 @MultipartConfig
@@ -82,7 +81,7 @@ public class ITPDFServlet extends HttpServlet {
 	        if(isPartenityPart(itType))
 	        	certificatePDF = SistemaRED.getCertificatePdf(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
 	        else
-	        	certificatePDF = SistemaRED.pdfIT(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, PartType.BAJA, dateFrom, dateFrom);
+	        	certificatePDF = SistemaRED.pdfIT(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, SistemaRED.PartType.BAJA, dateFrom, dateFrom);
 	        
 	        output.write(certificatePDF);
 			res.flushBuffer();

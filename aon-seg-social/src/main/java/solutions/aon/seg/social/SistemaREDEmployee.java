@@ -46,7 +46,7 @@ import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class SistemaREDEmployee {
+class SistemaREDEmployee {
 
 	// GETS BOTH REAL AND PREVIUS EMPLOYEES
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,

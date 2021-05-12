@@ -19,9 +19,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 
-import solutions.aon.seg.social.SistemaREDI;
-import solutions.aon.seg.social.SistemaREDI.LiquidationType;
-import solutions.aon.seg.social.SistemaREDI.Regime;
+import solutions.aon.seg.social.SistemaRED.LiquidationType;
+import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -37,11 +36,11 @@ import solutions.aon.seg.social.object.*;
 import solutions.aon.seg.social.object.BankData.BankDataBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
-public class SistemaREDRemesas {
+class SistemaREDRemesas {
 
 	public static void draftRequest(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc, final SistemaREDI.Regime regime, 
-			Date dateFrom, Date dateTo, final SistemaREDI.LiquidationType liqType, final boolean recoverPreviousMonthBases, final boolean receptionQuery) throws SegSocialException {
+			final String certificatePassword, final String certificateType, final String ccc, final SistemaRED.Regime regime, 
+			Date dateFrom, Date dateTo, final SistemaRED.LiquidationType liqType, final boolean recoverPreviousMonthBases, final boolean receptionQuery) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, recoverPreviousMonthBases};
 		Toolkit.verifyData(arr_fields);
@@ -114,8 +113,8 @@ public class SistemaREDRemesas {
 	}
 	
 	public static void confirmationRequest(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc, final SistemaREDI.Regime regime, 
-			Date dateFrom, Date dateTo, final SistemaREDI.LiquidationType liqType, final boolean receptionQuery) throws SegSocialException {
+			final String certificatePassword, final String certificateType, final String ccc, final SistemaRED.Regime regime, 
+			Date dateFrom, Date dateTo, final SistemaRED.LiquidationType liqType, final boolean receptionQuery) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType};
 		Toolkit.verifyData(arr_fields);
@@ -187,7 +186,7 @@ public class SistemaREDRemesas {
 	
 	
 	public static void confirmationRequest(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc, final SistemaREDI.Regime regime) throws SegSocialException {
+			final String certificatePassword, final String certificateType, final String ccc, final SistemaRED.Regime regime) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arr_fields= {ccc, regime};
 		Toolkit.verifyData(arr_fields);
@@ -211,7 +210,7 @@ public class SistemaREDRemesas {
 	
 	
 	public static Collection<BankData> getBankDataByCCC(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String ccc, final SistemaREDI.Regime regime) throws SegSocialException {
+			final String certificatePassword, final String certificateType, final String ccc, final SistemaRED.Regime regime) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arr_fields= {ccc, regime};
 		Toolkit.verifyData(arr_fields);
