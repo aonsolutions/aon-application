@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF.IModel390HFCallback;
@@ -134,13 +133,6 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
 
-	private ExpressionResolver resolver = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model390HF.impl.mathExpression(expression,callback);
-		}
-	};
-	
 	interface TabLabelTemplate extends SafeHtmlTemplates {
 		@Template("<span class=\"{1} aon-padding-right aon-padding-left-20\" style=\"width: auto !important\">{0}</span>")
 		SafeHtml render(String label, String iconStyle);
@@ -631,7 +623,6 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected int paintField(Model390HFModuleOptions options,FlexTable table, int row, int col, final Mod390Key key, int fieldSize, boolean enabled) {
 		final FiscalModelDetail det1 = this.mod390.ensureDetail(key);
 		final DoubleBox input = new DoubleBox(fieldSize);
-		input.setResolver(resolver);
 		fieldsMap.put(key, input);
 		input.setEnabled(enabled); 
 		input.addStyleName(AON.AON_CSS.aonPaddingLeft10Important());

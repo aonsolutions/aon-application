@@ -7,10 +7,10 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
@@ -56,7 +56,7 @@ public class Model349 extends MainEntryPoint {
 	private final static int BREAKDOWN_TAB = 1;
 	
 	static Model349ServiceAsync SERVICE;
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	interface Model349Binder extends UiBinder<Widget, Model349> {}
 	private static final Model349Binder MODEL_349_BINDER = GWT.create(Model349Binder.class);
@@ -140,7 +140,7 @@ public class Model349 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData aonData) {

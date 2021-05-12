@@ -173,7 +173,12 @@ public class Mod2002017Object implements Serializable {
 		}
 	}
 	public void mathExpression(String expression,AsyncCallback<Double> callback) {
-		Model200.getFiscalService().mathExpression(expression, callback);
+		try {
+			double ret = Model200.resolve(expression);
+			callback.onSuccess(ret);
+		} catch (Throwable t) {
+			callback.onFailure(t);
+		}
 	}
 
 	public void calculate() {

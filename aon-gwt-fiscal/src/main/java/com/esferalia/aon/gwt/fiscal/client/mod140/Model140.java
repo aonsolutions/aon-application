@@ -8,9 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,8 +24,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model140 extends MainEntryPoint {
 
-	static FiscalServiceAsync fiscalService;
-	
 	final static CommonMessages MSG = GWT.create(CommonMessages.class);
 	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	
@@ -70,9 +65,6 @@ public class Model140 extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
-
-		FiscalServiceAsync mod180ServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(mod180ServiceRaw);
 
 		Widget ui = MODEL_140_BINDER.createAndBindUi(this);
 		

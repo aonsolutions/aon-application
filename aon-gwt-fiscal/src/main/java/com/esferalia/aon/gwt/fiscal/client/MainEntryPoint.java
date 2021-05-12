@@ -52,7 +52,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainEntryPoint implements EntryPoint {
 
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
 	//
@@ -121,7 +121,7 @@ public class MainEntryPoint implements EntryPoint {
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
 		if(getToken() != null) {
-			impl.getAonDataToken(getCurrentDomainName(), getCurrentDomain(), getToken(), new AsyncCallback<AonData>() {
+			FISCAL_SERVICE.getAonDataToken(getCurrentDomainName(), getCurrentDomain(), getToken(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
 					aonData = result;

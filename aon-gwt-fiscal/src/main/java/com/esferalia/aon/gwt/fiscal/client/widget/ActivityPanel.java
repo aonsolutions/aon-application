@@ -6,9 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
 import com.google.gwt.cell.client.ImageResourceCell;
@@ -62,7 +62,7 @@ public class ActivityPanel extends CustomDialog {
 	private static final ActivityPanelBinder activityPanelBinder = GWT
 			.create(ActivityPanelBinder.class);
 
-	private FiscalServiceAsync fiscalService;
+	private FiscalMSServiceAsync fiscalService;
 	
 	private SelectionCallBack callback;
 
@@ -115,8 +115,8 @@ public class ActivityPanel extends CustomDialog {
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		FiscalMSServiceAsync fiscalServiceRaw = GWT.create(FiscalMSService.class);
+		fiscalService = new FiscalMSServiceAsyncDecorator(fiscalServiceRaw);
 		activityGroup = new ListBox();
 		Widget ui = activityPanelBinder.createAndBindUi(this);
 		setWidget(ui);

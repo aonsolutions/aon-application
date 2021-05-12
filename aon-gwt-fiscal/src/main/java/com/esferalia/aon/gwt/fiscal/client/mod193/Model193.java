@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
@@ -53,7 +53,7 @@ public class Model193 extends MainEntryPoint {
 	private final static int BREAKDOWN_TAB = 1;
 	
 	static Model193ServiceAsync SERVICE;
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	interface Model193Binder extends UiBinder<Widget, Model193> {}
 	private static final Model193Binder MODEL_193_BINDER = GWT.create(Model193Binder.class);
@@ -121,7 +121,7 @@ public class Model193 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData aonData) {

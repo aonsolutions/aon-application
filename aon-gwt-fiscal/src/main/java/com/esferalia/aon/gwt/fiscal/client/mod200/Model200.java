@@ -7,9 +7,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2013.Mod2002013Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2013.Model2002013;
@@ -71,20 +70,11 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002017ServiceAsync mod2002017Service;
 	static Mod2002018ServiceAsync mod2002018Service;
 	static Mod2002019ServiceAsync mod2002019Service;
-	static FiscalServiceAsync fiscalService;
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	Model200Table table;
 	DeckLayoutPanel deckPanel;
 	SimpleLayoutPanel container;
-	
-	public static FiscalServiceAsync getFiscalService() {
-		if (fiscalService == null) {
-			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-		}
-		return fiscalService;
-	}
 	
 	public static Mod200ServiceAsync getMod200Service() {
 		if (mod200Service == null) {
@@ -162,7 +152,7 @@ public class Model200 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData aonData) {
@@ -213,7 +203,7 @@ public class Model200 extends MainEntryPoint {
 		
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				getFiscalService().getMod200s(options.getDomainName(), options.getDomain(),
+				mod200Service.getMod200s(options.getDomainName(), options.getDomain(), options.getUser(),
 				new AsyncCallback<LinkedList<Mod200>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod200> result) {
@@ -650,5 +640,9 @@ public class Model200 extends MainEntryPoint {
 		});
 	}
 	
+	public native static double resolve(String expression) /*-{
+		d = eval(expression);
+		return d;
+	}-*/;	
 	
 }

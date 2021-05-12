@@ -13,9 +13,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -61,7 +61,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	private API API;
 	private AonData aonData;
@@ -531,7 +531,7 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.add(l0);
 		hp.add(l1);
 		FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
-		impl.presentationFile(domain.getName(), domain.getId(), user, modelType, model.getId(), new AsyncCallback<Integer>() {
+		FISCAL_SERVICE.presentationFile(domain.getName(), domain.getId(), user, modelType, model.getId(), new AsyncCallback<Integer>() {
 
 			@Override
 			public void onSuccess(Integer result) {

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.DoubleVariable2015;
@@ -209,9 +211,14 @@ public class Mod2002015Object implements Serializable {
 		}
 	}
 	public void mathExpression(String expression,AsyncCallback<Double> callback) {
-		Model200.getFiscalService().mathExpression(expression, callback);
+		try {
+			double ret = Model200.resolve(expression);
+			callback.onSuccess(ret);
+		} catch (Throwable t) {
+			callback.onFailure(t);
+		}
 	}
-
+	
 	public void calculate() {
 		Model200.getMod2002015Service().calculateMod2002015(mod200, new AsyncCallback<Mod2002015>() {
 			

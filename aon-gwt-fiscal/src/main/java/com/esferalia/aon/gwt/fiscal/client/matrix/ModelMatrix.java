@@ -24,9 +24,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.Min
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
@@ -147,7 +147,7 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 	
 	protected static FiscalModelServiceAsync SERVICE;
-	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
+	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	private SplitLayoutPanel splitLayoutPanel;
 	private ScrollPanel scrollPanel; 
@@ -163,7 +163,7 @@ public class ModelMatrix extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 
 			@Override public void onFailure(Throwable caught) {}
 

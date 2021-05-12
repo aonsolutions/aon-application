@@ -13,9 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -118,9 +115,6 @@ public class OperationReport extends MainEntryPoint {
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
