@@ -1,25 +1,18 @@
-import {AonElement} from '../components/AonElement.js';
-import {rootPanel} from '../services/gwtLoader.js';
-import {setPosition} from '../services/maps.js';
+import { AonElement } from '../components/AonElement.js';
+import { rootPanel } from '../services/gwtLoader.js';
+import { setPosition } from '../services/maps.js';
 import { getToken, saveAuthDevice , getCompanies, getUser, getUserAppRole } from '../services/service.js';
-import './login/aon-login.js';
-import './register/aon-register.js';
-import './aon-home.js';
-import './company/aon-parent.js';
-import './company/aon-mobile-parent.js';
-import './company/aon-mobile-desktop.js';
-import './company/aon-desktop.js';
+import { AonLogin } from './login/aon-login.js';
+import { AonHome } from './aon-home.js';
 
 import { EVENT, TAG } from '../../environments/environments.js'; 
+
+import * as LS  from '../services/localStorageService.js';
 
 export class AonModule extends AonElement {
 
 	AON_LOGIN;
-	AON_REGISTER;
-	AON_HOME_DIV;
 	AON_HOME;
-	AON_DESKTOP;
-	AON_PARENT;
 
 	constructor () {
 		super();
@@ -28,46 +21,33 @@ export class AonModule extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.setWindowApp();
-
-		let loginDiv= this.createElement('div');
-		loginDiv.id = this.AON_LOGIN;
-		loginDiv.style.display = 'none';
-		this.appendChild(loginDiv);
-		loginDiv.innerHTML = '<aon-login></aon-login>';
-
-		let homeDiv = this.createElement('div');
-		homeDiv.id = this.AON_HOME_DIV;
-		homeDiv.style.display = 'none';
-		homeDiv.innerHTML = `<aon-home id="${this.AON_HOME}"></aon-home>`;
-		this.appendChild(homeDiv);
-
-		let registerDiv= this.createElement('div');
-		registerDiv.id = this.AON_REGISTER;
-		registerDiv.style.display = 'none';
-		this.appendChild(registerDiv);
-		registerDiv.innerHTML = '<aon-register></aon-register>';
 		this.load();
 	}
 
 	initialize(){
 		this.AON_LOGIN = 'aonLogin';
-		this.AON_REGISTER = 'aonRegister';
-		this.AON_HOME_DIV = 'aonHomeDiv';
 		this.AON_HOME = 'aonHome';
-		this.AON_DESKTOP = 'aonDesktop';
-		this.AON_PARENT = 'aonParent';
+	}
+
+	buildLogin(){
+		this.clear();
+		let login = new AonLogin();
+		login.id = this.AON_LOGIN;
+		this.appendChild(login)
+	}
+
+	buildHome() {
+		this.clear();
+		let home = new AonHome();
+		home.id = this.AON_HOME;
+		this.appendChild(home);
 	}
 
 	load() {
 		if(getToken()){
-			localStorage.removeItem('aon_domain_id');
-			localStorage.removeItem('aon_domain_name');
-			localStorage.removeItem('aon_domain_login');
+			LS.removeDomain();
+			this.buildHome();
 
-			this.clearElementById('rootPanel');
-			this.getElement(this.AON_LOGIN).style.display = 'none';
-			let homeDiv = this.getElement(this.AON_HOME_DIV);
-			homeDiv.style.display = 'block';
 			getCompanies().then(companies => {
 				if(companies.length === 1){
 					this.companySelection(companies[0]);
@@ -80,8 +60,7 @@ export class AonModule extends AonElement {
 			});
 			window.dispatchEvent( new Event('userAuth') );
 		} else {
-			this.getElement(this.AON_LOGIN).style.display = 'block';
-			this.getElement(this.AON_HOME).style.display = 'none';
+			this.buildLogin();
 		}
 	}
 
@@ -99,14 +78,13 @@ export class AonModule extends AonElement {
 	}
 
 	saveTokenFcm(tokenFCM){
-		console.log("TOKEN FCM", tokenFCM);
 		saveAuthDevice({tokenFCM});
 	}
 
 	companySelection(company) {
-		localStorage.setItem('company', JSON.stringify(company));
-		localStorage.setItem("aon_domain_id", company.id);
-		localStorage.setItem("aon_domain_name", company.domain);
+		LS.setCompany(JSON.stringify(company));
+		LS.setDomainId(company.id);
+		LS.setDomainName(company.domain);
 
 		let home = this.getElement(this.AON_HOME);
 		home.showMenu(true);
@@ -115,13 +93,14 @@ export class AonModule extends AonElement {
 		aonHeader.showCompanyOption(company);
 
 		if(!this.isMobile()){
-			let aonMenu = this.getElement('aonMenu');
+			
+			let aonMenu = this.getElement(home.AON_MENU);
 			aonMenu.clear();
 			aonMenu.init();
 		}
 
 		getUser().then(user => {
-			localStorage.setItem('aon_domain_login', user.login);
+			LS.setDomainLogin(user.login);
 			getUserAppRole().then(user => {
 				if(!this.isMobile()){
 					aonHeader.setAttribute('company', JSON.stringify(company));

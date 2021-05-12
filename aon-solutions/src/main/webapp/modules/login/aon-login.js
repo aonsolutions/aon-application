@@ -59,7 +59,9 @@ export class AonLogin extends AonElement {
 						<img id="aonLoginLogoImg" class="logo"/>
 					</div>
 						<div class="aon-login-form" style="width:300px;">
-							<div class="aonColorSecondary" style="font-weight: bold;padding-bottom: 20px;">
+          
+            
+              <div class="aonColorSecondary" style="font-weight: bold;padding-bottom: 20px;">
 								INICIO DE SESIÓN
 							</div>
 
@@ -88,6 +90,7 @@ export class AonLogin extends AonElement {
 							<div style="position:relative;">
 								<button class="aonButton" id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
 							</div>
+        
 
 						</div>
 			    <div class="aon-login-info2">
@@ -216,6 +219,7 @@ export class AonLogin extends AonElement {
         localStorage.removeItem('aon_domain_id');
         localStorage.removeItem('aon_domain_name');
         localStorage.removeItem('aon_domain_login');
+        this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){
             this.companySelection(companies[0]);
