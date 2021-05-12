@@ -56,7 +56,7 @@ import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilde
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class SistemaREDI {
+class SistemaREDI {
 
 	public static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc)
@@ -805,89 +805,9 @@ public class SistemaREDI {
 		
 	}
 	
-	public static enum LiquidationType{
-		L00_NORMAL("L00"),
-		C02_COMP_SALARIOS_TRAMITACION_NO_CONCERTADOS("C02"),
-		C03_COMP_SALARIOS_RETROACTIVOS_NO_CONCERTADO("C03"),
-		C13_COMP_VACAC_RETRIBUIDAS_NO_CONCERTADOS("C13"),
-		C90_COMP_POR_INCREMENTO_BASES_NO_CONCERTADOS("C90"),
-		C91_COMP_NUEVOS_TRAB_Y_O_TRAMOS_NO_CONCERTA("C91"),
-		L02_COMPLEMENTARIA_POR_SALARIOS_TRAM_NORMAL("L02"),
-		L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV("L03"),
-		L13_VACACIONES_RETRIBUIDAS("L13"),
-		L90_COMPLEMENTARIA_POR_INCREMENTO_DE_BASES("L90"),
-		L91_COMP_NUEVOS_TRABAJADORES_Y_O_TRAMOS("L91"),
-		L92_COMP_SALARIOS_TRAMITACIÓN_DE_OFICIO("L92"),
-		L93_COMP_VAC_RETR_Y_NO_DISFR_DE_OFICIO("L93"),
-		V03_COMP_ABONO_SALARIOS_RETROACTIVOS_DE_L13("V03"),
-		V90_COMP_POR_INCREMENTO_DE_BASES_DE_L13("V90"),
-		TODAS("T");
-		
-		private String value;
-		
-		
-		private LiquidationType(String value) {
-			this.value = value;
-		}
-		
-		public String getValue() {
-			return value;
-		}
-	}
-	
-	//Origen de la liquidación
-	public static enum LiquidationOrigin{
-		PRESENTADAS_POR_LA_EMPRESA("E"),
-		GENERADAS_POR_LA_TGSS("G"),
-		TODAS("T");
-		private String value;
-		private LiquidationOrigin(String value) {
-			this.value=value;
-		}
-		public String getValue() {
-			return value;
-		}
-	}
-	
-	public static enum Regime{
-		GENERAL("0111"),
-		GENERAL_ARTISTAS("0112"),
-		GENERAL_CONSERVAS_VEGETALES("0132"),
-		GENERAL_HOSTELERIA("0135"),
-		GENERAL_CINEMATOG("0136"),
-		GENERAL_OPINION_PUBLICA("0137"),
-		GENERAL_AGRARIO("0163"),
-		ESPECIAL_MAR_GRUPO_1("0811"),
-		ESPECIAL_MAR_GRUPO_2A("0812"),
-		ESPECIAL_MAR_GRUPO_2B("0813"),
-		ESPECIAL_MAR_GRUPO_3("0814"),
-		ESPECIAL_MAR_ASIMILADOS_GRUPO_1("0821"),
-		ESPECIAL_MAR_ASIMILADOS_GRUPO_2A("0822"),
-		ESPECIAL_MAR_ASIMILADOS_GRUPO_2B("0823");
-		private String value;
-		private Regime(String value) {
-			this.value=value;
-		}
-		public String getValue() {
-			return value;
-		}
-		
-		public static Regime fromValue(String value) {
-			for (Regime regime : Regime.values()) {
-				if ( regime.getValue().equals(value))
-					return regime;
-			}
-			return Regime.GENERAL;
-		}
-	}
-	
-	
-	
-	
-	
 	static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, OutOfServiceException {
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, OutOfServiceException {
 //		CCC
 			{
 				HtmlInput inputCcc = (HtmlInput) htmlPage.getElementById("idCCC");
@@ -948,8 +868,8 @@ public class SistemaREDI {
 	//RETURNS A COLLECTION OF ALL LIQUIDATIONS AVAILABLE FOR AN ENTERPRISE WITHIN THE DATE SPECIFIED
 	public static Collection<Liquidation> CalculationQueryByCCC(final InputStream certificateInputStream,
 		final String certificatePassword, final String certificateType, final String ccc,
-		final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-		final LiquidationOrigin liqOrigin) throws SegSocialException{
+		final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+		final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);
@@ -995,8 +915,8 @@ public class SistemaREDI {
 	//RETURNS A MAP (LIQUIDATION TYPE AS KEY) OF MAPS CONTAINING EACH WORKER'S CALCULATION QUERY (WORKERS' NSS AS KEY)
 	public static Map<String,Map<String, WorkerLiquidation>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
 			InvalidCertificateException.checkCertificate(certificateInputStream);
 			Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 			Toolkit.verifyData(arrFields);
@@ -1088,8 +1008,8 @@ public class SistemaREDI {
 	//TAKES A MAP (LIQUIDATION TYPE AS KEY) OF MAPS (NAF AS KEY) OF WORKERS' LIQUIDATIONS PASSING CCC AND NAFS AS ARGUMENTS
 	public static Map<String,Map<String, WorkerLiquidation>> workersCalculationQueryByCCCandNAFS(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -1205,8 +1125,8 @@ public class SistemaREDI {
 	////GETS THE WORKER LIQUIDATION AVAILABLE IN THE FIRST ENTERPRISE LIQUIDATION SHOWN FOR THE WORKER WHOSE NAF IS INPUTTED
 	public static WorkerLiquidation WorkerCalculationQueryByNAF(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String naf, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);
@@ -1277,8 +1197,8 @@ public class SistemaREDI {
 	//GETS ALL AVAILABLE WORKER LIQUIDATIONS FOR THE WORKER WHOSE NAF IS INPUTTED
 	public static Collection<WorkerLiquidation> WorkerCalculationQueriesByNAF(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String naf, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);

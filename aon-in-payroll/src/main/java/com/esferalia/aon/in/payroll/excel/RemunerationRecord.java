@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.excel;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -11,8 +12,8 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +22,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.imageio.ImageIO;
+
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
@@ -47,7 +49,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -309,16 +310,6 @@ public class RemunerationRecord {
 	}
 	
 
-	
-//	private static void copyRow (Row newRow, Row originalRow) {
-//		Iterator<Cell> it = originalRow.cellIterator();
-//		while (it.hasNext()) {
-//			Cell c = it.next();
-//			newRow.createCell(c.getColumnIndex());
-//		}
-//	}
-	
-
 
 	protected static InputStream getExcelDraft(Optional<Integer> entries) {
 		InputStream is = null;
@@ -338,6 +329,11 @@ public class RemunerationRecord {
 		return is;
 	}
 	
+	/**
+	 * Writes the remuneration record excel on the given OutputStream object.
+	 * @param os The output stream where the excel will be written on
+	 * @param remunerationRecordData The RemunerationRecordData object containing the remuneration record data
+	 */
 	public static void getExcel(OutputStream os, RemunerationRecordData remunerationRecordData) {
 		Integer entryNum = remunerationRecordData.getEntries() != null ? remunerationRecordData.getEntries().size() : null;
 		try (Workbook wb = new XSSFWorkbook(getExcelDraft(Optional.ofNullable(entryNum)))) {
@@ -386,26 +382,46 @@ public class RemunerationRecord {
 			{
 				sheet = wb.getSheetAt(0);
 				if (!remunerationRecordData.getLogo().isEmpty() ) {
-					Drawing<?> drawing = sheet.createDrawingPatriarch();
-					ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
-					anchor.setAnchorType( ClientAnchor.AnchorType.MOVE_AND_RESIZE );
-					int pictureIndex =
-					        wb.addPicture(remunerationRecordData.getLogo().orElse(null), Workbook.PICTURE_TYPE_PNG);
-//					anchor.setCol1( 0 );
-//					anchor.setRow1(0); // same row is okay
-//					anchor.setRow2(0);
-//					anchor.setCol2( 1 );
-					anchor.setDx1(100 * Units.EMU_PER_PIXEL);
-					anchor.setDx2(200 * Units.EMU_PER_PIXEL);
-					anchor.setDy1(100* Units.EMU_PER_PIXEL);
-					anchor.setDy2(200 * Units.EMU_PER_PIXEL);
-					drawing.createPicture( anchor, pictureIndex );
-//					pict.resize();
 					
+					byte[] logo = remunerationRecordData.getLogo().orElse(null);
+					if (logo != null) {
+						Image img = ImageIO.read(new ByteArrayInputStream(logo));
+						double relation = ((double)img.getWidth(null)/img.getHeight(null));
+						int height = 0;
+						int width = 0;
+						if (img.getWidth(null) > img.getHeight(null)) {
+							height = 100;
+							width = (int) (100*relation);
+							
+							if (width > 300) {
+								width = 300;
+								height = (int)(height * (300d/width));
+							}
+						} else {
+							height = 200;
+							width = (int) (150*relation);
+						}
+						
+						Drawing<?> drawing = sheet.createDrawingPatriarch();
+						ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
+						anchor.setAnchorType( ClientAnchor.AnchorType.MOVE_AND_RESIZE );
+						int pictureIndex =
+						        wb.addPicture(remunerationRecordData.getLogo().orElse(null), Workbook.PICTURE_TYPE_PNG);
+	//					anchor.setCol1( 0 );
+	//					anchor.setRow1(0); // same row is okay
+	//					anchor.setRow2(0);
+	//					anchor.setCol2( 1 );
+						int top = width >= height ? 90 : 30;
+						anchor.setDx1(90 * Units.EMU_PER_PIXEL);
+						anchor.setDx2((90+width) * Units.EMU_PER_PIXEL);
+						anchor.setDy1(top* Units.EMU_PER_PIXEL);
+						anchor.setDy2((top+height) * Units.EMU_PER_PIXEL);
+						drawing.createPicture( anchor, pictureIndex );
+	//					pict.resize();
 					
+					}
 				}
 			}
-			
 			
 			//SOCIAL REASON
 			{
@@ -617,6 +633,7 @@ public class RemunerationRecord {
 					//DELETE EXCESS ROWS
 					{
 						
+						//FORMULAS TRANSLATED TO RANGE FORMULAS
 //						for (int i=8;i<=8+remunerationRecordData.getEntries().values().size();i++) {
 //							rowNum = i+1;
 //							sheet.getRow(i).getCell(65).setCellFormula("+MAX($D$3,$K"+rowNum+")");
@@ -691,6 +708,7 @@ public class RemunerationRecord {
 		.select()
 		.from(SALARY)
 		.innerJoin(CONTRACT).on(SALARY.CONTRACT.eq(CONTRACT.ID))
+		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 		.innerJoin(IRPF_DATA).on(CONTRACT.ID.eq(IRPF_DATA.CONTRACT))
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 		.innerJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
@@ -699,7 +717,7 @@ public class RemunerationRecord {
 		.innerJoin(parcialityCoef).on(SALARY.ID.eq(parcialityCoef.SALARY)).and(parcialityCoef.NAME.eq("COEFICIENTE_PARCIALIDAD"))
 		.innerJoin(quoteGroup).on(SALARY.ID.eq(quoteGroup.SALARY)).and(quoteGroup.NAME.eq("GRUPO_COTIZACION"))
 		.where(condition).groupBy(CONTRACT.ID).orderBy(CONTRACT.START_DATE);
-		
+
 		
 		HashSet<SalaryPayment> aliasedTables = new HashSet<SalaryPayment>();
 		LinkedList<IRetributiveConcept> concepts = new LinkedList<IRetributiveConcept>();
@@ -845,7 +863,14 @@ public class RemunerationRecord {
 		
 	}
 	
-	
+	/**
+	 * Picks up the data for the remuneration record
+	 * @param domainName The domain name
+	 * @param enterpriseId If not given, the method uses just the domain name to pick up data
+	 * @param startDate The start date of the period chosen for the remuneration record
+	 * @param endDate The end date of the period chosen for the remuneration record
+	 * @return RemunerationRecordData object containing the remuneration record's data
+	 */
 	public static RemunerationRecordData getData(String domainName, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
 		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
@@ -863,6 +888,9 @@ public class RemunerationRecord {
 				.and(SALARY.START_DATE.ge(sqlStartDate))
 				.and(SALARY.END_DATE.le(sqlEndDate));
 		
+		String enterpriseDomain = aonContext.getDomainName();
+		Integer enterpriseDomainId = aonContext.getDomainId();
+		
 		if (!enterpriseId.isEmpty() && enterpriseId.get() > 0) {
 			condition = condition.and(WORKPLACE.ENTERPRISE.eq(enterpriseId.get()));
 			condition2 = condition2.and(WORKPLACE.ENTERPRISE.eq(enterpriseId.get()));
@@ -870,6 +898,21 @@ public class RemunerationRecord {
 			Enterprise enterprise = AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), "", enterpriseId.get());
 			remunerationRecordData.setSocialReason(enterprise.getName());
 			remunerationRecordData.setEnterpriseDocument(enterprise.getDocument());
+			
+			{
+				Record record = aonContext.getDslContext()
+				.select()
+				.from(ENTERPRISE)
+				.innerJoin(DOMAIN).onKey()
+				.where(ENTERPRISE.REGISTRY.eq(enterpriseId.get()))
+				.fetchOne();
+				
+				enterpriseDomain = record.get(DOMAIN.NAME);
+				enterpriseDomainId = record.get(DOMAIN.ID);
+			}
+			
+			
+			
 		} else { 
 			RegistryRecord registryRecord = aonContext.getDslContext()
 			.select()
@@ -881,11 +924,12 @@ public class RemunerationRecord {
 			remunerationRecordData.setSocialReason(registryRecord.getName());
 			remunerationRecordData.setEnterpriseDocument(registryRecord.getDocument());
 		}
-			
 		
-		Attach logoAttach = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+		
+		final Integer entDomId = enterpriseDomainId;
+		Attach logoAttach = AON.getAttach(enterpriseDomain, enterpriseDomainId, aonContext.getUser(),
 				f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
-						.and(f.getDomainProperty().eq(aonContext.getDomainId())),
+						.and(f.getDomainProperty().eq(entDomId)),
 				AttachType.REGISTRY);
 		
 		if (logoAttach != null && logoAttach.getData() != null) {
@@ -900,35 +944,56 @@ public class RemunerationRecord {
 		fillData(remunerationRecordData, aonContext, payments, condition2);
 		return remunerationRecordData;
 	}
-	
+	/**
+	 * Generates a remuneration record excel. Nonetheless, once it's created, user must refresh all formulas due to incompatibility reasons.
+	 * @param outputStream The output stream which the Excel will be written on
+	 * @param domainName The domain name
+	 * @param enterpriseId If not given, the method uses just the domain name to pick up data
+	 * @param startDate The start date of the period chosen for the remuneration record
+	 * @param endDate The end date of the period chosen for the remuneration record
+	 */
 	public static void generateExcel (OutputStream outputStream, String domainName, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
 		getExcel(outputStream, getData(domainName, enterpriseId, startDate, endDate));
 	}
 	
-	
-	/*public static void main(String[] args) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		calendar.set(Calendar.MONTH, 0);
-		calendar.set(Calendar.YEAR, 2021);
-		Date startDate = calendar.getTime();
-
-		calendar.set(Calendar.MONTH, 11);
-		calendar.set(Calendar.DAY_OF_MONTH, 31);
-		Date endDate = calendar.getTime();
-		
-		
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream("/home/igonzalez/Escritorio/pruebasExcel/excelxd.xlsx");
-			generateExcel(fos, "b72384936-ayudat.aonsolutions.net", Optional.empty(), startDate, endDate);
-		} catch (FileNotFoundException e) {
-			System.err.println(e.getMessage());
-		}
-		
-		
-		System.out.println("PROGRAM COMPLETE");
-	}*/
+	/**
+	 * Generates a remuneration record excel. Nonetheless, once it's created, user must refresh all formulas due to incompatibility reasons.
+	 * @param outputStream The output stream which the Excel will be written on
+	 * @param domainName The domain name
+	 * @param enterpriseId If not given, the method uses just the domain name to pick up data
+	 * @param year The chosen year for the remuneration record
+	 */
+	public static void generateExcel (OutputStream outputStream, String domainName, Optional<Integer> enterpriseId, Integer year) {
+		if (year != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.YEAR, year);
+			
+			Date startDate = cal.getTime();
+//			if (year != Calendar.getInstance().get(Calendar.YEAR)) {
+				cal.set(Calendar.MONTH, 11);
+				cal.set(Calendar.DAY_OF_MONTH, 31);
+//			} else {
+//				cal = Calendar.getInstance();
+//				cal.set(Calendar.MILLISECOND, 0);
+//				cal.set(Calendar.SECOND, 0);
+//				cal.set(Calendar.MINUTE, 0);
+//				cal.set(Calendar.HOUR_OF_DAY, 0);
+//			}
+			
+			Date endDate = cal.getTime();
+			
+			
+			
+			getExcel(outputStream, getData(domainName, enterpriseId, startDate, endDate));
+		} else
+			throw new NullPointerException("Null year");
+	}
 	
 	private static Stream<Record3<Byte, String, String>> getSalaryConceptsStream(AONContext aonContext, Condition condition) {
 		Stream<Record3<Byte, String, String>> payments = aonContext.getDslContext()
@@ -987,56 +1052,6 @@ public class RemunerationRecord {
 		newCell.setHyperlink(originalCell.getHyperlink());
 	}
 	
-	private static Cell getCell (Row row, int ind) {
-		if (row.getCell(ind) != null)
-			return row.getCell(ind);
-		else
-			return row.createCell(ind);
-	}
-	
-	
-	private static void redoFormulas(Workbook wb) {
-		Iterator<Sheet> it = wb.sheetIterator();
-		while (it.hasNext()) {
-			Sheet sheet = it.next();
-			Iterator<Row> rowIt = sheet.rowIterator();
-			while (rowIt.hasNext()) {
-				Row row = rowIt.next();
-				Iterator<Cell> cellIt = row.cellIterator();
-				while (cellIt.hasNext()) {
-					Cell cell = cellIt.next();
-					if (cell.getCellTypeEnum() == CellType.FORMULA) {
-						try {
-							String formula = cell.getCellFormula();
-							cell.setCellFormula(formula);
-//							wb.getCreationHelper().createFormulaEvaluator().evaluate(cell);
-						} catch (Exception e) {
-							System.out.println("Sheet name: "+sheet.getSheetName()+", "+CellReference.convertNumToColString(cell.getColumnIndex())+(cell.getRowIndex()+1));
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private static void redoSheetFormulas (Sheet sheet) {
-		Iterator<Row> rowIt = sheet.rowIterator();
-		while (rowIt.hasNext()) {
-			Row row = rowIt.next();
-			Iterator<Cell> cellIt = row.cellIterator();
-			while (cellIt.hasNext()) {
-				Cell cell = cellIt.next();
-				if (cell.getCellTypeEnum() == CellType.FORMULA) {
-//					try {
-						String formula = cell.getCellFormula();
-						cell.setCellFormula(formula);
-//					} catch (FormulaParseException e) {}
-				}
-			}
-		}
-	}
-	
-	
 	
 	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
 	    if ( ordinal == null )
@@ -1047,5 +1062,88 @@ public class RemunerationRecord {
 	        return null;
 	    }
 	}
+	
+	
+	
+//	public static void main(String[] args) {
+//	Calendar calendar = Calendar.getInstance();
+//	calendar.set(Calendar.DAY_OF_MONTH, 1);
+//	calendar.set(Calendar.MONTH, 0);
+//	calendar.set(Calendar.YEAR, 2021);
+//	Date startDate = calendar.getTime();
+//
+//	calendar.set(Calendar.MONTH, 11);
+//	calendar.set(Calendar.DAY_OF_MONTH, 31);
+//	Date endDate = calendar.getTime();
+//	
+//	
+//	FileOutputStream fos;
+//	try {
+//		fos = new FileOutputStream("/home/igonzalez/Escritorio/pruebasExcel/excelxd.xlsx");
+//		generateExcel(fos, "b72384936-ayudat.aonsolutions.net", Optional.empty(), startDate, endDate);
+//	} catch (FileNotFoundException e) {
+//		System.err.println(e.getMessage());
+//	}
+//	
+//	
+//	System.out.println("PROGRAM COMPLETE");
+//}
+//	
+//	private static void copyRow (Row newRow, Row originalRow) {
+//	Iterator<Cell> it = originalRow.cellIterator();
+//	while (it.hasNext()) {
+//		Cell c = it.next();
+//		newRow.createCell(c.getColumnIndex());
+//	}
+//}
+//	
+//	private static Cell getCell (Row row, int ind) {
+//		if (row.getCell(ind) != null)
+//			return row.getCell(ind);
+//		else
+//			return row.createCell(ind);
+//	}
+//	
+//	
+//	private static void redoFormulas(Workbook wb) {
+//		Iterator<Sheet> it = wb.sheetIterator();
+//		while (it.hasNext()) {
+//			Sheet sheet = it.next();
+//			Iterator<Row> rowIt = sheet.rowIterator();
+//			while (rowIt.hasNext()) {
+//				Row row = rowIt.next();
+//				Iterator<Cell> cellIt = row.cellIterator();
+//				while (cellIt.hasNext()) {
+//					Cell cell = cellIt.next();
+//					if (cell.getCellTypeEnum() == CellType.FORMULA) {
+//						try {
+//							String formula = cell.getCellFormula();
+//							cell.setCellFormula(formula);
+////							wb.getCreationHelper().createFormulaEvaluator().evaluate(cell);
+//						} catch (Exception e) {
+//							System.out.println("Sheet name: "+sheet.getSheetName()+", "+CellReference.convertNumToColString(cell.getColumnIndex())+(cell.getRowIndex()+1));
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//	
+//	private static void redoSheetFormulas (Sheet sheet) {
+//		Iterator<Row> rowIt = sheet.rowIterator();
+//		while (rowIt.hasNext()) {
+//			Row row = rowIt.next();
+//			Iterator<Cell> cellIt = row.cellIterator();
+//			while (cellIt.hasNext()) {
+//				Cell cell = cellIt.next();
+//				if (cell.getCellTypeEnum() == CellType.FORMULA) {
+////					try {
+//						String formula = cell.getCellFormula();
+//						cell.setCellFormula(formula);
+////					} catch (FormulaParseException e) {}
+//				}
+//			}
+//		}
+//	}
 
 }

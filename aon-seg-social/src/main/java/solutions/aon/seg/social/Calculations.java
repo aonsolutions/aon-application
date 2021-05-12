@@ -29,9 +29,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaREDI.LiquidationType;
-import solutions.aon.seg.social.SistemaREDI.Regime;
+import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaRED.LiquidationType;
+import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -44,11 +44,11 @@ import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class Calculations {
+class Calculations {
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
 		Toolkit.verifyData(arrFields);
@@ -214,8 +214,8 @@ public class Calculations {
 	
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
-			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};

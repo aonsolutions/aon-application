@@ -28,7 +28,6 @@ import com.google.gson.JsonParser;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
@@ -186,7 +185,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		return SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private Boolean movDelete(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,

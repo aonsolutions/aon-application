@@ -1,4 +1,4 @@
-package solutions.aon;
+package solutions.aon.seg.social;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.SistemaREDRemesas;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
@@ -33,7 +32,7 @@ public class TestSistemaREDRemesas {
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.MONTH, 1);
 			Date d=c.getTime();
-			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (NotExistingYetException e) {
 			
@@ -52,7 +51,7 @@ public class TestSistemaREDRemesas {
 	public void testDraftRequestOutOfTime() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-09-2020");
-			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (outOfTimeException e) {
 			
@@ -73,7 +72,7 @@ public class TestSistemaREDRemesas {
 	public void testDraftRequestInvalidCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (invalidCccException e) {
 			
@@ -92,7 +91,7 @@ public class TestSistemaREDRemesas {
 	public void testDraftRequestUnfilledCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (UnfilledMandatory e) {
 			
@@ -119,7 +118,7 @@ public class TestSistemaREDRemesas {
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.MONTH, 1);
 			Date d=c.getTime();
-			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (LiquidationDoesNotExist e) {
 			
@@ -136,7 +135,7 @@ public class TestSistemaREDRemesas {
 	public void testConfirmationRequestInvalidCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (invalidCccException e) {
 			
@@ -155,7 +154,7 @@ public class TestSistemaREDRemesas {
 	public void testConfirmationRequestUnfilledCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (UnfilledMandatory e) {
 			

@@ -137,13 +137,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaREDITParts.AccidentType;
-import solutions.aon.seg.social.SistemaREDITParts.CauseType;
-import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
-import solutions.aon.seg.social.SistemaREDITParts.ContractType;
-import solutions.aon.seg.social.SistemaREDITParts.PartType;
-import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
-import solutions.aon.seg.social.SistemaREDSecondaryUser;
+import solutions.aon.seg.social.SistemaRED.AccidentType;
+import solutions.aon.seg.social.SistemaRED.CauseType;
+import solutions.aon.seg.social.SistemaRED.Contingencies;
+import solutions.aon.seg.social.SistemaRED.PartType;
+import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
@@ -2561,7 +2559,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			Collection<SecondaryUser> secondaryUsersCollection = SistemaREDSecondaryUser.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
 			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<SecondaryUserCertificate>();
@@ -2603,7 +2601,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			SistemaREDSecondaryUser.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -2620,7 +2618,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			SistemaREDSecondaryUser.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -2791,17 +2789,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					regime, 
 					ccc, 
 					naf, 
-					Contingencies.valueOf(contingency), 
-					SituationEmployee.valueOf(situation_employee), 
+					SistemaRED.Contingencies.valueOf(contingency), 
+					SistemaRED.SituationEmployee.valueOf(situation_employee), 
 					Optional.of(licenseNumber), 
 					Optional.of(cias), 
 					Optional.of(occupation), 
 					startdate, 
-					ContractType.valueOf(contractType), 
+					SistemaRED.ContractType.valueOf(contractType), 
 					baseCot, 
-					cotDays, 
+					cotDays,
 					Optional.of(fATEP), 
-					Optional.of(AccidentType.valueOf(accidentType)));
+					Optional.of(SistemaRED.AccidentType.valueOf(accidentType)));
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -2828,8 +2826,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					regime, 
 					ccc, 
 					naf, 
-					Contingencies.values()[Integer.parseInt(contingency)], 
-					SituationEmployee.values()[Integer.parseInt(situation_employee)], 
+					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
+					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
 					Optional.of(licenseNumber), 
 					Optional.of(cias), 
 					fbaja, 
@@ -2861,15 +2859,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					regime, 
 					ccc, 
 					naf, 
-					Contingencies.values()[Integer.parseInt(contingency)], 
-					SituationEmployee.values()[Integer.parseInt(situation_employee)], 
+					SistemaRED.Contingencies.values()[Integer.parseInt(contingency)], 
+					SistemaRED.SituationEmployee.values()[Integer.parseInt(situation_employee)], 
 					Optional.of(licenseNumber), 
 					Optional.of(cias), 
 					fbaja, 
 					falta, 
 					Optional.of(fATEP), 
-					Optional.of(AccidentType.values()[Integer.parseInt(accidentType)]), 
-					CauseType.values()[Integer.parseInt(causeType)]);
+					Optional.of(SistemaRED.AccidentType.values()[Integer.parseInt(accidentType)]), 
+					SistemaRED.CauseType.values()[Integer.parseInt(causeType)]);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -2894,7 +2892,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					regime, 
 					ccc, 
 					naf, 
-					PartType.values()[Integer.parseInt(partType)], 
+					SistemaRED.PartType.values()[Integer.parseInt(partType)], 
 					dateBj, 
 					dateProcess);
 			

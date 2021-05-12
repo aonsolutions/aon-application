@@ -1,4 +1,4 @@
-package solutions.aon;
+package solutions.aon.seg.social;
 
 import org.junit.Test;
 

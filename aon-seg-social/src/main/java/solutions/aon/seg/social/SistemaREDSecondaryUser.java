@@ -32,7 +32,7 @@ import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 
-public class SistemaREDSecondaryUser {
+class SistemaREDSecondaryUser {
 
 	// HANDLE SECONDARYUSERS EXCEPTIONS
 	public static SecondaryUser getSecondaryUserByIpf(final InputStream certificateInputStream,
