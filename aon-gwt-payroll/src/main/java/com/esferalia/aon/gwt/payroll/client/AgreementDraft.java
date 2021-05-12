@@ -602,15 +602,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					AgreementDraft.this.calculate(getNextFocusCallback());
 				}
 			});
-			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
-
-				@Override
-				public void onBlur(BlurEvent event) {
-					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) + 1;
-					if (salaryTableEditors.size() > next)
-						salaryTableEditors.get(next).setFocus();
-				}
-			});
+//			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
+//
+//				@Override
+//				public void onBlur(BlurEvent event) {
+//					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) + 1;
+//					if (salaryTableEditors.size() > next)
+//						salaryTableEditors.get(next).setFocus();
+//				}
+//			});
 		}
 
 		void hide(boolean hide) {
@@ -631,13 +631,24 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		CalculateCallback getNextFocusCallback() {
 			return new SuccessCalculateCallback() {
-				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(CategoriesEditor.this);
+//				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(CategoriesEditor.this);
 
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
-					IFocusableEditor editor = getSalaryTableEditorFor(currentIndex + 1);
-					if (editor != null)
-						editor.setFocus();
+//					IFocusableEditor editor = getSalaryTableEditorFor(currentIndex + 1);
+//					if (editor != null)
+//						editor.setFocus();
+					
+					LevelEditor lastLevelEditor = getLastLevelEditor();
+					if(null != lastLevelEditor) {
+						lastLevelEditor.setFocus();
+						lastLevelEditor.descriptionTextBox.setFocus(true);
+					}
+				}
+
+				private LevelEditor getLastLevelEditor() {
+					loadCategoryTableEditor();
+					return salaryTableEditors.isEmpty() ? null : (LevelEditor) salaryTableEditors.get(salaryTableEditors.size() - 1);
 				}
 			};
 		}
