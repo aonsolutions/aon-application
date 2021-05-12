@@ -762,6 +762,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	    tabLayOutPanel.selectTab(0, false);
 		employee.initializeView();
+		employee.cleanWarningIcons();
 		
 		footTabPanel.clear();
 		splitLayoutPanel.setWidgetSize(footPanel, 25);

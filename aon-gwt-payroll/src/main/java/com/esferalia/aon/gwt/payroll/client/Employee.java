@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
@@ -48,6 +49,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -74,6 +76,8 @@ public abstract class Employee extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String journeyDurationWarning();
+		String warningTB();
+		String flexGrow();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -109,6 +113,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	Label ssNumberStatus;
+	
+	@UiField
+	HTMLPanel namePanel;
 
 	@UiField
 	SuggestBox name;
@@ -124,6 +131,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	ListBox ssRegimeType;
+	
+	@UiField
+	HTMLPanel activityCCCPanel;
 
 	@UiField
 	ListBox activityCCC;
@@ -132,7 +142,13 @@ public abstract class Employee extends ResizeComposite {
 	ListBox mdCTZLB;
 	
 	@UiField
+	HTMLPanel workplacePanel;
+	
+	@UiField
 	ListBox workplace;
+	
+	@UiField
+	HTMLPanel contractTypePanel;
 	
 	@UiField
 	TableCellElement contractTypeNode;
@@ -148,6 +164,9 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	ListBox modality;
+	
+	@UiField
+	HTMLPanel startDatePanel;
 
 	@UiField
 	DateBoxEx start_date;
@@ -216,6 +235,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	TextBox addressInfo;
+	
+	@UiField
+	HTMLPanel addressZipPanel;
 
 	@UiField
 	TextBox addressZip;
@@ -1345,56 +1367,95 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	public boolean checkIfNewEmployeeIsPossible() {
+		cleanWarningIcons();
+		
 		if(checkIfSaveIsPossible())
 			if(checkDates())
 				return true;	
-			else {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+			else 
 				return false;
-			}
-		else {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");	
+		else 	
 			return false;
-		}
+		
 	}
 	
 	private boolean checkIfSaveIsPossible() {
 		Byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue());
 		
 		if(ssRegime == (byte) 3) { // RETA
-			String nameValue = name.getValue();
-			String workplaceValue = workplace.getSelectedValue();
+			boolean isNotNameBlank = isNotNameBlank();
+			boolean isWokplaceSelected = isWokplaceSelected();
 			
-			return 	AonStringUtils.isNotBlank(nameValue) && 
-					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1");
+			return 	isNotNameBlank && isWokplaceSelected;
 		} else {
-			String nameValue = name.getValue();
-			String activityValue = activityCCC.getSelectedValue();
-			String workplaceValue = workplace.getSelectedValue();
-			String contractTypeValue = contractTypeLB.getSelectedValue();
+			boolean isNotNameBlank = isNotNameBlank();
+			boolean isWokplaceSelected = isWokplaceSelected();
+			boolean isActivityCCCSelected = isActivityCCCSelected();
+			boolean isContractTypeSelected = isContractTypeSelected();
 			
-			return 	AonStringUtils.isNotBlank(nameValue) && 
-					!AonStringUtils.equalsIgnoreCase(activityValue, "-1") && 
-					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1") &&
-					!AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1");
+			return  isNotNameBlank && isWokplaceSelected && isActivityCCCSelected && isContractTypeSelected;
 		}
 	}
 	
+	// ------------------------------------------------- SaveMethods.checkIfSaveIsPossible
+	
+	private boolean isNotNameBlank() {
+		String nameValue = name.getValue();
+		if(AonStringUtils.isBlank(nameValue)) {
+			addWarningIcon(namePanel, name, null);
+			return false;
+		} else
+			return true;
+	}
+	
+	private boolean isWokplaceSelected() {
+		String workplaceValue = workplace.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(workplaceValue, "-1")) {
+			addWarningIcon(workplacePanel, workplace, null);
+			return false;
+		} else
+			return true;
+	}
+	
+	private boolean isActivityCCCSelected() {
+		String activityValue = activityCCC.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(activityValue, "-1")) {
+			addWarningIcon(activityCCCPanel, activityCCC, null);
+			return false;
+		} else
+			return true;
+	}
+	
+	private boolean isContractTypeSelected() {
+		removeWarningIconLB(contractTypePanel, contractTypeLB);
+		
+		String contractTypeValue = contractTypeLB.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1")) {
+			addWarningIcon(contractTypePanel, contractTypeLB, null);
+			return false;
+		} else
+			return true;
+	}
+	
 	private boolean checkDates() {
-		Date startDate = DateUtils.copyDateOnly(start_date.getValue());
+		Date startDate = null == start_date.getValue() ? null : DateUtils.copyDateOnly(start_date.getValue());
 		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
 		
-		if(null == endDate)
-			return true;
-		
-		else if(endDate.after(startDate) || endDate.equals(startDate))
-			return true;
-		
-		else
+		if(null == startDate) {
+			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede estar sin definir.");
 			return false;
+		}
+		
+		if(null == endDate || endDate.after(startDate) || endDate.equals(startDate))
+			return true;
+		else {
+			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede ser posterior a la fecha de fin.");
+			return false;
+		}
+
 	}
+	
+	// ------------------------------------------------- SaveMethods.checkAddress
 	
 	private boolean checkAddress() {
 		String addressZipValue = addressZip.getValue();
@@ -1404,13 +1465,56 @@ public abstract class Employee extends ResizeComposite {
 		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) {
 			if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
 				return true;
-			else {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Campos direccion obligatorios", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente.");	
+			else {	
+				addWarningIcon(addressZipPanel, addressZip, "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente.");
 				return false;
 			}
 		} else
 			return true;
+	}
+	
+	// ------------------------------------------------- Add and remove styles
+	
+	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
+		message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
+		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
+		widget.addStyleName(style.warningTB());
+		widget.addStyleName(style.flexGrow());
+	}
+
+	private void removeWarningIconTB(HTMLPanel panel, Widget widget) {
+		panel.clear();
+		panel.add(widget);
+		widget.addStyleName("aon-inputText");
+		widget.getElement().getStyle().setWidth(99, Unit.PCT);
+		widget.removeStyleName(style.warningTB());
+	}
+	
+	private void removeWarningIconLB(HTMLPanel panel, Widget widget) {
+		panel.clear();
+		panel.add(widget);
+		widget.addStyleName("aon-selectOneMenu");
+		widget.getElement().getStyle().setWidth(100, Unit.PCT);
+		widget.removeStyleName(style.warningTB());
+	}
+	
+	private void removeWarningIconAddressTB(HTMLPanel panel, Widget widget) {
+		panel.clear();
+		panel.add(widget);
+		widget.addStyleName("aon-inputText");
+		widget.getElement().getStyle().setWidth(97, Unit.PCT);
+		widget.removeStyleName(style.warningTB());
+	}
+
+	// ------------------------------------------------- cleanWarningIcons
+	
+	public void cleanWarningIcons() {
+		removeWarningIconTB(namePanel, name);
+		removeWarningIconLB(workplacePanel, workplace);
+		removeWarningIconLB(activityCCCPanel, activityCCC);
+		removeWarningIconLB(contractTypePanel, contractTypeLB);
+		removeWarningIconTB(startDatePanel, start_date);
+		removeWarningIconAddressTB(addressZipPanel, addressZip);
 	}
 	
 }
