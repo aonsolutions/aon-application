@@ -99,6 +99,15 @@ export const buildDesktopWritter = (parent, data) => {
                 direction : me ?  RIGHT : LEFT
             });
 
+            /**
+             * Setting the chat line once all is rendered
+             * DO NOT change this, is compulsory.
+             */
+            const lined = document.querySelector(".continueLined");
+            if (lined)
+                lined.style.setProperty("--height", lined.scrollHeight + "px");
+             
+
             me =! me;
             parent.data = data;
         }
@@ -106,22 +115,11 @@ export const buildDesktopWritter = (parent, data) => {
 
     const sendIcon = createSendIcon();
 
-    const attachHistory = createAttachHistory();
-    const attachIcon = createMaterialIcon({
-        name: MATERIAL_ICONS.ATTACH_FILE,
-        color: CSS.variable(CSS.AON_BLUE),
-        size: "1em"
-    });
-
-    const leftDiv = createStartJustifiedRow();
-    const attachTitle = createAttachTitle();
-    const attachTitleText = createAttachTitleText();
-    const expandIcon = createExpandIcon();
 
     title.appendTo(titleDiv.element);
 
     receiverTitle.appendTo(receiverDiv.element);
-    receiverSelect.appendTo(receiverDiv.element);
+    receiverDiv.element.appendChild(receiverSelect);
 
     uploadIcon.appendTo(upload.element);
     uploadText.appendTo(upload.element);
@@ -130,12 +128,6 @@ export const buildDesktopWritter = (parent, data) => {
     sendIcon.appendTo(sendButton.element);
     sendButton.appendTo(sendButtonWrapper.element);
     sendButtonWrapper.appendTo(sendBar.element);
-
-    attachIcon.appendTo(leftDiv.element);
-    attachTitleText.appendTo(leftDiv.element);
-    leftDiv.appendTo(attachTitle.element);
-    expandIcon.appendTo(attachTitle.element);
-    attachTitle.appendTo(attachHistory.element);
 
     //main elements append
     
@@ -146,7 +138,6 @@ export const buildDesktopWritter = (parent, data) => {
     parent.appendChild(aonTextArea);
 
     sendBar.appendTo(parent.element);
-    attachHistory.appendTo(parent.element);
 }
 
 /**
@@ -155,20 +146,34 @@ export const buildDesktopWritter = (parent, data) => {
  * @param {*} funct 
  */
 const setSelectionMarkup = (element, funct, conditions) => {
+    
     const text = element.value;
-    let selection = element.dataset.lastFocusedText;
-
-    if (!selection)
+    let start = element.selectionStart;
+    if (start == -1)
         return;
+    
+    let indexOfNextSpace = text.indexOf(" ",start);
+    
+    if(indexOfNextSpace == -1)
+        indexOfNextSpace = text.length
 
-    let start = element.dataset.start;
-    let end = element.dataset.end;
+    let selection = text.substr(start, indexOfNextSpace);
 
-    if (start == -1 || end == -1)
-        return;
+    if (conditions(text, selection , start, end)){
 
-    if (conditions(text, selection, start, end))
-        element.value = text.substr(0, start) + funct(selection) + text.substr(end, text.length);
+        let pre = "";
+        let compiled = funct(selection);
+        let post = "";
+
+        if(start !== 0)
+            pre = text.substr(0, start);
+        
+        if(indexOfNextSpace !== text.length)
+            post = text.substr(end, text.length);
+
+
+        element.value = pre + compiled + post;
+    }
 }
 
 /**
@@ -258,7 +263,7 @@ export const buildMobileWritter = (parent) => {
     waitChildEl(textarea, "#" + textarea.TEXTAREA).then(writtable => {
         setStyles(writtable, {
             resize: "none",
-            height: "100%"
+            height: "100%",
         });
     });
 
@@ -270,6 +275,22 @@ export const buildMobileWritter = (parent) => {
             height: "40px",
             justifyContent: "flex-start"
         });
+    });
+
+    setEvents(back.element,{
+       click : () => {
+          /**
+          * Showing float button
+          */
+          let button = document.querySelector("#aonMessengeraddButtonIconButton")
+          setStyles(button , {
+              transition : "0.25s",
+              opacity : "1"
+          });
+          setTimeout(() => button.style.display = "block", 100);
+
+          hideWritter();
+       } 
     });
 
 
@@ -299,11 +320,29 @@ export const buildMobileWritter = (parent) => {
                 direction : me ?  RIGHT : LEFT
             });
 
+            /**
+             * Setting the chat line once all is rendered
+             * DO NOT change this, is compulsory.
+             */
+            const lined = document.querySelector(".continueLined");
+            if (lined)
+            lined.style.setProperty("--height", lined.scrollHeight + "px");
             me =! me;
             parent.data = data;
 
             hideWritter();
+            
+            /**
+             * Showing float button
+             */
+            let button = document.querySelector("#aonMessengeraddButtonIconButton")
+            setStyles(button , {
+                transition : "0.25s",
+                opacity : "1"
+            });
+            setTimeout(() => button.style.display = "block", 100);
 
+            document.querySelector("#end").scrollIntoView();
         }
     });
 
