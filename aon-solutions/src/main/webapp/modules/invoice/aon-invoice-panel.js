@@ -371,22 +371,10 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoice(type, invoice) {
 		let aonInvoice = this.getApplication();
-		if(this.getDur().isAlpha() || type === 'emitida' 
-				|| (invoice && invoice.status === 'pending') 
-				|| (invoice && invoice.status === 'scored')
-				|| (invoice && invoice.status === 'accounting')){
-			let ni = this.isMobile() ? new AonMobileNewInvoice() : new AonNewInvoice();
-			ni.setInvoice(invoice);
-			aonInvoice.setContent(ni);
-		} else if(this.isMobile()) {
-			aonInvoice.setContentHTML(invoice
-				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
-				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
-		} else {
-			aonInvoice.setContentHTML(invoice
-				? `<aon-invoice invoice='${JSON.stringify(invoice).replaceAll("'", "")}'> </aon-invoice>`
-				: `<aon-invoice type="${type}"> </aon-invoice>`);
-		}
+		let ni = this.isMobile() ? new AonMobileNewInvoice() : new AonNewInvoice();
+		ni.setType(type);
+		ni.setInvoice(invoice);
+		aonInvoice.setContent(ni);
 	}
 
 	selectOption(option) {

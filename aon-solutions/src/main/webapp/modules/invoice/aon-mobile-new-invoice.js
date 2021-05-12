@@ -169,13 +169,13 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			let reference = new AonInput();
 			reference.id = this.REFERENCE;
 			reference.description = MSG.REFERENCE;
-			reference.value = this.invoice.reference;
-			// reference.readonly = this.invoice.isReadonly();
+			reference.readonly = this.invoice.isReadonly();
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
 				if(this.autosave) this.save();
 			});
 			table.addCell(reference, '2');
+			reference.value = this.invoice.reference;
 		}
 
 		table.addRow(); // ----- ROW 2
@@ -191,7 +191,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
+		table.addCell(date);
 		date.value = this.invoice.date;
 		// ----- TOTAL
 
@@ -206,7 +206,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
+		table.addCell(total);
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.length > 1 
 			|| this.invoice.details.length > 0;

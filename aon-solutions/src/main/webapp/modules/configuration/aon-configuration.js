@@ -14,7 +14,7 @@ import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
 
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import { AonUser } from "../user/aon-user.js";
@@ -229,11 +229,17 @@ export class AonConfiguration extends AonElement {
         this.buildCreateUser(false)
       );
     }
+    aonConfiguration.addSearchOption();
 
     let userList = this.isMobile() 
         ? new AonMobileUserList() 
         : new AonUserList();
     aonConfiguration.setContent(userList);
+
+    aonConfiguration.addEventListener(EVENT.SEARCH, (event) => {
+      userList.setValue(event.detail);
+    });
+
   }
 
   buildCompanyList() {

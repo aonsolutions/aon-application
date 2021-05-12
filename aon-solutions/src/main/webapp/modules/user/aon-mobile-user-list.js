@@ -37,9 +37,6 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     init() {
-        let application = this.getApplication();
-        let toolbar = this.getElement(application.TOOLBAR);
-        toolbar.removeButtons();
         this.build();
         getUsers(this.getFilter()).then(users => {
             users.forEach((user, i) => this.addRow(user, i));
@@ -56,11 +53,23 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     aonUser(user, i) {
-		let content = this.parentElement;
-		content.innerHTML = '<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>';
+        this.getApplication().setContentHTML('<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>');
 		let aonUser = document.getElementById('aonUser-' + user.id);
 		aonUser.style.width = "100%";
 		aonUser.setAttribute('user', JSON.stringify(user));
+	}
+
+    setValue(value) {
+        this.build();
+        this.removeAllLi();
+        getUsers(this.getFilter()).then(users => {
+            users.filter(f => 
+                f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
+                || f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
+            ).forEach((user, i) => {
+                this.addRow(user, i)
+            });
+        });
 	}
 }
 window.customElements.define('aon-mobile-user-list', AonMobileUserList);
