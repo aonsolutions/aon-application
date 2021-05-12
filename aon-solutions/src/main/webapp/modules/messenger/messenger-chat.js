@@ -17,6 +17,10 @@ export const LEFT = "LEFT";
 export const buildMobileChat = (parent, data) => {
 
     parent.element.style.padding = 0;
+    /**
+     * Wrapper 
+     * if some new menus / toolbars needed, here.
+     */
     const wrapper = newComponent({
         type: 'wrapper',
         classes: [CSS.FLEX_COLUMN],
@@ -27,6 +31,9 @@ export const buildMobileChat = (parent, data) => {
         }
     });
 
+    /**
+     * The chat itself
+     */
     const chat = newComponent({
         type: 'chat',
         classes: [
@@ -48,7 +55,10 @@ export const buildMobileChat = (parent, data) => {
         }
     });
 
-    const semiheader = newComponent({
+    /**
+     * Back button and info bar 
+     */
+    const toolbar = newComponent({
         classes: [
             CSS.FLEX_ROW,
             CSS.FLEX_ALIGN_CENTER,
@@ -70,7 +80,9 @@ export const buildMobileChat = (parent, data) => {
     });
    back.element.style.marginLeft = "16px"
    back.element.onclick = () => {
-       document.querySelector("#aonMessengerSidenavAbiertas").click();
+       chat.element.style.transition = "0.25s";
+       chat.element.style.opacity = 0;
+       setTimeout(() => document.querySelector("#aonMessengerSidenavAbiertas").click(), 250);
    }
 
     const info = newComponent({
@@ -107,14 +119,16 @@ export const buildMobileChat = (parent, data) => {
 
     id.appendTo(info.element);
     status.appendTo(info.element);
-    back.appendTo(semiheader.element);
-    info.appendTo(semiheader.element);
+    back.appendTo(toolbar.element);
+    info.appendTo(toolbar.element);
 
-    wrapper.appendChild(semiheader.element);
+    wrapper.appendChild(toolbar.element);
     title.appendTo(chat.element);
 
 
-    const start = newComponent({ id: "start" });
+    const start = newComponent({ id: "start", styles : {
+        padding : '10px'
+    } });
     start.appendTo(chat.element);
     
     data.content.forEach(element => {
@@ -136,7 +150,9 @@ export const buildMobileChat = (parent, data) => {
 
     });
 
-    const end = newComponent({ id: "end" });
+    const end = newComponent({ id: "end", styles : {
+        padding : '10px'
+    }});
     end.appendTo(chat.element);
 
     buildMobileWritter(wrapper,data)
@@ -151,6 +167,10 @@ export const buildMobileChat = (parent, data) => {
  */
 export const buildChat = (parent, data) => {
 
+    /**
+     * Wrapper 
+     * if some new side menus / toolbars needed, here.
+     */
     const wrapper = newComponent({
         type: 'wrapper',
         classes: ['flexColumn'],
@@ -160,6 +180,9 @@ export const buildChat = (parent, data) => {
         }
     });
 
+    /**
+     * The chat itself
+     */
     const chat = newComponent({
         type: 'chat',
         classes: ["continueLined", "flexColumn", "noScrollbar", "flexAlignCenter"],
@@ -187,7 +210,12 @@ export const buildChat = (parent, data) => {
     );
     title.appendTo(wrapper.element);
 
-    const start = newComponent({ id: "start" });
+    /**
+     * Component for easy scroll to the start
+     */
+    const start = newComponent({ id: "start", styles : {
+        padding : '10px'
+    } });
     start.appendTo(chat.element);
 
     data.content.forEach(element => {
@@ -209,12 +237,17 @@ export const buildChat = (parent, data) => {
 
     });
 
-    const end = newComponent({ id: "end" });
+    const end = newComponent({ id: "end", styles : {
+        padding : '10px'
+    } });
     end.appendTo(chat.element);
 
     chat.appendTo(wrapper.element);
     wrapper.appendTo(parent.element);
 
+    /**
+     * A side buttonbar 
+     */
     const leftButtonBar = newComponent({
         classes: ["flexColumn", "flexJustifyEnd"],
         styles: {
@@ -265,7 +298,6 @@ const chooseActionIcon = (actionType) => {
     }
 }
 
-
 /**
  * Append a new message to the chat with a little animation
  * @param {*} properties 
@@ -275,7 +307,7 @@ export const appendChatMessage = (properties) => {
     const message = createChatMessage(properties);
     setStyles(message.element, {
         opacity : 0,
-        marginTop : '10px',
+        marginTop : '20px',
         transition : ".25s"
     });
 
@@ -288,10 +320,13 @@ export const appendChatMessage = (properties) => {
 
     end.scrollIntoView();
 
+    /**
+     * Appearing animation
+     */
     setTimeout(() => {
         setStyles(message.element, {
             opacity : 1,
-            marginTop : '0px'
+            marginTop : '10px'
         });
     }, 100);
 } 
@@ -318,19 +353,20 @@ export const createChatMessage = (properties) => {
         color: '#c5c5c5',
         fontSize : '.7em'
     });
+
     date.appendTo(name.element);
     name.appendTo(message.element);
     description.appendTo(message.element);
     footer.appendTo(message.element);
-
 
     return message;
 }
 
 /**
  * Check the properties of the message
+ * AVOID showing null or undefined in UI.
  * @param {*} properties 
- * @returns 
+ * @returns Valid properties object.
  */
 const checkProperties = (properties) => {
     if (!properties.name)

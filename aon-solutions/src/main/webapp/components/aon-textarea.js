@@ -279,6 +279,7 @@ export class AonTextArea extends AonElement {
 			id: this.TEXTAREA,
 			text : this.dataset.value,
 			styles : {
+				userSelect : 'text',
 				height: '100%'
 			}
 		});

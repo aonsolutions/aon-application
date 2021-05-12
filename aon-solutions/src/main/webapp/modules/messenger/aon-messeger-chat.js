@@ -43,11 +43,20 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintView(data) {
-
+    /*Base font-size*/
+    this.style.fontSize = "12px";
     console.info(data);
+
+    /**
+     * Switching between mobile and desktop
+     */
     if (this.isMobile()) this.paintMobile(data);
     else this.paintDesktop(data);
 
+    /**
+     * Setting the chat line once all is rendered
+     * DO NOT change this, is compulsory.
+     */
     const lined = document.querySelector(".continueLined");
     if (lined)
       lined.style.setProperty("--height", lined.scrollHeight + "px");
@@ -134,7 +143,7 @@ export class AonMessengerChat extends AonElement {
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
       styles: {
         width: "50%",
-        height: '80%',
+        height: '100%',
         minWidth: "400px",
         maxWidth: "600px",
         paddingTop: '5vh',
@@ -172,7 +181,24 @@ export class AonMessengerChat extends AonElement {
 
   paintMobile(data) {
     this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
-      this.applicationEl.removeFloatOption();
+      
+      /**
+       * Hidding float button
+       */
+       let button = document.querySelector("#aonMessengeraddButtonIconButton")
+
+       setStyles(button , {
+           transition : "0.25s",
+           opacity : 0
+       });
+
+       setTimeout(() => {
+         button.style.display = "none";
+       }, 100);
+
+      /**
+       * show writter
+       */
       setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex",});
       setTimeout(() => {
         setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{

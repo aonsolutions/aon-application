@@ -12,7 +12,7 @@ aon-textarea{
 aon-textarea .bar{
     --border-color: #e0e0e0;
     position : relative;
-    min-height: 50px;
+    height: 50px;
     border-bottom: 1px solid var(--border-color);
     flex-wrap: wrap;
 }
@@ -43,7 +43,7 @@ aon-textarea .bar .icon:hover{
 }
 
 aon-textarea textarea{
-    font-size: 1em !important;
+    font-size: 1em;
     font-family: Arial, Helvetica, sans-serif;
     border: none;
     padding: 10px;
@@ -56,7 +56,7 @@ aon-textarea textarea{
 }
 
 aon-textarea pre{
-    font-size: 1em !important;
+    font-size: 1em;
     font-family: Arial, Helvetica, sans-serif;
     border: none;
     padding: 10px;

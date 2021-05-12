@@ -1,3 +1,4 @@
+import { AonSelect } from "../../components/aon-select.js";
 import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
 import { newComponent } from "../../services/utils.js";
 import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./creationUtils.js";
@@ -116,22 +117,16 @@ export const createReceiverTitle = () => newComponent({
   },
 });
 
-export const createReceiverselect = () => newComponent({
-  type: "select",
-  text: "<option>Laboral</option>",
-  styles: {
-    boxShadow: "0px 0px 2px rgba(0,0,0,.5)",
-    border: "none",
-    color: "#A9A9A9",
-    borderRadius: "3px",
-    background: "#fff",
-    padding: "7px",
-    marginLeft: "5px",
-    width: "80%",
-    maxWidth: "200px",
-    borderRadius: "2px",
-  },
-});
+export const createReceiverselect = () => {
+  
+  let comp = new AonSelect();
+  comp.id = "";
+  comp.title = "";
+  comp.setOptions([{name : "Laboral", value : "Laboral"}]);
+
+  return comp;
+
+}
 
 
 
@@ -332,7 +327,7 @@ export const createMessageContent = (properties) => newComponent({
   text: properties.message,
   styles: {
       fontSize: "1em",
-      textAlign : properties.direction == RIGHT ? "right" : "left",
+      textAlign : "left",
       fontWeight : "400",
       color :  CSS.variable(COLORS.GRAYSON),
       paddingTop :"5px"
