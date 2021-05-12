@@ -24,8 +24,10 @@ import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
+import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class SistemaRED {
@@ -215,6 +217,44 @@ public class SistemaRED {
 		default:
 			throw new SegSocialException(e);
 		}
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByCCC(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return getCalcByCCC(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+		}catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByCCC(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+
+		return Calculations.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+		
+	}
+	
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByNAF(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+		try ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+
+	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> getCalcByNAF(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+		return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
 	}
 
 	public static Map<String, Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(
