@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390HF;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 
-public class Model390HFModuleOptions extends  FiscalModelModuleOptions {
+public class Model390HFModuleOptions extends  FiscalModelModuleOptions<Mod390HF> {
 
 	private static final long serialVersionUID = -4243132427760315542L;
 

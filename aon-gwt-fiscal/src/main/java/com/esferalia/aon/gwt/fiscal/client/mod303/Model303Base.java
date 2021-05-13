@@ -299,7 +299,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						@Override
 						public void onAccept() {
 							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-								options.getExternalCallback().onExit();
+								options.getExternalCallback().onExit(mod303);
 							} else {
 								callback.onCancel();
 							}
@@ -312,7 +312,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					});
 				} else {
 					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-						options.getExternalCallback().onExit();
+						options.getExternalCallback().onExit(mod303);
 					} else {
 						callback.onCancel();
 					}

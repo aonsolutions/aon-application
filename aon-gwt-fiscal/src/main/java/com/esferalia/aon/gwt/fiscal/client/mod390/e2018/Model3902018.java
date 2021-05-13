@@ -218,7 +218,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-					options.getExternalCallback().onExit();
+					options.getExternalCallback().onExit(m390);
 				} else {
 					cbk.cleanErrorPanel();
 					cbk.onCancel();

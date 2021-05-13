@@ -819,13 +819,13 @@ public class Model130 extends MainEntryPoint {
 	void onCancelButtonClick(ClickEvent event) {
 		if (!isDirty()) {
 			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
-				this.options.getExternalCallback().onExit();
+				this.options.getExternalCallback().onExit(currentMod);
 			} else {
 				cancel();
 			}
 		} else {
 			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
-				this.options.getExternalCallback().onExit();
+				this.options.getExternalCallback().onExit(currentMod);
 			} else {
 				cancelButton.setEnabled(false);
 				ConfirmDialog cd = new ConfirmDialog();

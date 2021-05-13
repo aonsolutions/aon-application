@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod202;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 
-public class Model202ModuleOptions extends  FiscalModelModuleOptions {
+public class Model202ModuleOptions extends  FiscalModelModuleOptions<Mod202> {
 
 	private static final long serialVersionUID = -4243132427760315542L;
 
