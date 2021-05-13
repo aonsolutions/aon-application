@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -27,7 +26,6 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -47,7 +45,6 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class SalaryDraftObject implements IContextProvider , Payroll{
@@ -553,14 +550,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	
 						@Override
 						public void onFailure(Throwable caught) {
-							AonDialog dialog = new AonDialog("ERROR", new HTML(caught.getMessage()));
-							dialog.warning();
+							callback.onCalculateFailure(caught);
 						}
 	
 						@Override
 						public void onSuccess(String result) {
-							AonDialog dialog = new AonDialog("Certifi@2", new HTML(result));
-							dialog.info();
 							callback.onCalculateSucces(SalaryDraftObject.this);
 						}
 						
