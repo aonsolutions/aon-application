@@ -203,6 +203,7 @@ public class Model200 extends MainEntryPoint {
 		
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
+				
 				getMod200Service().getMod200s(options.getDomainName(), options.getDomain(), options.getUser(),
 				new AsyncCallback<LinkedList<Mod200>>() {
 					@Override
