@@ -22,10 +22,10 @@ public class PageM14_2 extends PageAbs {
 		private static final long serialVersionUID = 1L;
 
 		{
-			put(new Integer(1), new String(AON.MSG.memory14_2Row1()));
-			put(new Integer(4), new String(AON.MSG.memory14_2Row2()));
-			put(new Integer(8), new String(AON.MSG.memory14_2Row3()));
-			put(new Integer(9), new String(AON.MSG.memory14_2Row4()));
+			put(Integer.valueOf(1), new String(AON.MSG.memory14_2Row1()));
+			put(Integer.valueOf(4), new String(AON.MSG.memory14_2Row2()));
+			put(Integer.valueOf(8), new String(AON.MSG.memory14_2Row3()));
+			put(Integer.valueOf(9), new String(AON.MSG.memory14_2Row4()));
 		};
 	};
 	

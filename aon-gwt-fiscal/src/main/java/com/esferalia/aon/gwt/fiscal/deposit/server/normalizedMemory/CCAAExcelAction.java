@@ -1807,10 +1807,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		D2DepositKey[][] keys = D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1;
 		//  1
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
-		map.put(new Integer(8), new String("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL"));
-		map.put(new Integer(11), new String("3.Correcciones valorativas por deterioro"));
-		map.put(new Integer(15), new String("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales"));
-		map.put(new Integer(16), new String("1.Provisi\u00F3n para actuaciones medioambientales, inclu\u00EDdas en provisiones"));
+		map.put(Integer.valueOf(8), new String("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL"));
+		map.put(Integer.valueOf(11), new String("3.Correcciones valorativas por deterioro"));
+		map.put(Integer.valueOf(15), new String("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales"));
+		map.put(Integer.valueOf(16), new String("1.Provisi\u00F3n para actuaciones medioambientales, inclu\u00EDdas en provisiones"));
 		general(pageMaxNumber, 2, new String[]{"DESCRIPCI\u00d3N DEL CONCEPTO", "Ejercicio " + getD2Deposit().getYear(), 
 				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, map);
 	}

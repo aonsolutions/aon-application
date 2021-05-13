@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.util.LinkedList;
 
-import org.jooq.conf.ParamType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -161,21 +160,6 @@ public class FiscalMenuDAO {
 		}
 		if (params.isConfiguredVisible()) {
 				FiscalParameters fiscalParams = AppParamDAO.getFiscalParameters(ctx);
-				System.out.println(
-						
-						ctx.getDslContext()
-						.select( APP_PARAM.NAME
-								,APP_PARAM.VALUE
-								,DOMAIN.ID
-								,DOMAIN.DESCRIPTION)
-						.from(APP_PARAM)
-						.join(DOMAIN).on( APP_PARAM.DOMAIN.equal(DOMAIN.ID))
-						.where(DOMAIN.PARENT.equal(domain.getId()))
-							.and(DOMAIN.SCOPE.isNull().or(SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE)))
-							.and(APP_PARAM.NAME.like(PARAM_PREFIX_LIKE))
-						.orderBy(APP_PARAM.NAME)
-						.getSQL(ParamType.INLINED)
-						);
 				ctx.getDslContext()
 					.select( APP_PARAM.NAME
 							,APP_PARAM.VALUE

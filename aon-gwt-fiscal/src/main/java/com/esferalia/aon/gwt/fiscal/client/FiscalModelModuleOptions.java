@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.common.client.AonModuleCallback;
 import com.esferalia.aon.gwt.common.shared.AonData;
 
-public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOptions> {
+public class FiscalModelModuleOptions<T> extends  ModuleOptions<FiscalModelModuleOptions<T>> {
 
 	private static final long serialVersionUID = -8275746757276688771L;
 	private Integer fiscalModelId;
-	private ModuleCallback externalCallback;
+	private AonModuleCallback<T> externalCallback;
 	private AonData aonData;
 	private boolean embedded = false;
 	private boolean backButtonVisible = false;
@@ -16,12 +16,12 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 		return fiscalModelId;
 	}
 
-	public FiscalModelModuleOptions setFiscalModelId(Integer fiscalModelId) {
+	public FiscalModelModuleOptions<T> setFiscalModelId(Integer fiscalModelId) {
 		this.fiscalModelId = fiscalModelId;
 		return this;
 	}
 
-	public ModuleCallback getExternalCallback() {
+	public AonModuleCallback<T> getExternalCallback() {
 		return externalCallback;
 	}
 
@@ -29,7 +29,7 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 		return getExternalCallback() != null;
 	}
 
-	public FiscalModelModuleOptions setExternalCallback(ModuleCallback externalCallback) {
+	public FiscalModelModuleOptions<T> setExternalCallback(AonModuleCallback<T> externalCallback) {
 		this.externalCallback = externalCallback;
 		return this;
 	}
@@ -37,7 +37,7 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 	public AonData getAonData() {
 		return aonData;
 	}
-	public FiscalModelModuleOptions setAonData(AonData aonData) {
+	public FiscalModelModuleOptions<T> setAonData(AonData aonData) {
 		this.aonData = aonData;
 		return this;
 	}
@@ -45,7 +45,7 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 	public boolean isEmbedded() {
 		return embedded;
 	}
-	public FiscalModelModuleOptions setEmbedded(boolean embedded) {
+	public FiscalModelModuleOptions<T> setEmbedded(boolean embedded) {
 		this.embedded = embedded;
 		return this;
 	}
@@ -53,7 +53,7 @@ public class FiscalModelModuleOptions extends  ModuleOptions<FiscalModelModuleOp
 	public boolean isBackButtonVisible() {
 		return backButtonVisible;
 	}
-	public FiscalModelModuleOptions setBackButtonVisible(boolean backButtonVisible) {
+	public FiscalModelModuleOptions<T> setBackButtonVisible(boolean backButtonVisible) {
 		this.backButtonVisible = backButtonVisible;
 		return this;
 	}

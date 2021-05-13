@@ -238,7 +238,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 						@Override
 						public void onAccept() {
 							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-								options.getExternalCallback().onExit();
+								options.getExternalCallback().onExit( mod390);
 							} else {
 								callback.onCancel();
 							}
@@ -251,7 +251,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					});
 				} else {
 					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-						options.getExternalCallback().onExit();
+						options.getExternalCallback().onExit(mod390);
 					} else {
 						callback.onCancel();
 					}

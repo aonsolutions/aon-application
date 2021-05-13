@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOARScript1;
