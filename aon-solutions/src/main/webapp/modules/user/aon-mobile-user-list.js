@@ -60,9 +60,8 @@ export class AonMobileUserList extends AonMobileList {
 	}
 
     setValue(value) {
-        this.build();
-        this.removeAllLi();
         getUsers(this.getFilter()).then(users => {
+            this.build();
             users.filter(f => 
                 f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
                 || f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())

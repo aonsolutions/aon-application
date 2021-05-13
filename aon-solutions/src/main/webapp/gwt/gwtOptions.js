@@ -6,6 +6,7 @@ export const GWT_PAYROLL = 'aon_gwt_payroll';
 
 
 export const CUSTOMER = {
+  title: MSG.CUSTOMERS,
   name: MSG.CUSTOMERS,
   module: GWT_FISCAL,
   entryPoint: 'Customer'
@@ -80,21 +81,25 @@ export const DEPOSIT = {
 };
 
 export const EMPLOYEES = {
+  title:'Integral de Nóminas',
   module: GWT_AIO,
   entryPoint: 'employees'
 };
 
 export const CONVENIOS = {
+  title: 'Convenios',
   module: GWT_PAYROLL,
   entryPoint: 'MainAgreement'
 };
 
 export const PAYROLL_CONFIG = {
+  title: 'Configuración. Globales',
   module: GWT_PAYROLL,
   entryPoint: 'MainSystem'
 };
 
 export const PAYROLL_TRASH = {
+  title: 'Papelera',
   module: GWT_PAYROLL,
   entryPoint: 'MainTrash'
 };
@@ -115,6 +120,7 @@ export const RAWDOC = {
 };
 
 export const MAIN_CONTRATA = {
+  title: 'Contratos',
   module: GWT_PAYROLL,
   entryPoint: 'MainContrata'
 };
@@ -146,12 +152,14 @@ export const TEMPLATE = {
 };
 
 export const MODEL_111 = {
+  title: MSG.MODEL_111_DESCRIPTION,
   name: MSG.MODEL_111_DESCRIPTION,
   module: GWT_FISCAL,
   entryPoint: 'Model111'
 };
 
 export const MODEL_190 = {
+  title: MSG.MODEL_190_DESCRIPTION,
   name: MSG.MODEL_190_DESCRIPTION,
   module: GWT_FISCAL,
   entryPoint: 'Model90'
