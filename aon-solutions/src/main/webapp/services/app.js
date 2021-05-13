@@ -1,6 +1,7 @@
 import { AON_ICON } from '../environments/aonTag.js';
 import { MSG, CONSTANT, AON_ICONS } from '../environments/environments.js';
 import { CONTACT } from '../environments/msg-en.js';
+import * as GWT from '../gwt/gwt.js';
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
@@ -352,38 +353,22 @@ export const AccountingMenu =
     initAction: 'bankStatement_search'
   }];
 
-export const PayrollMenu =
-  [{
-    title:'Integral de Nóminas',
-    module: 'aon_gwt_aio',
-    entryPoint: 'employees'
-  },{
-    title: 'Convenios',
-    module: 'aon_gwt_payroll',
-    entryPoint:'MainAgreement'
-  },{
-    title: 'Modelo 111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta',
-    module: 'aon_gwt_fiscal',
-    entryPoint:'Model111'
-  },{
-    title: 'Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta',
-    module: 'aon_gwt_fiscal',
-    entryPoint:'Model190'
-  },{
-    title: 'Configuración. Globales',
-    module: 'aon_gwt_payroll',
-    entryPoint:'MainSystem'
-  },{
-    title: 'Papelera',
-    module: 'aon_gwt_payroll',
-    entryPoint:'MainTrash'
-  },{
-    title: 'Remesa Transferencia de Nóminas',
-    initAction: 'fbatch_search-Payroll'
-  },{
-    title: 'Vencimientos de Nóminas',
-    initAction: 'finance_search-Payroll'
-  }];
+export const PayrollMenu =[
+    GWT.EMPLOYEES,
+    GWT.CONVENIOS,
+    GWT.MAIN_CONTRATA,
+    GWT.MODEL_111,
+    GWT.MODEL_190,
+    GWT.PAYROLL_CONFIG,
+    GWT.PAYROLL_TRASH,
+    {
+      title: 'Remesa Transferencia de Nóminas',
+      initAction: 'fbatch_search-Payroll'
+    },{
+      title: 'Vencimientos de Nóminas',
+      initAction: 'finance_search-Payroll'
+    }
+];
 
   export const ToolsMenu =
     [{

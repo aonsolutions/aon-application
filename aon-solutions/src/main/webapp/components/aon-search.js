@@ -83,8 +83,8 @@ export class AonSearch extends AonElement {
 		span.appendChild(searchButton);
 ;
 
-		let form = this.createElement(TAG.FORM);
-		span.appendChild(form);
+		// let form = this.createElement(TAG.FORM);
+		// span.appendChild(form);
 
 		let input = this.createElement(TAG.INPUT);
 		input.id = this.SEARCH_INPUT;
@@ -95,7 +95,7 @@ export class AonSearch extends AonElement {
 		input.style.border = 'none';
 		input.style.marginTop = '1px';
 		input.style.height = '37px';
-		form.appendChild(input);
+		span.appendChild(input);
 
 		let advancedButton = new AonIconButton();
 		advancedButton.style.display = 'none';
