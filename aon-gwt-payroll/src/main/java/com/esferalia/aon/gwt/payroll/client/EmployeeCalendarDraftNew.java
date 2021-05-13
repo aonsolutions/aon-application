@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -999,9 +1000,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					if(!this.employeeCalendarDraftObject.isCalendarHourIsEmpty()) {
 						Double dayHour = this.employeeCalendarDraftObject.getHourByDate(currentDay);
 						
-						if(null != dayHour)
+						if(null != dayHour) {
+							dayHour = Math.round(dayHour * 10) / 10.0;
 							hourDay.setText(dayHour.toString());
-						else
+						} else
 							cellsDayType[row][i].setAsType(DayType.NOWORKINGDAY, row, i);
 					}
 					
@@ -1103,9 +1105,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				if(!this.employeeCalendarDraftObject.isCalendarHourIsEmpty()) {
 					Double dayHour = this.employeeCalendarDraftObject.getHourByDate(currentDay);
 					
-					if(null != dayHour)
+					if(null != dayHour) {
+						dayHour = Math.round(dayHour * 10) / 10.0;
 						hourDay.setText(dayHour.toString());
-					else
+					} else
 						cellsDayType[row][column].setAsType(DayType.NOWORKINGDAY, row, column);
 				}
 				
@@ -1167,10 +1170,29 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private boolean isOutOfContractPeriod(Date date) {
-		Date newEndDate = this.employeeCalendarDraftObject.getContractEndDate();
-		if(null == newEndDate) {
+		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
+		Date newEndDate = null;
+		if(null == contractEndDate) {
 			Integer nextYear = new Date().getYear() + 2;
 			newEndDate = new Date(nextYear, 11, 31);
+		} else {
+			newEndDate = DateUtils.copyDateOnly(contractEndDate);
+		}
+		
+		Date startDate = DateUtils.copyDateOnly(this.employeeCalendarDraftObject.getContractStartDate());
+		
+		return date.before(startDate) || date.after(newEndDate);
+	}
+	
+	private boolean isOutOfContractPeriodIncludeCurrentYear(Date date) {
+		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
+		Date newEndDate = null;
+		if(null == contractEndDate) {
+			Integer nextYear = new Date().getYear() + 2;
+			newEndDate = new Date(nextYear, 11, 31);
+		} else {
+			newEndDate = DateUtils.copyDateOnly(contractEndDate);
+			newEndDate = DateUtils.getLastDayOfYear(newEndDate);
 		}
 		
 		Date startDate = DateUtils.copyDateOnly(this.employeeCalendarDraftObject.getContractStartDate());
@@ -1663,7 +1685,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		for(int i=0; i<this.yearLB.getItemCount(); i++) {
 			Integer year = Integer.parseInt(this.yearLB.getValue(i));
 			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
-			if(isOutOfContractPeriod(lastDayOfYear)) {
+			if(isOutOfContractPeriodIncludeCurrentYear(lastDayOfYear)) {
 				idxsToDelete.add(i);
 			}
 		}
@@ -1671,8 +1693,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
+		Collections.sort(idxsToDelete, Collections.reverseOrder());
 		for(Integer idx : idxsToDelete)
-			this.yearLB.removeItem(idx);
+			try {
+				this.yearLB.removeItem(idx);
+			} catch (Exception e) {
+				continue;
+			}
 	}
 
 	// ----------------------------------------------------------------------------------------------------
