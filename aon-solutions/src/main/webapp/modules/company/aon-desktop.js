@@ -17,7 +17,6 @@ import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
-import { AonDocumentAyudat } from '../documental/ayudat/aon-document-ayudat.js';
 
 export class AonDesktop extends AonElement {
 
@@ -274,7 +273,7 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
-				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentAyudat() : new AonDocumental();
+				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
 				this.rootPanel(aonDocumental);
 				break;
 			case Apps.ACCOUNTING.app:

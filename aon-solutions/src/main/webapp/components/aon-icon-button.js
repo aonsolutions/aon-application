@@ -237,7 +237,7 @@ export class AonIconButton extends AonElement {
 
   setDisabled(disabled) {
     this.disabled = disabled;
-    this.getElement(this.BUTTON).disabled = newValue;
+    this.getElement(this.BUTTON).disabled = disabled;
   } 
 }
 if(!window.customElements.get('aon-icon-button')){
