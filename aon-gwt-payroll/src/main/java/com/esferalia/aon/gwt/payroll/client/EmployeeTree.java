@@ -103,6 +103,8 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -118,7 +120,7 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
-		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener {
+		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener {
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 
@@ -2722,7 +2724,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	public SalaryDraft getSalaryDraft() {
 		if (salaryDraft == null)
-			salaryDraft = new SalaryDraft();
+			(salaryDraft = new SalaryDraft()).addListener(this); 
 		return salaryDraft;
 	}
 
@@ -3794,5 +3796,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	/*-{
 		return eval(javascript);
 	}-*/;
+
+	@Override
+	public void fireSettleMessage(String message) {
+		Tree messageTree = new Tree();
+		messageTree.getElement().getStyle().setPaddingTop(10, Unit.PX);
+		TreeItem parent = messageTree.addTextItem("Certifi@2");
+		parent.addTextItem(message);
+		parent.setState(true, false);
+		resultsPanel.setWidget(messageTree);
+		showResultsPanel();
+	}
 
 }

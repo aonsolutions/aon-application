@@ -57,7 +57,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.js.payroll.client.Reports;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -171,8 +170,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
 	
-	
-	
+	// Listener to fireSettleMessage
+	static interface Listener {
+		void fireSettleMessage(String message);
+	}
 	
 	public static enum SettleType {
 		A3,
@@ -2603,6 +2604,8 @@ public class SalaryDraft extends ResizeComposite
 	private boolean autoSave = true;
 	private MenuItem autoSaveMenuItem;
 	
+	private List<Listener> listeners;
+	
 //	private boolean dummies = false;
 //	private MenuItem dummiesMenuItem;
 	
@@ -2618,12 +2621,23 @@ public class SalaryDraft extends ResizeComposite
 		showDraft();
 		
 		dockLayoutPanel.addStyleName(style.container());
+		
+		listeners = new LinkedList<Listener>();
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
 		initEventsStyles(style);
 		initSalaryDb();
 		export2JS(this);
+	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	void fireSettleMessage(String message) {
+		for (Listener listener : listeners)
+			listener.fireSettleMessage(message);
 	}
 	
 	public void calculate() {
@@ -3304,7 +3318,24 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
-		salaryDraftObject.emitSalary(this);
+		salaryDraftObject.emitSalary(new CalculateCallback() {
+			
+			@Override
+			public void onCalculateSucces(SalaryDraftObject salaryDraftObject) {
+				String message = "El fichero Certific@2 se ha generado correctmente. Para poder visualizarlo y comunicarlo dirijase a: Contratos > " + salaryDraftObject.getEmployeeName() + " > Mas > Cetific@2";
+				fireSettleMessage(message);
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				fireSettleMessage(throwable.getMessage());
+			}
+			
+			@Override
+			public Calculate getCalculate() {
+				return null;
+			}
+		});
 	}
 	
 	@UiHandler("salaryButton")
