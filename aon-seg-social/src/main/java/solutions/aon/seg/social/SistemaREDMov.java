@@ -16,19 +16,15 @@ import java.util.regex.Pattern;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
@@ -38,13 +34,14 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
-import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 
 class SistemaREDMov {
+	
+//	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
 
 	//HANDLE THE EXCEPTIONS OF Mov METHOD
 	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
@@ -363,40 +360,41 @@ class SistemaREDMov {
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
 	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
-	 	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
+	      
     	  for (int i=0;i<nssList.size();i++) {
+    		  String naf = nssList.get(i);
+    		  naf  = naf.length() > 10 ? naf.substring(0, 10) : naf;
     		  HtmlInput inpt = formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i+1)));
-    		  inpt.setValueAttribute(nssList.get(i).substring(0, 10));
+    		  inpt.setValueAttribute(naf);
     	  }
-
-    	  ArrayList<Employee> employees = new ArrayList<>();
     	  
+    	  ArrayList<Employee> employees = new ArrayList<>();
+ 
     	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_3")).click();
-    	  System.out.println();
-    	  if(!pageAux.isHtmlPage()) {
+    	  
+    	  if(pageAux instanceof XmlPage) {
     		    XmlPage xmlPage = (XmlPage)pageAux;
     			DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
     			EmployeeBuilder builder = new EmployeeBuilder();
 				for (DomNode employee : employeesHtml) {
 					String ipf = employee.querySelector("ip9numdoc").getTextContent();
+					String fieldName = employee.querySelector("nombre_completo").getTextContent();
 					if(!ipf.isEmpty()) {
 						String nss = employee.querySelector("na5numsegsocialcompleto").getTextContent().trim();
-						String name = employee.querySelector("nombre_completo").getTextContent().trim();
 						Employee empl = builder
     					.setNss(nss)
-    					.setName(name)
+    					.setName(fieldName.trim())
     					.setIpf(ipf)
     					.build();
     					employees.add(empl);
-					} else {
-						throw new Exception("Sin datos para la consulta");
+					} else if(!fieldName.isEmpty()) {
+						throw new Exception(fieldName.trim());
 					}
 				}
 			} else {
 				htmlPage = (HtmlPage) pageAux;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
-//    	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
     	  return employees;
 		} 
 	}
@@ -429,8 +427,7 @@ class SistemaREDMov {
 		  EmployeeBuilder builder = new EmployeeBuilder();
 	
 	  	  Page pageAux = ((HtmlButton)formDatos.querySelector("#ENVIO_2")).click();
-	  	  Toolkit.buildFile(pageAux.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
-    	  if(!pageAux.isHtmlPage()) {
+    	  if(pageAux instanceof XmlPage) {
     		    XmlPage xmlPage = (XmlPage)pageAux;
     		    DomNode employeeHtml = xmlPage.querySelector("usuario_red");
 				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
@@ -441,7 +438,12 @@ class SistemaREDMov {
 					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
 				    builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
 				} else {
-					throw new Exception("Sin datos para la consulta");
+					String messageError = "Sin datos para la consulta";
+					DomNode textEl = xmlPage.querySelector("texto");
+					if(textEl!=null && textEl.getTextContent()!=null) {
+						messageError = textEl.getTextContent().trim();
+					}
+					throw new Exception(messageError);
 				}
 
 			} else {
@@ -521,6 +523,7 @@ class SistemaREDMov {
 				throw new InvalidDataException(error);
 			}
 		} catch (NullPointerException e) {}
+		
 	}
 	
 	private static String identity(String ipf) {

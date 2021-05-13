@@ -47,15 +47,14 @@ public class TestSistemaREDMov {
 		}
 	}
 
-
 	@Test
 	@Ignore
 	public void ipfxnaf() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 		    ArrayList<String> nssList = new ArrayList<>();
-		    nssList.add("1231231223");	
+		    nssList.add("010022757387");	
 		    Collection<Employee> employee = SistemaREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
-		    System.out.println(employee.toString());
+		    System.out.println(employee.stream().findFirst());
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -70,8 +69,8 @@ public class TestSistemaREDMov {
 	public void nafxipf() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 
-		   Employee employee = SistemaREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "1123H", "123", "PER1232EZ");
-		   System.out.println(employee.getIpf());
+		   Employee employee = SistemaREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "garcia", "perez");
+		   System.out.println(employee.getNss());
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
