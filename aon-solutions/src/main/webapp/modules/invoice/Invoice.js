@@ -610,10 +610,13 @@ export class Invoice {
       };		
       this.finances.push(finance);
     } else if(this.finances.length === 1) {
+      this.finances[0].paymethod = this.paymethod;
       this.finances[0].amount = this.total; 
     } else if(this.finances.length > 1) {
       let financeTotal = 0.0;
-      this.finances.forEach(finance => {
+      this.finances.forEach((finance, i) => {
+        finance.paymethod = this.paymethod;
+        finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });
       if(this.total != financeTotal) {

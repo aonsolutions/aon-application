@@ -4,7 +4,7 @@ import './aon-input.js';
 import './aon-icon-button.js';
 
 import {setDate} from '../services/utils.js';
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 
 export class AonDate extends AonElement {
 
@@ -104,8 +104,12 @@ export class AonDate extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
-    input.setAttribute(CONSTANT.READONLY, true);
     input.addIconButton('calendar_today', () => this.openDatepicker());
+    input.readonly = this.isReadonly();
+    input.addEventListener(EVENT.CHANGE, () => {
+      let date = this.parseDateStr(input.value);
+      this.setDate(date);
+    });
     this.getElement(input.INPUT).style.minWidth = '125px';
   }
 
@@ -139,7 +143,7 @@ export class AonDate extends AonElement {
     previous.style.position = 'absolute';
     previous.style.left = '0px';
     previous.style.top = '5px';
-    previous.addEventListener('click', (ev) => {
+    previous.addEventListener(EVENT.CLICK, (ev) => {
       ev.stopPropagation();
       ev.preventDefault();
       this.previousMonth();
@@ -160,13 +164,13 @@ export class AonDate extends AonElement {
     next.style.position = 'absolute';
     next.style.right = '0px';
     next.style.top = '5px';
-    next.addEventListener('click', (ev) => {
+    next.addEventListener(EVENT.CLICK, (ev) => {
       ev.stopPropagation();
       ev.preventDefault();
       this.nextMonth();
     });
 
-    let datepickerDays = this.createElement('div');
+    let datepickerDays = this.createElement(TAG.DIV);
     datepickerDays.innerHTML = `
       <table id="${this.DATEPICKER_DAYS}" style="width:100%"></table>
     `;
@@ -174,7 +178,7 @@ export class AonDate extends AonElement {
     datepicker.appendChild(datepickerDays);
     this.buildCalendar();
 
-    document.addEventListener('click', function(event) {
+    document.addEventListener(EVENT.CLICK, function(event) {
       let isClickInside = input.contains(event.target);
 
       if(!isClickInside){
@@ -235,7 +239,7 @@ export class AonDate extends AonElement {
           td.style.backgroundColor = 'transparent';
       });
 
-      td.addEventListener('click', () => {
+      td.addEventListener(EVENT.CLICK, () => {
         this.setDate(actDate);
         this.closeDatepicker();
       });
@@ -303,7 +307,7 @@ export class AonDate extends AonElement {
   }
 
   openDatepicker() {
-    if(!this.hasAttribute(CONSTANT.READONLY)) {
+    if(!this.isReadonly()) {
       this.getElement(this.DATEPICKER).classList.add('is-visible');
     }
   }
@@ -349,6 +353,45 @@ export class AonDate extends AonElement {
 
   focus() {
     this.getElement(this.INPUT).focus();
+  }
+
+  isReadonly() {
+    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+      && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
+
+  parseDateStr(dateStr) {
+      if(dateStr.includes('/')){
+        let dateArr = dateStr.split('/');
+        let a = dateArr[0].length === 1 
+            ? '0' + dateArr[0] : dateArr[0];
+        let b = dateArr[1].length === 1 
+            ? '0' + dateArr[1] : dateArr[1];
+        let c = dateArr[2];
+        dateStr = a + b + c;       
+      } 
+      
+      if(dateStr.includes('-')){
+        let dateArr = dateStr.split('-');
+        let a = dateArr[0].length === 1 
+            ? '0' + dateArr[0] : dateArr[0];
+        let b = dateArr[1].length === 1 
+            ? '0' + dateArr[1] : dateArr[1];
+        let c = dateArr[2];
+        dateStr = a + b + c;       
+      } 
+ 
+      let day = dateStr.substring(0, 2);
+      let month = dateStr.substring(2, 4);
+      let year = dateStr.substring(4);
+
+      if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
+        return this.date;
+      } else {
+        let d = month + '/' + day + '/' + year;
+        console.log(d);
+        return new Date(d);
+      }
   }
 
 }

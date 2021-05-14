@@ -60,13 +60,6 @@ export class AonToolbar extends AonElement {
 
 	constructor () {
 		super();
-		this.HEADER = this.id + 'Header';
-		this.TITLE_SECTION = this.HEADER + 'TitleSection';
-		this.TITLE_SECTION_MENU = this.TITLE_SECTION + 'Menu';
-		this.TITLE_SECTION_SPAN = this.TITLE_SECTION + 'Span';
-		this.TITLE_SECTION_OPTION = this.TITLE_SECTION + 'Option';
-		this.TOOL_SECTION = this.HEADER + 'ToolSection';
-
 	}
 
 	toogleSidenav(fn) {
@@ -75,7 +68,17 @@ export class AonToolbar extends AonElement {
 	}
 
 	connectedCallback () {
+		this.initialize();
 		this.appendChild(this.build());
+	}
+
+	initialize() {
+		this.HEADER = this.id + 'Header';
+		this.TITLE_SECTION = this.HEADER + 'TitleSection';
+		this.TITLE_SECTION_MENU = this.TITLE_SECTION + 'Menu';
+		this.TITLE_SECTION_SPAN = this.TITLE_SECTION + 'Span';
+		this.TITLE_SECTION_OPTION = this.TITLE_SECTION + 'Option';
+		this.TOOL_SECTION = this.HEADER + 'ToolSection';
 	}
 
 	build() {

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -204,24 +204,41 @@ export class AonNewInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.NEXT, () => this.nextInvoice());
 		invoiceToolbar.addButton2(ACTION.PREVIOUS, () => this.previousInvoice());
 		invoiceToolbar.addSeparator();
-		if(this.getInvoice().isInbox() || this.getInvoice().isPending() || this.getInvoice().isScored()){
-			invoiceToolbar.addButton2(ACTION.DUPLICATE, () => this.duplicateInvoice());
-			invoiceToolbar.addButton2(ACTION.RECTIFY, () => this.rectifyInvoice());			
-		//	invoiceToolbar.addButton('Options', 'more_vert', (e) => this.more(e));
-			invoiceToolbar.addSeparator();
-		}
 
-		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
+		invoiceToolbar.addButton('Options', 'more_vert', (e) => {
+			e.preventDefault();
+			let rect = e.target.getBoundingClientRect();
+		    let x = e.clientX - rect.left;
+			let y = e.clientY - rect.top;
+
+			const top  = rect.top + y;
+			const left = rect.left + x;
+			
+			let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+			let moreActions = [];
+			if(this.getInvoice().isInbox() ){
+				let comment = ACTION.COMMENT;
+				comment.fn = () => this.addInvoiceComment();
+				moreActions.push(comment);
+			}
+			let rectify = ACTION.RECTIFY_INVOICE;
+			rectify.fn = () => this.rectifyInvoice();
+			moreActions.push(rectify); 
+			
+			let duplicate = ACTION.DUPLICATE_INVOICE;
+			duplicate.fn = () => this.duplicateInvoice();
+			moreActions.push(duplicate);
+
+			d.setMenuOptions(moreActions, top, left);
+			d.open();
+		});
+		
+		
+
+		if((this.getInvoice().isInbox() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
-		}
-		
-		if(this.getInvoice().isPending() && this.getDur().isInvoiceManager()) {
-			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
-			//invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-			//invoiceToolbar.addSeparator();
 		}
 
 		if(this.getInvoice().isRejected()) {
@@ -232,11 +249,13 @@ export class AonNewInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.COMMENT, () => this.addInvoiceComment());
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
-		} 
+		} else if (this.getInvoice().isPending()){
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
@@ -390,7 +409,7 @@ export class AonNewInvoice extends AonElement {
 			
 			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
-			
+			number.disabled = CONSTANT.TRUE;	
 		} else {
 
 			// ----- REFERENCE
@@ -399,7 +418,7 @@ export class AonNewInvoice extends AonElement {
 			reference.id = this.REFERENCE;
 			reference.description = MSG.REFERENCE;
 			reference.value = this.invoice.reference;
-			// reference.readonly = this.invoice.isReadonly();
+			reference.readonly = this.invoice.isReadonly();
 			reference.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setReference(reference.value);
 				if(this.autosave) this.save();
@@ -412,8 +431,8 @@ export class AonNewInvoice extends AonElement {
 		let date = new AonDate();
 		date.id = this.DATE;
 		date.title = MSG.DATE;
-
-		date.readonly = this.invoice.isReadonly();
+		if(this.invoice.isReadonly())
+			date.readonly = this.invoice.isReadonly();
 		date.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setDate(date.value);
 			if(this.autosave) this.save();
@@ -1173,7 +1192,7 @@ export class AonNewInvoice extends AonElement {
 			this.clearElement(fileDiv);
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
-				? 'application/pdf' : this.getInvoice().file.type;
+				? 'application/pdf' : this.getInvoice().file.content_type;
 			viewer.file = !this.getInvoice().file && this.getInvoice().isEmitida()
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(this.getInvoice()))
 				: this.getInvoice().file.url;
