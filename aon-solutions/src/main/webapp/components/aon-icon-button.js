@@ -14,11 +14,11 @@ export class AonIconButton extends AonElement {
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get icon() {

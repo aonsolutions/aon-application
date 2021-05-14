@@ -9,9 +9,7 @@ export const AON_APPLICATION_TOP = 'aon_application_top'; // ¿?
 export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
 
-export const get = (item) => {
-    localStorage.getItem(item);
-}
+export const get = (item) => localStorage.getItem(item);
 
 export const set = (item, value) => {
     localStorage.setItem(item, value);
@@ -21,9 +19,7 @@ export const remove = (item) => {
     localStorage.removeItem(item);
 }
 
-export const getLanguage = () => {
-    return get(AON_LANGUAGE);
-}
+export const getLanguage = () => get(AON_LANGUAGE);
 
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
@@ -33,9 +29,7 @@ export const removeLanguage = () => {
     remove(AON_LANGUAGE);
 }
 
-export const getToken = () => {
-    return get(AON_SESSION_ID);
-}
+export const getToken = () => get(AON_SESSION_ID);
 
 export const setToken = (value) => {
     set(AON_SESSION_ID, value);
@@ -45,9 +39,8 @@ export const removeToken = () => {
     remove(AON_SESSION_ID);
 }
 
-export const getDomainName = () => {
-    return get(AON_DOMAIN_NAME);
-}
+export const getDomainName = () => get(AON_DOMAIN_NAME);
+
 
 export const setDomainName = (value) => {
     set(AON_DOMAIN_NAME, value);
@@ -57,9 +50,7 @@ export const removeDomainName = () => {
     remove(AON_DOMAIN_NAME);
 }
 
-export const getDomainId = () => {
-    return get(AON_DOMAIN_ID);
-}
+export const getDomainId = () =>  get(AON_DOMAIN_ID);
 
 export const setDomainId = (value) => {
     set(AON_DOMAIN_ID, value);
@@ -69,9 +60,7 @@ export const removeDomainId = () => {
     remove(AON_DOMAIN_ID);
 }
 
-export const getDomainLogin = () => {
-    return get(AON_DOMAIN_LOGIN);
-}
+export const getDomainLogin = () =>  get(AON_DOMAIN_LOGIN);
 
 export const setDomainLogin = (value) => {
     set(AON_DOMAIN_LOGIN, value);
@@ -81,9 +70,7 @@ export const removeDomainLogin = () => {
     remove(AON_DOMAIN_LOGIN);
 }
 
-export const getApplicationTop = () => {
-    return get(AON_APPLICATION_TOP);
-}
+export const getApplicationTop = () =>  get(AON_APPLICATION_TOP);
 
 export const setApplicationTop = (value) => {
     set(AON_APPLICATION_TOP, value);
@@ -93,9 +80,7 @@ export const removeApplicationTop = () => {
     remove(AON_APPLICATION_TOP);
 }
 
-export const getAonSolutions = () => {
-    return get(AON_SOLUTIONS);
-}
+export const getAonSolutions = () => get(AON_SOLUTIONS);
 
 export const setAonSolutions = (value) => {
     set(AON_SOLUTIONS, value);
@@ -105,9 +90,7 @@ export const removeAonSolutions = () => {
     remove(AON_SOLUTIONS);
 }
 
-export const getRootPanel = () => {
-    return get(ROOT_PANEL);
-}
+export const getRootPanel = () =>  get(ROOT_PANEL);
 
 export const setRootPanel = (value) => {
     set(ROOT_PANEL, value);
@@ -117,9 +100,7 @@ export const removeRootPanel = () => {
     remove(ROOT_PANEL);
 }
 
-export const getCompany = () => {
-    return get(COMPANY);
-}
+export const getCompany = () =>  get(COMPANY) ? JSON.parse(get(COMPANY)) : null;
 
 export const setCompany = (value) => {
    set(COMPANY, value);

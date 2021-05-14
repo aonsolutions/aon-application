@@ -30,7 +30,7 @@
 	}
 
 	export const preStartModule = (module) => {
-		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
+		// google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		let search = `/${module}.nocache.js`;
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {

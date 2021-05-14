@@ -1,5 +1,5 @@
-import { CONSTANT } from '../environments/environments.js';
-import { setStyles } from '../services/utils.js';
+import { CONSTANT, TAG } from '../environments/environments.js';
+import { newComponent, setStyles } from '../services/utils.js';
 import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {
@@ -21,9 +21,11 @@ export class AonToast extends AonElement {
 	}
 
 	connectedCallback() {
-		this.innerHTML = `
-			<div id="${this.DIV}" class="aonToast"></div>
-		`;
+		this.setStyleComponent();
+		this.paintView();
+	}
+
+	setStyleComponent(){
 		setStyles(this, {
 			position: "absolute",
 			bottom: "10%",
@@ -34,8 +36,28 @@ export class AonToast extends AonElement {
 			left: 0,
 			right: 0,
 			textAlign: "center",
-			zIndex: 99
+			zIndex: 99, 
+			height: 0,
+			overflow: "hidden",
+			opacity: 0,
+			transition: "opacity 1s ease-out"
 		});
+	}
+
+	paintView(){
+		const el = newComponent({
+			type:TAG.DIV,
+			id: this.DIV,
+			styles:{
+				backgroundColor: "#333",
+				color:" #fff",
+				borderRadius: "2px",
+				padding: "16px",
+				fontSize: "17px",
+				wordWrap: "break-word",
+			}
+		});
+		this.innerHTML = el.element.outerHTML;
 	}
 
 	start(options) {
@@ -47,19 +69,27 @@ export class AonToast extends AonElement {
 		if (type === CONSTANT.ERROR) color = '#f44336';
 		else if (type === CONSTANT.SUCCESS) color = '#4CAF6E';
 		else if (type === CONSTANT.PRIMARY) color = '#2196f3';
-		// if(position && "top" === position){
-		// 	toast.style.top = "10%";
-		// } else {
-		// 	toast.style.bottom = "10%";
-		// }
-		toast.classList.add("aonToastShow");
-
 		toast.innerHTML = message;
 		toast.style.background = color;
-
-		setTimeout(() => toast.classList.remove('aonToastShow'), delay);
+		this.displayToast(true);
+		setTimeout(() => this.displayToast(false), delay);
 	}
 
+	displayToast(boolean = true){
+		if(boolean){
+			setStyles(this, {
+				opacity: 1,
+				height: "auto"
+			});
+		} else {
+			setStyles(this, {
+				transition: "opacity 1s ease-out",
+				opacity: 0,
+				height: 0,
+				overflow: "hidden",
+			});
+		}
+	}
 }
 if(!window.customElements.get('aon-toast')){
 	window.customElements.define('aon-toast', AonToast);

@@ -576,7 +576,7 @@ button:disabled, button[disabled]{
 }
 
 .aonAppMenuSidenavList {
-  height: 30px;
+  /* height: 30px; */
   line-height: 30px;
   margin: 0;
   padding: 0 26px;
@@ -611,7 +611,7 @@ button:disabled, button[disabled]{
 }
 
 .aonMenuItemSpan {
-  position: absolute;
+  /* position: absolute; */
   margin-left: 10px;
   margin-top: 2px;
   font-size: 12px;
