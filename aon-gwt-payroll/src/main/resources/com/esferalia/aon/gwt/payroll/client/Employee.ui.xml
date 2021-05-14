@@ -191,15 +191,15 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
-							    <g:HorizontalPanel ui:field="horizontalPanel">
-							        <g:Button styleName="aon-lookupButton-clear" ui:field="clear_employee" debugId="clear_employee"></g:Button>
+								<g:HTMLPanel ui:field="horizontalPanel" styleName="{style.flex}">
 							        <g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
-							    </g:HorizontalPanel>
+							   </g:HTMLPanel>
 							</td>
 							<td>
 								<g:HorizontalPanel>
-									<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-									<g:Label ui:field="documentStatus" debugId="documentStatus"></g:Label>
+									<g:HTMLPanel ui:field="documentPanel" styleName="{style.flex}">
+										<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									</g:HTMLPanel>
 								</g:HorizontalPanel>
 							</td>
 							<td style="width: 10%;" ui:field="nationalityLabelCell" debugId="nationalityLabelCell">
@@ -213,8 +213,9 @@
 							</td>
 							<td >
 								<g:HorizontalPanel>
-									<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-									<g:Label ui:field="ssNumberStatus" debugId="ssNumberStatus"></g:Label>
+									<g:HTMLPanel ui:field="ssNumberPanel" styleName="{style.flex}">
+										<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									</g:HTMLPanel>
 								</g:HorizontalPanel>
 							</td>
 						</tr>
@@ -324,10 +325,9 @@
 									antigüedad</g:Label>
 							</td>
 							<td>
-								<g:HorizontalPanel>
+								<g:HTMLPanel ui:field="seniorityDatePanel" styleName="{style.flex}">
 									<a:DateBoxEx ui:field="seniority_date" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
-									<g:Label ui:field="seniority_dateStatus" debugId="seniority_dateStatus"></g:Label>	
-								</g:HorizontalPanel>
+								</g:HTMLPanel>
 							</td>
 						</tr>
 						<tr>
@@ -385,7 +385,7 @@
 							</td>
 							<td colspan="6">
 								<g:HTMLPanel styleName="{style.flexPanel}">
-									<g:Label ui:field="journeyDuration" debugId="journeyDuration"> </g:Label>
+									<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flex}" />
 									<g:HTMLPanel styleName="{style.flex}">
 										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
 										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration"></a:DoubleBox>
@@ -515,10 +515,9 @@
 								<g:Label styleName='{style.alignTextCenter}'>IBAN</g:Label>
 							</td>
 							<td colspan="3">
-								<g:HorizontalPanel styleName="{style.maxWidth}">
+								<g:HTMLPanel ui:field="accountPanel" styleName="{style.flex}">
 									<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
-									<g:Label ui:field="accountStatus" debugId="ssNumberStatus"></g:Label>
-								</g:HorizontalPanel>
+								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>

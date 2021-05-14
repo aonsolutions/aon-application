@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -20,7 +21,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
@@ -274,7 +274,39 @@ public class EmployeeDraft extends Composite {
 	
 	// ------------------------------------------------- ScheduledCommand
 	
-	class NewPeculiaritiesCommand implements ScheduledCommand {
+	class AFICommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onAFIChanges();
+		}
+	}
+	
+	class IDCCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showIdc();
+		}
+	}
+	
+	class IDCPlNssCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showIdcPlNss();
+		}
+	}
+	
+	class TACommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showTa();
+		}
+	}
+	
+	class PeculiaritiesCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
@@ -284,7 +316,7 @@ public class EmployeeDraft extends Composite {
 		}
 	}
 	
-	class NewBonificationsCommand implements ScheduledCommand {
+	class BonificationsCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
@@ -294,20 +326,66 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	class NewContextMenu extends ContextMenu {
-				
+		
+		private MenuItem ta;
+		private MenuItem afi;
+		private MenuItem idc;
+		private MenuItem idcPlNss;		
 		private MenuItem peculiarities = null;
 		private MenuItem bonifications = null;
 		
 		public NewContextMenu() {
 			
-			peculiarities = addItem("Peculiaridades de cotizaci" + String.valueOf("\u00F3") + "n", new NewPeculiaritiesCommand(), 
+			afi = addItem("Cambios AFI", new AFICommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			afi.ensureDebugId("afi");
+			
+			peculiarities = addItem("Peculiaridades de cotizaci" + String.valueOf("\u00F3") + "n", new PeculiaritiesCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			peculiarities.ensureDebugId("peculiarities");
 			
-			bonifications = addItem("Bonificaciones", new NewBonificationsCommand(), 
+			bonifications = addItem("Bonificaciones", new BonificationsCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			bonifications.ensureDebugId("bonifications");
+			
+			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			ta.ensureDebugId("ta");
+			
+			idc = addItem("Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", new IDCCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			idc.ensureDebugId("idc");
+			
+			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			idcPlNss.ensureDebugId("idcPlNss");
+			
 		}
+
+		public MenuItem getTa() {
+			return ta;
+		}
+
+		public MenuItem getAfi() {
+			return afi;
+		}
+
+		public MenuItem getIdc() {
+			return idc;
+		}
+
+		public MenuItem getIdcPlNss() {
+			return idcPlNss;
+		}
+
+		public MenuItem getPeculiarities() {
+			return peculiarities;
+		}
+
+		public MenuItem getBonifications() {
+			return bonifications;
+		}
+		
 	}
 	
 	// ------------------------------------------------- UiFields
@@ -340,11 +418,7 @@ public class EmployeeDraft extends Composite {
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
-	private AonToolbarButton ta;
-	private AonToolbarButton afi;
-	private AonToolbarButton tgss;
-	private AonToolbarButton idc;
-	private AonToolbarButton idcPlNss;
+	private AonExpandButton tgss;
 	private AonToolbarButton closePDF;
 	private AonToolbarButton downloadPDF;
 	private ListBox zoomListBox;
@@ -406,8 +480,8 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	private void initializeIdcDateListBox() {
-		idc.setEnabled(false);
-		idc.setVisible(false);
+		contextMenu.getIdc().setEnabled(false);
+		contextMenu.getIdc().setVisible(false);
 		employeeDraftObject.getIdcDates(
 		(dates) -> {
 			int count = dates.size();
@@ -416,8 +490,8 @@ public class EmployeeDraft extends Composite {
 			idcDateListBox.setVisibleRange(0, count+1);
 			idcDateListBox.setSelected(count-1, true);
 			idcDateListBox.onResizeDropDownPopup();
-			idc.setEnabled(true);
-			idc.setVisible(true);
+			contextMenu.getIdc().setEnabled(true);
+			contextMenu.getIdc().setVisible(true);
 		}, 
 		(error) -> {
 		} );
@@ -532,11 +606,11 @@ public class EmployeeDraft extends Composite {
 		//RETA, había algo mas que determinaba si era o no RETA
 		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { 
 			employee.showElementsFreelancerTable();
-			afi.setVisible(false);
+			contextMenu.getAfi().setVisible(false);
 			fillContractFreelancerTable(contractData);
 		} else {
 			employee.hideElementsFreelancerTable();
-			afi.setVisible(true);
+			contextMenu.getAfi().setVisible(true);
 			fillContractTable(contractData);
 		}
 	}
@@ -581,13 +655,9 @@ public class EmployeeDraft extends Composite {
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			employee.showPartialTimeContract();
 			if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
-				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-				employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+				employee.createJourneyDurationWarning();
 			} else {
-				employee.journeyDuration.setText(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
+				employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
 		} else
 			employee.showElementsFullTimeContract();
@@ -703,49 +773,22 @@ public class EmployeeDraft extends Composite {
 		});
 		toolbar.add(redo);
 		
-		ta = new AonToolbarButton( "Duplicados de Documentos TA", AON.CSS.aonIconTgssTa() );
-		ta.addClickHandler(new ClickHandler() {
+		tgss = new AonExpandButton("TGSS", AON.CSS.aonIconTgss()) {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				onTA(event);
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				contextMenu.show();
 			}
-		});
-		toolbar.add(ta);
-		
-		idc = new AonToolbarButton( "Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", AON.CSS.aonIconTgssIdc() );
-		idc.addClickHandler(new ClickHandler() {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				onIdc(event);
+			public void onDefaultClick(ClickEvent evet) {
+				onAFIChanges();
 			}
-		});
-		toolbar.add(idc);
 
-		idcPlNss = new AonToolbarButton( "Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", AON.CSS.aonIconTgssIdc() );
-		idcPlNss.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onIdcPlNss(event);
-			}
-		});
-		toolbar.add(idcPlNss);
+		};
 		
-		afi = new AonToolbarButton( "Cambios AFI", AON.CSS.aonIconTgssAfi() );
-		afi.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAFI(event);
-			}
-		});
-		toolbar.add(afi);
-		
-		tgss = new AonToolbarButton( "TGSS", AON.CSS.aonIconTgss() );
-		tgss.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onTgss(event);
-			}
-		});
 		toolbar.add(tgss);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
@@ -819,30 +862,18 @@ public class EmployeeDraft extends Composite {
 		initializeView();
 	}
 	
-	private void onTA(ClickEvent event) {
-		showTa();
-	}
-	
-	private void onIdc(ClickEvent event) {
-		showIdc();
-	}
-
-	private void onIdcPlNss(ClickEvent event) {
-		showIdcPlNss();
-	}
-
-	private void onAFI(ClickEvent event) {
+	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
-				this.employee.start_date.getValue(),
-				this.employee.end_date.getValue(),
-				this.employee.contractTypeLB.getSelectedValue(),
-				this.employee.quote_group.getSelectedValue(),
-				this.employee.occupation.getSelectedValue(),
-				this.employee.partiality_coef.getValue(),
-				this.employeeDraftObject.getPayrollDate(),
-				this.employeeDraftObject.getContractId(),
-				this.employeeDraftObject.getDomainId(),
-				this.employeeDraftObject.getWorkplaceId()
+				employee.start_date.getValue(),
+				employee.end_date.getValue(),
+				employee.contractTypeLB.getSelectedValue(),
+				employee.quote_group.getSelectedValue(),
+				employee.occupation.getSelectedValue(),
+				employee.partiality_coef.getValue(),
+				employeeDraftObject.getPayrollDate(),
+				employeeDraftObject.getContractId(),
+				employeeDraftObject.getDomainId(),
+				employeeDraftObject.getWorkplaceId()
 				){
 
 					@Override
@@ -870,12 +901,6 @@ public class EmployeeDraft extends Composite {
 			
 		dialog.center();
 		dialog.show();
-	}
-	
-	private void onTgss(ClickEvent event) {
-		NativeEvent nativeEvent = event.getNativeEvent();
-		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-		contextMenu.show();
 	}
 
 	private void onClosePDF(ClickEvent event) {
@@ -936,11 +961,11 @@ public class EmployeeDraft extends Composite {
 	}
 
 	private void showPdf() {
-		afi.setVisible(false);
+		contextMenu.getAfi().setVisible(false);
 		tgss.setVisible(false);
-		ta.setVisible(false);
-		idc.setVisible(false);
-		idcPlNss.setVisible(false);
+		contextMenu.getTa().setVisible(false);
+		contextMenu.getIdc().setVisible(false);
+		contextMenu.getIdcPlNss().setVisible(false);
 		undo.setVisible(false);
 		redo.setVisible(false);
 		undoAll.setVisible(false);
@@ -953,14 +978,14 @@ public class EmployeeDraft extends Composite {
 	}
 
 	private void showEmployee() {
-		afi.setVisible(true);
+		contextMenu.getAfi().setVisible(true);
 		tgss.setVisible(true);
 		undo.setVisible(true);
 		redo.setVisible(true);
 		undoAll.setVisible(true);
-		ta.setVisible(true);
-		idcPlNss.setVisible(true);
-		idc.setVisible(idc.isEnabled());
+		contextMenu.getTa().setVisible(true);
+		contextMenu.getIdcPlNss().setVisible(true);
+		contextMenu.getIdc().setVisible(contextMenu.getIdc().isEnabled());
 		
 		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
@@ -1022,11 +1047,11 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	public void setTaVisible(boolean visible ) {
-		ta.setVisible(visible);
+		contextMenu.getTa().setVisible(visible);
 	}
 
 	public void setIdcVisible(boolean visible ) {
 		initializeIdcDateListBox();
-		idcPlNss.setVisible(visible);
+		contextMenu.getIdcPlNss().setVisible(visible);
 	}
 }
