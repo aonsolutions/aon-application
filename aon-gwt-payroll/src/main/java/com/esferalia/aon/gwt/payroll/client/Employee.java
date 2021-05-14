@@ -33,11 +33,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,9 +48,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -82,23 +80,20 @@ public abstract class Employee extends ResizeComposite {
 
 	// TABLA DATOS CONTRATO
 	@UiField
-	HorizontalPanel horizontalPanel;
+	HTMLPanel horizontalPanel;
 	
 	@UiField
 	TableElement contractDataTable;
 	
 	@UiField
-	Button clear_employee;
+	Label document_type;
 	
 	@UiField
-	Label document_type;
+	HTMLPanel documentPanel;
 	
 	@UiField
 	SuggestBox document;
 	
-	@UiField
-	Label documentStatus;
-
 	@UiField
 	TableCellElement nationalityLabelCell;
 
@@ -109,10 +104,10 @@ public abstract class Employee extends ResizeComposite {
 	SuggestBox nationality;
 	
 	@UiField
-	SuggestBox security_social_num;
+	HTMLPanel ssNumberPanel;
 	
 	@UiField
-	Label ssNumberStatus;
+	SuggestBox security_social_num;
 	
 	@UiField
 	HTMLPanel namePanel;
@@ -176,13 +171,13 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	Label seniority_date_label;
+	
+	@UiField
+	HTMLPanel seniorityDatePanel;
 
 	@UiField
 	DateBoxEx seniority_date;
 	
-	@UiField
-	Label seniority_dateStatus;
-
 	@UiField
 	ListBox agreement;
 
@@ -264,18 +259,20 @@ public abstract class Employee extends ResizeComposite {
 	TextBox bic;
 	
 	@UiField
+	HTMLPanel accountPanel;
+	
+	@UiField
 	SuggestBox account;
 	
 	@UiField
-	Label accountStatus;
-	
-	@UiField
-	Label journeyDuration;
+	HTMLPanel journeyDuration;
 	
 	// ------------------------------------------------- Class variables
 	
 	private ContractType contractType;
 	private Municipalities municipalities;
+	
+	private AonToolbarSmallButton clearEmployee;
 
 	// ------------------------------------------------- Constructor
 
@@ -296,16 +293,19 @@ public abstract class Employee extends ResizeComposite {
 		
 		initializeView();
 		addReformatAccount();
+		
+		clearEmployee = new AonToolbarSmallButton("Limpiar empleado", AON.CSS.aonIconRefresh());
+		clearEmployee.addClickHandler(e -> {
+			onClearEmployeeClick();
+		});
+		horizontalPanel.clear();
+		horizontalPanel.add(clearEmployee);
+		horizontalPanel.add(document_type);	
 	}
 	
 	// ------------------------------------------------- UiHandlers
 	
 	// TABLA DATOS CONTRATO
-	
-	@UiHandler("clear_employee")
-	void onClearEmployeeClick(ClickEvent event) {
-		onClearEmployeeClick();
-	}
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(SelectionEvent<Suggestion> event) {
@@ -324,13 +324,15 @@ public abstract class Employee extends ResizeComposite {
 			this.document_type.setText(document_type);
 			
 			if(checkDocumentValidation(document_type, document))
-				addSuccessStyle(this.documentStatus);
+				addSuccessIconTB(documentPanel, this.document);
 			else
-				addWarningStyle(this.documentStatus);
+				addWarningIcon(documentPanel, this.document, "El documento de identidad es err\u00F3neo");
 				
 			showNationality(document_type);	
 			
 			onEmployeeDocumentChange(document, document_type);
+		} else {
+			removeWarningIconTB(documentPanel, this.document);
 		}	
 	}
 	
@@ -352,11 +354,13 @@ public abstract class Employee extends ResizeComposite {
 		String ssNum = this.security_social_num.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum)) {
 			if(checkSSNumValidation(ssNum))
-				addSuccessStyle(this.ssNumberStatus);
+				addSuccessIconTB(ssNumberPanel, this.security_social_num);
 			else
-				addWarningStyle(this.ssNumberStatus);
+				addWarningIcon(ssNumberPanel, this.security_social_num, "El numero es err\u00F3neo");
 			
 			onEmployeeSSNumChange(ssNum); 
+		} else {
+			removeWarningIconTB(ssNumberPanel, this.security_social_num);
 		}
 	}
 	
@@ -488,17 +492,17 @@ public abstract class Employee extends ResizeComposite {
 		Date seniorityDate = this.seniority_date.getValue();
 		
 		if(null == startDate)
-			addWarningDateStyle(this.seniority_dateStatus);
+			addInfoIcon(seniorityDatePanel, this.seniority_date, "La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
 		else if(null != seniorityDate) {
 			DateUtils.resetTime(startDate);
 			DateUtils.resetTime(seniorityDate);
 			
 			if(DateUtils.equals(startDate, seniorityDate))
-				this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
+				removeInfoIcon(seniorityDatePanel, this.seniority_date);
 			else
-				addWarningDateStyle(this.seniority_dateStatus);
+				addInfoIcon(seniorityDatePanel, this.seniority_date, "La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
 		} else
-			this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
+			removeInfoIcon(seniorityDatePanel, this.seniority_date);
 		
 		onContractSeniorityDateChange(seniorityDate);
 	}
@@ -567,11 +571,6 @@ public abstract class Employee extends ResizeComposite {
 	void onContractPartialityCoefChangeValue(ValueChangeEvent<Double> event) {
 		Double partialityCoef = this.partiality_coef.getValue();
 		onContractPartialityChange(partialityCoef);
-	}
-	
-	@UiHandler("journeyDuration")
-	void onContractJourneyDurationClick(ClickEvent event) {
-		onContractJourneyDurationClick();
 	}
 	
 	// TABLA DATOS EMPLEADO
@@ -691,9 +690,9 @@ public abstract class Employee extends ResizeComposite {
 		
 		if(account.length() > 0)
 			if(Iban.validateIBAN(account))
-				addSuccessStyle(this.accountStatus);
+				addSuccessIconTB(accountPanel, this.account);
 			else
-				addWarningStyle(this.accountStatus);
+				addWarningIcon(accountPanel, this.account, "IBAN no valido");
 		
 		String bankAlias = getBankAlias(account);
 		String bankSwift = getBankSwift(account);
@@ -787,7 +786,7 @@ public abstract class Employee extends ResizeComposite {
 		this.occupation.clear();
 		this.journeyType.clear();
 		this.partiality_coef.setValue(null);
-		this.journeyDuration.setText("");
+		this.journeyDuration.clear();
 
 		// TABLA DATOS EMPLEADO
 		
@@ -1031,11 +1030,11 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Show/hide clearEmployee
 
 	public void hideClearEmployee() {
-		clear_employee.getElement().getStyle().setDisplay(Display.NONE);
+		clearEmployee.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showClearEmployee() {
-		clear_employee.getElement().getStyle().clearDisplay();
+		clearEmployee.getElement().getStyle().clearDisplay();
 	}
 	
 	// ------------------------------------------------- Show/hide methods freelancer
@@ -1081,12 +1080,20 @@ public abstract class Employee extends ResizeComposite {
 	
 	public void showPartialTimeContract() {
 		showElementsPartialTimeContract();
-		journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-		journeyDuration.addStyleName(style.journeyDurationWarning());
-		journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-		journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-		journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		journeyDuration.clear();
+		AonToolbarSmallButton calendarBtn = new AonToolbarSmallButton("Abrir calendario", AON.CSS.aonIconEditCalendar());
+		Label message = new Label("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		journeyDuration.add(calendarBtn);
+		journeyDuration.add(message);
 		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
+		
+		calendarBtn.addClickHandler(e -> {
+			onContractJourneyDurationClick();
+		});
+		
+		message.addClickHandler(e -> {
+			onContractJourneyDurationClick();
+		});
 	}
 	
 	private void showElementsPartialTimeContract() {
@@ -1340,26 +1347,6 @@ public abstract class Employee extends ResizeComposite {
 	    return age;                   
 	}
 	
-	// ------------------------------------------------- Add success/warning style
-	
-	private void addSuccessStyle(Widget widget) {
-		widget.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-		widget.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-	}
-	
-	private void addWarningStyle(Widget widget) {
-		widget.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-		widget.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-	}
-	
-	private void addWarningDateStyle(Widget widget) {
-		widget.getElement().getStyle().clearDisplay();
-		widget.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
-		
-		widget.setStyleName("aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border");widget.getElement().getStyle().setMarginTop(3.00, Unit.PX);
-		widget.getElement().getStyle().setMarginTop(3.00, Unit.PX);
-	}
-	
 	// ------------------------------------------------- Save methods
 	
 	public boolean checkIfSaveEmployeeIsPossible() {
@@ -1473,9 +1460,40 @@ public abstract class Employee extends ResizeComposite {
 			return true;
 	}
 	
+	// ------------------------------------------------- journeyDuration.Methods
+	
+	public void createJourneyDurationWarning(){
+		journeyDuration.clear();
+		AonToolbarSmallButton calendarBtn = new AonToolbarSmallButton("Abrir calendario", AON.CSS.aonIconEditCalendar());
+		Label message = new Label("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		journeyDuration.add(calendarBtn);
+		journeyDuration.add(message);
+		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
+		
+		calendarBtn.addClickHandler(e -> {
+			onContractJourneyDurationClick();
+		});
+		
+		message.addClickHandler(e -> {
+			onContractJourneyDurationClick();
+		});
+	}
+	
+	public void createJourneyDurationInfo(String messageStr){
+		journeyDuration.clear();
+		Label message = new Label(messageStr);
+		journeyDuration.add(message);
+		
+		message.addClickHandler(e -> {
+			onContractJourneyDurationClick();
+		});
+	}
+	
 	// ------------------------------------------------- Add and remove styles
 	
 	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
+		panel.clear();
+		panel.add(widget);
 		message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
 		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
 		widget.addStyleName(style.warningTB());
@@ -1503,6 +1521,31 @@ public abstract class Employee extends ResizeComposite {
 		panel.add(widget);
 		widget.addStyleName("aon-inputText");
 		widget.getElement().getStyle().setWidth(97, Unit.PCT);
+		widget.removeStyleName(style.warningTB());
+	}
+	
+	private void addSuccessIconTB(HTMLPanel panel, Widget widget) {
+		panel.clear();
+		panel.add(widget);
+		panel.add(new AonToolbarSmallButton("", AON.CSS.aonIconAccept()));
+		widget.addStyleName(style.flexGrow());
+		widget.removeStyleName(style.warningTB());
+	}
+	
+	private void addInfoIcon(HTMLPanel panel, Widget widget, String message) {
+		panel.clear();
+		panel.add(widget);
+		message = AonStringUtils.isBlank(message) ? "Info" : message;
+		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconInfo()));
+		widget.addStyleName(style.flexGrow());
+	}
+	
+	private void removeInfoIcon(HTMLPanel panel, Widget widget) {
+		panel.clear();
+		panel.add(widget);
+		widget.addStyleName("rich-calendar-input aon-selectInputDate-inputClass");
+		widget.getElement().getStyle().setWidth(96, Unit.PCT);
+		widget.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		widget.removeStyleName(style.warningTB());
 	}
 

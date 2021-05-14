@@ -224,14 +224,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
 							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
 						}
-						employee.journeyDuration.setText(result);
-						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						
+						employee.createJourneyDurationInfo(result);
+		
 					}else {
-						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.setText(" ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-						employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+						employee.createJourneyDurationWarning();
 					}
 					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
 					employee.partiality_coef.setValue(partialityCoef);
@@ -545,13 +542,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		Integer contractTypeInt =  Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			if(employeeDialogObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
-				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-				employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+				employee.createJourneyDurationWarning();
 			} else {
-				employee.journeyDuration.setText(employeeDialogObject.getContractData().getContractJourneyDuration().getJourneyText());
+				employee.createJourneyDurationInfo(employeeDialogObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
 		}
 		

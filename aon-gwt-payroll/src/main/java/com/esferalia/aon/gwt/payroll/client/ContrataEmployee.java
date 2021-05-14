@@ -33,7 +33,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
@@ -218,14 +217,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
 							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
 						}
-						employee.journeyDuration.setText(result);
-						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						
+						employee.createJourneyDurationInfo(result);
+						
 					}else {
-						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.setText(" ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-						employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+						employee.createJourneyDurationWarning();
 					}
 					contrataEmployeeObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
 					employee.partiality_coef.setValue(partialityCoef);
@@ -923,13 +919,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			employee.showPartialTimeContract();
 			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
-				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-				employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-				employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+				employee.createJourneyDurationWarning();
 			} else {
-				employee.journeyDuration.setText(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
+				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
 		} else
 			employee.showElementsFullTimeContract();
