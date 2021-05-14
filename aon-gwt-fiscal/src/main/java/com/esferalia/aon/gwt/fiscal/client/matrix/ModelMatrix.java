@@ -363,7 +363,14 @@ public class ModelMatrix extends MainEntryPoint {
 							tab.getCellFormatter().setStyleName(row, modelCol, AON.CSS.aonBold());
 							tab.getCellFormatter().addStyleName(row, modelCol, AON.CSS.aonBorder());
 							tab.getCellFormatter().addStyleName(row, modelCol, AON.CSS.aonTextCenter());
-							tab.setWidget(row, modelCol, new Label( modelName ));
+							FiscalModel fm = new FiscalModel();
+							fm.setAdministration(admon);
+							FiscalModelType modelType = FiscalModelType.valueOf(modelName);
+							fm.setModel(modelType);
+							if (type == PeriodType.YEARLY) fm.setPeriod(Period.YEAR);
+							else if (type == PeriodType.QUARTERLY) fm.setPeriod(Period.T1);
+							else fm.setPeriod(Period.M01);
+							tab.setWidget(row, modelCol, new Label( FiscalModelUtils.getModelName(fm) ));
 
 							Label admonLabel = new Label();
 							if (admon == Administration.UNKNOWN) {
@@ -380,8 +387,6 @@ public class ModelMatrix extends MainEntryPoint {
 							tab.getCellFormatter().setStyleName(row, periodCol, AON.CSS.aonBorder());
 							tab.getCellFormatter().addStyleName(row, periodCol, AON.CSS.aonTextCenter());
 							tab.setWidget(row, periodCol, periodLabel);
-
-							FiscalModelType modelType = FiscalModelType.safeValueByName(modelName);
 							int colspan2 = 12 / (type.getArraySize());
 							for (int x = 0; x < type.getArraySize(); x++) {
 								int c = x + modelOffset;
@@ -411,7 +416,6 @@ public class ModelMatrix extends MainEntryPoint {
 									
 									@Override
 									public void onClick(ClickEvent event) {
-										LOGGER.info("Before add Model: [" + model.getModel() + "] ");
 										model.getModel().visit(new MatrixNewModelVisitor(aonData,model));
 									}
 								});
@@ -457,8 +461,6 @@ public class ModelMatrix extends MainEntryPoint {
 											focusPanel.addClickHandler( new ClickHandler() {
 												@Override
 												public void onClick(ClickEvent event) {
-													LOGGER.info("Before view Model: [" + model.getModel() + "] ");
-													FiscalModelType modelType = FiscalModelType.safeValueByName(model.getModel());
 													modelType.visit(new MatrixViewModelVisitor(aonData,model));
 												}
 											});
@@ -469,7 +471,6 @@ public class ModelMatrix extends MainEntryPoint {
 										focusPanel.addClickHandler( new ClickHandler() {
 											@Override
 											public void onClick(ClickEvent event) {
-												LOGGER.info("Before add Model: [" + model.getModel() + "] ");
 												FiscalModel fs = new FiscalModel();
 												fs.setModel(modelType);
 												fs.setAdministration(admon);
@@ -515,16 +516,10 @@ public class ModelMatrix extends MainEntryPoint {
 			String s = item.getSurname();
 			String name = AonStringUtils.join(new String[]{s,n}, AonStringUtils.isBlank(s)?"":", ");
 			name = AonStringUtils.abbreviate(AonStringUtils.join(new String[]{doc,name}, " "), 50);
-			FiscalModelType modelType = FiscalModelType.safeValueByName(item.getModel());
 			Administration admon = Administration.safeValueOf(item.getAdministration());
 			if (admon == null) admon = Administration.UNKNOWN;
-			LOGGER.info("Period ... " + (item.getPeriod()==null?"NULL":("NOT NULL" + item.getPeriod() )));
+			FiscalModelType modelType = FiscalModelType.valueOf(item.getModel());
 			Period period = Period.valueOf(item.getPeriod());
-			FiscalModel fs = new FiscalModel()
-					.setModel(modelType)
-					.setAdministration(admon)
-					.setPeriod(period);
-			String modelName = FiscalModelUtils.getModelName(fs);
 			PeriodType type = PeriodType.getPeriodType(period);
 			LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>> admonMap = domainMap.get(domainName);
 			if (admonMap == null) {
@@ -544,10 +539,10 @@ public class ModelMatrix extends MainEntryPoint {
 				periodMap.put(type,modelMap);	
 			}
 			
-			LinkedHashMap<String, LinkedList<JsFiscalMenuItem>> documentMap = modelMap.get(modelName);
+			LinkedHashMap<String, LinkedList<JsFiscalMenuItem>> documentMap = modelMap.get(modelType.toString());
 			if (documentMap == null) {
 				documentMap = new LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>();
-				modelMap.put(modelName,documentMap);	
+				modelMap.put(modelType.toString(),documentMap);	
 			}
 			
 			LinkedList<JsFiscalMenuItem> list = documentMap.get(name);

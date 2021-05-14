@@ -34,7 +34,7 @@ public enum FiscalMenuItemJSON {
 	MODEL{
 		@Override
 		public JSONObject to(IFiscalModel model, JSONObject json) {
-			return json.put(IJsonNames.MODEL, model.getModel().getName());
+			return json.put(IJsonNames.MODEL, model.getModel().toString());
 		}
 	},
 	YEAR{
