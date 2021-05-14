@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -28,13 +31,12 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SSBonusDraft extends CustomDialog {
-	
-	
+public class SSBonusDraft extends AonCustomDialog {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -74,10 +76,7 @@ public class SSBonusDraft extends CustomDialog {
 	//BUTTONS ACCEPT AND CANCEL
 	
 	@UiField
-	Button acceptButton;
-	
-	@UiField
-	Button cancelButton;
+	HTMLPanel buttonsPanel;
 	
 	@UiField
 	FormPanel idcFormPanel;
@@ -102,15 +101,18 @@ public class SSBonusDraft extends CustomDialog {
 	
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 
-	
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
+
 // ---------------------------------------------------------------- CONSTRUCTOR ----------------------------------------------------------
 	
 	public SSBonusDraft(Integer contractId) {
 		
-		setCaption("Bonificaciones...");
+		setCaption("Bonificaciones");
 		
 		setWidget(binder.createAndBindUi(this));
-				
+		
+		getButtonsPanel();
 		
 		this.ssBonuses = new ArrayList<>();
 		this.contractId = contractId;
@@ -147,6 +149,8 @@ public class SSBonusDraft extends CustomDialog {
 		
 		this.idcUserNameHidden.setValue(Wnd.getCurrentUser());
 		this.idcDomainNameHidden.setValue(Wnd.getCurrentDomainNameURL());
+		
+		acceptBtnDialog.setVisible(false);
 
 	}
 	
@@ -173,16 +177,6 @@ public class SSBonusDraft extends CustomDialog {
 		for(int itRow = 0; itRow < rows; itRow++){
 			this.listBonusesTable.getRowFormatter().removeStyleName(itRow, style.selected());
 		}
-	}
-
-	@UiHandler("cancelButton")
-	void onCancelButonClick(ClickEvent e ) {
-		hide();
-	}
-
-	@UiHandler("acceptButton")
-	void onAcceptButonClick(ClickEvent e ) {
-		
 	}
 
 	private void clearListBonuses() {
@@ -383,5 +377,41 @@ public class SSBonusDraft extends CustomDialog {
 		}
 	};
 
+	private void getButtonsPanel() {
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
 	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		
+	}
 }
