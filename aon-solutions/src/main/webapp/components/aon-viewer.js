@@ -89,7 +89,7 @@ export class AonViewer extends AonElement {
 		div.style.position = "absolute";
 		div.style.right = "2%";
 		div.style.top = "1%";
-		div.style.justifyContent = "space-between";
+		// div.style.justifyContent = "space-between";
 		div.style.height = "80%";
 		let mail = this.createElement(TAG.SPAN);
 		mail.innerHTML = `<aon-icon-button id="aonViewerButtonsDivEmail" icon="email" background="#f1f1f1"></aon-icon-button>`;

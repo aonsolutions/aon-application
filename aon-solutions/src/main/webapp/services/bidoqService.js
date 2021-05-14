@@ -1,14 +1,23 @@
 import { API_URL_BIDOQ } from '../environments/environments.js';
-import {getToken} from './request.js';
+import {getCompany}  from  './localStorageService.js';
 
 export const getTypeUserBidoq = (data) =>{
   let name = "Cliente";
   switch(data){
+    case 1:
+      name = "Super";
+    break;
     case 2:
       name = "Admin";
       break;
     case 3:
-      name= "Asesor";
+      name = "Asesor";
+      break;
+    case 4:
+      name = "Auxiliar";
+      break;
+    case 5:
+      name = "Comercial";
       break;
     case 6:
       name = "Cliente";
@@ -59,22 +68,25 @@ export const requestBidoq = (method, url, sendData, fn) => {
 export const getAccessBidoq = () => {
   const BIDOQ_URL_USER = 'https://mispapeles.es/api/aon/v1/index.php';
   const api_key = "K7>})(xQw~px_wgs#0=97..QGkBSxw*=.uatCfw[D.T{,fy.nrt?ok8jB@9}2}I";
-  const session_id = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJzY2hlbWFcIjpcImF5dWRhdC1hb25zb2x1dGlvbnMtbmV0XCIsXCJzY2hlbWFfZmlyc3RfZG9tYWluXCI6XCIwMDIyNDIwMzllLWF5dWRhdC5hb25zb2x1dGlvbnMubmV0XCIsXCJ1dWlkXCI6XCJFNkFGMjg1NEI2NjYxMUVBODMyMzA2QTBCREQ3MkE0NlwifSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjAwNzkzNDgyfQ.4O-z1Hldqz1WAmX7kcsBkRlb0zy64ucYXQIoLnDL7mA"; // : getToken()
-  const newParams = {
-    method: "get_user_login",
-    api_key,
-    session_id,
-  }
-  const sendData = new URLSearchParams(newParams).toString();
-  return new Promise( (resolve, reject) => {
-    requestBidoq('POST', BIDOQ_URL_USER, sendData, (result, error) => {
-      if(error) {
-        reject(error);
-      } else {
-        resolve(result);
-      }
+  const company = getCompany();
+  if(company && company.document){
+    const newParams = {
+      method: "get_company_login",
+      document: company.document,
+      api_key,
+    }
+    const sendData = new URLSearchParams(newParams).toString();
+    return new Promise( (resolve, reject) => {
+      requestBidoq('POST', BIDOQ_URL_USER, sendData, (result, error) => {
+        if(error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
     });
-  });
+  }
+  return null;
 }
 
 export const postBidoq = (data) => {
