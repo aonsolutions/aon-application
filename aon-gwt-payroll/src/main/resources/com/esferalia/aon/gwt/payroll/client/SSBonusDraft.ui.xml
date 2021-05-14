@@ -219,6 +219,12 @@
 			margin-left: 10px;
 			margin-right: 10px;
 		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin: 10px;
+		}
 
 	</ui:style>
 	
@@ -285,10 +291,7 @@
 	    	<a:ProgressPanel ui:field="progressPanel" styleName="{style.progress}" ></a:ProgressPanel>
 	    </div>
 		
-		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton" visible="false">Guardar</g:Button>
-		</div>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 		
 	</g:HTMLPanel>
 </ui:UiBinder> 
