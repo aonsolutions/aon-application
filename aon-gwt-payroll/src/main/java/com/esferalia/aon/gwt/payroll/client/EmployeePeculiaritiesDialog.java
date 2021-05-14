@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -16,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -41,7 +44,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeePeculiaritiesDialog extends CustomDialog {
+public class EmployeePeculiaritiesDialog extends AonCustomDialog {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -164,10 +167,7 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 	//BUTTONS ACCEPT AND CANCEL
 	
 	@UiField
-	Button acceptButton;
-	
-	@UiField
-	Button cancelButton;
+	HTMLPanel buttonsPanel;
 	
 	
 	//BEGIN OF CLASS
@@ -175,11 +175,16 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 	private Peculiarities peculiaritiesMap;
 	private Integer contractId;
 	private Date contractStartDate;
+	
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
 
 	public EmployeePeculiaritiesDialog(Integer contractId, Date contractStartDate) {
 		setCaption("Peculiaridades de cotizaci"+String.valueOf("\u00D3")+"n");
 		
 		setWidget(binder.createAndBindUi(this));
+		
+		getButtonsPanel();
 		
 		this.contractId = contractId;
 		this.contractStartDate = contractStartDate;
@@ -195,21 +200,6 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 		orclTRL.addAll(contractTRLSuggest);
 		orclTRL.setDefaultSuggestionsFromText(trlEntries);
 		this.trl.setAutoSelectEnabled(true);
-		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				onAccept();
-			}
-		});		
-		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
 		
 		trl.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
@@ -969,5 +959,44 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 			public void onSuccess(String result) {
 				hide();
 			}});	
+	}
+	
+	private void getButtonsPanel() {
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		hide();
+		onAccept();
 	}
 }
