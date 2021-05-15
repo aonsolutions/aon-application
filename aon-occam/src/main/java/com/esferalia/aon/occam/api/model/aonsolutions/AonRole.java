@@ -41,7 +41,8 @@ public enum AonRole  implements Serializable {
 	BETA,				// USUARIO CON ACCESO A FUNCIONALIDADES BETA
 	AON_AIO,			// ACCESO A AON AIO
 	AON_SMB,			// ACCESO A AON SMB
-	DEV					// USUARIO TIPO DESARROLLADOR.
+	DEV,					// USUARIO TIPO DESARROLLADOR.
+	SELFCONTA
 	;
 	
 	public Byte value(){

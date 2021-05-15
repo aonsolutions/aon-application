@@ -314,6 +314,10 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.BIDOQ) && (isAdmin() || hasRole(AonRole.BIDOQ));
 	}
 	
+	public Boolean isSelfconta() {
+		return hasApp(AonApp.SELFCONTA) && (isAdmin() || hasRole(AonRole.SELFCONTA));
+	}
+	
 	public Boolean isConfidential() {
 		return hasRole(AonRole.CONFIDENTIALITY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CONFIDENTIALITY);
 	}

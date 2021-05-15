@@ -383,11 +383,15 @@ export class DomainUserRoles {
   }
 
   isAon() {
-		return this.hasApp(App.AIO) && (this.isAdmin() || this.hasRole(Role.AON));
+		return this.hasAon() && (this.isAdmin() || this.hasRole(Role.AIO));
 	}
 
   isBidoq() {
 		return this.hasApp(App.BIDOQ) && (this.isAdmin() || this.hasRole(Role.BIDOQ));
+	}
+
+  isSelfconta() {
+		return this.hasApp(App.SELFCONTA) && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
   isConfidential() {

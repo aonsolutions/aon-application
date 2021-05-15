@@ -175,6 +175,14 @@ export const BIDOQ = {
   price: ' ', //'-'
 };
 
+export const SELFCONTA = {
+  app: 'selfconta',
+  title: 'Selfconta',
+  description: 'Selfconta.',
+  logo: '../assets/apps/selfconta.png',
+  price: ' ', //'-'
+};
+
 export const ALMA = {
   app: 'alma',
   title: 'Alma',
@@ -247,17 +255,17 @@ export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVO
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 
 export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger', 'invoice'];
-export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio'];
+export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio', 'bidoq', 'selfconta'];
 
 export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,
    TIMECONTROL, INVOICE, MESSENGER};
 export const AuxApps = {TOOLS};
-export const ClassicApps = {AON_SOLUTIONS, BIDOQ}
-export const Services = {OCR, CONVENIOS, BANK}
-export const OtherServices = {FORMACION, ACELERA, OUTSOURCING }
+export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA};
+export const Services = {OCR, CONVENIOS, BANK};
+export const OtherServices = {FORMACION, ACELERA, OUTSOURCING };
 
 export const AllApps = { ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL,
-   TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ};
+   TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ, SELFCONTA};
 
 export const getApp = (name) => {
   for(let key in Apps) {

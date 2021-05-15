@@ -122,18 +122,26 @@ export class AonDesktop extends AonElement {
 		}
 		let classicOptions = [];
 
-		if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
+		// if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
+		// 	classicOptions.push({
+		// 		name: 'aonSolutions',
+		// 		img: 'assets/apps/aon.png',
+		// 		fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+		// 	});
+		// }
+		// if(localStorage.getItem('aon_jsf')){
+		// 	classicOptions.push({
+		// 		name: 'aonGestion',
+		// 		img: 'assets/apps/aon.png',
+		// 		fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
+		// 	});
+		// }
+
+		if(this.getDur().isAon()){
 			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/apps/aon.png',
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
-			});
-		}
-		if(localStorage.getItem('aon_jsf')){
-			classicOptions.push({
-				name: 'aonGestion',
-				img: 'assets/apps/aon.png',
-				fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
 			});
 		}
 
@@ -151,6 +159,14 @@ export class AonDesktop extends AonElement {
 						}
 					});
 				}
+			});
+		}
+
+		if(this.getDur().isSelfconta()){
+			classicOptions.push({
+				name: 'Selfconta',
+				img: 'assets/apps/selfconta.png',
+				fn: () =>open('https://mispapeles.es/selfconta/')
 			});
 		}
 
