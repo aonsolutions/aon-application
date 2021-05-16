@@ -837,7 +837,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			this.clearElement(fileDiv);
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
-				? 'application/pdf' : this.getInvoice().file.type;
+				? 'application/pdf' : this.getInvoice().file.content_type;
 			viewer.file = !this.getInvoice().file && this.getInvoice().isEmitida()
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(this.getInvoice()))
 				: this.getInvoice().file.url;
