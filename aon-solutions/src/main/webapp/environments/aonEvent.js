@@ -8,6 +8,7 @@ export const DROP = 'drop';
 export const FOCUS = 'focus';
 export const KEYPRESS = 'keypress';
 export const KEYUP = 'keyup';
+export const AON_KEYUP = 'aon-keyup';
 export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';

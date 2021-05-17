@@ -11,6 +11,11 @@
   --materialBlue : #007bff;
   --materialBlack : #404040;
   --materialSoftBlack : #202020;
+
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
+  --sal: env(safe-area-inset-left);
 }
 
 body {
@@ -686,7 +691,7 @@ button:disabled, button[disabled]{
 }
 
 .aonCardTitleSection {
-  display: inline-flex; 
+  display: inline-flex;
   flex: 1 1 auto;
   align-items: center;
   white-space: nowrap;
@@ -1166,14 +1171,14 @@ button:disabled, button[disabled]{
 .materialScroll::-webkit-scrollbar-thumb
 {
     border-radius: 4px;
-    background-color: var(--aonLightGray);  
+    background-color: var(--aonLightGray);
 }
 
 .materialScroll{
-    /* 
-      Firefox have no support 
+    /*
+      Firefox have no support
       for this, so we hide it.
     */
-    scrollbar-width: none; 
+    scrollbar-width: none;
 
 }

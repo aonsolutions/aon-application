@@ -136,17 +136,25 @@ export class AonApplication extends AonElement {
 			<aon-toast id="${this.TOAST}"> </aon-toast>
 		`;
 
+
+
     let toolbar = this.getElement(this.TOOLBAR);
     toolbar.toogleSidenav(() => this.toogleSidenav());
 
     let sidenav = this.getElement(this.SIDENAV);
     sidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : "250px";
+    if(this.isMobile()  && this.isSab()) {
+      sidenav.style.height = 'calc(100vh - 172px)';
+    }
 
     let content = this.getElement(this.CONTENT);
     content.className =
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
         : "aonContent";
+    if(this.isMobile() && this.isSab()){
+      content.style.bottom = '69px';
+    }
 
     if (this.hasAttribute("drag_and_drop")) {
       content.addEventListener(EVENT.DRAGOVER, (event) => {
@@ -271,12 +279,12 @@ export class AonApplication extends AonElement {
       div.style.paddingBottom = "25px";
       div.style.borderBottom = "1px solid #ebebeb";
       sidenav.appendChild(div);
-  
+
       let sidenavTitle = this.createElement("div");
       sidenavTitle.className = "aonSidenavTitle";
       sidenavTitle.innerHTML = title;
       div.appendChild(sidenavTitle);
-  
+
       let content = this.createElement("div");
       content.style.paddingLeft = "26px";
       content.innerHTML = html;
@@ -506,7 +514,7 @@ export class AonApplication extends AonElement {
     span.id = this.id + "FloatSpan";
     span.style.position = "fixed";
     span.style.right = "20px";
-    span.style.bottom = "70px";
+    span.style.bottom = this.isSab() ? "80px" : "70px";
     span.innerHTML = `<aon-icon-button id="${
       this.id + action.id + "Button"
     }" icon="${action.icon}" title="${

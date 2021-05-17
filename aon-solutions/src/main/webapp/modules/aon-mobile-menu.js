@@ -74,7 +74,7 @@ export class AonMobileMenu extends AonElement {
       if(target.innerHeight < height){
         display = "none";
         bottom = "1px";
-      } 
+      }
       if(application && application.getContent())
         application.getContent().style.bottom = bottom;
       this.style.display = display;
@@ -93,6 +93,9 @@ export class AonMobileMenu extends AonElement {
     let div = this.createElement('div');
     div.id = id;
     div.className = 'aonMobileMenu';
+    if(this.isSab()) {
+      div.style.marginBottom = '10px'; 
+    }
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
     dialogMenu.id = this.id + 'dialogMenu';
@@ -130,7 +133,7 @@ export class AonMobileMenu extends AonElement {
         apps.push(this.getAppInfo(app));
       }
     });
-    
+
     apps.forEach((app, i) => {
       if(count >= 4 && apps.length > 4) {
         options.push(app);
@@ -198,7 +201,7 @@ export class AonMobileMenu extends AonElement {
         span.style.marginRight = n;
       }
       menu.appendChild(span);
-  
+
       let button = new AonIconButton();
       button.id = span.id + 'Button';
       if(app.icon) button.icon = app.icon;
