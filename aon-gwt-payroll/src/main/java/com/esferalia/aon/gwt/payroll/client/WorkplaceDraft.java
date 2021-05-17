@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -25,11 +24,7 @@ public class WorkplaceDraft extends Composite {
 		@Override
 		public void onWorkplaceDescriptionChange() {
 			String workplacedescription = workplaceDescription.getValue();
-			if(AonStringUtils.isBlank(workplacedescription)) {
-				AonMessageDialog.warning("Este campo es obligatorio");
-				workplaceDescription.setValue(workplaceDraftObject.getWorkplaceDescription());
-			} else
-				workplaceDraftObject.setWorkplaceDescription(workplacedescription);
+			workplaceDraftObject.setWorkplaceDescription(workplacedescription);
 		}
 
 		@Override

@@ -77,6 +77,14 @@
 			margin-top: 20px;
 		}
 		
+		.flexGrow{
+			flex-grow: 1;
+		}
+		
+		.warningTB{
+			border: 1px solid red;
+		}
+		
 	</ui:style>
 	
 	<g:VerticalPanel styleName="{style.container}">
@@ -84,11 +92,11 @@
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos Generales</g:Label>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
+		    		<g:HTMLPanel ui:field="workplaceDescriptionPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
 		    			<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel ui:field="workplaceAddressParentPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
 		    			<g:HTMLPanel ui:field="workplaceAddressPanel" styleName='{style.widthAll}'></g:HTMLPanel>
 					</g:HTMLPanel>
