@@ -92,6 +92,14 @@
 			margin-top: 20px;
 		}
 		
+		.flexGrow{
+			flex-grow: 1;
+		}
+		
+		.warningTB{
+			border: 1px solid red;
+		}
+		
 	</ui:style>
 
 	<g:VerticalPanel styleName="{style.container}">
@@ -99,7 +107,7 @@
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos empresa</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
+		    		<g:HTMLPanel ui:field="namePanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
 		    			<g:TextBox ui:field="enterpriseName" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
@@ -108,7 +116,7 @@
 		    			<g:TextBox ui:field="enterpriseAlias" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.requiredColor} {style.firstColumn}'>Documento</g:Label>
+		    			<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
 		    			<g:Label ui:field="documentType"></g:Label>
 		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
 						<g:Label ui:field="documentStatus"></g:Label>	

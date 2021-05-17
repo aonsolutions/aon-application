@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -49,9 +50,14 @@ public abstract class Enterprise extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String warningColor();
+		String warningTB();
+		String flexGrow();
 	}
 	
 	// TABLA DATOS EMPRESA
+	
+	@UiField
+	HTMLPanel namePanel;
 	
 	@UiField
 	TextBox enterpriseName;
@@ -146,7 +152,12 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	@UiHandler("enterpriseName")
 	void onEnterpriseNameChangeValue(ChangeEvent event) {
-		onEnterpriseNameChange();
+		if(AonStringUtils.isNotBlank(enterpriseName.getValue())) {
+			removeWarningIcon(namePanel, enterpriseName);
+			onEnterpriseNameChange();
+		} else {
+			addWarningIcon(namePanel, enterpriseName, null);
+		}
 	}
 	
 	@UiHandler("enterpriseAlias")
@@ -450,6 +461,22 @@ public abstract class Enterprise extends ResizeComposite {
 		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		
 		return label;
+	}
+	
+	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
+		if(panel.getWidgetCount() == 2) {
+			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
+			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
+			widget.addStyleName(style.warningTB());
+			widget.addStyleName(style.flexGrow());
+		}
+	}
+	
+	private void removeWarningIcon(HTMLPanel panel, Widget widget) {
+		if(panel.getWidgetCount() > 2)
+			panel.remove(panel.getWidgetCount() - 1);
+		
+		widget.removeStyleName(style.warningTB());
 	}
 
 }
