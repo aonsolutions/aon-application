@@ -439,10 +439,10 @@ public class ModelMatrix extends MainEntryPoint {
 									if (status != FiscalStatus.MISSING) {
 										mod.setStyleName(AON.CSS.aonClickable());
 										mod.addStyleName(AON.CSS.aonTextCenter());
-										if (status == FiscalStatus.FINISHED || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.SENT) {
-											mod.setText( AON.FMT.format(model.getResult()));
-											// mod.setStyleName(AonMathUtils.isGreatherThanZero(model.getResult()) ? AON.CSS.aonColorRed() : AON.CSS.aonColorBlue() );
-										}
+//										if (status == FiscalStatus.FINISHED || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.SENT) {
+//											mod.setText( AON.FMT.format(model.getResult()));
+//											// mod.setStyleName(AonMathUtils.isGreatherThanZero(model.getResult()) ? AON.CSS.aonColorRed() : AON.CSS.aonColorBlue() );
+//										}
 										if (status == FiscalStatus.FINISHED) {
 											focusPanel.addStyleName(AON.CSS.aonClickable());
 											focusPanel.setTitle("Seleccionar");

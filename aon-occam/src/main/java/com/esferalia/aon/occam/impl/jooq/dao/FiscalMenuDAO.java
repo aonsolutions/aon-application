@@ -3,8 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
-import java.util.LinkedList;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,14 +31,23 @@ public class FiscalMenuDAO {
 	public static JSONArray  getDomainsModels(AONContext ctx, int domainId, FiscalMatrixParams params) {
 		final JSONArray allModels = new JSONArray();
 		Domain domain = DomainDAO.getDomain(ctx, domainId);
-		if (domain.isParent()) {
-			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx, p-> p.getParentProperty().eq( domainId));
-			for (Domain d : domains) {
-				getDomainModels(ctx, d, allModels, params);
-			}
-		} else {
-			getDomainModels(ctx, domain, allModels, params);
-		}
+//		if (domain.isParent()) {
+//			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx, p-> p.getParentProperty().eq( domainId));
+			//******************
+			//******************
+//			Domain dom = domains.get(0);
+//			for (int i = 0; i < 99; i++) {
+//				domains.add(dom);
+//			}
+			//******************
+			//******************
+			
+//			for (Domain d : domains) {
+				getDomainModels(ctx, domain, allModels, params);
+//			}
+//		} else {
+//			getDomainModels(ctx, domain, allModels, params);
+//		}
 		return allModels;
 	}
 	
@@ -49,24 +56,48 @@ public class FiscalMenuDAO {
 			IFiscalModelTypeVisitor visitor = new IFiscalModelTypeVisitor() {
 				@Override 
 				public void visitM111() {
-					Mod111DAO.getMod111s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
+						.map(record -> {
+							FiscalModel fm = FiscalModelDAO.map(record);
+							fm.setDomainName(record.get(DOMAIN.DESCRIPTION));
+							return fm;
+						})
+						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+//					Mod111DAO.getMod111s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM115() {
-					Mod115DAO.getMod115s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+//					Mod115DAO.getMod115s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM123() {
-					Mod123DAO.getMod123s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+//					Mod123DAO.getMod123s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM130() {
-					Mod130DAO.getMod130s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+//					Mod130DAO.getMod130s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM131() {
-					Mod131DAO.getMod131s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+//					Mod131DAO.getMod131s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
+				@Override 
+				public void visitM390HF() {
+//					Mod390HFDAO.getMod390HFs(ctx, domain.getId(), p -> getFilter(p, domain, params))
+//						.peek(mod -> mod.setModel( FiscalModelType.M390_HF))
+//						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+				}
+				@Override 
+				public void visitM202() {
+//					Mod202DAO.getMod202s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+				}
+				@Override 
+				public void visitM303() {
+//					Mod303DAO.getMod303s(ctx, domain.getId(), p -> getFilter(p, domain, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
+				}
+				// *************
+				// *************
+				// *************
 				@Override 
 				public void visitM347() {
 					if (AonStringUtils.isBlank( params.getModel()) || FiscalModelType.M347.getValue().equals(params.getModel())) {
@@ -93,12 +124,6 @@ public class FiscalMenuDAO {
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 							.forEach(mod -> allModels.put( serialize(mod,domain) ) );
 					}
-				}
-				@Override 
-				public void visitM390HF() {
-					Mod390HFDAO.getMod390HFs(ctx, domain.getId(), p -> getFilter(p, params))
-						.peek(mod -> mod.setModel( FiscalModelType.M390_HF))
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 				@Override 
 				public void visitM180() {
@@ -144,14 +169,6 @@ public class FiscalMenuDAO {
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
 						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
 					}
-				}
-				@Override 
-				public void visitM202() {
-					Mod202DAO.getMod202s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
-				}
-				@Override 
-				public void visitM303() {
-					Mod303DAO.getMod303s(ctx, domain.getId(), p -> getFilter(p, params)).forEach(mod -> allModels.put( serialize(mod,domain) ) );
 				}
 			};
 			for (FiscalModelType type : FiscalModelType.values()) {
@@ -202,12 +219,18 @@ public class FiscalMenuDAO {
 
 	private static JSONObject serialize(IFiscalModel model, Domain domain) {
 		JSONObject m = FiscalMenuItemJSON.toJSON(model) ;
-		m.put(IJsonNames.DOMAIN_NAME,  domain.getDescription());
+//		m.put(IJsonNames.DOMAIN_NAME,  domain.getDescription());
 		return m;
 	}
 
-	public static Filter getFilter(FiscalModelProperties p, FiscalMatrixParams params) {
+	public static Filter getFilter(FiscalModelProperties p, Domain domain, FiscalMatrixParams params) {
 		Filter prop = p.getYearProperty().eq(params.getYear());
+		if (domain.isParent()) {
+			prop = prop.and( p.getParentDomainProperty().eq(domain.getId()));
+		} else {
+			prop = prop.and( p.getDomainProperty().eq(domain.getId()));
+		}
+		
 		if (params.getAdministration() != null) {
 			prop = prop.and( p.getAdministrationProperty().eq(params.getAdministration().getValue()));
 		}
