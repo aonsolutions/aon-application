@@ -76,6 +76,7 @@ export const CHECK_CIRCLE = 'check_circle';
 export const CHECK_CIRCLE_OUTLINE = 'check_circle_outline';
 export const CHROME_READER_MODE = 'chrome_reader_mode';
 export const CLASS = 'class';
+export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
 export const CODE = 'code';
 export const COMMENT = 'comment';
@@ -96,6 +97,8 @@ export const DONE = 'done';
 
 export const EDIT = 'edit';
 export const EXTENSION = 'extension';
+export const EXPAND_LESS = 'expand_less';
+export const EXPAND_MORE = 'expand_more';
 
 // ----- F
 
@@ -108,8 +111,6 @@ export const FORMAT_ITALIC = "format_italic";
 export const FORMAT_BOLD = "format_bold";
 export const FORMAT_LIST_BULLETED = "format_list_bulleted";
 
-//
-export const INSERT_DRIVE_FILE = "insert_drive_file";
 
 // ----- G
 
@@ -118,6 +119,8 @@ export const INSERT_DRIVE_FILE = "insert_drive_file";
 // ----- I
 
 export const INBOX = 'inbox';
+export const INFO = 'info';
+export const INSERT_DRIVE_FILE = "insert_drive_file";
 
 // ----- K
 

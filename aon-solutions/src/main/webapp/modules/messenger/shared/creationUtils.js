@@ -1,4 +1,4 @@
-import { newComponent } from "../../services/utils.js";
+import { newComponent } from "../../../services/utils.js";
 
 /**
  * Create a row with space between elements inside 

@@ -121,7 +121,7 @@ export class AonTextArea extends AonElement {
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				events : {click : fn}
 			});
-			waitEl("#" + this.LEFT).then(el => el.appendChild(icon.element));
+			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
 		}
 	}
 
@@ -140,7 +140,7 @@ export class AonTextArea extends AonElement {
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
 				events : {click : fn}
 			});
-			waitEl("#" + this.RIGHT).then(el => el.appendChild(icon.element));
+			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
 		}
 	}
 
@@ -157,17 +157,17 @@ export class AonTextArea extends AonElement {
 		super();
 		this.left = "left";
 		this.right = "right";
-		this.textarea = "textarea";
-		this.toolbar = "toolbar";
 	}
 
 	connectedCallback () {
+		this.textarea = "textarea" + this.id;
+		this.toolbar = "toolbar" + this.id;
 		this.build();
 	}
 
 	build() {
 		const bar = newComponent({
-			type: this.TOOLBAR,
+			type: "toolbar",
 			id : this.TOOLBAR,
 			classes: [
 				'bar',
@@ -275,7 +275,7 @@ export class AonTextArea extends AonElement {
 	generateTextArea(){
 		let area = newComponent({
 			type: "textarea",
-			classes : [CSS.NO_FOCUS, CSS.MATERIAL_SCROLL],
+			classes : [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL],
 			id: this.TEXTAREA,
 			text : this.dataset.value,
 			styles : {

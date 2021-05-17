@@ -1,14 +1,13 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
+import { getDomainUserRoles } from "../../services/companyService.js";
 import { getMessenger } from "../../services/messengerService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
+import { SigninSidenav } from "../signin//signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS } from "./MessengerEnums.js";
-import { SigninSidenav } from  "../signin//signinEnums.js";
-import { AonMessengerChat } from "./aon-messeger-chat.js";
-import { getDomainUserRoles } from "../../services/companyService.js";
-import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;

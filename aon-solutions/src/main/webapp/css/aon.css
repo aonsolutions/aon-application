@@ -5,8 +5,12 @@
   --aonDarkGray : #5F6368;
   --aonBlack : #212529;
   --aonWhite : #ffffff;
+
+  --onlineGreen : #5cb85c;
   --grayson : #787878;
   --materialBlue : #007bff;
+  --materialBlack : #404040;
+  --materialSoftBlack : #202020;
 }
 
 body {
@@ -1161,6 +1165,15 @@ button:disabled, button[disabled]{
 
 .materialScroll::-webkit-scrollbar-thumb
 {
-    border-radius: 10px;
-    background-color: #c5c5c5;
+    border-radius: 4px;
+    background-color: var(--aonLightGray);  
+}
+
+.materialScroll{
+    /* 
+      Firefox have no support 
+      for this, so we hide it.
+    */
+    scrollbar-width: none; 
+
 }
