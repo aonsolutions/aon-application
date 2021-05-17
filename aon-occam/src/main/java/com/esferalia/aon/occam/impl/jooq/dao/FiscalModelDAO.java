@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
@@ -66,6 +67,7 @@ public class FiscalModelDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.DOMAIN);}
+		@Override public Property<Integer> getParentDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);}
 		@Override public Property<Integer> getYearProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.YEAR);}
 		@Override public Property<String> getModelProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.MODEL);}
 		@Override public Property<Byte> getPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(FS_MODEL.PERIOD);}
@@ -219,6 +221,22 @@ public class FiscalModelDAO {
 				.where(FS_MODEL_PROPERTIES.getConditions(filter))
 				.and(FS_MODEL.DOMAIN.eq(domain))
 				.and(FS_MODEL.MODEL.eq(model.getValue()))
+				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+				.fetch()
+				.stream();
+	}
+
+	public static Stream<Record> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.leftOuterJoin(DOMAIN).on(FS_MODEL.DOMAIN.equal(DOMAIN.ID))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.where(FS_MODEL_PROPERTIES.getConditions(filter))
 				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
 				.fetch()
 				.stream();
@@ -475,6 +493,8 @@ public class FiscalModelDAO {
 		} else if (type == FiscalModelType.M131) {
 			return map131(new Mod131(), record);
 		} else if (type == FiscalModelType.M303) {
+			return map303(new Mod303(), record);
+		} else if (type == FiscalModelType.M390_HF) {
 			return map303(new Mod303(), record);
 		} else {
 			return mapGeneric(new FiscalModel(), record);
