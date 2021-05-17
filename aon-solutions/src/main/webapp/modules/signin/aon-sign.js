@@ -4,7 +4,7 @@ import {getPosition} from '../../services/maps.js';
 import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { EVENT } from '../../environments/environments.js';
+import { CONSTANT, EVENT } from '../../environments/environments.js';
 
 export class AonSign extends AonElement {
 
@@ -16,11 +16,11 @@ export class AonSign extends AonElement {
   TIME;
 
   get id() {
-		return this.getAttribute('id');
+		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
-		this.setAttribute('id', id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
   constructor () {

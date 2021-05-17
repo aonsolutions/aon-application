@@ -8,11 +8,10 @@ import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { EVENT, TAG } from "../../../environments/environments.js";
-import { MSG, CONSTANT } from '../../../environments/environments.js';
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
-import "../../../components/aon-filter.js";
+import { EVENT, TAG,  MSG, CONSTANT } from "../../../environments/environments.js";
+import { AonFilter } from "../../../components/aon-filter.js";
+import { AonMobileList } from "../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../components/aon-table.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
@@ -31,11 +30,11 @@ export class AonTax extends AonElement {
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -65,26 +64,24 @@ export class AonTax extends AonElement {
     this.buildToolbar();
     await this.buildFilter();
     await this.getTable();
-    await this.getBanks();
+    this.getBanks();
   }
 
   paintView() {
-    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
-    }
-
-    this.innerHTML = innerHTML;
+    let aonFilter = new AonFilter();
+    aonFilter.id = this.id+"Filter";
+    aonFilter.title = MSG.FILTERS;
+    this.appendChild(aonFilter);
+    
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
-      filterEl.openFilter()
-    );
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter() );
   }
 
   async buildFilter() {
@@ -137,7 +134,7 @@ export class AonTax extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          aonTable.addRow(res, (el) => this.openDialog(res));
+          aonTable.addRow(res, () => this.openDialog(res));
         });
       } catch (e) {
         console.log(e);
@@ -157,7 +154,7 @@ export class AonTax extends AonElement {
             title: `${res.model}`,
             subtitle: `${res.periodText} - ${res.year}`,
           };
-          aonTable.addLi(options, idx, (el) => this.openDialog(res));
+          aonTable.addLi(options, idx, () => this.openDialog(res));
         });
       } catch (e) {
         console.log(e);

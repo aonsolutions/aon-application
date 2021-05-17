@@ -17,23 +17,33 @@ export class AonAltaDirecta extends AonElement {
     _contrato;
     ACTION;
     static get observedAttributes() {
-        return ['data'];
+        return [CONSTANT.DATA];
     }
 
     get id() {
-        return this.getAttribute('id');
+        return this.getAttribute(CONSTANT.ID);
     }
 
     set id(id) {
-        this.setAttribute('id', id);
+        this.setAttribute(CONSTANT.ID, id);
     }
 
     get data() {
-        return JSON.parse(this.getAttribute('data'));
+        return JSON.parse(this.getAttribute(CONSTANT.DATA));
     }
 
     set data(value) {
-        this.setAttribute('data', JSON.stringify(value));
+        this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (CONSTANT.DATA == name && newValue) {
+            const toolbarEl = this.getElement(this.TOOLBAR);
+            if(toolbarEl){
+                toolbarEl.title = 'Modificar contrato';
+            }
+            this.edit(this.data);
+        }
     }
 
     constructor() {
@@ -43,21 +53,9 @@ export class AonAltaDirecta extends AonElement {
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
-        this.applicationElToolbar = this.getElement(this.applicationEl.TOOLBAR);
-        this.applicationElToolbar.setAttribute('option', 'Comunicar contrato');
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if ("data" == name && newValue) {
-            const textEdit =  'Modificar contrato';
-            this.applicationElToolbar.setAttribute('option', textEdit);
-            const toolbarEl = this.getElement(this.TOOLBAR);
-            if(toolbarEl){
-                toolbarEl.title = textEdit;
-            }
-            this.edit(this.data);
-        }
-    }
+
 
     connectedCallback() {
         this.build();

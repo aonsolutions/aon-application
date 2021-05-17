@@ -5,41 +5,41 @@ import { getPosition } from "../../../../services/maps.js";
 import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
+import * as ACTION from '../../../actions.js';
+import { CONSTANT, MSG } from "../../../../environments/environments.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
 
-import * as ACTION from '../../../actions.js';
-import { CONSTANT, MSG } from "../../../../environments/environments.js";
 
 export class AonLocationAdd extends AonElement {
   NAME;
   static get observedAttributes() {
-    return ["data", "add"];
+    return [CONSTANT.DATA, CONSTANT.ADD];
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   get add() {
-    return this.getAttribute("add") == "true";
+    return this.getAttribute(CONSTANT.ADD) == CONSTANT.TRUE;
   }
 
   set add(add) {
-    this.setAttribute("add", add);
+    this.setAttribute(CONSTANT.ADD, add);
   }
 
   get data() {
-    return JSON.parse(this.getAttribute("data"));
+    return JSON.parse(this.getAttribute(CONSTANT.DATA));
   }
 
   set data(value) {
-    this.setAttribute("data", JSON.stringify(value));
+    this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
   }
 
 
@@ -56,10 +56,10 @@ export class AonLocationAdd extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("data" == name && newValue) {
+    if (CONSTANT.DATA == name && newValue) {
       this.setFormValues();
     }
-    if ("add" == name && newValue) {
+    if (CONSTANT.ADD == name && newValue) {
       this.paintViewMap(undefined);
     }
   }

@@ -8,27 +8,28 @@ import {
   getIdcCcc,
 } from "../../../../services/service.js";
 import { PAYROLL_VIEWS } from "../../PayrollEnums.js";
-import "../../../../components/aon-table.js";
-import "../../../../components/aon-mobile-list.js";
 import { formatDateOrigin } from "../../../../services/utils.js";
+import { CONSTANT } from "../../../../environments/environments.js";
+import { AonMobileList } from "../../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../../components/aon-table.js";
 
 
 export class AonCtaList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return this.getAttribute("filter");
+    return this.getAttribute(CONSTANT.FILTER);
   }
 
   set filter(filter) {
-    this.setAttribute("filter", filter);
+    this.setAttribute(CONSTANT.FILTER, filter);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.build();
+    if (CONSTANT.FILTER === name) this.build();
   }
 
   constructor() {
@@ -51,10 +52,10 @@ export class AonCtaList extends AonElement {
   }
   
   paintView() {
-    this.applicationEl.removeToolbarOptions();
-    if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
+    this.applicationEl.removeToolbarOptions();        
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   async getTableDesk() {

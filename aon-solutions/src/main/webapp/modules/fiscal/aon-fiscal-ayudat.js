@@ -1,5 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-import '../../components/aon-application.js';
+import { MSG } from '../../environments/environments.js';
+import { AonApplication } from '../../components/aon-application.js';
 
 class AonFiscalAyudat extends AonElement {
 	AON_FISCAL_AYUDAT;
@@ -12,15 +13,12 @@ class AonFiscalAyudat extends AonElement {
 
 	connectedCallback () {
 		this.AON_FISCAL_AYUDAT = "aonFiscalAyudat";
-		this.innerHTML = `
-			<aon-application id="${this.id}" title="FISCAL"></aon-application>
-		`;
-    this.build();
+		this.createApplication(this.AON_FISCAL_AYUDAT, MSG.FISCAL, new AonApplication());
+		this.applicationEl = this.getApplication();
+    	this.build();
  	}
 
  	build() {
-		let aonFiscal = this.getElement(this.AON_FISCAL_AYUDAT);
-
 		let yearOptions = [
 			{
 				name: '2020',
@@ -28,6 +26,7 @@ class AonFiscalAyudat extends AonElement {
 				fn: () => this.loadIndex(2020, this.quarter)
 			}
 		];
+
 		let quarterOptions = [
 			{
 				name: '1T',
@@ -50,17 +49,15 @@ class AonFiscalAyudat extends AonElement {
 				fn: () => this.loadIndex(this.year, 4)
 			},
 		];
-		aonFiscal.addSidenavOptions('AÑO', yearOptions);
-		aonFiscal.addSidenavOptions('TRIMESTRE', quarterOptions);
+		this.applicationEl.addSidenavOptions('AÑO', yearOptions);
+		this.applicationEl.addSidenavOptions('TRIMESTRE', quarterOptions);
 		this.loadIndex();
 	}
 
 	loadIndex(year = this.year, quarter = this.quarter) {
 		this.year = year;
 		this.quarter = quarter;
-
-		let aonFiscal = this.getElement(this.AON_FISCAL_AYUDAT);
-		aonFiscal.setContentHTML('<iframe src="../../aon-suite/public/fiscal/index.html?year=' + this.year + '&quarter=' + this.quarter + '" style="width:100%;height:100%;border:none;"></iframe>');
+		this.applicationEl.setContentHTML('<iframe src="../../aon-suite/public/fiscal/index.html?year=' + this.year + '&quarter=' + this.quarter + '" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-fiscal-ayudat', AonFiscalAyudat);

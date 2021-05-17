@@ -1,35 +1,35 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation } from "../../../../services/service.js";
 import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
-import "../../../../components/aon-table.js";
-import "../../../../components/aon-mobile-list.js";
-import { MSG } from "../../../../environments/environments.js";
+import { CONSTANT, MSG } from "../../../../environments/environments.js";
+import { AonMobileList } from "../../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../../components/aon-table.js";
 
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if (CONSTANT.FILTER === name) this.getTable();
   }
 
   constructor() {
@@ -52,13 +52,9 @@ export class AonLocationList extends AonElement {
   }
 
   paintView() {
-    let innerHTML = "";
-    if (this.isMobile()) {
-      innerHTML = innerHTML + `<aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
-    }
-    this.innerHTML = innerHTML;
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   build() {
@@ -71,9 +67,7 @@ export class AonLocationList extends AonElement {
     this.applicationEl.removeToolbarOptions();
 
     if (this.isMobile()) {
-        this.applicationEl.addFloatOption(SigninSidenav.ADD,
-          () => this.add()
-        );
+        this.applicationEl.addFloatOption(SigninSidenav.ADD,() => this.add());
     } else {
       this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
     }

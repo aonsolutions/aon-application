@@ -13,45 +13,46 @@ import {
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
-import "../../../../components/aon-table.js";
-import "../../../../components/aon-mobile-list.js";
-import "../../../../components/aon-filter.js";
-import { EVENT, MSG } from "../../../../environments/environments.js";
-
+import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
+import { AonFilter } from "../../../../components/aon-filter.js";
+import { AonToolbar } from "../../../../components/aon-toolbar.js";
+import { AonMobileList } from "../../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../../components/aon-table.js";
+
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter", "data"];
+    return [CONSTANT.FILTER, CONSTANT.DATA];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get data() {
-    return JSON.parse(this.getAttribute("data"));
+    return JSON.parse(this.getAttribute(CONSTANT.DATA));
   }
 
   set data(value) {
-    if (value) this.setAttribute("data", JSON.stringify(value));
+    if (value) this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) {
+    if (CONSTANT.FILTER === name) {
       this.initialize();
       this.getTable();
     }
@@ -92,17 +93,21 @@ export class AonEventDetailList extends AonElement {
   }
 
   paintView() {
-    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    const aonToolbar = this.isMobile()
-      ? `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`
-      : "";
+    let aonFilter = new AonFilter();
+    aonFilter.id = this.id+"Filter";
+    aonFilter.title = MSG.FILTERS;
+    this.appendChild(aonFilter);
+    
     if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + ` <aon-table id='${this.TABLE_ID}' />`;
-    }
+      let aonToolbar =  new AonToolbar();
+      aonToolbar.id = this.TOOLBAR;
+      aonToolbar.type = ToolbarType.SECONDARY;
+      this.appendChild(aonToolbar);
+    } 
 
-    this.innerHTML = aonToolbar + innerHTML;
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   buildToolbarDesk() {

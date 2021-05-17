@@ -3,36 +3,35 @@ import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from ".
 import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
-import "../../../components/aon-filter.js";
-import { EVENT, MSG } from "../../../environments/environments.js";
-// import { AonSwitch } from "../../../components/aon-switch.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { AonMobileList } from "../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../components/aon-table.js";
+import { AonFilter } from "../../../components/aon-filter.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if (CONSTANT.FILTER === name) this.getTable();
   }
 
   constructor() {
@@ -61,21 +60,21 @@ export class AonPresenceList extends AonElement {
   }
 
   paintView() {
-    let innerHTML =  `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
-    }
+    let aonFilter = new AonFilter();
+    aonFilter.id = this.id+"Filter";
+    aonFilter.title = MSG.FILTERS;
+    this.appendChild(aonFilter);
 
-    this.innerHTML = innerHTML;
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
-    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, (e) => this.getTimeControlExcel()
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter());
+    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel()
    );
   }
 
@@ -122,8 +121,6 @@ export class AonPresenceList extends AonElement {
     this.applicationEl.stopLoader();
     this.applicationParenEl.changeFilter();
   }
-
-
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);

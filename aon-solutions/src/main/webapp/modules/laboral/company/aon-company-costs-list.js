@@ -19,36 +19,34 @@ import {
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
 import { pieChar, addLegend} from "./pieChar.js";
-import { EVENT, MSG } from "../../../environments/environments.js";
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
-import "../../../components/aon-filter.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { AonFilter } from "../../../components/aon-filter.js";
 
 
 export class AonCompanyCostsList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get id() {
-    return this.getAttribute("id");
+    return this.getAttribute(CONSTANT.ID);
   }
 
   set id(id) {
-    this.setAttribute("id", id);
+    this.setAttribute(CONSTANT.ID, id);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if (CONSTANT.FILTER === name) this.getTable();
   }
 
   constructor() {
@@ -76,19 +74,18 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   paintView() {
-    this.innerHTML =  /*html*/`<aon-filter id="${this.id}Filter" title="${MSG.FILTERS}"></aon-filter>`;
+    let aonFilter = new AonFilter();
+    aonFilter.id = this.id+"Filter";
+    aonFilter.title = MSG.FILTERS;
+    this.appendChild(aonFilter);
   }
 
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
-      filterEl.openFilter()
-    );
-    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, (e) =>
-      this.getCompanyCostsExcel()
-    );
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () =>filterEl.openFilter());
+    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
   }
 
   async buildFilter() {
