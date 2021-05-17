@@ -111,27 +111,27 @@ export class AonHeader extends AonElement {
 			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
-		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
+		let aonHeaderWeb = this.getElement('aonHeaderWeb');
 
 		this.buildLogo();
 
 		if(!this.isMobile()) {
-			let aonHeaderHomeButton = document.getElementById(this.BASE_ID + 'HomeButton');
+			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
 				rootPanel(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = document.getElementById('aonDesktop');
+				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			});
 
-			let aonHeaderHelpButton = document.getElementById(this.BASE_ID + 'HelpButton');
+			let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
 				const top  = aonHeaderHelpButton.getBoundingClientRect().top;
 				const left = aonHeaderHelpButton.getBoundingClientRect().left;
 				getDomainUserRoles({}).then(r => {
 					this.dur = new DomainUserRoles(r);
-					let d = document.getElementById('aonHeaderDialogHelpOption');
+					let d = this.getElement('aonHeaderDialogHelpOption');
 					let options = [{
 						name: 'Solicitudes',
 						icon: 'assignment',
@@ -160,28 +160,28 @@ export class AonHeader extends AonElement {
 			});
 		}
 
-		let aonHeaderCompanyListButton = document.getElementById(this.BASE_ID + 'CompanyListButton');
+		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
 			if(!this.isMobile()) {
-				let aonHeaderSearch = document.getElementById(this.BASE_ID + 'Search');
+				let aonHeaderSearch = this.getElement(this.BASE_ID + 'Search');
 				aonHeaderSearch.style.display = 'block';
 
-				let aonHeaderHome = document.getElementById(this.BASE_ID + 'Home');
+				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
 				aonHeaderHome.style.display = 'none';
 
-				let aonHeaderCompany = document.getElementById(this.BASE_ID + 'Company');
+				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
 
-				let aonShowMenu = document.getElementById('aonShowMenu');
+				let aonShowMenu = this.getElement('aonShowMenu');
 				aonShowMenu.style.display = 'none';
 
-				let aonMenu = document.getElementById('aonMenu');
+				let aonMenu = this.getElement('aonMenu');
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
 				aonMenu.close();
 			}
 
-			let aonHeaderCompanyList = document.getElementById(this.BASE_ID + 'CompanyList');
+			let aonHeaderCompanyList = this.getElement(this.BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'none';
 
 			this.removeAttribute('company');
@@ -198,14 +198,14 @@ export class AonHeader extends AonElement {
 				this.timeControlStatus(r);
 			});;
 		}
-		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
+		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
 			if(this.activeTimecontrol) {
 				getTimeControl().then(r => {
 					this.timeControlStatus(r);
 					const top  = aonHeaderUserButton.getBoundingClientRect().top;
 					const left = aonHeaderUserButton.getBoundingClientRect().left;
-					let d = document.getElementById('aonHeaderDialogUserOption');
+					let d = this.getElement('aonHeaderDialogUserOption');
 
 					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
 					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
@@ -231,7 +231,7 @@ export class AonHeader extends AonElement {
 				} else {
 					const top  = aonHeaderUserButton.getBoundingClientRect().top;
 					const left = aonHeaderUserButton.getBoundingClientRect().left;
-					let d = document.getElementById('aonHeaderDialogUserOption');
+					let d = this.getElement('aonHeaderDialogUserOption');
 
 					let options = [{
 							name: 'Configuración',
@@ -250,13 +250,13 @@ export class AonHeader extends AonElement {
 
 	timeControlStatus(signin) {
 		this.activeTimecontrol = true;
-		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		let aonUserConnected = this.getElement('aonHeaderUserConnected');
 		if(!aonUserConnected) {
-			aonUserConnected = document.createElement('div');
+			aonUserConnected = this.createElement('div');
 			aonUserConnected.id = this.BASE_ID + 'UserConnected';
 			aonUserConnected.className = 'aonConnected';
 
-			let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+			let aonHeaderUserButtonIconButton = this.getElement('aonHeaderUserButtonIconButton');
 			aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
 		}
 
@@ -286,7 +286,7 @@ export class AonHeader extends AonElement {
 	}
 
 	buildLogo() {
-		let aonLogo = document.getElementById('aonLogo');
+		let aonLogo = this.getElement('aonLogo');
 
 		if(window.location.href.includes('ayudat')){
 			aonLogo.src = '../assets/ayudat-logo2.png';
@@ -300,7 +300,7 @@ export class AonHeader extends AonElement {
 				rootPanel(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = document.getElementById('aonDesktop');
+				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {
 				rootPanel('<aon-parent id="aonParent"></aon-parent>');
@@ -311,7 +311,7 @@ export class AonHeader extends AonElement {
 
 	aonConfiguration() {
 		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
-		let aonConfiguration = document.getElementById('aon-configuration');
+		let aonConfiguration = this.getElement('aon-configuration');
 		if(this.getAttribute('company')){
 			aonConfiguration.setAttribute('company', this.getAttribute('company'));
 		}

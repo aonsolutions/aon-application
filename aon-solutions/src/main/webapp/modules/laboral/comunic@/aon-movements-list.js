@@ -3,29 +3,29 @@ import { disabledForm, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
-import { EVENT } from "../../../environments/environments.js";
-
+import { CONSTANT, EVENT } from "../../../environments/environments.js";
+import { SigninSidenav } from "../../signin/signinEnums.js";
+import { AonMobileList } from "../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../components/aon-table.js";
 
 
 export class AonMovementsList extends AonElement {
   TABLE_ID;
   searchFilter;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILLED];
   }
 
   get filter() {
-    return this.getAttribute("filter");
+    return this.getAttribute(CONSTANT.FILLED);
   }
 
   set filter(filter) {
-    this.setAttribute("filter", filter);
+    this.setAttribute(CONSTANT.FILLED, filter);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.build();
+    if (CONSTANT.FILLED === name) this.build();
   }
 
   constructor() {
@@ -55,28 +55,20 @@ export class AonMovementsList extends AonElement {
   }
 
   paintView() {
-    if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   buildToobar() {
     this.applicationEl.removeToolbarOptions();
     if (this.isMobile()) {
-        let floatButton = this.getElement(`${this.applicationEl.id}FloatSpan`);
-        if (!floatButton) {
-            this.applicationEl.addFloatOption({
-                id: 'AddAlta',
-                name: 'addalta',
-                icon: 'add'
-            }, () =>   this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA)); 
-        }
+      this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA) );
     } else {
-        this.applicationEl.addToolbarOption('Add', 'add', () =>  this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
+      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
     }
     this.applicationEl.addSearchOption();
     this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
-    this.getElement(this.applicationEl.TOOLBAR).setAttribute('option', 'Movimientos');
   }
 
   async getTable(){
@@ -90,16 +82,19 @@ export class AonMovementsList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Apellidos y nombre", "string", "name", "45%");
+      aonTable.addColumn("Apellidos y nombre", "string", "name", "35%");
       aonTable.addColumn("DNI/NIE", "string", "dni", "15%");
-      aonTable.addColumn("Movimiento", "string", "status", "25%");
-      aonTable.addColumn("Fecha", "date", "fecha", "15%");
+      aonTable.addColumn("Movimiento", "string", "status", "10%");
+      aonTable.addColumn("Cuenta", "string", "ctaCtiCompleta", "10%");
+      aonTable.addColumn("Fecha", "date", "fecha", "10%");
       try {
         const resp = await this.getData();
-        aonTable.removeRows();
-        resp.map((res) => {
-          aonTable.addRow(res, (el) => this.aonMovement(el, res));
-        });
+        if(resp){
+          aonTable.removeRows();
+          resp.map((res) => {
+            aonTable.addRow(res, (el) => this.aonMovement(el, res));
+          });
+        }
       } catch (e) {
         console.log(e);
       }
@@ -112,20 +107,21 @@ export class AonMovementsList extends AonElement {
       aonTable.createAonDialog();
       try {
         const resp = await this.getData();
-        aonTable.removeAllLi();
-        resp.map((res, idx) => {
-          // let icon = res.situation === "AL" ? 'trending_up' : 'trending_down';
-          aonTable.addLi(
-            {
-              aonIcon: "aon_seg_social",
-              title: `${res.name}`,
-              subtitle: `${res.status} ${res.fecha}`,
-              option: this.applicationParentEl.getOptions(res),
-            },
-            idx,
-            (el) => this.aonMovement(el, res)
-          );
-        });
+        if(resp){
+          aonTable.removeAllLi();
+          resp.map((res, idx) => {
+            aonTable.addLi(
+              {
+                aonIcon: "aon_seg_social",
+                title: `${res.name}`,
+                subtitle: `${res.status} ${res.fecha}`,
+                option: this.applicationParentEl.getOptions(res),
+              },
+              idx,
+              (el) => this.aonMovement(el, res)
+            );
+          });
+        }
       } catch (e) {
         console.log(e);
       }
@@ -154,7 +150,7 @@ export class AonMovementsList extends AonElement {
     try {
       const movements = this.applicationParentEl._movements;
       if(this.searchFilter && movements){
-        data = movements.filter(({name, ipf})=> this.includeSearch(name) ||this.includeSearch(ipf));
+        data = movements.filter(({name, ipf, ctaCtiCompleta})=> this.includeSearch(name) || this.includeSearch(ipf) || this.includeSearch(ctaCtiCompleta));
       } else {
         const resp = movements || await getMovements(this.getFilter());
         data = resp
@@ -177,12 +173,14 @@ export class AonMovementsList extends AonElement {
             tipo_mov = `${tipo_mov} Consolidada`;
           }
           const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
+          const ctaCtiCompleta = res.regime+"-"+res.ctaCti;
           return {
             ...res,
             dni,
             fecha,
             status,
             prev,
+            ctaCtiCompleta,
           };
         });
         this.applicationParentEl._movements = data;
@@ -200,10 +198,9 @@ export class AonMovementsList extends AonElement {
     return data;
   }
 
-  getFilter = () => JSON.parse(this.getAttribute("filter"));
+  getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
 
-  setFilter = (filter) => this.setAttribute("filter", JSON.stringify(filter));
-
+  setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
 
   search(detail){
     this.searchFilter = detail

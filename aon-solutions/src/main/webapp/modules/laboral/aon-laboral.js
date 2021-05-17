@@ -5,14 +5,13 @@ import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
-import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
+import { PayrollOptions, PAYROLL_VIEWS, CONTRACT_OPTIONS } from "./PayrollEnums.js";
 import { AonContractList } from "./payroll/aon-contract-list.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
 import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
-import { CONTRACT_OPTIONS } from "./PayrollEnums.js";
 import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 

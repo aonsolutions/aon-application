@@ -6,25 +6,25 @@ import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { EVENT, MSG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import * as ACTION from '../../actions.js';
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
-import "../../../components/aon-filter.js";
+import { AonFilter } from "../../../components/aon-filter.js";
+import { AonMobileList } from "../../../components/aon-mobile-list.js";
+import { AonTable } from "../../../components/aon-table.js";
 
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return ["filter"];
+    return [CONSTANT.FILTER];
   }
 
   get filter() {
-    return JSON.parse(this.getAttribute("filter"));
+    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
   }
 
   set filter(filter) {
-    this.setAttribute("filter", JSON.stringify(filter));
+    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
   }
 
   get id() {
@@ -36,7 +36,7 @@ export class AonPayrollList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if (CONSTANT.FILTER === name) this.getTable();
   }
 
   constructor() {
@@ -67,14 +67,14 @@ export class AonPayrollList extends AonElement {
   }
 
   paintView() {
-    let innerHTML =  `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
-    }
-
-    this.innerHTML = innerHTML;
+    let aonFilter = new AonFilter();
+    aonFilter.id = this.id+"Filter";
+    aonFilter.title = MSG.FILTERS;
+    this.appendChild(aonFilter);
+    
+    let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
 
   buildToolbar() {
