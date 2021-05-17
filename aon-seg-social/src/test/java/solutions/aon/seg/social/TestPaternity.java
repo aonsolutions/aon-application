@@ -56,7 +56,7 @@ public class TestPaternity {
 			Date startDate= calendar.getTime();
 			
 			calendar = Calendar.getInstance();
-			calendar.add(Calendar.YEAR, 2);
+			calendar.add(Calendar.YEAR, 10);
 			
 			Date endDate= calendar.getTime();
 			
