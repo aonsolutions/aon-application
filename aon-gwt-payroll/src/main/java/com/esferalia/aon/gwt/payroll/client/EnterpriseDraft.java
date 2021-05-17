@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
@@ -33,12 +32,6 @@ public class EnterpriseDraft extends Composite {
 		@Override
 		public void onEnterpriseNameChange() {
 			String value = this.enterpriseName.getValue();
-			
-			if(AonStringUtils.isBlank(value)) {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules obligatoriamente.");
-			}
-			
 			enterpriseDraftObject.setName(value);
 		}
 
