@@ -25,9 +25,9 @@ export const dateCustomDayHour = (d) => {
   const now = new Date();
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
     let day = null;
-    if(date.getDay() === now.getDay()){
+    if(date.getDate() === now.getDate()){
       day = "hoy";
-    } else if(date.getDay() === now.addDay(-1).getDay()){
+    } else if(date.getDate() === now.addDay(-1).getDate()){
       day = "ayer";
     }
     if(day) return firstLetters(day)+", "+ setTime(date);

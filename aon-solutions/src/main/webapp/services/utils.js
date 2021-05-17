@@ -165,9 +165,9 @@ export const dayStr = (date) => {
   const now = new Date();
   let day = DAYS[date.getDay()];
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
-    if(date.getDay() === now.getDay()){
+    if(date.getDate() === now.getDate()){
       day = "hoy";
-    } else if(date.getDay() === now.addDay(-1).getDay()){
+    } else if(date.getDate() === now.addDay(-1).getDate()){
       day = "ayer";
     }
   }
