@@ -7,9 +7,14 @@ import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js'
 export class AonRegistry extends AonElement {
 
   OPTIONS;
+  OPTIONS_UL;
+  OPTIONS_LI;
   DOCUMENT;
   NAME;
   ADDRESS;
+
+  options;
+  selected;
 
   types;
 
@@ -48,10 +53,13 @@ export class AonRegistry extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonRegistry';
-    this.OPTIONS = this.id + 'Options'
+    this.OPTIONS = this.id + 'Options';
+    this.OPTIONS_UL = this.OPTIONS + 'Ul';
+    this.OPTIONS_LI = this.OPTIONS + 'Li';
     this.DOCUMENT = this.id + 'Document';
     this.NAME = this.id + 'Name';
     this.ADDRESS= this.id + 'Address';
+    this.selected = -1;
   }
 
   build() {
@@ -79,16 +87,42 @@ export class AonRegistry extends AonElement {
       // });
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    doc.addEventListener(EVENT.KEYUP, () => {
-      console.log(doc.value);
-      if(doc.value.length > 2) {
-        let data = { types: this.types, document: doc.value};
-				getRegistries(data).then(r => {
-					this.buildOptions(r.map((rs) => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
-				});
-			} else {
-				this.closeOptions();
-			}
+    doc.addEventListener(EVENT.KEYUP, (e) => {
+      if(e.key || e.keyCode) {
+        if (e.keyCode == '38' || e.key == 'ArrowUp') {
+          // up arrow
+         let li = this.getElement(this.OPTIONS_LI + this.selected);
+         if(li) li.style.backgroundColor = 'transparent';
+         if(this.selected > -1){
+           this.selected = this.selected - 1;
+           let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+           if(li2) li2.style.backgroundColor = '#f1f1f1';
+         }
+       }
+       else if (e.keyCode == '40' || e.key == 'ArrowDown') {
+         // down arrow
+         let li = this.getElement(this.OPTIONS_LI + this.selected);
+         if(li) li.style.backgroundColor = 'transparent';
+         this.selected = this.selected + 1;
+          let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+          if(li2) li2.style.backgroundColor = '#f1f1f1';
+       } else if (e.keyCode == '13' || e.key == 'Enter') {
+        // enter
+        this.closeOptions();
+        this.setRegistry(this.options[this.selected].registry);
+        this.dispatchEvent(new Event(EVENT.SELECT));
+       } else {
+          console.log(doc.value);
+          if(doc.value.length > 2) {
+           let data = { types: this.types, document: doc.value};
+			  	  getRegistries(data).then(r => {
+			  	  	this.buildOptions(r.map((rs) => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
+			  	  });
+			   } else {
+			  	  this.closeOptions();
+			   }
+        }
+      }
     });
     span1.appendChild(doc);
     doc.value = this.registry.document;
@@ -105,15 +139,41 @@ export class AonRegistry extends AonElement {
       this.registry.name = name.value;
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    name.addEventListener(EVENT.KEYUP, () => {
-      if(name.value.length > 2) {
-        console.log(this.types);
-        let data = { types: this.types, name: name.value};
-				getRegistries(data).then(r => {
-					this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
-				}).catch(e => alert(e));
-      } else {
+    name.addEventListener(EVENT.KEYUP, (e) => {
+      if(e.key || e.keyCode) {
+        if (e.keyCode == '38' || e.key == 'ArrowUp') {
+          // up arrow
+         let li = this.getElement(this.OPTIONS_LI + this.selected);
+         if(li) li.style.backgroundColor = 'transparent';
+         if(this.selected > -1){
+           this.selected = this.selected - 1;
+           let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+           if(li2) li2.style.backgroundColor = '#f1f1f1';
+         }
+       }
+       else if (e.keyCode == '40' || e.key == 'ArrowDown') {
+         // down arrow
+         let li = this.getElement(this.OPTIONS_LI + this.selected);
+         if(li) li.style.backgroundColor = 'transparent';
+         this.selected = this.selected + 1;
+          let li2 = this.getElement(this.OPTIONS_LI + this.selected);
+          if(li2) li2.style.backgroundColor = '#f1f1f1';
+       } else if (e.keyCode == '13' || e.key == 'Enter') {
+        // enter
         this.closeOptions();
+        this.setRegistry(this.options[this.selected].registry);
+        this.dispatchEvent(new Event(EVENT.SELECT));
+       } else {
+         if(name.value.length > 2) {
+          console.log(this.types);
+           let data = { types: this.types, name: name.value};
+			  	getRegistries(data).then(r => {
+			  		this.buildOptions(r.map(rs => {return {name: rs.document + ' - ' + rs.name, value: rs.document, registry: rs};}));
+			  	}).catch(e => alert(e));
+        } else {
+          this.closeOptions();
+         }
+        } 
       }
     });
     span2.appendChild(name);
@@ -141,14 +201,18 @@ export class AonRegistry extends AonElement {
 
 	buildOptions(options) {
     this.clearElementById(this.OPTIONS);
+    this.options = options;
+    this.selected = -1;
     if(options && options.length > 0){
       let div = this.getElement(this.OPTIONS);
       div.classList.add('is-visible');
       let ul = this.createElement('ul');
+      ul.id = this.OPTIONS_UL;
       ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
       ul.setAttribute('for', this.getAttribute('id') + 'Icon');
       for (let i = 0; i < options.length; i++) {
         let li = this.createElement('li');
+        li.id = this.OPTIONS_LI + i;
         li.className = CSS.AON_INPUT_LIST_OPTIONS_ITEM;
         li.innerHTML = options[i].name;
         li.addEventListener('click', (e) => {

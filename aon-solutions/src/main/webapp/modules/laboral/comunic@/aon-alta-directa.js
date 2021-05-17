@@ -71,7 +71,7 @@ export class AonAltaDirecta extends AonElement {
 
     paintView() {
         const toolbar = /*html*/`<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
-        const form = 
+        const form =
         /*html*/`
         <div>
             <form id="${this.id}Form" action="#" onsubmit="return false;">
@@ -429,7 +429,7 @@ export class AonAltaDirecta extends AonElement {
 
     suggestionDni() {
         const searchSuggestion = this.getElement(`${this.id}Dni`);
-        searchSuggestion.addEventListener(EVENT.KEYUP, async ({ target: { value } }) => {
+        searchSuggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
             const dni = value.toString().toUpperCase();
             if (dni.length > 2) {
                 const resp = await getPersonas(dni);

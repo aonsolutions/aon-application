@@ -4,7 +4,7 @@ import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
- 
+
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
 import '../../components/aon-date.js';
@@ -49,7 +49,7 @@ export class AonNewInvoice extends AonElement {
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	   }
-  
+
 	set id(id) {
 	   this.setAttribute(CONSTANT.ID, id);
 	}
@@ -93,14 +93,14 @@ export class AonNewInvoice extends AonElement {
 		this.FILE = this.id + 'File';
 		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
 
-		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap(); 
+		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
 		this.INVESTMENT = CONSTANT.AON_INVOICE + CONSTANT.INVESTMENT.initCap();
 		this.RECTIFIED = CONSTANT.AON_INVOICE + CONSTANT.RECTIFIED.initCap();
 		this.NUMBER = CONSTANT.AON_INVOICE + CONSTANT.NUMBER.initCap();
 		this.REFERENCE = CONSTANT.AON_INVOICE + CONSTANT.REFERENCE.initCap();
 		this.DATE = CONSTANT.AON_INVOICE + CONSTANT.DATE.initCap();
-		this.TOTAL = CONSTANT.AON_INVOICE + CONSTANT.TOTAL.initCap(); 
+		this.TOTAL = CONSTANT.AON_INVOICE + CONSTANT.TOTAL.initCap();
 		this.REGISTRY = CONSTANT.AON_INVOICE + CONSTANT.REGISTRY.initCap();
 		this.CATEGORY = CONSTANT.AON_INVOICE + CONSTANT.CATEGORY.initCap();
 		this.PAYMETHOD = CONSTANT.AON_INVOICE + CONSTANT.PAYMETHOD.initCap();
@@ -112,8 +112,8 @@ export class AonNewInvoice extends AonElement {
 		this.TAX = CONSTANT.AON_INVOICE_TAX;
 		this.TAX_TABLE = this.TAX + CONSTANT.TABLE.initCap();
 		this.TAX_TABLE2 = this.TAX_TABLE + '2';
-		
-		this.TRANSACTION_TYPE = CONSTANT.AON_INVOICE + CONSTANT.TRANSACTION_TYPE.initCap(); 
+
+		this.TRANSACTION_TYPE = CONSTANT.AON_INVOICE + CONSTANT.TRANSACTION_TYPE.initCap();
 		this.SURCHARGE = CONSTANT.AON_INVOICE + CONSTANT.SURCHARGE.initCap();
 		this.WITHHOLDING = CONSTANT.AON_INVOICE + CONSTANT.WITHHOLDING.initCap();
 		this.WITHHOLDING_FARMER = CONSTANT.AON_INVOICE + CONSTANT.WITHHOLDING_FARMER.initCap();
@@ -124,7 +124,7 @@ export class AonNewInvoice extends AonElement {
 		this.TAX_QUOTA = this.TAX  + CONSTANT.QUOTA.initCap();
 		this.TAX_DELETE = this.TAX  + CONSTANT.DELETE.initCap();
 		this.TAX_ADD = this.TAX  + CONSTANT.ADD.initCap();
-		
+
 		// ----- DETAIL
 
 		this.DETAIL = CONSTANT.AON_INVOICE_DETAIL;
@@ -185,13 +185,13 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	setFocus(focusId) {
-		this.focusId = focusId; 
+		this.focusId = focusId;
 	}
 
 	focus() {
 		console.log(this.focusId);
 		if(this.focusId)
-			this.getElement(this.focusId).focus();	
+			this.getElement(this.focusId).focus();
 	}
 
 	buildToolbar() {
@@ -213,7 +213,7 @@ export class AonNewInvoice extends AonElement {
 
 			const top  = rect.top + y;
 			const left = rect.left + x;
-			
+
 			let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 			let moreActions = [];
 			if(this.getInvoice().isInbox() ){
@@ -223,8 +223,8 @@ export class AonNewInvoice extends AonElement {
 			}
 			let rectify = ACTION.RECTIFY_INVOICE;
 			rectify.fn = () => this.rectifyInvoice();
-			moreActions.push(rectify); 
-			
+			moreActions.push(rectify);
+
 			let duplicate = ACTION.DUPLICATE_INVOICE;
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
@@ -232,8 +232,8 @@ export class AonNewInvoice extends AonElement {
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
 		});
-		
-		
+
+
 
 		if((this.getInvoice().isInbox() || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()) {
 			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
@@ -338,7 +338,7 @@ export class AonNewInvoice extends AonElement {
 			let button  = this.getElement(card.TITLE_SECTION2 + MSG.OPTIONS + 'Button');
 
 			// ----- SERVICE
-			
+
 			let service = new AonSwitch();
 			service.id = this.SERVICE;
 			service.title = MSG.SERVICE;
@@ -350,7 +350,7 @@ export class AonNewInvoice extends AonElement {
 			});
 
 			// ----- BIENES INVERSION
-			
+
 			let investment = new AonSwitch();
 			investment.id = this.INVESTMENT;
 			investment.title = MSG.INVESTMENT;
@@ -363,7 +363,7 @@ export class AonNewInvoice extends AonElement {
 
 
 			// ----- RECTIFICATIVA
-			
+
 			let rectified = new AonSwitch();
 			rectified.id = this.RECTIFIED;
 			rectified.title = MSG.RECTIFIED;
@@ -373,7 +373,7 @@ export class AonNewInvoice extends AonElement {
 				this.invoice.setRectified(rectified.checked);
 			});
 			rectified.checked = this.invoice.isRectified();
-			 
+
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
@@ -406,14 +406,14 @@ export class AonNewInvoice extends AonElement {
 			number.id = this.NUMBER;
 			number.description = MSG.NUMBER;
 			number.value = this.invoice.number;
-			
+
 			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
-			number.disabled = CONSTANT.TRUE;	
+			number.disabled = CONSTANT.TRUE;
 		} else {
 
 			// ----- REFERENCE
-			
+
 			let reference = new AonInput();
 			reference.id = this.REFERENCE;
 			reference.description = MSG.REFERENCE;
@@ -454,7 +454,7 @@ export class AonNewInvoice extends AonElement {
 		});
 		table.addCell(total, this.invoice.isEmitida() ? '1' : '2');
 		total.readonly = this.invoice.isReadonly()
-			|| this.invoice.taxes.length > 1 
+			|| this.invoice.taxes.length > 1
 			|| this.invoice.details.length > 0;
 		total.value = this.invoice.total;
 
@@ -516,7 +516,7 @@ export class AonNewInvoice extends AonElement {
 		if(this.invoice.finances.length === 1) {
 			paymethod.value = this.invoice.finances[0].paymethod;
 		}
-	}	
+	}
 
 	buildTaxCard(parent) {
 		let card = new AonCard();
@@ -564,7 +564,7 @@ export class AonNewInvoice extends AonElement {
 			surcharge.setDisabled(true);
 		}
 		surcharge.checked = this.invoice.isSurcharge();
-		
+
 
 		// ----- WITHHOLDING FARMER
 
@@ -586,7 +586,7 @@ export class AonNewInvoice extends AonElement {
 		farmer.checked = this.invoice.isWithholdingFarmer();
 
 		// ----- TAXES
-		
+
 		let taxesTable = new AonBasicTable();
 		taxesTable.id = this.TAX_TABLE2;
 		card.addContent(taxesTable);
@@ -597,7 +597,7 @@ export class AonNewInvoice extends AonElement {
 
 		for(let i = 0; i < this.invoice.taxes.length; i++) {
 			let tax = this.invoice.taxes[i];
-			if(TaxType.IVA === tax.tax) 
+			if(TaxType.IVA === tax.tax)
 				this.printTax(taxesTable, tax, i);
 		}
 
@@ -611,8 +611,8 @@ export class AonNewInvoice extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
-		
-		
+
+
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
 
@@ -620,7 +620,7 @@ export class AonNewInvoice extends AonElement {
 			addButton.id = this.TAX_ADD;
 			addButton.title = MSG.ADD_TAX;
 			addButton.icon = MATERIAL_ICONS.ADD;
-			
+
 			addButton.addEventListener('click', () => {
 				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
 				this.invoice.addTax();
@@ -632,7 +632,7 @@ export class AonNewInvoice extends AonElement {
 				addButton.setDisabled(true);
 			}
 		}
-		
+
 		// ----- WITHHOLDING
 
 		let irpf = new AonSwitch();
@@ -644,7 +644,7 @@ export class AonNewInvoice extends AonElement {
 		irpf.style.marginLeft = '10px';
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholding(irpf.checked); 
+			this.invoice.setWithholding(irpf.checked);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -683,10 +683,10 @@ export class AonNewInvoice extends AonElement {
 		});
 		taxesTable.addCell(percentage);
 		percentage.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
-		percentage.value = tax.percentage;		
-	
+		percentage.value = tax.percentage;
+
 		// ----- TAX BASE
-		
+
 		let base = new AonNumber();
 		base.id = this.TAX_BASE + i;
 		base.description = MSG.BASE;
@@ -703,7 +703,7 @@ export class AonNewInvoice extends AonElement {
 		base.value = tax.base;
 
 		// ----- TAX QUOTA
-		
+
 		let quota = new AonNumber();
 		quota.id = this.TAX_QUOTA + i;
 		quota.description = MSG.QUOTA;
@@ -751,7 +751,7 @@ export class AonNewInvoice extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
-		
+
 		if(!this.invoice.isReadonly()) {
 			let addButton = new AonIconButton();
 			addButton.id = this.DETAIL_ADD;
@@ -771,11 +771,11 @@ export class AonNewInvoice extends AonElement {
 		table.addRow(); // ----- ROW i
 
 		// ----- DETAIL CONCEPT | DESCRIPTION | PRODUCT
-		
+
 		let description = new AonSuggestion();
 		description.id = this.DETAIL_DESCRIPTION + i;
 		description.title = MSG.CONCEPT;
-		description.addEventListener(EVENT.KEYUP, () => {
+		description.addEventListener(EVENT.AON_KEYUP, (e) => {
 			if(description.value.length > 2) {
 				let data = { value: description.value};
 				getItems(data).then(r => {
@@ -784,17 +784,17 @@ export class AonNewInvoice extends AonElement {
 						value: r.id,
 						item: r};}));
 				}).catch(e => this.showError(e));
-			  } 
+			  }
 		});
 
 		description.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.details[i].description = description.value;
 			this.setFocus(this.DETAIL_QUANTITY + i);
 		});
-		
+
 		description.addEventListener(EVENT.SELECT,(e) => {
 			console.log(e.detail);
-			detail.description = e.detail.name; 
+			detail.description = e.detail.name;
 			detail.item = e.detail.item.id;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
@@ -806,7 +806,7 @@ export class AonNewInvoice extends AonElement {
 		td.style.width = '50%';
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
-		
+
 		// ----- DETAIL QUANTITY
 
 		let quantity = new AonNumber();
@@ -844,7 +844,7 @@ export class AonNewInvoice extends AonElement {
 		price.value = detail.price;
 
 		// ----- DETAIL DISCOUNT
-		
+
 		let discount = new AonNumber();
 		discount.id = this.DETAIL_DISCOUNT + i;
 		discount.description = '%Dto'//MSG.DISCOUNT;
@@ -862,7 +862,7 @@ export class AonNewInvoice extends AonElement {
 		discount.value = detail.discount;
 
 		// ----- DETAIL AMOUNT
-		
+
 		let amount = new AonNumber();
 		amount.id = this.DETAIL_AMOUNT + i;
 		amount.description = MSG.AMOUNT;
@@ -871,9 +871,9 @@ export class AonNewInvoice extends AonElement {
 		amount.readonly = CONSTANT.TRUE;
 		amount.value = detail.amount;
 		table.addCell(amount);
-		
+
 		// ----- DETAIL VAT
-	
+
 		let vat = new AonSelect();
 		vat.id = this.DETAIL_VAT + i;
 		vat.title = '%IVA';
@@ -895,7 +895,7 @@ export class AonNewInvoice extends AonElement {
 		}
 		detail.percentage = detail.percentage || detail.vat;
 		if(detail.percentage) vat.value = detail.percentage;
-		
+
 		// ----- DETAIL OPTIONS
 
 		let detailOptions = new AonIconButton();
@@ -908,7 +908,7 @@ export class AonNewInvoice extends AonElement {
 		table.addCell(detailOptions);
 
 		// ----- DETAIL DELETE
-		
+
 		if(!this.invoice.isReadonly()) {
 			let detailDelete = new AonIconButton();
 			detailDelete.id = this.DETAIL_DELETE + i;
@@ -931,7 +931,7 @@ export class AonNewInvoice extends AonElement {
 		div.style.margin = '15px';
 
 		// ----- WITHHOLDING
-			
+
 		// let withholding = new AonSwitch();
 		// withholding.id = this.DETAIL_WITHHOLDING + i;
 		// withholding.title = MSG.WITHHOLDING;
@@ -945,7 +945,7 @@ export class AonNewInvoice extends AonElement {
 		// });
 
 		// ----- PREPAYMENT | SUPLIDO
-		
+
 		let prepayment = new AonSwitch();
 		prepayment.id = this.DETAIL_PREPAYMENT + i;
 		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
@@ -978,7 +978,7 @@ export class AonNewInvoice extends AonElement {
 			category.value = detail.category || this.invoice.getCategory();
 		});
 
-		// ----- BIEN AFECTO 
+		// ----- BIEN AFECTO
 		// TODO
 		let bienAfecto = new AonSelect();
 		bienAfecto.id = 'aonInvoiceDetailBienAfecto';
@@ -996,7 +996,7 @@ export class AonNewInvoice extends AonElement {
 		// 	category.options = JSON.stringify(accs);
 		// 	category.value = detail.category || this.invoice.getCategory();
 		// });
-			
+
 		const top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 		dialog.setContent(div, top, left);
@@ -1020,7 +1020,7 @@ export class AonNewInvoice extends AonElement {
 
 		let div = this.createElement(TAG.DIV);
 		card.addContent(div);
-		
+
 		if(!this.invoice.isReadonly()) {
 			let addButton = new AonIconButton();
 			addButton.id = this.FINANCE_ADD;
@@ -1038,7 +1038,7 @@ export class AonNewInvoice extends AonElement {
 
 	printFinance(table, finance, i) {
 		table.addRow(); // ----- ROW i
-		
+
 		// ----- FINANCE DUE DATE
 
 		let date = new AonDate();
@@ -1053,7 +1053,7 @@ export class AonNewInvoice extends AonElement {
 		});
 		table.addCell(date);
 		date.value = finance.due_date;
-		
+
 		// ----- FINANCE PAYMETHOD
 
 		let paymethod = new AonSelect();
@@ -1070,15 +1070,15 @@ export class AonNewInvoice extends AonElement {
 		});
 		table.addCell(paymethod);
 		paymethod.value = finance.paymethod;
-	
+
 		// ----- FINANCE BANK ACCOUNT | RBANK
-		
+
 		let bankAccount = new AonSuggestion();
 		bankAccount.id = this.FINANCE_BANK_ACCOUNT + i;
 		bankAccount.title = 'Cuenta Bancaria'; //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
 
-		bankAccount.addEventListener(EVENT.KEYUP, () => {
+		bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
 
 		});
 
@@ -1087,17 +1087,17 @@ export class AonNewInvoice extends AonElement {
 			finance.bank_account = bankAccount.value;
 			this.invoice.setFinance(finance, i);
 		});
-		
+
 		// bankAccount.addEventListener(EVENT.SELECT,() => {
 		// 	this.setFocus(this.FINANCE_AMOUNT + i);
 		// })
-		
+
 		table.addCell(bankAccount);
 		finance.bank_account = finance.bank_account || finance.iban;
 		bankAccount.value = finance.bank_account;
 
 		// ----- FINANCE AMOUNT
-		
+
 		let amount = new AonNumber();
 		amount.id = this.FINANCE_AMOUNT + i;
 		amount.description = MSG.AMOUNT;
@@ -1114,7 +1114,7 @@ export class AonNewInvoice extends AonElement {
 		amount.value = finance.amount;
 
 		// ----- FINANCE DELETE
-		
+
 		if(!this.invoice.isReadonly()) {
 			let financeDelete = new AonIconButton();
 			financeDelete.id = this.FINANCE_DELETE + i;

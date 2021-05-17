@@ -83,6 +83,14 @@ export class AonElement extends HTMLElement{
     if(elem) elem.style.display = 'block';
   }
 
+  isSab() {
+      return getComputedStyle(document.documentElement).getPropertyValue("--sab") == '34px';
+  }
+  
+  getRootPanel() {
+    return this.getElement(this.ROOT_PANEL);
+  }
+
   rootPanel(element) {
     this.clearElementById(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);
@@ -113,29 +121,29 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
-  
+
   clearTimeAction() {
     clearTimeout(this.TIME_ACTION);
   }
-  
+
   setTimeAction(tm){
     this.TIME_ACTION = tm;
   }
 
   showError(e) {
-      this.showToast(JSON.parse(e))    
+      this.showToast(JSON.parse(e))
   }
 
   /**
-   * 
-   * @param {string or obj, obj = {message, type}} error error del catch 
+   *
+   * @param {string or obj, obj = {message, type}} error error del catch
    * @returns obj{message, type}
    */
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);
     const toast = this.getElement(this.getApplication().TOAST);
     if(toast){
-      toast.start(obj);    
+      toast.start(obj);
     }
   }
 }
