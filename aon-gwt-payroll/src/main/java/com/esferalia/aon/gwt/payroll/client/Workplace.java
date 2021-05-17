@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -37,12 +39,21 @@ public abstract class Workplace extends ResizeComposite{
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {}
+	interface MyStyle extends CssResource {
+		String warningTB();
+		String flexGrow();
+	}
 
 	// TABLA DATOS CENTRO DE TRABAJO
 	
 	@UiField
+	HTMLPanel workplaceDescriptionPanel;
+	
+	@UiField
 	TextBox workplaceDescription;
+	
+	@UiField
+	HTMLPanel workplaceAddressParentPanel;
 	
 	@UiField
 	HTMLPanel workplaceAddressPanel;
@@ -76,7 +87,12 @@ public abstract class Workplace extends ResizeComposite{
 	
 	@UiHandler("workplaceDescription")
 	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
-		onWorkplaceDescriptionChange();
+		if(AonStringUtils.isNotBlank(workplaceDescription.getValue())) {
+			removeWarningIcon(workplaceDescriptionPanel, workplaceDescription);
+			onWorkplaceDescriptionChange();
+		} else {
+			addWarningIcon(workplaceDescriptionPanel, workplaceDescription, null);
+		}
 	}
 
 	@UiHandler("workplaceEconomicConcert")
@@ -146,7 +162,12 @@ public abstract class Workplace extends ResizeComposite{
 			
 			addressListBox.addChangeHandler(e -> {
 				Integer addressId = Integer.valueOf(addressListBox.getSelectedValue());
-				onWorkplaceAddressChange(addressId);
+				if(addressId == -1) {
+					addWarningIcon(workplaceAddressParentPanel, addressListBox, "La direcci\u00F3n es obligatoria");
+				} else {
+					removeWarningIcon(workplaceAddressParentPanel, addressListBox);
+					onWorkplaceAddressChange(addressId);
+				}
 			});
 			
 			// If only one activity, selected it and fire event
@@ -267,6 +288,22 @@ public abstract class Workplace extends ResizeComposite{
 	
 	public void hideCalendarPanel() {
 		workplaceCalendarHTMLPanel.setVisible(false);
+	}
+	
+	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
+		if(panel.getWidgetCount() == 2) {
+			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
+			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
+			widget.addStyleName(style.warningTB());
+			widget.addStyleName(style.flexGrow());
+		}
+	}
+	
+	private void removeWarningIcon(HTMLPanel panel, Widget widget) {
+		if(panel.getWidgetCount() > 2)
+			panel.remove(panel.getWidgetCount() - 1);
+		
+		widget.removeStyleName(style.warningTB());
 	}
 
 }
