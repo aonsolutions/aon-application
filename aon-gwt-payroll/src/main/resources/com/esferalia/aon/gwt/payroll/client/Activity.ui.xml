@@ -83,6 +83,14 @@
 			text-align: center !important;
 		}
 		
+		.flexGrow{
+			flex-grow: 1;
+		}
+		
+		.warningTB{
+			border: 1px solid red;
+		}
+		
 	</ui:style>
 
 	<g:VerticalPanel styleName="{style.container}">
@@ -90,11 +98,11 @@
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos de actividad</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel styleName="{style.flex}">
+		    		<g:HTMLPanel ui:field="activityDescriptionPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
 		    			<g:TextBox ui:field="activityDescription" styleName='aon-inputText {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel ui:field="activityCNAE2009Panel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>CNAE2009</g:Label>
 		    			<g:SuggestBox ui:field="activityCNAE2009" styleName='aon-inputText {style.widthAll}'></g:SuggestBox>
 					</g:HTMLPanel>

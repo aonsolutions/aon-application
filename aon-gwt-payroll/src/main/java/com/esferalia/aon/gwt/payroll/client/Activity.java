@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -66,7 +69,10 @@ public abstract class Activity extends ResizeComposite {
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {}
+	interface MyStyle extends CssResource {
+		String warningTB();
+		String flexGrow();
+	}
 
 	// TABLA DATOS ACTIVIDAD
 	
@@ -74,7 +80,13 @@ public abstract class Activity extends ResizeComposite {
 	HTMLPanel activityDataTable;
 	
 	@UiField
+	HTMLPanel activityDescriptionPanel;
+	
+	@UiField
 	TextBox activityDescription;
+	
+	@UiField
+	HTMLPanel activityCNAE2009Panel;
 	
 	@UiField
 	SuggestBox activityCNAE2009;
@@ -113,12 +125,25 @@ public abstract class Activity extends ResizeComposite {
 	
 	@UiHandler("activityDescription")
 	void onDescriptionChangeValue(ChangeEvent event) {
-		onActivityDescriptionChange();
+		if(AonStringUtils.isBlank(activityDescription.getValue()))
+			addWarningIcon(activityDescriptionPanel, activityDescription, null);
+		else {
+			removeWarningIcon(activityDescriptionPanel, activityDescription);
+			onActivityDescriptionChange();
+		}
 	}
 	
 	@UiHandler("activityCNAE2009")
-	void onCNAE2009ChangeValue(SelectionEvent<Suggestion> event) {
+	void onCNAE2009SelectionValue(SelectionEvent<Suggestion> event) {
 		onActivityCNAE2009Change(); 
+	}
+	
+	@UiHandler("activityCNAE2009")
+	void onCNAE2009ChangeValue(ValueChangeEvent<String> event) {
+		if(AonStringUtils.isBlank(activityCNAE2009.getValue()) || AonStringUtils.equalsIgnoreCase(activityCNAE2009.getValue(), "-"))
+			addWarningIcon(activityCNAE2009Panel, activityCNAE2009, null);
+		else
+			removeWarningIcon(activityCNAE2009Panel, activityCNAE2009);
 	}
 	
 	@UiHandler("startDate")
@@ -168,6 +193,26 @@ public abstract class Activity extends ResizeComposite {
 	
 	public void hideActivityColumn() {
 		cccWidget.hideActivityColumn();
+	}
+
+	public void setActivityDraftCCCHeight() {
+		cccWidget.setActivityDraftCCCHeight();
+	}
+	
+	public void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
+		if(panel.getWidgetCount() == 2) {
+			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
+			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
+			widget.addStyleName(style.warningTB());
+			widget.addStyleName(style.flexGrow());
+		}
+	}
+	
+	public void removeWarningIcon(HTMLPanel panel, Widget widget) {
+		if(panel.getWidgetCount() > 2)
+			panel.remove(panel.getWidgetCount() - 1);
+		
+		widget.removeStyleName(style.warningTB());
 	}
 
 }

@@ -135,6 +135,7 @@ public abstract class CCC extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 		initFooterOptionsToolbar();
 		initPreview();
+		calculateScrollPanelHeight();
 		contextMenu = new AddTgssContextMenu();
 	}
 	
@@ -153,7 +154,6 @@ public abstract class CCC extends ResizeComposite {
 		cccDataTable.resizeColumns(5);
 		
 		paintHeader();
-		calculateScrollPanelHeight();
 		setColumnWidth();
 	}
 	
@@ -180,6 +180,11 @@ public abstract class CCC extends ResizeComposite {
 	public void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
 		scrollPanel.setHeight((clientHeight/3) + "px");
+	}
+	
+	public void setActivityDraftCCCHeight() {
+		Integer clientHeight = Window.getClientHeight();
+		scrollPanel.setHeight((clientHeight/3 - 80) + "px");
 	}
 	
 	public void setDialogHeight() {

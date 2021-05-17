@@ -131,6 +131,8 @@ public class ActivityDraft extends Composite{
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
 		
+		activity.setActivityDraftCCCHeight();
+		
 		centerContainer.add(activity);
 		centerContainer.getElement().getStyle().setMarginTop(40, Unit.PX);
 		
@@ -222,9 +224,6 @@ public class ActivityDraft extends Composite{
 			} else
 				updateActivity();
 			
-		}else{
-			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar los campos azules obligatoriamente."));
-			dialog.warning();
 		}
 	}
 	
@@ -252,8 +251,10 @@ public class ActivityDraft extends Composite{
 	}
 	
 	private boolean checkIfSaveIsPossible() {
-		if(!AonStringUtils.isBlank(activity.activityDescription.getValue()) && !AonStringUtils.isBlank(activity.activityCNAE2009.getValue())
-				&& !AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-")){
+		if( !AonStringUtils.isBlank(activity.activityDescription.getValue()) && 
+			!AonStringUtils.isBlank(activity.activityCNAE2009.getValue()) && 
+			!AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-"))
+		{
 			return true;
 		}else
 			return false;
