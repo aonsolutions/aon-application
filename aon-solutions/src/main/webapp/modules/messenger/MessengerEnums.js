@@ -1,11 +1,8 @@
-
-
 export const AON_MESSENGER_LIST = {
     name: 'Abiertas',
     icon: 'assignment',
     id: 'messenger'
 };
-
 
 export const AON_MESSENGER_LIST_CLOSE = {
     name: 'Cerradas',
@@ -14,10 +11,9 @@ export const AON_MESSENGER_LIST_CLOSE = {
 };
 
 export const MessengerOptions = {
-    AON_MESSENGER_LIST, AON_MESSENGER_LIST_CLOSE
-  };
-
-
+    AON_MESSENGER_LIST,
+    AON_MESSENGER_LIST_CLOSE
+};
 
 export const MESSENGER_VIEWS = {
     AON_MESSENGER: "aonMessenger",
@@ -25,10 +21,24 @@ export const MESSENGER_VIEWS = {
     AON_MESSENGER_CHAT: "aonMessengerChat",
 }
 
-
 export const MESSENGER_COMPONENTS = {
     WRITTER : "writter",
     MESSAGE : "message",
+    WRAPPER : "wrapper",
+    CHAT : "chat",
+    ADVICE : 'advice',
+}
+
+export const MESSENGER_IDS = {
+    MESSENGER_CHAT: "messengerChat",
+    NEW_REQUEST_PANEL : "newRequestPanel", 
+    NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
+    NEW_REQUEST_PANEL_TITLE : "newRequestPanelTitle", 
+    NEW_REQUEST_PANEL_RECEIVER : "newRequestPanelReceiver", 
+    NO_MESSAGES : "noMessages",
+    START : "start",
+    END : "end",
+    ADD_ICON_BUTTON : "aonMessengeraddButtonIconButton"
 }
 
 export const MESSENGER_MODES = {
@@ -37,4 +47,34 @@ export const MESSENGER_MODES = {
     TEST : "test",
 }
 
-export const MESSENGER_MODE = MESSENGER_MODES.DEMO;
+export const MESSENGER_CHAT_TYPES = {
+    MESSAGE : "message",
+    ACTION : "action"
+}
+
+export const ICON_TYPES = {
+    MATERIAL : "material",
+    MATERIAL_OUTLINED : "material_outlined"
+}
+
+export const MESSENGER_ACTION_TYPES = {
+    CLOSE : "close",
+    MOVE : "move",
+} 
+
+export const REQUEST_FILTER = {
+    ABIERTAS : "abiertas",
+    CERRADAS : "cerradas"
+}
+
+/**
+ * 
+ * Current state of the view
+ * ---------------------------------
+ * DEMO - Demo mode.
+ * TEST - Beta in aonsolutions.org
+ * PRODUCTION - Disable possible logs and testing content.
+ * 
+ */
+ export const MESSENGER_MODE = MESSENGER_MODES.DEMO;
+

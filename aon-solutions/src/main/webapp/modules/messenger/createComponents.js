@@ -1,9 +1,9 @@
 import { AonSelect } from "../../components/aon-select.js";
 import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
-import { newComponent } from "../../services/utils.js";
-import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./creationUtils.js";
-import { RIGHT } from "./messenger-chat.js";
-import { MESSENGER_COMPONENTS } from "./MessengerEnums.js";
+import { newComponent, setClasses } from "../../services/utils.js";
+import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./shared/creationUtils.js";
+import { RIGHT } from "./shared/messenger-chat.js";
+import { ICON_TYPES, MESSENGER_COMPONENTS } from "./MessengerEnums.js";
 
 const fontColor = CSS.variable(COLORS.GRAYSON);
 
@@ -57,20 +57,25 @@ export const createTitleDiv = () => newComponent({
 
 export const createEditableTitle = (title) => newComponent({
   type: "text",
-  text: title ? title : "",
+  text: title ? title : "Escriba su titulo aqui",
+  classes : [CSS.TRANSITION_QUICK,CSS.CONTENT_EDITABLE, CSS.NO_FOCUS],
   styles: {
     fontSize: "1.5em",
     fontWeight: "400",
+    padding : "10px",
     background: "transparent",
     border: "none",
     width: "100%",
     color: CSS.variable(COLORS.AON_BLUE),
   },
+  attributes: {
+    contentEditable : ""
+  }
 });
 
 export const createTitle = (title) => newComponent({
   type: "text",
-  text: title,
+  text: title == "" ? "Escriba titulo aqui" : title,
   styles: {
     fontSize: "1.8em",
     fontWeight: "400",
@@ -122,7 +127,8 @@ export const createReceiverselect = () => {
   let comp = new AonSelect();
   comp.id = "";
   comp.title = "";
-  comp.setOptions([{name : "Laboral", value : "Laboral"}]);
+  comp.style.transition = "background-color .25s";
+  setClasses(comp,[CSS.TRANSITION_CASCADE]);
 
   return comp;
 
@@ -355,12 +361,12 @@ export const createAction = (icon, message, outlined) => {
   });
 
   let properties = {
-    name :  icon.substr(0,4) != "out-" ?  icon : icon.substr(4,icon.length),
-    color : CSS.variable(COLORS.MATERIAL_BLUE),
+    name :  icon.icon,
+    color : icon.color,
     size : "1.4em"
   };
 
-  const image = icon.substr(0,4) != "out-" ? createMaterialIcon(properties): createOutlinedMaterialIcon(properties);
+  const image = icon.type === ICON_TYPES.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
   const text = createText({
     text : message,
     fontSize : "1.1em",

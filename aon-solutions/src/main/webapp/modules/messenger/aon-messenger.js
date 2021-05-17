@@ -1,15 +1,24 @@
-import {AonElement} from '../../components/AonElement.js';
-import { MessengerOptions, MESSENGER_VIEWS } from './MessengerEnums.js';
-import { AonMessengerList } from './aon-messenger-list.js';
-import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 import '../../components/aon-application.js';
-import { setClasses } from '../../services/utils.js';
+import { AonElement } from '../../components/AonElement.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
+import { AonMessengerList } from './aon-messenger-list.js';
+import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
 
 class AonMessenger extends AonElement {
     AON_MESSENGER;
+	FILTER
+
 	constructor () {
 		super();
+		this.FILTER = REQUEST_FILTER.ABIERTAS;
+	}
+
+	get filter() {
+		return JSON.parse(this.FILTER);
+	}
+
+	set filter(filter){
+		this.FILTER = JSON.stringify(filter);
 	}
 
 	connectedCallback () {

@@ -38,15 +38,22 @@
     align-items: center;
 }
 
-.materialButton:hover{
-    border-radius:  50px !important;
+.noCopy, .noCopy * {
+  -webkit-user-select: none;  
+  -moz-user-select: none;     
+  -ms-user-select: none;      
+  user-select: none;
 }
 
-.noCopy, .noCopy * {
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-  user-select: none;
+.copy, .copy * {
+    -webkit-user-select: text;  
+    -moz-user-select: text;    
+    -ms-user-select: text;     
+    user-select: text;
+  }
+
+.noScrollbar{
+    scrollbar-width: none; /* Firefox 64 */
 }
 
 .noScrollbar::-webkit-scrollbar {
@@ -58,4 +65,27 @@
 
 .noFocus:focus{
     outline: none;
+}
+
+.transitionCascade * {
+    transition: inherit;
+}
+
+.transitionQuick{
+    transition: .25s;
+}
+
+.contentEditable:hover { 
+    border-radius: 2px;
+    background : var(--aon-color-interaction-minus-two) !important; 
+}
+
+.contentEditable:focus { 
+    transition: .25s;
+    -webkit-user-select: text;  
+    -moz-user-select: text;    
+    -ms-user-select: text;     
+    user-select: text;
+    border-radius: 2px;
+    background : var(--aon-color-interaction-minus-two) !important; 
 }

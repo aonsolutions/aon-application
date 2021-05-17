@@ -1,11 +1,15 @@
+import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, CSS } from "../../environments/environments.js";
-import { newComponent, setStyles } from "../../services/utils.js";
+import { COLORS, CONSTANT, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
+import { ToolbarType } from "../../models/enums.js";
+import { newComponent, setClasses, setStyles, waitEl } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { createMainView, createMobileMainView } from "./createComponents.js";
-import { buildChat, buildMobileChat } from "./messenger-chat.js";
-import { buildDesktopWritter } from "./messenger-writter.js";
+import { buildChat, buildMobileChat } from "./shared/messenger-chat.js";
+import { buildDesktopWritter } from "./shared/messenger-writter.js";
 import { MESSENGER_COMPONENTS, MESSENGER_VIEWS } from "./MessengerEnums.js";
+import * as ACTIONS from "../actions.js";
+import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
 
 export class AonMessengerChat extends AonElement {
   
@@ -45,14 +49,16 @@ export class AonMessengerChat extends AonElement {
   paintView(data) {
     /*Base font-size*/
     this.style.fontSize = "12px";
-    console.info(data);
 
     /**
      * Switching between mobile and desktop
      */
-    if (this.isMobile()) this.paintMobile(data);
-    else this.paintDesktop(data);
-
+    if (this.isMobile()){ 
+        this.paintMobile(data);
+    }
+    else { 
+      this.paintDesktop(data);
+    }
     /**
      * Setting the chat line once all is rendered
      * DO NOT change this, is compulsory.
@@ -139,6 +145,35 @@ export class AonMessengerChat extends AonElement {
 
   paintDesktop(data) {
     const mainView = createMainView();
+    const toolbar = new AonToolbar();
+
+    toolbar.id = "id";
+		toolbar.type = ToolbarType.SECONDARY;
+    toolbar.title = "#" + data.id;
+
+    waitEl("#id").then(bar => {
+      bar.addButton2(ACTIONS.BACK,() => {
+        mainView.element.style.opacity = "0";
+        mainView.element.style.transition = ".25s";
+        
+        setTimeout(() => {
+            const button = document.getElementById("aonMessengerSidenavAbiertas");
+            button?.click();
+        }, 250);
+      })
+      const titleSpan = bar.querySelector(".aonSecondaryToolbarTitle")
+
+      setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
+
+      const status = createOutlinedMaterialIcon({
+        name: "info",
+        color: CSS.variable(COLORS.ONLINE_GREEN),
+        size: "20px"
+      });
+      status.element.style.marginLeft = "10px"
+      status.appendTo(titleSpan);
+    })
+
     const writter = newComponent({
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
       styles: {
@@ -171,6 +206,8 @@ export class AonMessengerChat extends AonElement {
 
     writter.appendTo(mainView.element);
     chat.appendTo(mainView.element);
+
+    this.appendChild(toolbar);
     mainView.appendTo(this);
 
     setTimeout(() => {
