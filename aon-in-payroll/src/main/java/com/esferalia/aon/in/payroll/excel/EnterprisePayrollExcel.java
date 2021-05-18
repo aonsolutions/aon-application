@@ -1695,7 +1695,7 @@ public class EnterprisePayrollExcel {
 			enterprisePayroll.enterpriseSS = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
 
 			enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
-			enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS + enterprisePayroll.irpf
+			enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS /*+ enterprisePayroll.irpf*/
 					+ enterprisePayroll.raw;
 			
 			
