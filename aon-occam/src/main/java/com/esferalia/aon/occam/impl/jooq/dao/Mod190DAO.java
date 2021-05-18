@@ -517,13 +517,12 @@ public class Mod190DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 				.select(FS_MODEL190.fields())
+				.select(DOMAIN.DESCRIPTION)
 				.from(FS_MODEL190)
 				.join(DOMAIN)
 				.on(FS_MODEL190.DOMAIN.equal(DOMAIN.ID))
-				.where(FS_MODEL190.DOMAIN.equal(domain).or(
-						DOMAIN.PARENT.equal(domain)))
-				.orderBy(FS_MODEL190.YEAR.desc(), FS_MODEL190.NAME.asc(),
-						FS_MODEL190.REPLACEMENT.asc())
+				.where(FS_MODEL190.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+				.orderBy(FS_MODEL190.YEAR.desc(), FS_MODEL190.NAME.asc(),FS_MODEL190.REPLACEMENT.asc())
 				.fetch()
 				.stream()
 				.map(new Mod190Filler());
@@ -533,13 +532,11 @@ public class Mod190DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 				.select(FS_MODEL190.fields())
+				.select(DOMAIN.DESCRIPTION)
 				.from(FS_MODEL190)
-				.join(DOMAIN)
-				.on(FS_MODEL190.DOMAIN.equal(DOMAIN.ID))
-				.where(FS_MODEL190.DOMAIN.equal(domain).or(
-						DOMAIN.PARENT.equal(domain)))
-				.orderBy(FS_MODEL190.YEAR.desc(), FS_MODEL190.NAME.asc(),
-						FS_MODEL190.REPLACEMENT.asc())
+				.join(DOMAIN).on(FS_MODEL190.DOMAIN.equal(DOMAIN.ID))
+				.where(FS_MODEL190.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+				.orderBy(FS_MODEL190.YEAR.desc(), FS_MODEL190.NAME.asc(),FS_MODEL190.REPLACEMENT.asc())
 				.fetch()
 				.stream()
 				.map(new Mod190Filler())
@@ -551,6 +548,7 @@ public class Mod190DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL190.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MODEL190)
 			.where(FS_MODEL190.ID.equal(id))
 			.fetch()
@@ -833,6 +831,7 @@ public class Mod190DAO {
 			return new Mod190()
 				.setId(record.getValue(FS_MODEL190.ID))
 				.setDomain(record.getValue(FS_MODEL190.DOMAIN))
+				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setEnterprise(record.getValue(FS_MODEL190.ENTERPRISE))
 				.setYear(record.getValue(FS_MODEL190.YEAR))
 				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL190.ADMINISTRATION)))

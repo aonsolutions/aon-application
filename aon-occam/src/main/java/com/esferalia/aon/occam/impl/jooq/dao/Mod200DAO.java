@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 
 import java.util.function.Function;
@@ -15,11 +16,28 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class Mod200DAO extends FiscalModelDAO {
 	
+	public static Stream<Mod200> getHeaders(AONContext ctx, int domain) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+			.select(FS_MODEL200.fields())
+			.select(DOMAIN.DESCRIPTION)
+			.from(FS_MODEL200)
+			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
+			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.orderBy(FS_MODEL200.YEAR.desc()
+					,FS_MODEL200.NAME.asc())
+			.fetch()
+			.stream()
+			.map( new Mod200Filler() )
+			;
+	}
+
 	public static Stream<Mod200> getMod200s(AONContext ctx,int domain) {
 		ctx.checkRead();
 		return ctx.getDslContext()
 				.select()
 				.from(FS_MODEL200)
+				.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
 //				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
 //				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
 //				.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
@@ -39,7 +57,7 @@ public class Mod200DAO extends FiscalModelDAO {
 			return new Mod200() 
 				.setId(record.getValue(FS_MODEL200.ID))
 				.setDomain(record.getValue(FS_MODEL200.DOMAIN))
-				.setDomainName(null)
+				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setYear(record.getValue(FS_MODEL200.YEAR))
 				.setAdministration(Administration.safeValueOf(record.getValue(FS_MODEL200.ADMINISTRATION)))
 				

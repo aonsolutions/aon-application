@@ -52,7 +52,7 @@ public class FiscalMatrixDAO {
 	
 	public static LinkedList<IFiscalModel> getModelsPanel(AONContext ctx, int domain,FiscalMatrixParams params,int user) {
 		
-		FiscalModelType modelType = FiscalModelType.safeValueOf( params.getModel());
+		FiscalModelType modelType = params.getModel();
 		return 
 				Stream.concat(
 						(params.isMadeModelsVisible()

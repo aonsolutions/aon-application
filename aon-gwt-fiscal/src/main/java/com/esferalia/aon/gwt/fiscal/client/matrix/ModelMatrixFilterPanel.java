@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.matrix;
 
+import java.util.logging.Logger;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
@@ -16,6 +18,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -24,6 +27,11 @@ import com.google.gwt.user.client.ui.ListBox;
 
 class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers<FiscalMatrixParams>, Focusable {
 	
+	private static final Logger LOGGER = Logger.getLogger(ModelMatrixFilterPanel.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
+
 	private ListBox year;
 	private ListBox model;
 	private ListBox admon;
@@ -67,8 +75,8 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
 		for (FiscalModelType m : FiscalModelType.values()) {
-			if (m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS) {
-				model.addItem(AON.MSG.fiscalModelType(m),m.getValue());
+			if (m != FiscalModelType.M303_RG && m != FiscalModelType.M303_RS && m != FiscalModelType.M310 && m != FiscalModelType.M311 && m != FiscalModelType.M340 ) {
+				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
 		add(model);
@@ -145,8 +153,14 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 		if ( admon.getSelectedIndex() > 0) {
 			administration = Administration.values()[admon.getSelectedIndex() - 1];
 		}
+		FiscalModelType modelType = null;
+		LOGGER.info(model.getSelectedIndex() + " " + model.getSelectedValue());
+		if ( model.getSelectedIndex() > 0) {
+			modelType = FiscalModelType.valueOf(model.getSelectedValue());
+		}
+		LOGGER.info(modelType==null?"NULL":("NOT NULL " + modelType.toString()));
 		params.setYear(y)
-			.setModel(model.getSelectedValue())
+			.setModel(modelType)
 			.setAdministration(administration)
 			.setConfiguredVisible(showConfigurated.getValue())
 			.setMadeModelsVisible(showMadeModels.getValue())
@@ -180,7 +194,7 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 	}
 
 	public int getSelectedYear() {
-		return AonNumberUtils.toint(year.getSelectedValue()); 
+		return AonNumberUtils.toint(year.getSelectedItemText()); 
 	}
 
 }

@@ -9,7 +9,7 @@ public class FiscalMatrixParams implements Serializable{
 	private static final long serialVersionUID = 7741345914522007076L;
 	
 	private int year;
-	private String model;
+	private FiscalModelType model;
 	private Administration administration;
 	
 	private boolean configuredVisible;
@@ -23,10 +23,10 @@ public class FiscalMatrixParams implements Serializable{
 		return this;
 	}
 	
-	public String getModel() {
+	public FiscalModelType getModel() {
 		return model;
 	}
-	public FiscalMatrixParams setModel(String model) {
+	public FiscalMatrixParams setModel(FiscalModelType model) {
 		this.model = model;
 		return this;
 	}

@@ -43,6 +43,7 @@ public class Mod390DAO {
 				,FS_MODEL390.RECEIPT
 				,FS_MODEL390.REPLACED_RECEIPT
 				,FS_MODEL390.RESPONSE
+				,DOMAIN.DESCRIPTION
 			)
 			.from(FS_MODEL390)
 			.join(DOMAIN).on(FS_MODEL390.DOMAIN.equal(DOMAIN.ID))
@@ -72,6 +73,7 @@ public class Mod390DAO {
 				,FS_MODEL390.RECEIPT
 				,FS_MODEL390.REPLACED_RECEIPT
 				,FS_MODEL390.RESPONSE
+				,DOMAIN.DESCRIPTION
 			)
 			.from(FS_MODEL390)
 			.join(DOMAIN).on(FS_MODEL390.DOMAIN.equal(DOMAIN.ID))
@@ -102,6 +104,7 @@ public class Mod390DAO {
 				,FS_MODEL390.RECEIPT
 				,FS_MODEL390.REPLACED_RECEIPT
 				,FS_MODEL390.RESPONSE
+				,DOMAIN.DESCRIPTION
 			)
 			.from(FS_MODEL390)
 			.join(DOMAIN).on(FS_MODEL390.DOMAIN.equal(DOMAIN.ID))
@@ -127,6 +130,7 @@ public class Mod390DAO {
 				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL390.STATUS)))
 				.setYear(record.getValue(FS_MODEL390.YEAR))
 				.setDomain(record.getValue(FS_MODEL390.DOMAIN))
+				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setEnterprise(record.getValue(FS_MODEL390.ENTERPRISE))
 				.setDocument(record.getValue(FS_MODEL390.DOCUMENT))
 				.setName(record.getValue(FS_MODEL390.NAME))

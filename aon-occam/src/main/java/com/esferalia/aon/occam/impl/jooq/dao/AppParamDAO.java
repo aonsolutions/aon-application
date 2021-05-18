@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
@@ -191,6 +192,16 @@ public class AppParamDAO {
 			params.setName(company.getName());
 		}
 		return params;
+	}
+	public static Administration parseDefaultAdministration(String paramValue) {
+		if (AonStringUtils.isNotBlank(paramValue)) {
+			try {
+				return Administration.values()[Integer.parseInt(paramValue)]; 
+			} catch (NumberFormatException e) {
+			} catch (IndexOutOfBoundsException e) {
+			}
+		}
+		return null;
 	}
 	
 	public static IRPFRegime getDefaultIRPFRegime(AONContext ctx) {

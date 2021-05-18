@@ -46,6 +46,7 @@ public class Mod193DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL193.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MODEL193)
 			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL193.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
@@ -61,6 +62,7 @@ public class Mod193DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL193.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MODEL193)
 			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL193.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
@@ -78,6 +80,7 @@ public class Mod193DAO {
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select(FS_MODEL193.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MODEL193)
 			.join(DOMAIN).on(FS_MODEL193.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL193.DOMAIN.equal(ctx.getDomainId()).or(DOMAIN.PARENT.equal(ctx.getDomainId())))
@@ -430,6 +433,7 @@ public class Mod193DAO {
 			return new Mod193()
 				.setId(record.getValue(FS_MODEL193.ID))
 				.setDomain(record.getValue(FS_MODEL193.DOMAIN))
+				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setEnterprise(record.getValue(FS_MODEL193.ENTERPRISE))
 				.setYear(record.getValue(FS_MODEL193.YEAR))
 				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL193.ADMINISTRATION)))
