@@ -141,9 +141,13 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			while (!matcher.matches()) {
 				matcher = A3Regex.CONCEPT.matcher(concept_line);
 				if (matcher.matches()) {
-					if (matcher.group("devengos") != null) {
+					if (matcher.group("devengos") != null || (matcher.group("concept") != null && matcher.group("concept").charAt(0) == '*')) {
 						Double amount = PdfParsingTools
 								.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("devengos")));
+						if (amount == null) {
+							amount = PdfParsingTools
+									.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));
+						}
 						String description = AonStringUtils.trimToNull(matcher.group("concept"));
 						description = PdfParsingTools.removeSpace(description, 19);
 						if (description.charAt(0) == '*' || description.charAt(0) == '-') {
@@ -191,10 +195,9 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 						} else if (payrollType == 2) {
 							pt = PaymentType.CRA_0009;
 						}
-
 						salaryBuilder.addPayment(amount, amount, amount, description, dFrom, dTo,
 								(IPayment) new Payment().setType(pt).setName(context), Collections.emptyMap());
-
+						
 					} else if (matcher.group("deducciones") != null) {
 						Double amount = PdfParsingTools
 								.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));

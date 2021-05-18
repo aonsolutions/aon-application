@@ -56,6 +56,13 @@ public class A3Regex {
 	Pattern.compile("\\s*CUANTIA\\s*PRECIO\\s*CONCEPTO\\s*DEVENGOS\\s*DEDUCCIONES\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//30,00     26,741     1  *Salario Base                               802,24                   
+//    30,00     31,667     1  *Salario Base                               950,00                   
+//    30,00      3,056     3  *Mejora Voluntaria                           91,67                   
+//    30,00      5,278    30  *P.Pagas Extras                             158,33                   
+//                       221  *COMISIONES                                  24,99                   
+//                       995   COTIZACION CONT.COMU 4,70                                 57,57     
+//                       996   COTIZACION FORMACION 0,10                                  1,22     
+//                       997   COTIZACION DESEMPLEO 1,55                                 18,99     
 	public static final Pattern CONCEPT =
 	Pattern.compile("\\s*(?<cuantia>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<price>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<unknownnumber>\\d+)?\\s*(?<concept>\\*?.+?)\\s{1,2}(?<tipo>\\d+[,]\\d*)?\\s*(?<devengos>\\d+[,]\\d*)?\\s{19}?(?<deducciones>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*$"
 	, Pattern.CASE_INSENSITIVE);

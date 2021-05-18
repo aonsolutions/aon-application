@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Repeatable;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -330,7 +331,6 @@ public class TestSistemaREDI {
 			fail("Error with the certificate input");
 		}
 	}
-	
 	
 	@Test
 	public void testContributionInfoDuplicateOk() {
@@ -1278,6 +1278,8 @@ public class TestSistemaREDI {
 			  if(!(pdf.length>0)) {
 				  fail("Didn't return a pdf");
 			  }
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
 		} catch (IOException e1) {
@@ -1293,6 +1295,8 @@ public class TestSistemaREDI {
 			  byte[] pdf=SistemaREDI.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01100477910", opDate);
 				  fail("Shouldn't run");
 		} catch (invalidCccException e) {
+			
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
@@ -1311,6 +1315,8 @@ public class TestSistemaREDI {
 			  byte[] pdf=SistemaREDI.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
 				  fail("Shouldn't run");
 		} catch (DataDoesNotExist e) {
+			
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
@@ -1331,6 +1337,8 @@ public class TestSistemaREDI {
 				  fail("Shouldn't run");
 		} catch (UnfilledMandatory e) {
 			
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
 		} catch (ParseException e) {
@@ -1349,7 +1357,9 @@ public class TestSistemaREDI {
 				  fail("Shouldn't run");
 		} catch (UnfilledMandatory e) {
 			
-		} catch (SegSocialException e) {
+		} catch (FailingHttpStatusCodeException e) {
+			
+		}catch (SegSocialException e) {
 			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
@@ -1366,6 +1376,8 @@ public class TestSistemaREDI {
 			  byte[] pdf=SistemaREDI.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
 				  fail("Shouldn't run");
 		} catch (CertificateNotFoundException e) {
+			
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
@@ -1385,6 +1397,8 @@ public class TestSistemaREDI {
 				  fail("Shouldn't run");
 		} catch (InvalidCertificateException e) {
 			
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
 		} catch (ParseException e) {
@@ -1402,6 +1416,8 @@ public class TestSistemaREDI {
 			  byte[] pdf=SistemaREDI.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "kcs12", "011017250195", "0111", "01105577910", opDate);
 				  fail("Shouldn't run");
 		} catch (InvalidCertificateException e) {
+			
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (SegSocialException e) {
 			fail(e.getMessage());
