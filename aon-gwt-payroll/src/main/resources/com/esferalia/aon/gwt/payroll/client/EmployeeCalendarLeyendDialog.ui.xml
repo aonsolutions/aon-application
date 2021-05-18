@@ -11,6 +11,10 @@
 		.holidayColor{
 			background-color: #52ab3c;
 		}
+		
+		.effectiveColor{
+			background-color: #77e1d2;
+		}
 
 		.inactivityColor{
 			background-color: #71b1e8;
@@ -73,6 +77,14 @@
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>Efectivos</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
 				</td>
 			</tr>
 			<tr>
