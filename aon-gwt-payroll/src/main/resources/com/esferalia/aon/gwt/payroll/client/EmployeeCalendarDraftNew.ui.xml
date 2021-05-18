@@ -42,6 +42,7 @@
 			justify-content: space-between;
 			border-bottom: .1rem solid #ff704d;
 			padding: .3rem 0;
+			flex-wrap: wrap;
 		}
 		
 		.typeButtonUpperMenuStyle{
@@ -96,6 +97,10 @@
 
 		.peonadasColor{
 			background-color: #d692f9;
+		}
+		
+		.effectiveColor{
+			background-color: #77e1d2;
 		}
 		
 		/* ------------------- Calendar Panel ------------------- */
@@ -203,6 +208,10 @@
 			background-color: #445a69;
 		}
 		
+		.effectiveStyle{
+			background-color: #77e1d2;
+		}
+		
 		/* ------------------- Hour Days ------------------- */
 		
 		.hourStyle{
@@ -277,6 +286,7 @@
 					<g:HTMLPanel>
 						<g:Button styleName="{style.aonButtonStyle} {style.aonButtonStyleWithOutIcon}" ui:field="workingDayButton">Laborable</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton">Efectivos</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">Inactividad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton">Ausencia</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton">Vacaciones</g:Button>

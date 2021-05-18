@@ -89,6 +89,7 @@ public class JooqEmployeeCalendarNew {
 		varNames.add(ContextVariable.HOLIDAYS.getName());
 		varNames.add("LABORABLE");
 		varNames.add("NO_LABORABLE");
+		varNames.add("DIAS_EFECTIVOS");
 		
 		// COEFFICIENT TYPES
 		varNames.add(ContextVariable.ERE_FACTOR.getName());
@@ -526,6 +527,7 @@ public class JooqEmployeeCalendarNew {
 				.and(CONTRACT_DATA.NAME.in(
 						ContextVariable.HOLIDAYS.getName()
 						,"NO_LABORABLE"
+						,"DIAS_EFECTIVOS"
 						,"JORNADAS_REALES"
 						,"JORNADAS_TEORICAS"
 						,"LABORABLE"
@@ -818,6 +820,7 @@ public class JooqEmployeeCalendarNew {
 					"DIAS_FESTIVOS",
 					ContextVariable.HOLIDAYS.getName()
 					,"NO_LABORABLE"
+					,"DIAS_EFECTIVOS"
 					,"JORNADAS_REALES"
 					,"JORNADAS_TEORICAS"
 					,ContextVariable.ERE_FACTOR.getName()
@@ -907,6 +910,7 @@ public class JooqEmployeeCalendarNew {
 		{
 			put(DayType.BAJAIT, "DIAS_IT");
 			put(DayType.HOLIDAY, "DIAS_VACACIONES");
+			put(DayType.EFFECTIVE, "DIAS_EFECTIVOS");
 			put(DayType.STRIKEDAY, "COEFICIENTE_HUELGA");
 			put(DayType.EREDAY, "COEFICIENTE_ERE");
 			put(DayType.INACTIVITY, "CAUSA_INACTIVIDAD");
@@ -944,6 +948,7 @@ public class JooqEmployeeCalendarNew {
 			put("FIN_ERE_FZA_EXONERADO", DayType.EREFZAEXONENDDAY);
 			put("DIAS_FESTIVOS", DayType.FREEDAY);
 			put("LABORABLE", DayType.WORKINGDAY);
+			put("DIAS_EFECTIVOS", DayType.EFFECTIVE);
 		}
 	};
 	// ---------------------------------------------------------------------------------------------------
