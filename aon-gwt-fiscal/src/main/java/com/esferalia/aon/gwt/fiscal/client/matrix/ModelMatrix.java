@@ -180,22 +180,6 @@ public class ModelMatrix extends MainEntryPoint {
 		filterPanel.fireValueChangeEvent();
 	}
 
-//	private void search(AonData aonData, FiscalMatrixParams params) {
-//		SERVICE.getFiscalPanel(aonData.getDomain().getName(), aonData.getUser().getLogin(), aonData.getDomain().getId(), params, 
-//				new AsyncCallback<LinkedList<IFiscalModel>>() {
-//					
-//					@Override
-//					public void onSuccess(LinkedList<IFiscalModel> matrix) {
-//						scrollPanel.setWidget( paint(aonData, matrix, params ));
-//					}
-//					
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						
-//					}
-//				});
-//	}
-	
 	private FlowPanel paint(AonData aonData, AonJsArray<JsFiscalMenuItem> aonJsArray, FiscalMatrixParams fiscalMatrixParams) {
 		FlowPanel content = new FlowPanel();
 		content.setStyleName(AON.CSS.aonMarginRight());
@@ -333,7 +317,7 @@ public class ModelMatrix extends MainEntryPoint {
 			String domainId = AonStringUtils.substringBefore(complexDomainName, "|");
 			String domainName = AonStringUtils.substringAfter(complexDomainName, "|");
 
-			if (AonStringUtils.isBlank( fiscalMatrixParams.getModel() )) {
+			if (fiscalMatrixParams.getModel() == null) {
 				Label emptyLabel = new Label();
 				emptyLabel.setStyleName(AON.CSS.aonMarginTop());
 				tab.setWidget(row, 0, emptyLabel);
@@ -604,7 +588,7 @@ public class ModelMatrix extends MainEntryPoint {
 		yearListt.add(AonNumberUtils.toString(params.getYear()) );
 		filterMap.put(IJsonNames.YEAR, yearListt);
 		LinkedList<String> modelListt = new LinkedList<String>();
-		modelListt.add(params.getModel());
+		modelListt.add(params.getModel() == null ? "" : params.getModel().toString());
 		filterMap.put(IJsonNames.MODEL, modelListt);
 		LinkedList<String> admonListt = new LinkedList<String>();
 		admonListt.add(params.getAdministration()==null?"":params.getAdministration().toString());

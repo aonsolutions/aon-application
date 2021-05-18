@@ -49,6 +49,7 @@ public class Mod349DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MOD349.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MOD349)
 			.join(DOMAIN).on(FS_MOD349.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD349.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
@@ -66,6 +67,7 @@ public class Mod349DAO {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MOD349.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MOD349)
 			.join(DOMAIN).on(FS_MOD349.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD349.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
@@ -85,6 +87,7 @@ public class Mod349DAO {
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select(FS_MOD349.fields())
+			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MOD349)
 			.join(DOMAIN).on(FS_MOD349.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD349.DOMAIN.equal(ctx.getDomainId()).or(DOMAIN.PARENT.equal(ctx.getDomainId())))
@@ -422,7 +425,8 @@ public class Mod349DAO {
 		public Mod349 apply(Record record) {
 			return new Mod349() 
 				.setId(record.getValue(FS_MOD349.ID))
-				.setDomain(record.getValue(FS_MOD349.DOMAIN))				
+				.setDomain(record.getValue(FS_MOD349.DOMAIN))
+				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
 				.setYear(record.getValue(FS_MOD349.YEAR))
 				.setPeriod(Period.safeValueOf(record.getValue(FS_MOD349.PERIOD)))
 				.setAdministration(Administration.safeValueOf(record.getValue(FS_MOD349.ADMINISTRATION)))

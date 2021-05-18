@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.api.json;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum FiscalMatrixParamsJSON {
 
@@ -22,7 +24,11 @@ public enum FiscalMatrixParamsJSON {
 	MODEL{
 		@Override
 		public FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json) {
-			return params.setModel(json.optString(IJsonNames.MODEL,null));
+			String model = json.optString(IJsonNames.MODEL,null);
+			if (AonStringUtils.isNotBlank(model)) {
+				params.setModel(FiscalModelType.valueOf(model));
+			}
+			return params;
 		}
 		@Override
 		public JSONObject to(FiscalMatrixParams params, JSONObject json) {
