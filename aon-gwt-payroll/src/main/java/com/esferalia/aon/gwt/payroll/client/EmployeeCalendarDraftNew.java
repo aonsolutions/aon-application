@@ -101,6 +101,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					return null;
 				}
 				
+				// Efectivos
+				@Override
+				public Void visitEffectiveDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
+					calendarGrid.getWidget(row, col).addStyleName(style.effectiveStyle());	
+					return null;
+				}
+				
 				// Inactividad
 				@Override
 				public Void visitInactivityDay(DayType dayType) {
@@ -593,6 +601,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		String peonadasStyle();
 		String partialityStyle();
 		String freeDayStyle();
+		String effectiveStyle();
 		// Out of contract
 		String outOfContractStyle();
 		String cmd_btn();
@@ -620,6 +629,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	@UiField
 	Button nonWorkingDayButton;
+	
+	@UiField
+	Button effectiveDayButton;
 	
 	@UiField
 	Button inactivityDayButton;
@@ -790,6 +802,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		initDatesDialog(DayType.NOWORKINGDAY);
 	}
 	
+	@UiHandler("effectiveDayButton")
+	public void onEffeDayButctivetonClick(ClickEvent event) {
+		initDatesDialog(DayType.EFFECTIVE);
+	}
+	
 	@UiHandler("inactivityDayButton")
 	public void onInactivityDayButtonClick(ClickEvent event) {
 		initiInactivityDialog(DayType.INACTIVITY);
@@ -880,7 +897,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			showElement(hourButton.getElement());
 			definitionMenu.showSeparator();
 			
-			extraHoursButton.setText("H. Complementarias");
+			extraHoursButton.setText("H. Compl.");
+			extraHoursButton.setTitle("Horas Complementarias");
 			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().setDisplay(Display.NONE);
 			definitionMenu.getHourMenuItem().getElement().getStyle().clearDisplay();
 		}
@@ -1470,6 +1488,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			return "DIAS NO LABORABLES";
 		case HOLIDAY:
 			return "DIAS VACACIONES";
+		case EFFECTIVE:
+			return "DIAS EFECTIVOS";
 		case INACTIVITY:
 			return "DIAS INACTIVIDAD";
 		case REAL_DAYS:
@@ -1723,6 +1743,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			@Override
 			public void execute() {
 				initDatesDialog(DayType.NOWORKINGDAY);
+			}
+		});
+		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) efectivos", new Command() {
+			@Override
+			public void execute() {
+				initDatesDialog(DayType.EFFECTIVE);
 			}
 		});
 		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) inactividad", new Command() {

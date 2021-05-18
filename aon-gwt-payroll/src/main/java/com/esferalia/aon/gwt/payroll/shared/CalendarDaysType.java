@@ -19,6 +19,8 @@ public class CalendarDaysType implements Serializable {
 		T visitNoWorkingDay(DayType dayType);
 		// Vacaciones
 		T visitHolyDay(DayType dayType);
+		// Efectivos
+		T visitEffectiveDay(DayType dayType);
 		// Inactividad
 		T visitInactivityDay(DayType dayType);
 		// Ausencia
@@ -65,6 +67,13 @@ public class CalendarDaysType implements Serializable {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitHolyDay(this);
+			}
+		},
+		// Efectivos
+		EFFECTIVE {
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitEffectiveDay(this);
 			}
 		},
 		// Inactividad
@@ -716,6 +725,7 @@ public class CalendarDaysType implements Serializable {
 	private boolean validDayType(DayType dayType) {
 		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
 		validDayTypes.add(DayType.NOWORKINGDAY);
+		validDayTypes.add(DayType.EFFECTIVE);
 		validDayTypes.add(DayType.REAL_DAYS);
 		validDayTypes.add(DayType.IF_DAYS);
 		validDayTypes.add(DayType.HOLIDAY);
@@ -749,6 +759,7 @@ public class CalendarDaysType implements Serializable {
 	private boolean isDaysBetweenExpression(DayType dayType) {
 		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
 		validDayTypes.add(DayType.NOWORKINGDAY);
+		validDayTypes.add(DayType.EFFECTIVE);
 		validDayTypes.add(DayType.REAL_DAYS);
 		validDayTypes.add(DayType.IF_DAYS);
 		validDayTypes.add(DayType.HOLIDAY);
