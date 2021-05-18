@@ -3,10 +3,10 @@ set -eo pipefail
 shopt -s nullglob
 
 #echo 'Initializing database'
-#mysql_install_db 
+#sudo -u mysql mysql_install_db 
 #echo 'Database initialized'
 
-sed -i -s 's/^\s*\(bind-address.*\)$/# \1/' /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i -s 's/^\s*\(bind-address.*\)$/# \1/' /etc/my.cnf.d/mariadb-server.cnf
 
 mysqld_safe --datadir='/var/lib/mysql' &
 
@@ -25,12 +25,14 @@ if [ "$i" = 0 ]; then
 	exit 1
 fi
 
-mysqladmin -u root password 'new-password'
+#mysqladmin -u root password 'new-password'
 
-"${mysql[@]}" <<-EOSQL
-	-- 
+"${mysql[@]}" -v  <<-EOSQL
 	-- 
 	GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'serubd2000' ;
+	--
+	-- default privileges include a row with Host='localhost' and User=''. 
+	GRANT ALL ON *.* TO 'dbuser'@'localhost' IDENTIFIED BY 'serubd2000' ;
 EOSQL
 
 echo
@@ -52,6 +54,9 @@ if [ "$i" = 0 ]; then
         echo >&2 'Docker init process failed.'
         exit 1
 fi
+
+docker load < /root/tomcat:9-jdk16.tar
+docker load < /root/openjdk:16-slim.tar
 
 echo
 echo 'Docker init process done. Ready for start up.'
