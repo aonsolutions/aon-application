@@ -1,4 +1,5 @@
 export const BLUR = 'blur';
+export const INPUT = 'input';
 export const CHANGE = 'change';
 export const CLICK = 'click';
 export const DRAGOVER = 'dragover';

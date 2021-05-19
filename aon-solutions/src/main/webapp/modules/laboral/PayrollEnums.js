@@ -26,6 +26,12 @@ export const AON_CERT = {
   },
 };
 
+export const AON_LABORAL = {
+  name: 'Laboral',
+  icon: 'settings',
+  id: "LABORAL"
+};
+
 export const AON_COMUNICA = {
   name: 'Comunic@',
   aonIcon: {
@@ -88,8 +94,31 @@ export const CONTRACT_OPTIONS = {
   }
 };
 
+export const ACTION_COMUNICA = {
+  INFORMES:{
+    name: 'Informes',
+    aonIcon: "aon_seg_social",
+    id: 'informes',
+  },
+  COMUNICAR:{
+    id: 'Save',
+    name: 'Comunicar',
+    icon: 'send'
+  },
+  BACK: {
+    id: 'Previous',
+    name: 'Volver',
+    icon: 'arrow_back'
+  },
+  BAJA:{
+    id: 'Baja',
+    name: 'Dar baja',
+    icon: 'cancel_schedule_send'
+  },
+}
+
 export const PayrollOptions = {
-  AON_CONTRACT ,COMPANY_COSTS, SEPA_FILES, PAYSHEET, AON_COMUNICA, AON_CERT, AON_CCC
+  AON_CONTRACT ,COMPANY_COSTS, SEPA_FILES, PAYSHEET, AON_COMUNICA, AON_CERT, AON_CCC, AON_LABORAL
 };
 
 export const PAYROLL_VIEWS = {

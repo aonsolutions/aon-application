@@ -129,20 +129,22 @@ export class AonMovementsList extends AonElement {
   }
 
   async aonMovement({ }, { regime, ctaCti, nss, prev, situation }) {
-    this.applicationEl.startLoader();
-    const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA);
+    this.applicationEl.startLoading();
+  
     try {
       let resp = await getEmployee({ regime, ctaCti, nss });
       if (resp) {
-        resp = { ...resp, prev, situation };
+        const data = { ...resp, prev, situation };
+        const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
         if (aonAltaDirecta) {
           disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
-          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH)
-          aonAltaDirecta.data = resp;
+          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
         }
       }
-    } catch (error) {}
-    this.applicationEl.stopLoader();
+    } catch (error) {
+      this.showError(error);
+    }
+    this.applicationEl.stopLoading();
   }
 
   async getData() {
