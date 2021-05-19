@@ -111,8 +111,6 @@ export class AonHeader extends AonElement {
 			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
-		let aonHeaderWeb = this.getElement('aonHeaderWeb');
-
 		this.buildLogo();
 
 		if(!this.isMobile()) {
@@ -135,7 +133,7 @@ export class AonHeader extends AonElement {
 					let options = [{
 						name: 'Solicitudes',
 						icon: 'assignment',
-						fn: () =>rootPanel('<aon-messenger></aon-messenger>')
+						fn: () =>this.isBeta() ? rootPanel(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
 					}, {
 						name: 'Ayuda',
 						icon: 'help_outline',

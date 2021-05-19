@@ -110,22 +110,22 @@ export class AonCtaList extends AonElement {
       {
         name: "Certificado TGSS",
         aonIcon: "aon_seg_social",
-        fn: (el) => this.getCertCorriente(res, el),
+        fn: () => this.getCertCorriente(res),
       },
       {
         name: "Trabajadores en alta",
         aonIcon: "aon_seg_social",
-        fn: (el) => this.getReportAffiliateInAlta(res, el),
+        fn: () => this.getReportAffiliateInAlta(res),
       },
       {
         name: "Movimientos previos",
         aonIcon: "aon_seg_social",
-        fn: (el) => this.getReportAffiliateInMovPrev(res, el),
+        fn: () => this.getReportAffiliateInMovPrev(res),
       },
       {
         name: "IDC",
         aonIcon: "aon_seg_social",
-        fn: (el) => this.getIdcCcc(res, el),
+        fn: () => this.getIdcCcc(res),
       },
     ];
   }
@@ -152,7 +152,7 @@ export class AonCtaList extends AonElement {
     return name;
   }
 
-  async getCertCorriente(data, el) {
+  async getCertCorriente(data) {
     this.applicationEl.startLoading();
     try {
       const { ccc, cccRegimeCode: regimen } = data;
@@ -163,7 +163,7 @@ export class AonCtaList extends AonElement {
     this.applicationEl.stopLoading();
   }
 
-  async getReportAffiliateInAlta(data, el) {
+  async getReportAffiliateInAlta(data) {
     this.applicationEl.startLoading();
     try {
       const { ccc, cccRegimeCode: regimen } = data;
@@ -174,7 +174,7 @@ export class AonCtaList extends AonElement {
     this.applicationEl.stopLoading();
   }
 
-  async getReportAffiliateInMovPrev(data, el) {
+  async getReportAffiliateInMovPrev(data) {
     this.applicationEl.startLoading();
     try {
       const { ccc, cccRegimeCode: regimen } = data;
@@ -185,7 +185,7 @@ export class AonCtaList extends AonElement {
     this.applicationEl.stopLoading();
   }
   
-  async getIdcCcc(data, el) {
+  async getIdcCcc(data) {
     this.applicationEl.startLoading();
     try {
       const { ccc, cccRegimeCode: regimen } = data;

@@ -1,5 +1,8 @@
-import { TAG } from "../../environments/environments.js";
-import { newComponent } from "../../services/utils.js";
+import { AonIconButton } from "../../components/aon-icon-button.js";
+import { AonInput } from "../../components/aon-input.js";
+import { AonSelect } from "../../components/aon-select.js";
+import { CSS, TAG } from "../../environments/environments.js";
+import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utils.js";
 
 
 export const createDiv = (properties)=> newComponent({
@@ -113,3 +116,30 @@ export const createBadge = (id) => createSpan({
     fontWeight: 800,
   }
 });
+
+export const createSelect = ({attributes, events}, parent) => {
+  if(attributes.options && typeof attributes.options !== "string") attributes.options=JSON.stringify(attributes.options);
+  let select = new AonSelect();
+  setClasses(select,[CSS.TRANSITION_CASCADE]);
+  setAttributes(select, attributes);
+  if(events) setEvents(select, events);
+  parent.appendChild(select);
+  return select;
+}
+
+
+export const createInput = ({attributes, events}, parent) => {
+  let input = new AonInput();
+  setAttributes(input, attributes);
+  if(events) setEvents(input, events);
+  parent.appendChild(input);
+  return input;
+}
+
+export const createIconButton = ({attributes, events}, parent) => {
+  let icon = new AonIconButton();
+  setAttributes(icon, attributes);
+  if(events) setEvents(icon, events);
+  parent.appendChild(icon);
+  return icon;
+}
