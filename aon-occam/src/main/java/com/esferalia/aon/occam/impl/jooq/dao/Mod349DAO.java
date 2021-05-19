@@ -46,6 +46,9 @@ public class Mod349DAO {
 	private static byte ONE_BYTE = 1;
 	
 	public static Stream<Mod349> getHeaders(AONContext ctx, int domain) {
+		return getHeaders(ctx, domain, null);
+	}
+	public static Stream<Mod349> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MOD349.fields())
@@ -53,6 +56,7 @@ public class Mod349DAO {
 			.from(FS_MOD349)
 			.join(DOMAIN).on(FS_MOD349.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD349.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MOD349.YEAR.desc()
 					,getDueMonth().desc()  // Se ordena por el mes hasta del periodo, por que en un mismo ejercicio podrían coincidir varias periodicidades (trimestral y mensual, por ejemplo)
 					,FS_MOD349.NAME.asc()

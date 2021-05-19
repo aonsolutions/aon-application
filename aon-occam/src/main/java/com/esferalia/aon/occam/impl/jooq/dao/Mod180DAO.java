@@ -43,6 +43,9 @@ public class Mod180DAO {
 	private static byte ZERO_BYTE = 0;
 
 	public static Stream<Mod180> getHeaders(AONContext ctx, int domain) {
+		return getHeaders(ctx, domain, null);
+	}
+	public static Stream<Mod180> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL180.fields())
@@ -50,6 +53,7 @@ public class Mod180DAO {
 			.from(FS_MODEL180)
 			.join(DOMAIN).on(FS_MODEL180.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL180.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MODEL180.YEAR.desc()
 					,FS_MODEL180.NAME.asc()
 					,FS_MODEL180.REPLACEMENT.asc())

@@ -11,6 +11,7 @@ public class FiscalMatrixParams implements Serializable{
 	private int year;
 	private FiscalModelType model;
 	private Administration administration;
+	private Integer scope;
 	
 	private boolean configuredVisible;
 	private boolean madeModelsVisible;
@@ -38,6 +39,14 @@ public class FiscalMatrixParams implements Serializable{
 		this.administration = administration;
 		return this;
 	}
+	public Integer getScope() {
+		return scope;
+	}
+	public FiscalMatrixParams setScope(Integer scope) {
+		this.scope = scope;
+		return this;
+	}
+	
 	public boolean isConfiguredVisible() {
 		return configuredVisible;
 	}

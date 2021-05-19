@@ -4,12 +4,18 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
-import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,37 +25,61 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 
-class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers<FiscalMatrixParams>, Focusable {
+class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHandlers<FiscalMatrixParams>, Focusable {
 	
 	private static final Logger LOGGER = Logger.getLogger(ModelMatrixFilterPanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
+	private static CommonServiceAsync COMMON_SERVICE;
+
 	private ListBox year;
 	private ListBox model;
 	private ListBox admon;
+	private ListBox scopeBox;
 	private CheckBox showConfigurated;
 	private CheckBox showMadeModels;
 	private AonSearchPanelButton refreshButton;
+	private AonSearchPanelButton configButton;
+
 	
+	protected ModelMatrixFilterPanel(MatrixModuleOptions options) {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+
+		COMMON_SERVICE.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser(),
+				new AsyncCallback<AonConfiguration>() {
+			@Override
+			public void onSuccess(AonConfiguration result) {
+				options.setConfiguration(result);
+				load(options);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("No se puede cargar la página [Interno: " + caught.getMessage()+ "]");
+			}
+		});
+	}
+
 	
-	protected ModelMatrixFilterPanel(AonData aonData) {
-		setStyleName(AON.CSS.aonSearchPanel());
+	protected void load(MatrixModuleOptions options) {
+		addStyleName(AON.CSS.aonSearchPanel());
 		addStyleName(AON.CSS.aonMarginLeft());
 		addStyleName(AON.CSS.aonMarginRight());
 		addStyleName(AON.CSS.aonBlockCenter());
 		addStyleName(AON.CSS.aonMarginTop());
+		addStyleName(AON.CSS.aonWidthAlmostAll());
 
 		InlineLabel yearLabel = new InlineLabel(AON.MSG.fiscalYear());
 		yearLabel.setStyleName(AON.CSS.aonMarginRight());
-		add(yearLabel);
 		year = new ListBox();
 		year.setStyleName(AON.CSS.aonMarginRight());
 		for (int i = 2012; i < 2025; i++) {
@@ -59,7 +89,6 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
-		add(year);
 		year.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -70,7 +99,6 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 		
 		InlineLabel modelLabel = new InlineLabel(AON.MSG.fiscalModels());
 		modelLabel.setStyleName(AON.CSS.aonMarginRight());
-		add(modelLabel);
 		model = new ListBox();
 		model.setStyleName(AON.CSS.aonMarginRight());
 		model.addItem(" TODOS ", "");
@@ -79,7 +107,6 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
-		add(model);
 		model.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -90,15 +117,13 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 
 		InlineLabel admonLabel = new InlineLabel(AON.MSG.administration());
 		admonLabel.setStyleName(AON.CSS.aonMarginRight());
-		add(admonLabel);
+
 		admon = new ListBox();
 		admon.setStyleName(AON.CSS.aonMarginRight());
 		admon.addItem(" TODAS ", "");
 		for (Administration a : Administration.values()) {
 			admon.addItem(a.getDescription());
 		}
-		add(admon);
-		
 		admon.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -107,6 +132,28 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 			}
 		});
 		
+		
+		InlineLabel scopeLabel = new InlineLabel(AON.MSG.scope());
+		scopeBox = new ListBox();
+		boolean showScopes = (options != null && options.getConfiguration() != null && options.getConfiguration().hasAvailableScopes());
+		if (showScopes) {
+			scopeLabel.setStyleName(AON.CSS.aonMarginRight());
+			scopeBox.setStyleName(AON.CSS.aonMarginRight());
+			scopeBox.addItem(" TODOS ", "");
+			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
+				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
+			}
+			scopeBox.addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					fireValueChangeEvent();
+				}
+			});
+		}
+		
+		
+
 		showConfigurated = new CheckBox();
 		showConfigurated.setValue(false);
 		showConfigurated.setStyleName(AON.CSS.aonMarginRight());
@@ -118,7 +165,6 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 				fireValueChangeEvent();
 			}
 		});
-		add(showConfigurated);
 		
 		showMadeModels = new CheckBox();
 		showMadeModels.setValue(true);
@@ -131,7 +177,6 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 				fireValueChangeEvent();
 			}
 		});
-		add(showMadeModels);
 		
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refreshButton.addStyleName(AON.CSS.aonMarginRight());
@@ -141,9 +186,37 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 				fireValueChangeEvent();
 			}
 		});
-		add(refreshButton);
 
-
+		configButton = new AonSearchPanelButton(AON.MSG.settings(),AON.CSS.aonIconSettings());
+		configButton.addStyleName(AON.CSS.aonMarginRight());
+		configButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showConfigurationPanel();
+			}
+		});
+		
+		addRow()
+			.addCell(yearLabel,AON.CSS.aonTableLabel())
+			.addCell(year)
+			.addCell(modelLabel,AON.CSS.aonTableLabel())
+			.addCell(model)
+			.addCell(showConfigurated)
+			.addCell(new InlineLabel())
+			.addCell(new InlineLabel())
+			.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
+		;
+			
+		addRow()
+			.addCell(admonLabel,AON.CSS.aonTableLabel())
+			.addCell(admon)
+			.addCell(showScopes?scopeLabel:new InlineLabel(),AON.CSS.aonTableLabel())
+			.addCell(showScopes?scopeBox:new InlineLabel())
+			.addCell(showMadeModels)
+			.addCell(refreshButton)
+			.addCell(new InlineLabel(),AON.CSS.aonFlexGrow1())
+		;
+		fireValueChangeEvent();
 	}
 
 	protected void fireValueChangeEvent() {
@@ -154,18 +227,19 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 			administration = Administration.values()[admon.getSelectedIndex() - 1];
 		}
 		FiscalModelType modelType = null;
-		LOGGER.info(model.getSelectedIndex() + " " + model.getSelectedValue());
 		if ( model.getSelectedIndex() > 0) {
 			modelType = FiscalModelType.valueOf(model.getSelectedValue());
 		}
-		LOGGER.info(modelType==null?"NULL":("NOT NULL " + modelType.toString()));
+		LOGGER.info("Scope ..: " + scopeBox.getSelectedValue()); 
+		Integer scope = AonNumberUtils.toInteger(scopeBox.getSelectedValue());
 		params.setYear(y)
 			.setModel(modelType)
 			.setAdministration(administration)
+			.setScope(scope)
 			.setConfiguredVisible(showConfigurated.getValue())
 			.setMadeModelsVisible(showMadeModels.getValue())
 			;
-		
+
 		ValueChangeEvent.fire(ModelMatrixFilterPanel.this, params);
 	}
 
@@ -195,6 +269,11 @@ class ModelMatrixFilterPanel extends FlowPanel implements HasValueChangeHandlers
 
 	public int getSelectedYear() {
 		return AonNumberUtils.toint(year.getSelectedItemText()); 
+	}
+
+	private void showConfigurationPanel() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

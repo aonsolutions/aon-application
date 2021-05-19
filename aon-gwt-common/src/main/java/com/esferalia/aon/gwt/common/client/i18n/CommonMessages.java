@@ -4007,6 +4007,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Presentaci\u00F3n telm\u00E1tica")
 	String telematicSubmission();
+	
+	@DefaultMessage("Configuraci\u00F3n")
+	String settings();
 
 }
 
