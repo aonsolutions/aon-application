@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -59,14 +58,13 @@ public class MainDigitalCertificatesObject {
 		
 	}
 	
-	public void deleteDigitalCertificate(String typeStr, Consumer<Void> success, Consumer<Throwable> failure){
-		Byte type = Byte.parseByte(typeStr);
-		impl.deleteDigitalCertificate(type, new AsyncCallback<Void>() {
+	public void deleteDigitalCertificate(CertificateType certificateType, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.deleteDigitalCertificate(certificateType, new AsyncCallback<Void>() {
 			
 			@Override
-			public void onSuccess(Void accept) {
+			public void onSuccess(Void result) {
 				getDigitalCertificates(s -> {
-					success.accept(accept);	
+					success.accept(result);	
 				}, f -> {});
 			}
 
@@ -173,55 +171,7 @@ public class MainDigitalCertificatesObject {
 		});
 	}
 
-	public void setConfidential(byte certificateType, boolean isConfidential) {
-		checkAndCreateCertificateType(certificateType);
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				digitalCertificate.setConfidential(isConfidential);
-	}
-
-	public void setPassword(byte certificateType, String password) {
-		checkAndCreateCertificateType(certificateType);
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				digitalCertificate.setPassword(password);
-	}
-	
-	public void setDescription(byte certificateType, String description) {
-		checkAndCreateCertificateType(certificateType);
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				digitalCertificate.setDescription(description);
-	}
-
-	private void checkAndCreateCertificateType(byte certificateType) {
-		boolean exists = false;
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				exists = true;
-		
-		if(!exists) {
-			DigitalCertificate digitalCertificate = new DigitalCertificate();
-			digitalCertificate.setType(certificateType);
-			digitalCertificateList.add(digitalCertificate);
-		}
-	}
-
-	public String getDescription(byte certificateType) {
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				return StringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
-		
-		return "Certficado sin nombre";
-	}
-
-	public boolean hasData(byte certificateType) {
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
-			if(digitalCertificate.getType() == certificateType)
-				return digitalCertificate.getHasCertificate();
-		
-		return false;
-	}
+	// ----------------------------------------------------------- GETTERS
 	
 	public List<DigitalCertificate> getDigitalCertificateList(){
 		return digitalCertificateList;
@@ -242,6 +192,8 @@ public class MainDigitalCertificatesObject {
 		
 	}
 	
+	// ----------------------------------------------------------- AUXILIAR METHODS
+	
 	public String checkIPFType(String ipf) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 
@@ -254,7 +206,7 @@ public class MainDigitalCertificatesObject {
 	public boolean hasMoraThanOneSEPECertificates() {
 		int sepeCertificates = 0;
 		for(DigitalCertificate digitalCertificate : digitalCertificateList) {
-			if(digitalCertificate.getType() == (byte)0)
+			if(digitalCertificate.getType() == CertificateType.SEPE)
 				sepeCertificates++;
 		}
 		return sepeCertificates > 1;

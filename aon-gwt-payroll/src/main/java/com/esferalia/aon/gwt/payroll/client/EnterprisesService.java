@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -227,7 +228,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Map<String, String> getPayMethods(String currentDomainName);
 
-	void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type);
+	void deleteDigitalCertificate(String currentDomainName, String currentUser, CertificateType certificateType);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser);
 

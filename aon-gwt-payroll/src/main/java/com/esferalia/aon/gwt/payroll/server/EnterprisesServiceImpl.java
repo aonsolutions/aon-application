@@ -75,6 +75,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -137,11 +138,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED.AccidentType;
-import solutions.aon.seg.social.SistemaRED.CauseType;
-import solutions.aon.seg.social.SistemaRED.Contingencies;
-import solutions.aon.seg.social.SistemaRED.PartType;
-import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
@@ -2473,12 +2469,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void deleteDigitalCertificate(String domainName, String userLogin, Byte type) {
+	public void deleteDigitalCertificate(String domainName, String userLogin, CertificateType certificateType) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			JooqDigitalCertificate.deleteDigitalCertificate(connection, domainId, userId, type);
+			JooqDigitalCertificate.deleteDigitalCertificate(connection, domainId, userId, certificateType);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
