@@ -28,7 +28,7 @@ public class BOEPyGCoopAbbreviateScript extends BalanceScript {
 		 ,CEA006(1,HEADER1, "6." ,"Gastos de personal.",null,"CEA006A+CEA006B")
 		 	,CEA006A(2,LEAF, "a)" ,"Servisio de trabajo de socios.","sap({647})",null)
 		 	,CEA006B(2,LEAF, "b)" ,"Otros gastos de personal.","sap({64,7950,7957})-sap({647})",null)
-		 ,CEA007(1,LEAF, "7." ,"Otros gastos de explotación.","sap({636,639,794,7954})-sdp({62,631,634,65,657,694,695})",null)
+		 ,CEA007(1,LEAF, "7." ,"Otros gastos de explotación.","sap({636,639,794,7954})-sdp({62,631,634,650,651,659,694,695})",null)
 		 ,CEA008(1,LEAF, "8." ,"Amortización del inmovilizado.","sap({68})",null)
 		 ,CEA009(1,LEAF, "9." ,"Imputación de subvenciones de inmovilizado no financiero y otras.","sap({746})",null)
 		 ,CEA010(1,LEAF,"10." ,"Excesos de provisiones.","sap({7951,7952,7955,7956})",null)
