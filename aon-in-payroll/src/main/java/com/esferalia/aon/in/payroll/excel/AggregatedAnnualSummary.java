@@ -1,0 +1,1343 @@
+package com.esferalia.aon.in.payroll.excel;
+
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jooq.Condition;
+
+import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.Bonus;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Cost;
+import com.esferalia.aon.occam.api.model.Salary.Deduction;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class AggregatedAnnualSummary {
+	
+	private static Enterprise getEnterpriseById (AONContext aonContext, Integer enterpriseId) {
+		return AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), enterpriseId);
+	}
+	
+	private static Enterprise getEnterpriseByWorkplaceId (AONContext aonContext, Integer workplaceId) {
+		Workplace workplace = AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), f -> f.getIdProperty().eq(workplaceId));
+		Integer enterpriseId = workplace.getEnterprise();
+		return getEnterpriseById(aonContext, enterpriseId);
+	}
+	
+	private static Enterprise pickEnterpriseFromDomain (AONContext aonContext) {
+		EnterpriseRecord registry = aonContext.getDslContext()
+		.select()
+		.from(ENTERPRISE)
+		.where(ENTERPRISE.DOMAIN.eq(aonContext.getDomainId()))
+		.fetchOneInto(ENTERPRISE);
+		
+		Integer enterpriseId = registry.getRegistry();
+		
+		return getEnterpriseById(aonContext, enterpriseId);
+	}
+	
+	public static void writeExcel (OutputStream oos, String domainName, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		
+		Date startDate = calendar.getTime();
+		
+		calendar.set(Calendar.MONTH, 11);
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		
+		Date endDate = calendar.getTime();
+		
+		AONContext aonContext = AONContext.getAONContext(domainName, "");
+		
+		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
+				.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())));
+		if (enterpriseId.isPresent() && enterpriseId.get() > 0)
+			condition = condition.and(ENTERPRISE.REGISTRY.eq(enterpriseId.get()));
+		if (workplaceId.isPresent() && workplaceId.get() > 0)
+			condition = condition.and(WORKPLACE.ID.eq(workplaceId.get()));
+		
+		Map<String, Map<String, AggregatedAnnualEntry>> entries = getEntries(aonContext, condition);
+		
+		Enterprise enterprise = null;
+		if (!enterpriseId.isEmpty()) {
+			enterprise = getEnterpriseById(aonContext, enterpriseId.get());
+		} else if (!workplaceId.isEmpty()) {
+			enterprise = getEnterpriseByWorkplaceId(aonContext, workplaceId.get());
+		} else {
+			enterprise = pickEnterpriseFromDomain(aonContext);
+		}
+		
+		
+		getExcel(oos, year, entries, enterprise.getName());
+		
+	}
+
+	protected static void getExcel(OutputStream oos, Integer year,
+			Map<String, Map<String, AggregatedAnnualEntry>> entries, String enterpriseName) {
+		try (Workbook wb = new XSSFWorkbook()) {
+			
+			DataFormat format = wb.createDataFormat();
+			
+			//STYLES
+			CellStyle monthCellStyle = wb.createCellStyle();
+			monthCellStyle.setBorderTop(BorderStyle.THIN);
+			monthCellStyle.setBorderBottom(BorderStyle.THIN);
+			monthCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			monthCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+			
+			CellStyle rightBorderCellStyle = wb.createCellStyle();
+			rightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+			rightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			CellStyle topRightBorderCellStyle = wb.createCellStyle();
+			topRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+			topRightBorderCellStyle.setBorderTop(BorderStyle.THIN);
+			topRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+			topRightBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			topRightBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+			topRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+
+			CellStyle topLeftBorderCellStyle = wb.createCellStyle();
+			topLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+			topLeftBorderCellStyle.setBorderTop(BorderStyle.THIN);
+			topLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+			topLeftBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			topLeftBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+			topLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			CellStyle topLeftBorderCellStyleNoBottom = wb.createCellStyle();
+			topLeftBorderCellStyleNoBottom.setBorderLeft(BorderStyle.THIN);
+			topLeftBorderCellStyleNoBottom.setBorderTop(BorderStyle.THIN);
+			topLeftBorderCellStyleNoBottom.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			CellStyle leftBorderCellStyle = wb.createCellStyle();
+			leftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+			leftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			CellStyle bottomBorderCellStyle = wb.createCellStyle();
+			bottomBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+			bottomBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+
+			CellStyle bottomLeftBorderCellStyle = wb.createCellStyle();
+			bottomLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+			bottomLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+			bottomLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+
+			CellStyle bottomRightBorderCellStyle = wb.createCellStyle();
+			bottomRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+			bottomRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+			bottomRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			CellStyle numberCellStyle = wb.createCellStyle();
+			numberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			
+			LinkedHashMap<String, LinkedHashMap<String, String>> totalsFormulas = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+			LinkedHashMap<String, LinkedHashSet<String>> orderedConcepts = new LinkedHashMap<String, LinkedHashSet<String>>();
+			{
+				orderedConcepts.put("payments", new LinkedHashSet<String>());
+				orderedConcepts.put("deductions", new LinkedHashSet<String>());
+				orderedConcepts.put("daysAndHours", new LinkedHashSet<String>());
+			}
+			
+			Sheet totalSheet = wb.createSheet("TOTALES");
+			
+			for (String nif : entries.keySet()) {
+				Map<String, AggregatedAnnualEntry> entry = entries.get(nif);
+				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(nif));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
+				sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 8));
+				sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 2));
+				
+				
+				Row row = sheet.createRow(1);
+				
+				Cell cell = row.createCell(0);
+				
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
+				
+				row = sheet.createRow(2);
+				cell = row.createCell(0);
+				cell.setCellValue("Empresa:");
+				cell = row.createCell(1);
+				cell.setCellValue(enterpriseName != null ? enterpriseName : "");
+				
+				row = sheet.createRow(4);
+				cell = row.createCell(0);
+				cell.setCellValue("Moneda:");
+				cell = row.createCell(1);
+				cell.setCellValue("Euros");
+				
+				LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<String>();
+				LinkedHashSet<String> deductionConceptsSet = new LinkedHashSet<String>();
+				Pattern noWords = Pattern.compile("[A-Za-z]+");
+				entry.values().stream().map(e -> e.getPayments()).forEach(payments -> {
+					payments.stream()
+					.filter(p -> p != null)
+					.sorted(Comparator.comparing(p -> p.getPaymentType() != null ? p.getPaymentType() : PaymentType.values()[PaymentType.values().length -1]))
+					.map(p -> {
+						if (p.getDescription() != null) {
+							Matcher matcher = noWords.matcher(p.getDescription());
+							if (matcher.find())
+								return p.getDescription();
+							else
+								return p.getName();
+						} else
+							return p.getName();
+					})
+					.forEach(name -> paymentConceptsSet.add(name));
+				});
+				
+				entry.values().stream().map(e -> e.getDeductions()).forEach(deductions-> {
+					if (deductions != null) {
+						deductions.stream()
+						.filter(d -> d != null)
+						.sorted(Comparator.comparing(d -> d.getDeductionType() != null ? d.getDeductionType() : DeductionType.values()[DeductionType.values().length-1], Comparator.naturalOrder()))
+						.forEach(deduction -> {
+							String name = deduction.getDescription() != null ? deduction.getDescription() : deduction.getDeductionType().name();
+							deductionConceptsSet.add(name);
+						});
+					}
+				});
+				
+				LinkedList<String> paymentConcepts = new LinkedList<String>();
+				paymentConceptsSet.forEach(c -> paymentConcepts.add(c));
+				Pattern pattern = Pattern.compile(".*salario.*base.*", Pattern.CASE_INSENSITIVE);
+				Optional<String> optBaseSalary = paymentConcepts.stream().filter(p -> {
+					Matcher matcher = pattern.matcher(p);
+					if (matcher.matches())
+						return true;
+					return false;
+				}).findFirst();
+				
+				if (!optBaseSalary.isEmpty() ) {
+					int ind = paymentConcepts.indexOf(optBaseSalary.get());
+					paymentConcepts.remove(ind);
+					Deque<String> dequeue = paymentConcepts;
+					dequeue.addFirst(optBaseSalary.get());
+					paymentConcepts.clear();
+					paymentConcepts.addAll(dequeue);
+				}
+				
+				//MONTHS HEADER
+				
+				String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
+				
+				sheet.addMergedRegion(new CellRangeAddress(5, 5, 0, 2));
+				row = sheet.createRow(sheet.getLastRowNum()+1);
+				cell = row.createCell(0);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("CONCEPTO");
+				int[] cellNum = {3};
+				Arrays.stream(months).forEach(month -> {
+					Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]++);
+					monthCell.setCellType(CellType.STRING);
+					monthCell.setCellValue(month);
+					monthCell.setCellStyle(monthCellStyle);
+				});
+				
+				Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]);
+				monthCell.setCellType(CellType.STRING);
+				monthCell.setCellValue("TOTAL");
+				monthCell.setCellStyle(topRightBorderCellStyle);
+				
+				row.getCell(3).setCellStyle(topLeftBorderCellStyle);
+				
+				//PAYMENTS
+				LinkedHashSet<String> conceptSet = orderedConcepts.get("payments");
+				paymentConceptsSet.forEach(concept -> {
+					Row paymentRow = sheet.createRow(sheet.getLastRowNum()+1);
+					sheet.addMergedRegion(new CellRangeAddress(paymentRow.getRowNum(), paymentRow.getRowNum(), 0, 2));
+					Cell paymentCell = paymentRow.createCell(0);
+					paymentCell.setCellType(CellType.STRING);
+					if (concept != null)
+						paymentCell.setCellValue(removeUnderscore(concept));
+					int[] amountCellNum = {3};
+					conceptSet.add(concept);
+					
+					Arrays.stream(months).forEach(month -> {
+						Cell amountCell = paymentRow.createCell(amountCellNum[0]++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey(concept)) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get(concept);
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put(concept, monthly);
+						}
+						
+						if (entry.get(month) != null) {
+							amountCell.setCellType(CellType.NUMERIC);
+							Collection<Payment> paym = entry.get(month).getPayments();
+							double amount = paym.stream().filter(p -> {
+								if (p != null) {
+									String desc = p.getDescription() != null ? p.getDescription() : p.getName();
+									if (desc != null) {
+										Matcher matcher = noWords.matcher(desc);
+										if (!matcher.find())
+											desc = p.getName();
+									}
+									if (desc != null) {
+										return desc.equals(concept);
+									} else {
+										return desc == concept;
+									}
+								}
+								return false;
+							}).mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0).sum();
+							if (amount != 0d)
+								amountCell.setCellValue(amount);
+							amountCell.setCellStyle(numberCellStyle);
+						}
+					});
+					Cell totalCell = paymentRow.createCell(amountCellNum[0]);
+					totalCell.setCellType(CellType.FORMULA);
+					int realRowNum = totalCell.getRowIndex()+1;
+					totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
+					
+				});
+				
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				cell = row.createCell(0);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("Total Bruto");
+				int[] rawCellNum = {3};
+				Arrays.stream(months).forEach(month -> {
+					AggregatedAnnualEntry ent = entry.get(month);
+					Row rawRow = sheet.getRow(sheet.getLastRowNum());
+					Cell rawCell = rawRow.createCell(rawCellNum[0]++);
+					
+					String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(rawCell.getColumnIndex()) + (rawCell.getRowIndex()+1);
+					
+					if (totalsFormulas.containsKey("Total Bruto")) {
+						LinkedHashMap<String, String> monthly = totalsFormulas.get("Total Bruto");
+						if (monthly.containsKey(month)) {
+							String form = monthly.get(month);
+							monthly.put(month, form + "+" + formula);
+						} else {
+							monthly.put(month, formula);
+						}
+					} else {
+						LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+						monthly.put(month, formula);
+						totalsFormulas.put("Total Bruto", monthly);
+					}
+					
+					rawCell.setCellType(CellType.NUMERIC);
+					if (ent != null && ent.getTotalRaw() != null)
+						rawCell.setCellValue(ent.getTotalRaw());
+					rawCell.setCellStyle(numberCellStyle);
+				});
+				cell = row.createCell(rawCellNum[0]);
+				cell.setCellType(CellType.FORMULA);
+				cell.setCellFormula("SUM(D"+(row.getRowNum()+1)+":"+CellReference.convertNumToColString(rawCellNum[0]-1)+(row.getRowNum()+1)+")");
+				
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//DEDUCTIONS
+				LinkedHashSet<String> deductionSet = orderedConcepts.get("deductions");
+				deductionConceptsSet.forEach(concept -> {
+						Row deductionRow = sheet.createRow(sheet.getLastRowNum()+1);
+						sheet.addMergedRegion(new CellRangeAddress(deductionRow.getRowNum(), deductionRow.getRowNum(), 0, 2));
+						Cell deductionCell = deductionRow.createCell(0);
+						deductionCell.setCellType(CellType.STRING);
+						if (concept != null)
+							deductionCell.setCellValue(spaDeduction(concept));
+						deductionSet.add(concept);
+						
+						int[] amountCellNum = {3};
+						Arrays.stream(months).forEach(month -> {
+							Cell amountCell = deductionRow.createCell(amountCellNum[0]++);
+							
+							String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
+							
+							if (totalsFormulas.containsKey(concept)) {
+								LinkedHashMap<String, String> monthly = totalsFormulas.get(concept);
+								if (monthly.containsKey(month)) {
+									String form = monthly.get(month);
+									monthly.put(month, form + "+" + formula);
+								} else {
+									monthly.put(month, formula);
+								}
+							} else {
+								LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+								monthly.put(month, formula);
+								totalsFormulas.put(concept, monthly);
+							}
+							
+							if (entry.get(month) != null) {
+								amountCell.setCellType(CellType.NUMERIC);
+								
+								double amount = entry.get(month).getDeductions().stream().filter(d -> {
+									if (d != null) {
+										if (d.getDeductionType() != null) {
+											String name = d.getDescription() != null ? d.getDescription() : d.getDeductionType().name();
+											return name.equals(concept);
+										}
+									}
+									return false;
+								}).mapToDouble(d -> d.getAmount()!= null ? d.getAmount() : 0).sum();
+								if (amount != 0d)
+									amountCell.setCellValue(amount);
+								amountCell.setCellStyle(numberCellStyle);
+							}
+						});
+						Cell totalCell = deductionRow.createCell(amountCellNum[0]);
+						totalCell.setCellType(CellType.FORMULA);
+						int realRowNum = totalCell.getRowIndex()+1;
+						totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
+				});
+				
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				
+				cell = row.createCell(0);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("Total Deducciones");
+				
+				int[] totalDeductionCellNum = {3};
+				Arrays.stream(months).forEach(month -> {
+					AggregatedAnnualEntry ent = entry.get(month);
+					Row totalDedRow = sheet.getRow(sheet.getLastRowNum());
+					Cell totalDedCell = totalDedRow.createCell(totalDeductionCellNum[0]++);
+					
+					String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(totalDedCell.getColumnIndex()) + (totalDedCell.getRowIndex()+1);
+					
+					if (totalsFormulas.containsKey("Total Deducciones")) {
+						LinkedHashMap<String, String> monthly = totalsFormulas.get("Total Deducciones");
+						if (monthly.containsKey(month)) {
+							String form = monthly.get(month);
+							monthly.put(month, form + "+" + formula);
+						} else {
+							monthly.put(month, formula);
+						}
+					} else {
+						LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+						monthly.put(month, formula);
+						totalsFormulas.put("Total Deducciones", monthly);
+					}
+					
+					totalDedCell.setCellType(CellType.NUMERIC);
+					if (ent != null && ent.getTotalDeduction() != null)
+						totalDedCell.setCellValue(ent.getTotalDeduction());
+					totalDedCell.setCellStyle(numberCellStyle);
+				});
+				
+				Cell totalCell = row.createCell(totalDeductionCellNum[0]);
+				totalCell.setCellType(CellType.FORMULA);
+				int rRowNum = totalCell.getRowIndex()+1;
+				totalCell.setCellFormula("SUM(D"+rRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+rRowNum+")");
+				
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//TOTAL LIQUID
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("TOTAL LÍQUIDO");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("TOTAL LÍQUIDO")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("TOTAL LÍQUIDO");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("TOTAL LÍQUIDO", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getTotalLiquid() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getTotalLiquid());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//EXTRA PRORATION
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("PRORRATA PAGAS EXTRAS");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("PRORRATA PAGAS EXTRAS")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("PRORRATA PAGAS EXTRAS");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("PRORRATA PAGAS EXTRAS", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getExtraProrration() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getExtraProrration());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//BONUSES
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BONIFICACIONES/REDUCCIONES");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BONIFICACIONES/REDUCCIONES")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BONIFICACIONES/REDUCCIONES");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BONIFICACIONES/REDUCCIONES", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getBonuses() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getBonuses());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//ENTERPRISE SS
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("SEG.SOCIAL EMPRESA");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("SEG.SOCIAL EMPRESA")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("SEG.SOCIAL EMPRESA");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("SEG.SOCIAL EMPRESA", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getEnterpriseSS() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getEnterpriseSS());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//ENTERPRISE COST
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("COSTE EMPRESA");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("COSTE EMPRESA")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("COSTE EMPRESA");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("COSTE EMPRESA", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getEnterpriseCost() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getEnterpriseCost());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//CC BASE
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BASE CONTINGENCIAS COMUNES");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BASE CONTINGENCIAS COMUNES")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BASE CONTINGENCIAS COMUNES");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BASE CONTINGENCIAS COMUNES", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getCcBase() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getCcBase());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//IT BASE
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BASE ACCIDENTES");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BASE ACCIDENTES")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BASE ACCIDENTES");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BASE ACCIDENTES", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getAccBase() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getAccBase());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//IRPF MONEY BASE
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BASE IRPF DINERARIA");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BASE IRPF DINERARIA")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BASE IRPF DINERARIA");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BASE IRPF DINERARIA", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getMoneyIrpfBase() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getMoneyIrpfBase());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//IRPF IN-KIND BASE
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BASE IRPF EN ESPECIE");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BASE IRPF EN ESPECIE")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BASE IRPF EN ESPECIE");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BASE IRPF EN ESPECIE", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getInKindIrpfBase() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getInKindIrpfBase());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//IRPF TOTAL BASE
+				{
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("BASE IRPF TOTAL");
+					int cellInd = 3;
+					boolean hasContent = false;
+					for (String month : months) {
+						AggregatedAnnualEntry ent = entry.get(month);
+						cell = row.createCell(cellInd++);
+						
+						String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+						
+						if (totalsFormulas.containsKey("BASE IRPF TOTAL")) {
+							LinkedHashMap<String, String> monthly = totalsFormulas.get("BASE IRPF TOTAL");
+							if (monthly.containsKey(month)) {
+								String form = monthly.get(month);
+								monthly.put(month, form + "+" + formula);
+							} else {
+								monthly.put(month, formula);
+							}
+						} else {
+							LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+							monthly.put(month, formula);
+							totalsFormulas.put("BASE IRPF TOTAL", monthly);
+						}
+						
+						cell.setCellType(CellType.NUMERIC);
+						if (ent != null && ent.getTotalIrpfBase() != null) {
+							hasContent = true;
+							cell.setCellValue(ent.getTotalIrpfBase());
+						}
+						cell.setCellStyle(numberCellStyle);
+					}
+					cell = row.createCell(cellInd);
+					cell.setCellType(CellType.FORMULA);
+					int realRowNum = cell.getRowIndex()+1;
+					cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+					if (!hasContent)
+						sheet.removeRow(row);
+					else
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+				}
+				//DAYS AND HOURS
+				{
+					LinkedHashSet<String> dahNames = new LinkedHashSet<String>();
+					entry.values().stream().map(ent -> ent.getDaysAndHours()).forEach(dah -> {
+						if (dah != null)
+							dah.keySet().forEach(key -> dahNames.add(key));
+					});
+					if (!dahNames.isEmpty()) {
+						LinkedHashSet<String> dahSet = orderedConcepts.get("daysAndHours");
+						dahNames.forEach(dahName -> {
+							Row dahRow = sheet.createRow(sheet.getLastRowNum() +1);
+							sheet.addMergedRegion(new CellRangeAddress(dahRow.getRowNum(), dahRow.getRowNum(), 0, 2));
+							Cell dahCell = dahRow.createCell(0);
+							dahCell.setCellType(CellType.STRING);
+							dahCell.setCellValue(removeUnderscore(dahName));
+							dahSet.add(dahName);
+							
+							int[] cNum = {3};	
+							Arrays.stream(months).forEach(month -> {
+								Map<String, Double> dah = entry.get(month) != null ? entry.get(month).getDaysAndHours() : null;
+								Cell dCell = dahRow.createCell(cNum[0]);
+								
+								String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
+								
+								if (totalsFormulas.containsKey(dahName)) {
+									LinkedHashMap<String, String> monthly = totalsFormulas.get(dahName);
+									if (monthly.containsKey(month)) {
+										String form = monthly.get(month);
+										monthly.put(month, form + "+" + formula);
+									} else {
+										monthly.put(month, formula);
+									}
+								} else {
+									LinkedHashMap<String, String> monthly = new LinkedHashMap<String, String>();
+									monthly.put(month, formula);
+									totalsFormulas.put(dahName, monthly);
+								}
+								
+								dCell.setCellType(CellType.NUMERIC);
+								dCell.setCellStyle(numberCellStyle);
+								if (dah != null && dah.get(dahName) != null) {
+									dCell.setCellValue(dah.get(dahName));
+								}
+								cNum[0]++;
+							});
+							dahCell = dahRow.createCell(cNum[0]);
+							int realRowNum = dahCell.getRowIndex()+1;
+							dahCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(dahCell.getColumnIndex()-1)+realRowNum+")");
+						});
+					}
+					
+				}
+				
+//				sheet.createFreezePane(0, 6);
+				sheet.createFreezePane(3, 6, 3, 6);
+				
+				
+				
+			}
+			//TOTALS
+			{
+				
+//				totalsFormulas
+				totalSheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
+				totalSheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 8));
+				totalSheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 2));
+				
+				
+				Row row = totalSheet.createRow(1);
+				
+				Cell cell = row.createCell(0);
+				
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
+				
+				row = totalSheet.createRow(2);
+				cell = row.createCell(0);
+				cell.setCellValue("Empresa:");
+				cell = row.createCell(1);
+				cell.setCellValue(enterpriseName != null ? enterpriseName : "");
+				
+				row = totalSheet.createRow(4);
+				cell = row.createCell(0);
+				cell.setCellValue("Moneda:");
+				cell = row.createCell(1);
+				cell.setCellValue("Euros");
+				
+				
+				//MONTHS HEADER
+				
+				String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
+				
+				totalSheet.addMergedRegion(new CellRangeAddress(5, 5, 0, 2));
+				row = totalSheet.createRow(totalSheet.getLastRowNum()+1);
+				cell = row.createCell(0);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue("CONCEPTO");
+				int[] cellNum = {3};
+				Arrays.stream(months).forEach(month -> {
+					Cell monthCell = totalSheet.getRow(totalSheet.getLastRowNum()).createCell(cellNum[0]++);
+					monthCell.setCellType(CellType.STRING);
+					monthCell.setCellValue(month);
+					monthCell.setCellStyle(monthCellStyle);
+				});
+				
+				Cell monthCell = totalSheet.getRow(totalSheet.getLastRowNum()).createCell(cellNum[0]);
+				monthCell.setCellType(CellType.STRING);
+				monthCell.setCellValue("TOTAL");
+				monthCell.setCellStyle(topRightBorderCellStyle);
+				
+				row.getCell(3).setCellStyle(topLeftBorderCellStyle);
+				
+				//PAYMENTS
+				LinkedHashSet<String> paymentsSet = orderedConcepts.get("payments");
+				paymentsSet.forEach(pay -> {
+					Row pRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+					totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, pRow, months, pay);
+				});
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//RAW
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "Total Bruto");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//DEDUCTIONS
+				{
+					LinkedHashSet<String> deductionsSet = orderedConcepts.get("deductions");
+					deductionsSet.forEach(ded -> {
+						Row dRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+						totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, dRow, months, spaDeduction(ded));
+					});
+				}
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//TOTAL LIQUID
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "TOTAL LÍQUIDO");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//EXTRA PAY PRO.
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "PRORRATA PAGAS EXTRAS");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//BONUSES
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "BONIFICACIONES/REDUCCIONES");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//ENTERPRISE SS
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "SEG.SOCIAL EMPRESA");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//ENTERPRISE COST
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "COSTE EMPRESA");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//CC BASE
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "BASE CONTINGENCIAS COMUNES");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//MONEY IRPF BASE
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "BASE IRPF DINERARIA");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+								
+				//IN-KIND IRPF BASE
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "BASE IRPF EN ESPECIE");
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				
+				//TOTAL IRPF BASE
+				totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, row, months, "BASE IRPF TOTAL");
+				
+				//DAYS AND HOURS
+				{
+					LinkedHashSet<String> dahSet = orderedConcepts.get("daysAndHours");
+					dahSet.forEach(dah -> {
+						Row dRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+						totalsCellCreator(numberCellStyle, totalsFormulas, totalSheet, dRow, months, dah);
+					});
+				}
+
+				
+				totalSheet.createFreezePane(3, 6, 3, 6);
+			}
+
+			//RESIZE AND SOME STYLES
+			for (Sheet sheet : wb){
+				int maxCells[] = {0};
+				sheet.rowIterator().forEachRemaining(r -> {
+					Cell cel = r.getCell(15) != null ? r.getCell(15) : r.createCell(15);
+					cel.setCellStyle(r.getRowNum() > 5 ? rightBorderCellStyle : cel.getCellStyle());
+					cel = r.getCell(3) != null ? r.getCell(3) : r.createCell(3);
+					cel.setCellStyle(r.getRowNum() >5 ? leftBorderCellStyle : cel.getCellStyle());
+
+					cel = r.getCell(0) != null ? r.getCell(0) : r.createCell(0);
+					cel.setCellStyle(r.getRowNum() >5 ? leftBorderCellStyle : cel.getCellStyle());
+					
+					int cellCount[] = {0};
+					r.forEach(c -> {
+						cellCount[0]++;
+					});
+					maxCells[0] = maxCells[0] < cellCount[0] ? cellCount[0] : maxCells[0];
+					});
+				for(int i=0;i<=maxCells[0];i++) {
+					sheet.setColumnWidth(i, 3000);
+//					sheet.autoSizeColumn(i, true);
+				}
+				int lastRowNum = sheet.getLastRowNum();
+				Row lastRow = sheet.getRow(lastRowNum);
+				for (int i=0; i<=14;i++) {
+					Cell lastRowCell = lastRow.getCell(i) != null ? lastRow.getCell(i) : lastRow.createCell(i);
+					lastRowCell.setCellStyle(bottomBorderCellStyle);
+				}
+				
+				{
+					Cell lastRowCell = lastRow.getCell(0) != null ? lastRow.getCell(0) : lastRow.createCell(0);
+					lastRowCell.setCellStyle(bottomLeftBorderCellStyle);
+					lastRowCell = lastRow.getCell(3) != null ? lastRow.getCell(3) : lastRow.createCell(3);
+					lastRowCell.setCellStyle(bottomLeftBorderCellStyle);
+					lastRowCell = lastRow.getCell(15) != null ? lastRow.getCell(15) : lastRow.createCell(15);
+					lastRowCell.setCellStyle(bottomRightBorderCellStyle);
+					if (sheet.getRow(6) != null) {
+						Cell firstConceptCell = sheet.getRow(6).getCell(0) != null ? sheet.getRow(6).getCell(0) : sheet.getRow(6).createCell(0);
+						firstConceptCell.setCellStyle(topLeftBorderCellStyleNoBottom);
+					}
+				}
+			}
+			
+			wb.write(oos);
+			
+			
+			
+		} catch (IOException e) {}
+	}
+
+	private static void totalsCellCreator(CellStyle numberCellStyle,
+			LinkedHashMap<String, LinkedHashMap<String, String>> totalsFormulas, Sheet totalSheet, Row row,
+			String[] months, String field) {
+		Cell cell;
+		{
+			LinkedHashMap<String, String> rawFormulas = totalsFormulas.get(field);
+			totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+			cell = row.createCell(0);
+			cell.setCellType(CellType.STRING);
+			cell.setCellValue(removeUnderscore(field));
+			int[] cNum = {3};
+			if (rawFormulas != null) {
+				for (String month : months) {
+					String formula = rawFormulas.get(month);
+					Cell formulaCell = row.createCell(cNum[0]++);
+					formulaCell.setCellType(CellType.FORMULA);
+					formulaCell.setCellStyle(numberCellStyle);
+					formulaCell.setCellFormula(formula);
+				}
+				cell = row.createCell(cNum[0]);
+				int realRowNum = cell.getRowIndex()+1;
+				cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
+			}
+			
+		}
+	}
+	
+	public static Map<String, Map<String, AggregatedAnnualEntry>> getEntries (AONContext aonContext, Condition condition) {
+
+		Collection<Integer> ids = aonContext.getDslContext()
+				.select(SALARY.ID, WORKPLACE.DESCRIPTION)
+				.from(SALARY)
+				.innerJoin(CONTRACT).onKey()
+				.innerJoin(WORKPLACE).onKey()
+				.innerJoin(ENTERPRISE).onKey()
+				.where(condition)
+				.fetchStreamInto(SALARY).map(SalaryRecord::getId).collect(Collectors.toList());
+		
+		Stream<Salary> salaries = AON.getSalaries(aonContext,
+				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
+		
+		LinkedHashMap<String, Map<String, AggregatedAnnualEntry>> entries = new LinkedHashMap<String, Map<String, AggregatedAnnualEntry>>();
+		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", new Locale("es", "ES"));
+		salaries.sorted(Comparator.comparing(Salary::getEmployeeDocument)).forEach(s -> {
+			String month = s.getIssueDate() != null ? df.format(s.getIssueDate()).toUpperCase() : null;
+			if (entries.containsKey(s.getEmployeeDocument())) {
+				AggregatedAnnualEntry entry = entries.get(s.getEmployeeDocument()).get(month) != null ? entries.get(s.getEmployeeDocument()).get(month) : new AggregatedAnnualEntry();
+				fillEntry(s, entry);
+				entries.get(s.getEmployeeDocument()).put(month, entry);
+			} else {
+				AggregatedAnnualEntry entry = new AggregatedAnnualEntry();
+				fillEntry(s, entry);
+				LinkedHashMap<String, AggregatedAnnualEntry> map = new LinkedHashMap<String, AggregatedAnnualEntry>();
+				map.put(month, entry);
+				entries.put(s.getEmployeeDocument(), map);
+			}
+		});
+		return entries;
+	}
+
+	private static void fillEntry(Salary s, AggregatedAnnualEntry entry) {
+		if (s.getProfessionalContingenciesBase() != null)
+			entry.setAccBase((entry.getAccBase() != null ? entry.getAccBase() : 0d) + s.getProfessionalContingenciesBase());
+		if (s.getBonuses() != null && !s.getBonuses().isEmpty()) {
+			Double bonuses = s.getBonuses().stream().mapToDouble(Bonus::getAmount).sum();
+			if (bonuses != null && bonuses != 0d)
+				entry.setBonuses((entry.getBonuses() != null ? entry.getBonuses() : 0d) + bonuses);
+		}
+		if (s.getCommonContingenciesBase() != null)
+			entry.setCcBase((entry.getCcBase() != null ? entry.getCcBase() : 0d) + s.getCommonContingenciesBase());
+		if (s.getTotalEnterprise() != null || s.getTotalPayment() != null) {
+			Double totalEnterprise = (entry.getEnterpriseCost() != null ? entry.getEnterpriseCost() : 0d);
+			if (s.getTotalEnterprise() != null)
+				totalEnterprise += s.getTotalEnterprise();
+			if (s.getTotalPayment() != null)
+				totalEnterprise += s.getTotalPayment();
+			entry.setEnterpriseCost(totalEnterprise);
+		}
+		Double enterpriseSS = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
+		if (enterpriseSS != null && enterpriseSS != 0d)
+			entry.setEnterpriseSS((entry.getEnterpriseSS() != null ? entry.getEnterpriseSS() : 0d) + enterpriseSS);
+		if (s.getExtraProrationBase() != null)
+			entry.setExtraProrration((entry.getExtraProrration() != null ? entry.getExtraProrration() : 0d) + s.getExtraProrationBase());
+		if (s.getInkindIrpfBase() != 0d)
+			entry.setInKindIrpfBase((entry.getInKindIrpfBase() != null ? entry.getInKindIrpfBase() : 0d) + s.getInkindIrpfBase());
+		if (s.getIrpfBase() != null)
+			entry.setTotalIrpfBase((entry.getTotalIrpfBase() != null ? entry.getTotalIrpfBase() : 0d) + s.getIrpfBase());
+		if (s.getMoneyIrpfBase() != 0d)
+			entry.setMoneyIrpfBase((entry.getMoneyIrpfBase() != null ? entry.getMoneyIrpfBase() : 0d) + s.getMoneyIrpfBase());
+		if (s.getInkindIrpfBase() != 0d)
+			entry.setInKindIrpfBase((entry.getInKindIrpfBase() != null ? entry.getInKindIrpfBase() :0d) + s.getInkindIrpfBase());
+		
+		if (s.getPayments() != null) {
+			Collection<Payment> payments = entry.getPayments() != null ? entry.getPayments() : new LinkedList<Payment>(); 
+			payments.addAll(s.getPayments());
+			entry.setPayments(payments);
+		}
+		if (s.getDeductions() != null) {
+			Collection<Deduction> deductions =entry.getDeductions() != null ? entry.getDeductions() : new LinkedList<Deduction>();
+			deductions.addAll(s.getDeductions());
+			entry.setDeductions(deductions);
+		}
+		if (s.getTotalLiquid() != null) {
+			entry.setTotalLiquid((entry.getTotalLiquid() != null ? entry.getTotalLiquid() : 0d) + s.getTotalLiquid());
+		}
+		if (s.getTotalDeduction() != null)
+			entry.setTotalDeduction((entry.getTotalDeduction() != null ? entry.getTotalDeduction() : 0d) + s.getTotalDeduction());
+		if (s.getTotalPayment() != null)
+			entry.setTotalRaw((entry.getTotalRaw() != null ? entry.getTotalRaw() : 0d) + s.getTotalPayment());
+		if (s.getContextData() != null) {
+			Map<String, Double> data = entry.getDaysAndHours() != null ? entry.getDaysAndHours() : new LinkedHashMap<String, Double>();
+			s.getContextData().keySet().stream()
+			.filter(key -> AonStringUtils.containsIgnoreCase(key, "dias") || AonStringUtils.containsIgnoreCase(key, "horas"))
+			.forEach(key -> {
+				String expression = s.getContextData().get(key).stream().map(ContextData::getExpression).findFirst().orElse(null);
+				if (expression != null) {
+					try {
+						data.put(key, Double.parseDouble(expression));
+					} catch (NumberFormatException e) {}
+				}
+			});
+			entry.setDaysAndHours(data);
+		}
+	}
+	
+	private static String removeUnderscore (String str) {
+		if (str == null)
+			return null;
+		else {
+			return str.replaceAll("_", " ");
+		}
+	}
+	
+	private static String spaDeduction (String dedName) {
+		try {
+			DeductionType type = DeductionType.valueOf(dedName);
+			switch (type) {
+				case ADVANCE_PAYMENT:
+					return "ADELANTOS";
+				case IN_KIND:
+					return "EN ESPECIE";
+				case COMMON_CONTINGENCY:
+					return "CONTNGENCIAS COMUNES";
+				case JOB_TRAINING:
+					return "FORMACIÓN PROFESIONAL";
+				case NON_STRUCTURAL_OVERTIME:
+					return "HORAS NO ESTRUCTURALES";
+				case PROFESSIONAL_CONTINGENCY:
+					return "CONTINGENCIAS PROFESIONALES";
+				case STRUCTURAL_OVERTIME:
+					return "HORAS ESTRUCTURALES";
+				case UNEMPLOYMENT:
+					return "DESEMPLEO";
+				case OTHER:
+			default:
+				return "OTRAS DEDUCCIONES";
+			}
+		} catch (IllegalArgumentException e) {}
+		return dedName;
+	}
+	
+}
