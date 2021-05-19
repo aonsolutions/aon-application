@@ -87,12 +87,15 @@ public class UserServlet extends AonApiHttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
+			LOGGER.info("[POST] /user" + api.getPath());
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, setUser(api));
+				break;
+			case "/email":
+				response(req, resp, sendAuthInfoMail(api));
 				break;
 			case "/app":
 				response(req, resp, setUserAppRole(api));
@@ -410,11 +413,11 @@ public class UserServlet extends AonApiHttpServlet {
 				login = usr.getLogin();
 //				pass = AON_SOLUTIONS.getUserPassword(getDomain().getName(), getDomain().getId(), usr.getId());
 			}
-
+			
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null) {
 				auth = createAuth(api.getDomain(), api.getData(), login, pass);
-				sendAuthCreateInfoMail(email, login);
+//				sendAuthCreateInfoMail(email, login);
 			} else updateAuth(auth, api.getData());
 			
 			byte[] a = auth.getAuth();
@@ -565,6 +568,19 @@ public class UserServlet extends AonApiHttpServlet {
 		String body = authCreateInfoContent(email, password);
 		String subject = "NUEVO USUARIO | AON SOLUTIONS"; 
 		SES.sendEmail(from, to, subject, body);
+	}
+	
+	private JSONObject sendAuthInfoMail(AonApiData api) {
+		String email = api.getData().optString("email");
+		Auth auth = AON_SOLUTIONS.getAuth(email);
+		
+		String password = Utils.generatePassword();
+		String pass = Utils.createPasswordHash(auth.getEmail(), password);
+		auth.setPassword(pass);
+		AON_SOLUTIONS.updateAuthPassword(auth);
+		
+		sendAuthCreateInfoMail(email, password);
+		return new JSONObject();
 	}
 	
 	private String authCreateInfoContent(String email, String password) {

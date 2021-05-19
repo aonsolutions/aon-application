@@ -186,6 +186,12 @@ export const SEND_INVOICE = {
     icon: MATERIAL_ICONS.MAIL
 };
 
+export const SEND_EMAIL = {
+    id: CONSTANT.SEND.initCap(),
+    name: MSG.SEND,
+    icon: MATERIAL_ICONS.FORWARD_TO_INBOX
+};
+
 export const SHOW_FILE = {
     id: CONSTANT.SHOW_FILE.initCap(),
     name: MSG.SHOW_FILE,

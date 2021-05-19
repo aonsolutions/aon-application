@@ -46,7 +46,7 @@ public class RememberPasswordServlet extends HttpServlet{
     				auth = AON_SOLUTIONS.getAuth(domain, 0, email);
     				auth.setSchema(schema);
 	    	    	if(auth.getUuid() != null) {
-	    				String password = generatePassword();
+	    				String password = Utils.generatePassword();
 	    	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 	    	    		auth.setPassword(pass);
 	    	    		AON_SOLUTIONS.updateAuthPassword(auth);
@@ -95,13 +95,6 @@ public class RememberPasswordServlet extends HttpServlet{
 	    email.setSubject(subject);
 	    email.setContent(bodyText, "text/html");
 	    return email;
-	}
-	
-	private String generatePassword() {
-		return com.code.aon.google.apis.Utils.PasswordGenerator.getPassword(
-				com.code.aon.google.apis.Utils.PasswordGenerator.MINUSCULAS
-				+ com.code.aon.google.apis.Utils.PasswordGenerator.MAYUSCULAS
-				+ com.code.aon.google.apis.Utils.PasswordGenerator.NUMEROS, 10);
 	}
 	
 }

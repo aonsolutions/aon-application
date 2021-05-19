@@ -260,4 +260,11 @@ public class Utils {
 			return false; 
 		return pat.matcher(email).matches() || email.contains("@aon.solutions");
 	}
+	
+	public static String generatePassword() {
+		return com.code.aon.google.apis.Utils.PasswordGenerator.getPassword(
+				com.code.aon.google.apis.Utils.PasswordGenerator.MINUSCULAS
+				+ com.code.aon.google.apis.Utils.PasswordGenerator.MAYUSCULAS
+				+ com.code.aon.google.apis.Utils.PasswordGenerator.NUMEROS, 10);
+	}
 }
