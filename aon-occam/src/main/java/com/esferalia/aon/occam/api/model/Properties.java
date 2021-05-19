@@ -1388,6 +1388,7 @@ public interface Properties {
 	public interface FiscalModelProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<Integer> getDomainScopeProperty();
 		Property<Integer> getParentDomainProperty();
 		Property<Integer> getYearProperty();
 		Property<String> getModelProperty();

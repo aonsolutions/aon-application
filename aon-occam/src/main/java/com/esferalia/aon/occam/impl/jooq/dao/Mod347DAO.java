@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
 //import org.jooq.impl.DSL;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
 import com.esferalia.aon.occam.api.AONContext;
@@ -58,6 +59,9 @@ public class Mod347DAO {
 	// -------------------- MOD347 --------------------
 	
 	public static Stream<Mod347> getHeaders(AONContext ctx, int domain) {
+		return getHeaders(ctx, domain, null);
+	}
+	public static Stream<Mod347> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MOD347.fields())
@@ -65,6 +69,7 @@ public class Mod347DAO {
 			.from(FS_MOD347)
 			.join(DOMAIN).on(FS_MOD347.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MOD347.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MOD347.YEAR.desc()
 					,FS_MOD347.NAME.asc()
 					,FS_MOD347.COMPLEMENTARY.asc()

@@ -7,9 +7,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -17,6 +19,9 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 public class Mod200DAO extends FiscalModelDAO {
 	
 	public static Stream<Mod200> getHeaders(AONContext ctx, int domain) {
+		return getHeaders(ctx, domain, null);
+	}
+	public static Stream<Mod200> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL200.fields())
@@ -24,8 +29,8 @@ public class Mod200DAO extends FiscalModelDAO {
 			.from(FS_MODEL200)
 			.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
-			.orderBy(FS_MODEL200.YEAR.desc()
-					,FS_MODEL200.NAME.asc())
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
+			.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())
 			.fetch()
 			.stream()
 			.map( new Mod200Filler() )

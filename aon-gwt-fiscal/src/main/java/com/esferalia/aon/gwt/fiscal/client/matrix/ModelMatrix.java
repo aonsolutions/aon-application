@@ -130,22 +130,36 @@ public class ModelMatrix extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(AonData aonData) {
-				onModuleLoad(aonData);
+				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+				MatrixModuleOptions options = new MatrixModuleOptions();
+				options.setParentWidget(root);
+				options.setDomainName(getCurrentDomainName());
+				options.setDomain(getCurrentDomain());
+				options.setUser(getCurrentUser());
+				options.setAonData(aonData);
+				onModuleLoad(options);
 			}
 		});
 	}
 	
-	public void onModuleLoad(AonData aonData) {
+	public void onModuleLoad(MatrixModuleOptions options) {
 		AON.ensureInjected();
 		
 		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
 		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
 
 		DockLayoutPanel dockLayout = new DockLayoutPanel(Unit.PX);
-		filterPanel = new ModelMatrixFilterPanel(aonData);
-		dockLayout.addNorth(filterPanel, 50);
+		filterPanel = new ModelMatrixFilterPanel(options);
+		filterPanel.addValueChangeHandler( new ValueChangeHandler<FiscalMatrixParams>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<FiscalMatrixParams> event) {
+				search( options, event.getValue() );
+			}
+		});
+		dockLayout.addNorth(filterPanel, 100);
 		splitLayoutPanel = new SplitLayoutPanel();
-		this.neo = new NeoMatrix(aonData) {
+		this.neo = new NeoMatrix(options.getAonData()) {
 			@Override
 			protected void onParentLoad() {
 				filterPanel.fireValueChangeEvent();				
@@ -161,26 +175,15 @@ public class ModelMatrix extends MainEntryPoint {
 				closeFootPanel();
 			}
 		};
-		splitLayoutPanel.addSouth(getMinimizePanel( aonData ), 30);
+		splitLayoutPanel.addSouth(getMinimizePanel( options.getAonData() ), 30);
 		scrollPanel = new ScrollPanel();
 		splitLayoutPanel.add(scrollPanel);
 		dockLayout.add(splitLayoutPanel);
-		
-		filterPanel.addValueChangeHandler( new ValueChangeHandler<FiscalMatrixParams>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<FiscalMatrixParams> event) {
-				search( aonData, event.getValue() );
-			}
-		});
-		
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(dockLayout);
-		
-		filterPanel.fireValueChangeEvent();
+		options.getParentWidget().add(dockLayout);
+		// filterPanel.fireValueChangeEvent();
 	}
 
-	private FlowPanel paint(AonData aonData, AonJsArray<JsFiscalMenuItem> aonJsArray, FiscalMatrixParams fiscalMatrixParams) {
+	private FlowPanel paint(MatrixModuleOptions options, AonJsArray<JsFiscalMenuItem> aonJsArray, FiscalMatrixParams fiscalMatrixParams) {
 		FlowPanel content = new FlowPanel();
 		content.setStyleName(AON.CSS.aonMarginRight());
 		content.addStyleName(AON.CSS.aonMarginLeft());
@@ -400,7 +403,7 @@ public class ModelMatrix extends MainEntryPoint {
 									
 									@Override
 									public void onClick(ClickEvent event) {
-										model.getModel().visit(new MatrixNewModelVisitor(aonData,model));
+										model.getModel().visit(new MatrixNewModelVisitor(options.getAonData(),model));
 									}
 								});
 								tab.setWidget(row, c, addButton);
@@ -445,7 +448,7 @@ public class ModelMatrix extends MainEntryPoint {
 											focusPanel.addClickHandler( new ClickHandler() {
 												@Override
 												public void onClick(ClickEvent event) {
-													modelType.visit(new MatrixViewModelVisitor(aonData,model));
+													modelType.visit(new MatrixViewModelVisitor(options.getAonData(),model));
 												}
 											});
 										}
@@ -461,7 +464,7 @@ public class ModelMatrix extends MainEntryPoint {
 												fs.setPeriod(period);
 												fs.setYear(fiscalMatrixParams.getYear());
 												fs.setDomain(Integer.valueOf(model.getDomain() + ""));
-												modelType.visit(new MatrixNewModelVisitor(aonData, fs));
+												modelType.visit(new MatrixNewModelVisitor(options.getAonData(), fs));
 											}
 										});
 									}
@@ -579,10 +582,10 @@ public class ModelMatrix extends MainEntryPoint {
 		return footPanel; 
 	}
 	
-	private void search(AonData aonData, FiscalMatrixParams params) {
-		API API = new API(GWT.getHostPageBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
+	private void search(MatrixModuleOptions options, FiscalMatrixParams params) {
+		API API = new API(GWT.getHostPageBaseURL(), options.getAonData().getMd5(),
+				options.getAonData().getDomain().getName(), options.getAonData().getDomain().getId(),
+				options.getAonData().getUser().getLogin());
 		HashMap<String, LinkedList<String>> filterMap = new HashMap<String, LinkedList<String>>();
 		LinkedList<String> yearListt = new LinkedList<String>();
 		yearListt.add(AonNumberUtils.toString(params.getYear()) );
@@ -593,6 +596,9 @@ public class ModelMatrix extends MainEntryPoint {
 		LinkedList<String> admonListt = new LinkedList<String>();
 		admonListt.add(params.getAdministration()==null?"":params.getAdministration().toString());
 		filterMap.put(IJsonNames.ADMINISTRATION, admonListt);
+		LinkedList<String> scopeListt = new LinkedList<String>();
+		scopeListt.add(AonNumberUtils.toString(params.getScope()) );
+		filterMap.put(IJsonNames.SCOPE, scopeListt);
 		LinkedList<String> configuredVisibleListt = new LinkedList<String>();
 		configuredVisibleListt.add( params.isConfiguredVisible()?Boolean.TRUE.toString() : Boolean.FALSE.toString() );
 		filterMap.put(IJsonNames.CONFIGURED_VISIBLE, configuredVisibleListt);
@@ -603,7 +609,7 @@ public class ModelMatrix extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(JSON<JsFiscalMenuItem> result) {
-				scrollPanel.setWidget( paint(aonData, result.getData(), params));
+				scrollPanel.setWidget( paint(options, result.getData(), params));
 			}
 			
 			@Override

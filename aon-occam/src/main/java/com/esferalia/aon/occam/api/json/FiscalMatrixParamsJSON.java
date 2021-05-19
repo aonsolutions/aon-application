@@ -45,6 +45,16 @@ public enum FiscalMatrixParamsJSON {
 			return json.put(IJsonNames.ADMINISTRATION, params.getAdministration().toString());
 		}
 	},
+	SCOPE{
+		@Override
+		public FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json) {
+			return params.setScope( AonNumberUtils.toInteger(  json.optNumber(IJsonNames.SCOPE, null) ));
+		}
+		@Override
+		public JSONObject to(FiscalMatrixParams params, JSONObject json) {
+			return json.put(IJsonNames.SCOPE, params.getScope());
+		}
+	},
 	CONFIGURED_VISIBLE{
 		@Override
 		public FiscalMatrixParams from(FiscalMatrixParams params, JSONObject json) {

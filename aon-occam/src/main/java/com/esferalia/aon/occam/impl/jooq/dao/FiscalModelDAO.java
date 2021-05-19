@@ -67,6 +67,7 @@ public class FiscalModelDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.DOMAIN);}
+		@Override public Property<Integer> getDomainScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.SCOPE);}
 		@Override public Property<Integer> getParentDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);}
 		@Override public Property<Integer> getYearProperty() {return new FilterDAO.PropertyDAO<Integer>(FS_MODEL.YEAR);}
 		@Override public Property<String> getModelProperty() {return new FilterDAO.PropertyDAO<String>(FS_MODEL.MODEL);}

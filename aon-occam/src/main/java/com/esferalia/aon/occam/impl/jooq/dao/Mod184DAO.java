@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel184Record;
 import com.esferalia.aon.occam.api.AONContext;
@@ -33,6 +34,9 @@ public class Mod184DAO {
 	private static byte ZERO_BYTE = 0;
 
 	public static Stream<Mod184> getHeaders(AONContext ctx, int domain) {
+		return getHeaders(ctx, domain, null);
+	}
+	public static Stream<Mod184> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 			.select(FS_MODEL184.fields())
@@ -40,6 +44,7 @@ public class Mod184DAO {
 			.from(FS_MODEL184)
 			.join(DOMAIN).on(FS_MODEL184.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL184.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MODEL184.YEAR.desc()
 					,FS_MODEL184.NAME.asc()
 					,FS_MODEL184.REPLACEMENT.asc())
