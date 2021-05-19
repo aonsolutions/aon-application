@@ -371,6 +371,10 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoice(type, invoice) {
 		let aonInvoice = this.getApplication();
+		if(this.isMobile()) {
+			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+			toolbar.removeButtons();
+		}
 		let ni = this.isMobile() ? new AonMobileNewInvoice() : new AonNewInvoice();
 		ni.setType(type);
 		ni.setInvoice(invoice);

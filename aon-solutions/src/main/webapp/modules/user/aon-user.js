@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteUser,
-	 changePassword, getAuth, getDomainUserRoles} from  '../../services/service.js';
+	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {ToolbarType} from '../../models/enums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -178,17 +178,12 @@ export class AonUser extends AonElement {
 		if(aonUserSurname)
 			aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
-		if(user && user.document && !user.document.isEmpty()) {
-			aonUserDocument.disabled = true;
-			aonUserDocument.value = user.document;
-		} else aonUserDocument.value = '';
+		aonUserDocument.value = user.document;
+
 		let aonUserPhone = document.getElementById('aonConfigurationUserCardPhone');
 		aonUserPhone.setAttribute('value', user && user.phone ? user.phone : '');
 		let aonUserEmail = document.getElementById('aonConfigurationUserCardEmail');
-		if(user && user.email && !user.email.isEmpty()) {
-			aonUserEmail.disabled = true;
-			aonUserEmail.value = user.email;
-		} else aonUserEmail.value = '';
+		aonUserEmail.value = user.email;
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
@@ -279,12 +274,14 @@ export class AonUser extends AonElement {
 		if(!this.hasAttribute('showToolbar'))
 			userToolbar.style.display = 'none';
 		userToolbar.removeButtons();
-
+		if(this._user && this._user.uuid)
+			userToolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
 			userToolbar.addButton2(ACTION.SAVE, () => this.save());
 		if(this._user.id)
 			userToolbar.addButton2(ACTION.DELETE, () => this.delete());
 		userToolbar.addButton2(ACTION.BACK, () => this.back());
+		
 	}
 
 	build() {
@@ -385,7 +382,7 @@ export class AonUser extends AonElement {
 		if(editPassword) {
 			editPassword.addEventListener('click', (e) => {
 				e.preventDefault();
-				this.editPassword()
+				this.editPassword();
 			});
 		}
 		let card3 = document.getElementById('aonConfigurationUserInfoCard');
@@ -450,22 +447,33 @@ export class AonUser extends AonElement {
 	}
 
 	delete() {
-		let aonApplication = document.querySelector('aon-application');
-    let d = document.getElementById(aonApplication.DIALOG);
-    d.clear();
-    if(!this.isMobile()) d.width = '400px';
-    d.setTitle(MSG.DELETE);
-    d.setContentHTML(`Estás seguro de eliminar el usuario`);
-    d.addAcceptAction(() => {
+    	let d = this.getApplication().getDialog();
+   	 	d.clear();
+    	if(!this.isMobile()) d.width = '400px';
+    	d.setTitle(MSG.DELETE);
+   	 	d.setContentHTML(`Estás seguro de eliminar el usuario`);
+    	d.addAcceptAction(() => {
 			let data = { user: this._user.id};
 			deleteUser(data).then(() => this.back());
-    });
-    d.open();
+    	});
+    	d.open();
 	}
 
 	back() {
 		this.getApplication().setContent( this.isMobile() 
 			? new AonMobileUserList() : new AonUserList());
+	}
+
+	sendEmail() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE);
+		d.setContentHTML('Al notificar los datos de usuario se generará una nueva contraseña.');
+		d.addAcceptAction(() => {
+			sendUserInfoEmail(this._user);
+		});
+		d.open();
 	}
 
 	buildAppSelect(app) {

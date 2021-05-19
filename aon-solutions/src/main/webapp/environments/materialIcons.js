@@ -110,7 +110,7 @@ export const FORMAT_INDENT_INCREASE = "format_indent_increase";
 export const FORMAT_ITALIC = "format_italic";
 export const FORMAT_BOLD = "format_bold";
 export const FORMAT_LIST_BULLETED = "format_list_bulleted";
-
+export const FORWARD_TO_INBOX = "forward_to_inbox";
 
 // ----- G
 

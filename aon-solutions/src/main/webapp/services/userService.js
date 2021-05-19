@@ -14,3 +14,5 @@ export const setUserAppRole = (data) => post(`${API_URL}/user/app`, data);
 export const getUserNotice = (data) => get(`${API_URL}/user/notice`, data);
 
 export const deleteUser = (data) => remove(`${API_URL}/user`, data);
+
+export const sendUserInfoEmail = (data) => post(`${API_URL}/user/email`, data);

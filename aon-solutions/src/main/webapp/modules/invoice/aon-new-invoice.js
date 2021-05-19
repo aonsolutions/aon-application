@@ -1150,6 +1150,8 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	back() {
+		if(this.isMobile())
+			this.getApplication().getParent().buildToolbarOptions();
 		this.getApplication().getParent().aonInvoiceList();
 	}
 
