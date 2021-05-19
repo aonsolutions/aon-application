@@ -1,3 +1,5 @@
+	import * as LS from '../services/localStorageService.js';
+	
 	export const removeRootPanel = (panel) => {
 		panel = panel || 'rootPanel';
 		const myNode = document.getElementById(panel);
@@ -56,8 +58,16 @@
 	export const load = (gwtOption, rootPanel) => {
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
+	
+	const loadDomainFunctions = () => {
+		window.getCurrentDomainNameURL = () => LS.getDomainName();
+		window.getCurrentDomainName = () => LS.getDomainName();
+		window.getCurrentDomain = () => LS.getDomainId();
+		window.getCurrentUser = () => LS.getDomainLogin();
+	}
 
 	export const startModule = (module, entrypoint, rootPanel) => {
+		loadDomainFunctions();
 		let panel = rootPanel || 'rootPanel';
 		if(rootPanel) {
 			localStorage.setItem('rootPanel', rootPanel);
@@ -78,6 +88,8 @@
 			}
 		}
 	}
+
+
 
 	export const triggerModuleStart = (module) => {
 		try{
