@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -28,6 +29,14 @@ public class CertificatesServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		// Get rattach Id
+		String rattachIdStr = req.getParameter("rattachId");
+		Integer rattachId = AonStringUtils.isBlank(rattachIdStr) ? null : Integer.parseInt(rattachIdStr);
+		
+		// Get raddinfo Id
+		String raddinfoIdStr = req.getParameter("raddinfoId");
+		Integer raddinfoId = AonStringUtils.isBlank(raddinfoIdStr) ? null : Integer.parseInt(raddinfoIdStr);
+		
 		// Get extension and parse to MimeType
 		String extension = req.getParameter("extension");
 		byte mimeType = getMimeType(extension);
@@ -37,7 +46,7 @@ public class CertificatesServlet extends HttpServlet {
 		
 		// Get extension and parse to MimeType
 		String certificateTypeStr = req.getParameter("certificatetype");
-		Byte certificateType = Byte.parseByte(certificateTypeStr);
+		CertificateType certificateType = AonStringUtils.equalsIgnoreCase(certificateTypeStr, "0") ? CertificateType.SEPE : CertificateType.TGSS;
 		
 		// Get currentUser
 		String currentUser = req.getParameter("currentUser");
@@ -57,7 +66,7 @@ public class CertificatesServlet extends HttpServlet {
 		
 		try ( InputStream is = filePart.getInputStream() ){
 				byte data [] = toByteArray(is);
-				JooqDigitalCertificate.setDigitalCertificateData(domainName, currentUser, mimeType, fileName, certificateType, data);
+				JooqDigitalCertificate.setDigitalCertificateData(domainName, currentUser, mimeType, fileName, certificateType, data, rattachId, raddinfoId);
 		}		
 	}
 	

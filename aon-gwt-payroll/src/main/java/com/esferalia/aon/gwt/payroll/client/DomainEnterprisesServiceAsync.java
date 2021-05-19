@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -395,8 +396,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), getToken(), digitalCertificateList, asyncCallback);
 	}
 	
-	public void deleteDigitalCertificate(Byte type, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), getCurrentUser(), type, asyncCallback);
+	public void deleteDigitalCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
 	}
 	
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {

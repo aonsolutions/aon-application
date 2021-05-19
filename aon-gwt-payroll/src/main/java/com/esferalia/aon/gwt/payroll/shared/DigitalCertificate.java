@@ -6,32 +6,46 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class DigitalCertificate implements Serializable {
 	
-	private Integer id;
-	private Byte type;
+	public enum CertificateType {
+		SEPE,
+		TGSS
+	}
+	
+	private Integer rattachId;
+	private Integer raddinfoId;
+	private CertificateType type;
 	private Boolean confidential;
 	private String password;
 	private Boolean hasCertificate;
-	private Date creationDate;
+	private Date updateDate;
 	private String description;
 	
 	public DigitalCertificate() {
 		super();
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getRattachId() {
+		return rattachId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setRattachId(Integer rattachId) {
+		this.rattachId = rattachId;
 	}
 
-	public Byte getType() {
+	public Integer getRaddinfoId() {
+		return raddinfoId;
+	}
+
+	public void setRaddinfoId(Integer raddinfoId) {
+		this.raddinfoId = raddinfoId;
+	}
+
+	public CertificateType getType() {
 		return type;
 	}
 
-	public void setType(Byte type) {
-		this.type = type;
+	public void setType(CertificateType certificateType) {
+		this.type = certificateType;
 	}
 
 	public Boolean getConfidential() {
@@ -58,12 +72,12 @@ public class DigitalCertificate implements Serializable {
 		this.hasCertificate = hasCertificate;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	public String getDescription() {

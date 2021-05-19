@@ -15,6 +15,13 @@
 		
 		.styleBorder{
 			border-style: solid; 
+			width: 825px; 
+			border-width: 1px; 
+			margin: 60px 10px 0 10px;
+		}
+		
+		.styleBorder2{
+			border-style: solid; 
 			width: 975px; 
 			border-width: 1px; 
 			margin: 60px 10px 0 10px;
@@ -44,11 +51,22 @@
 		
 		.scrollStyle {
 			margin-left: 10px;
-			width: 950px;
+			width: 800px;
 			margin-bottom: 10px;
 		}
 		
 		.gridStyle{
+			margin-left: 10px;
+			width: 800px;
+		}
+		
+		.scrollStyle2 {
+			margin-left: 10px;
+			width: 950px;
+			margin-bottom: 10px;
+		}
+		
+		.gridStyle2{
 			margin-left: 10px;
 			width: 950px;
 		}
@@ -56,6 +74,11 @@
 		.center{
 			display: flex;
 			justify-content: center;
+		}
+		
+		.centerColumn{
+			display: flex;
+			flex-direction: column;
 		}
 		
 		.headerStyle{
@@ -123,39 +146,35 @@
 	    		<g:VerticalPanel>
 	    			<g:VerticalPanel styleName="{style.styleBorder}">
 			    		<g:Label styleName='{style.tittle}'>Cert. del Usuario</g:Label>
-				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
-				    		<g:VerticalPanel>
-				    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-				    			<g:HTMLPanel>
-				    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-				    			</g:HTMLPanel>
-					    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
-					    			<g:Grid ui:field="digitalCertificatesDataTable"></g:Grid>
-					    		</g:ScrollPanel>
-				    		</g:VerticalPanel>
+				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}" debugId="paymetDialogHTMLPanel">
+			    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+			    			<g:HTMLPanel>
+			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
+			    			</g:HTMLPanel>
+				    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+				    			<g:Grid ui:field="digitalCertificatesDataTable"></g:Grid>
+				    		</g:ScrollPanel>
 				    	</g:HTMLPanel>
 				    </g:VerticalPanel>
 				    
-				    <g:VerticalPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder}">
+				    <g:VerticalPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder2}">
 			    		<g:Label styleName='{style.tittle}'>Usr. Secundarios</g:Label>
-				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
-				    		<g:VerticalPanel>
-				    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-				    			<g:HTMLPanel>
-				    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-				    			</g:HTMLPanel>
-					    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
-					    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
-					    				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
-					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
-					    				<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
-					    			</g:DeckPanel>
-					    		</g:ScrollPanel>
-					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar">
-					    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addSecondaryUserToolbar"></g:HTMLPanel>
-					    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showSecondaryUserToolbar"></g:HTMLPanel>
-					    		</g:HTMLPanel>
-				    		</g:VerticalPanel>
+				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}" debugId="paymetDialogHTMLPanel">
+			    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle2}"></g:Grid>
+			    			<g:HTMLPanel>
+			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
+			    			</g:HTMLPanel>
+				    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle2}">
+				    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
+				    				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
+				    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+				    				<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
+				    			</g:DeckPanel>
+				    		</g:ScrollPanel>
+				    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar">
+				    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addSecondaryUserToolbar"></g:HTMLPanel>
+				    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showSecondaryUserToolbar"></g:HTMLPanel>
+				    		</g:HTMLPanel>
 				    	</g:HTMLPanel>
 				    </g:VerticalPanel>
 	    		</g:VerticalPanel>

@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -651,7 +652,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type, AsyncCallback<Void> callback) {
+	public void deleteDigitalCertificate(String currentDomainName, String currentUser, CertificateType type, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, currentUser, type, new AsyncCallbackWrapper<Void>(callback));
 	}
