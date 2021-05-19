@@ -206,6 +206,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -551,7 +552,10 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
+			Certificate certificate =  getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
+			if(null == certificate.getCertificate())
+				throw new CertificateNotFoundException();
+			return certificate;
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -574,7 +578,10 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().getCertificateSEPE(ctx, domainId);
+			Certificate certificate =  getSecurity().getCertificateSEPE(ctx, domainId);
+			if(null == certificate.getCertificate())
+				throw new CertificateNotFoundException();
+			return certificate;
 		} finally {
 			if (ctx != null)
 				ctx.close();
