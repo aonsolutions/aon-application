@@ -550,6 +550,7 @@ public class Mod190DAO {
 			.select(FS_MODEL190.fields())
 			.select(DOMAIN.DESCRIPTION)
 			.from(FS_MODEL190)
+			.join(DOMAIN).on(FS_MODEL190.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL190.ID.equal(id))
 			.fetch()
 			.stream()
