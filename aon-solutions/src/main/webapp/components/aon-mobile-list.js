@@ -52,18 +52,20 @@ export class AonMobileList extends AonElement {
     ul.style.overflow = "auto";
     ul.className = "list-group";
     this.appendChild(ul);
-
-    let content = this.getApplication().getContent();
-    if (content)
-      content.addEventListener("scroll", () => {
-        let scrollTop = content.scrollTop;
-        let offsetHeight = content.offsetHeight;
-        let physicalSize = content.scrollHeight;
-        let maxScrollPosition = physicalSize - offsetHeight;
-        if (scrollTop >= maxScrollPosition) {
-          this.dispatchEvent(new CustomEvent("more"));
-        }
-      });
+    let aonAplication = this.getApplication();
+    if(aonAplication){
+      let content = aonAplication.getContent();
+      if (content)
+        content.addEventListener("scroll", () => {
+          let scrollTop = content.scrollTop;
+          let offsetHeight = content.offsetHeight;
+          let physicalSize = content.scrollHeight;
+          let maxScrollPosition = physicalSize - offsetHeight;
+          if (scrollTop >= maxScrollPosition) {
+            this.dispatchEvent(new CustomEvent("more"));
+          }
+        });
+    }
   }
 
   addLi(data, index, fn) {

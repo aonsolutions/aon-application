@@ -23,8 +23,6 @@ export class AonParent extends AonElement {
 			<aon-application id="aonParentMain" title="Parent" main="true"></aon-application>
 		`;
 
-		let aonParent = document.getElementById('aonParentMain');
-
 		getUserNotice().then(r => {
 			this.buildSidenav(r);
 			this.init();
@@ -37,7 +35,7 @@ export class AonParent extends AonElement {
 	}
 
 	buildSidenav(notice) {
-		let aonParent = document.getElementById('aonParentMain');
+		let aonParent = this.getElement('aonParentMain');
 
 		let inboxCount = 0;
 		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
@@ -110,26 +108,27 @@ export class AonParent extends AonElement {
 
 		getTimeControl().then(r => {
 			aonParent.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
-			let aonHeader = document.getElementById('aonHeader');
+			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
 	}
 
 	init(filter) {
-		let aonParent = document.getElementById('aonParentMain');
-		aonParent.startLoader();
-		getCompanies()
-		.then( companies => {
-				aonParent.stopLoader();
-				if(companies.length ===1){
-					this.companySelection(companies[0]);
-				} else {
-      		this.build(companies.filter(f => this.companyFilter(f, filter)));
-				}
-
-      }, () => closeSession()
-    );
-  }
+		let aonParent = this.getElement('aonParentMain');
+		if(aonParent){
+			aonParent.startLoader();
+			getCompanies()
+			.then( companies => {
+					aonParent.stopLoader();
+					if(companies.length ===1){
+						this.companySelection(companies[0]);
+					} else {
+				  this.build(companies.filter(f => this.companyFilter(f, filter)));
+					}
+	
+		  	}, () => closeSession());
+		}
+   }
 
 	companyFilter(f, q) {
 		if(!q) {
@@ -176,7 +175,7 @@ export class AonParent extends AonElement {
 	}
 
  	build(companies) {
-		let aonParent = document.getElementById('aonParentMain');
+		let aonParent = this.getElement('aonParentMain');
 		let content = document.createElement('div');
 		let div = document.createElement('div');
 		div.style.borderBottom = '1px solid #5f6368';
@@ -255,29 +254,29 @@ export class AonParent extends AonElement {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
 
-		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
+		let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
 		aonHeaderCompanyList.style.display = 'block';
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-			let aonShowMenu = document.getElementById('aonShowMenu');
+			let aonShowMenu = this.getElement('aonShowMenu');
 			aonShowMenu.style.display = 'block';
 		}
-		let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
+		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
 		aonHeaderHelp.style.display = 'block';
 
-		let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
+		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		aonHeaderSearch.style.display = 'none';
 
-		let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
+		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
 		aonHeaderHome.style.display = 'block';
 
-		let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
+		let aonHeaderCompany = this.getElement(BASE_ID + 'Company');
 		aonHeaderCompany.style.display = 'block';
 
-		let aonHeaderCompanyName = document.getElementById(BASE_ID + 'CompanyName');
+		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
 
-		let aonLogo = document.getElementById('aonLogo');
+		let aonLogo = this.getElement('aonLogo');
 
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
@@ -289,12 +288,12 @@ export class AonParent extends AonElement {
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
 			getUserAppRole().then(user => {
-				let aonHeader = document.getElementById('aonHeader');
+				let aonHeader = this.getElement('aonHeader');
 				aonHeader.setAttribute('company', JSON.stringify(company));
 				aonHeader.setAttribute('user', JSON.stringify(user));
 
 				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = document.getElementById('aonDesktop');
+				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', JSON.stringify(company));
 				aonDesktop.setAttribute('user', JSON.stringify(user));
 			});

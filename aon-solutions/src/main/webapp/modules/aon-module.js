@@ -8,6 +8,7 @@ import { AonHome } from './aon-home.js';
 import { EVENT, TAG } from '../../environments/environments.js'; 
 
 import * as LS  from '../services/localStorageService.js';
+import { waitEl } from '../services/utils.js';
 
 export class AonModule extends AonElement {
 
@@ -58,7 +59,7 @@ export class AonModule extends AonElement {
 					 	: '<aon-parent id="aonParent"></aon-parent>');
 				}
 			});
-			window.dispatchEvent( new Event('userAuth') );
+			window.dispatchEvent( new Event(EVENT.USER_AUTH) );
 		} else {
 			this.buildLogin();
 		}
@@ -75,6 +76,14 @@ export class AonModule extends AonElement {
 		window.setNotificationAction = (data) =>  {
 			window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
 		}
+
+		window.addEventListener(EVENT.USER_AUTH, ()=>{
+			waitEl(TAG.AON_NOTIFICATION_ICON).then(aonNotificationIcon=>{
+				aonNotificationIcon.initializeFB();
+				aonNotificationIcon.getTotalNotification();
+			})
+		});
+
 	}
 
 	saveTokenFcm(tokenFCM){

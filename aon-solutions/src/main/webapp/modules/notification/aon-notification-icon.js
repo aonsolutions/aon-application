@@ -1,11 +1,10 @@
-import { AonIconButton } from '../../components/aon-icon-button.js';
 import {AonElement} from '../../components/AonElement.js';
-import { CONSTANT, EVENT } from '../../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
 import { getTotalNotification } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { AonNotification } from './aon-notification.js';
-import { createBadge, createSpan } from './createComponent.js';
+import { createBadge, createIconButton, createSpan } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 
@@ -32,40 +31,12 @@ export class AonNotificationIcon extends AonElement {
         this.build();
         this.observerListener();
 	}
-    
 
     build(){
         this.append(this.getView());
     }
 
-
-    getView(){
-        const aonIconButton = new AonIconButton();
-        aonIconButton.id = "aonHeaderNotificationButton";
-        aonIconButton.icon = "notifications";
-        const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON});
-        notificationSpan.appendChild(aonIconButton);
-        return notificationSpan.element;
-    }
-
-    async changeBadge(){
-        const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
-        const total = this.getTotalCount();
-        const badge = this.getElement(this.BADGE)  ||  createBadge(this.BADGE).element;
-        if(total && total > 0){
-            badge.textContent = total;
-            notificationSpan.appendChild(badge);   
-        } else {
-            badge.remove();
-        }
-    }
-
     observerListener(){
-		window.addEventListener(EVENT.USER_AUTH, ()=>{
-			this.initializeFB();
-            this.getTotalNotification();
-		});
-
         window.addEventListener(EVENT.RECEIVED_NOTIFICATION, ()=>{
 			this.getTotalNotification();
 		});
@@ -73,6 +44,28 @@ export class AonNotificationIcon extends AonElement {
         this.addEventListener(EVENT.CLICK, ()=>this.goAonNotification());
 	}
 
+    getView(){
+        const notificationSpan = createSpan({id:this.AON_NOTIFICATION_ICON}).element;
+        createIconButton({
+            attributes:{
+                id:  "aonHeaderNotificationButton",
+                icon: "notifications"
+            }
+        }, notificationSpan);
+        return notificationSpan;
+    }
+
+    async changeBadge(){
+        const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
+        const total = this.getTotalCount();
+        const badge = this.getElement(this.BADGE) || createBadge(this.BADGE).element;
+        if(total && total > 0){
+            badge.textContent = total;
+            notificationSpan.appendChild(badge);   
+        } else {
+            badge.remove();
+        }
+    }
 
 	async initializeFB()  {
 		try{
@@ -96,7 +89,6 @@ export class AonNotificationIcon extends AonElement {
 
     async goAonNotification(){
         try {
-            if(!this.isBeta()) return true;
             const aonNotification = new AonNotification();
             this.rootPanel(aonNotification);
         } catch(e){
@@ -105,10 +97,8 @@ export class AonNotificationIcon extends AonElement {
     }
 
     async getTotalNotification(){
-        if(this.isBeta()){
-            this.COUNT = await getTotalNotification();
-            this.changeBadge();
-        }
+        this.COUNT = await getTotalNotification();
+        this.changeBadge();
     }
 
     getTotalCount(){
@@ -116,4 +106,4 @@ export class AonNotificationIcon extends AonElement {
     }
 
 }
-window.customElements.define('aon-notification-icon',  AonNotificationIcon);
+window.customElements.define(TAG.AON_NOTIFICATION_ICON,  AonNotificationIcon);

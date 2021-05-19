@@ -111,43 +111,45 @@ export class AonSelect extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
-    if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
-      input.setAttribute(CONSTANT.READONLY, true);
-    }
-    input.addEventListener(EVENT.KEYUP, () => {
-      const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-      this.buildOptions(optios.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
-    });
-    input.addIconButton('arrow_drop_down', () => {
-      if(!this.isReadonly()) {
+    if(input){
+      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
+        input.setAttribute(CONSTANT.READONLY, true);
+      }
+      input.addEventListener(EVENT.KEYUP, () => {
         const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(optios);
-      }
-    });
-
-    input.addEventListener(EVENT.CLICK, () => {
-      if(!this.hasAttribute(CONSTANT.READONLY)) {
-        const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(optios);
-      }
-    });
-
-    let div = this.getElement(input.DIV);
-    let span = this.createElement(TAG.SPAN);
-    span.id = input.SPAN;
-    div.appendChild(span);
-
-    const options = this.createElement(TAG.DIV);
-    options.id = this.OPTIONS;
-    options.className = 'aonInputListOptions';
-    span.appendChild(options);
-
-    let opts = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-    opts.forEach((item, i) => {
-      if(item.value == this.value) {
-        this.getElement(this.INPUT).value = item.name;
-      }
-    });
+        this.buildOptions(optios.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
+      });
+      input.addIconButton('arrow_drop_down', () => {
+        if(!this.isReadonly()) {
+          const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+          this.buildOptions(optios);
+        }
+      });
+  
+      input.addEventListener(EVENT.CLICK, () => {
+        if(!this.hasAttribute(CONSTANT.READONLY)) {
+          const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+          this.buildOptions(optios);
+        }
+      });
+  
+      let div = this.getElement(input.DIV);
+      let span = this.createElement(TAG.SPAN);
+      span.id = input.SPAN;
+      div.appendChild(span);
+  
+      const options = this.createElement(TAG.DIV);
+      options.id = this.OPTIONS;
+      options.className = 'aonInputListOptions';
+      span.appendChild(options);
+  
+      let opts = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
+      opts.forEach((item, i) => {
+        if(item.value == this.value) {
+          this.getElement(this.INPUT).value = item.name;
+        }
+      });
+    }
   }
 
   buildOptions(options) {

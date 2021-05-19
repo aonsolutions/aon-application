@@ -179,7 +179,7 @@ export class AonLogin extends AonElement {
   }
 
   buildLogo() {
-    let logo = document.getElementById("aonLoginLogoImg");
+    let logo = this.getElement("aonLoginLogoImg");
     const href = window.location.href;
     let src = "assets/aon-logo.png"; 
     if (href.includes("ayudat")) {
@@ -204,14 +204,14 @@ export class AonLogin extends AonElement {
   }
 
   signin() {
-    const username = document.getElementById("aonLoginUser").value;
-    const password = document.getElementById("aonLoginPassword").value;
+    const username = this.getElement("aonLoginUser").value;
+    const password = this.getElement("aonLoginPassword").value;
     const data = {
       username: username,
       password: password,
     };
 
-    let loader = document.getElementById("aonLoginLoader");
+    let loader = this.getElement("aonLoginLoader");
     loader.start();
     login(data)
       .then(() => {
@@ -219,6 +219,7 @@ export class AonLogin extends AonElement {
         localStorage.removeItem('aon_domain_id');
         localStorage.removeItem('aon_domain_name');
         localStorage.removeItem('aon_domain_login');
+        window.dispatchEvent( new Event(EVENT.USER_AUTH) );
         this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){
@@ -229,19 +230,18 @@ export class AonLogin extends AonElement {
               ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
               : '<aon-parent id="aonParent"></aon-parent>');
           }
-          this.getElement("aonLogin").style.display = 'none';
-          let homeDiv = this.getElement("aonHomeDiv");
-          homeDiv.style.display = 'block';
+          // this.getElement("aonLogin").style.display = 'none';
+          // let homeDiv = this.getElement("aonHomeDiv");
+          // homeDiv.style.display = 'block';
         });
-        window.dispatchEvent( new Event('userAuth') );
       })
       .catch((e) => {
         loader.stop();
         let error = JSON.parse(e);
-        let aonLoginError = document.getElementById("aonLoginError");
+        let aonLoginError = this.getElement("aonLoginError");
         aonLoginError.style.display = "block";
 
-        let aonLoginErrorMessage = document.getElementById(
+        let aonLoginErrorMessage = this.getElement(
           "aonLoginErrorMessage"
         );
         aonLoginErrorMessage.innerHTML = error.message;
@@ -277,7 +277,7 @@ export class AonLogin extends AonElement {
         rootPanel(this.isMobile()
           ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
           : '<aon-desktop id="aonDesktop"></aon-desktop>');
-        let aonDesktop = document.getElementById('aonDesktop');
+        let aonDesktop = this.getElement('aonDesktop');
         aonDesktop.setAttribute('company', JSON.stringify(company));
         aonDesktop.setAttribute('user', JSON.stringify(user));
       });
@@ -287,7 +287,7 @@ export class AonLogin extends AonElement {
   onEnter(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
-      document.getElementById("aonLoginSignin").click();
+      this.getElement("aonLoginSignin").click();
     }
   }
 }
