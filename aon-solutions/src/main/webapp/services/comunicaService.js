@@ -26,6 +26,10 @@ export const getCertCorriente = (data) =>
 
 export const postAltaDirecta = (data) =>
   post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
+
+export const postBaja = (data) =>
+post(`${API_URL}/comunica/baja`, data); //BAJA
+  
 export const postUpdateCto = (data) =>
   post(`${API_URL}/comunica/update-contrato`, data); //ALTA DIRECTA
 export const postDeleteMov = (data) =>

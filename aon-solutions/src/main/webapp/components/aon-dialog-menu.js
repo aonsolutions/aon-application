@@ -55,8 +55,20 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	open(){
-    let dialog = this.getElement(this.DIALOG);
+    	let dialog = this.getElement(this.DIALOG);
 		dialog.style.display = 'block';
+	}
+
+	openPosition({left,top}){
+		let dialog = this.getElement(this.DIALOG);
+		let content = this.getElement(this.CONTENT);
+  		content.style.top = top + 'px' || '90px';
+		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px';
+		dialog.style.display = 'block';
+	}
+
+	clear() {
+		this.getElement(this.CONTENT).innerHTML = '';
 	}
 
 	close() {
@@ -67,6 +79,16 @@ export class AonDialogMenu extends AonElement {
 	setContentHTML(html) {
 		let content = this.getElement(this.CONTENT);
 		content.innerHTML = html;
+	}
+
+
+	setContent(element) {
+		let content = this.getElement(this.CONTENT);
+		content.appendChild(element);
+	}
+
+	getContent(){
+		return  this.getElement(this.CONTENT);
 	}
 
 	setContentTitle(title){

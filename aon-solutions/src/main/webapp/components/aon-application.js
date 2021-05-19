@@ -404,9 +404,7 @@ export class AonApplication extends AonElement {
           let button = this.createElement("span");
           button.style.right = i * 30 + "px";
           button.style.position = "absolute";
-          button.innerHTML = `
-						<aon-icon-button id="${li.id + item.id}" icon='${item.icon}'> </aon-icon-button
-					`;
+          button.innerHTML = `<aon-icon-button id="${li.id + item.id}" icon='${item.icon}'> </aon-icon-button>`;
           actionDiv.appendChild(button);
           let aib = this.getElement(li.id + item.id);
           let b = this.getElement(aib.BUTTON);
@@ -579,7 +577,7 @@ export class AonApplication extends AonElement {
 		this.confirmDialog(title, subtitle, () => {});
 	}
 
-  confirmDialog(title, subtitle, fn){
+  confirmDialog(title, subtitle, fn, buttonTitle = undefined){
       let d = this.getDialog();
       if(d){
         d.clear();
@@ -587,7 +585,13 @@ export class AonApplication extends AonElement {
         if (!this.isMobile()) d.width = '400px';
         d.setTitle(title);
         d.open();
-        d.addAcceptAction(() => fn());
+        if(buttonTitle) {
+          d.addSendAction(() => {
+            d.close();
+            return fn();
+          }, buttonTitle);
+        }
+        else d.addAcceptAction(() => fn());
       }
   }
 

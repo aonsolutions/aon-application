@@ -1182,3 +1182,10 @@ button:disabled, button[disabled]{
     scrollbar-width: none;
 
 }
+
+.iconArrow::after {
+  content: "\25BE";
+  position: absolute;
+  left: 28px;
+  top: 9px;
+}

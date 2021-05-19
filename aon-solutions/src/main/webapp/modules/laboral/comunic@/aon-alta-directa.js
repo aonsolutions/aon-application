@@ -1,9 +1,10 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, formatDateOrigin, disabledForm } from '../../../services/utils.js';
-import { getPersonas, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
+import { getPersonas, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, postBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
-import { PAYROLL_VIEWS } from '../PayrollEnums.js';
+import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
+import { createBajaDialogContent } from '../createComponent.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
 import '../../../components/aon-number.js';
@@ -36,15 +37,7 @@ export class AonAltaDirecta extends AonElement {
         this.setAttribute(CONSTANT.DATA, JSON.stringify(value));
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (CONSTANT.DATA == name && newValue) {
-            const toolbarEl = this.getElement(this.TOOLBAR);
-            if(toolbarEl){
-                toolbarEl.title = 'Modificar contrato';
-            }
-            this.edit(this.data);
-        }
-    }
+    attributeChangedCallback(name, oldValue, newValue) {}
 
     constructor() {
         super();
@@ -55,8 +48,6 @@ export class AonAltaDirecta extends AonElement {
         this.applicationParentEl = this.getApplicationParent();
     }
 
-
-
     connectedCallback() {
         this.build();
     }
@@ -64,8 +55,14 @@ export class AonAltaDirecta extends AonElement {
     build() {
         this.paintView();
         this.buildToolbar();
-        this.initLists();
-        this.eventListener();
+        this.initLists().then(()=>{
+            this.eventListener();
+            if(this.data){
+                const toolbarEl = this.getElement(this.TOOLBAR);
+                if(toolbarEl) toolbarEl.title = 'Editar contrato';
+                this.edit(this.data);
+            }        
+        });
     }
 
 
@@ -184,7 +181,7 @@ export class AonAltaDirecta extends AonElement {
 
         if (this.isMobile()){
             this.getElement(`${this.id}DivSubmit`)
-                .innerHTML = /*html*/`<button class="aonButton" style="margin-top: 10px;" type="button" id="${this.id}Submit">Comunicar</button>`;
+                .innerHTML = /*html*/`<button class="aonButton" style="margin-top: 10px;" type="button" id="${this.id}Submit">Aceptar</button>`;
         }
         this.addSpanDecimal();
         this.getElement(`${this.id}Dni`).disabled = true;
@@ -194,57 +191,61 @@ export class AonAltaDirecta extends AonElement {
     buildToolbar() {
         const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
+  
+        if(this.data){
+            toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => {
+                ev.preventDefault();
+                let rect = ev.target.getBoundingClientRect();
+                let x = ev.clientX - rect.left + 180;
+                let y = ev.clientY - rect.top;
+        
+                const top  = rect.top + y;
+                const left = rect.left + x;
+    
+                let d = this.getApplication().getOptionDialog();
+                d.getContent().style.width = "133px";
+                let moreActions = [];
+                //IDC
+                let idc = CONTRACT_OPTIONS.IDC;
+                idc.fn = () =>  this.applicationParentEl.getIdc(this.data);
+                moreActions.push(idc);
+                //TA
+                let ta = CONTRACT_OPTIONS.TA;
+                ta.fn = () =>  this.applicationParentEl.getTa(this.data);
+                moreActions.push(ta);
 
-        toolbar.addButton2({
-            id: 'Idc',
-            name: 'Obtener IDC',
-            aonIcon: 'aon_idc',
-        }, () => this.applicationParentEl.getIdc(this.data));
-
-        toolbar.addButton2({
-            id: 'Ta',
-            name: 'Obtener TA',
-            aonIcon: 'aon_ta',
-        }, () => this.applicationParentEl.getTa(this.data));
-
-        toolbar.addButton2({
-            id: 'Delete',
-            name: 'Anular',
-            icon: 'delete_forever',
-        }, async (el) => {
-            try {
-                await this.applicationParentEl.deleteMov(this.data, el);
-            } catch (error) {
-                console.log(error);
-            }
-        });
-
-        if(!this.isMobile()){
-            toolbar.addButton2({
-                id: 'Save',
-                name: 'Comunicar',
-                icon: 'send'
-            }, () => this.formSubmit());
+                d.setMenuOptions(moreActions, top, left);
+                d.open();
+            });
+            this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        toolbar.addButton2({
-            id: 'Previous',
-            name: 'Volver',
-            icon: 'arrow_back'
-        }, () => this.back());
+        if(this.isAlta()) 
+            toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
-        this.hiddenButtonToolbar({ 'Delete': true, 'Idc': true, 'Ta': true });
+        if(!this.isMobile())  // ALTA
+            toolbar.addButton2( ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
+
+        if(this.data && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)) //DELETE
+            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
+
+        toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
+
     }
 
 
-    initLists() {
-        this.suggestionDni();
-        this.listCentroTrabajo();
-        this.listTipoContrato();
-        this.listTipoJornada();
-        this.listGrupoCotizacion();
-        this.listOcupacion();
-        this.listConvenios();
+    async initLists() {
+        await Promise.all([
+            this.suggestionDni(), 
+            this.listCentroTrabajo(),
+            this.listTipoContrato(),
+            this.listTipoJornada(),
+            this.listGrupoCotizacion(),
+            this.listOcupacion(),
+            this.listConvenios()
+        ]).catch(e=>{
+            console.log(e);
+        });
     }
 
     eventListener() {
@@ -288,22 +289,8 @@ export class AonAltaDirecta extends AonElement {
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, (e) => this.disabledCardTrabajor(false));
     }
 
-
-
-    hiddenButtonToolbar(buttonToolbar) {
-        let toolbarSection = this.getElement(this.TOOLBAR);
-        if (toolbarSection) {
-            toolbarSection = toolbarSection.TOOL_SECTION
-            for (const button in buttonToolbar) {
-                const deleteToolbar = this.getElement(toolbarSection + button + 'Button');
-                if (deleteToolbar) deleteToolbar.hidden = buttonToolbar[button];
-            }
-        }
-    }
-
     getContrato() {
-        const form = this.getElement(`${this.id}Form`);
-        return serializeForm(form);
+        return serializeForm(this.getElement(`${this.id}Form`));
     }
 
     edit(data) {
@@ -348,12 +335,6 @@ export class AonAltaDirecta extends AonElement {
         //calculo horas
         this.calculoHoras();
 
-        //hidden toolbar button
-        let buttonToolbar = { "Idc": false, "Ta": false };
-        if (this.applicationParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
-        this.hiddenButtonToolbar(buttonToolbar);
-        //end hidden toolbar
-
         //ocultar switch
         let switchDni = this.getElement('switchDni');
         if (switchDni) switchDni.parentNode.hidden = true;
@@ -370,7 +351,7 @@ export class AonAltaDirecta extends AonElement {
 
     addSpanDecimal() {
         let coefparcialInput = this.getElement('coefparcialInput')
-        let span = document.createElement('span');
+        let span = this.createElement('span');
         span.innerHTML = '0,';
         span.style.position = "absolute";
         span.style.top = "50%";
@@ -631,7 +612,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     formSubmit() {
-        this.applicationEl.confirmDialog("Comunicar", "Desea comunicar a la seguridad social?", () => {
+        this.applicationEl.confirmDialog(MSG.COMMUNICATE, MSG.COMMUNICATE_CONFIRM, () => {
             switch (this.ACTION) {
                 case "CREATE":
                     this.save();
@@ -639,10 +620,13 @@ export class AonAltaDirecta extends AonElement {
                 case "UPDATE":
                     this.update();
                     break;
+                case "BAJA":
+                    this.baja();
+                    break;
                 default:
                     break;
             }
-        });
+        }, MSG.COMMUNICATE);
     }
 
     async save() {
@@ -718,6 +702,73 @@ export class AonAltaDirecta extends AonElement {
             this.getElement(`${this.id}Dni`).disabled = true;
             this.getElement(`nombre`).disabled = true;
         }
+    }
+
+    openDialogBaja(ev){
+		let rect = ev.target.getBoundingClientRect();
+		let x = ev.clientX - rect.left + 180;
+		let y = ev.clientY - rect.top;
+
+		const top  = rect.top + y;
+		const left = rect.left + x;
+
+        const dialog = this.applicationEl.getOptionDialog();
+        const content = dialog.getContent();
+        dialog.clear();
+        content.style.textAlign = "center";
+        content.style.width = "200px";
+        dialog.setContentTitle("Dar Baja");
+        const div = createBajaDialogContent();
+        const button = document.createElement("button");
+        button.className = "aonButton";
+        button.textContent = "Aceptar";
+        button.style.padding ="0.5rem 1rem";
+        button.style.marginBottom ="5px";
+        button.disabled = true;
+        div.appendChild(button);
+        dialog.setContent(div);
+        dialog.openPosition({top, left});
+
+        const fechaEl =  this.getElement("fechaBaja");
+        fechaEl.addEventListener(EVENT.CHANGE, ()=>{
+            if(new Date(fechaEl.value).isValid()) button.disabled = false;
+            else button.disabled = true;
+        })
+                
+        button.addEventListener(EVENT.CLICK, ()=>{
+            this.ACTION = "BAJA";
+            this.formSubmit();
+        })
+    }
+
+    setStyleIconSegSocial(toolbar, id ){
+        const aonIconButton = this.getElement(toolbar.TOOL_SECTION + id + "Button")
+        if(aonIconButton){
+            aonIconButton.style.position = "relative";
+            aonIconButton.classList.add("iconArrow");
+            const button = this.getElement(aonIconButton.BUTTON);
+            if(button) button.style.height = "26px";
+        }
+    }
+
+    async baja(){
+        this.applicationEl.startLoading();
+        try {
+            const fechaBaja = this.getElement("fechaBaja");
+            const data = {...this.data, fechaBaja: fechaBaja.value};
+            await postBaja(data);
+            this.applicationEl.getOptionDialog().close();
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
+            this.applicationParentEl._movements = undefined;
+            this.back();
+        } catch (error) {
+            this.showToast(error);
+        }
+        this.applicationEl.stopLoading();
+    }
+
+    isAlta(){
+        return this.data && "AL" === this.data.situation;
     }
 }
 

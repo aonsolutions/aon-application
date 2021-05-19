@@ -96,6 +96,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					LOGGER.info("ALTA-DIRECTA SERVLET - POST METHOD");
 					jsonInString = gjson.toJson(sendAlta(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
+				case "/baja":
+					LOGGER.info("BAJA SERVLET - POST METHOD");
+					jsonInString = gjson.toJson(sendBaja(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
+					break;
 				case "/delete-mov":
 					LOGGER.info("DELETE-MOV SERVLET - POST METHOD");
 					jsonInString = gjson.toJson(movDelete(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
@@ -186,6 +190,28 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setMdctz(md_ctz)
 		.build();
 		return SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+	}
+	
+	private Employee sendBaja(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType) throws SegSocialException, Exception{
+		//first screen
+		String regimen = api.getData().optString("regime");
+		String ctaCti = api.getData().optString("ctaCti");
+		String nss = api.getData().optString("nss");
+		
+		String ipf = api.getData().optString("ipf");
+		
+		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), "yyyy-MM-dd");
+
+		EmployeeBuilder builder = new EmployeeBuilder();
+		Employee employee = builder
+		.setRegime(regimen)
+		.setCtaCti(ctaCti)
+		.setNss(nss)
+		.setIpf(ipf)
+		.setFra(fecha)
+		.build();
+		return SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private Boolean movDelete(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,

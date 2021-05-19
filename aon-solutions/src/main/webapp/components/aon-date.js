@@ -1,10 +1,8 @@
 import {AonElement} from './AonElement.js';
-
-import './aon-input.js';
-import './aon-icon-button.js';
-
 import {setDate} from '../services/utils.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import './aon-input.js';
+import './aon-icon-button.js';
 
 export class AonDate extends AonElement {
 
@@ -80,7 +78,7 @@ export class AonDate extends AonElement {
 	connectedCallback () {
     this.initialize();
 		this.innerHTML = `
-      <aon-input id="${this.INPUT}" description="${this.title}"></aon-input>
+      <aon-input id="${this.INPUT}" description="${this.title}" autocomplete="off"></aon-input>
 		`;
     this.build();
     this.buildDatepicker();
@@ -106,11 +104,56 @@ export class AonDate extends AonElement {
     let input = this.getElement(this.INPUT);
     input.addIconButton('calendar_today', () => this.openDatepicker());
     input.readonly = this.isReadonly();
-    input.addEventListener(EVENT.CHANGE, () => {
-      let date = this.parseDateStr(input.value);
-      this.setDate(date);
-    });
+    // input.addEventListener(EVENT.CHANGE, () => {
+    //   let date = this.parseDateStr(input.value);
+    //   this.setDate(date);
+    // });
+    this.autoFormat();
     this.getElement(input.INPUT).style.minWidth = '125px';
+  }
+
+  autoFormat(){
+    let date = this.getElement(this.INPUT);
+
+     const checkValue = (str, max)=> {
+      if (str.charAt(0) !== '0' || str == '00') {
+        let num = parseInt(str);
+        if (isNaN(num) || num <= 0 || num > max) num = 1;
+        str = num > parseInt(max.toString().charAt(0)) && num.toString().length == 1 ? '0' + num : num.toString();
+      }
+      return str;
+    }
+    
+    date.addEventListener(EVENT.INPUT, ({target})=> {
+      let input = target.value;
+      if (/\D\/$/.test(input)) input = input.substr(0, input.length - 3);
+      const values = input.split('/').map((v)=>  v.replace(/\D/g, ''));
+      if (values[0]) values[0] = checkValue(values[0], 31);
+      if (values[1]) values[1] = checkValue(values[1], 12);
+      const output = values.map((v, i)=> v.length == 2 && i < 2 ? v + ' / ' : v);
+      target.value = output.join('').substr(0, 14);
+      if(input.length>=14) target.blur();
+    });
+    
+    date.addEventListener(EVENT.BLUR, ({target}) =>{
+      const input = target.value;
+      const values = input.split('/').map((v)  => v.replace(/\D/g, ''));
+      let output = '';
+      if (values.length === 3) {
+        const year = values[2].length !== 4 ? parseInt(values[2]) + 2000 : parseInt(values[2]);
+        const month = parseInt(values[0]) - 1;
+        const day = parseInt(values[1]);
+        const d = new Date(year, month, day);
+        if (!isNaN(d)) {
+          const dates = [d.getMonth() + 1, d.getDate(), d.getFullYear()];
+          output = dates.map((v) =>{
+            v = v.toString();
+            return v.length === 1 ? '0' + v : v;
+          }).join(' / ');
+        }
+      }
+      target.value = output.replaceAll(" ", "");
+    });
   }
 
   buildDatepicker() {
@@ -360,39 +403,38 @@ export class AonDate extends AonElement {
       && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 
-  parseDateStr(dateStr) {
-      if(dateStr.includes('/')){
-        let dateArr = dateStr.split('/');
-        let a = dateArr[0].length === 1 
-            ? '0' + dateArr[0] : dateArr[0];
-        let b = dateArr[1].length === 1 
-            ? '0' + dateArr[1] : dateArr[1];
-        let c = dateArr[2];
-        dateStr = a + b + c;       
-      } 
+  // parseDateStr(dateStr) {
+  //     if(dateStr.includes('/')){
+  //       let dateArr = dateStr.split('/');
+  //       let a = dateArr[0].length === 1 
+  //           ? '0' + dateArr[0] : dateArr[0];
+  //       let b = dateArr[1].length === 1 
+  //           ? '0' + dateArr[1] : dateArr[1];
+  //       let c = dateArr[2];
+  //       dateStr = a + b + c;       
+  //     } 
       
-      if(dateStr.includes('-')){
-        let dateArr = dateStr.split('-');
-        let a = dateArr[0].length === 1 
-            ? '0' + dateArr[0] : dateArr[0];
-        let b = dateArr[1].length === 1 
-            ? '0' + dateArr[1] : dateArr[1];
-        let c = dateArr[2];
-        dateStr = a + b + c;       
-      } 
+  //     if(dateStr.includes('-')){
+  //       let dateArr = dateStr.split('-');
+  //       let a = dateArr[0].length === 1 
+  //           ? '0' + dateArr[0] : dateArr[0];
+  //       let b = dateArr[1].length === 1 
+  //           ? '0' + dateArr[1] : dateArr[1];
+  //       let c = dateArr[2];
+  //       dateStr = a + b + c;       
+  //     } 
  
-      let day = dateStr.substring(0, 2);
-      let month = dateStr.substring(2, 4);
-      let year = dateStr.substring(4);
+  //     let day = dateStr.substring(0, 2);
+  //     let month = dateStr.substring(2, 4);
+  //     let year = dateStr.substring(4);
 
-      if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
-        return this.date;
-      } else {
-        let d = month + '/' + day + '/' + year;
-        console.log(d);
-        return new Date(d);
-      }
-  }
+  //     if(Number(month) > 12 || Number(day) > 31 || year.length > 4){
+  //       return this.date;
+  //     } else {
+  //       let d = month + '/' + day + '/' + year;
+  //       return new Date(d);
+  //     }
+  // }
 
 }
 if(!window.customElements.get('aon-date')){

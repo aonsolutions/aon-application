@@ -1,3 +1,4 @@
+import { AonDate } from "../../components/aon-date.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
@@ -117,6 +118,12 @@ export const createBadge = (id) => createSpan({
   }
 });
 
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {*} parent 
+ * @returns 
+ */
 export const createSelect = ({attributes, events}, parent) => {
   if(attributes.options && typeof attributes.options !== "string") attributes.options=JSON.stringify(attributes.options);
   let select = new AonSelect();
@@ -127,7 +134,12 @@ export const createSelect = ({attributes, events}, parent) => {
   return select;
 }
 
-
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {*} parent 
+ * @returns 
+ */
 export const createInput = ({attributes, events}, parent) => {
   let input = new AonInput();
   setAttributes(input, attributes);
@@ -136,10 +148,30 @@ export const createInput = ({attributes, events}, parent) => {
   return input;
 }
 
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {*} parent 
+ * @returns 
+ */
 export const createIconButton = ({attributes, events}, parent) => {
   let icon = new AonIconButton();
   setAttributes(icon, attributes);
   if(events) setEvents(icon, events);
   parent.appendChild(icon);
   return icon;
+}
+
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {*} parent 
+ * @returns 
+ */
+ export const createDate = ({attributes, events}, parent) => {
+  let date = new AonDate();
+  setAttributes(date, attributes);
+  if(events) setEvents(date, events);
+  parent.appendChild(date);
+  return date;
 }
