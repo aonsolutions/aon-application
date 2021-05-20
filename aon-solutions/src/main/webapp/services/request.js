@@ -60,6 +60,22 @@ export const request = (method, url, token, sendData, fn) => {
   };
 };
 
+export const requestJsonAsset = (file) => new Promise((resolve,reject)=>{
+  let xobj = new XMLHttpRequest();
+  const url = "/assets/json/"+file;
+  xobj.overrideMimeType("application/json");
+  xobj.open('GET', url, true); 
+  xobj.onload =  () =>  {
+      if (xobj.status == "200") {
+        resolve(JSON.parse(xobj.responseText));
+      } else {
+        reject("Archivo no encontrado");
+      }
+  };
+  xobj.send(null);  
+});
+
+
 export const requestFile = (method, url, sendData, fn) => {
   try {
     const xhr = xmlHttpRequestAon(method, url, getToken(), sendData);
@@ -246,3 +262,6 @@ export const openFileMobile = async (url) => new Promise((resolve, reject) => {
       }
     });
 });
+
+
+

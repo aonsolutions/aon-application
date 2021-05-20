@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
-import './aon-input.js';
+import { AonInput } from './aon-input.js';
 
 export class AonSelect extends AonElement {
 
@@ -102,10 +102,12 @@ export class AonSelect extends AonElement {
 
 	connectedCallback () {
     this.INPUT = this.id + 'Input';
-    this.OPTIONS = this.id + CONSTANT.OPTIONS
-    this.innerHTML = `
-      <aon-input id="${this.INPUT}"  description="${this.title}"></aon-input>
-		`;
+    this.OPTIONS = this.id + CONSTANT.OPTIONS;
+    let aonInput = new AonInput();
+    aonInput.id = this.INPUT;
+    aonInput.description = this.title;
+    if(this.autocomplete) aonInput.autocomplete = this.autocomplete;
+    this.appendChild(aonInput);
     this.build();
 	}
 
@@ -132,6 +134,16 @@ export class AonSelect extends AonElement {
           this.buildOptions(optios);
         }
       });
+      let inputSelect = this.getElement(input.INPUT);
+      if(inputSelect){
+        inputSelect.addEventListener(EVENT.FOCUS, () => {
+          inputSelect.select();
+        });
+      }
+      input.addEventListener(EVENT.BLUR, ()=>{
+        const exists = this.getOptions().some(({value})=> value === input.value);
+        if(!exists) input.value = "";
+      })
   
       let div = this.getElement(input.DIV);
       let span = this.createElement(TAG.SPAN);
@@ -199,6 +211,11 @@ export class AonSelect extends AonElement {
 
   setOptions(options) {
     this.setAttribute(CONSTANT.OPTIONS, JSON.stringify(options));
+  }
+
+  getOptions() {
+    const options = this.options ? this.options : [];
+    return JSON.parse(options);
   }
 
   setEnumOptions(options) {

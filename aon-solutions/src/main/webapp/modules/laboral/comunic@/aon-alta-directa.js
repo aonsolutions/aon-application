@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, formatDateOrigin, disabledForm } from '../../../services/utils.js';
-import { getPersonas, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, postBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
+import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, postBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
@@ -100,7 +100,7 @@ export class AonAltaDirecta extends AonElement {
                 <aon-select name="ctaCti" id="ctaCti" title="Cuenta de cotización"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
-                <aon-select name="convenio" id="convenio" title="Convenio" type="list"></aon-select>
+                <aon-suggestion id="convenio" title="Convenio (opcional)" name="convenio"></aon-suggestion>
             </div>
             <aon-input name="regimen" id="regimen" description="regimen" visible="false"></aon-input>
             `
@@ -142,7 +142,7 @@ export class AonAltaDirecta extends AonElement {
         aonContratoCard.setContentHTML(
            /*html*/`
                 <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
+                    <aon-select name="type_cto" id="type_cto" title="Tipo de contrato" autocomplete="off" readonly="false"></aon-select>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
@@ -173,11 +173,11 @@ export class AonAltaDirecta extends AonElement {
         );
 
         let aonAltaDirectaDni = this.getElement(`${this.id}DniDiv`);
-        aonAltaDirectaDni.innerHTML = /*html*/`<aon-suggestion id="${this.id}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
+        aonAltaDirectaDni.innerHTML = /*html*/ `<aon-input name="ipf" id="${this.id}Dni" description="DNI/NIE" autocomplete="on"></aon-input>`;
         aonAltaDirectaDni.setAttribute('disabled', true);
 
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
-        aonAltaDirectaNss.innerHTML = /*html*/`<aon-suggestion id="${this.id}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
+        aonAltaDirectaNss.innerHTML = /*html*/ `<aon-input name="nss" id="${this.id}Nss" description="NSS/NAF" autocomplete="on"></aon-input>`;
 
         if (this.isMobile()){
             this.getElement(`${this.id}DivSubmit`)
@@ -236,13 +236,12 @@ export class AonAltaDirecta extends AonElement {
 
     async initLists() {
         await Promise.all([
-            this.suggestionDni(), 
             this.listCentroTrabajo(),
             this.listTipoContrato(),
             this.listTipoJornada(),
             this.listGrupoCotizacion(),
             this.listOcupacion(),
-            this.listConvenios()
+            this.suggestionConvenio()
         ]).catch(e=>{
             console.log(e);
         });
@@ -408,27 +407,6 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    suggestionDni() {
-        const searchSuggestion = this.getElement(`${this.id}Dni`);
-        searchSuggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
-            const dni = value.toString().toUpperCase();
-            if (dni.length > 2) {
-                const resp = await getPersonas(dni);
-                searchSuggestion.buildOptions(resp);
-            } else {
-                searchSuggestion.closeOptions();
-            }
-        });
-        searchSuggestion.addEventListener('select', ({ detail }) => {
-            if (detail) {
-                setValueName('nss', detail.nss);
-                setValueName('nombre', detail.nombre);
-                setValueName('apellido1', detail.last_name1);
-                setValueName('apellido2', detail.last_name2);
-            }
-        });
-    }
-
     async listCentroTrabajo() {
         let centro_trabajo = this.getElement('centro_trabajo');
         try {
@@ -469,13 +447,7 @@ export class AonAltaDirecta extends AonElement {
                 const { cccs } = detail;
                 let ctaCti = this.getElement('ctaCti');
                 ctaCti.options = JSON.stringify(
-                    cccs.map(r => {
-                        return {
-                            ...r,
-                            name: `${r.cccRegimeCode} - ${r.ccc}`,
-                            value: r.ccc
-                        }
-                    })
+                    cccs.map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }))
                 );
             } catch (error) { }
         }
@@ -486,13 +458,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getTipoContrato();
             type_cto.options = JSON.stringify(
-                resp.map(r => {
-                    return {
-                        ...r,
-                        name: `${r.value} - ${r.name}`,
-                        value: r.value
-                    }
-                })
+                resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}))
             );
         } catch (error) { }
     }
@@ -501,33 +467,26 @@ export class AonAltaDirecta extends AonElement {
         let tipo_jornada = this.getElement('tipo_jornada');
         try {
             const resp = await getTipoJornada();
-            tipo_jornada.options = JSON.stringify(
-                resp.map(r => {
-                    return {
-                        ...r,
-                        name: `${r.name}`,
-                        value: r.value
-                    }
-                })
-            );
+            const options = resp.map(r => ({ ...r, name: `${r.name}`, value: r.value }) );
+            tipo_jornada.options = JSON.stringify(options);
+            tipo_jornada.value = options[0].value;
         } catch (error) { }
     }
 
-    async listConvenios() {
-        let convenio = this.getElement('convenio');
-        try {
-            const resp = await getConvenios();
-            const options = resp.map(r => {
-                return {
-                    ...r,
-                    name: `${r.name}`,
-                    value: r.value
-                }
-            });
-            convenio.options = JSON.stringify(options);
-            if(options && options[0] && options[0].value)
-                convenio.value = options[0].value;
-        } catch (error) { }
+    async suggestionConvenio() {
+        const searchSuggestion = this.getElement(`convenio`);
+        searchSuggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
+            let newValue = value.toString().toUpperCase();
+            if (newValue.length > 2) {
+                const resp = await getConvenios(newValue);
+                searchSuggestion.buildOptions(resp);
+            } else {
+                searchSuggestion.closeOptions();
+            }
+        });
+        searchSuggestion.addEventListener('select', ({ detail }) => {
+            console.log(detail);
+        });
     }
 
     async listGrupoCotizacion() {
@@ -535,13 +494,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getGrupoCotizacion();
             grup_ctz.options = JSON.stringify(
-                resp.map(r => {
-                    return {
-                        ...r,
-                        name: `${r.value} - ${r.name}`,
-                        value: r.value
-                    }
-                })
+                resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}))
             );
         } catch (error) { }
     }
@@ -551,12 +504,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getOcupacion();
             ocupacion.options = JSON.stringify(
-                resp.map(r => {
-                    return {
-                        name: `${r.value} - ${r.name}`,
-                        value: r.value
-                    }
-                })
+                resp.map(r => ({ name: `${r.value} - ${r.name}`, value: r.value}))
             );
         } catch (error) { }
     }

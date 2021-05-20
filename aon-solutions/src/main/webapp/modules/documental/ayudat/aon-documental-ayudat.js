@@ -86,8 +86,7 @@ export class AonDocumentalAyudat extends AonElement {
         try {
             const {datos, message} = await postBidoq({"method": "carpetas"});
             if(CONSTANT.SUCCESS === message && datos){
-                const categoryOptions = datos.map((folder) => {
-                    const option = {
+                const categoryOptions = datos.map((folder) => ({
                         name: folder.carpeta,
                         icon: 'folder',
                         fn: () => {
@@ -97,10 +96,8 @@ export class AonDocumentalAyudat extends AonElement {
                             this.applicationEl.addToolbarTitle(folder.carpeta);
                             this.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
                         }
-                    };
-        
-                    return option;
-                });
+                    })
+                );
         
                 this.applicationEl.addSidenavOptions('CATEGORIAS', categoryOptions);
                 this._folders = datos;

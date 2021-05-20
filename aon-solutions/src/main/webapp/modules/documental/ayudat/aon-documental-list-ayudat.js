@@ -94,7 +94,7 @@ export class AonDocumentalListAyudat extends AonElement {
     eventListener(){
         let input = this.getElement(this.INPUTFILE);
         if(input) {
-            input.addEventListener(EVENT.CHANGE, () => this.upload(input.files));
+            input.addEventListener(EVENT.CHANGE, () => this.upload(input));
         }
     }
 
@@ -170,29 +170,31 @@ export class AonDocumentalListAyudat extends AonElement {
         return data;
       }
 
-    async upload(files) {
-    this.applicationEl.startLoader();
-    if(files.length){
-        try {
-            let folders = [];
-            await Promise.all([...files].map(async (file)=>{
-                const {content, name, size} = await getReader(file).catch(e=>({}));
-                if(name){
-                    const nameSplit = name.split('.');
-                    folders.push({
-                        image_content: content,
-                        image_name: nameSplit[0],
-                        image_type: nameSplit.reverse()[0],
-                        image_size: size
-                    });
-                }
-            }));
-            await this.attach(folders);
-        } catch (error) {
-            console.log(error);
+    async upload(input) {
+        const files = input.files;
+        this.applicationEl.startLoader();
+        if(files.length){
+            try {
+                let folders = [];
+                await Promise.all([...files].map(async (file)=>{
+                    const {content, name, size} = await getReader(file).catch(e=>({}));
+                    if(name){
+                        const nameSplit = name.split('.');
+                        folders.push({
+                            image_content: content,
+                            image_name: nameSplit[0],
+                            image_type: nameSplit.reverse()[0],
+                            image_size: size
+                        });
+                    }
+                }));
+                await this.attach(folders);
+                input.value = "";
+            } catch (error) {
+                console.log(error);
+            }
         }
-    }
-    this.applicationEl.stopLoader();
+        this.applicationEl.stopLoader();
     }
 
     async attach(files){

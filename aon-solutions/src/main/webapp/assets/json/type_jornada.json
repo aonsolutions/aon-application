@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "name": "Semanal",
+    "value": "semanal"
+  },
+  {
+    "id": "2",
+    "name": "Diaria",
+    "value": "diaria"
+  }
+]
