@@ -125,7 +125,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				getExtraPaymentFilter(), 
 				new CompositePayments<IContractPayment>(monthlyQuotedPayments, super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
 
-		return extraPayments;
+		return getExtraPayments(extraPayments);
 	}
 
 	@Override
@@ -687,6 +687,25 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		public void sqlContractExtraCalculatorContext(IContractSalaryCalculatorContext ctx) throws AonException;
 	}
 
+	private static final class DelegateExtraPayment extends DelegateContractPayment {
+		private DelegateExtraPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+
+		@Override
+		public SalaryType getSalaryType() {
+			return SalaryType.EXTRA;
+		}
+	}
+
+	private static Collection<IContractPayment> getExtraPayments(Collection<IContractPayment> payments){
+		List<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
+		
+		payments.forEach( p -> extraPayments.add(new DelegateExtraPayment(p)));
+		
+		return extraPayments;
+	}
+	
 	private static class ExtraPaymentFilter implements FilterCollection.Filter<IContractPayment> {
 		
 		private Month month;
