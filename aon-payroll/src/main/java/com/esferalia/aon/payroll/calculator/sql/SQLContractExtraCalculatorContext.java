@@ -279,10 +279,15 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			}
 			
 			@Override
+			public SalaryType getSalaryType() {
+				return SalaryType.EXTRA;
+			}
+
+			@Override
 			public ExpressionScope getScope() {
 				return ExpressionScope.APPLICATION;
 			}
-
+			
 			@Override
 			public String getExpression() {
 				return Double.toString(salaryPayment.getQuote());
@@ -699,10 +704,11 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			try {
 			IExtraPayment p = (IExtraPayment) e;
 			Calendar pIssueDate = parseExtraDate(p.getExtraIssueDate(), new Date());
-			return  p.getSalaryType() == SalaryType.EXTRA 
-					&& p.getMonth() == this.month 
-					&& pIssueDate.get(DAY_OF_MONTH) ==  issueDate.get(DAY_OF_MONTH) 
-					;
+			return  
+			//p.getSalaryType() == SalaryType.EXTRA && 
+			p.getMonth() == this.month && 
+			pIssueDate.get(DAY_OF_MONTH) ==  issueDate.get(DAY_OF_MONTH) 
+			;
 			} catch ( Exception c ) {
 				return  e.getSalaryType() == SalaryType.EXTRA 
 						&& e.getMonth() == this.month; 
