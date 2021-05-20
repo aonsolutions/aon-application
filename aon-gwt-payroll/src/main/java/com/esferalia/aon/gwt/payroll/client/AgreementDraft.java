@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -1390,7 +1391,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private AonToolbarButton undoButton;
 	private AonToolbarButton redoButton;
 	private AonToolbarButton fxButton;
-	private AonToolbarButton addPaymentButton;
+	private AonExpandButton addPaymentButton;
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementPDFButton;
 	private AonToolbarButton serviAgreementXLSButton;
@@ -4846,15 +4847,28 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		toolbar.add(fxButton);
 		fxButton.setEnabled(false);
 		
-		addPaymentButton = new AonToolbarButton("A" + String.valueOf("\u00F1") + "adir Pago", AON.CSS.aonIconAddBlock());
-		addPaymentButton.addClickHandler(new ClickHandler() {
+		addPaymentButton = new AonExpandButton("A" + String.valueOf("\u00F1") + "adir Pago", AON.CSS.aonIconAddBlock()) {
+			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onExpandClick(ClickEvent event) {
 				NativeEvent nativeEvent = event.getNativeEvent();
 				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 				contextMenu.show();
 			}
-		});
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				AgreementPaymentWizard wizard = new AgreementPaymentWizard() {
+					@Override
+					protected void onAccept(Payment payment) {
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+						agreementDraftObject.save(AgreementDraft.this);
+					}
+				};
+				wizard.center();
+				wizard.show();
+			}
+		};
 		toolbar.add(addPaymentButton);
 		
 		CheckBox changesCheck = new CheckBox();
