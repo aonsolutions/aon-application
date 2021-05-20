@@ -110,7 +110,7 @@ class AonLaboral extends AonElement {
     this.applicationEl.addSidenavOptions(MSG.PAYROLL, laboralOptions);
 
     if(this.isComunica() || !this.isEmployee()){
-      let aon_cta_list = this.isMobile() ? PayrollOptions.AON_CCC : PayrollOptions.AON_LABORAL;
+      let aon_cta_list = PayrollOptions.AON_CCC;
       aon_cta_list.fn = () =>  this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
       conf.push(aon_cta_list);
       if(!this.isMobile()){
@@ -285,7 +285,7 @@ class AonLaboral extends AonElement {
             if(this.isMobile()){
                 aonView = new AonCtaList();
             } else {
-                GWT.load(GWT.CONFIGURATION_COMUNICA, this.applicationEl.CONTENT);
+                GWT.load(GWT.MAIN_CCC, this.applicationEl.CONTENT);
             }
             break;
           case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:

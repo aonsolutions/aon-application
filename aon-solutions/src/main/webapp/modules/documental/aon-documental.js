@@ -14,6 +14,7 @@ import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 import '../../components/aon-application.js';
 import '../../components/aon-input.js';
+import { getReader } from '../../services/utils.js';
 
 
 
@@ -408,20 +409,29 @@ export class AonDocumental extends AonElement {
       let selType = this.getElement("aonDocumentalUploadType");
       selType.value = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()
         ? 'enterprise' : 'employee';
-      d.addAcceptAction(() => {
+      d.addAcceptAction(async () => {
         let data = {
           category: this.getElement("aonDocumentalUploadCategory").value,
           scope: this.getElement("aonDocumentalUploadScope").value,
           tag: this.getElement("aonDocumentalUploadTag").value,
           type: this.getElement("aonDocumentalUploadType").value
         }
-        for(let i = 0; i < files.length; i++) {
-          const READER = new FileReader();
-          READER.readAsDataURL(files[i]);
-          READER.onload = (_event) => {
-            this.attach(READER.result, files[i], data);
-          };
+        // for(let i = 0; i < files.length; i++) {
+        //   const READER = new FileReader();
+        //   READER.readAsDataURL(files[i]);
+        //   READER.onload = (_event) => {
+        //     this.attach(READER.result, files[i], data);
+        //   }
+        // }
+
+        const application = this.getApplication();
+        application.startLoader();
+        for await (const file of files) {
+          const reader = await getReader(file).catch(e=>null);
+          if(reader) await this.attach(reader, data).catch(e=>null);
         }
+        this.getElement(this.INPUTFILE).value = "";
+        application.stopLoader();
       });
       d.open();
     }
@@ -509,29 +519,42 @@ export class AonDocumental extends AonElement {
       return table;
     }
 
-    attach(fileDataUri,  file, d){
-      if (fileDataUri.length > 0) {
-        const base64File = fileDataUri.split(',')[1];
+    // attach(fileDataUri,  file, d){
+    //   if (fileDataUri.length > 0) {
+    //     const base64File = fileDataUri.split(',')[1];
+    //     const data = {
+    //       content: base64File,
+    //       contentType: file.type,
+    //       contentEncoding: 'base64',
+    //       contentName: file.name,
+    //       contentSize: file.size,
+    //       category: d.category,
+    //       tag: d.tag,
+    //       scope: d.scope,
+    //       type: d.type
+    //     };
+
+    //     const application = this.getApplication();
+    //     application.startLoader();
+
+    //     uploadFileDocumental(data).then((r) => {
+    //       application.stopLoader();
+    //       this.aonDocumentalList()
+    //     });
+    //   }
+    // }
+
+    async attach(reader, d){
         const data = {
-          content: base64File,
-          contentType: file.type,
-          contentEncoding: 'base64',
-          contentName: file.name,
-          contentSize: file.size,
+          ...reader,
+          contentName: reader.name,
+          contentSize: reader.size,
           category: d.category,
           tag: d.tag,
           scope: d.scope,
           type: d.type
         };
-
-        const application = this.getApplication();
-        application.startLoader();
-
-        uploadFileDocumental(data).then((r) => {
-          application.stopLoader();
-          this.aonDocumentalList()
-        });
-      }
+        await uploadFileDocumental(data).then(() =>  this.aonDocumentalList()).catch(e=>null);
     }
 }
 window.customElements.define('aon-documental', AonDocumental);
