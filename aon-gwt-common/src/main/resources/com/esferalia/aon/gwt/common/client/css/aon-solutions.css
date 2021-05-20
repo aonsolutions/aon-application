@@ -9,6 +9,10 @@
 .aon_icon_add_block { background-image: iconAddBlock;}
 @url iconEmail aonIconEmail;
 .aon_icon_email { background-image: iconEmail;}
+@url iconPrev aonIconPrev;
+.aon_icon_prev { background-image: iconPrev;}
+@url iconNext aonIconNext;
+.aon_icon_next { background-image: iconNext;}
 @url iconDeleteList aonIconDeleteList;
 .aon_icon_delete_list { background-image: iconDeleteList;}
 @url iconEmit aonIconEmit;
