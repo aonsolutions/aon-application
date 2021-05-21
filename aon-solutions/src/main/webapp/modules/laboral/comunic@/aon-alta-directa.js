@@ -145,7 +145,7 @@ export class AonAltaDirecta extends AonElement {
                     <aon-select name="type_cto" id="type_cto" title="Tipo de contrato" autocomplete="off" readonly="false"></aon-select>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
+                    <aon-date name="fecha" id="fecha" title="Fecha"></aon-date>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
@@ -172,6 +172,14 @@ export class AonAltaDirecta extends AonElement {
             `
         );
 
+        if(!this.isMobile() && this.data && this.data.status) {
+            const titleRight = aonContratoCard.getCardTitle2();
+            titleRight.innerHTML = this.data.status;
+        }
+        if(this.data && !this.isAlta()){
+            disabledForm(`${this .id}ContratoCard`);
+        }
+       
         let aonAltaDirectaDni = this.getElement(`${this.id}DniDiv`);
         aonAltaDirectaDni.innerHTML = /*html*/ `<aon-input name="ipf" id="${this.id}Dni" description="DNI/NIE" autocomplete="on"></aon-input>`;
         aonAltaDirectaDni.setAttribute('disabled', true);
@@ -179,7 +187,7 @@ export class AonAltaDirecta extends AonElement {
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
         aonAltaDirectaNss.innerHTML = /*html*/ `<aon-input name="nss" id="${this.id}Nss" description="NSS/NAF" autocomplete="on"></aon-input>`;
 
-        if (this.isMobile()){
+        if (this.isMobile() && this.isAlta()){
             this.getElement(`${this.id}DivSubmit`)
                 .innerHTML = /*html*/`<button class="aonButton" style="margin-top: 10px;" type="button" id="${this.id}Submit">Aceptar</button>`;
         }
@@ -223,11 +231,17 @@ export class AonAltaDirecta extends AonElement {
         if(this.isAlta()) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
-        if(!this.isMobile())  // ALTA
+        if(!this.isMobile() && this.isAlta() )  // ALTA
             toolbar.addButton2( ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
-        if(this.data && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)) //DELETE
-            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
+        
+        if(this.data){ //DELETE{}
+            const fc =  this.data.frb || this.data.fra;
+            if(this.applicationParentEl.anularCondition(this.data.situation, fc)){
+                toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
+            }
+        }
+            
 
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
 
@@ -298,7 +312,7 @@ export class AonAltaDirecta extends AonElement {
             ...data,
             regimen: data.regime,
             nombre: data.name,
-            fecha: data.fra,
+            fecha: data.frb || data.fra,
             grup_ctz: data.gc,
         }
         if (data.ocup) obj['ocupacion'] = data.ocup.toString().toLowerCase();

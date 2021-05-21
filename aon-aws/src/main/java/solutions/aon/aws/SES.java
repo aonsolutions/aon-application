@@ -181,16 +181,86 @@ public class SES extends AWS{
             		new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
 
             SendRawEmailRequest rawEmailRequest = 
-            		new SendRawEmailRequest(rawMessage)
-            		    .withConfigurationSetName(CONFIGURATION_SET);
+	            		new SendRawEmailRequest(rawMessage).
+	            		withConfigurationSetName(CONFIGURATION_SET);
             
             client.sendRawEmail(rawEmailRequest);
             System.out.println("Email sent!");
         // Display an error if something goes wrong.
         } catch (Exception ex) {
-          System.out.println("Email Failed");
-            System.err.println("Error message: " + ex.getMessage());
-            ex.printStackTrace();
+            System.out.println("Email Failed");
+			System.err.println("Error message: " + ex.getMessage());
+			ex.printStackTrace();
+        }
+    }
+    
+    public static void sendEmailWithAttachment(String from, LinkedList<String> toList, String subject, String body, LinkedList<File> files) throws AddressException, MessagingException, IOException{	
+    	Session session = Session.getDefaultInstance(new Properties());
+        
+        // Create a new MimeMessage object.
+        MimeMessage message = new MimeMessage(session);
+    
+        String toStr =  String.join(",", toList.toArray(String[]::new));
+        // Add subject, from and to lines.
+        message.setSubject(subject, "UTF-8");
+        message.setFrom(new InternetAddress(from));
+        message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(toStr));
+        MimeMultipart msg_body = new MimeMultipart("alternative");
+        // Create a wrapper for the HTML and text parts.        
+        MimeBodyPart wrap = new MimeBodyPart();
+        
+        // Define the HTML part.
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        htmlPart.setContent(body,"text/html; charset=UTF-8");
+                
+        // Add the text and HTML parts to the child container.
+//        msg_body.addBodyPart(textPart);
+        msg_body.addBodyPart(htmlPart);
+        
+        // Add the child container to the wrapper object.
+        wrap.setContent(msg_body);
+        
+        // Create a multipart/mixed parent container.
+        MimeMultipart msg = new MimeMultipart("mixed");
+        
+        // Add the parent container to the message.
+        message.setContent(msg);
+        
+        // Add the multipart/alternative part to the message.
+        msg.addBodyPart(wrap);
+        
+        for (File file : files) {
+        	// Define the attachment
+        	MimeBodyPart att = new MimeBodyPart(); 
+        	DataSource bds = new FileDataSource(file);
+        	att.setDataHandler(new DataHandler(bds)); 
+        	att.setFileName(bds.getName());             
+            // Add the attachment to the message.
+            msg.addBodyPart(att);
+		}
+
+        // Try to send the email.
+        try {
+            // Instantiate an Amazon SES client, which will make the service 
+            // call with the supplied AWS credentials.
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
+                    .withCredentials(getProvider())
+                    .withRegion("eu-west-1")
+                    .build();
+
+            // Send the email.
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            message.writeTo(outputStream);
+            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
+
+            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
+            
+            client.sendRawEmail(rawEmailRequest);
+            System.out.println("Email sent!");
+        // Display an error if something goes wrong.
+        } catch (Exception ex) {
+			System.err.println("Error message: " + ex.getMessage());
+			ex.printStackTrace();
         }
     }
 }

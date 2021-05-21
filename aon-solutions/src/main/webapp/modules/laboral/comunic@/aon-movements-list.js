@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, setDate } from "../../../services/utils.js";
+import { disabledForm, isEmptyObject, setDate } from "../../../services/utils.js";
 import { getMovements, getEmployee } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
@@ -128,13 +128,13 @@ export class AonMovementsList extends AonElement {
     }
   }
 
-  async aonMovement({ }, { regime, ctaCti, nss, prev, situation }) {
+  async aonMovement({ }, { regime, ctaCti, nss, prev, situation, status }) {
     this.applicationEl.startLoading();
   
     try {
       let resp = await getEmployee({ regime, ctaCti, nss });
       if (resp) {
-        const data = { ...resp, prev, situation };
+        const data = { ...resp, prev, situation, status };
         const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
         if (aonAltaDirecta) {
           disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
@@ -151,7 +151,7 @@ export class AonMovementsList extends AonElement {
     let data = [];
     try {
       const movements = this.applicationParentEl._movements;
-      if(this.searchFilter && movements){
+      if(this.searchFilter && !isEmptyObject(movements)){
         data = movements.filter(({name, ipf, ctaCtiCompleta})=> this.includeSearch(name) || this.includeSearch(ipf) || this.includeSearch(ctaCtiCompleta));
       } else {
         const resp = movements || await getMovements(this.getFilter());
@@ -167,7 +167,7 @@ export class AonMovementsList extends AonElement {
           let tipo_mov = situation === "AL" ? "Alta" : "Baja";
           if (prev) {
             color = "#488601";
-            tipo_mov = `${tipo_mov} previa`;
+            tipo_mov = `${tipo_mov} Previa`;
           } else if (this.applicationParentEl.anularCondition(situation, fra)) {
             color = "#CB8D00";
             tipo_mov = `${tipo_mov} Consolidada`;

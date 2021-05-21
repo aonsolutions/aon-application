@@ -1,32 +1,35 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import solutions.aon.aws.SES;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -189,7 +192,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		return SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		employee = SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		sendEmailAndNotify(api, employee); // send mov mail
+		return employee;
 	}
 	
 	private Employee sendBaja(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
@@ -211,7 +216,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setIpf(ipf)
 		.setFra(fecha)
 		.build();
-		return SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
+		employee =  SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
+		return employee;
 	}
 	
 	private Boolean movDelete(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
@@ -223,9 +229,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ctaCti = api.getData().getString("ctaCti");
 		String nss = api.getData().getString("nss");
 		Boolean prev = api.getData().getBoolean("prev"); //true prev, false consolidado
-
-		//second screen
+		
 		Date fecha = Toolkit.parseDate(api.getData().getString("fra"), "yyyy-MM-dd");
+		
+		if(!api.getData().isNull("frb")) {
+			fecha = Toolkit.parseDate(api.getData().getString("frb"), "yyyy-MM-dd");
+		}
 
 		if(prev) {
 			SistemaRED.movPrevDelete(certificateInputStream, certificatePassword, certificateType,  situation, regimen, ctaCti, nss, fecha);
@@ -248,7 +257,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().optString("regime");
 		String ccc =  api.getParams().optString("ctaCti");
 		String nss =  api.getParams().optString("nss");
-		return SistemaRED.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);
+		Employee employee =  SistemaRED.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);	
+		return employee;
 	}
 	
 	private Map<String, Object> updateContrato(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
@@ -309,6 +319,46 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			if(api.getData().optString("coefparcial") == null || "".equals(api.getData().optString("coefparcial")) ) {
 				throw new Exception("Coeficiente parcial requerido");
 			}
+	}
+	
+	private void sendEmailAndNotify(AonApiData api, Employee employee) {
+		Thread newThread = new Thread(() -> {
+			try {
+			    Domain domain = api.getDomain();
+				LinkedList<String> toList = new LinkedList<>();
+			    User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+    			Auth auth = AON_SOLUTIONS.getAuth(user.getAuth());
+				toList.add(auth.getEmail());
+				AON.getDomainUserStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(user.getId()))).forEach(usr -> {
+		    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());
+		    		if(dur.isComunicaManager()) {
+						toList.add(AON_SOLUTIONS.getAuth(usr.getAuth()).getEmail());
+		    		}
+		    	});
+				
+				
+				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+				final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
+				String regimen = employee.getRegime();
+				String ccc = employee.getCtaCti().get();
+				String nss = employee.getNss();
+				Date fecha = employee.getFra();
+				String from = "no-reply@aon.solutions"; 
+				String body = "Te informamos que se ha realizado un Alta en la Seguridad Social, adjuntamos un duplicado.";
+				String subject = "SEG SOCIAL | AON SOLUTIONS"; 
+				LinkedList<File> files = new LinkedList<File>();
+				byte[] fileByte = SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);
+				File file = File.createTempFile("duplicado_alta", ".pdf");
+				FileOutputStream os = new FileOutputStream(file);
+	            os.write(fileByte);
+	            os.close();
+				files.add(file);
+				SES.sendEmailWithAttachment(from, toList, subject, body, files);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		newThread.start();
 	}
 	
 }
