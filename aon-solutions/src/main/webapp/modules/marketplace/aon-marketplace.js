@@ -113,7 +113,8 @@ export class AonMarketplace extends AonElement {
 				let span3 = document.createElement('span');
 				span3.innerHTML = app.subtitle;
 				span3.style.color = 'gray';
-				span.appendChild(span3);
+				span3.style.fontWeight = '400';
+				span2.appendChild(span3);
 			}
 
 			let buttons = document.createElement('span');

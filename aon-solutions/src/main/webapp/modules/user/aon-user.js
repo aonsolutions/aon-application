@@ -468,7 +468,7 @@ export class AonUser extends AonElement {
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.DELETE);
+		d.setTitle(MSG.SEND);
 		d.setContentHTML('Al notificar los datos de usuario se generará una nueva contraseña.');
 		d.addAcceptAction(() => {
 			sendUserInfoEmail(this._user);

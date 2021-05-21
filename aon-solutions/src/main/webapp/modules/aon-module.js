@@ -1,14 +1,13 @@
 import { AonElement } from '../components/AonElement.js';
 import { rootPanel } from '../services/gwtLoader.js';
-import { setPosition } from '../services/maps.js';
+
 import { getToken, saveAuthDevice , getCompanies, getUser, getUserAppRole } from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 
-import { EVENT, TAG } from '../../environments/environments.js'; 
+import { EVENT, TAG } from '../environments/environments.js'; 
 
 import * as LS  from '../services/localStorageService.js';
-import { waitEl } from '../services/utils.js';
 
 export class AonModule extends AonElement {
 
@@ -21,7 +20,6 @@ export class AonModule extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		this.setWindowApp();
 		this.load();
 	}
 
@@ -59,36 +57,12 @@ export class AonModule extends AonElement {
 					 	: '<aon-parent id="aonParent"></aon-parent>');
 				}
 			});
-			window.dispatchEvent( new Event(EVENT.USER_AUTH) );
 		} else {
 			this.buildLogin();
 		}
 	}
 
-	setWindowApp(){
-		window.setPosition = (pos) => setPosition(pos);
-
-		window.setTokenFCM =  (token) => {
-			window.tokenFCM = token;
-			this.saveTokenFcm(token);
-		}
-
-		window.setNotificationAction = (data) =>  {
-			window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
-		}
-
-		window.addEventListener(EVENT.USER_AUTH, ()=>{
-			waitEl(TAG.AON_NOTIFICATION_ICON).then(aonNotificationIcon=>{
-				aonNotificationIcon.initializeFB();
-				aonNotificationIcon.getTotalNotification();
-			})
-		});
-
-	}
-
-	saveTokenFcm(tokenFCM){
-		saveAuthDevice({tokenFCM});
-	}
+	
 
 	companySelection(company) {
 		LS.setCompany(JSON.stringify(company));

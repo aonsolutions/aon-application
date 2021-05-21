@@ -59,9 +59,7 @@ export class AonMobileMenu extends AonElement {
   }
 
   eventListener(){
-    window.addEventListener(EVENT.USER_AUTH, ()=>{
-      this.build();
-		});
+    this.build();
     window.addEventListener(EVENT.RESIZE, () => {
       this.reload();
     });
