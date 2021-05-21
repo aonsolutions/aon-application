@@ -151,6 +151,9 @@ export class AonMenu extends AonElement {
 					item.style.fontSize = '12px';
 					item.style.fontFamily = 'Roboto,sans-serif';
 					item.style.color = 'black';
+					item.style.position = 'absolute';
+					item.style.right = '50px';
+					item.style.margin = '10px';
 				});
 			}
 		});

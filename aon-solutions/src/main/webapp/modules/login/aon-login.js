@@ -219,7 +219,7 @@ export class AonLogin extends AonElement {
         localStorage.removeItem('aon_domain_id');
         localStorage.removeItem('aon_domain_name');
         localStorage.removeItem('aon_domain_login');
-        window.dispatchEvent( new Event(EVENT.USER_AUTH) );
+        window.loadScripts();
         this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){
@@ -236,6 +236,7 @@ export class AonLogin extends AonElement {
         });
       })
       .catch((e) => {
+        console.log(e);
         loader.stop();
         let error = JSON.parse(e);
         let aonLoginError = this.getElement("aonLoginError");

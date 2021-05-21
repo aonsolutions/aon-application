@@ -1,5 +1,8 @@
 /target/
+/node_modules/
+/temp/
+/package-lock.json
 /src/main/webapp/invoice/factura-emitida/
 .settings
 .classpath
-.project
+.project    

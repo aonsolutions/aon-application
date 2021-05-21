@@ -8,13 +8,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
 
-	<!-- FAVICON -->
-	<!-- <link rel="icon" type="image/x-icon" href="assets/favicon.ico"> -->
-
-	<!-- BOOTSTRAP -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
 	<!-- ROBOTO FONT -->
 	<link
 		href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
@@ -23,61 +16,12 @@
 	<!-- MATERIAL ICONS -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
 
-	<!-- MATERIAL COMPONENTS -->
-	<!-- <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css"> -->
-
-	<!-- <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script> -->
-	<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
-
-	<meta name="gwt:property" content="locale=es_ES" />
-
-	<style>
-		body {
-			margin: 0;
-		}
-	</style>
-	
-
-	<link rel="stylesheet" type="text/css" href="css/aon.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-loader.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-mobile.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-grid.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-input.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-slider.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-switch.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-tabs.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-textarea.css"> 
-	<link rel="stylesheet" type="text/css" href="css/aon-input-loading.css">
-	<link rel="stylesheet" type="text/css" href="css/aon-css-utils.css">
-	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js"></script>
-	<script src="https://www.gstatic.com/charts/loader.js"></script>
-	<script type="module" src="services/service.js"></script>
-	<script type="module" src="modules/aon-module.js"></script>
-	<script type="text/javascript">
-		let link = document.createElement('link');
-		link.type = 'image/x-icon';
-		link.rel = 'icon';
-
-		if (window.location.href.includes('ayudat')) {
-			link.href = 'assets/ayudat-favicon.png';
-		} else if (window.location.href.includes('translogia') || window.location.href.includes('tedi')
-			|| window.location.href.includes('aonsolutions.org')) {
-			link.href = 'assets/ayudat-favicon.png';
-			//link.href = 'assets/tedi-favicon.png';
-		} else {
-			link.href = 'assets/favicon-black.ico';
-		}
-		document.getElementsByTagName('head')[0].appendChild(link);
-		localStorage.setItem('aon_solutions', true);
-
-	</script>
+	<script type="module" src="dist/app.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="dist/styles.min.css">
 </head>
 
 <body>
-	<aon-module></aon-module>
+
 </body>
 
 </html>

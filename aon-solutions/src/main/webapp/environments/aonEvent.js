@@ -16,6 +16,5 @@ export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const SEARCH = 'search';
 export const SELECT = 'select';
 export const SELECT_OPTION = 'selectOption';
-export const USER_AUTH = 'userAuth';
 export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
