@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -24,8 +26,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 
 public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
@@ -43,6 +43,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	interface MyStyle extends CssResource {
 		String buttonFillPage();
 		String lineFill();
+		String visibilityDisabled();
 	}
 	
 	@UiField
@@ -75,8 +76,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	ListBox periodicityType;
 	
-	@UiField
-	HTMLPanel secondPage;
+//	@UiField
+//	HTMLPanel secondPage;
 	
 	@UiField
 	HTMLPanel partialityPanel;
@@ -84,17 +85,23 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	Button partialityButton;
 	
-	@UiField
-	HTMLPanel prevNextButtons;
+//	@UiField
+//	HTMLPanel prevNextButtons;
+//	
+//	@UiField
+//	Button firstButton;
+//	
+//	@UiField
+//	Button secondButton;
+//	
+//	@UiField
+//	HTMLPanel firstLine;
 	
 	@UiField
-	Button firstButton;
+	TextBox paymentConcept;
 	
 	@UiField
-	Button secondButton;
-	
-	@UiField
-	HTMLPanel firstLine;
+	HTMLPanel paymentCRAPanel;
 	
 	@UiField
 	TextBox paymentDescription;
@@ -107,23 +114,25 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	// -------------------------------------------- Variables
 	
-	private AonToolbarButton nextButton;
-	private AonToolbarButton prevButton;
+//	private AonToolbarButton nextButton;
+//	private AonToolbarButton prevButton;
 	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 	
-	private Integer currentPage = 0;
+//	private Integer currentPage = 0;
 	
 	private Payment payment;
+	
+	TypeListBox<Payment.Type> paymentTypeListBox;
 	
 	// -------------------------------------------- Constructor
 	
 	public AgreementPaymentWizard() {
-		setCaption("Creador Conceptos");
+		setCaption("Asistente Conceptos");
 		setWidget(binder.createAndBindUi(this));
 		
-		initPrevNextButtons();
+//		initPrevNextButtons();
 		initFooterButtons();
 		
 		// DeckPanel
@@ -137,12 +146,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		initPaymentListBox();
 		initPartialityButton();
+		initPaymentCRAType();
 		showFirstPage();
 		
 		// Fire SALARIO_BASE
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentType);
 	}
-	
+
 	private void initPaymentListBox() {
 		paymentType.clear();
 		paymentType.addItem("SALARIO_BASE", "SALARIO_BASE");
@@ -160,16 +170,25 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			periodicityType.addItem("MENSUAL", " * DIAS_TRABAJADOS / DIAS_MES");
 			periodicityType.addItem("DIARIO", " * DIAS_TRABAJADOS");
 			periodicityType.addItem("HORAS", " * HORAS_TRABAJADAS");
-			periodicityType.addItem("PEONADAS", " * PEONADAS");
+			periodicityType.addItem("PEONADAS", " * JORNADAS_REALES");
 		}
 		
 		if(AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_SALARIAL") || AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_EXTRA_SALARIAL")) {
 			periodicityType.clear();
+			periodicityType.addItem("MENSUAL", " * DIAS_TRABAJADOS / DIAS_MES");
 			periodicityType.addItem("DIAS TRABAJADOS", " * DIAS_TRABAJADOS");
 			periodicityType.addItem("DIAS EFECTIVOS", " * DIAS_EFECTIVOS");
 			periodicityType.addItem("HORAS TRABAJADAS", " * HORAS_TRABAJADAS");
 			periodicityType.addItem("FIJO", "FIJO");
 		}
+	}
+	
+	private void initPaymentCRAType() {
+		paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
+		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
+		paymentTypeListBox.addStyleName("aon-selectOneMenu");
+		paymentTypeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentCRAPanel.add(paymentTypeListBox);
 	}
 	
 	private void initPartialityButton() {
@@ -192,10 +211,10 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	// -------------------------------------------- UiHandler
 	
-	@UiHandler("firstButton")
-	void onFirstButtonClick(ClickEvent event) {
-		showFirstPage();
-	}
+//	@UiHandler("firstButton")
+//	void onFirstButtonClick(ClickEvent event) {
+//		showFirstPage();
+//	}
 	
 	@UiHandler("paymentType")
 	void onPaymentTypeChange(ChangeEvent event) {
@@ -225,10 +244,10 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		createUpdatePayment();
 	}
 	
-	@UiHandler("secondButton")
-	void onSecondButtonClick(ClickEvent event) {
-		showSecondPage();
-	}
+//	@UiHandler("secondButton")
+//	void onSecondButtonClick(ClickEvent event) {
+//		showSecondPage();
+//	}
 	
 	@UiHandler("partialityButton")
 	void onPartialityButtonClick(ClickEvent event) {
@@ -243,38 +262,58 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private void showFirstPage() {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(firstPage));
 		deckPanel.animate(500);
-		addFirstButtonFill();
+//		addFirstButtonFill();
 	}
 
-	private void showSecondPage() {
-		deckPanel.showWidget(deckPanel.getWidgetIndex(secondPage));
-		deckPanel.animate(500);
-		addSecondButtonFill();
-	}
+//	private void showSecondPage() {
+//		deckPanel.showWidget(deckPanel.getWidgetIndex(secondPage));
+//		deckPanel.animate(500);
+//		addSecondButtonFill();
+//	}
 
 	// -------------------------------------------- ButtonsPanel.Methods
 	
-	private void addFirstButtonFill() {
-		secondButton.removeStyleName(style.buttonFillPage());
-		firstLine.removeStyleName(style.lineFill());
-		
-		firstButton.addStyleName(style.buttonFillPage());
-	}
-
-	private void addSecondButtonFill() {
-		firstButton.addStyleName(style.buttonFillPage());
-		secondButton.addStyleName(style.buttonFillPage());
-		firstLine.addStyleName(style.lineFill());
-	}
+//	private void addFirstButtonFill() {
+//		secondButton.removeStyleName(style.buttonFillPage());
+//		firstLine.removeStyleName(style.lineFill());
+//		
+//		firstButton.addStyleName(style.buttonFillPage());
+//	}
+//
+//	private void addSecondButtonFill() {
+//		firstButton.addStyleName(style.buttonFillPage());
+//		secondButton.addStyleName(style.buttonFillPage());
+//		firstLine.addStyleName(style.lineFill());
+//	}
 	
 	// -------------------------------------------- Payment
 	
 	private void createUpdatePayment() {
+		createPaymentConcept();
 		createPaymentDescription();
 		createPaymentExpression();
+		checPartialityButton();
 		checkPartiality();
 	}
-	
+
+	private void createPaymentConcept() {
+		paymentConcept.setValue(getConceptName());
+	}
+
+	private String getConceptName() {
+		String paymentTypeValue = paymentType.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
+			return "SALARIO_BASE";
+		else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS_EXTRA")) {
+			String extraNameValue = extraName.getValue();
+			return AonStringUtils.isNotBlank(extraNameValue) ? "PLUS_XS_" + extraNameValue.toUpperCase() : "PLUS_XS_SIN_DEFINIR";
+		} if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")) {
+			String extraNameValue = extraName.getValue();
+			return AonStringUtils.isNotBlank(extraNameValue) ? "PLUS_" + extraNameValue.toUpperCase() : "PLUS_SIN_DEFINIR";
+		} else
+			return "SIN_DEFINIR";
+	}
+
 	private void createPaymentDescription() {
 		String paymentDescription = "";
 		
@@ -284,7 +323,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS EXTRA")) {
 			String extraNameValue = extraName.getValue();
 			if(AonStringUtils.isNotBlank(extraNameValue))
-				paymentTypeValue = "PLUS XS " + extraNameValue.toUpperCase();
+				paymentTypeValue = "PLUS EXTRA SALARIAL " + extraNameValue.toUpperCase();
 		} else if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")) {
 			String extraNameValue = extraName.getValue();
 			if(AonStringUtils.isNotBlank(extraNameValue))
@@ -314,8 +353,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	private String createBaseSalaryExpression() {
 		String expression = "";
+		String periodicity = periodicityType.getSelectedItemText();
 		
-		expression = "/*user*/SALARIO_BASE/**/";
+		expression = "/*user*/SALARIO_" + periodicity + "/**/";
 		expression += periodicityType.getSelectedValue();
 		
 		return expression;
@@ -325,15 +365,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		String expression = "";
 		String variable = "";
 		
-		String paymentTypeValue = paymentType.getSelectedValue();
+		variable = (AonStringUtils.isBlank(extraName.getValue()) ? "SIN_DEFINIR" : extraName.getValue().toUpperCase());
 		
-		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PLUS_SALARIAL"))
-			variable = "PLUS_" + (AonStringUtils.isBlank(extraName.getValue()) ? "SIN_DEFINIR" : extraName.getValue().toUpperCase());
-		
-		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PLUS_EXTRA_SALARIAL"))
-			variable = "PLUS_XS_" + (AonStringUtils.isBlank(extraName.getValue()) ? "SIN_DEFINIR" : extraName.getValue().toUpperCase());
-		
-		expression = "/*read-only*/" + variable + "/**/";
+		expression = "/*user*/" + variable + "/**/";
 		
 		String periodicityTypeValue = periodicityType.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "FIJO")) {
@@ -346,10 +380,23 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return expression;
 	}
 	
+	private void checPartialityButton() {
+		String expression = paymentExpression.getValue();
+		if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR")) {
+			partialityButton.setEnabled(true);
+			partialityButton.removeStyleName(style.visibilityDisabled());
+		} else {
+			getEnableDisableButton(partialityButton, true);
+			partialityButton.setEnabled(false);
+			partialityButton.addStyleName(style.visibilityDisabled());
+		}
+	}
+	
 	private void checkPartiality() {
+		String expression = paymentExpression.getValue();
 		Boolean isActive = isActiveToggleButton(partialityButton);
 		
-		if(isActive) {
+		if(isActive && (AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR"))) {
 			paymentExpression.setValue(paymentExpression.getValue() + " * COEFICIENTE_PARCIALIDAD");
 		} else {
 			String paymentExpressionValue = paymentExpression.getValue();
@@ -360,40 +407,40 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	// -------------------------------------------- FooterButtons
 	
-	private void initPrevNextButtons() {
-		prevButton = new AonToolbarButton("Anterior", AON.CSS.aonIconPrev());
-		prevButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				prevPage();
-			}
-		});
-		prevNextButtons.add(prevButton);
-		
-		nextButton = new AonToolbarButton("Siguiente", AON.CSS.aonIconNext());
-		nextButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				nextPage();
-			}
-
-		});
-		prevNextButtons.add(nextButton);
-	}
-	
-	private void nextPage() {
-		if(currentPage < 1) {
-			currentPage++;
-			showSecondPage();
-		}
-	}
-
-	private void prevPage() {
-		if(currentPage > 0) {
-			currentPage--;
-			showFirstPage();
-		}
-	}
+//	private void initPrevNextButtons() {
+//		prevButton = new AonToolbarButton("Anterior", AON.CSS.aonIconPrev());
+//		prevButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				prevPage();
+//			}
+//		});
+//		prevNextButtons.add(prevButton);
+//		
+//		nextButton = new AonToolbarButton("Siguiente", AON.CSS.aonIconNext());
+//		nextButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				nextPage();
+//			}
+//
+//		});
+//		prevNextButtons.add(nextButton);
+//	}
+//	
+//	private void nextPage() {
+//		if(currentPage < 1) {
+//			currentPage++;
+//			showSecondPage();
+//		}
+//	}
+//
+//	private void prevPage() {
+//		if(currentPage > 0) {
+//			currentPage--;
+//			showFirstPage();
+//		}
+//	}
 	
 	// -------------------------------------------- FooterButtons
 	
@@ -435,8 +482,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payment.setExpression(paymentExpression.getValue());
 		payment.setIrpfExpression("_P");
 		payment.setQuoteExpression("_P");
-		payment.setType(Payment.Type.CRA_0001);
+		payment.setType(paymentTypeListBox.getSelected());
 		payment.setSalaryType(Salary.Type.SALARY);
+		payment.setName(paymentConcept.getValue());
 	}
 	
 	// -------------------------------------------- Abstract Methods
