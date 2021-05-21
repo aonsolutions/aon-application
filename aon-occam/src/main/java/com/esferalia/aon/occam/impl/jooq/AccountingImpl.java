@@ -456,6 +456,20 @@ public class AccountingImpl implements IAccounting {
 	}
 	
 	@Override
+	public AccUtilitiesResult invoiceIntegrity(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.invoiceIntegrity(ctx)
+			 );		
+	}
+
+	@Override
+	public AccUtilitiesResult invoiceIntegrityFix(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.invoiceIntegrityFix(ctx,invoiceId)
+			 );		
+	}
+
+	@Override
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.unbalancedEntries(ctx)

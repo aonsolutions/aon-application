@@ -131,4 +131,14 @@ public class AccountingUtilitiesServiceImpl extends AonStatelessRemoteServiceSer
 	public AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params) {
 		return ACCOUNTING.removeEntries(domainName,user,domain,params);
 	}
+
+	@Override
+	public AccUtilitiesResult invoiceIntegrity(String domainName, String user, Domain domain) throws AonCoreException {
+		return ACCOUNTING.invoiceIntegrity(domainName,user,domain);
+	}
+	@Override
+	public AccUtilitiesResult invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.invoiceIntegrityFix(domainName,user,domain,invoiceId);
+	}
+	
 }

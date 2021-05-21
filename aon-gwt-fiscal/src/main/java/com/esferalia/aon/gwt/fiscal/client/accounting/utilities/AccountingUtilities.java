@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.core.client.GWT;
@@ -10,10 +12,9 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -75,9 +76,8 @@ public class AccountingUtilities extends MainEntryPoint{
 			public void onFailure(Throwable caught) {
 				SimpleLayoutPanel content = new SimpleLayoutPanel();		
 				Label errorLabel = new Label( "No se ha podido determinar la configuraci\u00F3n" );
-				errorLabel.setStyleName(AON.AON_CSS.aonBold());
-				errorLabel.addStyleName(AON.AON_CSS.aonColorRed());
-				errorLabel.addStyleName(AON.AON_CSS.aonErrorPanel());
+				errorLabel.setStyleName(AON.CSS.aonBold());
+				errorLabel.addStyleName(AON.CSS.aonColorRed());
 				content.setWidget(errorLabel);
 				root.add(content);
 			}
@@ -87,14 +87,15 @@ public class AccountingUtilities extends MainEntryPoint{
 	
 	protected Widget paint(Domain domain) {
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
+		AonToolbar toolbar = new AonToolbar("Utilidades contables");
+		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		SimpleLayoutPanel sidebar = new SimpleLayoutPanel();
-		sidebar.setStyleName(AON.AON_CSS.aonBorderRight());
+		sidebar.setStyleName(AON.CSS.aonBorderRight());
 		dockLayoutPanel.addWest(sidebar, 275);
 		
 		ScrollPanel scrollPanel = new ScrollPanel(); 
-		scrollPanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		scrollPanel.setStyleName(AON.CSS.aonWidthAll());
 		sidebar.setWidget(scrollPanel);
 		
 		FlowPanel sidebarMenu = new FlowPanel();
@@ -102,13 +103,12 @@ public class AccountingUtilities extends MainEntryPoint{
 
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
 		
-		DisclosurePanel checksDisclosurePanel = new DisclosurePanel("CHEQUEOS");
-		checksDisclosurePanel.setOpen(true);
-		FlowPanel checksPanel = new FlowPanel();
-		checksDisclosurePanel.add(checksPanel);
+		AonDisplayTable checksGrid = new AonDisplayTable();
+		sidebarMenu.add(checksGrid);
+		checksGrid.addRow().addCell(new InlineLabel("CHEQUEOS"), AON.CSS.aonBold(), AON.CSS.aonTextUnderline());
 		
 		AccountIntegrityCheck accIntegrity = new AccountIntegrityCheck(getDomainName(),getUser(),domain);
-		checksPanel.add(accIntegrity.getSidebarWidget());
+		checksGrid.addRow().addCell(accIntegrity.getSidebarWidget());
 		accIntegrity.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			@Override
 			public void onSelection(SelectionEvent<IOption> event) {
@@ -118,7 +118,7 @@ public class AccountingUtilities extends MainEntryPoint{
 		});
 
 		NoLowLevelAccountFinder noLowLevel = new NoLowLevelAccountFinder(getDomainName(),getUser(),domain);
-		checksPanel.add(noLowLevel.getSidebarWidget());
+		checksGrid.addRow().addCell(noLowLevel.getSidebarWidget());
 		noLowLevel.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			@Override
 			public void onSelection(SelectionEvent<IOption> event) {
@@ -128,7 +128,7 @@ public class AccountingUtilities extends MainEntryPoint{
 		});
 
 		EmptyEntryFinder empty = new EmptyEntryFinder(getDomainName(),getUser(),domain);
-		checksPanel.add(empty.getSidebarWidget());
+		checksGrid.addRow().addCell(empty.getSidebarWidget());
 		empty.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			@Override
 			public void onSelection(SelectionEvent<IOption> event) {
@@ -138,7 +138,7 @@ public class AccountingUtilities extends MainEntryPoint{
 		});
 		
 		UnbalancedEntryFinder unbalanced = new UnbalancedEntryFinder(getDomainName(),getUser(),domain);
-		checksPanel.add(unbalanced.getSidebarWidget());
+		checksGrid.addRow().addCell(unbalanced.getSidebarWidget());
 		unbalanced.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			@Override
 			public void onSelection(SelectionEvent<IOption> event) {
@@ -146,11 +146,9 @@ public class AccountingUtilities extends MainEntryPoint{
 				unbalanced.run();
 			}
 		});
-		sidebarMenu.add(checksDisclosurePanel);
-		
 		
 		WrongRecordedInvoices  wrongInvoices = new WrongRecordedInvoices(getDomainName(),getUser(),domain);
-		checksPanel.add(wrongInvoices.getSidebarWidget());
+		checksGrid.addRow().addCell(wrongInvoices.getSidebarWidget());
 		wrongInvoices.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			@Override
 			public void onSelection(SelectionEvent<IOption> event) {
@@ -158,11 +156,20 @@ public class AccountingUtilities extends MainEntryPoint{
 				wrongInvoices.run();
 			}
 		});
-		sidebarMenu.add(checksDisclosurePanel);
 
 		if (!domain.isParent()) {
+			InvoiceIntegrityCheck  invoiceIntegrityCheck = new InvoiceIntegrityCheck(getDomainName(),getUser(),domain);
+			checksGrid.addRow().addCell(invoiceIntegrityCheck.getSidebarWidget());
+			invoiceIntegrityCheck.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( invoiceIntegrityCheck );
+					invoiceIntegrityCheck.run();
+				}
+			});
+
 			DomainIntegrityCheck domainIntegrity = new DomainIntegrityCheck(getDomainName(),getUser(),domain);
-			checksPanel.add(domainIntegrity.getSidebarWidget());
+			checksGrid.addRow().addCell(domainIntegrity.getSidebarWidget());
 			domainIntegrity.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 				@Override
 				public void onSelection(SelectionEvent<IOption> event) {
@@ -172,14 +179,15 @@ public class AccountingUtilities extends MainEntryPoint{
 			});
 		}
 
-		DisclosurePanel utilitiesDisclosurePanel = new DisclosurePanel("UTILIDADES");
-		utilitiesDisclosurePanel.setOpen(false);
-		FlowPanel utilitiesPanel = new FlowPanel();
-		utilitiesDisclosurePanel.add(utilitiesPanel);
+		AonDisplayTable utilitiesGrid = new AonDisplayTable();
+		utilitiesGrid.addStyleName(AON.CSS.aonMarginTop());
+		sidebarMenu.add(utilitiesGrid);
+		utilitiesGrid.addRow().addCell(new InlineLabel("UTILIDADES"), AON.CSS.aonBold(), AON.CSS.aonTextUnderline());
+		
 
 		if (!domain.isParent()) {
 			AccountRegistryChecker archecker = new AccountRegistryChecker(getDomainName(),getUser(),domain);
-			utilitiesPanel.add(archecker.getSidebarWidget());
+			utilitiesGrid.addRow().addCell(archecker.getSidebarWidget());
 			archecker.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 				@Override
 				public void onSelection(SelectionEvent<IOption> event) {
@@ -188,7 +196,7 @@ public class AccountingUtilities extends MainEntryPoint{
 			});
 			
 			JournalRegenerator journalRegenerator = new JournalRegenerator(getDomainName(),getUser(),domain);
-			utilitiesPanel.add(journalRegenerator.getSidebarWidget());
+			utilitiesGrid.addRow().addCell(journalRegenerator.getSidebarWidget());
 			journalRegenerator.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 				@Override
 				public void onSelection(SelectionEvent<IOption> event) {
@@ -198,7 +206,7 @@ public class AccountingUtilities extends MainEntryPoint{
 			});
 			
 			EntriesRemover entriesRemover = new EntriesRemover(getDomainName(),getUser(),domain);
-			utilitiesPanel.add(entriesRemover.getSidebarWidget());
+			utilitiesGrid.addRow().addCell(entriesRemover.getSidebarWidget());
 			entriesRemover.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 			  @Override
 			  public void onSelection(SelectionEvent<IOption> event) {
@@ -208,7 +216,7 @@ public class AccountingUtilities extends MainEntryPoint{
 			});
 
 			InputVatRegenerator inputVatRegenerator = new InputVatRegenerator(getDomainName(),getUser(),domain);
-			utilitiesPanel.add(inputVatRegenerator.getSidebarWidget());
+			utilitiesGrid.addRow().addCell(inputVatRegenerator.getSidebarWidget());
 			inputVatRegenerator.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 				@Override
 				public void onSelection(SelectionEvent<IOption> event) {
@@ -220,7 +228,7 @@ public class AccountingUtilities extends MainEntryPoint{
 		
 		if (domain.isParent()) {
 			ParentAccountLinker linker = new ParentAccountLinker(getDomainName(),getUser(),domain);
-			utilitiesPanel.add(linker.getSidebarWidget());
+			utilitiesGrid.addRow().addCell(linker.getSidebarWidget());
 			linker.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
 				@Override
 				public void onSelection(SelectionEvent<IOption> event) {
@@ -228,36 +236,8 @@ public class AccountingUtilities extends MainEntryPoint{
 				}
 			});
 		}
-		sidebarMenu.add(utilitiesDisclosurePanel);
-		
 		dockLayoutPanel.add( content );
 		return dockLayoutPanel; 
-	}
-
-	private Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Utilidades contables"));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
 	}
 	
 }

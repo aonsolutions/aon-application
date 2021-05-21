@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
@@ -45,6 +44,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesDomain
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInvoiceIntegrityItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateInputVatItem;
@@ -63,15 +64,22 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongR
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
+import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -825,7 +833,7 @@ public class AccountingUtilitiesDAO {
 	}
 	
 	public static Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId) {
-		Registry registry = RegistryOldDAO.getRegistry(ctx, p -> p.getIdProperty().eq(registryId));
+		Registry registry = RegistryDAO.get(ctx, registryId);
 		if (registry == null || registry.getId() == null) throw new AonCoreException("Registro no encontrado");
 		AccountLinker accountLinker = new AccountLinker(ctx, registry, registryType);
 		registryType.visit( null,  accountLinker);
@@ -852,25 +860,25 @@ public class AccountingUtilitiesDAO {
 		@Override
 		public void visitSupplier(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryOldDAO.updateSupplierAccount(ctx,registry.getId(),account.getId());
+			SupplierDAO.updateSupplierAccount(ctx, registry.getId(), account.getId());
 		}
 		
 		@Override
 		public void visitCustomer(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryOldDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
+			CustomerDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
 		public void visitCreditor(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryOldDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+			CreditorDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
 		public void visitUndedCreditor(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryOldDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+			CreditorDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		private Account createAccount(Registry reg) {
@@ -1247,4 +1255,173 @@ public class AccountingUtilitiesDAO {
 		return buf.toString();
 	}
 	
+	public static AccUtilitiesResult invoiceIntegrity(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		ctx.getDslContext()
+			.select(INVOICE.ID,INVOICE.DOMAIN,INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.REFERENCE_CODE,
+				INVOICE.ISSUE_DATE,INVOICE.TAX_DATE,INVOICE.SECURITY_LEVEL,INVOICE.REGISTRY,INVOICE.RDOCUMENT,
+				INVOICE.RDOCUMENT_TYPE,INVOICE.RDOCUMENT_COUNTRY,INVOICE.RNAME,INVOICE.ACTIVITY,
+				CUSTOMER.REGISTRY,SUPPLIER.REGISTRY,CREDITOR.REGISTRY)
+			.from(INVOICE)
+			.innerJoin(REGISTRY).on( INVOICE.REGISTRY.eq(REGISTRY.ID) )
+			.leftOuterJoin(CUSTOMER).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+			.leftOuterJoin(SUPPLIER).on(REGISTRY.ID.eq(SUPPLIER.REGISTRY))
+			.leftOuterJoin(CREDITOR).on(REGISTRY.ID.eq(CREDITOR.REGISTRY))
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.and(
+				INVOICE.TYPE.eq(InvoiceType.SALES.value()).and(CUSTOMER.REGISTRY.isNull())
+				.or(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()).and(SUPPLIER.REGISTRY.isNull()))
+				.or(INVOICE.TYPE.eq(InvoiceType.EXPENSES.value()).and(CREDITOR.REGISTRY.isNull()))
+				.or(INVOICE.TYPE.eq(InvoiceType.UNDEDUCTIBLE.value()).and(CREDITOR.REGISTRY.isNull()))
+			)
+			.fetch()
+			.stream()
+			.map( record -> new AccUtilitiesInvoiceIntegrityItem()
+					.setDomain(record.getValue(INVOICE.DOMAIN))
+					.setInvoice(new Invoice () 
+						.setId(record.getValue(INVOICE.ID))
+						.setDomain(record.getValue(INVOICE.DOMAIN))
+						.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
+						.setSeries(record.getValue(INVOICE.SERIES))
+						.setNumber(record.getValue(INVOICE.NUMBER))
+						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
+						.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+						.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+						.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
+						.setRegistry(record.getValue(INVOICE.REGISTRY))
+						.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
+						.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
+						.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+						.setRegistryName(record.getValue(INVOICE.RNAME))
+						.setActivity(record.getValue(INVOICE.ACTIVITY)))
+					.setCustomer(record.getValue(CUSTOMER.REGISTRY) != null)
+					.setCreditor(record.getValue(CREDITOR.REGISTRY) != null)
+					.setSupplier(record.getValue(SUPPLIER.REGISTRY) != null)
+				)
+			.forEach(item -> {
+				String who = "";
+				if (item.getInvoice().getType() == InvoiceType.SALES && !item.isCustomer()) {
+					who = item.isCreditor()?"Acreedor":"Proveedor";
+				} else if (item.getInvoice().getType() == InvoiceType.PURCHASE && !item.isSupplier()) {
+					who = item.isCreditor()?"Acreedor":"Cliente";
+				} else if (item.getInvoice().getType() == InvoiceType.EXPENSES && !item.isCreditor()) {
+					who = item.isSupplier()?"Proveedor":"Cliente";
+				} else if (item.getInvoice().getType() == InvoiceType.UNDEDUCTIBLE && !item.isCreditor()) {
+					who = item.isSupplier()?"Proveedor":"Cliente";
+				}
+				item.setMessage("Factura de " + item.getInvoice().getType().getDescription() + " vinculada a un " + who);
+				result.add(item);	
+			});
+		;
+		return result;
+	}
+	public static AccUtilitiesResult invoiceIntegrityFix(AONContext ctx,Integer invoiceId) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
+		if ( invoice == null) {
+			result.addMessage("Factura no encontrada");
+		} else {
+			invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+				@Override
+				public void visitSales(Invoice invoice) {
+					Customer customer = CustomerDAO.get(ctx, invoice.getRegistry());
+					if (customer != null) {
+						result.addMessage("Factura de venta vinculada a un cliente. Nada que hacer.");
+					} else {
+						result.addMessage("Factura de venta. No se puede modificar desde esta utilidad.");
+					}
+				}
+
+				@Override
+				public void visitPurchase(Invoice invoice) {
+					Supplier supplier = SupplierDAO.get(ctx, invoice.getRegistry());
+					if (supplier != null) {
+						result.addMessage("Factura de compra vinculada a un proveedor. Nada que hacer.");
+					} else {
+						Creditor creditor = CreditorDAO.get(ctx, invoice.getRegistry());
+						if (creditor != null) {
+							int i = ctx.getDslContext()
+								.update(INVOICE)
+									.set(INVOICE.TYPE, InvoiceType.EXPENSES.value() )
+								.where(INVOICE.ID.equal( invoice.getId()))
+								.execute();
+							ctx.log().info("UPDATE INVOICE TYPE invoice: " + invoice.getId() + "("+i+" rows)");
+							
+							ctx.getDslContext()
+								.select(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY, ACCOUNT_ENTRY.ENTRY_TYPE)
+								.from(ACCOUNT_ENTRY_INVOICE)
+								.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID))
+								.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq( invoice.getId() ))
+								.fetchStream()
+								.forEach( record -> {
+									Integer accountEntryId = record.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY);
+									AccountEntryType type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
+									if (type != AccountEntryType.EXPENSE_INVOICE) {
+										int x = ctx.getDslContext()
+												.update(ACCOUNT_ENTRY)
+												.set(ACCOUNT_ENTRY.ENTRY_TYPE, AccountEntryType.EXPENSE_INVOICE.getValue() )
+												.where(ACCOUNT_ENTRY.ID.equal( accountEntryId ))
+												.execute();
+										ctx.log().info("UPDATE ACCOUNT_ENTRY TYPE invoice: " + invoice.getId() + "("+x+" rows)");
+									} else {
+										ctx.log().info("UPDATE ACCOUNT_ENTRY TYPE NO NEEDED!");
+									}
+								})
+								;
+						}
+ 					}
+				}
+				
+				@Override
+				public void visitExpenses(Invoice invoice) {
+					Creditor creditor = CreditorDAO.get(ctx, invoice.getRegistry());
+					if (creditor != null) {
+						result.addMessage("Factura de gastos vinculada a un acreedor. Nada que hacer.");			
+					} else {
+						Supplier supplier = SupplierDAO.get(ctx, invoice.getRegistry());
+						if (supplier != null) {
+							int i = ctx.getDslContext()
+								.update(INVOICE)
+									.set(INVOICE.TYPE, InvoiceType.PURCHASE.value() )
+								.where(INVOICE.ID.equal( invoice.getId()))
+								.execute();
+							ctx.log().info("UPDATE INVOICE TYPE invoice: " + invoice.getId() + "("+i+" rows)");
+							
+							ctx.getDslContext()
+							.select(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY, ACCOUNT_ENTRY.ENTRY_TYPE)
+							.from(ACCOUNT_ENTRY_INVOICE)
+							.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID))
+							.where(ACCOUNT_ENTRY_INVOICE.INVOICE.eq( invoice.getId() ))
+							.fetchStream()
+							.forEach( record -> {
+								Integer accountEntryId = record.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY);
+								AccountEntryType type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
+								if (type != AccountEntryType.PURCHASE_INVOICE) {
+									int x = ctx.getDslContext()
+											.update(ACCOUNT_ENTRY)
+											.set(ACCOUNT_ENTRY.ENTRY_TYPE, AccountEntryType.PURCHASE_INVOICE.getValue() )
+											.where(ACCOUNT_ENTRY.ID.equal( accountEntryId ))
+											.execute();
+									ctx.log().info("UPDATE ACCOUNT_ENTRY TYPE invoice: " + invoice.getId() + "("+x+" rows)");
+								} else {
+									ctx.log().info("UPDATE ACCOUNT_ENTRY TYPE NO NEEDED!");
+								}
+							})
+							;
+						}
+					}
+				}
+				@Override
+				public void visitUndeductible(Invoice invoice) {
+					visitExpenses(invoice);
+				}
+			});
+		}
+		return result;
+	}
+	
 } 
+
+
+
+
