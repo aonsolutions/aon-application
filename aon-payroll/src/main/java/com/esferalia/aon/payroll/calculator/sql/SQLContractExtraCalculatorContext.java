@@ -710,7 +710,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			pIssueDate.get(DAY_OF_MONTH) ==  issueDate.get(DAY_OF_MONTH) 
 			;
 			} catch ( Exception c ) {
-				return  e.getSalaryType() == SalaryType.EXTRA 
+				return  ( e.getSalaryType() == SalaryType.EXTRA 
+						|| e.getType() == PaymentType.CRA_0004  )
 						&& e.getMonth() == this.month; 
 			}
 			
