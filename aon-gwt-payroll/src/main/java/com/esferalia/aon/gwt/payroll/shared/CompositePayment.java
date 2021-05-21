@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -32,10 +33,11 @@ public class CompositePayment extends Payment {
 
 	public void addChild(Payment child) {
 		childs.add(child);
-		System.out.println(child.getDescription() + " / " + child.getType());
+		//System.out.println(child.getDescription() + " / " + child.getType());
 	}
 
 	public Collection<Payment> getChilds() {
+		Collections.sort(childs, (p1,p2) -> p1.getStartDate().compareTo(p2.getStartDate()));
 		return childs;
 	}
 

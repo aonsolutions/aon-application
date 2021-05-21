@@ -614,7 +614,7 @@ public class SalaryDraftBuilder
 		draftPayment.setEndDate(endDate);
 		
 
-		CompositePayment compositePayment = getPayment(draftPayment.getId());
+		CompositePayment compositePayment = getPayment(draftPayment);
 		
 		// TODO: por que falla el type??
 		draftPayment.setType(getPaymentType(payment.getType()));
@@ -1165,11 +1165,12 @@ public class SalaryDraftBuilder
 		return bonus;
 	}
 
-	private CompositePayment getPayment(Integer id) {
+	private CompositePayment getPayment(Payment p) {
 		List<Payment> payments = salaryDraft.getPayments();
 		for (int i = 0; i < payments.size(); i++) {
 			Payment payment = payments.get(i);
-			if (AonNumberUtils.equals(payment.getId(), id)) {
+			if (AonNumberUtils.equals(payment.getId(), p.getId())
+				|| areSame(payment, p)  ) {
 				if (payment instanceof CompositePayment)
 					return (CompositePayment) payment;
 
@@ -1413,6 +1414,16 @@ public class SalaryDraftBuilder
 						ContextVariable.COMMON_DISEASE_LACK_DAYS))
 				;
 
+	}
+	
+	private boolean areSame(Payment p1, Payment p2) {
+		return
+		!(p1.getEndDate().equals(p2.getEndDate()))
+		&& !(p1.getStartDate().equals(p2.getStartDate()))
+		&& AonStringUtils.equals(p1.getName(), p2.getName())
+		&& AonStringUtils.equals(p1.getExpression(), p2.getExpression())
+		&& AonStringUtils.equals(p1.getDescriptionTemplate(), p2.getDescriptionTemplate())
+		;
 	}
 	
 
