@@ -76,10 +76,10 @@
 							<g:SuggestBox debugId="conceptSuggestBox" ui:field="conceptSuggestBox"
 								styleName="aon-width-all aon-inputText" />
 						</g:cell>
-						<g:cell >
-							<g:Label styleName="aon-margin-left" debugId="conceptDescriptionLabel" ui:field="conceptDescriptionLabel"
+						<!-- g:cell >
+							<g:Label styleName="aon-margin-left" debugId="conceptDescriptionLabel" ui:field="conceptDescriptionLabel" visible="false"
 								/>
-						</g:cell>
+						</g:cell -->
 					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>

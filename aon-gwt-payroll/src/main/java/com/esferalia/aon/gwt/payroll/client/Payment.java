@@ -318,8 +318,8 @@ public class Payment extends ResizeComposite {
 
 	@UiField(provided = true)
 	SuggestBox conceptSuggestBox;
-	@UiField
-	Label conceptDescriptionLabel;
+//	@UiField
+//	Label conceptDescriptionLabel;
 
 	@UiField(provided = true)
 	SuggestBox descriptionSuggestBox;
@@ -914,9 +914,9 @@ public class Payment extends ResizeComposite {
 
 	private void onChangeConcept() {
 		conceptSuggestBox.setText(concept == null ? null : concept.getName());
-		conceptDescriptionLabel.setVisible(concept != null);
-		conceptDescriptionLabel.setText(concept == null ? null : concept
-				.getDescription());
+//		conceptDescriptionLabel.setVisible(concept != null);
+//		conceptDescriptionLabel.setText(concept == null ? null : concept
+//				.getDescription());
 
 		showOrHideResetTaxButton();
 		showOrHideResetQuoteButton();
