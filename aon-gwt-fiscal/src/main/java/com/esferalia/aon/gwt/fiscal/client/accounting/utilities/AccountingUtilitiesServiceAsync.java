@@ -58,4 +58,8 @@ public interface AccountingUtilitiesServiceAsync {
 	// Borrado de apuntes
 	void removeEntries(String domainName, String user, Domain domain, AccountEntryParams params, AsyncCallback<AccUtilitiesResult> asyncCallback);
 	
+	// Integridad de facturas 
+	void invoiceIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback);
+	void invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	
 }

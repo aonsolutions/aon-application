@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -58,5 +59,9 @@ public interface AccountingUtilitiesService extends RemoteService {
 	AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) throws AonCoreException;
 
 	// Borrado de apuntes
-	AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params);
+	AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params) throws AonCoreException;
+
+	// Integridad de facturas 
+	AccUtilitiesResult invoiceIntegrity(String domainName, String user, Domain domain) throws AonCoreException;
+	AccUtilitiesResult invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId) throws AonCoreException;	
 }

@@ -44,6 +44,14 @@ public class AccUtilitiesResult implements Serializable {
 		}
 		return false;
 	}
+	public String getFirstMessage() {
+		for (IAccUtilitiesItem item : getItems()) {
+			if (item.getType() == AccUtilitiesItemType.ERROR_MESSAGE) {
+				return item.getMessage();
+			}
+		}
+		return null;
+	}
 	public String getFirstInfoMessage() {
 		for (IAccUtilitiesItem item : getItems()) {
 			if (item.getType() == AccUtilitiesItemType.INFO_MESSAGE) {

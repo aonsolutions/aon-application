@@ -252,5 +252,6 @@ class UnbalancedEntryFinder extends OptionBase {
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
+		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 	}
 }

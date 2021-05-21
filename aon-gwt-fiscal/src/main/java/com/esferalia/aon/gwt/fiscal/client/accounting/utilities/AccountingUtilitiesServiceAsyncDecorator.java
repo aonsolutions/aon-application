@@ -166,4 +166,17 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.removeEntries(domainName, user, domain,params, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
 
+	// Integridad de facturas 
+	@Override
+	public void invoiceIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.invoiceIntegrity(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+	
+	@Override
+	public void invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.invoiceIntegrityFix(domainName, user, domain, invoiceId, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
 }
