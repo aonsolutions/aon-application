@@ -34,30 +34,33 @@ const xmlHttpRequestAon = (method, url, token, sendData) =>{
 }
 
 export const request = (method, url, token, sendData, fn) => {
-  let xhr = xmlHttpRequestAon(method, url, token, sendData);
-  xhr.send(JSON.stringify(sendData));
-  xhr.onload = () => {
-    if (xhr.status != 200) {
-      // analyze HTTP status of the response
-      console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-      fn(undefined, xhr.response);
-    } else {
-      // show the result
-      console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-      fn(xhr.response);
-    }
-  };
-  xhr.onprogress = (event) => {
-    if (event.lengthComputable) {
-      console.log(`Received ${event.loaded} of ${event.total} bytes`);
-    } else {
-      console.log(`Received ${event.loaded} bytes`); // no Content-Length
-    }
-  };
-
-  xhr.onerror = () => {
-    console.log("Request failed");
-  };
+  try {
+    let xhr = xmlHttpRequestAon(method, url, token, sendData);
+    xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        fn(xhr.response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    fn(undefined, error);
+  }
 };
 
 export const requestJsonAsset = (file) => new Promise((resolve,reject)=>{

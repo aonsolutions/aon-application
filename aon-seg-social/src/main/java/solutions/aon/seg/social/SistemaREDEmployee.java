@@ -117,8 +117,6 @@ class SistemaREDEmployee {
 		Boolean workTimeReduct = Toolkit.toBoolean(page.getElementById("SDFLITRJ").getTextContent());
 		String fraStr = page.getElementById("SDFFRAAFI").getTextContent();
 		String feaStr = page.getElementById("SDFFEAAFI").getTextContent();
-		String frbStr = page.getElementById("SDFFRBAFI").getTextContent();
-		String febStr = page.getElementById("SDFFEBAFI").getTextContent();
 		String contract = page.getElementById("SDFTIPOAFI").getTextContent();
 		String coef = page.getElementById("SDFCOEFAFI").getTextContent();
 		String colec = page.getElementById("SDFCOLECTIVO").getTextContent();
@@ -127,7 +125,10 @@ class SistemaREDEmployee {
 		String vinFam = page.getElementById("SDFVINCULO").getTextContent();
 		String profesCat = page.getElementById("SDFCATEGORIA").getTextContent();
 		String reducingCoef = page.getElementById("SDFCOEFRED").getTextContent();
-
+		String frbStr = page.getElementById("SDFFRBAFI").getTextContent();
+		String febStr = page.getElementById("SDFFEBAFI").getTextContent();
+		
+	
 		ipf = removeExtraZeros(ipf);
 		companyId = removeExtraZeros(companyId);
 
@@ -139,6 +140,21 @@ class SistemaREDEmployee {
 		Date fea = parseDate(feaStr, "dd/MM/yyyy");
 		Date frb = parseDate(frbStr, "dd/MM/yyyy");
 		Date feb = parseDate(febStr, "dd/MM/yyyy");
+		
+		if(frb==null) {
+			HtmlInput button = page.querySelector("[name=btn_Sub2207601004]");
+			if(button.isDisplayed()) {
+				page = ((HtmlInput)page.querySelector("[name=btn_Sub2207601004]")).click(); 
+				DomElement frEl = page.getElementById("SDFFRBAFI");
+				if(frEl!=null) {
+					situation = page.getElementById("SDFTSITUACAFI").getTextContent();
+					frbStr = frEl.getTextContent();
+					febStr = page.getElementById("SDFFEBAFI").getTextContent();
+					frb = parseDate(frbStr, "dd/MM/yyyy");
+					feb = parseDate(febStr, "dd/MM/yyyy");	
+				}
+			}
+		}
 
 		// BUILD
 		EmployeeBuilder builder = new EmployeeBuilder();

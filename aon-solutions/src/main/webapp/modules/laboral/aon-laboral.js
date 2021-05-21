@@ -227,7 +227,13 @@ class AonLaboral extends AonElement {
         try {
           await postDeleteMov(data);
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
-          if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
+          if(this._movements){
+            this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
+              const dtFecha = data.frb || data.fra;
+              const fecha = frb || fra;
+              return !(ctaCti.includes(data.ctaCti) && fecha.includes(dtFecha) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation))
+            });
+          }
           this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
         } catch (error) {
           this.showToast(error);

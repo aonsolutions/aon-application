@@ -225,6 +225,7 @@ export class AonInput extends AonElement {
     input.required = true;
     input.id = this.INPUT;
     input.name = this.getAttribute(CONSTANT.NAME);
+    input.style.textOverflow = "ellipsis";
     if (this.getAttribute(CONSTANT.PATTERN)) {
       input.pattern = this.getAttribute(CONSTANT.PATTERN);
     }
@@ -237,12 +238,12 @@ export class AonInput extends AonElement {
 
     input.addEventListener(EVENT.CHANGE, () => this.value = input.value);
 
-    input.addEventListener(EVENT.KEYUP, (e) => {
+    input.addEventListener(EVENT.KEYUP, () => {
       if (input.type !== "time") this.value = input.value;
       this.dispatchEvent(new Event(EVENT.KEYUP));
     });
 
-    input.addEventListener(EVENT.BLUR, (e) => {
+    input.addEventListener(EVENT.BLUR, () => {
       this.dispatchEvent(new Event(EVENT.BLUR));
     });
 
