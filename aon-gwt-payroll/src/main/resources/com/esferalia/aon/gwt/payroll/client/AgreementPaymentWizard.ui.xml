@@ -15,7 +15,7 @@
 		}
 		
 		.deckPanel{
-			height: 150px;
+			height: 200px;
 			min-width: 400px;
 		}
 		
@@ -86,11 +86,16 @@
 		.buttonsAcceptCancelPanel{
 			display: flex;
 			justify-content: flex-end;
-			margin: 5px 10px;
+			margin: 5px 20px;
 		}
 		
 		.uppercase{
 			text-transform: uppercase;
+		}
+		
+		.visibilityDisabled{
+			display: block !important;
+			visibility: visible !important;
 		}
 		
 	</ui:style>
@@ -117,26 +122,38 @@
 									<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
 									<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu" />
 								</g:HTMLPanel>
-							</g:HTMLPanel>
-							
-							<g:HTMLPanel ui:field="secondPage" styleName="{style.pagePanel}">
 								<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
 									<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
 									<g:Button ui:field="partialityButton" />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 							
+							<!-- g:HTMLPanel ui:field="secondPage" styleName="{style.pagePanel}">
+								<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
+									<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
+									<g:Button ui:field="partialityButton" />
+								</g:HTMLPanel>
+							</g:HTMLPanel -->
+							
 						</g:DeckLayoutPanel>
 					
-						<g:HTMLPanel ui:field="prevNextButtons" styleName="{style.flexCenter}"/>
+						<!-- g:HTMLPanel ui:field="prevNextButtons" styleName="{style.flexCenter}"/ -->
 						
-						<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}">
+						<!-- g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}">
 							<g:Button ui:field="firstButton" styleName="{style.buttonPage}">1</g:Button>
 							<g:HTMLPanel ui:field="firstLine" styleName="{style.line}"/>
 							<g:Button ui:field="secondButton" styleName="{style.buttonPage}">2</g:Button>
-						</g:HTMLPanel>
+						</g:HTMLPanel -->
 						
 						<g:HTMLPanel styleName="{style.flexColumn}">
+							<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.flexColumn2}">
+								<g:Label styleName="{style.title}">Concepto</g:Label>
+								<g:TextBox ui:field="paymentConcept" />
+							</g:HTMLPanel>
+							<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.flexColumn2}">
+								<g:Label styleName="{style.title}">Tipo CRA</g:Label>
+								<g:HTMLPanel ui:field="paymentCRAPanel" />
+							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flexColumn2}">
 								<g:Label styleName="{style.title}">Devengo</g:Label>
 								<g:TextBox ui:field="paymentDescription" />
