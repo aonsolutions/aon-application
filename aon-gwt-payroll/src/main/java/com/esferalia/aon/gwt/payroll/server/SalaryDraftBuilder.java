@@ -1417,9 +1417,10 @@ public class SalaryDraftBuilder
 	}
 	
 	private boolean areSame(Payment p1, Payment p2) {
+		
 		return
-		!(p1.getEndDate().equals(p2.getEndDate()))
-		&& !(p1.getStartDate().equals(p2.getStartDate()))
+		AonUtils.notEquals(p1.getEndDate(), p2.getEndDate())
+		&& AonUtils.notEquals(p1.getStartDate(),p2.getStartDate())
 		&& AonStringUtils.equals(p1.getName(), p2.getName())
 		&& AonStringUtils.equals(p1.getExpression(), p2.getExpression())
 		&& AonStringUtils.equals(p1.getDescriptionTemplate(), p2.getDescriptionTemplate())
