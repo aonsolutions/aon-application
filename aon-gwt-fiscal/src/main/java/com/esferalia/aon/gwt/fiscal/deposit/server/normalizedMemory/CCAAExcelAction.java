@@ -652,16 +652,35 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row.setRowStyle(rowStyle);
 		cellCount = 0;
-		Cell cell = row.createCell(cellCount++);
+
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
 		style.setFont(defaulFont );
 		style.setBorderBottom(BorderStyle.THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		style.setVerticalAlignment(VerticalAlignment.TOP);
-		cell.setCellStyle(style);
-		cell.setCellValue(text);
-		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		if(text.length() > 32000) {
+			Integer div = (text.length() / 32000) + 1;
+			for(Integer i = 0; i < div; i++) {
+				row = sheet.createRow(rowCount++);
+				row.setRowStyle(rowStyle);
+				cellCount = 0;
+				String str = i != div - 1
+						? text.substring(i * 32000, (i * 32000) + 32000)
+						: text.substring(i * 32000);
+				Cell cell = row.createCell(cellCount++);
+				cell.setCellStyle(style);
+				cell.setCellValue(str);
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+			}
+		} else {
+			Cell cell = row.createCell(cellCount++);
+			cell.setCellStyle(style);
+			cell.setCellValue(text);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		}
+		
 		
 		Integer height = row.getHeight() * 20;
 		row.setHeight(height.shortValue());
