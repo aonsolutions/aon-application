@@ -3,6 +3,7 @@
 /temp/
 /package-lock.json
 /src/main/webapp/invoice/factura-emitida/
+/src/main/webapp/dist/
 .settings
 .classpath
 .project    

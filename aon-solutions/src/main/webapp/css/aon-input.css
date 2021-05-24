@@ -155,7 +155,7 @@ input:required {
 }
 
 .aonInputListOptions.is-visible {
-	z-index: 999;
+	z-index: 1;
 	visibility: visible;
 	width: 100%;
 	padding: 1px;

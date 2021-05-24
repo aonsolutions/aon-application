@@ -136,13 +136,13 @@ export class AonSelect extends AonElement {
       });
       let inputSelect = this.getElement(input.INPUT);
       if(inputSelect){
-        inputSelect.addEventListener(EVENT.FOCUS, () => {
-          inputSelect.select();
-        });
+        // inputSelect.addEventListener(EVENT.FOCUS, () => {
+        //   inputSelect.select();
+        // });
       }
       input.addEventListener(EVENT.BLUR, ()=>{
-        const exists = this.getOptions().some(({value})=> value === input.value);
-        if(!exists) input.value = "";
+        const exists = this.getOptions().some(({name})=> name == input.value);
+        if(!exists) input.value = this.getOptions().find(f => f.value == this.value).name;
       })
   
       let div = this.getElement(input.DIV);

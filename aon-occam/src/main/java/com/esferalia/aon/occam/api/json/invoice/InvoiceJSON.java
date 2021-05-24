@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.json.invoice;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -23,9 +24,13 @@ public class InvoiceJSON {
 
 	public static Invoice fromJSON(JSONObject json) {
 		Date date = TediJSONUtils.parseDate(json.optString("date"));
+		if(date == null) {
+			SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+			date = TediJSONUtils.parseDate(json.optString("date"), DATE_TIME_FORMAT);
+		}
 		String category = json.optString(IJsonNames.CATEGORY);
 		InvoiceType type = getType(json.optString(IJsonNames.TYPE), category);
-
+	
 		JSONObject registryJSON = InvoiceType.SALES.equals(type) 
 				? JsonUtils.getJSONObject(json, IJsonNames.RECEIVER)
 				: JsonUtils.getJSONObject(json, IJsonNames.SENDER);
