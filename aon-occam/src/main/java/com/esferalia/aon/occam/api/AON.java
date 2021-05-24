@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -961,6 +962,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static Stream<EnterpriseActivity> getEnterpriseActivities(String domainName, Integer domainId, String login) { //, EnterpriseActivityFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getEnterpriseActivities(ctx, domainId, new Date());
 		}
 	}
 	
