@@ -130,7 +130,7 @@ export class AonDate extends AonElement {
       const values = input.split('/').map((v)=>  v.replace(/\D/g, ''));
       if (values[0]) values[0] = checkValue(values[0], 31);
       if (values[1]) values[1] = checkValue(values[1], 12);
-      const output = values.map((v, i)=> v.length == 2 && i < 2 ? v + ' / ' : v);
+      const output = values.map((v, i)=> v.length == 2 && i < 2 ? v + '/' : v);
       target.value = output.join('').substr(0, 14);
       if(input.length>=14) target.blur();
     });
@@ -140,16 +140,25 @@ export class AonDate extends AonElement {
       const values = input.split('/').map((v)  => v.replace(/\D/g, ''));
       let output = '';
       if (values.length === 3) {
-        const year = values[2].length !== 4 ? parseInt(values[2]) + 2000 : parseInt(values[2]);
-        const month = parseInt(values[0]) - 1;
-        const day = parseInt(values[1]);
+        let year = parseInt(values[2]);
+        if(values[2].length === 2) {
+          let now = new Date(Date.now());
+          let y = now.getFullYear() + '';
+          let a = parseInt(y.substring(2,4));
+          year = a >= year ? year + 2000 : year + 1900;
+        }
+        const month = parseInt(values[1]) - 1;
+        const day = parseInt(values[0]);
+        
         const d = new Date(year, month, day);
-        if (!isNaN(d)) {
-          const dates = [d.getMonth() + 1, d.getDate(), d.getFullYear()];
+        
+        if (!isNaN(d)) {          
+          this.setDate(d);
+          const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
           output = dates.map((v) =>{
             v = v.toString();
             return v.length === 1 ? '0' + v : v;
-          }).join(' / ');
+          }).join('/');
         }
       }
       target.value = output.replaceAll(" ", "");
