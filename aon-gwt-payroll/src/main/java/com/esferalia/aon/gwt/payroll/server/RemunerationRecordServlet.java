@@ -33,7 +33,7 @@ public class RemunerationRecordServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		resp.setContentType(MimeType.MS_EXCEL.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"RefistroRetributivo."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+		resp.setHeader("Content-disposition", "attachment; filename=\"RegistroRetributivo."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		
 		String domain = req.getServerName();
 		String enterpriseIdStr = req.getParameter("enterpriseId");

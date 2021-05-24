@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.ENTERPRISE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.WORKPLACE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.YEAR;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
@@ -10,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -21,6 +26,9 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 				"/aon_gwt_payroll/AggregatedAnnualSummary/*" 
 		}
 )
+
+
+
 public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -32,9 +40,9 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType(MimeType.MS_EXCEL.getName());
 		resp.setHeader("Content-disposition", "attachment; filename=\"ResumenAnualAgregado."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
-		String enterpriseIdStr = req.getParameter("enterprise");
-		String workplaceIdStr = req.getParameter("workplace");
-		String yearStr = req.getParameter("year");
+		String enterpriseIdStr = req.getParameter(ENTERPRISE.getName());
+		String workplaceIdStr = req.getParameter(WORKPLACE.getName());
+		String yearStr = req.getParameter(YEAR.getName());
 		
 		Optional<Integer> enterpriseId = Optional.empty();
 		Optional<Integer> workplaceId = Optional.empty();
@@ -65,7 +73,7 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 				, year);
 		oos.flush();
 		}
-		//http://ayudat.aonsolutions.net:8080/aon-aio/aon_gwt_payroll/AggregatedAnnualSummary/eee?year=2020&enterprise=216767
+		//http://ayudat.aonsolutions.net:8080/aon-aio/aon_gwt_payroll/AggregatedAnnualSummary/Resumen_Anual_Agregado_2020?year=2020&enterpriseId=216767
 	}
 	
 }

@@ -1,3 +1,4 @@
+ 
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
@@ -5,6 +6,7 @@ import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -96,13 +99,20 @@ public class Cost extends ResizeComposite {
 		}
 	}
 	
+	
 	class ExcelMenu extends ContextMenu {
 				
 		private MenuItem excel = null;
 		private MenuItem excelComplete = null;
 		private MenuItem csv = null;
+		private ContextMenu aggregatedAnnualSummary = null;
+		private ContextMenu remunerationRecord = null;
+		
 		
 		public ExcelMenu() {
+			
+			LinkedHashSet <Integer> availableYears = new LinkedHashSet<Integer>();
+			
 			
 			excel = addItem("Microsoft Excel (.xls)", new ExcelCommand(), 
 					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
@@ -115,7 +125,67 @@ public class Cost extends ResizeComposite {
 			csv = addItem("Valores separados por comas (.csv)", new CSVCCommand(), 
 					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			csv.ensureDebugId("csv");
+			
+			addSeparator();
+			
+				MenuItem summaryItem = addItem("Resumen Anual Agregado", () -> {},
+						AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+				summaryItem.setScheduledCommand(() -> {
+					
+					if (costDocuments != null)
+						for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments
+							.getCosts()) {
+							availableYears.add(cost.getYear());
+						}
+					
+					if (availableYears != null & !availableYears.isEmpty()) {
+						
+						aggregatedAnnualSummary = new ContextMenu();
+						for (Integer year : availableYears) {
+							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year));
+						}
+						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
+						
+					
+					}
+					
+					PopupPanel ppp = new PopupPanel(true);
+					ppp.add(aggregatedAnnualSummary);
+					ppp.setPopupPosition(summaryItem.getAbsoluteLeft() + summaryItem.getOffsetWidth(), summaryItem.getAbsoluteTop());
+					ppp.show();
+				});
+				
+				
+				MenuItem recordItem = addItem("Registro Retributivo", () -> {},
+						AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+				recordItem.setScheduledCommand(() -> {
+					
+					if (costDocuments != null)
+						for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments
+							.getCosts()) {
+							availableYears.add(cost.getYear());
+						}
+					
+					if (availableYears != null & !availableYears.isEmpty()) {
+						
+						remunerationRecord = new ContextMenu();
+						for (Integer year : availableYears) {
+							remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year));
+						}
+						remunerationRecord.ensureDebugId("aggregatedAnnualSummary");
+						
+					
+					}
+					
+					PopupPanel ppp = new PopupPanel(true);
+					ppp.add(remunerationRecord);
+					ppp.setPopupPosition(recordItem.getAbsoluteLeft() + recordItem.getOffsetWidth(), recordItem.getAbsoluteTop());
+					ppp.show();
+				});
+			
 		}
+		
+		
 	}
 	
 	// ----------------------------------------------- ScheduledCommand (See Type) 
@@ -261,6 +331,7 @@ public class Cost extends ResizeComposite {
 	private ExcelMenu excelMenu;
 	private SeeMenu seeMenu;
 	
+	
 	// ----------------------------------------------- Constructor
 	public Cost() {
 		toolbar = getToolbarPanel();
@@ -269,15 +340,15 @@ public class Cost extends ResizeComposite {
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
-		excelMenu = new ExcelMenu();
 		seeMenu = new SeeMenu();
-
+		
 		dateListBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				onSalaryDateChanged();
 			}
 		});
+		
 
 		new TypeCommand(seeMenu.getSalary(), Salary.Type.SALARY);
 		new TypeCommand(seeMenu.getExtra(), Salary.Type.EXTRA);
@@ -288,6 +359,8 @@ public class Cost extends ResizeComposite {
 
 //		publishBtn.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		bidoqBtn.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		
+		excelMenu = new ExcelMenu();
 		
 	}
 
@@ -495,6 +568,58 @@ public class Cost extends ResizeComposite {
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainPanel.remove(formPanel);
+		});
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
+	}
+	public void printAggregatedAnnualSummary (Integer year) {
+		
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
+		
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "AggregatedAnnualSummary/Resumen_Anual_Agregado_" + year);
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("year", String.valueOf(year)));
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+//		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainPanel.remove(formPanel);
+		});
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
+	}
+	
+	public void printRemunerationRecord (Integer year) {
+		
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
+		
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "remuneration_record/Registro_Retributivo_" + year);
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("year", String.valueOf(year)));
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+		
 		
 		formPanel.add(flowPanel);
 		
