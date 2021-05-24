@@ -725,6 +725,17 @@ public class AccountStatementDAO {
 				}
 			);
 		}
+		
+		if (!report.getParams().isNoBalanceAccountVisible()) {
+			TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
+			for (String account : report.getBalances().keySet()) {
+				if (report.getBalances().get(account).hasAfterPeriodBalance()) {
+					balances.put(account, report.getBalances().get(account));
+				}
+			}
+			report.setBalances( balances );
+		}
+		
 		if (!report.getParams().isNoActivityAccountVisible()) {
 			TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
 			for (String account : report.getBalances().keySet()) {

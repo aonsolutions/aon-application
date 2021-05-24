@@ -157,6 +157,7 @@ public class Asserts {
 		assertEquals("PreviousPeriods", expected.getPreviousPeriods(), actual.getPreviousPeriods()); 
 		assertEquals("LowLevelAccountVisible", expected.isLowLevelAccountVisible(), actual.isLowLevelAccountVisible());
 		assertEquals("NoActivityAccountVisible", expected.isNoActivityAccountVisible(), actual.isNoActivityAccountVisible());
+		assertEquals("NoBalanceAccountVisible", expected.isNoBalanceAccountVisible(), actual.isNoBalanceAccountVisible());
 		assertEquals("PercentsEnabled", expected.isPercentsEnabled(), actual.isPercentsEnabled());
 		assertEquals("ByMonth", expected.isByMonth(), actual.isByMonth());
 		assertEquals("OpeningEntriesExcluded", expected.areOpeningEntriesExcluded(), actual.areOpeningEntriesExcluded()); 

@@ -172,6 +172,7 @@ public interface IJsonNames {
 	String NATIONALITY = "nationality";
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
+	String NO_BALANCE_ACCOUNT_VISIBLE = "noBalanceAccountVisible"; 
 	String NULL = "null";
 	String NUMBER = "number";
 	// ---------------------------------------------------------------------------------------------	[O] 

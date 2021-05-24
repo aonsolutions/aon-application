@@ -57,6 +57,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	private ListBox level;
 	private CheckBox lowLevelAccountVisible;
 	private CheckBox noActivityAccountVisible;
+	private CheckBox noBalanceAccountVisible;
 	
 	private CheckBox operatingEntriesExcluded;
 	private CheckBox closingEntriesExcluded;
@@ -215,6 +216,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level = new ListBox();
 		lowLevelAccountVisible = new CheckBox("Mostrar acumulados inferiores");
 		noActivityAccountVisible = new CheckBox("Mostrar cuentas sin movimientos en el periodo");
+		noBalanceAccountVisible = new CheckBox("Mostrar cuentas con saldo final cero");
 		
 		operatingEntriesExcluded = new CheckBox("Excluir asientos de explotaci\u00F3n"); 
 		closingEntriesExcluded = new CheckBox("Excluir asientos de cierre");
@@ -413,15 +415,19 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		}
 		tab.setWidget(2, 1, level);
 		
+		
 		// ************************************************************  LOW LEVEL VISIBLE
 		if (params != null) {
 			lowLevelAccountVisible.setValue(params.isLowLevelAccountVisible());
 			noActivityAccountVisible.setValue(params.isNoActivityAccountVisible());
+			noBalanceAccountVisible.setValue(params.isNoBalanceAccountVisible());
 		}
 		VerticalPanel checks1 = new VerticalPanel();
 		checks1.add(lowLevelAccountVisible);
 		checks1.add(noActivityAccountVisible);
-		tab.setWidget(2, 2, checks1);
+		checks1.add(noBalanceAccountVisible);
+
+		tab.setWidget(2, 2, noActivityAccountVisible);
 		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
 		
 		// ************************************************************  NO ACTIVITY ACCOUNT
@@ -432,10 +438,19 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		VerticalPanel checks2 = new VerticalPanel();
 		checks2.add(operatingEntriesExcluded);
 		checks2.add(closingEntriesExcluded);
-		tab.setWidget(2, 3, checks2);
+		tab.setWidget(2, 3, operatingEntriesExcluded);
 		tab.getCellFormatter().setStyleName(2,3, AON.CSS.aonNowrap());
 		tab.getFlexCellFormatter().setColSpan(2, 3, 2);
 		
+		
+		tab.setWidget(3, 1, lowLevelAccountVisible);
+		
+		tab.setWidget(3, 2, noBalanceAccountVisible);
+		tab.getFlexCellFormatter().setColSpan(3, 2, 2);
+
+		tab.setWidget(3, 3, closingEntriesExcluded);
+		tab.getCellFormatter().setStyleName(3,3, AON.CSS.aonNowrap());
+		tab.getFlexCellFormatter().setColSpan(3, 3, 2);
 
 
 		// **********************************************************************  EVENTS
@@ -517,6 +532,13 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			}
 		});
 		
+		noBalanceAccountVisible.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
+			}
+		});
+
 		operatingEntriesExcluded.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -548,6 +570,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			.setLevel(AonNumberUtils.toInteger( level.getSelectedValue()))
 			.setLowLevelAccountVisible(lowLevelAccountVisible.getValue() )
 			.setNoActivityAccountVisible(noActivityAccountVisible.getValue())
+			.setNoBalanceAccountVisible(noBalanceAccountVisible.getValue())
 			.setOperatingEntriesExcluded(operatingEntriesExcluded.getValue())
 			.setClosingEntriesExcluded(closingEntriesExcluded.getValue())
 			.setAccount(new Account().setCode(account.getValue()))
