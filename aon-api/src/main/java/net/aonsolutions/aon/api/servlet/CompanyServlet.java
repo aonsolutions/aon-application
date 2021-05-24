@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -82,6 +83,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 				break;	
 			case "/header":
 				response(req, resp, getHeaderInfo(api));
+				break;	
+			case "/activities":
+				response(req, resp, getActivities(api));
 				break;	
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -510,6 +514,13 @@ public class CompanyServlet extends AonApiHttpServlet{
 			json.put("logo", "https://" + company.getDomain().getName() + "/aonDocuments/company.logo");
 		}
 		return json;	
+	}
+	
+	private JSONArray getActivities(AonApiData api) {
+		JSONArray array = new JSONArray();
+		AON.getEnterpriseActivities(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())
+			.forEach(ea -> array.put(EnterpriseActivityJSON.toJSON(ea))); 
+		return array;		
 	}
 	
 }

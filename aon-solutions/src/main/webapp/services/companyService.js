@@ -68,6 +68,8 @@ export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, dat
 
 export const getCompanyBanks = (data) => get(`${API_URL}/company/banks`, data);
 
+export const getCompanyActivities = (data) => get(`${API_URL}/company/activities`, data);
+
 export const saveCompany = (data) => put(`${API_URL}/company`, data)
 
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);

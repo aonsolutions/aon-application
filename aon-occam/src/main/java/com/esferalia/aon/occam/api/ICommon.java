@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -66,6 +67,12 @@ public interface ICommon {
 	public Company getCompany(AONContext ctx, int domain);
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx);
 
+	// --------------------------------------------
+	// ENTERPRISE ACTIVITY
+	// --------------------------------------------
+	
+	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate);
+	
 	// --------------------------------------------
 	// WORKPLACE
 	// --------------------------------------------

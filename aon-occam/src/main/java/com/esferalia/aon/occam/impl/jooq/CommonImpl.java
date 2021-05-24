@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
@@ -372,5 +373,11 @@ public class CommonImpl implements ICommon {
 	public GeoZone get(AONContext ctx, GeoZoneFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			GeoZoneDAO.get(ctx, filter));
+	}
+
+	@Override
+	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			CompanyDAO.getEnterpriseActivities(ctx, domainId, atDate));
 	}
 }
