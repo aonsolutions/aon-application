@@ -326,6 +326,11 @@ public class JsonParser {
 		if (noActivityAccountVisible != null) {
 			params.setNoActivityAccountVisible(noActivityAccountVisible==1);
 		}
+		// *******************  NO_BALANCE_ACCOUNT_VISIBLE ******************* 
+		Long noBalanceAccountVisible = (Long) jsonParams.get(IRequestParamsNames.NO_BALANCE_ACCOUNT_VISIBLE);
+		if (noBalanceAccountVisible != null) {
+			params.setNoBalanceAccountVisible(noBalanceAccountVisible==1);
+		}
 		
 		// ******************* OPERATING_ENTRIES_EXCLUDED ******************* 
 		Long operatingEntriesExcluded = (Long) jsonParams.get(IRequestParamsNames.OPERATING_ENTRIES_EXCLUDED);

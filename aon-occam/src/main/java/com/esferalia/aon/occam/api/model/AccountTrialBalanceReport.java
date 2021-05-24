@@ -170,6 +170,9 @@ public class AccountTrialBalanceReport implements Serializable{
 		public boolean hasPeriodEntries() {
 			return AonMathUtils.isNotZero(getInPeriodDebit()) || AonMathUtils.isNotZero(getInPeriodCredit());
 		}
+		public boolean hasAfterPeriodBalance() {
+			return AonMathUtils.isNotZero(getAfterPeriodDebitBalance()) || AonMathUtils.isNotZero(getAfterPeriodUnpaidBalance());
+		}
 	}
 	
 //	private AccountPeriod selectedPeriod;

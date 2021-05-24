@@ -32,6 +32,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	
 	private boolean lowLevelAccountVisible;
 	private boolean noActivityAccountVisible;
+	private boolean noBalanceAccountVisible;
 	private boolean percentsEnabled;
 	private boolean byMonth;
 	
@@ -179,6 +180,14 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	}
 	public AccountingReportParams setNoActivityAccountVisible(boolean noActivityAccountVisible) {
 		this.noActivityAccountVisible = noActivityAccountVisible;
+		return this;
+	}
+	
+	public boolean isNoBalanceAccountVisible() {
+		return noBalanceAccountVisible;
+	}
+	public AccountingReportParams setNoBalanceAccountVisible(boolean noBalanceAccountVisible) {
+		this.noBalanceAccountVisible = noBalanceAccountVisible;
 		return this;
 	}
 	public boolean isReverseOrder() {
@@ -550,6 +559,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setPreviousPeriods(getPreviousPeriods())
 			.setLowLevelAccountVisible(isLowLevelAccountVisible())
 			.setNoActivityAccountVisible(isNoActivityAccountVisible())
+			.setNoBalanceAccountVisible(isNoBalanceAccountVisible())
 			.setPercentsEnabled(isPercentsEnabled())
 			.setByMonth(isByMonth())
 			.setOpeningEntriesExcluded(areOpeningEntriesExcluded())

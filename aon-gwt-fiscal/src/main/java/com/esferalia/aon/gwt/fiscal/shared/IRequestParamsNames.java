@@ -72,6 +72,7 @@ public interface IRequestParamsNames {
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
+	String NO_BALANCE_ACCOUNT_VISIBLE = "noBalanceAccountVisible";
 	String OPERATING_ENTRIES_EXCLUDED = "operatingEntriesExcluded";
 	String CLOSING_ENTRIES_EXCLUDED = "closingEntriesExcluded";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";

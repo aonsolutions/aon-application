@@ -268,6 +268,7 @@ public class AonFaker {
 			.setPreviousPeriods( AonRandom.getInt(0, 9) )
 			.setLowLevelAccountVisible(AonRandom.gt( 50 ))
 			.setNoActivityAccountVisible(AonRandom.gt( 50 ))
+			.setNoBalanceAccountVisible(AonRandom.gt( 50 ))
 			.setPercentsEnabled(AonRandom.gt( 50 ))
 			.setByMonth(AonRandom.gt( 50 ))
 			.setOpeningEntriesExcluded(AonRandom.gt( 50 ))
