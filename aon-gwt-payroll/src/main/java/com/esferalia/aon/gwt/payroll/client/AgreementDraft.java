@@ -4865,8 +4865,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						agreementDraftObject.save(AgreementDraft.this);
 					}
 				};
-				wizard.center();
-				wizard.show();
+//				wizard.center();
+//				wizard.show();
 			}
 		};
 		toolbar.add(addPaymentButton);
