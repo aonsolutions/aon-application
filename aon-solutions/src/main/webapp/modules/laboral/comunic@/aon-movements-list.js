@@ -82,7 +82,7 @@ export class AonMovementsList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Apellidos y nombre", "string", "name", "35%");
+      aonTable.addColumn("Nombre", "string", "name", "35%");
       aonTable.addColumn("DNI/NIE", "string", "dni", "15%");
       aonTable.addColumn("Movimiento", "string", "status", "10%");
       aonTable.addColumn("Cuenta", "string", "ctaCtiCompleta", "10%");

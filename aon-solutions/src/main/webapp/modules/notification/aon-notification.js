@@ -250,7 +250,7 @@ export class AonNotification extends AonElement {
 
   markReadNotification(id){
     this.changeBadgeComponent(-1);
-    markReadNotification({id}).catch(e=>console.log(e));
+    markReadNotification({id: parseInt(id)}).catch(e=>console.log(e));
     let aonCard = this.getElement(this.AON_NOTIFICATION + "Card" + id);
     if (aonCard) {
       aonCard.setBackground("#fff");

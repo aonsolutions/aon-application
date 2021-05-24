@@ -109,11 +109,9 @@ export class AonAltaDirecta extends AonElement {
         let aonTrabajadorCard = this.getElement(`${this.id}TrabajadorCard`);
         aonTrabajadorCard.setContentHTML(
             /*html*/`
-            <div class="aonCol-sm-12 aonCol-md-4" style="padding-top: 18px;">
+            <div class="aonCol-sm-12 aonCol-md-4" style="padding-top: 18px;padding-bottom: 10px;">
                 <aon-switch id="switchDni" title="Buscar por DNI"></aon-switch>
-                <div id="${this.id}Reiniciar" hidden>
-                    Reiniciar <aon-icon-button id="${this.id}IconReset" icon="cached"> </aon-icon-button>
-                </div>
+                <div id="${this.id}Reiniciar" style="margin-top:-15px;" hidden>Reiniciar <aon-icon-button id="${this.id}IconReset" icon="cached"> </aon-icon-button></div>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
                 <div id="${this.id}NssDiv"></div>
@@ -187,7 +185,7 @@ export class AonAltaDirecta extends AonElement {
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
         aonAltaDirectaNss.innerHTML = /*html*/ `<aon-input name="nss" id="${this.id}Nss" description="NSS/NAF" autocomplete="on"></aon-input>`;
 
-        if (this.isMobile() && this.isAlta()){
+        if(this.isMobile() && (this.isAlta() || !this.data) ) {
             this.getElement(`${this.id}DivSubmit`)
                 .innerHTML = /*html*/`<button class="aonButton" style="margin-top: 10px;" type="button" id="${this.id}Submit">Aceptar</button>`;
         }
@@ -231,17 +229,15 @@ export class AonAltaDirecta extends AonElement {
         if(this.isAlta()) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
-        if(!this.isMobile() && this.isAlta() )  // ALTA
-            toolbar.addButton2( ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
+        if(!this.isMobile() && (this.isAlta() || !this.data) )  // ALTA
+            toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
-        
         if(this.data){ //DELETE{}
             const fc =  this.data.frb || this.data.fra;
             if(this.applicationParentEl.anularCondition(this.data.situation, fc)){
                 toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
             }
         }
-            
 
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
 

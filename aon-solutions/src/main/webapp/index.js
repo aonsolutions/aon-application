@@ -7,6 +7,7 @@ import { TAG } from './environments/environments.js';
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-input.css';
+import './css/aon-input-loading.css';
 import './css/aon-loader.css';
 import './css/aon-mobile.css';
 import './css/aon-slider.css';

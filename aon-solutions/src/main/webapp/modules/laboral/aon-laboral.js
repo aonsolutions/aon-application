@@ -203,11 +203,11 @@ class AonLaboral extends AonElement {
 		this.applicationEl.stopLoading();
 	}
 
-  anularCondition(situation, fra) {
+  anularCondition(situation, fecha) {
 		const date_prev = new Date().addDay(-2);
 		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
 		// (situation.indexOf(sit) > -1) &&
-		return (date_prev.getTime() <= new Date(fra).getTime());
+		return (date_prev.getTime() <= new Date(fecha).getTime());
 	}
 
 	async getIdc(data, el) {

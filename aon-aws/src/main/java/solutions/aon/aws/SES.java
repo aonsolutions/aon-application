@@ -77,6 +77,34 @@ public class SES extends AWS{
         }
     }
     
+    public static String sendEmail(String from, LinkedList<String> toList, String subject, String body) {
+    	String[] to = toList.toArray(String[]::new);
+        Destination destination = new Destination().withToAddresses(to);
+
+        Content subject2 = new Content().withData(subject);
+        Content textBody = new Content().withData(body);
+        Body body2 = new Body().withHtml(textBody);
+
+        Message message = new Message().withSubject(subject2).withBody(body2);
+
+        SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
+        
+        try {
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
+                .withCredentials(getProvider())
+                .withRegion("eu-west-1")
+                .build();
+
+            client.sendEmail(request);
+            System.out.println("Email sent!");
+            return "ok";
+        } catch (Exception ex) {
+            System.out.println("The email was not sent.");
+            System.out.println("Error message: " + ex.getMessage());
+            return "Error message: " + ex.getMessage();
+        }
+    }
+    
     public static String sendEmailWithBCC(String from, String to, String bbc, String subject, String body) {
         Destination destination = new Destination().withToAddresses(new String[]{to});
 
