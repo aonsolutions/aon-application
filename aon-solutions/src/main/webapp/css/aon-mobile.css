@@ -12,7 +12,7 @@
 }
 
 .aonMobileHeaderButton {
-  position: fixed;
+  position: fixed !important;
   top: 10px;
 }
 
