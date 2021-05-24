@@ -7,6 +7,8 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -126,6 +128,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	TypeListBox<Payment.Type> paymentTypeListBox;
 	
+	private boolean hasPartiality = true;
+	
 	// -------------------------------------------- Constructor
 	
 	public AgreementPaymentWizard() {
@@ -151,6 +155,15 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		// Fire SALARIO_BASE
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentType);
+		
+		// Show center
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				center();
+				show();
+			}
+		});
 	}
 
 	private void initPaymentListBox() {
@@ -188,11 +201,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
 		paymentTypeListBox.addStyleName("aon-selectOneMenu");
 		paymentTypeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentTypeListBox.setEnabled(false);
+		paymentTypeListBox.addStyleName(style.visibilityDisabled());
 		paymentCRAPanel.add(paymentTypeListBox);
 	}
 	
 	private void initPartialityButton() {
-		getEnableDisableButton(partialityButton, false);
+		getEnableDisableButton(partialityButton, hasPartiality);
 	}
 	
 	private void getEnableDisableButton(Button button, boolean disabled) {
@@ -232,16 +247,19 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 		
 		createUpdatePayment();
+		checkPartialityButton();
 	}
 	
 	@UiHandler("periodicityType")
 	void onPeriodicityTypeChange(ChangeEvent event) {
 		createUpdatePayment();
+		checkPartialityButton();
 	}
 	
 	@UiHandler("extraName")
 	void onExtraNameChange(ChangeEvent event) {
 		createUpdatePayment();
+		checkPartialityButton();
 	}
 	
 //	@UiHandler("secondButton")
@@ -253,8 +271,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	void onPartialityButtonClick(ClickEvent event) {
 		Boolean oldValue = isActiveToggleButton(partialityButton);
 		Boolean value = !oldValue;
+		hasPartiality = value;
 		getEnableDisableButton(partialityButton, value);
-		createUpdatePayment();
+		checkPartiality();
 	}
 	
 	// -------------------------------------------- DeckPanel.Methods
@@ -292,12 +311,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		createPaymentConcept();
 		createPaymentDescription();
 		createPaymentExpression();
-		checPartialityButton();
-		checkPartiality();
 	}
 
 	private void createPaymentConcept() {
-		paymentConcept.setValue(getConceptName());
+		String conceptName = getConceptName();
+		paymentConcept.setValue(conceptName);
+		
+		paymentConcept.setEnabled(!AonStringUtils.equalsIgnoreCase(conceptName, "SALARIO_BASE"));
 	}
 
 	private String getConceptName() {
@@ -355,7 +375,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		String expression = "";
 		String periodicity = periodicityType.getSelectedItemText();
 		
-		expression = "/*user*/SALARIO_" + periodicity + "/**/";
+		if(AonStringUtils.equals(periodicity, "HORAS")) periodicity = "HORA";
+		
+		expression = "/*read-only*/SALARIO_" + periodicity + "/**/";
 		expression += periodicityType.getSelectedValue();
 		
 		return expression;
@@ -380,28 +402,34 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return expression;
 	}
 	
-	private void checPartialityButton() {
+	private void checkPartialityButton() {
 		String expression = paymentExpression.getValue();
-		if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR")) {
+		if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") ||
+				AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES")) {
+			hasPartiality = false;
 			partialityButton.setEnabled(true);
+			getEnableDisableButton(partialityButton, hasPartiality);
 			partialityButton.removeStyleName(style.visibilityDisabled());
 		} else {
-			getEnableDisableButton(partialityButton, true);
+			hasPartiality = true;
 			partialityButton.setEnabled(false);
+			getEnableDisableButton(partialityButton, hasPartiality);
 			partialityButton.addStyleName(style.visibilityDisabled());
 		}
 	}
 	
 	private void checkPartiality() {
 		String expression = paymentExpression.getValue();
-		Boolean isActive = isActiveToggleButton(partialityButton);
 		
-		if(isActive && (AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR"))) {
+		if(hasPartiality && (AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") ||
+				AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES"))) {
 			paymentExpression.setValue(paymentExpression.getValue() + " * COEFICIENTE_PARCIALIDAD");
 		} else {
 			String paymentExpressionValue = paymentExpression.getValue();
-			if(AonStringUtils.containsIgnoreCase(paymentExpressionValue, " * COEFICIENTE_PARCIALIDAD"))
-				paymentExpression.setValue(paymentExpressionValue.split(" * COEFICIENTE_PARCIALIDAD")[0]);
+			if(AonStringUtils.containsIgnoreCase(paymentExpressionValue, " * COEFICIENTE_PARCIALIDAD")) {
+				String newExpression = paymentExpressionValue.split(" \\* COEFICIENTE_PARCIALIDAD")[0];
+				paymentExpression.setValue(newExpression.trim());
+			}
 		}
 	}
 
@@ -479,7 +507,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private void createPayment() {
 		payment.setId(-1);
 		payment.setDescription(paymentDescription.getValue());
-		payment.setExpression(paymentExpression.getValue());
+		payment.setExpression("/*wizard*/" + paymentExpression.getValue());
 		payment.setIrpfExpression("_P");
 		payment.setQuoteExpression("_P");
 		payment.setType(paymentTypeListBox.getSelected());

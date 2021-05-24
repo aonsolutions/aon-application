@@ -7,10 +7,11 @@
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentWizard.MyStyle">
 	
 		.body {
-			padding: 10px;
+			margin-top: 5px;
+			padding: 20px 10px;
 			display: flex;
 			flex-direction: column;
-			height: 400px;
+			height: 375px;
 			min-width: 500px;
 		}
 		
@@ -29,10 +30,15 @@
 			width: auto !important;
 		}
 		
+		.flexColumnPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px 20px;
+		}
+		
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
-			padding: 5px 10px;
 		}
 		
 		.flexColumn2{
@@ -48,7 +54,6 @@
 		.flex{
 			display: flex;
 			gap: 5px;
-			padding: 5px 10px;
 			align-items: center;
 		}
 		
@@ -98,6 +103,21 @@
 			visibility: visible !important;
 		}
 		
+		.flexPanel{
+			display: flex;
+			gap: 15px;
+			padding: 5px 20px;
+			align-items: end;
+		}
+		
+		.w180{
+			width: 180px !important;
+		}
+		
+		.maxWidth{
+			width: 100%;
+		}
+		
 	</ui:style>
 	
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{style.body}">
@@ -110,22 +130,29 @@
 						<g:DeckLayoutPanel ui:field="deckPanel" styleName="{style.deckPanel}">
 							
 							<g:HTMLPanel ui:field="firstPage" styleName="{style.pagePanel}">
-								<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
-									<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
-									<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu" />
+								
+								<g:HTMLPanel styleName="{style.flexPanel}">
+									<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
+										<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
+										<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu {style.w180}" />
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="extraPanel" styleName="{style.flexColumn} {style.maxWidth}">
+										<g:Label ui:field="extraLabel" styleName="{style.title}"/>
+										<g:TextBox ui:field="extraName" styleName="aon-inputText {style.uppercase} {style.maxWidth}" />
+									</g:HTMLPanel>
 								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="extraPanel" styleName="{style.flexColumn}">
-									<g:Label ui:field="extraLabel" styleName="{style.title}"/>
-									<g:TextBox ui:field="extraName" styleName="aon-inputText {style.uppercase}" />
+								
+								<g:HTMLPanel styleName="{style.flexPanel}">
+									<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.flexColumn}">
+										<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
+										<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180}" />
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
+										<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
+										<g:Button ui:field="partialityButton" />
+									</g:HTMLPanel>
 								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.flexColumn}">
-									<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
-									<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu" />
-								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
-									<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
-									<g:Button ui:field="partialityButton" />
-								</g:HTMLPanel>
+								
 							</g:HTMLPanel>
 							
 							<!-- g:HTMLPanel ui:field="secondPage" styleName="{style.pagePanel}">
@@ -145,7 +172,7 @@
 							<g:Button ui:field="secondButton" styleName="{style.buttonPage}">2</g:Button>
 						</g:HTMLPanel -->
 						
-						<g:HTMLPanel styleName="{style.flexColumn}">
+						<g:HTMLPanel styleName="{style.flexColumnPanel}">
 							<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.flexColumn2}">
 								<g:Label styleName="{style.title}">Concepto</g:Label>
 								<g:TextBox ui:field="paymentConcept" />
