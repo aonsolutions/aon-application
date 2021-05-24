@@ -19,6 +19,7 @@ public class AggregatedAnnualEntry {
 	private Double moneyIrpfBase;
 	private Double inKindIrpfBase;
 	private Double totalIrpfBase;
+	private String workplace;
 	
 	
 	private Collection<Payment> payments;
@@ -114,6 +115,12 @@ public class AggregatedAnnualEntry {
 	}
 	public void setDaysAndHours(Map<String, Double> daysAndHours) {
 		this.daysAndHours = daysAndHours;
+	}
+	public String getWorkplace() {
+		return workplace;
+	}
+	public void setWorkplace(String workplace) {
+		this.workplace = workplace;
 	}
 	
 }

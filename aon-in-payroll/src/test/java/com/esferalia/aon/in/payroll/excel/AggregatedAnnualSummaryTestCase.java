@@ -24,7 +24,7 @@ public class AggregatedAnnualSummaryTestCase {
 	
 	private void test() {
 		Faker faker = new Faker(new Locale("es", "ES"));
-		Map<String, Map<String, AggregatedAnnualEntry>> mainMap = new LinkedHashMap<String, Map<String,AggregatedAnnualEntry>>();
+		Map<String, AggregatedAnnualYearlyEntry> mainMap = new LinkedHashMap<String, AggregatedAnnualYearlyEntry>();
 		for (int i=0; i< faker.number().numberBetween(0, 10); i++) {
 			String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
 			Map<String, AggregatedAnnualEntry> map = new LinkedHashMap<String, AggregatedAnnualEntry>();
@@ -71,10 +71,16 @@ public class AggregatedAnnualSummaryTestCase {
 				entry.setPayments(payments);
 				
 				map.put(month, entry);
+				
 			}
-			mainMap.put(faker.business().creditCardNumber(), map);
+			AggregatedAnnualYearlyEntry yearlyEntry = new AggregatedAnnualYearlyEntry(
+					eightyPercent(faker) ? faker.artist().name() : null
+					, eightyPercent(faker) ? faker.business().creditCardNumber() : null
+					, eightyPercent(faker) ? faker.educator().campus() : null
+					, map);
+			mainMap.put(faker.business().creditCardNumber(), yearlyEntry);
 		}
-		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream(), faker.number().numberBetween(2000, 2050), mainMap, faker.company().name());
+		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream(), faker.number().numberBetween(2000, 2050), mainMap, faker.company().name(), faker.business().creditCardNumber());
 	}
 	private static Double getAmount(Faker faker) {
 		int probab = faker.number().numberBetween(0, 100);
