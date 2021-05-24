@@ -15,9 +15,7 @@ public enum InvoiceSource implements Serializable {
     ,ACCOUNT		("Apunte contable"	, (d,v) -> v.visitAccount(d) )			
     ,DIRECT_INVOICE	("Directa"			, (d,v) -> v.visitDirectInvoice(d) )
     ,OFFER			("Presupuesto"		, (d,v) -> v.visitOffer(d) )
-    ,RESERVATION	("Reserva"			, (d,v) -> v.visitReservation(d) )
-    ,API			("Api"				, (d,v) -> v.visitApi(d) )
-    ;
+    ,RESERVATION	("Reserva"			, (d,v) -> v.visitReservation(d) );
 
 	public byte value() {
 		return (byte) ordinal();

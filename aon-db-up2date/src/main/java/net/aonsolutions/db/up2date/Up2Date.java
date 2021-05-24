@@ -19,13 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.notification.NotificationCreation;
-import net.aonsolutions.db.up2date.notification.NotificationReceiverCreation;
-import net.aonsolutions.db.up2date.payroll.InKindDeductionInsert;
-import net.aonsolutions.db.up2date.payroll.InKindDeductionInsertRETA;
+import net.aonsolutions.db.up2date.finance.UpdateInvoiceSource;
 import net.aonsolutions.db.up2date.payroll.IntegrityFix;
-import net.aonsolutions.db.up2date.payroll.WorkAccidentInsuranceInsert;
-import net.aonsolutions.db.up2date.tgss.Bases2021UpdateII;
 
 public class Up2Date {
 
@@ -161,7 +156,8 @@ public class Up2Date {
     		//Bases2021UpdateII.BASES2021UPDATEII,
     		//InKindDeductionInsert.INKIND_DEDUCTION_INSERT,
     		//WorkAccidentInsuranceInsert.WORKACCIDENTINSURANCEINSERT
-    		InKindDeductionInsertRETA.INKIND_DEDUCTION_INSERT_RETA
+    		//InKindDeductionInsertRETA.INKIND_DEDUCTION_INSERT_RETA,
+    		UpdateInvoiceSource.UPDATE_INVOICE_SOURCE
     };
 
 

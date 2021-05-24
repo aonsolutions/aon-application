@@ -39,7 +39,7 @@ public class InvoiceDetailJSON {
 			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 			.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
 			.setPrepayment(json.optBoolean(IJsonNames.PREPAYMENT))
-			.setSource(InvoiceSource.API)
+			.setSource(InvoiceSource.DIRECT_INVOICE)
 			.setInvoiceTaxes(new LinkedList<InvoiceTax>());
 		
 		if(json.opt(IJsonNames.PERCENTAGE) != null) {
