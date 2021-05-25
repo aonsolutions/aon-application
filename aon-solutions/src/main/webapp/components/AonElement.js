@@ -124,7 +124,6 @@ export class AonElement extends HTMLElement{
 
   clearTimeAction() {
     clearTimeout(this.TIME_ACTION);
-    clearTimeout(null);
   }
 
   setTimeAction(tm){
@@ -132,7 +131,7 @@ export class AonElement extends HTMLElement{
   }
 
   showError(e) {
-    this.showToast(JSON.parse(e))
+      this.showToast(JSON.parse(e))
   }
 
   /**
