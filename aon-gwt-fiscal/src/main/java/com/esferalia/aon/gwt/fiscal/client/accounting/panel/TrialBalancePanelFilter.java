@@ -57,7 +57,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	private ListBox level;
 	private CheckBox lowLevelAccountVisible;
 	private CheckBox noActivityAccountVisible;
-	private CheckBox noBalanceAccountVisible;
+	private CheckBox noBalanceAccountExcluded;
 	
 	private CheckBox operatingEntriesExcluded;
 	private CheckBox closingEntriesExcluded;
@@ -216,7 +216,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level = new ListBox();
 		lowLevelAccountVisible = new CheckBox("Mostrar acumulados inferiores");
 		noActivityAccountVisible = new CheckBox("Mostrar cuentas sin movimientos en el periodo");
-		noBalanceAccountVisible = new CheckBox("Mostrar cuentas con saldo final cero");
+		noBalanceAccountExcluded = new CheckBox("Excluir cuentas con saldo final cero");
 		
 		operatingEntriesExcluded = new CheckBox("Excluir asientos de explotaci\u00F3n"); 
 		closingEntriesExcluded = new CheckBox("Excluir asientos de cierre");
@@ -420,12 +420,12 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		if (params != null) {
 			lowLevelAccountVisible.setValue(params.isLowLevelAccountVisible());
 			noActivityAccountVisible.setValue(params.isNoActivityAccountVisible());
-			noBalanceAccountVisible.setValue(params.isNoBalanceAccountVisible());
+			noBalanceAccountExcluded.setValue(params.isNoBalanceAccountExcluded());
 		}
 		VerticalPanel checks1 = new VerticalPanel();
 		checks1.add(lowLevelAccountVisible);
 		checks1.add(noActivityAccountVisible);
-		checks1.add(noBalanceAccountVisible);
+		checks1.add(noBalanceAccountExcluded);
 
 		tab.setWidget(2, 2, noActivityAccountVisible);
 		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
@@ -445,7 +445,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		
 		tab.setWidget(3, 1, lowLevelAccountVisible);
 		
-		tab.setWidget(3, 2, noBalanceAccountVisible);
+		tab.setWidget(3, 2, noBalanceAccountExcluded);
 		tab.getFlexCellFormatter().setColSpan(3, 2, 2);
 
 		tab.setWidget(3, 3, closingEntriesExcluded);
@@ -532,7 +532,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			}
 		});
 		
-		noBalanceAccountVisible.addClickHandler(new ClickHandler() {
+		noBalanceAccountExcluded.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
@@ -570,7 +570,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			.setLevel(AonNumberUtils.toInteger( level.getSelectedValue()))
 			.setLowLevelAccountVisible(lowLevelAccountVisible.getValue() )
 			.setNoActivityAccountVisible(noActivityAccountVisible.getValue())
-			.setNoBalanceAccountVisible(noBalanceAccountVisible.getValue())
+			.setNoBalanceAccountExcluded(noBalanceAccountExcluded.getValue())
 			.setOperatingEntriesExcluded(operatingEntriesExcluded.getValue())
 			.setClosingEntriesExcluded(closingEntriesExcluded.getValue())
 			.setAccount(new Account().setCode(account.getValue()))

@@ -726,7 +726,7 @@ public class AccountStatementDAO {
 			);
 		}
 		
-		if (!report.getParams().isNoBalanceAccountVisible()) {
+		if (report.getParams().isNoBalanceAccountExcluded()) {
 			TreeMap<String, AccountTrialBalance> balances = new TreeMap<String, AccountTrialBalance>();
 			for (String account : report.getBalances().keySet()) {
 				if (report.getBalances().get(account).hasAfterPeriodBalance()) {
