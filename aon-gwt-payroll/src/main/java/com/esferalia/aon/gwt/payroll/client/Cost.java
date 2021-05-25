@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -129,7 +130,7 @@ public class Cost extends ResizeComposite {
 			addSeparator();
 			
 				MenuItem summaryItem = addItem("Resumen Anual Agregado", () -> {},
-						AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				summaryItem.setScheduledCommand(() -> {
 					
 					if (costDocuments != null)
@@ -142,7 +143,8 @@ public class Cost extends ResizeComposite {
 						
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
-							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year));
+							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year),
+									AON.CSS.aonIconExcel(), style.cmd_btn());
 						}
 						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
 						
@@ -157,7 +159,7 @@ public class Cost extends ResizeComposite {
 				
 				
 				MenuItem recordItem = addItem("Registro Retributivo", () -> {},
-						AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				recordItem.setScheduledCommand(() -> {
 					
 					if (costDocuments != null)
@@ -170,7 +172,8 @@ public class Cost extends ResizeComposite {
 						
 						remunerationRecord = new ContextMenu();
 						for (Integer year : availableYears) {
-							remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year));
+							remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year),
+									AON.CSS.aonIconExcel(), style.cmd_btn());
 						}
 						remunerationRecord.ensureDebugId("aggregatedAnnualSummary");
 						
@@ -590,10 +593,10 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("year", String.valueOf(year)));
-		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
-//		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
-		
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.YEAR.getName(), String.valueOf(year)));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
+//		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.COMPLETE.getName(), "true"));
 		
 		formPanel.add(flowPanel);
 		

@@ -877,7 +877,7 @@ public class RemunerationRecord {
 		RemunerationRecordData remunerationRecordData = new RemunerationRecordData();
 		remunerationRecordData.setStartDate(startDate);
 		remunerationRecordData.setEndDate(endDate);
-		AONContext aonContext = AONContext.getAONContext(domainName, "");
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
 
 		Condition condition = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNotNull().or(SALARY_PAYMENT.DESCRIPTION.isNotNull()))
@@ -942,6 +942,7 @@ public class RemunerationRecord {
 		
 		
 		fillData(remunerationRecordData, aonContext, payments, condition2);
+		}
 		return remunerationRecordData;
 	}
 	/**

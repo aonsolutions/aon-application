@@ -141,8 +141,6 @@ public class EnterprisePayrollExcel {
 	
 	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
 		
-		AONContext aonContext = AONContext.getAONContext(domainName, "");
-		
 		Integer wId = null;
 		Integer eId = null;
 		if (workplaceId.isPresent())
@@ -150,16 +148,17 @@ public class EnterprisePayrollExcel {
 		if (enterpriseId.isPresent())
 			eId = enterpriseId.get();
 		
-		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-		if (eId == null || eId == 0)
-			eId = AON.getWorkplace(aonContext.getDomainName()
-				, aonContext.getDomainId()
-				, aonContext.getUser()
-				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-				.getEnterprise();
 		
-		
-		try {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+					.getEnterprise();
+			
 			Collection<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
 					.collect(Collectors.toList());
@@ -183,8 +182,6 @@ public class EnterprisePayrollExcel {
 		Integer month = c.get(Calendar.MONTH)+1;
 		Integer year = c.get(Calendar.YEAR);
 		
-		AONContext aonContext = AONContext.getAONContext(domainName, "");
-		
 		Integer wId = null;
 		Integer eId = null;
 		if (workplaceId.isPresent())
@@ -192,16 +189,17 @@ public class EnterprisePayrollExcel {
 		if (enterpriseId.isPresent())
 			eId = enterpriseId.get();
 		
-		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-		if (eId == null || eId == 0)
-			eId = AON.getWorkplace(aonContext.getDomainName()
-				, aonContext.getDomainId()
-				, aonContext.getUser()
-				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-				.getEnterprise();
 		
-		
-		try {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+					.getEnterprise();
+			
 			Collection<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, month, year, eId, wId)
 					.collect(Collectors.toList());
@@ -223,7 +221,6 @@ public class EnterprisePayrollExcel {
 		Integer month = c.get(Calendar.MONTH)+1;
 		Integer year = c.get(Calendar.YEAR);
 		
-		AONContext aonContext = AONContext.getAONContext(domainName, "");
 		
 		Integer wId = null;
 		Integer eId = null;
@@ -232,16 +229,17 @@ public class EnterprisePayrollExcel {
 		if (enterpriseId.isPresent())
 			eId = enterpriseId.get();
 		
-		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-		if (eId == null || eId == 0)
-			eId = AON.getWorkplace(aonContext.getDomainName()
-				, aonContext.getDomainId()
-				, aonContext.getUser()
-				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-				.getEnterprise();
 		
-		
-		try {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+			
+			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+			if (eId == null || eId == 0)
+				eId = AON.getWorkplace(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+					.getEnterprise();
+			
 			Collection<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, month, year, eId, wId)
 					.filter(p -> types.contains(p.getSalaryType().ordinal()))
