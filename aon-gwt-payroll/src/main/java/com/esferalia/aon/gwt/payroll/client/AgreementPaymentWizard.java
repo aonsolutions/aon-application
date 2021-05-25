@@ -404,12 +404,16 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	private void checkPartialityButton() {
 		String expression = paymentExpression.getValue();
-		if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") ||
-				AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES")) {
+		if(AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR")) {
 			hasPartiality = false;
 			partialityButton.setEnabled(true);
 			getEnableDisableButton(partialityButton, hasPartiality);
 			partialityButton.removeStyleName(style.visibilityDisabled());
+		} else if(AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES")) {
+			hasPartiality = false;
+			partialityButton.setEnabled(false);
+			getEnableDisableButton(partialityButton, hasPartiality);
+			partialityButton.addStyleName(style.visibilityDisabled());
 		} else {
 			hasPartiality = true;
 			partialityButton.setEnabled(false);
