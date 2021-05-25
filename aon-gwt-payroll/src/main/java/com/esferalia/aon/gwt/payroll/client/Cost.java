@@ -595,7 +595,7 @@ public class Cost extends ResizeComposite {
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.YEAR.getName(), String.valueOf(year)));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
-//		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.COMPLETE.getName(), "true"));
 		
 		formPanel.add(flowPanel);
