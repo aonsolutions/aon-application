@@ -359,10 +359,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			}
 	}
 	
-	private LinkedList<String> getEmails(AonApiData api, Optional<User> user) {
+	private  LinkedList<String> getEmails(AonApiData api, User user) {
 	    Domain domain = api.getDomain();
 		LinkedList<String> toList = new LinkedList<>();
-		User newUser = user.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
+		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
 		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth());
 		toList.add(auth.getEmail());
 		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
@@ -424,8 +424,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	            os.write(fileByte);
 	            os.close();
 				files.add(file);
-				LinkedList<String>  emails = getEmails(api, Optional.of(user));
-				SES.sendEmailWithAttachment(from, emails, subject, body, files);
+				SES.sendEmailWithAttachment(from, getEmails(api, user), subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -440,8 +439,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 				String from = "no-reply@aon.solutions"; 
 				String subject = "COMUNIC@ | AON SOLUTIONS"; 
-				LinkedList<String>  emails = getEmails(api, Optional.of(user));
-				SES.sendEmail(from, emails, subject, body);
+				SES.sendEmailToList(from, getEmails(api, user), subject, body);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
