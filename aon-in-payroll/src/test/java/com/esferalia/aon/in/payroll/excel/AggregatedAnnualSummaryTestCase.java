@@ -80,7 +80,7 @@ public class AggregatedAnnualSummaryTestCase {
 					, map);
 			mainMap.put(faker.business().creditCardNumber(), yearlyEntry);
 		}
-		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream(), faker.number().numberBetween(2000, 2050), mainMap, faker.company().name(), faker.business().creditCardNumber());
+		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream(), faker.number().numberBetween(2000, 2050), mainMap, faker.company().name(), faker.business().creditCardNumber(), faker.bool().bool());
 	}
 	private static Double getAmount(Faker faker) {
 		int probab = faker.number().numberBetween(0, 100);

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.ENTERPRISE;
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.WORKPLACE;
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.YEAR;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.COMPLETE;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -43,6 +43,7 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		String enterpriseIdStr = req.getParameter(ENTERPRISE.getName());
 		String workplaceIdStr = req.getParameter(WORKPLACE.getName());
 		String yearStr = req.getParameter(YEAR.getName());
+		boolean complete = req.getParameter(COMPLETE.getName()) != null && req.getParameter(COMPLETE.getName()).equalsIgnoreCase("true");
 		
 		Optional<Integer> enterpriseId = Optional.empty();
 		Optional<Integer> workplaceId = Optional.empty();
@@ -64,14 +65,15 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 			} catch (NumberFormatException e) {}
 		}
 		
-		try (OutputStream oos = resp.getOutputStream()){
+		try (OutputStream os = resp.getOutputStream()){
 		AggregatedAnnualSummary.writeExcel(
-				oos
+				os
 				, req.getServerName()
 				, enterpriseId
 				, workplaceId
-				, year);
-		oos.flush();
+				, year
+				, complete);
+		os.flush();
 		}
 		//http://ayudat.aonsolutions.net:8080/aon-aio/aon_gwt_payroll/AggregatedAnnualSummary/Resumen_Anual_Agregado_2020?year=2020&enterpriseId=216767
 	}
