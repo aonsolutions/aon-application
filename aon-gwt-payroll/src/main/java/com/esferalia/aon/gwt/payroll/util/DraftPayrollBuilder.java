@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.payroll.util;
 
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
-import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION.DEFAULT;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,20 +20,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -48,6 +47,7 @@ public class DraftPayrollBuilder {
 	 * @throws CanNotCreatePdfException
 	 * @throws SalaryException
 	 */
+	@SuppressWarnings("static-access")
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
@@ -112,7 +112,16 @@ public class DraftPayrollBuilder {
 				else
 					dpb.setPayrollType(PayrollTypes.Type.SALARY);
 			}
+			
+			
 			//PAYMENTS
+			
+			/**
+			 *  ( EDIT ) To get the extra hours base
+			 */
+			double nonStructBase[] = new double[]{ 0d };
+			double forceMajeureBase[] = new double[]{ 0d };
+			
 			{
 				
 				dpb.setAccrualTotal(salary.getTotalPayment());
@@ -125,13 +134,26 @@ public class DraftPayrollBuilder {
 					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 					if (description.length() > 50) {
 						try {
-							description = PDFToolkit.croppedString(description, 999, PdfFonts.HELVETICA, 9f);
-							
+							description = croppedString(description, 999, PdfFonts.HELVETICA, 9f);
 						} catch (IOException ignored) {}	
 					}
 					
+					/**
+					 * Getting nonStruct and forceMajeure bases
+					 */
 					
-					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
+					//Structural
+					if (p.getType() == PaymentType.CRA_0002) {						
+						nonStructBase[0] += p.getAmount();
+					}
+					
+					//Force Majeure
+					if(p.getType() == PaymentType.CRA_0003) {
+						forceMajeureBase[0] += p.getAmount();
+					}
+					
+					
+					PDFPayment accrual = new PDFPayment(p.getAmount(), description);					
 					if (!paymentMap.containsKey(p.getType().ordinal()))
 						paymentMap.put(p.getType().ordinal(), new ArrayList<PDFPayment>());
 					 
@@ -143,7 +165,9 @@ public class DraftPayrollBuilder {
 				});
 				dpb.setAccruals(paymentMap);
 			}
-			//DEDUCTIONS
+			
+			
+			//DEDUCTIONS						
 			{
 				dpb.setDeductionTotal(salary.getTotalDeduction());
 				
@@ -151,13 +175,20 @@ public class DraftPayrollBuilder {
 				
 				Collection<IDeduction> deductions = salary.getDeductionS();
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
-				deductions.stream().filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
+				deductions.stream().filter(p -> p != null).filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
+					
+		
 				
 					try {
-						String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
-						percent = Double.parseDouble(desc);
-					} catch (NumberFormatException ignored) {}
+						if(d.getDescription() != null) {
+							String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
+							System.out.println( d.getName() + " : " + d.getDescription());
+							percent = Double.parseDouble(desc);
+						}
+					} catch (NumberFormatException ignored) {
+					
+					}
 					
 					int type = getDeductionPDFType(d.getType().ordinal());
 					String desc = d.getType().getName(new Locale("es"));
@@ -165,26 +196,29 @@ public class DraftPayrollBuilder {
 					if(desc == null || desc.isEmpty()) 
 						desc = getDeductionTypeDescription(d.getType().ordinal());
 					
-					PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
-					
-					
-					if (!deductionsMap.containsKey(type))
+					PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent );
+					if (!deductionsMap.containsKey(type)) 
 						deductionsMap.put(type, new ArrayList<PDFDeduction>());
 					
 					if (deductionsMap.get(type).stream()
-							.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(), deduction.getDescription().get()))) {
+					.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(), deduction.getDescription().get()))) 
+					{
 						PDFDeduction ded = deductionsMap.get(type).stream()
-								.filter(p -> AonStringUtils.equalsIgnoreCase(deduction.getDescription().get(),p.getDescription().get())).findFirst().get();
-						ded.setAmount(ded.getAmount().get()+deduction.getAmount().get());
+						.filter(p -> AonStringUtils.equalsIgnoreCase(deduction.getDescription().get(),p.getDescription().get()))
+						.findFirst()
+						.get();
+						
+						ded.setAmount(ded.getAmount().get() + deduction.getAmount().get());
 					} else
 						deductionsMap.get(type).add(deduction);
+					
 					inserted.add(Utilities.getDeductionType(d.getType().ordinal()));
 				});
 				
 
-				if (deductionsMap.get(1)==null)
+				if (deductionsMap.get(1) == null)
 					deductionsMap.put(1, new ArrayList<PDFDeduction>());
-				if (deductionsMap.get(2)==null)
+				if (deductionsMap.get(2) == null)
 					deductionsMap.put(2, new ArrayList<PDFDeduction>());
 				
 				if (!inserted.contains("CGC"))
@@ -267,11 +301,11 @@ public class DraftPayrollBuilder {
 				for (IDeduction c : costs) {
 					
 					Double percentD = null;
-					System.out.println(c.getName() + " : " + c.getDescription());
-					
 					try {
 						percentD = Double.parseDouble(c.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1"));
-					} catch (NumberFormatException e) {}
+					} catch (Exception e) {
+
+					}
 					
 					Optional<Double> percent = Optional.ofNullable(percentD);
 					 
@@ -280,13 +314,17 @@ public class DraftPayrollBuilder {
 						cbb.setCommonContType(percent);
 					}
 					else if (c.getName().equals("IMS_E")) {
-						at_ep_ap_enterprise += c.getAmount();
-						atEp[0] = percentD; 
+						at_ep_ap_enterprise += c.getAmount();   
+						
+						if(percentD != null)
+							atEp[0] = percentD; 
 						
 					}
 					else if(c.getName().equals("IT_E")) {
 						at_ep_ap_enterprise += c.getAmount();
-						atEp[1] = percentD;					
+						
+						if(percentD != null)
+							atEp[1] = percentD;					
 					}
 					else if (c.getName().equals("DESMPL_E")) {
 						unemployment_ap_enterprise += c.getAmount();
@@ -296,19 +334,32 @@ public class DraftPayrollBuilder {
 						profes_form_ap_enterprise += c.getAmount();
 						cbb.setProfesFormType(percent);
 					}
-					else if (c.getName().equals("FOGASA_E")) {
+					else if (c.getName().equals("FOGASA_E")) { 
 						fogasa_ap_enterprise += c.getAmount();
+						
+						if(percentD == null){
+							
+							//Saving life here... :v
+							double professionalBase = salary.getProfessionalBase() == null ? 0 : salary.getProfessionalBase();
+							if(professionalBase == 0) 
+								professionalBase = 1;
+								
+							double value = fogasa_ap_enterprise / professionalBase * 100;
+							percent = Optional.of(value);		
+							
+						}
+						
 						cbb.setFogasaType(percent);
 					}
-					else if (c.getType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal()) {
+					else if (c.getName().equals("EXTR_E")) {
 						force_majeure_ap_enterprise += c.getAmount();
 						cbb.setForceMajeureType(percent);
+					
 					}
-					else if (c.getType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal()) {
+					else if (c.getName().equals("NEXTR_E")) {
 						no_struct_ap_enterprise += c.getAmount();
 						cbb.setNoStructType(percent);
-					}
-					
+					}					
 				}
 				
 				if(atEp[0] != -1 || atEp[1] != -1)
@@ -322,15 +373,14 @@ public class DraftPayrollBuilder {
 				cbb.setForceMajeureApEnterprise(Optional.ofNullable(force_majeure_ap_enterprise));
 				cbb.setNoStructApEnterprise(Optional.ofNullable(no_struct_ap_enterprise));
 				
-				
+				cbb.setNoStructBase(Optional.of(nonStructBase[0]));
+				cbb.setForceMajeureBase(Optional.of(forceMajeureBase[0]));
 				
 				dpb.setContingencies(cbb.build());		
 			}	
 			dpb.setPayrollTotal(salary.getTotalLiquid());
 			
 			Optional<InputStream> optLogo = Utilities.getSignature(domainName);
-			
-			
 			dpt.print(outputStream, dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
 
 	}

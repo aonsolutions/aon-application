@@ -578,7 +578,6 @@ public class SalaryDraftBuilder
 			, Date startDate, Date endDate,  IDeduction cost, Map<String, ITimedVariable<?>> context) {
 
 		addContext(context);
-
 		IContractDeduction contractCost = (IContractDeduction) cost;
 		
 		Deduction draftCost = newDeduction(contractCost);
@@ -651,6 +650,7 @@ public class SalaryDraftBuilder
 		deduction.setStartDate(start);
 		deduction.setEndDate(end);
 		deduction.setDescription(description);
+		
 		deduction.setDescription(formatItemDescription(deduction, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());

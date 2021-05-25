@@ -97,6 +97,7 @@ public class PayrollTemplate {
 		try (PDDocument doc = print(payrolls, logo, language))
 		{
 			doc.save(os);
+			os.close();
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
