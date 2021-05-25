@@ -168,9 +168,9 @@ public class AggregatedAnnualSummary {
 			Map<String, AggregatedAnnualYearlyEntry> entries = getEntries(aonContext, condition);
 			
 			Enterprise enterprise = null;
-			if (!enterpriseId.isEmpty()) {
+			if (!enterpriseId.isEmpty() && enterpriseId.get() > 0) {
 				enterprise = getEnterpriseById(aonContext, enterpriseId.get());
-			} else if (!workplaceId.isEmpty()) {
+			} else if (!workplaceId.isEmpty() && workplaceId.get() > 0) {
 				enterprise = getEnterpriseByWorkplaceId(aonContext, workplaceId.get());
 			} else {
 				enterprise = pickEnterpriseFromDomain(aonContext);
@@ -1061,7 +1061,10 @@ public class AggregatedAnnualSummary {
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
 		LinkedHashMap<String, AggregatedAnnualYearlyEntry> entries = new LinkedHashMap<String, AggregatedAnnualYearlyEntry>();
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", new Locale("es", "ES"));
-		salaries.sorted(Comparator.comparing(Salary::getEmployeeDocument)).forEach(s -> {
+		salaries
+		.filter(s -> s != null)
+		.sorted(Comparator.comparing(s -> s.getEmployeeDocument() != null ? s.getEmployeeDocument() : ""))
+		.forEach(s -> {
 			String month = s.getIssueDate() != null ? df.format(s.getIssueDate()).toUpperCase() : null;
 			AggregatedAnnualYearlyEntry yearlyEntry = entries.get(s.getEmployeeDocument()) != null ? entries.get(s.getEmployeeDocument()) : new AggregatedAnnualYearlyEntry(); 
 			
