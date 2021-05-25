@@ -1,11 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, getWeekDayObj, saveTimeControl} from '../../services/service.js';
+import {getTaskHoldersUser, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser, setDateTimestampDay, formatDateOrigin } from '../../services/utils.js';
+import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
-import { timeHour } from './time-control/utils.js';
+import { CONSTANT, EVENT } from '../../environments/environments.js';
 
 export class AonSign extends AonElement {
 
@@ -206,11 +205,7 @@ export class AonSign extends AonElement {
       timeDiv.innerHTML = timePaser(time);
       timeDiv.style.cursor = "default";
     } else this.clearTimeAction();
-    this.setTimeAction(setTimeout( () => {
-      const newTime = time + 1000;
-      this.timeAction(newTime);
-      this.updateTotalHour();
-    }, 1000));
+    this.setTimeAction(setTimeout( () => this.timeAction(time + 1000), 1000));
   }
 
   divLastTime(signin){
@@ -234,56 +229,7 @@ export class AonSign extends AonElement {
       div.style.cursor = "default";
       div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
       content.append(div);
-      this.totalHourWeek();
     }
-  }
-
-  async totalHourWeek(){
-    try {
-      if(this._taskHolder){
-        const weekDayObj = getWeekDayObj();
-        let filter = {
-          taskHolderId:this._taskHolder, 
-          group:"DAY",
-          startDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekFirst) ),
-          endDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekLast) )
-        };
-        let datos = await getTaskHolderTimeControl(filter);
-        if(datos){
-          let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in")>=0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
-          let content = this.getElement(this.CONTENT);
-          const id = "totalHour";
-          const div = this.getElement(id) || this.createElement('div');
-          div.id = id;
-          div.style.marginTop = "10px";
-          div.style.color = "grey";
-          div.style.fontSize = "12px";
-          div.style.cursor = "default";
-          div.dataset.sumHour = sumHour;
-          div.innerHTML = "Horas semana actual: ";
-          let span = this.createElement(TAG.SPAN);
-          span.style.fontWeight = 800;
-          span.id = id+"Span";
-          div.appendChild(span);
-          content.append(div);
-          this.updateTotalHour();
-        }
-      }
-    } catch (error) {console.log(error);}
-  }
-
-  updateTotalHour(){
-    try {
-      const div = this.getElement("totalHour");
-      const dataset = div.dataset;
-      if(dataset){
-        const hour = Number(dataset.sumHour);
-        const span = this.getElement(div.id+"Span");
-        span.innerHTML = timeHour(hour);
-        span.style.color = "black";
-        dataset.sumHour  = hour + 1000;
-      }
-    } catch (error) {}
   }
 }
 window.customElements.define('aon-sign', AonSign);
