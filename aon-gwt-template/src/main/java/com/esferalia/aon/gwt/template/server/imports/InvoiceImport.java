@@ -427,10 +427,11 @@ public class InvoiceImport {
 			invoice.setType(ivs.get(i).getInvoiceType() != null
 				? ivs.get(i).getInvoiceType()
 				: getInvoiceType(ivs.get(i).getAccount()));
-			if(ivs.get(i).getSerie() != null) {
+			if(ivs.get(i).getSerie() != null && invoice.isSales()) {
 				invoice.setSeries(ivs.get(i).getSerie());
 			} 
-			if(ivs.get(i).getNumber() != null) {
+			
+			if(ivs.get(i).getNumber() != null && invoice.isSales()) {
 				invoice.setNumber(ivs.get(i).getNumber());	
 			}
 			
