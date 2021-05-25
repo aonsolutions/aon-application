@@ -108,9 +108,9 @@ public enum AccountingReportParamsJSON {
 		(params, json) -> params.setNoActivityAccountVisible(json.optBoolean(IJsonNames.NO_ACTIVITY_ACCOUNT_VISIBLE)),
 		(params, json) -> json.put(IJsonNames.NO_ACTIVITY_ACCOUNT_VISIBLE, params.isNoActivityAccountVisible())
 	),
-	NO_BALANCE_ACCOUNT_VISIBLE(
-			(params, json) -> params.setNoBalanceAccountVisible(json.optBoolean(IJsonNames.NO_BALANCE_ACCOUNT_VISIBLE)),
-			(params, json) -> json.put(IJsonNames.NO_BALANCE_ACCOUNT_VISIBLE, params.isNoBalanceAccountVisible())
+	NO_BALANCE_ACCOUNT_EXCLUDED(
+			(params, json) -> params.setNoBalanceAccountExcluded(json.optBoolean(IJsonNames.NO_BALANCE_ACCOUNT_EXCLUDED)),
+			(params, json) -> json.put(IJsonNames.NO_BALANCE_ACCOUNT_EXCLUDED, params.isNoBalanceAccountExcluded())
 		),
 	OPENING_ENTRIES_EXCLUDED(
 		(params, json) -> params.setOperatingEntriesExcluded(json.optBoolean(IJsonNames.OPENING_ENTRIES_EXCLUDED)),
