@@ -180,7 +180,7 @@ public class TimeControlDAO {
 			while(date.compareTo(endDate) <= 0 ) {
 				int month = AonDateUtils.getMonth(date);
 				int year = AonDateUtils.getYear(date);
-				Date zDate = AonDateUtils.getMonthLastDay(startDate);
+				Date zDate = AonDateUtils.getMonthLastDay(date);
 				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (
 						AonDateUtils.getMonth(f.getDate()) == month
 						&& AonDateUtils.getYear(f.getDate()) == year)), date, zDate, TimeControlGroup.MONTH );
@@ -198,7 +198,7 @@ public class TimeControlDAO {
 			Date date = AonDateUtils.getYearFirstDay(startDate);
 			while(date.compareTo(endDate) <= 0 ) {
 				int year = AonDateUtils.getYear(date);
-				Date zDate = AonDateUtils.getYearLastDay(startDate);
+				Date zDate = AonDateUtils.getYearLastDay(date);
 				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year), date, zDate, TimeControlGroup.YEAR);
 				tcList.add(tc);
 				date = AonDateUtils.addYears(date, 1);

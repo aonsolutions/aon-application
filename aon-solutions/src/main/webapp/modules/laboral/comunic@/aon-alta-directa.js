@@ -4,7 +4,7 @@ import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAl
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
-import { createBajaDialogContent } from '../createComponent.js';
+import { createBajaDialogContent, createFormComunica, createToolbarComunica } from '../createComponent.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
 import '../../../components/aon-number.js';
@@ -13,6 +13,7 @@ import '../../../components/aon-suggestion.js';
 import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
+
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -67,26 +68,14 @@ export class AonAltaDirecta extends AonElement {
 
 
     paintView() {
-        const toolbar = /*html*/`<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
-        const form =
-        /*html*/`
-        <div>
-            <form id="${this.id}Form" action="#" onsubmit="return false;">
-                <div id="${this.id}Div">
-                    <div class="aonCol-sm-12">
-                        <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa" flex="true"></aon-card>
-                    </div>
-                    <div class="aonCol-sm-12 aonCol-md-6">
-                        <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador" flex="true"></aon-card>
-                    </div>
-                    <div class="aonCol-sm-12 aonCol-md-6">
-                        <aon-card id="${this.id}ContratoCard" title="Datos del contrato" flex="true"></aon-card>
-                    </div>
-                </div>
-            </form>
-        `;
 
-        this.innerHTML = toolbar + form;
+        createToolbarComunica({
+            id:this.TOOLBAR,
+            type:ToolbarType.SECONDARY,
+            title:"Alta Directa",
+        },this);
+
+        createFormComunica(this.id, this);
 
         this.applicationEl.removeToolbarOptions();
 
@@ -291,11 +280,11 @@ export class AonAltaDirecta extends AonElement {
             nss.removeIcon();
         });
 
-        this.getElement('coefparcial').addEventListener(EVENT.CHANGE, (e) => this.calculoHoras());
+        this.getElement('coefparcial').addEventListener(EVENT.CHANGE, () => this.calculoHoras());
 
-        this.getElement('iconSegSocial').addEventListener(EVENT.CLICK, (e) => this.getNaf());
+        this.getElement('iconSegSocial').addEventListener(EVENT.CLICK, () => this.getNaf());
 
-        this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, (e) => this.disabledCardTrabajor(false));
+        this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
     }
 
     getContrato() {
@@ -484,19 +473,20 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async suggestionConvenio() {
-        const searchSuggestion = this.getElement(`convenio`);
-        searchSuggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
+        const suggestion = this.getElement(`convenio`);
+        suggestion.querySelector("input").autocomplete = "on";
+        suggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
             let newValue = value.toString().toUpperCase();
             if (newValue.length > 2) {
                 const resp = await getConvenios(newValue);
-                searchSuggestion.buildOptions(resp);
+                suggestion.buildOptions(resp);
             } else {
-                searchSuggestion.closeOptions();
+                suggestion.closeOptions();
             }
         });
-        searchSuggestion.addEventListener('select', ({ detail }) => {
-            console.log(detail);
-        });
+        // suggestion.addEventListener(EVENT.SELECT, ({ detail }) => {
+        //     console.log(detail);
+        // });
     }
 
     async listGrupoCotizacion() {
@@ -687,7 +677,7 @@ export class AonAltaDirecta extends AonElement {
         dialog.setContent(div);
         dialog.openPosition({top, left});
 
-        const fechaEl =  this.getElement("fechaBaja");
+        const fechaEl = this.getElement("fechaBaja");
         fechaEl.addEventListener(EVENT.CHANGE, ()=>{
             if(new Date(fechaEl.value).isValid()) button.disabled = false;
             else button.disabled = true;
