@@ -221,6 +221,12 @@ export class AonInput extends AonElement {
     label.style.width = "100%";
 
     let input = this.createElement(TAG.INPUT);
+
+    if(this.iOS()) {
+      label.classList.add(CSS.AON_INPUT_IOS)
+      input.classList.add(CSS.AON_INPUT_IOS);
+    }
+
     if(this.autocomplete) input.autocomplete =this.autocomplete;
     // input.required = true;
     input.id = this.INPUT;

@@ -29,6 +29,8 @@ export class Invoice {
   selfconta;
   insight;
 
+  activity;
+
   service; // boolean | servicio
   withholding; // boolean | retencion 
   investment; // boolean | bienes de inversion
@@ -139,6 +141,7 @@ export class Invoice {
       this.selfconta = invoice.selfconta || false;
 
       let company = JSON.parse(localStorage.getItem('company'));
+      this.activity = invoice.activity;
 
       this.service = invoice.service || false;// boolean | servicio
       this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
@@ -148,6 +151,14 @@ export class Invoice {
       this.surcharge = invoice.surcharge || company.surcharge;
       this.rectified = invoice.rectified || false;
     }
+  }
+
+  getActivity() {
+    return this.activity;
+  }
+
+  setActivity(activity) {
+    this.activity = activity;
   }
 
   getSerie() {
@@ -271,6 +282,14 @@ export class Invoice {
 
   setService(service) {
     this.service = service;
+  }
+
+  isVatAccrualPayment() {
+    return this.vatAccrualPayment && this.vatAccrualPayment != CONSTANT.FALSE;
+  }
+
+  setVatAccrualPayment(vatAccrualPayment) {
+    this.vatAccrualPayment = vatAccrualPayment;
   }
 
   isInvestment() {
@@ -506,7 +525,6 @@ export class Invoice {
   }
 
   addDetail() {
-    console.log("AA - " + this.isWithholding());
     let wh = this.getWitholdingTax();
     let detail = {
       description: '',
@@ -616,7 +634,7 @@ export class Invoice {
       let financeTotal = 0.0;
       this.finances.forEach((finance, i) => {
         finance.paymethod = this.paymethod;
-        finances[i] = finance;
+        this.finances[i] = finance;
         financeTotal = financeTotal + Number(finance.amount);
       });
       if(this.total != financeTotal) {

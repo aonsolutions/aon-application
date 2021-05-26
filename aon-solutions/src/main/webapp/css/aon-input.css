@@ -20,6 +20,12 @@ input:required {
 }
 
 /* Input*/
+
+.aonInputIos {
+	-webkit-appearance: none;
+	border-radius: 0;
+}
+
 .aonInputUnderlined > input,
 .aonInputFilled > input {
 	border: none;

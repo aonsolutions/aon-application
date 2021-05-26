@@ -53,12 +53,17 @@ import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
+import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -1013,8 +1018,21 @@ public class InvoiceDAO {
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
 		invoice = insert(ctx, aonCtx, invoice);
 		FinanceDAO.insertFinances(ctx, invoice.getFinances());
-		if(rawdocId != null) 
-			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);
+		if(rawdocId != null) {
+			Rawdoc rawdoc = RawdocDAO.getFull(ctx, rawdocId);
+			if(rawdoc.getData() != null) {
+				Attach attach = new Attach()
+					.setDate(new Date())
+					.setDomain(new Domain().setId(invoice.getDomain()))
+					.setAttachModule(invoice.getId())
+					.setMimeType(rawdoc.getMimeType())
+					.setAttachType(AttachType.INVOICE)
+					.setType(InvoiceAttachmentType.INVOICE.value())
+					.setData(rawdoc.getData());
+				AttachmentDAO.insertInvoiceAttach(ctx, attach);
+			}
+			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
+		}
 		return invoice;
 	}
 	
@@ -1555,7 +1573,30 @@ public class InvoiceDAO {
 				}
 			}
 			
-			@Override public void visitTedi(InvoiceDetail detail) {}
+			@Override public void visitTedi(InvoiceDetail detail) {
+				if (detail.getAccount() == null) 
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
+				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
+					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
+					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
+					.execute();
+				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
+					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+//					if (tax.getAccount() == null) 
+//						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
+						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
+						.execute();
+						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+					}
+				} else {
+					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+				}
+			}
 		});
 	}
 	
@@ -1595,7 +1636,27 @@ public class InvoiceDAO {
 					});
 			}
 			
-			@Override public void visitTedi(InvoiceDetail detail) {}
+			@Override public void visitTedi(InvoiceDetail detail) {
+				int count = ctx.getDslContext()
+						.delete(INVOICE_DETAIL_ACCOUNT)
+						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+						.execute();
+					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+					
+					ctx.getDslContext().select(INVOICE_TAX.ID)
+						.from(INVOICE_TAX)
+						.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
+						.fetch()
+						.stream()
+						.mapToInt(rec -> rec.getValue(INVOICE_TAX.ID))
+						.forEach(id -> {
+							int x = ctx.getDslContext()
+									.delete(INVOICE_TAX_ACCOUNT)
+									.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
+									.execute();
+							ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+						});
+			}
 			
 		});
 		

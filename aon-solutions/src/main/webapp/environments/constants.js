@@ -5,6 +5,7 @@ export const UNDEFINED = 'undefined';
 
 export const ACCEPT = 'accept';
 export const ACCOUNTING = 'accounting';
+export const ACTIVITY = 'activity';
 export const ADD = 'add';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
@@ -206,6 +207,7 @@ export const UPLOAD_FILE = 'uploadFile';
 
 export const VALUE = 'value';
 export const VAT = 'vat';
+export const VAT_ACCRUAL_PAYMENT = 'vatAccrualPayment';
 export const VISIBLE = 'visible';
 
 // ----- W

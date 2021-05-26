@@ -191,6 +191,7 @@ export class AonRegistry extends AonElement {
     let address = new AonAddress();
     address.id = this.ADDRESS;
     address.title = MSG.ADDRESS;
+    address.readonly = this.isReadonly();
     div2.appendChild(address);
     address.buildAddressValue(this.registry.address)
     address.addEventListener(EVENT.CHANGE, () => {

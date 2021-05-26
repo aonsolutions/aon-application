@@ -107,6 +107,7 @@ export class AonSuggestion extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
+    input.readonly = this.isReadonly();
     input.addEventListener(EVENT.KEYUP, (e) => {
       this.value = input.value;
       if(e.key || e.keyCode) {
@@ -209,8 +210,7 @@ export class AonSuggestion extends AonElement {
   loading(start) {
     this.getElement(this.INPUT).loading(start);
   }
-
-
+  
   closeOptions() {
     let div = this.getElement(this.OPTIONS);
     if (div.classList.contains('is-visible')) {
@@ -220,6 +220,11 @@ export class AonSuggestion extends AonElement {
 
   focus() {
     this.getElement(this.INPUT).focus();
+  }
+
+  isReadonly() {
+    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+      && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 }
 if(!window.customElements.get('aon-suggestion')){

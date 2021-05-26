@@ -114,7 +114,8 @@ export class AonSelect extends AonElement {
   build() {
     let input = this.getElement(this.INPUT);
     if(input){
-      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
+      input.readonly = this.isReadonly();
+      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {     
         input.setAttribute(CONSTANT.READONLY, true);
       }
       input.addEventListener(EVENT.KEYUP, () => {
@@ -129,7 +130,7 @@ export class AonSelect extends AonElement {
       });
   
       input.addEventListener(EVENT.CLICK, () => {
-        if(!this.hasAttribute(CONSTANT.READONLY)) {
+        if(!this.isReadonly()) {
           const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
           this.buildOptions(optios);
         }
