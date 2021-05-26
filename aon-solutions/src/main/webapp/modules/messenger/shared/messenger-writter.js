@@ -259,7 +259,7 @@ const sendMessage = (aonTextArea) => {
      */
     if(aonTextArea.querySelector("textarea") == null){
         const eyeButton = document.querySelector("#preview");
-        eyeButton?.click();
+        if(eyeButton) eyeButton.click();
     }
 
     const value = aonTextArea.compiledValue;

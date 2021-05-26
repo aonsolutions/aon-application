@@ -45,7 +45,8 @@ export const request = (method, url, token, sendData, fn) => {
       } else {
         // show the result
         console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
-        fn(xhr.response);
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
       }
     };
     xhr.onprogress = (event) => {
@@ -59,6 +60,7 @@ export const request = (method, url, token, sendData, fn) => {
       console.log("Request failed");
     };
   } catch (error) {
+    console.log("error");
     fn(undefined, error);
   }
 };
