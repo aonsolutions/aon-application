@@ -222,7 +222,7 @@ export class AonInput extends AonElement {
 
     let input = this.createElement(TAG.INPUT);
     if(this.autocomplete) input.autocomplete =this.autocomplete;
-    input.required = true;
+    // input.required = true;
     input.id = this.INPUT;
     input.name = this.getAttribute(CONSTANT.NAME);
     input.style.textOverflow = "ellipsis";

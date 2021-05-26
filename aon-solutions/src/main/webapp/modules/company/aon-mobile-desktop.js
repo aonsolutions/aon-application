@@ -1,17 +1,14 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-
-import {AonElement, AonIconButton} from '../../components/components.js';
+import { MSG, TAG } from '../../environments/environments.js';
+import {AonElement} from '../../components/components.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../../components/aon-suggestion.js';
-
 import '../signin/aon-sign.js';
 import '../invoice/aon-invoice-panel.js';
 import './aon-mobile-parent.js';
 import '../messenger/aon-messenger.js';
-
-import { MSG, TAG, MATERIAL_ICONS } from '../../environments/environments.js';
 
 export class AonMobileDesktop extends AonElement {
 

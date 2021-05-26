@@ -141,6 +141,10 @@ export class AonCard extends AonElement {
 	setContentHTML(html) {
 		this.getElement(this.CONTENT).innerHTML = html;
 	}
+	
+	getContent(){
+		return this.getElement(this.CONTENT);
+	}
 
 	setVisible(visible) {
 		this.setAttribute(CONSTANT.VISIBLE, visible);

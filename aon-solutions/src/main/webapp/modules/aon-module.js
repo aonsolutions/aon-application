@@ -1,13 +1,11 @@
 import { AonElement } from '../components/AonElement.js';
 import { rootPanel } from '../services/gwtLoader.js';
-
-import { getToken, saveAuthDevice , getCompanies, getUser, getUserAppRole } from '../services/service.js';
+import { getToken , getCompanies, getUser, getUserAppRole } from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
-
-import { EVENT, TAG } from '../environments/environments.js'; 
-
+import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
+import { waitEl } from '../services/utils.js';
 
 export class AonModule extends AonElement {
 
@@ -48,13 +46,19 @@ export class AonModule extends AonElement {
 			this.buildHome();
 
 			getCompanies().then(companies => {
+				let homeEl = this.getElement(this.AON_HOME);
 				if(companies.length === 1){
 					this.companySelection(companies[0]);
 				} else {
-					this.getElement(this.AON_HOME).showMenu(false);
+					homeEl.showMenu(false);
 					rootPanel(this.isMobile()
 					 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
 					 	: '<aon-parent id="aonParent"></aon-parent>');
+				}
+				if(companies.length > 1){
+					waitEl(`#${homeEl.AON_HEADER}CompanyList'`).then(el=>{
+						el.style.display = 'block';
+					});
 				}
 			});
 		} else {

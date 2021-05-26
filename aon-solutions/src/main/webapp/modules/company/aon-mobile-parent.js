@@ -1,13 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies, getUser} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-
+import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
-
-import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
-import { AonSearch } from '../../components/aon-search.js';
-import { AonToolbar } from '../../components/aon-toolbar.js';
 
 export class AonMobileParent extends AonElement {
 
