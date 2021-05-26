@@ -225,7 +225,10 @@ class AonLaboral extends AonElement {
     this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
         this.applicationEl.startLoading();
         try {
-          await postDeleteMov(data);
+          await postDeleteMov({
+            ...data,
+            nombre: data.nombre || data.name
+          });
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
           if(this._movements){
             this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
