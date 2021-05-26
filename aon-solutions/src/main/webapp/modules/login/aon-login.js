@@ -13,6 +13,7 @@ import "../company/aon-parent.js";
 import { EVENT, MSG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
+import { AonInput } from "../../components/aon-input.js";
 
 export class AonLogin extends AonElement {
   tag;
@@ -169,13 +170,16 @@ export class AonLogin extends AonElement {
   aonDialogLoginRemember() {
     let dialog = this.getElement("aonDialogLogin");
     dialog.setTitle(MSG.RECOVER_PASSWORD);
-    dialog.setContentHTML(`
-			<form action="#">
-				<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
-			</form>`);
-    dialog.addAcceptAction(() =>
-      rememberPassword(this.getElement("aonLoginRememberEmail").value)
-    );
+    let form = this.createElement("form");
+    form.action = "#";
+    let aonInput = new AonInput();
+    aonInput.id = "aonLoginRememberEmail";
+    aonInput.description = "Email";
+    aonInput.autocomplete = "on";
+    form.appendChild(aonInput);
+    dialog.setContent(form);
+    
+    dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? rememberPassword(aonInput.value) : null);
   }
 
   buildLogo() {
