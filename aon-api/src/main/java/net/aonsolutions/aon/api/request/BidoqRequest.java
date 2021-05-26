@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -61,6 +62,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediPayMethod;
 import es.translogia.tedi.json.TediJSONUtils;
+import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.InvoiceServlet;
 
 public class BidoqRequest {
@@ -157,9 +159,11 @@ public class BidoqRequest {
 			invoice.setTaxDate(AonDateUtils.parse(selfInvoice.optString("date"), "yyyy-MM-dd"));
 			invoice.setComments(selfInvoice.optString("comments"));
 			invoice.setType(getInvoiceType(selfInvoice));
-			invoice.setSeries(selfInvoice.optString("series"));
 			
-			invoice.setNumber(selfInvoice.optInt("number"));
+			if(invoice.isSales()) {
+				invoice.setSeries(selfInvoice.optString("series"));
+				invoice.setNumber(selfInvoice.optInt("number"));
+			}
 			invoice.setReferenceCode(selfInvoice.optString("reference"));
 			invoice.setTotal(selfInvoice.optDouble("total"));
 			invoice.setWithholding(false);
@@ -1046,7 +1050,12 @@ public class BidoqRequest {
 	
 	private static void rawdoc(Domain domain, User user, JSONObject invoice, String error) {
 		JSONObject json = selfconta2Tedi(user, invoice, error);
-		InvoiceServlet.setInvoice(domain, user.getLogin(), json);
+		AonApiData api = new AonApiData()
+				.setDomain(domain)
+				.setUser(user)
+				.setData(json)
+				.setDur(new DomainUserRoles());
+		InvoiceServlet.setInvoice(api);
 	}
 	
 	private static JSONObject selfconta2Tedi(User user, JSONObject invoice, String error) {
@@ -1278,9 +1287,10 @@ public class BidoqRequest {
 		invoice.setTaxDate(AonDateUtils.parse(ti.optString("date"), "yyyy-MM-dd"));
 		// invoice.setComments(selfInvoice.optString("comments"));
 		invoice.setType(getTediInvoiceType(ti));
-		invoice.setSeries(ti.optString("series"));
-
-		invoice.setNumber(ti.optInt("number"));
+		if(invoice.isSales()) {
+			invoice.setSeries(ti.optString("series"));
+			invoice.setNumber(ti.optInt("number"));
+		}
 		invoice.setReferenceCode(ti.optString("reference"));
 		invoice.setTotal(ti.optDouble("total"));
 		invoice.setWithholding(false);

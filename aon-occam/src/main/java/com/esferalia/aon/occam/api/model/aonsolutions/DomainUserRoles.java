@@ -47,6 +47,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public LinkedList<AonApp> getDomainApps() {
+		if(domainApps == null) {
+			this.domainApps = new LinkedList<>();
+		}
 		return domainApps;
 	}
 	
@@ -56,6 +59,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public LinkedList<AonApp> getParentDomainApps() {
+		if(parentDomainApps == null) {
+			this.parentDomainApps = new LinkedList<>();
+		}
 		return parentDomainApps;
 	}
 	
@@ -65,6 +71,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public LinkedList<AonRole> getDomainUserRoles() {
+		if(domainUserRoles == null) {
+			this.domainUserRoles = new LinkedList<>();
+		}
 		return domainUserRoles;
 	}
 	
@@ -74,6 +83,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public LinkedList<AonRole> getParentDomainUserRoles() {
+		if(parentDomainUserRoles == null) {
+			this.parentDomainUserRoles = new LinkedList<>();
+		}
 		return parentDomainUserRoles;
 	}
 	
