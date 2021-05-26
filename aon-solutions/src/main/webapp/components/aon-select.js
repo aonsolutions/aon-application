@@ -142,7 +142,11 @@ export class AonSelect extends AonElement {
       }
       input.addEventListener(EVENT.BLUR, ()=>{
         const exists = this.getOptions().some(({name})=> name == input.value);
-        if(!exists) input.value = this.getOptions().find(f => f.value == this.value).name;
+        if(!exists){
+          const option = this.getOptions().find(f => f.value == this.value);
+          if(option)
+            input.value = option.name;
+        } 
       })
   
       let div = this.getElement(input.DIV);
@@ -214,7 +218,7 @@ export class AonSelect extends AonElement {
   }
 
   getOptions() {
-    const options = this.options ? this.options : [];
+    const options = this.options ? this.options : "[]";
     return JSON.parse(options);
   }
 

@@ -77,7 +77,7 @@ public class SES extends AWS{
         }
     }
     
-    public static String sendEmail(String from, LinkedList<String> toList, String subject, String body) {
+    public static void sendEmailToList(String from, LinkedList<String> toList, String subject, String body) {
     	String[] to = toList.toArray(String[]::new);
         Destination destination = new Destination().withToAddresses(to);
 
@@ -97,11 +97,9 @@ public class SES extends AWS{
 
             client.sendEmail(request);
             System.out.println("Email sent!");
-            return "ok";
         } catch (Exception ex) {
             System.out.println("The email was not sent.");
             System.out.println("Error message: " + ex.getMessage());
-            return "Error message: " + ex.getMessage();
         }
     }
     
