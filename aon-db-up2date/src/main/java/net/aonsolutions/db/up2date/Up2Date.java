@@ -157,7 +157,7 @@ public class Up2Date {
     		//InKindDeductionInsert.INKIND_DEDUCTION_INSERT,
     		//WorkAccidentInsuranceInsert.WORKACCIDENTINSURANCEINSERT
     		//InKindDeductionInsertRETA.INKIND_DEDUCTION_INSERT_RETA,
-    		UpdateInvoiceSource.UPDATE_INVOICE_SOURCE
+    		//UpdateInvoiceSource.UPDATE_INVOICE_SOURCE
     };
 
 

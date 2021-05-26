@@ -42,8 +42,11 @@ public enum InvoiceSource implements IResourceable {
     OFFER,
 
     /** RESERVATION. Facturacion de una reserva PMS */
-    RESERVATION;
-
+    RESERVATION,
+	
+	/** TEDI. Facturacion desde TEDI */
+    TEDI;
+	
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_invoice_source_";

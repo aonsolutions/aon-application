@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 
 
@@ -118,9 +119,10 @@ public class ItemDAO {
 		.set(ITEM.DETAIL3, item.getDetail3())
 		.set(ITEM.DESCRIPTION, item.getDescription())
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
-		.set(ITEM.SERIAL_DATE, new Date(item.getSerialDate().getTime()))
+		.set(ITEM.SERIAL_DATE, item.getSerialDate() != null 
+				? new Date(item.getSerialDate().getTime()) : null)
 		.set(ITEM.PRICE, item.getPrice())
-		.set(ITEM.STATUS, item.getStatus().value())
+		.set(ITEM.STATUS, item.getStatus() != null ? item.getStatus().value() : ProductStatus.ACTIVE.value())
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
 		.set(ITEM.EXPENSES_FIXED, item.getExpensesFixed())
 		.set(ITEM.PROFIT_PERCENT, item.getProfitPercent())
@@ -128,12 +130,12 @@ public class ItemDAO {
 		.set(ITEM.INTERNET, item.isInternet() ? (byte) 1: 0)
 		.set(ITEM.BARCODE, item.getBarcode())
 
-		.set(ITEM.PACK_FORMAT_TAG, item.getPackFormatTag().getId())
-		.set(ITEM.PACK_UNITS, item.getPackUnits())
-		.set(ITEM.PACK_UNITS_TAG, item.getPackUnitsTag().getId())
-		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement())
-		.set(ITEM.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag().getId())
-		.set(ITEM.STOCK_UNIT_TAG, item.getStockUnitTag().getId())
+		.set(ITEM.PACK_FORMAT_TAG, item.getPackFormatTag() != null ? item.getPackFormatTag().getId() : null)
+		.set(ITEM.PACK_UNITS, item.getPackUnits()!= null ? item.getPackUnits() : 0)
+		.set(ITEM.PACK_UNITS_TAG, item.getPackUnitsTag() != null ? item.getPackUnitsTag().getId() : null)
+		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement()!= null ? item.getPackMeasurement() : 0)
+		.set(ITEM.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag() != null ? item.getPackMeasurementTag().getId() : null)
+		.set(ITEM.STOCK_UNIT_TAG, item.getStockUnitTag() != null ? item.getStockUnitTag().getId() : null)
 		
 		.set(ITEM.CREATION_USER, ctx.getUser())
 		.set(ITEM.CREATION_DATE, now)
@@ -169,9 +171,9 @@ public class ItemDAO {
 		.set(ITEM.BARCODE, item.getBarcode())
 
 		.set(ITEM.PACK_FORMAT_TAG, item.getPackFormatTag().getId())
-		.set(ITEM.PACK_UNITS, item.getPackUnits())
+		.set(ITEM.PACK_UNITS, item.getPackUnits()!= null ? item.getPackUnits() : 0)
 		.set(ITEM.PACK_UNITS_TAG, item.getPackUnitsTag().getId())
-		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement())
+		.set(ITEM.PACK_MEASUREMENT, item.getPackMeasurement()!= null ? item.getPackMeasurement() : 0)
 		.set(ITEM.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag().getId())
 		.set(ITEM.STOCK_UNIT_TAG, item.getStockUnitTag().getId())
 		
