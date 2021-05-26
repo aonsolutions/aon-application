@@ -44,7 +44,7 @@ public class InvoiceJSON {
 				.setSeries(json.optString(IJsonNames.SERIE))
 				.setNumber(JsonUtils.getInt(json, IJsonNames.NUMBER))
 				.setTransaction(InvoiceTransactionType.safeValueOf(json.optString(IJsonNames.TRANSACTION)))
-				.setReferenceCode(json.optString(IJsonNames.REFERENCE_CODE))
+				.setReferenceCode(json.optString(IJsonNames.REFERENCE))
 				.setIssueDate(date) //JsonUtils.getDate(json, IJsonNames.DATE))
 				.setTaxDate(date)// JsonUtils.getDate(json, IJsonNames.DATE))
 				.setInvestment(json.optBoolean(IJsonNames.INVESTMENT))
@@ -73,7 +73,9 @@ public class InvoiceJSON {
 //				.setAddressZIP(raddress.getZip())
 				.setBreakdown(InvoiceBreakdownJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.TAXES)))
 				.setDetails(InvoiceDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
-				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)));
+				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
+				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
+				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY));
 	}
 	
 	public static JSONObject toJSON(Invoice invoice) {
@@ -106,7 +108,8 @@ public class InvoiceJSON {
 			.put(IJsonNames.RECEIVER, RegistryJSON.toJSON(invoice.getRegistryData()))
 			.put(IJsonNames.TAXES, InvoiceBreakdownJSON.toJSON(invoice.getBreakdown()))
 			.put(IJsonNames.DETAILS, InvoiceDetailJSON.toJSON(invoice.getDetails()))
-			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()));
+			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
+			.put(IJsonNames.ACTIVITY, invoice.getActivity());
 		
 		if(invoice.getDetails() != null && invoice.getDetails().size() > 0) {
 			json.put(IJsonNames.CATEGORY, invoice.getDetails().get(0).getAccountCode());

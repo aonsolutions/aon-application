@@ -80,6 +80,12 @@ export const TaxIRPFPercentage = [
   {value:2.0, name:'2%'}
 ];
 
+export const TaxRetentionPercentage = [
+  {value:19, name:'19%'},
+  {value:15.0, name:'15%'},
+  {value:7.0, name:'7%'}
+];
+
 export const TaxIRPFPROFPercentage = [
   {value:15.0, name:'15%'},
   {value:7.0, name:'7%'}
@@ -103,6 +109,16 @@ export const getSurchargeByVat = (vat) => {
     return 0.5;
   } else return 0.0;
 };
+
+export const getTaxType = (percentage) => {
+  if(percentage == 19.0) {
+    return TaxType.IRPF_ALQ;
+  } else if(percentage == 15.0 || percentage == 7.0) {
+    return TaxType.IRPF_PROF;
+  } else if(percentage == 2.0) {
+    return TaxType.IRPF_AGRI;
+  } else return TaxType.IVA;
+}
 
 export const getTaxTypeName = (type) => {
   if(TaxType.IVA === type) {
@@ -132,9 +148,9 @@ export const getTaxPercentageOption = (type) => {
   } else if(TaxType.IRPF === type) {
     return TaxIRPFPercentage;
   } else if(TaxType.IRPF_PROF === type) {
-    return TaxIRPFPROFPercentage;
+    return TaxRetentionPercentage; // TaxIRPFPROFPercentage;
   } else if(TaxType.IRPF_ALQ === type) {
-    return TaxIRPFALQPercentage;
+    return TaxRetentionPercentage; //TaxIRPFALQPercentage;
   } else if(TaxType.IRPF_AGRI === type) {
     return TaxIRPFAGRIPercentage;
   } 

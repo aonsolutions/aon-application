@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
@@ -294,7 +295,24 @@ public class InvoiceServlet extends AonApiHttpServlet{
 //		AonParser parser = new AonParser();
 //		TediInvoice invoice = parser.aon2Tedi(domain, login, id);
 //		return TediInvoiceJSON.toJSON(invoice);
-		return AON_SOLUTIONS.getInvoice(domain, login, id);
+		Attach a = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(id), AttachType.INVOICE);
+		JSONObject json = AON_SOLUTIONS.getInvoice(domain, login, id);
+
+		if(a != null && a.getId() != null) {
+			JSONObject data = new JSONObject();
+			data.put("domain_name", domain.getName());
+			data.put("domain_id", domain.getId());
+			data.put("id", a.getId());
+			data.put("attach_type", AttachType.INVOICE.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String url =  "ms/api/file/" +  result;
+								
+			JSONObject f = new JSONObject();
+		    f.put("url", url);
+		    f.put("content_type", a.getMimeType().getName());
+		    json.put("file", f);
+		}
+		return json;
 	}
 	
 	private static JSONArray getInvoices(Domain domain, String login, InvoiceFilter filter) {
