@@ -19,7 +19,7 @@ import {
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
 import { pieChar, addLegend} from "./pieChar.js";
-import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonFilter } from "../../../components/aon-filter.js";
 
 
@@ -147,9 +147,11 @@ export class AonCompanyCostsList extends AonElement {
     let id = this.id+ "pieChar";
     let idTitle = id + "Title";
     let total = 0;
-    let div =   this.getElement(id) || this.createElement('div');
-    let divTitle = this.getElement(idTitle) || this.createElement('div');
+    let div = this.getElement(id) || this.createElement(TAG.DIV);
+    div.id = id;
+    div.style.textAlign = "center";
     div.innerHTML = "";
+    let divTitle = this.getElement(idTitle) || this.createElement(TAG.DIV);
     try {
       const resp = await this.getData();
       if(resp && resp.length > 0 ){
@@ -160,8 +162,6 @@ export class AonCompanyCostsList extends AonElement {
         divTitle.style.margin = "20px";
         divTitle.style.marginBottom = 0;
         divTitle.id = idTitle;
-        div.id = id;
-        div.style.textAlign = "center";
         divTitle.style.textAlign = "center";
         this.appendChild(divTitle);
         this.appendChild(div);
@@ -180,41 +180,29 @@ export class AonCompanyCostsList extends AonElement {
         ];
 
         const colors = ['#0051C6','#db4437', '#B3B3B3', '#5e97f6'];
-        
-        let options = { 
-          slices: colors,
-        };
-        await pieChar(div, data, options, (evClick)=>{
+
+        await pieChar(div, data, { slices: colors }, (evClick)=>{
           console.log(evClick);
         });
         
         data.splice(2, 0, ["Total SS", totalSS]);
         colors.splice(2, 0, "none");
         
-        let newColor = colors.map(color=> {
-          return {
-            divColor: color,
-            nameColor: 'grey',
-            valueColor: 'grey'
-          }
-        });
+        let newColor = colors.map(color=> ({ divColor: color, nameColor: 'grey', valueColor: 'grey'}));
+
         newColor[2].valueColor = newColor[3].valueColor =  newColor[4].valueColor = "black";
         
-
         let newData = data.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
-        await addLegend(div, newData, newColor, (evClick)=>{
-          console.log(evClick);
-        });
 
-        let button = this.createElement('button');
+        await addLegend(div, newData, newColor, (evClick)=>console.log(evClick));
+
+        let button = this.createElement(TAG.BUTTON);
         button.className = "aonButton";
         button.id = `${this.id}Nomina`;
         button.innerHTML = MSG.VIEW_PAYROLL;
         button.style.marginTop = "10px";
         div.appendChild(button);
-        button.addEventListener('click',()=>{
-          this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
-        });
+        button.addEventListener('click',()=> this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST));
 
         let workplaceEl = this.getElement('workplace').querySelector('LI');
         if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
@@ -278,11 +266,7 @@ export class AonCompanyCostsList extends AonElement {
   async getCompanyCostsExcel() {
     let filter = this.applicationParentEl._filter;
     this.applicationEl.startLoading();
-    try {
-      await getCompanyCostsExcel({ ...filter });
-    } catch (error) {
-      this.showToast(error);
-    }
+    await getCompanyCostsExcel({ ...filter }).catch(e=>this.showToast(e));
     this.applicationEl.stopLoading();
   }
 }

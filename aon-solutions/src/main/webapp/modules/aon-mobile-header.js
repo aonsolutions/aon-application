@@ -60,7 +60,7 @@ export class AonMobileHeader extends AonElement {
 					<aon-notification-icon></aon-notification-icon>
 				</span>
 
-				<span id="aonHeaderCompanyList" class="aonRight100 aonMobileHeaderButton" style="display=none">
+				<span id="aonHeaderCompanyList" class="aonRight100 aonMobileHeaderButton" style="display:none;">
 					<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
 				</span>
 			</div>

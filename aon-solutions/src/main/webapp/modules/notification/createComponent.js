@@ -5,7 +5,6 @@ import { AonSelect } from "../../components/aon-select.js";
 import { CSS, TAG } from "../../environments/environments.js";
 import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utils.js";
 
-
 export const createDiv = (properties)=> newComponent({
   type: TAG.DIV,
   ...properties
@@ -126,9 +125,8 @@ export const createBadge = (id) => createSpan({
  */
 export const createSelect = ({attributes, events}, parent) => {
   if(attributes.options && typeof attributes.options !== "string") attributes.options=JSON.stringify(attributes.options);
-  let select = new AonSelect();
+  let select = setAttributes(new AonSelect(), attributes);
   setClasses(select,[CSS.TRANSITION_CASCADE]);
-  setAttributes(select, attributes);
   if(events) setEvents(select, events);
   parent.appendChild(select);
   return select;
@@ -141,8 +139,7 @@ export const createSelect = ({attributes, events}, parent) => {
  * @returns 
  */
 export const createInput = ({attributes, events}, parent) => {
-  let input = new AonInput();
-  setAttributes(input, attributes);
+  let input = setAttributes(new AonInput(), attributes);
   if(events) setEvents(input, events);
   parent.appendChild(input);
   return input;
@@ -155,8 +152,7 @@ export const createInput = ({attributes, events}, parent) => {
  * @returns 
  */
 export const createIconButton = ({attributes, events}, parent) => {
-  let icon = new AonIconButton();
-  setAttributes(icon, attributes);
+  let icon = setAttributes(new AonIconButton(), attributes);
   if(events) setEvents(icon, events);
   parent.appendChild(icon);
   return icon;
@@ -169,8 +165,7 @@ export const createIconButton = ({attributes, events}, parent) => {
  * @returns 
  */
  export const createDate = ({attributes, events}, parent) => {
-  let date = new AonDate();
-  setAttributes(date, attributes);
+  let date = setAttributes( new AonDate(), attributes);
   if(events) setEvents(date, events);
   parent.appendChild(date);
   return date;

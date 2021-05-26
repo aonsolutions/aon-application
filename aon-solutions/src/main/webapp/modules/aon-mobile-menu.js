@@ -10,7 +10,7 @@ import {
 } from "../services/service.js";
 import { AonDocumentalAyudat } from "./documental/ayudat/aon-documental-ayudat.js";
 import { AonDocumental } from "./documental/aon-documental.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
    PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
 
@@ -69,7 +69,7 @@ export class AonMobileMenu extends AonElement {
       let bottom = "59px";
       let display = "block";
       let application = this.getApplication();
-      if(target.innerHeight < height){
+      if((target.innerHeight +15) < height){
         display = "none";
         bottom = "1px";
       }
@@ -88,7 +88,7 @@ export class AonMobileMenu extends AonElement {
     const id = this.id + 'Sidenav';
     const sidEl = this.getElement(id);
     if(sidEl)sidEl.remove();
-    let div = this.createElement('div');
+    let div = this.createElement(TAG.DIV);
     div.id = id;
     div.className = 'aonMobileMenu';
     if(this.isSab()) {
@@ -188,7 +188,7 @@ export class AonMobileMenu extends AonElement {
     const idSpan = this.id + app.name;
     let span = this.getElement(idSpan);
     if(!span){
-      span = this.createElement('span');
+      span = this.createElement(TAG.SPAN);
       let menu = this.getElement(`${this.id}Sidenav`);
       let n = (window.innerWidth / 5 - 40) / 2;
       span.id = idSpan;

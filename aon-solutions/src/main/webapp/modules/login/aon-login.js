@@ -197,10 +197,10 @@ export class AonLogin extends AonElement {
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
       if(this.tag >= 5){
-        let baseUrl = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
+        const BASE_URL_MOBILE = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
         actionMobile({
           action:"setBaseUrl",
-          BASE_URL_MOBILE: baseUrl
+          BASE_URL_MOBILE
         });
         this.tag = 0;
       }
