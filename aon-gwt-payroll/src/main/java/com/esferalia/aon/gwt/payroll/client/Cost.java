@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -132,12 +133,14 @@ public class Cost extends ResizeComposite {
 				MenuItem summaryItem = addItem("Resumen Anual Agregado", () -> {},
 						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				summaryItem.setScheduledCommand(() -> {
-					
-					if (costDocuments != null)
-						for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments
-							.getCosts()) {
-							availableYears.add(cost.getYear());
-						}
+					availableYears.clear();
+					if (costDocuments != null && costDocuments.getCosts() != null) {
+						costDocuments.getCosts()
+						.stream()
+						.map(c -> c.getYear())
+						.sorted(Comparator.reverseOrder())
+						.forEach(y -> availableYears.add(y));
+					}
 					
 					if (availableYears != null & !availableYears.isEmpty()) {
 						
@@ -161,12 +164,14 @@ public class Cost extends ResizeComposite {
 				MenuItem recordItem = addItem("Registro Retributivo", () -> {},
 						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				recordItem.setScheduledCommand(() -> {
-					
-					if (costDocuments != null)
-						for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments
-							.getCosts()) {
-							availableYears.add(cost.getYear());
-						}
+					availableYears.clear();
+					if (costDocuments != null && costDocuments.getCosts() != null) {
+						costDocuments.getCosts()
+						.stream()
+						.map(c -> c.getYear())
+						.sorted(Comparator.reverseOrder())
+						.forEach(y -> availableYears.add(y));
+					}
 					
 					if (availableYears != null & !availableYears.isEmpty()) {
 						
