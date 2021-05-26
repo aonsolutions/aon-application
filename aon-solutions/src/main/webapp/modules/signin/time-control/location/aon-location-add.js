@@ -126,7 +126,7 @@ export class AonLocationAdd extends AonElement {
     iframe.frameborder = 0;
     iframe.style = "border:0;height: 400px;width: 100%;";
     if (data && data.latitude && data.longitude) {
-      iframe.src = `https://maps.google.es/maps?q=${data.latitude},${data.longitude}&z=${zoom}&output=embed&hl=es`;
+      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
     } else {
       iframe = this.iframeOnload(iframe, zoom);
     }
@@ -242,7 +242,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    this.applicationEl.back();
+    this.applicationEl.getParent().showView(SIGNIN_VIEWS.AON_LOCATION_LIST);
   }
 }
 
