@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -10,6 +12,8 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -199,7 +203,7 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
-			if(inv.getRegistryData().getId() == null) {
+			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
@@ -243,9 +247,58 @@ public class InvoiceAutoComplete {
 	};
 	
 	/**
-	 * Aseguramos el nombre del titular de la factura.
+	 * Aseguramos los detalles de la factura.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
+		if((inv.getDetails() == null || inv.getDetails().size() == 0) && inv.getBreakdown() != null) {		
+			Account acc = ACCOUNTING.getAccount(ctx.getContext(), inv.getTediCategory());
+			LinkedList<InvoiceDetail> invoiceDetails = new LinkedList<>();
+			InvoiceBreakdown ret = inv.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
+			inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).forEach(b -> {
+				LinkedList<InvoiceTax> invoiceTax = new LinkedList<>();
+				if(ret != null) {
+					InvoiceTax it1 = new InvoiceTax()
+							.setDomain(inv.getDomain())
+							.setBase(b.getBase())
+							.setPercentage(ret.getPercentage())
+							.setQuota(b.getBase() * ret.getPercentage() / 100)
+							.setTaxType(TaxType.RETENTION)
+							.setWithholding(true)
+							.setWithholdingType(b.getWithholdingType());
+					invoiceTax.add(it1);
+				}
+				
+				InvoiceTax it = new InvoiceTax()
+						.setDomain(inv.getDomain())
+						.setTaxType(TaxType.VAT)
+						.setBase(b.getBase())
+						.setPercentage(b.getPercentage())
+						.setQuota(b.getQuota())
+						.setSurcharge(b.getSurcharge())
+						.setSurchargeQuota(b.getSurchargeQuota())
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						.setDeductiblePercent(100.0)
+						.setDeductibleQuota(b.getQuota());
+				invoiceTax.add(it);
+				
+				InvoiceDetail id = new InvoiceDetail()
+						.setAccount(acc.getId())
+						.setAccountCode(acc.getCode())
+						.setAccountDescription(acc.getDescription())
+						.setDescription(AonStringUtils.isBlank(acc.getDescription()) 
+								? "IVA " + b.getPercentage() : acc.getDescription())
+						.setDomain(inv.getDomain())
+						.setInvoice(inv)
+						.setInvoiceTaxes(invoiceTax)
+						.setPrice(b.getBase())
+						.setQuantity(1)
+						.setTaxableBase(b.getBase())
+						.setSource(InvoiceSource.TEDI)
+						.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
+				invoiceDetails.add(id);
+			});
+			inv.setDetails(invoiceDetails);
+		}
 		inv.getDetails().stream().forEach(detail -> {
 
 			detail.setDomain(inv.getDomain());
@@ -260,6 +313,7 @@ public class InvoiceAutoComplete {
 			if(detail.getWorkPlace() == null) {
 				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
 			}
+			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
 				Account acc = AccountDAO.get(ctx.getContext(), detail.getAccountCode());
 				if(acc != null && acc.getId() != null) {
@@ -267,7 +321,7 @@ public class InvoiceAutoComplete {
 					detail.setAccountDescription(acc.getDescription());
 				}
 			}
-			
+						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
 					&& detail.getAccountCode() != null) {
@@ -292,7 +346,7 @@ public class InvoiceAutoComplete {
 							.setProduct(p)
 							.setDescription(detail.getDescription())
 							.setPrice(detail.getPrice());
-						
+					
 					i = ItemDAO.save(ctx.getContext(), i);
 
 				}
@@ -312,6 +366,8 @@ public class InvoiceAutoComplete {
 			if(finance.getFinanceStatus() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
+			
+			finance.setPayment(!inv.isSales());
 			
 			if(finance.getPayMethod() == null && finance.getPayMethodType() != null) {
 				PayMethod pm = PayMethodDAO.get(ctx.getContext(), f -> f.getTypeProperty().eq(finance.getPayMethodType().value()));

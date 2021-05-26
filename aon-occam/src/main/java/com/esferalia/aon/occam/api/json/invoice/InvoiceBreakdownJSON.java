@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceBreakdownJSON {
 
@@ -27,7 +28,8 @@ public class InvoiceBreakdownJSON {
 				.setPercentage(JsonUtils.getdouble(json, IJsonNames.PERCENTAGE))
 				.setQuota(JsonUtils.getdouble(json, IJsonNames.QUOTA))
 				.setSurcharge(JsonUtils.getdouble(json, IJsonNames.SURCHARGE))
-				.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA));
+				.setSurchargeQuota(JsonUtils.getdouble(json, IJsonNames.SURCHARGE_QUOTA))
+				.setWithholdingType(WithholdingType.safeValueOf(json.optString(IJsonNames.WITHHOLDING_TYPE)));
 	}
 	
 	public static JSONArray toJSON(LinkedList<InvoiceBreakdown> breakdown) {
@@ -40,6 +42,7 @@ public class InvoiceBreakdownJSON {
 	public static JSONObject toJSON(InvoiceBreakdown breakdown) {
 		return new JSONObject()
 				.put(IJsonNames.TAX, breakdown.getTaxType().getName2())
+				.put(IJsonNames.TYPE, breakdown.getTaxType().getName2())
 				.put(IJsonNames.BASE, breakdown.getBase())
 				.put(IJsonNames.PERCENTAGE, breakdown.getPercentage())
 				.put(IJsonNames.QUOTA, breakdown.getQuota())

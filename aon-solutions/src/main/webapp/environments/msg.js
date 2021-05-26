@@ -34,6 +34,7 @@ export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
 export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
+export const ACTIVITY = 'Actividad';
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
@@ -311,6 +312,7 @@ export const USERS = MSG.USERS;
 // ----- V
 
 export const VAT = MSG.VAT;
+export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
 

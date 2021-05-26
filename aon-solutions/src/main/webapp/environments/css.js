@@ -142,6 +142,8 @@ export const AON_INPUT_LIST_OPTIONS_ITEM = 'aonInputListOptionsItem';
 export const AON_INPUT_NOT_EMPTY = 'aonInputNotEmpty';
 export const IS_VISIBLE = 'aon-visible';
 export const AON_INPUT_ICON_LABEL = 'aonInputIconLabel';
+export const AON_INPUT_IOS = 'aonInputIos';
+
 // aon-input-loading.css
 
 export const AON_ICON_CONTAINER = 'aonIconContainer';
