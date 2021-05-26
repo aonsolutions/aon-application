@@ -38,12 +38,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
-import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
-import net.aonsolutions.aon.tedi.AonParser;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -139,7 +137,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, setInvoice(api.getDomain(), api.getUser().getLogin(), api.getData()));
+				response(req, resp, setInvoice(api));
 				break;
 			case "/selfconta":
 				response(req, resp, setSelfcontaInvoice(api));
@@ -165,7 +163,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, setInvoice(api.getDomain(), api.getUser().getLogin(), api.getData()));
+				response(req, resp, setInvoice(api));
 				break;
 			case "/accept":
 				response(req, resp, acceptInvoice(api));
@@ -369,7 +367,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), api.getData());
 	}
 	
-	public static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
+	public static JSONObject setInvoice(AonApiData api) {
+		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		JSONObject json = api.getData();
 		JSONObject file = null;
 		
 		if(json.opt("file")!= null) { 
@@ -399,18 +400,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.setMimeType(MimeType.get(contentType));
 
 			// TEDI PARSER!!!		    
-		    
-		    InputStream input = new ByteArrayInputStream(fileData);
-		    TediContext tctx = new TediContext()
+		    if(api.getDur().isOcr()) {
+		    	InputStream input = new ByteArrayInputStream(fileData);
+		    	TediContext tctx = new TediContext()
 		    		.setDomainName(domain.getName())
 		    		.setDomain(domain.getId())
 		    		.setUser(login);
-			try {
-		    	TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
-		    	json = TediInvoiceJSON.toJSON(r.getTedi());
-			} catch (TediException e) {
-				e.printStackTrace();
-			}
+		    	try {
+		    		TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
+		    		json = TediInvoiceJSON.toJSON(r.getTedi());
+		    	} catch (TediException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
     	rawdoc.setJson(json.toString());
     	rawdoc.setLog(json.opt("comments") != null? json.optJSONArray("comments").toString(): "[]");
