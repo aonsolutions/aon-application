@@ -145,6 +145,15 @@
 			height: 1.32em;
 		}
 		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.paymentPos{
+			width: 40px;
+			text-align: center;
+		}
+		
 	</ui:style>
 	
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{style.body}">
@@ -235,8 +244,11 @@
 								<g:HTMLPanel ui:field="paymentCRAPanel" />
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flexColumn2}">
-								<g:Label styleName="{style.title}">Devengo</g:Label>
-								<g:TextBox ui:field="paymentDescription" />
+								<g:Label styleName="{style.title}">Descripción</g:Label>
+								<g:HTMLPanel styleName="{style.flex}">
+									<g:TextBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />
+									<g:TextBox ui:field="paymentDescription" styleName="{style.widthAll}" />
+								</g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.flexColumn2}">
 								<g:Label styleName="{style.title}">Expresión</g:Label>
