@@ -1,5 +1,13 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.SELECTED_SALARIES;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.DOMAIN;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.USER;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.YEAR;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.MONTH;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.ENTERPRISE;
+import static com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService.Params.WORKPLACE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
@@ -31,10 +39,7 @@ import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Cost-PDF", 
-			urlPatterns = { "/aon_gwt_aio/cost_pdf/*", 
-							"/aon_gwt_payroll/cost_pdf/*" 
-			})
+@WebServlet(name = "Cost-PDF", urlPatterns = { "/aon_gwt_aio/cost_pdf/*", "/aon_gwt_payroll/cost_pdf/*" })
 public class CostPDFServlet extends HttpServlet {
 
 	private static Map<String, OutputFormat> OUTPUT_FORMATS = new HashMap<String, OutputFormat>() {
@@ -42,23 +47,23 @@ public class CostPDFServlet extends HttpServlet {
 			put("pdf", OutputFormat.PDF);
 		}
 	};
-	
-	
+
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String request = AonServletUtils.getFileName(req.getRequestURI());
-		String selectedSalaries = req.getParameter("selectedSalaries");
+		String selectedSalaries = req.getParameter(SELECTED_SALARIES.getName());
+		String domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName())
+				: req.getServerName();
+		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		Integer[] salaryIds = getSalaryIds(req, selectedSalaries);
 		LinkedList<Salary.Type> typeList = new LinkedList<Salary.Type>();
-		
-		
+
 		Iterator<String> it = req.getParameterMap().keySet().iterator();
 		while (it.hasNext()) {
 			String n = it.next();
-			System.out.println(n+": "+req.getParameterMap().get(n));
+			System.out.println(n + ": " + req.getParameterMap().get(n));
 		}
-		
+
 		if (req.getParameter("salary") != null && req.getParameter("salary").equals("1"))
 			typeList.add(Salary.Type.SALARY);
 		if (req.getParameter("extra") != null && req.getParameter("extra").equals("1"))
@@ -67,40 +72,33 @@ public class CostPDFServlet extends HttpServlet {
 			typeList.add(Salary.Type.SETTLE);
 		if (req.getParameter("delay") != null && req.getParameter("delay").equals("1"))
 			typeList.add(Salary.Type.DELAY);
-		
+
 		Type[] types = typeList.toArray(new Salary.Type[typeList.size()]);
-		
-		
-		
+
 		if (salaryIds.length > 0) {
-			
-			String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) != null ?
-					Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) :
-					req.getServerName();
-			
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream()
-					, domainName
-					, salaryIds
-					, getMonth(AonServletUtils.getFileName(req.getRequestURI()))
-					, getEnterpriseId(request)
-					);
-		}
-		else
-			noIds(resp.getOutputStream(), req.getServerName(), request, types);
-		
-		
+
+//			String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) != null ?
+//					Utilities.getDomainNameByEnterpriseId(req.getServerName(), getEnterpriseId(request)) :
+//					req.getServerName();
+
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, salaryIds,
+					getMonth(AonServletUtils.getFileName(req.getRequestURI())), getEnterpriseId(request));
+		} else
+			noIds(resp.getOutputStream(), domainName, user, request, types);
+
 	}
 
-	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Integer enterpriseId;
 		Integer workplaceId;
 		Integer month;
 		Integer year;
+		String domainName;
+		String user;
 		Salary.Type[] types;
-		
-		//Picking up the parameters
+
+		// Picking up the parameters
 		{
 			if (req.getParameterValues("filter") != null)
 				types = Arrays.stream(req.getParameterValues("filter")).map(str -> {
@@ -110,16 +108,19 @@ public class CostPDFServlet extends HttpServlet {
 				}).toArray(Salary.Type[]::new);
 			else
 				types = new Salary.Type[0];
-			
-			enterpriseId = req.getParameter("enterpriseId") != null ? Integer.parseInt(req.getParameter("enterpriseId")) : null;
-			workplaceId = req.getParameter("workplaceId") != null ? Integer.parseInt(req.getParameter("workplaceId")) : null;
-			month = Integer.parseInt(req.getParameter("month"));
-			year = Integer.parseInt(req.getParameter("year"));
-			
+
+			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null
+					? Integer.parseInt(req.getParameter(ENTERPRISE.getName()))
+					: null;
+			workplaceId = req.getParameter(WORKPLACE.getName()) != null
+					? Integer.parseInt(req.getParameter(WORKPLACE.getName()))
+					: null;
+			month = Integer.parseInt(req.getParameter(MONTH.getName()));
+			year = Integer.parseInt(req.getParameter(YEAR.getName()));
+			domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName())
+					: req.getServerName();
+			user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		}
-		
-		
-		
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
@@ -131,42 +132,27 @@ public class CostPDFServlet extends HttpServlet {
 		Date startDate = calendar.getTime();
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
-		
-		String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) != null ?
-				Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) :
-				req.getServerName();
-		
-		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
-				resp.getOutputStream()
-				, domainName
-				, startDate
-				, endDate
-				, enterpriseId
-				, workplaceId
-				, types
-				);
-		
-		
-		
+
+//		String domainName = Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) != null ?
+//				Utilities.getDomainNameByEnterpriseId(req.getServerName(), enterpriseId) :
+//				req.getServerName();
+
+		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, startDate,
+				endDate, enterpriseId, workplaceId, types);
+
 	}
 
-
-
-
-
-
-
-	private static Date getMonth (String request) {
+	private static Date getMonth(String request) {
 		Calendar calendar = Calendar.getInstance();
 		Matcher matcher = MONTH_PATTERN.matcher(request);
 		Integer month = null;
 		if (matcher.matches()) {
-			calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group("month"))+1);
+			calendar.set(Calendar.MONTH, Integer.parseInt(matcher.group("month")) + 1);
 			return calendar.getTime();
 		} else
 			return null;
 	}
-	
+
 // ------------------------------------------------------------------------
 
 	protected String getReportKey(String domain, final Integer enterpriseID, SalaryType salaryType)
@@ -174,8 +160,9 @@ public class CostPDFServlet extends HttpServlet {
 		return PayrollServletUtils.getSalaryReport(domain, enterpriseID, salaryType);
 	}
 
-	private static Pattern MONTH_PATTERN = Pattern.compile("(?<month>\\d{1,2})_(?<year>\\d{4})_(?<enterpriseid>\\d+)_(?<workplaceid>\\d+)");
-	
+	private static Pattern MONTH_PATTERN = Pattern
+			.compile("(?<month>\\d{1,2})_(?<year>\\d{4})_(?<enterpriseid>\\d+)_(?<workplaceid>\\d+)");
+
 	private Integer[] getSalaryIds(HttpServletRequest req, String selectedSalaries) {
 		ArrayList<Integer> _selectedSalaries = new ArrayList<>();
 		try {
@@ -189,18 +176,19 @@ public class CostPDFServlet extends HttpServlet {
 					_selectedSalaries.add(Integer.parseInt(idString));
 				}
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return _selectedSalaries.toArray(new Integer[_selectedSalaries.size()]);
 	}
-	
-	
-	private static void noIds (OutputStream outputStream, String domainName, String request, Salary.Type[] types) {
+
+	private static void noIds(OutputStream outputStream, String domainName, String user, String request,
+			Salary.Type[] types) {
 
 		Matcher matcher = MONTH_PATTERN.matcher(request);
 		if (matcher.matches()) {
 			int month = Integer.parseInt(matcher.group("month"));
 			int year = Integer.parseInt(matcher.group("year"));
-	
+
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.YEAR, year);
 			calendar.set(Calendar.MONTH, month);
@@ -211,33 +199,23 @@ public class CostPDFServlet extends HttpServlet {
 			Date startDate = calendar.getTime();
 			calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date endDate = calendar.getTime();
-	
+
 			int enterpriseId = Integer.parseInt(matcher.group("enterpriseid"));
 			int workplaceId = Integer.parseInt(matcher.group("workplaceid"));
-			
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(outputStream
-					, domainName
-					, startDate
-					, endDate
-					, enterpriseId
-					, workplaceId
-					);
+
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(outputStream, domainName, user, startDate, endDate,
+					enterpriseId, workplaceId);
 		}
 
 	}
-	
-	
-	private static Integer getEnterpriseId (String request) {
+
+	private static Integer getEnterpriseId(String request) {
 		Matcher matcher = MONTH_PATTERN.matcher(request);
 		if (matcher.matches()) {
 			return Integer.parseInt(matcher.group("enterpriseid"));
 		}
 		return null;
 	}
-	
-	
-	
-	
 
 	private static String getEntryPoint(HttpServletRequest request) {
 		return ((GWT) request.getSession().getAttribute("gwt")).getEntryPoint();

@@ -17,26 +17,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.jooq.tables.Salary;
-import com.esferalia.aon.jooq.tables.Workplace;
-import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -55,8 +49,8 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param enterpriseId
 	 * @param workplaceId
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
-		try (AONContext aonContext = AONContext.getAONContext(domain, "")) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
+		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
 			DSLContext ctx = aonContext.getDslContext();
 			
 			Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
@@ -65,7 +59,7 @@ public class JooqEnterpriseSalaryBuilder {
 			if (enterpriseId == null || enterpriseId == 0)
 				enterpriseId = AON.getWorkplace(aonContext.getDomainName()
 						, aonContext.getDomainId()
-						, ""
+						, aonContext.getUser()
 						, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
 			
 			AtomicInteger entId = new AtomicInteger(enterpriseId);
@@ -109,7 +103,7 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param enterpriseId
 	 * @param workplaceId
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Date startDate, Date endDate, int enterpriseId, Integer workplaceId) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId) {
 		Condition condition;
 		if (workplaceId != null && workplaceId != 0)
 			condition = WORKPLACE.ID.eq(workplaceId);
@@ -117,7 +111,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
 		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
-		generateEnterprisePayroll(outputStream, domain, condition, startDate, enterpriseId, workplaceId);
+		generateEnterprisePayroll(outputStream, domain, user, condition, startDate, enterpriseId, workplaceId);
 	}
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
@@ -129,7 +123,7 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param workplaceId
 	 * @param types Salary types that will be displayed
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
 		Condition condition;
 		if (workplaceId != null && workplaceId != 0)
 			condition = WORKPLACE.ID.eq(workplaceId);
@@ -141,7 +135,7 @@ public class JooqEnterpriseSalaryBuilder {
 		Collection<Integer> typeInts = Arrays.stream(types).map(t -> t.ordinal()).collect(Collectors.toList());
 		
 		condition = condition.and(SALARY.TYPE.in(typeInts));
-		generateEnterprisePayroll(outputStream, domain, condition, startDate, enterpriseId, workplaceId);
+		generateEnterprisePayroll(outputStream, domain, user, condition, startDate, enterpriseId, workplaceId);
 	}
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
@@ -151,9 +145,9 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param month A date containing the month and the year of the payroll
 	 * @param enterpriseId
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer[] salaryIds, Date month, Integer enterpriseId) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Integer[] salaryIds, Date month, Integer enterpriseId) {
 		Condition condition = SALARY.ID.in(salaryIds);
-		generateEnterprisePayroll(outputStream, domain, condition, month, enterpriseId, null);
+		generateEnterprisePayroll(outputStream, domain, user, condition, month, enterpriseId, null);
 	}
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
@@ -164,13 +158,13 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param enterpriseId
 	 * @param types Salary types that will be displayed
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer[] salaryIds, Date month, Integer enterpriseId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Integer[] salaryIds, Date month, Integer enterpriseId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
 		Condition condition = SALARY.ID.in(salaryIds);
 		
 		Collection<Integer> typeInts = Arrays.stream(types).map(t -> t.ordinal()).collect(Collectors.toList());
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		
-		generateEnterprisePayroll(outputStream, domain, condition, month, enterpriseId, null);
+		generateEnterprisePayroll(outputStream, domain, user, condition, month, enterpriseId, null);
 	}
 
 	/**
