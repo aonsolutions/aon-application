@@ -1,10 +1,11 @@
 import { AonCard } from "../../components/aon-card.js";
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
+import { AonSwitch } from "../../components/aon-switch.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { TAG } from "../../environments/environments.js";
-import { newComponent, setAttributes } from "../../services/utils.js";
-import { createDate, createForm, createInput, createSelect } from "../notification/createComponent.js";
+import { formatDateOrigin, newComponent, setAttributes } from "../../services/utils.js";
+import { createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
@@ -74,6 +75,7 @@ export const createCardEnterprise = (parent) => {
     divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-4"]})
     divC.appendTo(parent);
     let aonConvenio = new AonSuggestion();
+    aonConvenio.addEventListener("keyup", ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
     setAttributes(aonConvenio,{
         id:"convenio",
         title:"Convenio (opcional)",
@@ -102,12 +104,15 @@ export const createCardContract = (parent, id, isButton) => {
             title:"Tipo de contrato",
             autocomplete: "off",
             readonly: "false"
+        },
+        events:{
+            
         }
     }, divC.element);
  
     divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]})
     divC.appendTo(parent);
-    createDate({
+    const dateContract = createDate({
         attributes:{
             name:"fecha", 
             id:"fecha", 
@@ -195,7 +200,7 @@ export const createCardContract = (parent, id, isButton) => {
     }, parent);
 
     if(isButton){
-        let divB = createDiv({  styles:{textAlign: 'center'} });
+        let divB = createDiv({ styles:{textAlign: 'center'} });
         divB.appendTo(parent);
         let button = document.createElement(TAG.BUTTON);
         button.className="aonButton";
@@ -206,8 +211,120 @@ export const createCardContract = (parent, id, isButton) => {
         divB.element.appendChild(button);
     }
 
+    dateContract.value = formatDateOrigin(new Date());
     addSpanDecimal();
 }
+
+export const createCardEmployee = (parent, id) => {
+    let divT;
+    divT = createDiv({
+        classes:["aonCol-sm-12", "aonCol-md-4"],
+        styles:{
+            paddingTop: "18px",
+            paddingBottom: "10px"
+        }
+    })
+    divT.appendTo(parent);
+    let aonSwitch = setAttributes(new AonSwitch(),{
+        id:"switchDni", 
+        title:"Buscar por DNI"
+    })
+    divT.appendChild(aonSwitch);
+
+    let divReiniciar = createDiv({
+        attributes:{
+            id:id+"Reiniciar",
+            hidden: true,
+        },
+        styles:{
+            marginTop:"-15px" 
+        }
+    });
+    divReiniciar.appendTo(divT);
+    let span = document.createElement(TAG.SPAN);
+    span.textContent = "Reiniciar";
+    divReiniciar.appendChild(span);
+    createIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
+
+    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-4"] })
+    divT.appendTo(parent);
+    let divNss = createDiv({ attributes:{id: id+"NssDiv"} });
+    divNss.appendTo(divT.element);
+    createInputC({
+        attributes:{
+            name:"nss",
+            id: id+"Nss", 
+            description:"NSS/NAF", 
+            autocomplete:"on"
+        }
+    }, divNss.element);
+
+
+    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-4"] })
+    divT.appendTo(parent);
+    let divDni = createDiv({ attributes:{id: id+"DniDiv"} });
+    divDni.appendTo(divT.element);
+    createInputC({
+        attributes:{
+            name:"ipf",
+            id: id+"Dni", 
+            description:"DNI/NIE", 
+            autocomplete:"on",
+            disabled: true
+        }
+    }, divDni.element);
+
+    let divSurnames = createDiv({ attributes:{id:"div_apellidos", hidden:true} });
+    divSurnames.appendTo(parent);
+    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
+    divT.appendTo(divSurnames.element);
+    createInputC({
+        attributes:{
+            name:"apellido1",
+            id:"apellido1",
+            description:"1er Apellido",
+            type:"text",
+        }
+    }, divT.element);
+    
+    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
+    divT.appendTo(divSurnames.element);
+    createInputC({
+        attributes:{
+            name:"apellido2",
+            id:"apellido2",
+            description:"2do Apellido",
+            type:"text",
+        }
+    }, divT.element);
+
+    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-12", "aonCol-xs-12"] })
+    divT.appendTo(parent);
+    createInputC({
+        attributes:{
+            name:"nombre",
+            id:"nombre",
+            description:"Nombre",
+            type:"text",
+            disabled: "true"
+        }
+    }, divT.element);
+
+    addIconSurname();
+}
+
+const addIconSurname = () => {
+    const surnameTwo = document.getElementById("apellido2");
+    if(surnameTwo){
+        surnameTwo.addAonIcon("aon_seg_social");
+        if(surnameTwo.getIcon()){
+            let iass = surnameTwo.getIcon().querySelector("aon-icon");
+            if(iass)
+                iass.size = "18px";
+        }
+    }
+}
+
 
 const createDiv = (properties) =>  newComponent({
     type: TAG.DIV,

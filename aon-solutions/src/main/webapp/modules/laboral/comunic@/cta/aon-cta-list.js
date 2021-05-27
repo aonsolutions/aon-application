@@ -59,17 +59,17 @@ export class AonCtaList extends AonElement {
   }
 
   async getTableDesk() {
-    const aonCtaTable = this.getElement(this.TABLE_ID);
-    if (aonCtaTable) {
-      aonCtaTable.addColumn("Tipo", "string", "tipo", "20%");
-      aonCtaTable.addColumn("Cuenta de cotización", "string", "ccc", "40%");
-      aonCtaTable.addColumn("Provincia", "string", "geozone", "35%");
-      aonCtaTable.addColumn("Opción", "fn", "option", "5%");
+    const aonTable = this.getElement(this.TABLE_ID);
+    if (aonTable) {
+      aonTable.addColumn("Tipo", "string", "tipo", "20%");
+      aonTable.addColumn("Cuenta de cotización", "string", "ccc", "40%");
+      aonTable.addColumn("Provincia", "string", "geozone", "35%");
+      aonTable.addColumn("Opción", "fn", "option", "5%");
       try {
         const resp = await this.getData();
-        aonCtaTable.removeRows();
+        aonTable.removeRows();
         resp.map((res) => {
-          aonCtaTable.addRow({
+          aonTable.addRow({
             ...res,
             ccc: `${res.cccRegimeCode} - ${res.ccc}`,
             option: this.getOptions(res),
@@ -82,14 +82,14 @@ export class AonCtaList extends AonElement {
   }
 
   async getTableMobile() {
-    const aonCtaTable = this.getElement(this.TABLE_ID);
-    if (aonCtaTable) {
-      aonCtaTable.createAonDialog();
+    const aonTable = this.getElement(this.TABLE_ID);
+    if (aonTable) {
+      aonTable.createAonDialog();
       try {
         const resp = await this.getData();
-        aonCtaTable.removeAllLi();
+        aonTable.removeAllLi();
         resp.map((res, idx) => {
-          aonCtaTable.addLi(
+          aonTable.addLi(
             {
               icon: "assignment",
               title: `${res.cccRegimeCode} - ${res.ccc}`,

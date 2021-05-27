@@ -65,7 +65,7 @@ export class AonLocationAdd extends AonElement {
   }
 
 
-  async build() {
+  build() {
     this.paintView();
     this.buildToolbar();
   }

@@ -1,25 +1,23 @@
 import { AON_TAGS } from "../environments/aonTag.js";
-import { DAYS, MONTHS } from "../environments/msg.js";
+import { DAYS, MONTHS } from "../models/enums.js";
 
-export const getReader = (file) => {
-  return new Promise((resolve) => {
-    const READER = new FileReader();
-    READER.readAsDataURL(file);
-    READER.onload = () => {
-      const { result } = READER;
-      const { name, size, type: contentType } = file;
-      const base64File = result.split(',')[1];
-      const datos = {
-        content: base64File,
-        contentType,
-        contentEncoding: 'base64',
-        name,
-        size
-      };
-      resolve(datos);
-    };
-  });
-}
+export const getReader = (file) =>  new Promise((resolve) => {
+  const READER = new FileReader();
+  READER.readAsDataURL(file);
+  READER.onload = () => {
+    const { result } = READER;
+    const { name, size, type: contentType } = file;
+    const base64File = result.split(',')[1];
+    resolve({
+      content: base64File,
+      contentType,
+      contentEncoding: 'base64',
+      name,
+      size
+    });
+  };
+});
+
 
 export const formatBytes = (a,b=2)=>{if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
 
@@ -106,9 +104,7 @@ export const decimalAdjust = (type, value, exp) => {
  * @returns {Obj} values form 
  */
 export const serializeForm = (form) => {
-  let inputs = [
-    ...form.querySelectorAll(AON_TAGS)
-  ];
+  let inputs = [...form.querySelectorAll(AON_TAGS)];
   let obj = {};
   inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
   return obj;
@@ -231,9 +227,7 @@ export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, local
 export const disabledForm = (formId, elems) => {
   let elems_disabled = AON_TAGS;
   if (elems) elems_disabled = elems + ', ' + AON_TAGS;
-  [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => {
-      el.disabled = true;
-  })
+  [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => el.disabled = true);
 }
 
 /**
@@ -313,8 +307,7 @@ export const scrollInfinite = (element, fn) => {
 export const setAttributes = (element, attributes) =>{
   if(element && attributes) 
       for (const key in attributes)  
-          element.setAttribute(key,attributes[key]);
-
+        element.setAttribute(key,attributes[key]);
   return element;
 }
 
@@ -326,8 +319,7 @@ export const setAttributes = (element, attributes) =>{
 export const setDataset = (element,dataset) => {
   if(element && dataset) 
       for (const key in dataset) 
-          element.dataset[key] = dataset[key];
-  
+        element.dataset[key] = dataset[key];
   return element;
 }
 
@@ -339,8 +331,7 @@ export const setDataset = (element,dataset) => {
 export const setEvents =(element,events) => {
   if(element && events) 
       for (const key in events)  
-          element.addEventListener(key,events[key]);
-
+        element.addEventListener(key,events[key]);
   return element;
 }
 
@@ -353,7 +344,6 @@ export const setStyles = (element,styles) => {
   if(element && styles) 
     for (const key in styles)  
       element.style[key] = styles[key];  
-
   return element;
 }
 
@@ -366,5 +356,4 @@ export const setClasses = (element,classes) => {
   if(element && classes) 
     classes.forEach(cl => element.classList.add(cl));
   return element;
-
 }
