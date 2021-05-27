@@ -210,7 +210,7 @@ export class AonMovementsList extends AonElement {
   }
 
   includeSearch(str){
-    return str.toLowerCase().includes(this.searchFilter.toLowerCase());
+    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
   }
   
 }

@@ -1,8 +1,8 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT } from "../environments/environments.js";
-import "./aon-checkbox.js";
-import "./aon-dialog-menu.js";
-import "./aon-icon-button.js";
+import { CONSTANT, EVENT, TAG } from "../environments/environments.js";
+import { AonIconButton } from "./aon-icon-button.js";
+import { AonCheckbox } from "./aon-checkbox.js";
+import { AonDialogMenu } from "./aon-dialog-menu.js";
 
 export class AonTable extends AonElement {
   columns;
@@ -33,25 +33,28 @@ export class AonTable extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    this.innerHTML = `
-				<aon-dialog-menu id="${this.getId() + "aonDialogAddOption"}" ></aon-dialog-menu>
-				<table class="aonTable">
-					<thead>
-						<tr id="${this.THEADER}" >
+    let aonDialogM = new AonDialogMenu();
+    aonDialogM.id = this.getId()+"aonDialogAddOption";
+    this.appendChild(aonDialogM);
+    
+    let table = this.createElement(TAG.TABLE);
+    table.className = "aonTable";
+    this.appendChild(table);
 
-						</tr>
-					</thead>
-					<tbody id="${this.TBODY}">
+    let thead = this.createElement("thead");
+    table.appendChild(thead);
+    let tr = this.createElement(TAG.TR);
+    tr.id = this.THEADER;
+    thead.appendChild(tr);
 
-					</tbody>
-				</table>
-			`;
+    let tbody = this.createElement("tbody");
+    tbody.id = this.TBODY;
+    table.appendChild(tbody);
 
     if (this.hasAttribute("selectable")){
       this.paintCheckboxHeader();
     }
 
-    let tbody = this.getElement(this.TBODY);
     if (
       localStorage.getItem("aon_solutions") === undefined ||
       localStorage.getItem("aon_solutions") === null
@@ -97,13 +100,15 @@ export class AonTable extends AonElement {
     const idCheckBox = this.getId()+"checkboxHeader";
     let header = this.getElement(this.getId() + "TableHeader");
     if( !this.getElement(idCheckBox)){
-      let th = document.createElement("th");
+      let th = this.createElement(TAG.TH);
       th.id = idCheckBox;
       th.style.width = "5%";
-      th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
+      let aonCheckbox = new AonCheckbox();
+      aonCheckbox.id = "aonTableAllSelection";
+      th.appendChild(aonCheckbox);
       header.appendChild(th);
       let ch = this.getElement("aonTableAllSelection");
-      ch.addEventListener("change", () => {
+      ch.addEventListener(EVENT.CHANGE, () => {
         document.querySelectorAll("aon-checkbox").forEach((item, i) => {
           if (item.value != ch.value) {
             let it = this.getElement(item.id + "Input");
@@ -120,7 +125,7 @@ export class AonTable extends AonElement {
       this.paintCheckboxHeader();
     }
     let header = this.getElement(this.getId() + "TableHeader");
-    let th = document.createElement("th");
+    let th = this.createElement(TAG.TH);
     th.innerHTML = name;
     th.style.width = width;
     this.columns.push({ name, type, id, width });
@@ -129,34 +134,39 @@ export class AonTable extends AonElement {
 
   addColumnIcon(name, type, id, width, fn) {
     let header = this.getElement(this.getId() + "TableHeader");
-    let th = document.createElement("th");
-    th.innerHTML = `<aon-icon-button id="${this.getId()}Back" icon="${name}" noHover="true"></aon-icon-button>`;
+    let th = this.createElement(TAG.TH);
+    let aonIconB = new AonIconButton();
+    aonIconB.id = this.getId()+"Back";
+    aonIconB.icon = name;
+    aonIconB.noHover = "true";
+    th.appendChild(aonIconB);
     th.style.width = width;
     this.columns.push({ name, type, id, width });
     header.appendChild(th);
     let iconBack = this.getElement(`${this.getId()}Back`);
     if(iconBack) {
       iconBack.firstChild.style.paddingTop = "15px";
-      iconBack.addEventListener('click', e => fn(e))
+      iconBack.addEventListener(EVENT.CLICK, e => fn(e))
     }
   }
 
   addRow(value, fn, contextMenu) {
     let body = this.getElement(this.getId() + "TableBody");
     if (!body) return true;
-    let tr = document.createElement("tr");
+    let tr = this.createElement(TAG.TR);
     tr.style.cursor = "pointer";
 
     body.appendChild(tr);
     let checkBoxId = `aaa${body.children.length}`;
     if (this.hasAttribute("selectable")) {
-      let tdCheckBox = document.createElement("td");
+      let tdCheckBox = this.createElement(TAG.TD);
       tdCheckBox.style.width = "5%";
-      let checkBoxId = `aaa${body.children.length}`;
-      tdCheckBox.innerHTML = `<aon-checkbox id="aaa${body.children.length}"> </aon-checkbox>`;
+      let aonCheckbox = new AonCheckbox();
+      aonCheckbox.id = "aaa"+body.children.length;
+      tdCheckBox.appendChild(aonCheckbox);
       tr.appendChild(tdCheckBox);
       let checkbox = this.getElement(`aaa${body.children.length}`);
-      checkbox.addEventListener("change", () => {
+      checkbox.addEventListener(EVENT.CHANGE, () => {
         if (checkbox.getValue()) {
           this.selected.push(value);
           tr.style.backgroundColor = "aliceblue";
@@ -173,19 +183,22 @@ export class AonTable extends AonElement {
     }
 
     this.columns.forEach((item, i) => {
-      let td = document.createElement("td");
+      let td = this.createElement(TAG.TD);
       td.style.width = item.width;
       // if("number" === item.type) {
       //   td.style.textAlign = "right";
       //   td.style.paddingRight = "2%";
       // }
       let id = item.id;
-      if ("option" === id) {
-        td.innerHTML = `<aon-icon-button id="${this.getId()}IconOption" icon="more_vert"></aon-icon-button>`;
-        td.addEventListener("click", () => this.getOptions(tr, td, value[id]));
+      if ("option" === id && value[id]) {
+        let aonIconB = new AonIconButton();
+        aonIconB.id = this.getId()+"IconOption";
+        aonIconB.icon = "more_vert";
+        td.appendChild(aonIconB);
+        td.addEventListener(EVENT.CLICK, () => this.getOptions(tr, td, value[id]));
       } else {
         td.innerHTML = value[id] ? value[id] : "";
-        td.addEventListener("click", fn);
+        td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
             this.deselectAll();

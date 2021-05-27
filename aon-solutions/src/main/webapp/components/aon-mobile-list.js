@@ -1,10 +1,9 @@
 import { AonElement } from "./AonElement.js";
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { AonIconButton } from "./aon-icon-button.js";
+import { AonDialogMenu } from "./aon-dialog-menu.js";
+import { AonIcon } from "./aon-icon.js";
 
-import "./aon-icon.js";
-import "./aon-icon-button.js";
-import "./aon-dialog-menu.js";
-
-import { CONSTANT, TAG } from '../environments/environments.js';
 
 export class AonMobileList extends AonElement {
   UL;
@@ -47,7 +46,7 @@ export class AonMobileList extends AonElement {
 
   build() {
     this.innerHTML = "";
-    let ul = this.createElement("ul");
+    let ul = this.createElement(TAG.UL);
     ul.id = this.UL;
     ul.style.overflow = "auto";
     ul.className = "list-group";
@@ -69,24 +68,31 @@ export class AonMobileList extends AonElement {
   }
 
   addLi(data, index, fn) {
-    let li = document.createElement("li");
+    let li = this.createElement(TAG.LI);
     li.className = "aonLi aonAppLi";
 
-    li.addEventListener("click", fn);
+    li.addEventListener(EVENT.CLICK, fn);
 
-    let span = document.createElement("span");
+    let span = this.createElement(TAG.SPAN);
     span.className = "aonLiSpan";
     let spanHtml = null;
     if (data.aonIcon) {
-      spanHtml = `<aon-icon class="aonAvatar" icon="${data.aonIcon}" size="24"></aon-icon>`;
+      let aonIcon = new AonIcon();
+      aonIcon.className = "aonAvatar";
+      aonIcon.icon      = data.aonIcon
+      aonIcon.size      = "24";
+      spanHtml = aonIcon.outerHTML;
     } else if (data.icon) {
-      spanHtml = `<i class="material-icons aonAvatar"> ${data.icon} </i>`;
+      let ic = this.createElement("i");
+      ic.classList.add("material-icons","aonAvatar");
+      ic.textContent = data.icon;
+      spanHtml = ic.outerHTML;
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;
     }
     span.innerHTML = spanHtml;
 
-    let div = document.createElement("div");
+    let div = this.createElement(TAG.DIV);
     div.className = "aonListText";
     if(data.paddingTopTitle) div.style.paddingTop = data.paddingTopTitle;
     div.innerHTML = data.title;
@@ -94,7 +100,7 @@ export class AonMobileList extends AonElement {
     span.appendChild(div);
 
     if(data.subtitle){
-      let span3 = document.createElement("span");
+      let span3 = this.createElement(TAG.SPAN);
       span3.className = "aonLiSpanSubtitle";
       span3.innerHTML = data.subtitle;
       span.appendChild(span3);
@@ -105,11 +111,14 @@ export class AonMobileList extends AonElement {
 
     ///OPTIONS
     if (data.option) {
-      let span4 = document.createElement("span");
+      let span4 = this.createElement(TAG.SPAN);
       span4.className = "aonListMoreVert";
-      span4.innerHTML = `<aon-icon-button id="${this.id}IconOption" icon="more_vert"></aon-icon-button>`;
-      span4.addEventListener("click", (e) => {
-        e.stopPropagation();
+      let aonIconButton = new AonIconButton();
+      aonIconButton.id = this.id+"IconOption";
+      aonIconButton.icon = "more_vert";
+      span4.appendChild(aonIconButton);
+      span4.addEventListener(EVENT.CLICK, (ev) => {
+        ev.stopPropagation();
         this.getOptions(span4, data.option);
       });
       li.appendChild(span4);
@@ -125,8 +134,10 @@ export class AonMobileList extends AonElement {
 
   createAonDialog() {
     const id = this.id + "aonDialogAddOption";
-    let div = document.createElement("div");
-    div.innerHTML = `<aon-dialog-menu id="${id}" ></aon-dialog-menu>`;
+    let div = this.createElement(TAG.DIV);
+    let aonDialogM = new AonDialogMenu();
+    aonDialogM.id = id;
+    div.appendChild(aonDialogM);
     if (this) this.appendChild(div);
   }
 

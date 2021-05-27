@@ -1,6 +1,6 @@
 import { AonElement } from "./AonElement.js";
 import { waitEl } from "../services/utils.js";
-import { CONSTANT } from "../environments/environments.js";
+import { CONSTANT, TAG } from "../environments/environments.js";
 
 export class AonTabs extends AonElement {
   ACTIVE_CLASS;
@@ -27,11 +27,13 @@ export class AonTabs extends AonElement {
   }
 
   connectedCallback() {
-    this.innerHTML = /*html*/`
-    <nav class="tabs-box">
-        <div aria-label="simple tabs example" class="tabs-menu js-tabs-menu" role="tablist"> </div>
-    </nav>
-    `;
+    let nav = this.createElement("nav");
+    nav.className = "tabs-box";
+    let div = this.createElement(TAG.DIV);
+    div.className = "tabs-menu js-tabs-menu";
+    div.role = "tablist";
+    nav.appendChild(div);
+    this.appendChild(nav);
   }
 
   setButtons(options){
@@ -45,11 +47,11 @@ export class AonTabs extends AonElement {
 
 
   async getContent(){
-    return await waitEl(".js-tabs-menu");
+    return waitEl(".js-tabs-menu");
   }
 
   paintButtons(option, total){
-      const button = this.createElement('button');
+      const button = this.createElement(TAG.BUTTON);
       button.addEventListener("click", (ev) => {
         this.handleTabSelection(ev);
         const current = document.querySelector(`.focus`);
@@ -64,17 +66,17 @@ export class AonTabs extends AonElement {
       button.type= "button";
       button.id = option.id;
       button.setAttribute("role", "tab");
-      const divSpan = this.createElement('div');
+      const divSpan = this.createElement(TAG.DIV);
       divSpan.id = this.DIV_ICON+option.id;
       if(option.icon){
-        const spanIcon = this.createElement('span');
+        const spanIcon = this.createElement(TAG.SPAN);
         spanIcon.classList.add("material-icons");
         spanIcon.textContent = option.icon;
         divSpan.appendChild(spanIcon);
       }
       button.appendChild(divSpan);
       button.style.width = window.innerWidth / total;
-      const spanText = this.createElement('span');
+      const spanText = this.createElement(TAG.SPAN);
       spanText.classList.add("tab-button__content");
       spanText.textContent = option.name;
       button.appendChild(spanText);
@@ -82,7 +84,7 @@ export class AonTabs extends AonElement {
   }
 
   initialize(){
-    this.INDICATOR = this.createElement("span");
+    this.INDICATOR = this.createElement(TAG.SPAN);
     this.INDICATOR.className = "tab-indicator js-tab-indicator";
     this.TABS_MENU.appendChild(this.INDICATOR);
 
@@ -103,14 +105,12 @@ export class AonTabs extends AonElement {
         const div = await waitEl("#"+ this.DIV_ICON+id);
         if(div){
             const idBadge = id+"Badge";
-            const spanBadge = this.getElement(idBadge) || this.createElement('span');
+            const spanBadge = this.getElement(idBadge) || this.createElement(TAG.SPAN);
             spanBadge.id = idBadge;
             if(badge > 0){
                 spanBadge.classList.add("badge");
                 spanBadge.textContent = badge;
                 const spanExist = div.querySelector("span");
-                // const top  = spanExist.getBoundingClientRect().top;
-                // const left = spanExist.getBoundingClientRect().left;   
                 div.insertBefore(spanBadge, spanExist);
                 spanBadge.style.top = .7;
             } else {
@@ -123,30 +123,26 @@ export class AonTabs extends AonElement {
     this.toggleActiveClass(ev);
     this.moveTabIndicator(ev);
     this.handleA11y(ev);
-    this.dispatchEvent(new CustomEvent('change', {detail:{
-      position: this.getTabIndex(ev)
-    }}));
+    this.dispatchEvent(new CustomEvent('change', {detail:{ position: this.getTabIndex(ev) }}));
   }
   
-  toggleActiveClass(e) {
+  toggleActiveClass(ev) {
     const current = document.querySelector(`.${this.ACTIVE_CLASS}`);
     if (current) {
       current.className = current.className.replace(` ${this.ACTIVE_CLASS}`, "");
     }
 
-    e.currentTarget.className += ` ${this.ACTIVE_CLASS}`;
+    ev.currentTarget.className += ` ${this.ACTIVE_CLASS}`;
   }
 
-  moveTabIndicator(e) {
-    const indicatorPosition =  e.currentTarget.getBoundingClientRect().left - this.TABS_MENU.getBoundingClientRect().left;
-    this.INDICATOR.style.width = `${e.currentTarget.clientWidth}px`;
+  moveTabIndicator(ev) {
+    const indicatorPosition =  ev.currentTarget.getBoundingClientRect().left - this.TABS_MENU.getBoundingClientRect().left;
+    this.INDICATOR.style.width = `${ev.currentTarget.clientWidth}px`;
     this.INDICATOR.style.left = `${indicatorPosition}px`;
   }
 
   handleRippleEffect(e) {
-    // const posX = e.target.offsetLeft;
-    // const posY = e.target.offsetTop;
-    const span = document.createElement("span");
+    const span = this.createElement(TAG.SPAN);
     const x = e.pageX - e.currentTarget.getBoundingClientRect().left;
     const y = e.pageY - e.currentTarget.getBoundingClientRect().top;
 
