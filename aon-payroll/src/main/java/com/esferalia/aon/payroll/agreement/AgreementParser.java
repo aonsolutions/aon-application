@@ -343,7 +343,8 @@ public class AgreementParser {
 		put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_MENSUAL", "P_E_VERANO_Y_NAVIDAD_M");
 		put("PAGA_EXTRA_MARZO_MENSUAL", "PAGA_EXTRA_MARZO");
 		put("PAGA_EXTRA_SIN_ANTIGUEDAD_MENSUAL", "P_EXTRA_SIN_ANTIGUEDAD_M");
-		put("PAGA_EXTRA_VERANO_MENSUAL", "P_E_VERANO_M");
+		put("PAGA_EXTRA_NAVIDAD_MENSUAL", "PAGA_EXTRA_NAVIDAD");
+		put("PAGA_EXTRA_VERANO_MENSUAL", "PAGA_EXTRA_VERANO");
 		put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
 		put("PENSIONES_MENSUAL", "PENSIONES_M");
 		put("PERNOCTA_Y_DESAYUNO_DIARIO", "PERNOC_DESAYUNO_D");
@@ -1039,6 +1040,9 @@ public class AgreementParser {
 	}
 	
 	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode) {
+		boolean hasWinterPay = false;
+		boolean hasSummerPay = false;
+		
 		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
 		// Variables not insert
 		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
@@ -1104,6 +1108,12 @@ public class AgreementParser {
 				String realName = variablesNameMap.getOrDefault(lvlData.getName(), null);
 				
 				if(null != realName) {
+					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && AonStringUtils.containsIgnoreCase(realName, "VERANO"))
+						hasSummerPay = true;
+					
+					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && AonStringUtils.containsIgnoreCase(realName, "NAVIDAD"))
+						hasWinterPay = true;
+					
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
 						.set(AGREEMENT_LEVEL_DATA.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_LEVEL_DATA.NAME, realName)
@@ -1158,7 +1168,7 @@ public class AgreementParser {
 				
 				Integer paymentConceptId = paymentConceptRecord.getId();
 				
-				dslContext.insertInto(AGREEMENT_PAYMENT)
+				AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 						.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
@@ -1170,65 +1180,129 @@ public class AgreementParser {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.returning(AGREEMENT_PAYMENT.ID)
+						.fetchOne();
+				
+				Integer agreementPaymentId = agreementPaymentRecord.getId();
+				
+				// Summen agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/1")
+						.set(AGREEMENT_EXTRA.END_DATE, "30/6")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
 						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
+				
+				// Winter agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/7")
+						.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
+						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
+				
+				// Benefits agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "BENEFICIOS")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/1 -1")
+						.set(AGREEMENT_EXTRA.END_DATE, "31/12 -1")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/3")
+						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)2)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
 			}
 		}
 		
 		Integer paymentConceptId = insertOrGetPaymentConceptExtraPay(dslContext);
+		AgreementPaymentRecord agreementPaymentRecord = null;
+		Integer agreementPaymentId = null;
 		
-		AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
-			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
-			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
-			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-			.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
-			.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
-			.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-			.returning(AGREEMENT_PAYMENT.ID)
-			.fetchOne();
+		if(!hasSummerPay) {
 		
-		Integer agreementPaymentId = agreementPaymentRecord.getId();
+			agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
+				.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
+				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
+				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+				.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+				.returning(AGREEMENT_PAYMENT.ID)
+				.fetchOne();
+			
+			agreementPaymentId = agreementPaymentRecord.getId();
+			
+			dslContext.insertInto(AGREEMENT_EXTRA)
+				.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+				.set(AGREEMENT_EXTRA.START_DATE, "1/1")
+				.set(AGREEMENT_EXTRA.END_DATE, "30/6")
+				.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
+				.execute();
+			
+		}
 		
-		dslContext.insertInto(AGREEMENT_EXTRA)
+		if(!hasWinterPay) {
+		
+			agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
+				.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
+				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
+				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+				.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+				.returning(AGREEMENT_PAYMENT.ID)
+				.fetchOne();
+			
+			agreementPaymentId = agreementPaymentRecord.getId();
+			
+			dslContext.insertInto(AGREEMENT_EXTRA)
 			.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 			.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-			.set(AGREEMENT_EXTRA.START_DATE, "1/1")
-			.set(AGREEMENT_EXTRA.END_DATE, "30/6")
-			.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
+			.set(AGREEMENT_EXTRA.START_DATE, "1/7")
+			.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+			.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 			.execute();
-		
-		agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
-			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
-			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
-			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-			.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
-			.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
-			.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-			.returning(AGREEMENT_PAYMENT.ID)
-			.fetchOne();
-		
-		agreementPaymentId = agreementPaymentRecord.getId();
-		
-		dslContext.insertInto(AGREEMENT_EXTRA)
-		.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
-		.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
-		.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-		.set(AGREEMENT_EXTRA.START_DATE, "1/7")
-		.set(AGREEMENT_EXTRA.END_DATE, "31/12")
-		.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
-		.execute();
+			
+		}
 		
 		// Set agreement_data is ServiAgreement
 		
