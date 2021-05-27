@@ -19,11 +19,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.jooq.Result;
@@ -566,7 +564,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Connection connection;
 	
-	private TreeSet<Date> issuedSalaries;
+	private Collection<Date> issuedSalaries;
 
 	private ISQLContractSalaryCalculatorContext ctx;
 
@@ -1057,7 +1055,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	// --------------------------------------------------------- Private methods
 
-	private TreeSet<Date> nextSalaryRs(int contractId) throws SQLException {
+	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
 		TreeSet<Date> dates = new TreeSet<Date>();
 		extras = 0.00;
 		irpfBase = 0.00;
@@ -1158,34 +1156,14 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				return TaxCalculator.getTaxCalculator(ctx);
 			}
 		};
-		
-		AtomicBoolean dailySalary = new AtomicBoolean(false);
-		
-		SalaryBuilder builder = new SalaryBuilder() {
-			@Override
-			public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
-					Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
-				dailySalary.set(dailySalary.get() || isDailySalary(context));
-				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-			}
-			
-			private boolean isDailySalary(Map<String, ITimedVariable<?>> context)  {
-				if ( context.containsKey(ContextVariable.ACTUAL_DAYS.getName()) )
-					return true;
-				
-				if ( context.containsKey(ContextVariable.WORKED_DAYS.getName()) )
-					return !context.containsKey(ContextVariable.MONTH_DAYS.getName());
-				
-				return false;
-			}
-			
-		};
+
+		SalaryBuilder builder = new SalaryBuilder();
 		calculator.setSalaryBuilder(builder);
 
 
 		Collection<IrpfContractSalaryCalculatorContext> contexts = IrpfContractSalaryCalculatorContext
 				.getContexts(ctx);
-		double size ;
+		int size ;
 		
 		if ( (issuedSalaries.size() + contexts.size())  == 12) {
 			size = contexts.size();
@@ -1196,12 +1174,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			irpfBase = 0.00;
 			totalIrpf = 0.00;
 			socialSecurityContributons = 0.00;
-		}
-		
-		
-		int yearDays = AonDateUtils.getMax(startDate, Calendar.DAY_OF_YEAR);
-		for (Date isssuedSalary : issuedSalaries) {
-			yearDays -= AonDateUtils.getMax( isssuedSalary, Calendar.DAY_OF_MONTH);
 		}
 		
 		
@@ -1237,16 +1209,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					irpfBase -= extrasPayment;
 				}
 				
-				if (dailySalary.get()) {
-					int monthDays = AonDateUtils.getMax(irpfCtx.getStartDate(), Calendar.DAY_OF_MONTH);
-					size = 1.00 / monthDays * yearDays; 
-				}
-				
 				nextIrpfBase = (
 						( irpfBase )
 						+ ( proration ) 
 						) * size;
-				
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
 				
 				
