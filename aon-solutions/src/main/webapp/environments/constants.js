@@ -18,8 +18,10 @@ export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
 export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
 export const AON_INVOICE_TAX = 'aonInvoiceTax';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
+export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
+export const AUTOSAVE = 'autosave';
 
 
 // ----- B
@@ -76,6 +78,7 @@ export const ERROR = "error";
 // ----- F
 
 export const FALSE = 'false';
+export const FARMER = 'farmer';
 export const FILE = 'file';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
@@ -108,6 +111,7 @@ export const INVOICE_TICKET = 'invoiceTicket';
 export const MAX = 'max';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
+export const MOVABLE_CAPITAL = 'movableCapital';
 
 // ----- N
 
@@ -132,8 +136,9 @@ export const PERSON = 'person';
 export const PREPAYMENT = 'prepayment';
 export const PREVIOUS = 'previous';
 export const PRICE = 'price';
-export const PRIMARY = "primary";
-export const PRODUCT = "product";
+export const PRIMARY = 'primary';
+export const PRODUCT = 'product';
+export const PROFESSIONAL = 'professional'
 
 // ----- Q
 
@@ -161,6 +166,7 @@ export const REGISTRY_TARGET = 'registryTarget';
 export const REJECT = 'reject';
 export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';
+export const RENTING = 'renting';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
 export const ROOT_PANEL = 'rootPanel';
@@ -194,6 +200,7 @@ export const TITLE = 'title';
 export const TOOLS = 'tools';
 export const TOTAL = 'total';
 export const TRANSACTION_TYPE = 'transactionType';
+export const TRANSPORT_OPERATOR = 'transportOperator';
 export const TRASH = 'trash';
 export const TRUE = 'true';
 export const TYPE = 'type';

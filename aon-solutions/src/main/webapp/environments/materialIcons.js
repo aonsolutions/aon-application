@@ -134,6 +134,7 @@ export const LINK = "link";
 
 // ----- M
 
+export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
 
 // ----- P
@@ -153,6 +154,7 @@ export const ROOM = 'room';
 
 export const SAVE = 'save';
 export const SEARCH = 'search';
+export const SEND = 'send';
 export const SETTING = 'setting';
 export const SWAP_CALLS = 'swap_calls';
 

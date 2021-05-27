@@ -43,7 +43,7 @@ export class AonSwitch extends AonElement {
   }
 
   get disabled() {
-    return this.getAttribute(CONSTANT.disabled)
+    return this.getAttribute(CONSTANT.DISABLED)
   }
 
   set disabled(disabled) {
