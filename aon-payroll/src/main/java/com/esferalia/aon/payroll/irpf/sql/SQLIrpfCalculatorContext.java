@@ -355,10 +355,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				return false;
 			} catch ( ExpressionException e ) {
 				
-				return AonDateUtils.getDay(getStartDate()) == 1 ;
+				return AonDateUtils.get(getStartDate(), Calendar.DAY_OF_MONTH) == 1 ;
 			}
 		}
 		
+
 		// --------------------------------------------------------------------
 
 		private static <T extends Enum<?>> T get(
