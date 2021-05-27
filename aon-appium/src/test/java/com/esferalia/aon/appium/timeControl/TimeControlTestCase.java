@@ -2,16 +2,24 @@ package com.esferalia.aon.appium.timeControl;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.esferalia.aon.appium.AbstractTestCase;
 
 public class TimeControlTestCase extends AbstractTestCase {
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUpTestDefaultData();
-		super.setUpTestCase(apk, username, password, driver);
+	@BeforeClass
+	public static void setUpTimeControl() throws Exception {
+		setUpTestDefaultData();
+		setUpTestCase(apk, username, password, driver);
+	}
+	
+	@Before
+	public void openApp() {
+		//app.activateApp("aon APP");
+		
 	}
 	
 	@Test
