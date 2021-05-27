@@ -12,6 +12,7 @@ import { EVENT } from '../environments/environments.js';
 export class AonMobileHeader extends AonElement {
 
 	BASE_ID;
+	COMPANY_LIST;
 	activeTimecontrol;
 
 	get id() {
@@ -43,6 +44,7 @@ export class AonMobileHeader extends AonElement {
 	initialize() {
 		this.BASE_ID = 'aonHeader';
 		this.activeTimecontrol = false;
+		this.COMPANY_LIST = this.BASE_ID + 'CompanyList';
 	}
 
 	build() {
@@ -60,7 +62,7 @@ export class AonMobileHeader extends AonElement {
 					<aon-notification-icon></aon-notification-icon>
 				</span>
 
-				<span id="aonHeaderCompanyList" class="aonRight100 aonMobileHeaderButton" style="display:none;">
+				<span id="${this.COMPANY_LIST}" class="aonRight100 aonMobileHeaderButton" style="display:none;">
 					<aon-icon-button id="aonHeaderCompanyListButton" icon="business"></aon-icon-button>
 				</span>
 			</div>

@@ -46,19 +46,13 @@ export class AonModule extends AonElement {
 			this.buildHome();
 
 			getCompanies().then(companies => {
-				let homeEl = this.getElement(this.AON_HOME);
 				if(companies.length === 1){
 					this.companySelection(companies[0]);
 				} else {
-					homeEl.showMenu(false);
+					this.getElement(this.AON_HOME).showMenu(false);
 					rootPanel(this.isMobile()
 					 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
 					 	: '<aon-parent id="aonParent"></aon-parent>');
-				}
-				if(companies.length > 1){
-					waitEl(`#${homeEl.AON_HEADER}CompanyList'`).then(el=>{
-						el.style.display = 'block';
-					});
 				}
 			});
 		} else {
