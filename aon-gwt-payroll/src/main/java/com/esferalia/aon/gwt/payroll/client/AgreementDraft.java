@@ -4858,15 +4858,24 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				AgreementPaymentWizard wizard = new AgreementPaymentWizard() {
+				AgreementPaymentWizard wizard = new AgreementPaymentWizard(agreementDraftObject.getPayments()) {
 					@Override
 					protected void onAccept(Payment payment) {
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 						agreementDraftObject.save(AgreementDraft.this);
 					}
+
+					@Override
+					protected void onExtraAccept(Payment payment, Extra extra) {
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+						if(null != extra)
+							AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+						
+						agreementDraftObject.save(AgreementDraft.this);
+					}
 				};
-//				wizard.center();
-//				wizard.show();
+				
+				wizard.showDialog();
 			}
 		};
 		toolbar.add(addPaymentButton);

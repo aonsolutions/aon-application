@@ -1,6 +1,7 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
     
     
@@ -11,12 +12,12 @@
 			padding: 20px 10px;
 			display: flex;
 			flex-direction: column;
-			height: 375px;
-			min-width: 500px;
+			height: 425px;
+			min-width: 555px;
 		}
 		
 		.deckPanel{
-			height: 200px;
+			height: 250px;
 			min-width: 400px;
 		}
 		
@@ -110,12 +111,38 @@
 			align-items: flex-end;
 		}
 		
+		.flexWrap{
+			flex-wrap: wrap;
+		}
+		
 		.w180{
 			width: 180px !important;
 		}
 		
 		.maxWidth{
-			width: 100%;
+			width: 98%;
+		}
+		
+		.w40{
+			width: 40px;
+		}
+		
+		.w103{
+			width: 103px;
+		}
+		
+		.extraPayDate{
+			width: 45px;
+			text-align: center;
+		}
+		
+		.extraPayValue{
+			width: 74px;
+			text-align: center;
+		}
+		
+		.tbHeight{
+			height: 1.32em;
 		}
 		
 	</ui:style>
@@ -138,18 +165,44 @@
 									</g:HTMLPanel>
 									<g:HTMLPanel ui:field="extraPanel" styleName="{style.flexColumn} {style.maxWidth}">
 										<g:Label ui:field="extraLabel" styleName="{style.title}"/>
-										<g:TextBox ui:field="extraName" styleName="aon-inputText {style.uppercase} {style.maxWidth}" />
+										<g:TextBox ui:field="extraName" styleName="aon-inputText {style.uppercase} {style.maxWidth} {style.tbHeight}" />
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 								
-								<g:HTMLPanel styleName="{style.flexPanel}">
+								<g:HTMLPanel styleName="{style.flexPanel} {style.flexWrap}">
 									<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.flexColumn}">
 										<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
 										<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180}" />
 									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.flex}">
+										<g:Label styleName="{style.title}">Fecha cobro</g:Label>
+										<g:TextBox ui:field="extraPayDate" styleName="aon-inputText {style.extraPayDate}  {style.tbHeight}" />
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="extraPayCalcPanel" styleName="{style.flex}">
+										<g:Label styleName="{style.title}">Cálculo</g:Label>
+										<g:ListBox ui:field="extraPayCalc" styleName="aon-selectOneMenu" />
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="extraPayTypePanel" styleName="{style.flex}">
+										<g:Label styleName="{style.title}">Tipo importe</g:Label>
+										<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu {style.w103}" />
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="extraPayValuePanel" styleName="{style.flex}">
+										<g:Label styleName="{style.title}">Importe</g:Label>
+										<g:TextBox ui:field="extraPayValue" styleName="aon-inputText {style.extraPayValue}  {style.tbHeight}" />
+									</g:HTMLPanel>
 									<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
 										<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
 										<g:Button ui:field="partialityButton" />
+									</g:HTMLPanel>
+									
+								</g:HTMLPanel>
+								
+								<g:HTMLPanel styleName="{style.flexPanel}">
+									<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumn} {style.maxWidth}">
+										<g:Label styleName="{style.title}">Selecciona los conceptos</g:Label>
+										<g:ScrollPanel ui:field="paymentDataScrollPanel">
+											<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
+										</g:ScrollPanel>
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 								

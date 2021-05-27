@@ -85,7 +85,7 @@ public class Payment extends ResizeComposite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
-	private class PaymentsSelectionModel extends AbstractSelectionModel<com.esferalia.aon.gwt.payroll.shared.Payment> {
+	public class PaymentsSelectionModel extends AbstractSelectionModel<com.esferalia.aon.gwt.payroll.shared.Payment> {
 
 		private Timer synchronizer = new Timer() {
 			
