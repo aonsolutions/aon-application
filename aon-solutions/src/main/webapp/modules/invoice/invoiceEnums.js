@@ -120,7 +120,7 @@ export const getTaxType = (percentage) => {
   } else return TaxType.IVA;
 }
 
-export const getTaxTypeName = (type) => {
+export const getTaxTypeName = (type, mobile) => {
   if(TaxType.IVA === type) {
     return 'IVA';
   } else if(TaxType.IVA_RE === type) {
@@ -130,11 +130,11 @@ export const getTaxTypeName = (type) => {
   } else if(TaxType.IRPF === type) {
     return 'IRPF';
   } else if(TaxType.IRPF_PROF === type) {
-    return 'IRPF PROF.';
+    return mobile ? 'IRPF' : 'IRPF PROF.';
   } else if(TaxType.IRPF_ALQ === type) {
-    return 'IRPF ALQ.';
+    return mobile ? 'IRPF' : 'IRPF ALQ.';
   } else if(TaxType.IRPF_AGRI === type) {
-    return 'IRPF AGRI.';
+    return mobile ? 'IRPF' : 'IRPF AGRI.';
   } 
 }
 

@@ -622,6 +622,7 @@ export class AonNewInvoice extends AonElement {
 		transaction.readonly = this.invoice.isReadonly();
 		transaction.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setTransaction(transaction.value);
+			this.setFocus(transaction.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -771,7 +772,7 @@ export class AonNewInvoice extends AonElement {
 
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
-		percentage.title = '% ' + getTaxTypeName(tax.type);
+		percentage.title = '% ' + getTaxTypeName(tax.type, this.isMobile());
 		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type));
 		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
