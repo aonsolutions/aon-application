@@ -1169,6 +1169,221 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testAllYearConstantV() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date startContract = getFirstDayOfYear(getToday());
+//		startContract = add(startContract, Calendar.MONTH, 5);
+		
+		ContractRecord contract = newContract(aonContext, 
+				startContract, 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {
+						"2500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00  * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE NAVIDAD", 
+				"2500.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.DECEMBER.ordinal());
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE VERANO", 
+				"2500.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.JULY.ordinal());
+		
+
+		List<Double[]> irpfResults = new ArrayList<Double[]>(6);
+		// Be care that the first day of the month has value 1.
+		Date startDate = contract.getStartDate();
+		for ( int i = 0; i < 11 ; i++ ) {
+			System.out.println(startDate);
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			ctx.setListener( new Listener() {
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+					super.onIrpf(irpfOutcome);
+					Double irpfResult [] = new Double[4]; 
+					irpfResult[0] = irpfOutcome.getIrpfResult().getIrpf();
+					irpfResult[1] = irpfOutcome.getIrpfResult().getBaseIrpf();
+					irpfResult[2] = irpfOutcome.getIrpfResult().getAnnualIrpf();
+					irpfResult[3] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+					irpfResults.add(irpfResult);
+					
+					System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+					System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+					
+					if ( irpfOutcome.getIrpfRegularization() != null ) {
+						System.out.println("PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+						System.out.println("PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+					}
+
+//					System.out.println("DeducciblesExpenses:" + irpfOutcome.getIrpfResult().getDeducciblesExpenses());
+//					System.out.println("SocialSecurityPensioner:" + irpfOutcome.getIrpfResult().getSocialSecurityPensioner());
+//					System.out.println("MinimunPersonalFamily:" + irpfOutcome.getIrpfResult().getMinimunPersonalFamily());
+				}
+			});
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) ;
+			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(startDate, Calendar.MONTH, 1); 
+		}
+		
+		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
+		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		
+	}
+
+
+	@Test
+	public void testAllYearConstantVI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date startContract = getFirstDayOfYear(getToday());
+//		startContract = add(startContract, Calendar.MONTH, 5);
+		
+		ContractRecord contract = newContract(aonContext, 
+				startContract, 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {
+						"2500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00  * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE NAVIDAD", 
+				"2500.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.DECEMBER.ordinal());
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE VERANO", 
+				"2500.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.JULY.ordinal());
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE MARZO", 
+				"2000.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.MARCH.ordinal());
+
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				pagaExtraConcept, 
+				"PAGA EXTRAORDINARIA DE SEPTIEMBRE", 
+				"2000.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P/12", 
+				PaymentType.CRA_0004, 
+				(byte) Month.SEPTEMBER.ordinal());
+
+		
+		List<Double[]> irpfResults = new ArrayList<Double[]>(6);
+		// Be care that the first day of the month has value 1.
+		Date startDate = contract.getStartDate();
+		for ( int i = 0; i < 11 ; i++ ) {
+			System.out.println(startDate);
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			ctx.setListener( new Listener() {
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+					super.onIrpf(irpfOutcome);
+					Double irpfResult [] = new Double[4]; 
+					irpfResult[0] = irpfOutcome.getIrpfResult().getIrpf();
+					irpfResult[1] = irpfOutcome.getIrpfResult().getBaseIrpf();
+					irpfResult[2] = irpfOutcome.getIrpfResult().getAnnualIrpf();
+					irpfResult[3] = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+					irpfResults.add(irpfResult);
+					
+					System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+					System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+					System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+					System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+					
+					if ( irpfOutcome.getIrpfRegularization() != null ) {
+						System.out.println("PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+						System.out.println("PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+					}
+
+				}
+			});
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) ;
+			new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(startDate, Calendar.MONTH, 1); 
+		}
+		
+		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[1]).distinct().count());
+		org.junit.Assert.assertEquals(1, irpfResults.stream().map(irpfResult -> irpfResult[3]).distinct().count());
+		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[0]).distinct().count() <=2);
+//		org.junit.Assert.assertTrue(irpfResults.stream().map(irpfResult -> irpfResult[2]).distinct().count() <=2 );
+		
+	}
+
+
+	@Test
 	public void testExtrasI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
