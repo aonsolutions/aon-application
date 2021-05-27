@@ -59,22 +59,35 @@ import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private static final int SCALE = 2;
-
+	
+	private static final String EXTRAS_SQL = "SELECT "
+			+ " SUM( " + SalaryPaymentColumns.AMOUNT + ")"
+			+ " FROM " + SQLConstants.SALARY_PAYMENT
+			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
+			+ " AND " + SalaryPaymentColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
+			+ " AND " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE 
+			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0004.ordinal() + ", " +PaymentType.CRA_0005.ordinal() + ")"
+			;
+			
+	
 	private static final String SALARY_SQL = "SELECT"
-			+ "  "+ SQLConstants.SALARY + ".*"  
+			+ "  "+ SQLConstants.SALARY + ".*" 
+			+ ", (" + EXTRAS_SQL + ") AS EXTRAS " 
 			+ " FROM  " + SQLConstants.SALARY 
 			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
@@ -530,6 +543,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Date startDate;
 
+	private double extras;
 	private double totalIrpf;
 	private double irpfBase;
 	private double proExtBase;
@@ -873,6 +887,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public BigDecimal getRetribAnuales() {
 		Double retribAnuales = irpfBase;
+		retribAnuales -= extras;
 		retribAnuales += proExtBase;
 		retribAnuales += nextIrpfBase;
 		return round(BigDecimal.valueOf(retribAnuales));
@@ -1041,6 +1056,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
 		TreeSet<Date> dates = new TreeSet<Date>();
+		extras = 0.00;
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
 		proExtBase = 0.00;
@@ -1050,8 +1066,15 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			salaryStmt.setInt(1, contractId);
 			salaryRs = salaryStmt.executeQuery();
 			while (salaryRs.next()) {
-				irpfBase += salaryRs.getDouble(SalaryColumns.IRPF_BASE);
-				proExtBase += salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
+				double salaryExtras = salaryRs.getDouble("EXTRAS");
+				double salaryCgcBase = salaryRs.getDouble(SalaryColumns.CGC_BASE);
+				double salaryIrpfBase = salaryRs.getDouble(SalaryColumns.IRPF_BASE);
+				double salaryProExtBase = salaryRs.getDouble(SalaryColumns.PRO_EXT_BASE);
+				extras += salaryExtras;
+				irpfBase += salaryIrpfBase ;
+				irpfBase += Math.max(salaryCgcBase - irpfBase - salaryProExtBase, 0.00);
+				
+				proExtBase += salaryProExtBase;
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
