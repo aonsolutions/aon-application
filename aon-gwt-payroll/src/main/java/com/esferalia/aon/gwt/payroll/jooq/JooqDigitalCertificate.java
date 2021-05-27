@@ -22,7 +22,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.jooq.tables.records.RaddinfoRecord;
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
@@ -84,16 +83,21 @@ public class JooqDigitalCertificate {
 			insertTgssDigitalCertiticate(dslContext, registryUserId, employeeCertificateRecord, tgssDigitalCertificatePasswordRecord, digitalCertificates);
 				
 		} else {
-			 RattachRecord employeeCertificateRecord = dslContext.insertInto(RATTACH)
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+			
+			RattachRecord employeeCertificateRecord = dslContext.insertInto(RATTACH)
 				.set(RATTACH.DOMAIN, domainId)
 				.set(RATTACH.REGISTRY, registryUserId)
 				.set(RATTACH.MIMETYPE, (byte)36)
-				.set(RATTACH.DATA, DSL.castNull(RATTACH.DATA))
 				.set(RATTACH.TYPE, (byte)4)
 				.returning()
 				.fetchOne();
-			 
-			   RaddinfoRecord employeeCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
+			
+			Result<Record> employeeCertificatePasswordRecords = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryUserId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetch();
+			Record employeeCertificatePasswordRecord = null;
+			
+			if(employeeCertificatePasswordRecords.isEmpty())
+				employeeCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
 					.set(RADDINFO.DOMAIN, domainId)
 					.set(RADDINFO.REGISTRY, registryUserId)
 					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
@@ -101,9 +105,12 @@ public class JooqDigitalCertificate {
 					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
 					.returning()
 					.fetchOne();
+			else
+				employeeCertificatePasswordRecord = employeeCertificatePasswordRecords.get(0);
 			 
-			 insertTgssDigitalCertiticate(dslContext, registryUserId, employeeCertificateRecord, employeeCertificatePasswordRecord, digitalCertificates);
+			insertTgssDigitalCertiticate(dslContext, registryUserId, employeeCertificateRecord, employeeCertificatePasswordRecord, digitalCertificates);
 			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		}		
 		
 	}
@@ -143,36 +150,46 @@ public class JooqDigitalCertificate {
 		
 		if(enterpriseCertificateRecords.isNotEmpty()) {
 			
-			Record enterpriseCertificatePasswordRecord = dslContext.select().from(RADDINFO)
+			List<Record> enterpriseCertificatePasswordRecords = dslContext.select().from(RADDINFO)
 					.where(RADDINFO.REGISTRY.eq(registryEntepriseId))
 					.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-					.fetchOne();
+					.fetch();
+			
+			Record enterpriseCertificatePasswordRecord = enterpriseCertificatePasswordRecords.get(0);
 			
 			for(Record enterpriseCertificateRecord : enterpriseCertificateRecords) {
 				insertSepeDigitalCertiticate(dslContext, registryEntepriseId, enterpriseCertificateRecord, enterpriseCertificatePasswordRecord, digitalCertificates);
 			}
 			
 		} else {
-			 RattachRecord enterpriseCertificateRecord = dslContext.insertInto(RATTACH)
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+			
+			RattachRecord enterpriseCertificateRecord = dslContext.insertInto(RATTACH)
 				.set(RATTACH.DOMAIN, domainId)
 				.set(RATTACH.REGISTRY, registryEntepriseId)
 				.set(RATTACH.MIMETYPE, (byte)32)
-				.set(RATTACH.DATA, DSL.castNull(RATTACH.DATA))
 				.set(RATTACH.TYPE, (byte)4)
 				.returning()
 				.fetchOne();
+			
+			Result<Record> enterpriseCertificatePasswordRecords = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryEntepriseId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetch();
+			Record enterpriseCertificatePasswordRecord = null;
+			
+			if(enterpriseCertificatePasswordRecords.isEmpty())
+				enterpriseCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
+					.set(RADDINFO.DOMAIN, domainId)
+					.set(RADDINFO.REGISTRY, registryEntepriseId)
+					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+					.set(RADDINFO.VALUE, "")
+					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+					.returning()
+					.fetchOne();
+			else
+				enterpriseCertificatePasswordRecord = enterpriseCertificatePasswordRecords.get(0);
 			 
-			 RaddinfoRecord enterpriseCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
-				.set(RADDINFO.DOMAIN, domainId)
-				.set(RADDINFO.REGISTRY, registryEntepriseId)
-				.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
-				.set(RADDINFO.VALUE, "")
-				.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-				.returning()
-				.fetchOne();
-			 
-			 insertSepeDigitalCertiticate(dslContext, registryEntepriseId, enterpriseCertificateRecord, enterpriseCertificatePasswordRecord, digitalCertificates);
-			 
+			insertSepeDigitalCertiticate(dslContext, registryEntepriseId, enterpriseCertificateRecord, enterpriseCertificatePasswordRecord, digitalCertificates);
+			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		}
 		
 	}
