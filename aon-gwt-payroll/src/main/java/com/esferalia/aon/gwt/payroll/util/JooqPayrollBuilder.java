@@ -561,7 +561,9 @@ public class JooqPayrollBuilder {
 					payrollBuilder.setAddress(salary.getEnterpriseAddress());
 				}
 			}
-
 		}
+		
+		
+		
 	}
 }

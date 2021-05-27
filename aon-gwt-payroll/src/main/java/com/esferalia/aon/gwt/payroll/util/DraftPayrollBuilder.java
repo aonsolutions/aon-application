@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.payroll.util;
 import static com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder.buildDefaultPayrollFromSalary;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
@@ -46,6 +48,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.sun.pdfview.font.PDFFont;
 /**
  * Class containing method/s to print payrolls from a Salary and a SalaryDraft object
  */
@@ -421,15 +424,27 @@ public class DraftPayrollBuilder {
 			DefaultPayrollBuilder payrollBuilder = new DefaultPayrollBuilder();
 			buildDefaultPayrollFromSalary(payrollBuilder, salary);			
 			
+			List<String> lines = PDFToolkit.getLines(salary.getEnterpriseAddress(), 390, HELVETICA, 15); 
+			
+			if(lines.size() > 0)
+				payrollBuilder.setAddress(lines.get(0).trim());
+			
+			if(lines.size() > 1)
+				payrollBuilder.setAddress2(lines.get(1));
+			
 			/**
 			 * @TODO 
 			 *  1 - Logo get
 			 *  2 - Address FIX
 			 */
+
+
 			
-			
-			PdfMaker.printDefaultPayroll(outputStream, payrollBuilder.build(), null, null);
+			Optional<InputStream> optLogo = Utilities.getSignature(domainName);			
+			PdfMaker.printDefaultPayroll(outputStream, payrollBuilder.build(), optLogo.orElse(null), null);
 		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
