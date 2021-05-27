@@ -139,7 +139,7 @@ public class EnterprisePayrollExcel {
 		}
 	}
 	
-	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
+	public static void simpleEnterprisePayrollGenerator (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
 		
 		Integer wId = null;
 		Integer eId = null;
@@ -149,7 +149,7 @@ public class EnterprisePayrollExcel {
 			eId = enterpriseId.get();
 		
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -163,7 +163,7 @@ public class EnterprisePayrollExcel {
 					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
 					.collect(Collectors.toList());
 			
-			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			write(outputStream
 					, payrolls
 					, Optional.empty()
@@ -175,7 +175,7 @@ public class EnterprisePayrollExcel {
 		
 	}
 	
-	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType) {
+	public static void simpleEnterprisePayrollGenerator (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType) {
 		
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -190,7 +190,7 @@ public class EnterprisePayrollExcel {
 			eId = enterpriseId.get();
 		
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -204,7 +204,7 @@ public class EnterprisePayrollExcel {
 					getEnterprisePayrolls(aonContext, month, year, eId, wId)
 					.collect(Collectors.toList());
 			
-			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			write(outputStream
 					, payrolls
 					, Optional.empty()
@@ -214,7 +214,7 @@ public class EnterprisePayrollExcel {
 		} catch (IOException e) {}
 	}
 	
-	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType, Collection<Integer> types) {
+	public static void simpleEnterprisePayrollGenerator (String domainName, String user, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType, Collection<Integer> types) {
 		
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
@@ -230,7 +230,7 @@ public class EnterprisePayrollExcel {
 			eId = enterpriseId.get();
 		
 		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			
 			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 			if (eId == null || eId == 0)
@@ -246,7 +246,7 @@ public class EnterprisePayrollExcel {
 					.sorted(Comparator.comparing(IEnterprisePayroll::getEmployee))
 					.collect(Collectors.toList());
 			
-			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			String enterpriseName = getEnterpriseName(aonContext, eId, wId);
 			write(outputStream
 					, payrolls
 					, Optional.empty()
@@ -1871,16 +1871,13 @@ public class EnterprisePayrollExcel {
 		cell.setCellStyle(ssCellStyle);
 	}
 
-	public static String getEnterpriseName(String domainName, Integer enterpriseId, Integer workplaceId) {
-
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+	public static String getEnterpriseName(AONContext aonContext, Integer enterpriseId, Integer workplaceId) {
 			AtomicInteger eId = new AtomicInteger(enterpriseId);
 			if (enterpriseId == null || enterpriseId == 0)
 				eId.set(AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), "",
 						w -> w.getIdProperty().eq(workplaceId)).getEnterprise());
 			return AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 					r -> r.getIdProperty().eq(eId.get())).getName();
-		}
 	}
 	
 	public static class EnterprisePayroll implements IEnterprisePayroll {

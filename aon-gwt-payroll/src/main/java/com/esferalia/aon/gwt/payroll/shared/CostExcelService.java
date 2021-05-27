@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-public class AggregatedAnnualSummaryService {
+public class CostExcelService {
 	public static enum Params {
 		ENTERPRISE("enterpriseId"),
 		WORKPLACE("workplaceId"),
+		MONTH("month"),
 		YEAR("year"),
-		COMPLETE("complete"),
+		EXCEL_TYPE("excelType"),
+		FILTER("filter"),
 		DOMAIN("domain"),
 		USER("user");
 		private String name;
@@ -15,6 +17,5 @@ public class AggregatedAnnualSummaryService {
 		public String getName() {
 			return name;
 		}
-		
 	}
 }

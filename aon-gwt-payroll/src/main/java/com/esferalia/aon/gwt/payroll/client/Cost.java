@@ -16,7 +16,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
+import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
+import com.esferalia.aon.gwt.payroll.shared.CostExcelService;
+import com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
+import com.esferalia.aon.gwt.payroll.shared.RemunerationRecordService;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -482,20 +486,33 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
-		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
-		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
-		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
-		flowPanel.add(new Hidden("excelType", excelType.name()));
+		flowPanel.add(new Hidden(CostExcelService.Params.MONTH.getName()
+				, String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden(CostExcelService.Params.YEAR.getName()
+				, String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden(CostExcelService.Params.ENTERPRISE.getName()
+				, String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(CostExcelService.Params.WORKPLACE.getName()
+				, String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(CostExcelService.Params.EXCEL_TYPE.getName()
+				, excelType.name()));
+		flowPanel.add(new Hidden(CostExcelService.Params.DOMAIN.getName()
+				, Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(CostExcelService.Params.USER.getName()
+				, Wnd.getCurrentUser()));
 		
 		if (isMenuItemChecked(seeMenu.getSalary()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.SALARY.ordinal())));
 		if (isMenuItemChecked(seeMenu.getExtra()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.EXTRA.ordinal())));
 		if (isMenuItemChecked(seeMenu.getSettle()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (isMenuItemChecked(seeMenu.getDelay()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.DELAY.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
@@ -523,19 +540,21 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
-		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
-		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
-		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(Params.MONTH.getName(), String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden(Params.YEAR.getName(), String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden(Params.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(Params.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(Params.USER.getName(), Wnd.getCurrentUser()));
 		
 		if (isMenuItemChecked(seeMenu.getSalary()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.SALARY.ordinal())));
 		if (isMenuItemChecked(seeMenu.getExtra()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.EXTRA.ordinal())));
 		if (isMenuItemChecked(seeMenu.getSettle()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (isMenuItemChecked(seeMenu.getDelay()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.DELAY.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
@@ -563,19 +582,31 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
-		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
-		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
-		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.MONTH.getName()
+				, String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.YEAR.getName()
+				, String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.ENTERPRISE.getName()
+				, String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.WORKPLACE.getName()
+				, String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.DOMAIN.getName()
+				, Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.USER.getName()
+				, Wnd.getCurrentUser()));
 		
 		if (isMenuItemChecked(seeMenu.getSalary()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.SALARY.ordinal())));
 		if (isMenuItemChecked(seeMenu.getExtra()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.EXTRA.ordinal())));
 		if (isMenuItemChecked(seeMenu.getSettle()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (isMenuItemChecked(seeMenu.getDelay()))
-			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.DELAY.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
@@ -598,10 +629,13 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.YEAR.getName(), String.valueOf(year)));
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.COMPLETE.getName(), "true"));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.YEAR.getName(), String.valueOf(year)));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.WORKPLACE.getName(), String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.COMPLETE.getName(), "true"));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.USER.getName(), Wnd.getCurrentUser()));
+		
 		
 		formPanel.add(flowPanel);
 		
@@ -625,8 +659,10 @@ public class Cost extends ResizeComposite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("year", String.valueOf(year)));
-		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(RemunerationRecordService.Params.YEAR.getName(), String.valueOf(year)));
+		flowPanel.add(new Hidden(RemunerationRecordService.Params.ENTERPRISE.getName(), String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden(RemunerationRecordService.Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(RemunerationRecordService.Params.USER.getName(), Wnd.getCurrentUser()));
 		
 		
 		formPanel.add(flowPanel);
