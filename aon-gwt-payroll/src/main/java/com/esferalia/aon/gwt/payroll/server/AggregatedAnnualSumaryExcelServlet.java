@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.ENTERPRISE;
-import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.WORKPLACE;
-import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.YEAR;
-import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.COMPLETE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.ENTERPRISE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.WORKPLACE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.YEAR;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.COMPLETE;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.DOMAIN;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.USER;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,6 +44,8 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		resp.setHeader("Content-disposition", "attachment; filename=\"ResumenAnualAgregado."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		String enterpriseIdStr = req.getParameter(ENTERPRISE.getName());
 		String workplaceIdStr = req.getParameter(WORKPLACE.getName());
+		String domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName()) : req.getServerName();
+		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		String yearStr = req.getParameter(YEAR.getName());
 		boolean complete = req.getParameter(COMPLETE.getName()) != null && req.getParameter(COMPLETE.getName()).equalsIgnoreCase("true");
 		
@@ -68,7 +72,8 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		try (OutputStream os = resp.getOutputStream()){
 		AggregatedAnnualSummary.writeExcel(
 				os
-				, req.getServerName()
+				, domainName
+				, user
 				, enterpriseId
 				, workplaceId
 				, year

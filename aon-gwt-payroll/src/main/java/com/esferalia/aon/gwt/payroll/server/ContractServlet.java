@@ -269,11 +269,11 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(!api.getParams().optString("endDate").isEmpty()) {
 			Date endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
 			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-					api.getDomain().getName(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
+					api.getDomain().getName(), api.getUser().getLogin(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
 					startDate, endDate, excelType);
-		} else {
+		} else if (!api.getParams().optString("startDate").isEmpty()) {
 			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-					api.getDomain().getName(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
+					api.getDomain().getName(), api.getUser().getLogin(), new FileOutputStream(file), Optional.of(company.getId()), Optional.of(workplaceId), 
 					startDate, excelType);
 		}
 	

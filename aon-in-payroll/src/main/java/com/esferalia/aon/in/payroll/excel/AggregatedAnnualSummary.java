@@ -141,7 +141,7 @@ public class AggregatedAnnualSummary {
 		return getEnterpriseById(aonContext, enterpriseId);
 	}
 	
-	public static void writeExcel (OutputStream oos, String domainName, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, boolean complete) {
+	public static void writeExcel (OutputStream oos, String domainName, String user, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, boolean complete) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
@@ -157,7 +157,7 @@ public class AggregatedAnnualSummary {
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		
 		Date endDate = calendar.getTime();
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "");) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user);) {
 			Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
 					.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())));
 			if (enterpriseId.isPresent() && enterpriseId.get() > 0)

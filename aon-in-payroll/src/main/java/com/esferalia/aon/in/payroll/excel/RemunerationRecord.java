@@ -871,13 +871,13 @@ public class RemunerationRecord {
 	 * @param endDate The end date of the period chosen for the remuneration record
 	 * @return RemunerationRecordData object containing the remuneration record's data
 	 */
-	public static RemunerationRecordData getData(String domainName, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
+	public static RemunerationRecordData getData(String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
 		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		RemunerationRecordData remunerationRecordData = new RemunerationRecordData();
 		remunerationRecordData.setStartDate(startDate);
 		remunerationRecordData.setEndDate(endDate);
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 
 		Condition condition = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNotNull().or(SALARY_PAYMENT.DESCRIPTION.isNotNull()))
@@ -895,24 +895,10 @@ public class RemunerationRecord {
 			condition = condition.and(WORKPLACE.ENTERPRISE.eq(enterpriseId.get()));
 			condition2 = condition2.and(WORKPLACE.ENTERPRISE.eq(enterpriseId.get()));
 			
-			Enterprise enterprise = AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), "", enterpriseId.get());
+			Enterprise enterprise = AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), enterpriseId.get());
 			remunerationRecordData.setSocialReason(enterprise.getName());
 			remunerationRecordData.setEnterpriseDocument(enterprise.getDocument());
-			
-			{
-				Record record = aonContext.getDslContext()
-				.select()
-				.from(ENTERPRISE)
-				.innerJoin(DOMAIN).onKey()
-				.where(ENTERPRISE.REGISTRY.eq(enterpriseId.get()))
-				.fetchOne();
-				
-				enterpriseDomain = record.get(DOMAIN.NAME);
-				enterpriseDomainId = record.get(DOMAIN.ID);
-			}
-			
-			
-			
+
 		} else { 
 			RegistryRecord registryRecord = aonContext.getDslContext()
 			.select()
@@ -953,8 +939,8 @@ public class RemunerationRecord {
 	 * @param startDate The start date of the period chosen for the remuneration record
 	 * @param endDate The end date of the period chosen for the remuneration record
 	 */
-	public static void generateExcel (OutputStream outputStream, String domainName, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
-		getExcel(outputStream, getData(domainName, enterpriseId, startDate, endDate));
+	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
+		getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate));
 	}
 	
 	/**
@@ -964,7 +950,7 @@ public class RemunerationRecord {
 	 * @param enterpriseId If not given, the method uses just the domain name to pick up data
 	 * @param year The chosen year for the remuneration record
 	 */
-	public static void generateExcel (OutputStream outputStream, String domainName, Optional<Integer> enterpriseId, Integer year) {
+	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Integer year) {
 		if (year != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.MILLISECOND, 0);
@@ -991,7 +977,7 @@ public class RemunerationRecord {
 			
 			
 			
-			getExcel(outputStream, getData(domainName, enterpriseId, startDate, endDate));
+			getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate));
 		} else
 			throw new NullPointerException("Null year");
 	}

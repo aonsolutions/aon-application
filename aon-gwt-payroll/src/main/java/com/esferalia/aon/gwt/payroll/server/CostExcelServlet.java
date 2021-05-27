@@ -1,5 +1,14 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.DOMAIN;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.ENTERPRISE;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.EXCEL_TYPE;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.MONTH;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.USER;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.WORKPLACE;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.YEAR;
+import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.FILTER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,23 +50,27 @@ public class CostExcelServlet extends HttpServlet {
 		Integer workplaceId;
 		Integer month;
 		Integer year;
+		String domainName;
+		String user;
 		com.esferalia.aon.in.payroll.excel.ExcelType type;
 		Collection<Integer> types;
 		
 		//Picking up the parameters
 		{
-			if (req.getParameterValues("filter") != null)
-				types = Arrays.stream(req.getParameterValues("filter"))
+			if (req.getParameterValues(FILTER.getName()) != null)
+				types = Arrays.stream(req.getParameterValues(FILTER.getName()))
 				.map(str -> Integer.parseInt(str))
 				.collect(Collectors.toList());
 			else
 				types = Collections.unmodifiableList(new ArrayList<Integer>());
 			
-			enterpriseId = req.getParameter("enterpriseId") != null ? Integer.parseInt(req.getParameter("enterpriseId")) : null;
-			workplaceId = req.getParameter("workplaceId") != null ? Integer.parseInt(req.getParameter("workplaceId")) : null;
-			month = Integer.parseInt(req.getParameter("month"));
-			year = Integer.parseInt(req.getParameter("year"));
-			type = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter("excelType"));
+			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
+			workplaceId = req.getParameter(WORKPLACE.getName()) != null ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
+			month = Integer.parseInt(req.getParameter(MONTH.getName()));
+			year = Integer.parseInt(req.getParameter(YEAR.getName()));
+			type = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));
+			domainName = req.getParameter(DOMAIN.getName());
+			user = req.getParameter(USER.getName());
 		}
 		
 		
@@ -74,7 +87,8 @@ public class CostExcelServlet extends HttpServlet {
 		Date startDate = calendar.getTime();
 		try (ServletOutputStream sos = resp.getOutputStream()) {
 			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
-				req.getServerName()
+				domainName
+				, user
 				, sos
 				, Optional.ofNullable(enterpriseId)
 				, Optional.ofNullable(workplaceId)

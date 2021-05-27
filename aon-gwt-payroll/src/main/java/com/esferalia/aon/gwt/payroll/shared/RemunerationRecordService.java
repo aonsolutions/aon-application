@@ -1,11 +1,9 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-public class AggregatedAnnualSummaryService {
+public class RemunerationRecordService {
 	public static enum Params {
 		ENTERPRISE("enterpriseId"),
-		WORKPLACE("workplaceId"),
 		YEAR("year"),
-		COMPLETE("complete"),
 		DOMAIN("domain"),
 		USER("user");
 		private String name;
@@ -15,6 +13,5 @@ public class AggregatedAnnualSummaryService {
 		public String getName() {
 			return name;
 		}
-		
 	}
 }
