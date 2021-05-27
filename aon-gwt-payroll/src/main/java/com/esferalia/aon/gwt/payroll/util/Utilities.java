@@ -111,9 +111,9 @@ public class Utilities {
 			case 3:
 				return "FP";
 			case 4:
-				return "ESTR";
+				return "EXTR";
 			case 5:
-				return "NO_ESTR";
+				return "NEXTR";
 			case 6:
 				return "IRPF";
 			case 7:

@@ -320,12 +320,10 @@ public class PayrollTemplate {
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
 								String entryTxt = " por " + safeString(n.getDescription());
 
-								PdfText text = new PdfText(x, y, 60, 15, contents, entryValue, BLACK, HELVETICA,
-										fontSize, RIGHT);
+								PdfText text = new PdfText(x, y, 60, 15, contents, entryValue, BLACK, HELVETICA, fontSize, RIGHT);
 								text.draw();
 
-								PdfText t2 = new PdfText(x + 64, y, 350, 15, contents, entryTxt, PdfColors.BLACK, HELVETICA,
-										fontSize, LEFT);
+								PdfText t2 = new PdfText(x + 64, y, 350, 15, contents, entryTxt, BLACK, HELVETICA, fontSize, LEFT);
 								t2.drawCroppableLine();
 
 								y -= 10.5f;
@@ -339,8 +337,7 @@ public class PayrollTemplate {
 		y -= 5;
 
 		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), paymentTotal, BLACK, HELVETICA, fontSize, 7, 5);
-		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), paymentTotalTitle, BLACK, HELVETICA, fontSize, 5,
-				5);
+		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), paymentTotalTitle, BLACK, HELVETICA, fontSize, 5,5);
 	}
 
 	// DRAW DEDUCTIONS

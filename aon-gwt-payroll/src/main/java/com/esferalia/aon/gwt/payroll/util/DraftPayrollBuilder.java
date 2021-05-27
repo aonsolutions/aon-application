@@ -1,6 +1,7 @@
 
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder.buildDefaultPayrollFromSalary;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
@@ -19,7 +20,14 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
+import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
@@ -28,6 +36,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRES
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -51,8 +61,8 @@ public class DraftPayrollBuilder {
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		
-			//ENTERPRISE RELATED DATA
+
+		//ENTERPRISE RELATED DATA
 			{
 				dpb.setCcc(salary.getCcc());
 				dpb.setCif(salary.getEnterpriseDocument());
@@ -183,7 +193,6 @@ public class DraftPayrollBuilder {
 					try {
 						if(d.getDescription() != null) {
 							String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
-							System.out.println( d.getName() + " : " + d.getDescription());
 							percent = Double.parseDouble(desc);
 						}
 					} catch (NumberFormatException ignored) {
@@ -387,12 +396,215 @@ public class DraftPayrollBuilder {
 	
 	
 	
-
 	private static boolean filter (IPayment payment) {
 		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 	}
 	
 	
+
+	
+	/**
+	 * Print payroll draft 
+	 * @param outputStream - The stream to fill.
+	 * @param domainName - The domain name
+	 * @param salaryDraft - The salary with data.
+	 * @throws CanNotCreatePdfException - The method can not print this payroll.
+	 */
+	public static void printPayrollDraft (OutputStream outputStream, String domainName, SalaryDraft salaryDraft){
+	
+		/**
+		 * Check deductions descriptions
+		 */
+		
+		Salary salary = getOccamSalary(salaryDraft);
+		try {
+			DefaultPayrollBuilder payrollBuilder = new DefaultPayrollBuilder();
+			buildDefaultPayrollFromSalary(payrollBuilder, salary);			
+			
+			/**
+			 * @TODO 
+			 *  1 - Logo get
+			 *  2 - Address FIX
+			 */
+			
+			
+			PdfMaker.printDefaultPayroll(outputStream, payrollBuilder.build(), null, null);
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	/**
+	 * Generate occam salary from SalaryDraft
+	 * @param draft
+	 * @return
+	 */
+	public static Salary getOccamSalary(SalaryDraft draft){
+		
+		Salary salary = new Salary();
+		salary.setSalaryType(com.esferalia.aon.occam.api.model.type.SalaryType.values()[draft.getType().ordinal()]);
+		
+		salary.setTotalPayment(draft.getTotalPayment());
+		salary.setTotalLiquid(draft.getTotalLiquid());
+		salary.setTotalEnterprise(draft.getTotalEnterprise());
+		salary.setTotalDeduction(draft.getTotalDeduction());
+		salary.setSalaryDays(draft.getTimeUnits());
+		
+		salary.setStartDate(draft.getStartDate());
+		salary.setEmployeeSSNumber(draft.getEmployeeSS());
+		salary.setEmployeeSeniorityDate(draft.getEmployeeSeniorityDate());
+		salary.setRemuneration(draft.getRemuneration());
+		
+		salary.setCommonContingenciesBase(draft.getCgcBase());
+		salary.setEmployeeQuoteGroup(draft.getEmployeeQuoteGroup());
+		salary.setProfessionalContingenciesBase(draft.getCgpBase());
+		
+		salary.setEstructuralOvertimeBase(draft.gethExtraBase());
+		salary.setNonEstructuralOvertimeBase(draft.getNonHExtraBase());
+		
+		salary.setIssueDate(draft.getIssueDate());
+		salary.setId(draft.getId());
+		salary.setExtraProrationBase(draft.getProrationBase());
+		salary.setIrpfBase(draft.getIrpfBase());
+		salary.setInkindIrpfBase(draft.getInkindIrpfBase());
+		
+		salary.setEnterpriseName(draft.getEnterpriseName());
+		salary.setEnterpriseDocument(draft.getEmployeeDocument());
+		salary.setEnterpriseCCC(draft.getEnterpriseCCC());
+		salary.setEnterpriseAddress(draft.getEnterpriseAddress());
+		salary.setEndDate(draft.getEndDate());
+		
+		salary.setEmployeeName(draft.getEmployeeName());		
+		salary.setEmployeeDocument(draft.getEmployeeDocument());
+		salary.setEmployeeCategory(draft.getEmployeeAgreementCategory());
+		
+		List<Variable> contextData = draft.getContext();
+		for (Variable variable : contextData) {
+			salary.setContextData(variable.getName(), variable.getValue() + "", variable.getStartDate(), variable.getEndDate());
+		}
+		
+		/**
+		 * Adding payment 
+		 */
+		List<Payment> payments = draft.getPayments();
+		payments.forEach(payment -> addPaymentToSalary(salary,payment));
+		
+		/**
+		 * Adding deductions
+		 */
+		List<Deduction> deductions = draft.getDeductions();
+		deductions.forEach(deduction -> addDeductionToSalary(salary, deduction));
+		
+		/**
+		 * Add costs 
+		 */
+		List<Deduction> costs = draft.getCosts();
+		costs.forEach(cost -> addCostToSalary(salary, cost));
+		
+		/**
+		 * Add embargos 
+		 */
+		
+		List<Deduction> embargos = draft.getEmbargos();
+		embargos.forEach(embargo -> addEmbargoToSalary(salary, embargo));
+		
+		return salary;
+	}
+	
+	/**
+	 * Add a payment to salary
+	 * @param salary
+	 * @param payment
+	 */
+	private static void addPaymentToSalary(Salary salary, Payment payment) {
+		if (payment instanceof CompositePayment) {
+			CompositePayment compositePayment = (CompositePayment) payment;
+			for (Payment child : compositePayment.getChilds()) {
+				addPaymentToSalary(salary, child);
+			}
+		} else {
+			salary.addPayment(
+				payment.getName(),
+				payment.getExpression(),
+				payment.getDescription(),
+				payment.getAmount(),
+				payment.getQuote(),
+				com.esferalia.aon.occam.api.model.type.PaymentType.values()[payment.getType().ordinal()]
+			);
+			
+		}
+	}
+	
+	/**
+	 * Add a deduction to salary
+	 * @param salary
+	 * @param deduction
+	 */
+	public static void addDeductionToSalary(Salary salary, Deduction deduction) {
+
+		if (deduction instanceof CompositeDeduction) {
+			CompositeDeduction compositeDeduction = (CompositeDeduction) deduction;
+			for (Deduction child : compositeDeduction.getChilds()) {
+				addDeductionToSalary(salary, child);
+			}
+		} else {
+			DeductionType type = DeductionType.values()[deduction.getType().ordinal()];
+			String description = deduction.getType().getDescription();
+			
+			if(description == null || description.isEmpty()) 
+				description = getDeductionTypeDescription(deduction.getType().ordinal());
+			
+			salary.addDeduction(
+				type,
+				deduction.getAmount(),
+				description
+			);	
+		}
+	}
+	
+	/**
+	 * Add a cost to salary
+	 * @param salary
+	 * @param deduction
+	 */
+	public static void addCostToSalary(Salary salary, Deduction cost) {
+		/**
+		 * NEW SALARY METHODS!!!!
+		 * ------------------------------------------------
+		 * 
+		 * 	OKAY, LET'S GOooOooo.
+		 * 
+		 */
+		if (cost instanceof CompositeDeduction) {
+			CompositeDeduction compositeDeduction = (CompositeDeduction) cost;
+			for (Deduction child : compositeDeduction.getChilds()) {
+				addCostToSalary(salary, child);
+			}
+		} else {
+			DeductionType type = DeductionType.values()[cost.getType().ordinal()];
+			salary.addCost((byte) type.ordinal(), "", cost.getDescription(), cost.getAmount(), type);	
+		}
+	}
+
+	/**
+	 * Add a embargo to salary
+	 * @param salary
+	 * @param deduction
+	 */
+	public static void addEmbargoToSalary(Salary salary, Deduction embargo) {
+ 
+		if (embargo instanceof CompositeDeduction) {
+			CompositeDeduction compositeDeduction = (CompositeDeduction) embargo;
+			for (Deduction child : compositeDeduction.getChilds()) {
+				addEmbargoToSalary(salary, child);
+			}
+		} else {
+			salary.addEmbargo(embargo.getDescription(), embargo.getAmount());	
+		}
+		
+	}
 
 
 }

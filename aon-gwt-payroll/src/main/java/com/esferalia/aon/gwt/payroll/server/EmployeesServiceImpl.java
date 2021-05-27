@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder.buildDefaultPayrollFromSalary;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -167,11 +168,13 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
+import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.SettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -1605,16 +1608,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(draft);
-
-			try {
-				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
-			} catch (SalaryException | CanNotCreatePdfException e) {
-				e.printStackTrace();
-			}
+			DraftPayrollBuilder.printPayrollDraft(reportOut, domain, draft);
 
 			byte reportByteArray[] = reportOut.toByteArray();
-
 			ByteArrayInputStream reportInput = new ByteArrayInputStream(reportByteArray);
 
 			Writer stringWriter = new StringWriter();
@@ -3882,6 +3878,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	
+	
 	private static ISalary getSalary(SalaryDraft draft) {
 		return new ISalary() {
 
@@ -4124,10 +4122,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 							@Override
 							public DeductionType getType() {
-								
-								/**
-								 * @TODO fix this...  :(
-								 */
+
 								com.esferalia.aon.gwt.payroll.shared.Deduction.Type type = deduction.getType();
 								if(type == null)
 									type = type.OTHER;
@@ -4214,6 +4209,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		};
 	}
 
+	
+	/**
+	 * Get salary from database 
+	 * @param domain
+	 * @param draft
+	 * @return ISalary
+	 */
 	private static ISalary getSalary(String domain, SalaryDraft draft) {
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder() {
