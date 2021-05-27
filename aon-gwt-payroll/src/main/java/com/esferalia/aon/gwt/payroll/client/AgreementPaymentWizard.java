@@ -248,6 +248,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	HTMLPanel paymentCRAPanel;
 	
 	@UiField
+	TextBox paymentDescriptionPos;
+	
+	@UiField
 	TextBox paymentDescription;
 	
 	@UiField(provided = true)
@@ -610,6 +613,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	private void createUpdatePayment() {
 		createPaymentConcept();
+		createPaymentDescriptionPos();
 		createPaymentDescription();
 		createPaymentExpression();
 	}
@@ -636,6 +640,92 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			return AonStringUtils.isNotBlank(extraNameValue) ? "PAGA_EXTRA_" + extraNameValue.toUpperCase() : "PAGA_EXTRA_SIN_DEFINIR";
 		} else
 			return "SIN_DEFINIR";
+	}
+	
+	private void createPaymentDescriptionPos() {
+		String paymenteDescriptionPosValue = "";
+		
+		String paymentTypeValue = paymentType.getSelectedValue();
+		String periodicityTypeValue = periodicityType.getSelectedItemText();
+		
+		
+		/**
+		 * 
+		if(AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_SALARIAL") || AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_EXTRA_SALARIAL")) {
+			periodicityType.clear();
+			periodicityType.addItem("MENSUAL", " * DIAS_TRABAJADOS / DIAS_MES");
+			periodicityType.addItem("DIAS TRABAJADOS", " * DIAS_TRABAJADOS");
+			periodicityType.addItem("DIAS EFECTIVOS", " * DIAS_EFECTIVOS");
+			periodicityType.addItem("HORAS TRABAJADAS", " * HORAS_TRABAJADAS");
+			periodicityType.addItem("FIJO", "FIJO");
+		}
+		
+		if(AonStringUtils.equalsIgnoreCase(paymentType, "PAGA_EXTRA")) {
+			periodicityType.clear();
+			periodicityType.addItem("ANUAL", "ANUAL");
+			periodicityType.addItem("PRORRATEO", "PRORRATEO");
+		}*/
+		
+		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE")) {
+			switch (periodicityTypeValue) {
+				case "ANUAL":
+					paymenteDescriptionPosValue = "01";
+					break;
+				case "MENSUAL":
+					paymenteDescriptionPosValue = "02";
+					break;
+				case "DIARIO":
+					paymenteDescriptionPosValue = "03";
+					break;
+				case "HORAS":
+					paymenteDescriptionPosValue = "04";
+					break;
+				default:
+					paymenteDescriptionPosValue = "05";
+					break;
+			}
+		} else if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PLUS_SALARIAL")) {
+			switch (periodicityTypeValue) {
+				case "MENSUAL":
+					paymenteDescriptionPosValue = "10";
+					break;
+				case "DIAS TRABAJADOS":
+					paymenteDescriptionPosValue = "11";
+					break;
+				case "DIAS EFECTIVOS":
+					paymenteDescriptionPosValue = "12";
+					break;
+				case "FIJO":
+					paymenteDescriptionPosValue = "13";
+					break;
+				default:
+					paymenteDescriptionPosValue = "14";
+					break;
+			}	
+		} else if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PLUS_EXTRA_SALARIAL")) {
+			switch (periodicityTypeValue) {
+				case "MENSUAL":
+					paymenteDescriptionPosValue = "20";
+					break;
+				case "DIAS TRABAJADOS":
+					paymenteDescriptionPosValue = "21";
+					break;
+				case "DIAS EFECTIVOS":
+					paymenteDescriptionPosValue = "22";
+					break;
+				case "FIJO":
+					paymenteDescriptionPosValue = "23";
+					break;
+				default:
+					paymenteDescriptionPosValue = "24";
+					break;
+			}	
+		} else if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PAGA_EXTRA")) {
+			paymenteDescriptionPosValue = "93";
+		}
+			
+		
+		paymentDescriptionPos.setValue(paymenteDescriptionPosValue);
 	}
 
 	private void createPaymentDescription() {
@@ -868,8 +958,10 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 	
 	private void createPayment() {
+		String description = AonStringUtils.isBlank(paymentDescriptionPos.getValue()) ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
+		
 		payment.setId(-1);
-		payment.setDescription(paymentDescription.getValue());
+		payment.setDescription(description);
 		payment.setExpression(createExpression());
 		payment.setIrpfExpression("_P");
 		payment.setQuoteExpression("_P");
@@ -904,8 +996,10 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 
 	private void createExtraPayment() {
+		String description = AonStringUtils.isBlank(paymentDescriptionPos.getValue()) ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
+		
 		paymentExtra.setId(-1);
-		paymentExtra.setDescription(paymentDescription.getValue());
+		paymentExtra.setDescription(description);
 		paymentExtra.setExpression(paymentExpression.getValue());
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
