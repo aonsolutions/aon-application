@@ -281,11 +281,7 @@ class AonLaboral extends AonElement {
             aonView.setFilter({type: 'system'});
             break;
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
-            if(this.isMobile()){
               aonView = new AonContractList();
-            } else {
-              GWT.load(GWT.MAIN_CONTRATA, this.applicationEl.CONTENT);
-            }
             break;
           case PAYROLL_VIEWS.AON_CERT:
               GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);

@@ -93,6 +93,11 @@ export class AonSelect extends AonElement {
         detail =  options.find(v=>  v.value == newValue);
 
       this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail}));
+    } else if(CONSTANT.DISABLED === name){
+      if(CONSTANT.TRUE == this.disabled){
+        let input = this.getElement(this.INPUT);
+        if(input) input.removeIcon();
+      }
     }
   }
 
@@ -135,12 +140,7 @@ export class AonSelect extends AonElement {
           this.buildOptions(optios);
         }
       });
-      let inputSelect = this.getElement(input.INPUT);
-      if(inputSelect){
-        // inputSelect.addEventListener(EVENT.FOCUS, () => {
-        //   inputSelect.select();
-        // });
-      }
+
       input.addEventListener(EVENT.BLUR, ()=>{
         const exists = this.getOptions().some(({name})=> name == input.value);
         if(!exists){
@@ -180,22 +180,21 @@ export class AonSelect extends AonElement {
     let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
-    for(let i = 0; i < options.length; i++) {
+    for (const option of options) {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
-      li.innerHTML = options[i].name;
+      li.innerHTML = option.name;
       li.addEventListener(EVENT.CLICK, (e) => {
         div.classList.remove('is-visible');
-        this.value = options[i].value;
-        input.value = options[i].name;
-        this._selected = options[i];
-        this.dispatchEvent(new CustomEvent('select', {detail: options[i]}));
+        this.value = option.value;
+        input.value = option.name;
+        this._selected = option;
+        this.dispatchEvent(new CustomEvent('select', {detail: option}));
       });
       ul.appendChild(li);
     }
-    div.appendChild(ul)
-
-
+    div.appendChild(ul);
+    
     document.addEventListener(EVENT.CLICK, function(event) {
       this.value = this._selected ? this._selected.name : '';
       let isClickInside = input.contains(event.target);
@@ -235,7 +234,7 @@ export class AonSelect extends AonElement {
   }
 
   getDisabled(){
-    return this.disabled == "true";
+    return CONSTANT.TRUE == this.disabled;
   }
 
   setDisabled(disabled) {

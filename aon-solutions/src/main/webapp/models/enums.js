@@ -1,3 +1,5 @@
+import { SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER  } from "../environments/msg.js"
+
 export const ToolbarType = {
   APPLICATION: 'application',
   SECONDARY: 'secondary'
@@ -81,3 +83,28 @@ export const RegistryType = {
 	TARGET: 'TARGET',
 	TASK_HOLDER: 'TASK_HOLDER'
 }
+
+export const DAYS = [
+	SUNDAY,
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY
+];
+
+export const MONTHS =[
+	JANUARY,
+	FEBRUARY,
+	MARCH,
+	APRIL,
+	MAY,
+	JUNE,
+	JULY,
+	AUGUST,
+	SEPTEMBER,
+	OCTOBER,
+	NOVEMBER,
+	DECEMBER
+];

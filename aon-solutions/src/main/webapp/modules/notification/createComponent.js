@@ -99,7 +99,12 @@ export const createSpanFloat = () => createSpan({
 export const createForm  = (id="form") => newComponent({
   type:TAG.FORM,
   id,
-  action: "#"
+  attributes:{
+    action: "#"
+  },
+  events:{
+    submit: (ev)=>  ev.preventDefault()
+  }
 });
 
 export const createBadge = (id) => createSpan({

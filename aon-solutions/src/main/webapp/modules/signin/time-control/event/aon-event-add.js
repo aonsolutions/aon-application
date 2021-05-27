@@ -74,7 +74,6 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
-
     const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const aonCardCoordinate = ` <div class="aonCol-sm-12"><aon-card id="${this.id}CardCoordinate" title="Coordenadas" visible="false" flex="true"></aon-card> </div>`;
     const form = `
@@ -126,15 +125,17 @@ export class AonEventAdd extends AonElement {
       iframe.style.border = 0;
       iframe.style.height = "400px";
       iframe.style.width = "100%";
-      iframe.src = `https://maps.google.es/maps?q=${coordinates.latitude},${coordinates.longitude}&z=${zoom}&output=embed&hl=es`;
+      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${coordinates.latitude},${coordinates.longitude}&zoom=${zoom}&language=es`;
       aonMap.setContent(iframe);
       aonMap.setAttribute("visible", true);
     }
   }
 
   async initLists() {
-    await this.listStatus();
-    await this.listLocation();
+    await Promise.all([
+      this.listStatus(),
+      this.listLocation()
+    ]).catch(e=>null)
     this.setValues();
   }
 

@@ -335,26 +335,25 @@ export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 
 
 //-------------DAYS
-const SUNDAY = "domingo"; // TODO
-const MONDAY = "lunes"; // TODO 
-const TUESDAY = "martes"; // TODO
-const WEDNESDAY = "miercoles"; // TODO
-const THURSDAY = "jueves"; // TODO
-const FRIDAY = "viernes"; // TODO
-const SATURDAY = "sabado"; // TODO
-export const DAYS = [SUNDAY, MONDAY, TUESDAY,WEDNESDAY, THURSDAY, FRIDAY, SATURDAY];
+export const SUNDAY = "domingo"; 
+export const MONDAY = "lunes";  
+export const TUESDAY = "martes"; 
+export const WEDNESDAY = "miercoles"; 
+export const THURSDAY = "jueves"; 
+export const FRIDAY = "viernes"; 
+export const SATURDAY = "sabado"; 
 
 //-------------MONTHS
-const JANUARY   = "enero"; // TODO
-const FEBRUARY  = "febrero"; // TODO
-const MARCH     = "marzo"; // TODO
-const APRIL     = "abril"; // TODO
-const MAY       = "mayo"; // TODO
-const JUNE      = "junio"; // TODO
-const JULY      = "julio"; // TODO
-const AUGUST    = "agosto"; // TODO
-const SEPTEMBER = "septiembre"; // TODO
-const OCTOBER   = "octubre"; // TODO
-const NOVEMBER  = "noviembre"; // TODO
-const DECEMBER  = "diciembre"; // TODO
-export const MONTHS = [JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER];
+export const JANUARY   = "enero"; 
+export const FEBRUARY  = "febrero"; 
+export const MARCH     = "marzo"; 
+export const APRIL     = "abril"; 
+export const MAY       = "mayo"; 
+export const JUNE      = "junio"; 
+export const JULY      = "julio"; 
+export const AUGUST    = "agosto"; 
+export const SEPTEMBER = "septiembre"; 
+export const OCTOBER   = "octubre"; 
+export const NOVEMBER  = "noviembre"; 
+export const DECEMBER  = "diciembre"; 
+
