@@ -28,7 +28,7 @@ public class AppiumTools {
 	}
 	
 	public static void fillInput(WebDriver driver, String selector, String text) {
-		((JavascriptExecutor)driver).executeScript("document.querySeletcor("+selector+")?.value='" + text + "'");	
+		((JavascriptExecutor)driver).executeScript("document.querySelector('"+selector+"').value='" + text + "'");	
 	}
 	
 }
