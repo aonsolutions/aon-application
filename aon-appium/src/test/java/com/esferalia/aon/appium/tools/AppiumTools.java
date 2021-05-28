@@ -3,6 +3,8 @@ package com.esferalia.aon.appium.tools;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.appium.java_client.AppiumDriver;
@@ -25,5 +27,8 @@ public class AppiumTools {
 		return new AppiumDriver<MobileElement>(new URL(appiumServiceUrl),capabilities);
 	}
 	
+	public static void fillInput(WebDriver driver, String selector, String text) {
+		((JavascriptExecutor)driver).executeScript("document.querySeletcor("+selector+")?.value='" + text + "'");	
+	}
 	
 }
