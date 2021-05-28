@@ -15,9 +15,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -132,16 +134,37 @@ public abstract class AbstractTestCase {
 			String username = "09iker05@gmail.com";
 			String password = "15100811";
 
-			usernameInput.sendKeys(username);
-			passwordInput.sendKeys(password);
-
+			wait.until(ExpectedConditions.visibilityOf(usernameInput));
+			AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
+			
+			wait.until(ExpectedConditions.visibilityOf(passwordInput));
+			AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
+		
+		
+			
+			wait.until(ExpectedConditions.visibilityOf(loginButtonEl));
 			
 			loginButtonEl.click();
+			try {
+				WebDriverWait wait2 = new WebDriverWait(app, 3);
+				Alert alert = wait2.until(ExpectedConditions.alertIsPresent());
+			}catch(WebDriverException e) {
+			
+					usernameInput.clear();
+					AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
+					passwordInput.clear();
+					AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
+					loginButtonEl.click();
+				
+					
 
-			WebElement userIcon = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
-			//assertTrue("AON SOLUTIONS: Incorrect login", userIcon.isDisplayed());
+				//WebElement userIcon = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
+				//assertTrue("AON SOLUTIONS: Incorrect login", userIcon.isDisplayed());
 
-			console.success("login", "DONE.");
+				console.success("login", "DONE.");				
+			}
+			fail("Login denied.");
+
 		} catch (NoSuchElementException e) {
 			String message = "AON SOLUTIONS : The element does not exist";
 			fail(message);
