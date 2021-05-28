@@ -269,6 +269,10 @@ export const CONTENT_EDITABLE = "contentEditable";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 
+// aon-textarea 
+
+export const AON_TEXTAREA = 'aonTextarea';
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name

@@ -1355,7 +1355,7 @@ export class AonNewInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.REJECT_INVOICE);
-		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
+		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
 			if(!ta.value.isEmpty()){
@@ -1389,7 +1389,7 @@ export class AonNewInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ADD_COMMENT);
-		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
+		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
 			let dt = new Date()
@@ -1402,9 +1402,9 @@ export class AonNewInvoice extends AonElement {
 				status: this.getCommentStatus(),
 				reason: ta.value
 			};
-			this._invoice.comments.push(comment);
-			this.save();
-			this.build();
+			this.invoice.comments.push(comment);
+			this.reload();
+			if(this.autosave) this.save();
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -1414,18 +1414,24 @@ export class AonNewInvoice extends AonElement {
 		d.open();
 	}
 
+	getCommentStatus(){
+		if(this.invoice.isInbox())
+			return 'Inbox';
+		else if(this.invoice.isRejected()) {
+			return 'Rechazado'
+		} else return 'Papelera';
+	}
+
 	trashInvoice() {
 		this.getInvoice().status = CONSTANT.TRASH;
 		this.save();
-		if(!this.isMobile())
-			this.buildInvoiceToolbar();
+		this.reload();
 	}
 
 	restoreInvoice() {
 		this.getInvoice().status = CONSTANT.INBOX;
 		this.save();
-		if(!this.isMobile())
-			this.buildInvoiceToolbar();
+		this.reload();
 	}
 
 	removeInvoice() {
