@@ -261,9 +261,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	}
 	
 	private void calculateScrollPanelHeight() {
-		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight - 900) + "px");
-		secondaryUserScrollPanel.setHeight((clientHeight - 900) + "px");
+		//Integer clientHeight = Window.getClientHeight();
+		//scrollPanel.setHeight((clientHeight - 900) + "px");
+		//secondaryUserScrollPanel.setHeight((clientHeight - 900) + "px");
 	}
 	
 	private void setColumnWidth() {
