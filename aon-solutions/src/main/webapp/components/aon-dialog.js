@@ -138,7 +138,7 @@ export class AonDialog extends AonElement {
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
 				<label class="btn-close" id="${this.DIALOG}Click">×</label>
-				<h4 id="${this.TITLE}"></h4>
+				<h2 id="${this.TITLE}"></h2>
 				<div id="${this.CONTENT}"></div>
 				<div id="${this.ACTION}"></div>
 			</div>
