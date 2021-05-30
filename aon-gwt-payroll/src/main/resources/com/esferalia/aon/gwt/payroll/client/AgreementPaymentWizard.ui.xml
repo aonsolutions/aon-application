@@ -195,10 +195,6 @@
 										<g:Label styleName="{style.title}">Tipo importe</g:Label>
 										<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu {style.w103}" />
 									</g:HTMLPanel>
-									<g:HTMLPanel ui:field="extraPayValuePanel" styleName="{style.flex}">
-										<g:Label styleName="{style.title}">Importe</g:Label>
-										<g:TextBox ui:field="extraPayValue" styleName="aon-inputText {style.extraPayValue}  {style.tbHeight}" />
-									</g:HTMLPanel>
 									<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
 										<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
 										<g:Button ui:field="partialityButton" />
@@ -209,9 +205,7 @@
 								<g:HTMLPanel styleName="{style.flexPanel}">
 									<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumn} {style.maxWidth}">
 										<g:Label styleName="{style.title}">Selecciona los conceptos</g:Label>
-										<g:ScrollPanel ui:field="paymentDataScrollPanel">
-											<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
-										</g:ScrollPanel>
+										<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 								
@@ -246,7 +240,7 @@
 							<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flexColumn2}">
 								<g:Label styleName="{style.title}">Descripción</g:Label>
 								<g:HTMLPanel styleName="{style.flex}">
-									<g:TextBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />
+									<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />
 									<g:TextBox ui:field="paymentDescription" styleName="{style.widthAll}" />
 								</g:HTMLPanel>
 							</g:HTMLPanel>
