@@ -4161,18 +4161,17 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
 				.getSalaryPayments()) {
 			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
-					+ " (" + payment.getExpression() + ")");
+					+ " (" + payment.getQuote() + ")" );
 		}
 		
-//		for (com.esferalia.aon.payroll.SalaryData data: delay.getSalaryDatas()) {
-//			System.out.println(data.getName() + " :" + data.getExpression());
-//			
-//		}
+		for (com.esferalia.aon.payroll.SalaryData data: delay.getSalaryDatas()) {
+			System.out.println(data.getName() + " :" + data.getExpression());
+		}
 		
 		Assert.assertEquals(1750.00*2, delay.getTotalPayment());
-		Assert.assertEquals(1750.00*2, delay.getCommonBase());
-		Assert.assertEquals(1750.00*2, delay.getRawCommonBase());
-		Assert.assertEquals(1750.00*2, delay.getProfessionalBase());
+		//Assert.assertEquals(1750.00*2, delay.getCommonBase());
+		//Assert.assertEquals(1750.00*2, delay.getRawCommonBase());
+		//Assert.assertEquals(1750.00*2, delay.getProfessionalBase());
 		Assert.assertEquals(1750.00*2, delay.getIrpfBase());
 		
 //		delayCtx = new SQLContractDelayCalculatorContext(connection, 
