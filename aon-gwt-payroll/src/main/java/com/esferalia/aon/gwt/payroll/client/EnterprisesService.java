@@ -292,5 +292,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser,
 			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
+
+	Integer getEnterpriseId(String currentDomainName);
 	
 }

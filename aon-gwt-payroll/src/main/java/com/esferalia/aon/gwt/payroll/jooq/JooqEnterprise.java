@@ -59,6 +59,10 @@ public class JooqEnterprise {
 	
 	// --------------------------------- GETTER / SETTER ---------------------------------------------
 	
+	public static Integer getEnterpriseId(Connection conn, Integer domainId) {
+		return getEnterpriseIdDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+	
 	public static EnterpriseInfo getEnterpriseInfo(Connection conn, Integer enterpriseId) {
 		return getEnterpriseInfoDB(DSL.using(conn, getDefaultSettings()), enterpriseId);
 	}
@@ -87,6 +91,14 @@ public class JooqEnterprise {
 	
 	
 	// --------------------------------- GETTER / SETTER ---------------------------------------------
+	
+	private static Integer getEnterpriseIdDB(DSLContext dslContext, Integer domainId) {
+		Result<Record> enterpriseRecords = dslContext.select().from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetch();
+		if(enterpriseRecords.isEmpty())
+			return null;
+		
+		return enterpriseRecords.get(0).get(ENTERPRISE.REGISTRY);
+	}
 	
 	private static EnterpriseInfo getEnterpriseInfoDB(DSLContext dslContext, Integer enterpriseId) {
 		

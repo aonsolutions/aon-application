@@ -821,4 +821,10 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.setComunicaEnterpriseSettings(domainName, currentUser, comunicaEnterpriseSettings, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void getEnterpriseId(String domainName, AsyncCallback<Integer> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseId(domainName, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
 }
