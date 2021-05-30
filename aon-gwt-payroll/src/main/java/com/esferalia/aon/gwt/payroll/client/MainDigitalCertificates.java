@@ -151,46 +151,48 @@ public class MainDigitalCertificates extends MainEntryPoint{
 				
 				}, f -> {});
 		
-		try {
-			checkStatus(this.mainDigitalCertificatesObject);
-		} catch (Exception e) {}
+		checkStatus(this.mainDigitalCertificatesObject);
 	}
 	
 	// ------------------------------------------------------ Check Status
 	
 	private void checkStatus(MainDigitalCertificatesObject mainDigitalCertificatesObject) {
-		mainDigitalCertificatesObject.checkStatus(enterpriseStatus -> {
-			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
-				
-				@Override
-				public void up2Date() {}
-
-				@Override
-				public void run() {}
-				
-				@Override
-				protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {}
-				
-				@Override
-				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {}
-
-				@Override
-				protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total ) {}
-				
-				@Override
-				protected void saltraCredentialsFound() {}
-			};
-
-			enterpriseStatus.visit(sistemaREDResults);
-			EnterpriseStatus.ifSistemaREDEnabled(enterpriseStatus, () -> {
-				MainDigitalCertificates.this.setSistemaREDVisible(true);
-			}, () -> {
+		try {
+			mainDigitalCertificatesObject.checkStatus(enterpriseStatus -> {
+				SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+					
+					@Override
+					public void up2Date() {}
+	
+					@Override
+					public void run() {}
+					
+					@Override
+					protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {}
+					
+					@Override
+					protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {}
+	
+					@Override
+					protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total ) {}
+					
+					@Override
+					protected void saltraCredentialsFound() {}
+				};
+	
+				enterpriseStatus.visit(sistemaREDResults);
+				EnterpriseStatus.ifSistemaREDEnabled(enterpriseStatus, () -> {
+					MainDigitalCertificates.this.setSistemaREDVisible(true);
+				}, () -> {
+					MainDigitalCertificates.this.setSistemaREDVisible(false);
+				});
+	
+			}, throwable -> {
 				MainDigitalCertificates.this.setSistemaREDVisible(false);
 			});
-
-		}, throwable -> {
+		} catch (Exception e) {
 			MainDigitalCertificates.this.setSistemaREDVisible(false);
-		});
+		}
 	}
 
 	private void setSistemaREDVisible(boolean visible) {
@@ -451,7 +453,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		TextBox fileNameTB = new TextBox();
 		fileNameTB.getElement().getStyle().setWidth(305, Unit.PX);
-		String description = AonStringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
+		String description = "No existe certficado";
+		if(digitalCertificate.getHasCertificate())
+			description = AonStringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
 		fileNameTB.setValue(description);
 		
 		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates() && certificateType == CertificateType.SEPE)
@@ -761,7 +765,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		mainDigitalCertificatesObject.getSecondaryUsers(t -> {
 			this.showSecondaryUsers.setVisible(false);
 			insertSecondaryUsersRows();
-		}, e -> {});
+		}, e -> {
+			secondayUsersPanel.setVisible(false);
+		});
 	}
 	
 }

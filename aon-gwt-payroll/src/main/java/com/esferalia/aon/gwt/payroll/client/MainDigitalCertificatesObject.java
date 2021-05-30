@@ -21,10 +21,13 @@ public class MainDigitalCertificatesObject {
 	private List<DigitalCertificate> digitalCertificateList;
 	private List<SecondaryUserCertificate> secondaryUsers;
 	
+	private Integer enterpriseId;
+	
 	public MainDigitalCertificatesObject() {
 		super();
 		this.digitalCertificateList = new ArrayList<DigitalCertificate>();
 		this.secondaryUsers = new ArrayList<SecondaryUserCertificate>();
+		this.enterpriseId = null;
 	}
 	
 	public void getDigitalCertificates(Consumer<List<DigitalCertificate>> success, Consumer<Throwable> failure){
@@ -34,7 +37,26 @@ public class MainDigitalCertificatesObject {
 			@Override
 			public void onSuccess(List<DigitalCertificate> digitalCertificateListDB) {
 				digitalCertificateList = digitalCertificateListDB;
-				success.accept(digitalCertificateListDB);	
+				
+				getEnterpriseId(s -> {
+					success.accept(digitalCertificateListDB);	
+				}, f -> {});	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
+	public void getEnterpriseId(Consumer<Integer> success, Consumer<Throwable> failure){
+		
+		impl.getEnterpriseId(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer enterpriseIdIn) {
+				enterpriseId = enterpriseIdIn;
+				success.accept(enterpriseIdIn);	
 			}
 
 			@Override
@@ -85,7 +107,9 @@ public class MainDigitalCertificatesObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
@@ -157,8 +181,8 @@ public class MainDigitalCertificatesObject {
 	}
 	
 	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
-		
-		impl.getEnterpriseStatus(null, new AsyncCallback<EnterpriseStatus>() {
+		//TODO: enterprise Id???
+		impl.getEnterpriseStatus(enterpriseId, new AsyncCallback<EnterpriseStatus>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept( caught );
