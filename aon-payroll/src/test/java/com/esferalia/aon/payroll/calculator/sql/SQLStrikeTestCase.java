@@ -440,7 +440,7 @@ public class SQLStrikeTestCase extends AbstractSQLTestCase {
 				}).calculate(ctx);
 
 		Assert.assertEquals(
-				((1750.00 ) * (get(endDate, DAY_OF_MONTH) - (strikeDays)) / get(endDate, DAY_OF_MONTH) ) + 100.00
+				((1850.00 ) * (get(endDate, DAY_OF_MONTH) - (strikeDays)) / get(endDate, DAY_OF_MONTH) ) 
 				, salary.getTotalPayment(),
 				DELTA);
 
