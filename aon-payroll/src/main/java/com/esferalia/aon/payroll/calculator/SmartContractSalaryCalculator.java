@@ -1015,6 +1015,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 		} 
 		
+		if (results.size() == 1
+			&& isWholeMonth(results.get(0))	
+			&& results.get(0).getContext().size() == 0
+			&& isPermanentPayment(contractPayment, results.get(0).getPeriod()) ) {
+			try {
+				return subtractOFFPart(results, strikes, expressionContext);
+			} catch (UndefinedVariablesException e) {
+			} catch (ExpressionException e) {
+			}
+		} 
+
 		List<Period> worked = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);
 		
 		if ( Period.sub(strikes ,worked ).size() == 0  )

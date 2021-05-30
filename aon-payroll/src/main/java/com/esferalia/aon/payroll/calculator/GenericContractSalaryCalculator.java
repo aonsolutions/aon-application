@@ -1596,6 +1596,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		);
 	}
 
+	protected static boolean isPermanentPayment(IContractPayment payment, Period p) {
+		Date firstDayOfMonth = AonDateUtils.getMonthFirstDay(p.getStart());
+		Date lastDayOfMonth = AonDateUtils.getMonthLastDay(p.getEnd());
+		return Period.compare(payment.getStartDate(), firstDayOfMonth) < 0 
+				&& Period.compare(payment.getEndDate(), lastDayOfMonth) > 0;
+	}
+
 	// ---------------------------------------------------------------- Private
 	
 	private static boolean isPartialMonth(ITimedResult<?> result) {

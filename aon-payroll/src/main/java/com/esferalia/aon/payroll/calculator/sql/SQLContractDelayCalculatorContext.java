@@ -7,6 +7,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT_LEAVE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mvel2.util.MethodStub;
@@ -73,6 +75,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
 	
+	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
 	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
@@ -134,12 +137,14 @@ public class SQLContractDelayCalculatorContext extends
 		private Collection<Period> its;
 		private Map<Integer, Integer> itDays;
 		private Map<Integer, Integer> monthDays;
+		private Function<Period, Double>  totalWorkedDaysFunction;
 		
-		public SmartContractDelayCalculator(Map<Integer, Integer> monthDays, Map<Integer, Integer> itDays, Collection<Period> its) {
+		public SmartContractDelayCalculator(Map<Integer, Integer> monthDays, Map<Integer, Integer> itDays, Collection<Period> its, Function<Period, Double> totalWorkedDaysFunction ) {
 			super();
 			this.its = its;
 			this.itDays = itDays;
 			this.monthDays = monthDays;
+			this.totalWorkedDaysFunction = totalWorkedDaysFunction;
 		}
 
 		@Override
@@ -149,6 +154,18 @@ public class SQLContractDelayCalculatorContext extends
 			
 			if ( isITPayment(contractPayment))
 				return Collections.singletonList( isInIT(result.getPeriod()) ? fixItResult(result) : new TimedResult<Double>(0.00, result.getPeriod(), result.getContext()));
+
+			if ( !isWholeMonth(result.getPeriod()) ) {
+				try {
+					double workedDays = getWorkedDays(expressionContext, result);
+					double totalWorkedDays = totalWorkedDaysFunction.apply(result.getPeriod());
+					if ( workedDays < totalWorkedDays ) {
+						double value = result.getValue() / totalWorkedDays * workedDays;
+						return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
+					}
+				} catch ( Exception e ) {
+				}
+			}
 			
 			
 			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
@@ -183,6 +200,7 @@ public class SQLContractDelayCalculatorContext extends
 			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
 		}
 		
+	
 		@Override
 		protected List<ITimedResult<Double>> fixItResults(IContractPayment contractPayment,
 				List<ITimedResult<Double>> results, List<Period> its, Date start, Date end,
@@ -229,6 +247,7 @@ public class SQLContractDelayCalculatorContext extends
 				return true;
 			return false;
 		}
+
 
 		private static boolean isConstant(List<ITimedResult<?>> results) {
 			return results.size() == 1 && results.get(0).getContext().isEmpty();
@@ -323,7 +342,7 @@ public class SQLContractDelayCalculatorContext extends
 		public  int getOrdinal(IContractPayment payment) {
 			return payments.size()+1;
 		}
-	};
+		};
 
 		
 		DelayPaymentBuilder delayPaymentBuilder = new DelayPaymentBuilder(
@@ -342,7 +361,7 @@ public class SQLContractDelayCalculatorContext extends
 		Map<Integer, Integer> monthDays = getMonthDays(startDate, endDate);
 
 		//	ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractDelayCalculator<ISalary>(monthDays, itDays, itPeriods);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractDelayCalculator<ISalary>(monthDays, itDays, itPeriods, p -> getTotalWorkedDays(connection, criteria,p));
 		calculator.setSalaryBuilder(compositeBuilder);
 		
 		long prevDays = 0;
@@ -356,6 +375,7 @@ public class SQLContractDelayCalculatorContext extends
 			ISQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
 					connection, period.getStart(), period.getEnd(),
 					period.getEnd(), criteria, prevDays ) ;
+			
 			while (ctx.next()) {
 				calculator.calculate(ctx);
 				payments.addAll(delayPaymentBuilder.getContractPayments());
@@ -369,6 +389,22 @@ public class SQLContractDelayCalculatorContext extends
 
 		return payments;
 
+	}
+
+	private Double getTotalWorkedDays(Connection connection, Criteria criteria, Period p) {
+			Date firstDaysOfMonth = getFirstDayOfMonth(p.getStart());
+			Date lastDaysOfMonth = getLastDayOfMonth(p.getEnd());
+			
+			ISQLContractSalaryCalculatorContext ctx;
+			try {
+				ctx = new DelaySQLContractSalaryCalculatorContext(
+						connection, firstDaysOfMonth, lastDaysOfMonth, 
+						lastDaysOfMonth, criteria, 0 );
+				ctx.next();
+				return getTotalWorkedDays(ctx.getExpressionContext(), new Period(firstDaysOfMonth, lastDaysOfMonth));
+			} catch (ExpressionException | SQLException e) {
+				throw new RuntimeException(e);
+			}
 	}
 
 
@@ -516,6 +552,7 @@ public class SQLContractDelayCalculatorContext extends
 
 	}
 	
+
 	private static Collection<Period> getMonthPeriods(Date startDate, Date endDate){
 		Collection<Period> monthPeriods = new LinkedList<Period>();
 		
@@ -637,7 +674,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
 				+ " AND (" 
 				+ SalaryDataColumns.NAME + " LIKE 'DIAS_ENFERMEDAD%'" 
-				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD')"
+				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD'," + ERE_DAYS + " )"
 				+ ")"
 				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
 				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
@@ -662,7 +699,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
 				+ " AND (" 
 				+ SalaryDataColumns.NAME + " LIKE 'DIAS_ENFERMEDAD%'" 
-				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD')"
+				+ " OR " + SalaryDataColumns.NAME + " IN ('DIAS_MATERNIDAD', 'DIAS_PATERNIDAD', " + ERE_DAYS + " )"
 				+ ")"
 				+ ")"
 				;
@@ -734,7 +771,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() +"')" 
+				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + ")" 
 				+ " GROUP BY 1"
 				;
 
@@ -1220,6 +1257,27 @@ public class SQLContractDelayCalculatorContext extends
 		throw new UndefinedContextVariablesException(MONTH_DAYS);
 	}
 
+	private static double getWorkedDays(ExpressionContext expressionContext, ITimedResult<?> result ) throws ExpressionException {
+		
+		return getWorkedDays(expressionContext, result.getPeriod());
+	}
+
+	private static double getWorkedDays(ExpressionContext expressionContext, Period period ) throws ExpressionException {
+		
+		Date start = period.getStart();
+		Date end = period.getEnd();
+		
+		return expressionContext.eval(WORKED_DAYS.getName(), start, end, Number.class).stream().collect(Collectors.summingDouble(v -> v.getValue().doubleValue()));
+	}
+
+	private static double getTotalWorkedDays(ExpressionContext expressionContext, Period period ) throws ExpressionException {
+		
+		Date start = period.getStart();
+		Date end = period.getEnd();
+		
+		return expressionContext.eval(ContextVariable.TOTAL_WORKED_DAYS.getName(), start, end, Number.class).stream().collect(Collectors.summingDouble(v -> v.getValue().doubleValue()));
+	}
+
 	private static double getResultDays(ExpressionContext expressionContext, ITimedResult<?> result ) throws ExpressionException {
 		
 		Date start = result.getPeriod().getStart();
@@ -1234,4 +1292,6 @@ public class SQLContractDelayCalculatorContext extends
 		return resultDays;
 		
 	}
+	
+
 }
