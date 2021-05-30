@@ -188,5 +188,6 @@ public interface EnterprisesServiceAsync {
 	void getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
+	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
 	
 }

@@ -3011,5 +3011,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public Integer getEnterpriseId(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqEnterprise.getEnterpriseId(connection, domainId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
