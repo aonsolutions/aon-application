@@ -41,9 +41,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -209,12 +209,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	ListBox extraPayType;
 	
 	@UiField
-	HTMLPanel extraPayValuePanel;
-	
-	@UiField
-	TextBox extraPayValue;
-	
-	@UiField
 	HTMLPanel partialityPanel;
 	
 	@UiField
@@ -222,9 +216,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel paymentsDataGridPanel;
-	
-	@UiField
-	ScrollPanel paymentDataScrollPanel;
 	
 	@UiField(provided = true)
 	DataGrid<Payment> paymentsDataGrid;
@@ -248,7 +239,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	HTMLPanel paymentCRAPanel;
 	
 	@UiField
-	TextBox paymentDescriptionPos;
+	IntegerBox paymentDescriptionPos;
 	
 	@UiField
 	TextBox paymentDescription;
@@ -307,10 +298,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExtra = new Payment();
 		extra = new Extra();
 		
-		// Set height
-		paymentDataScrollPanel.setHeight("90px");
-		
 		extraPayDate.getElement().setPropertyString("placeholder", "dd/mm");
+		paymentDescriptionPos.getElement().setAttribute("type", "number");
 		
 		initPaymentListBox();
 		initExtraPayCalc();
@@ -393,8 +382,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	private void initExtraPayType() {
 		extraPayType.clear();
+		extraPayType.addItem("CALCULADO", "CALCULADO");
 		extraPayType.addItem("VARIABLE", "VARIABLE");
-		extraPayType.addItem("FIJO", "FIJO");
 	}
 
 	private void initPeriodicityType(String paymentType) {
@@ -441,7 +430,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		extraPayDatePanel.setVisible(visible);
 		extraPayCalcPanel.setVisible(visible);
 		extraPayTypePanel.setVisible(visible);
-		extraPayValuePanel.setVisible(visible);
 	}
 
 	
@@ -540,30 +528,24 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	@UiHandler("extraPayType")
 	void onExtraPayTypeChange(ChangeEvent event) {
-		if(AonStringUtils.equalsIgnoreCase(extraPayType.getSelectedValue(), "FIJO")) {
+		if(AonStringUtils.equalsIgnoreCase(extraPayType.getSelectedValue(), "VARIABLE")) {
 			paymentsDataGridPanel.getElement().getStyle().setDisplay(Display.NONE);
 			
 			partialityPanel.getElement().getStyle().clearDisplay();
-			extraPayValuePanel.getElement().getStyle().clearDisplay();
 			
 			hasPartiality = false;
 			partialityButton.setEnabled(true);
 			getEnableDisableButton(partialityButton, hasPartiality);
 			partialityButton.removeStyleName(style.visibilityDisabled());
+			
+			String extraNameValue = extraName.getValue();
+			paymentExpression.setValue(AonStringUtils.isNotBlank(extraNameValue) ? extraNameValue.replaceAll(" ", "_").toUpperCase() : "SIN_DEFINIR");
+			
 		} else {
 			paymentsDataGridPanel.getElement().getStyle().clearDisplay();
-			
 			partialityPanel.getElement().getStyle().setDisplay(Display.NONE);
-			extraPayValuePanel.getElement().getStyle().setDisplay(Display.NONE);
+			paymentExpression.setValue("");
 		}
-		
-		paymentExpression.setValue("");
-	}
-	
-	@UiHandler("extraPayValue")
-	void onExtraPayValueChange(ChangeEvent event) {	
-		paymentExpression.setValue(extraPayValue.getValue());
-		checkPartiality();
 	}
 	
 //	@UiHandler("secondButton")
@@ -637,7 +619,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			return AonStringUtils.isNotBlank(extraNameValue) ? "PLUS_" + extraNameValue.toUpperCase() : "PLUS_SIN_DEFINIR";
 		} if(AonStringUtils.containsIgnoreCase(paymentTypeValue, "PAGA_EXTRA")) {
 			String extraNameValue = extraName.getValue();
-			return AonStringUtils.isNotBlank(extraNameValue) ? "PAGA_EXTRA_" + extraNameValue.toUpperCase() : "PAGA_EXTRA_SIN_DEFINIR";
+			return AonStringUtils.isNotBlank(extraNameValue) ? "EXTRA_" + extraNameValue.replaceAll(" ", "_").toUpperCase() : "EXTRA_SIN_DEFINIR";
 		} else
 			return "SIN_DEFINIR";
 	}
@@ -725,7 +707,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 			
 		
-		paymentDescriptionPos.setValue(paymenteDescriptionPosValue);
+		paymentDescriptionPos.setValue(Integer.parseInt(paymenteDescriptionPosValue));
 	}
 
 	private void createPaymentDescription() {
@@ -831,7 +813,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		if(hasPartiality && (AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") ||
 				AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES") ||
-				AonStringUtils.containsIgnoreCase(extraPayTypeValue, "FIJO"))) {
+				AonStringUtils.containsIgnoreCase(extraPayTypeValue, "VARIABLE"))) {
 			paymentExpression.setValue(paymentExpression.getValue() + " * COEFICIENTE_PARCIALIDAD");
 		} else {
 			String paymentExpressionValue = paymentExpression.getValue();
@@ -958,7 +940,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 	
 	private void createPayment() {
-		String description = AonStringUtils.isBlank(paymentDescriptionPos.getValue()) ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
+		String description = null == paymentDescriptionPos.getValue() ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
 		
 		payment.setId(-1);
 		payment.setDescription(description);
@@ -996,7 +978,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	}
 
 	private void createExtraPayment() {
-		String description = AonStringUtils.isBlank(paymentDescriptionPos.getValue()) ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
+		String description = null == paymentDescriptionPos.getValue() ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
 		
 		paymentExtra.setId(-1);
 		paymentExtra.setDescription(description);
