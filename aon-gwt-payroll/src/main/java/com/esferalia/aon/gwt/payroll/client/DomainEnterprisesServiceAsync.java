@@ -518,6 +518,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicaEnterpriseSettings(getCurrentDomainName(), getCurrentUser(), comunicaEnterpriseSettings, asyncCallback);
 	}
 	
+	public void getEnterpriseId(AsyncCallback<Integer> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseId(getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -531,5 +535,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }
