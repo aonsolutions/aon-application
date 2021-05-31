@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
@@ -459,13 +460,20 @@ public class DraftPayrollBuilder {
 	public static Salary getOccamSalary(SalaryDraft draft){
 		
 		Salary salary = new Salary();
-		salary.setSalaryType(com.esferalia.aon.occam.api.model.type.SalaryType.values()[draft.getType().ordinal()]);
+		Type salaryType = draft.getType();
+		
+		if(salaryType != null)
+			salary.setSalaryType(com.esferalia.aon.occam.api.model.type.SalaryType.values()[salaryType.ordinal()]);
+		else
+			salary.setSalaryType(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
 		
 		salary.setTotalPayment(draft.getTotalPayment());
 		salary.setTotalLiquid(draft.getTotalLiquid());
 		salary.setTotalEnterprise(draft.getTotalEnterprise());
 		salary.setTotalDeduction(draft.getTotalDeduction());
-		salary.setSalaryDays(draft.getTimeUnits());
+		
+		Integer timeUnits = draft.getTimeUnits();
+		salary.setSalaryDays(timeUnits == null ? 0 : timeUnits);
 		
 		salary.setStartDate(draft.getStartDate());
 		salary.setEmployeeSSNumber(draft.getEmployeeSS());
@@ -483,7 +491,9 @@ public class DraftPayrollBuilder {
 		salary.setId(draft.getId());
 		salary.setExtraProrationBase(draft.getProrationBase());
 		salary.setIrpfBase(draft.getIrpfBase());
-		salary.setInkindIrpfBase(draft.getInkindIrpfBase());
+		
+		Double inkindIrpfBase = draft.getInkindIrpfBase();
+		salary.setInkindIrpfBase(inkindIrpfBase == null ? 0 : inkindIrpfBase);
 		
 		salary.setEnterpriseName(draft.getEnterpriseName());
 		salary.setEnterpriseDocument(draft.getEmployeeDocument());
