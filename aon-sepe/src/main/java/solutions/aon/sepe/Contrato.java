@@ -382,6 +382,24 @@ public class Contrato {
 		} 
 	}
 	
+	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType)  throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException {
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	
+	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+			
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
+	        DomNode fielset = htmlPage.querySelector("form > fieldset");	
+	        if(fielset.getVisibleText().indexOf("errores")>=0) {
+	        	String error =  fielset.querySelector("p").getVisibleText();
+	        	if(!error.isEmpty()) {
+	        		throw new SepeException(error);
+	        	}
+	        }
+	        
+		} 
+	}
+	
 	private static void removeTransformationImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {

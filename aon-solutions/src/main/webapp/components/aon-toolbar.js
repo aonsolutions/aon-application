@@ -239,7 +239,8 @@ export class AonToolbar extends AonElement {
 	}
 
 	removeButtons() {
-		this.getElement(this.TOOL_SECTION).innerHTML = '';
+		let section = this.getElement(this.TOOL_SECTION);
+		if(section) section.innerHTML = '';
 	}
 
 	toogleNav() {

@@ -1,11 +1,9 @@
-import { AonCard } from "../../components/aon-card.js";
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { AonToolbar } from "../../components/aon-toolbar.js";
 import { TAG } from "../../environments/environments.js";
-import { formatDateOrigin, newComponent, setAttributes } from "../../services/utils.js";
-import { createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { formatDateOrigin, setAttributes } from "../../services/utils.js";
+import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
@@ -21,11 +19,6 @@ export const createBajaDialogContent = () =>{
     return div;
 }
 
-export const createToolbarComunica = (attributes, parent) => {
-    let toolbar = setAttributes( new AonToolbar(), attributes);
-    parent.appendChild(toolbar);
-}
-
 export const createFormComunica = (id, parent) => {
     const form = createForm(id+"Form");
     parent.appendChild(form.element);
@@ -36,15 +29,15 @@ export const createFormComunica = (id, parent) => {
     let divC;
     divC = createDiv({classes:["aonCol-sm-12"]})
     divC.appendTo(div.element);
-    createCardComunica({id: id+"EmpresaCard", title:"Datos de la empresa"}, divC.element);
+    createCard({id: id+"EmpresaCard", title:"Datos de la empresa"}, divC.element);
 
     divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]});
     divC.appendTo(div.element);
-    createCardComunica({id: id+"TrabajadorCard", title:"Datos del trabajador"}, divC.element);
+    createCard({id: id+"TrabajadorCard", title:"Datos del trabajador"}, divC.element);
 
     divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]});
     divC.appendTo(div.element);
-    createCardComunica({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
+    createCard({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
 
     return form.element;
 }
@@ -83,7 +76,7 @@ export const createCardEnterprise = (parent) => {
     });
     divC.appendChild(aonConvenio);
 
-    createInputC({
+    createInput({
         attributes:{
             name:"regimen",
             id:"regimen",
@@ -154,7 +147,7 @@ export const createCardContract = (parent, id, isButton) => {
         attributes:{
             name:"tipo_jornada",
             id:"tipo_jornada",
-            title:"Tipo de jornada"
+            title:"Jornada"
         }
     }, divC.element);
 
@@ -189,7 +182,7 @@ export const createCardContract = (parent, id, isButton) => {
     })
     divC.appendChild(numberC);
 
-    createInputC({
+    createInput({
         attributes:{
             name:"situation",
             id:"situation",
@@ -250,7 +243,7 @@ export const createCardEmployee = (parent, id) => {
     divT.appendTo(parent);
     let divNss = createDiv({ attributes:{id: id+"NssDiv"} });
     divNss.appendTo(divT.element);
-    createInputC({
+    createInput({
         attributes:{
             name:"nss",
             id: id+"Nss", 
@@ -264,7 +257,7 @@ export const createCardEmployee = (parent, id) => {
     divT.appendTo(parent);
     let divDni = createDiv({ attributes:{id: id+"DniDiv"} });
     divDni.appendTo(divT.element);
-    createInputC({
+    createInput({
         attributes:{
             name:"ipf",
             id: id+"Dni", 
@@ -278,7 +271,7 @@ export const createCardEmployee = (parent, id) => {
     divSurnames.appendTo(parent);
     divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
     divT.appendTo(divSurnames.element);
-    createInputC({
+    createInput({
         attributes:{
             name:"apellido1",
             id:"apellido1",
@@ -289,7 +282,7 @@ export const createCardEmployee = (parent, id) => {
     
     divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
     divT.appendTo(divSurnames.element);
-    createInputC({
+    createInput({
         attributes:{
             name:"apellido2",
             id:"apellido2",
@@ -300,7 +293,7 @@ export const createCardEmployee = (parent, id) => {
 
     divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-12", "aonCol-xs-12"] })
     divT.appendTo(parent);
-    createInputC({
+    createInput({
         attributes:{
             name:"nombre",
             id:"nombre",
@@ -324,22 +317,6 @@ const addIconSurname = () => {
         }
     }
 }
-
-
-const createDiv = (properties) =>  newComponent({
-    type: TAG.DIV,
-    ...properties
-});
-
-const createCardComunica = (attributes, parent) => {
-    const aonCard = setAttributes(new AonCard(), {
-        ...attributes,
-        flex:"true"
-    });
-    parent.appendChild(aonCard);
-}
-
-export const createInputC = ({attributes, events}, parent) => createInput({attributes, events}, parent);
 
 const addSpanDecimal = () =>  {
     let coefInput = document.getElementById('coefparcialInput')

@@ -156,5 +156,18 @@ public class TestContrato {
 		}
 	}
 	
+	@Test
+	public void testvalidateCert() {
+		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("FNMT.p12")) {			
+			String certificatePassword = "jg@FNMT";
+			String certificateType = "pkcs12";
+			Contrato.validateCert(certificateInputStream, certificatePassword, certificateType);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	
 	
 }
