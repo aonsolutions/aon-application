@@ -4,7 +4,8 @@ import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAl
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
-import { createBajaDialogContent, createFormComunica, createCardEnterprise, createCardEmployee, createCardContract, createToolbarComunica } from '../createComponent.js';
+import { createBajaDialogContent, createFormComunica, createCardEnterprise, createCardEmployee, createCardContract } from '../createComponent.js';
+import { createToolbar } from '../../notification/createComponent.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -61,7 +62,7 @@ export class AonAltaDirecta extends AonElement {
     paintView() {
         this.applicationEl.removeToolbarOptions();
 
-        createToolbarComunica({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa"}, this);
+        createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa"}, this);
 
         createFormComunica(this.id, this);
 
