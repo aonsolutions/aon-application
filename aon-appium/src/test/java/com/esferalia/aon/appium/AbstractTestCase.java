@@ -20,6 +20,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -59,7 +60,7 @@ public abstract class AbstractTestCase {
 	public static void setUpTestDefaultData() {
 
 		driver = AbstractTestCase.class.getResource("chromedriver").getPath();
-		apk = AbstractTestCase.class.getResource("aon.apk").getPath();
+		apk = AbstractTestCase.class.getResource("aon-test.apk").getPath();
 		username = "usuario@aonsolutions.org";
 		password = "org";
 		console = new Console();
@@ -122,58 +123,77 @@ public abstract class AbstractTestCase {
 			String currentContext = (String) contextNames.toArray()[1];
 			System.out.println("CurrentContext: " + currentContext);
 			app.context(currentContext);
-
-			WebElement loginButtonEl = wait
-					.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonLoginSignin")));
-			System.err.println(loginButtonEl);
+			
+			app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 
 			WebElement usernameInput = app.findElement(By.id("aonLoginUserInput"));
 			WebElement passwordInput = app.findElement(By.id("aonLoginPasswordInput"));
 			System.out.println(usernameInput);
 
-			String username = "09iker05@gmail.com";
-			String password = "15100811";
+			String username = "usuario@aonsolutions.org";
+			String password = "org";
 
 			wait.until(ExpectedConditions.visibilityOf(usernameInput));
-			AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
+//			AppiumTools.humanType(usernameInput, username);
+			usernameInput.click();
+			app.hideKeyboard();
+			usernameInput.sendKeys(username);
+//			AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
+//			wait.until(ExpectedConditions.visibilityOf(passwordInput));
+//			AppiumTools.humanType(passwordInput, password);
+			passwordInput.click();
+			app.hideKeyboard();
+			passwordInput.sendKeys(password);
+//			AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
+			WebDriverWait wait2 = new WebDriverWait(app, 10);
+//			try {
+//				Alert alert = wait2.until(ExpectedConditions.alertIsPresent());
+//				System.out.println(alert.getText());
+//			} catch (Exception e) {}
 			
-			wait.until(ExpectedConditions.visibilityOf(passwordInput));
-			AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
-		
-		
+//			wait.until(ExpectedConditions.visibilityOf(loginButtonEl));
 			
-			wait.until(ExpectedConditions.visibilityOf(loginButtonEl));
+			Thread.sleep(1000);
+			
+			WebElement loginButtonEl = wait
+					.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonLoginSignin")));
+			
 			
 			loginButtonEl.click();
-			try {
-				WebDriverWait wait2 = new WebDriverWait(app, 3);
-				Alert alert = wait2.until(ExpectedConditions.alertIsPresent());
-			}catch(WebDriverException e) {
 			
-					usernameInput.clear();
-					AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
-					passwordInput.clear();
-					AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
-					loginButtonEl.click();
-				
-					
-
-				//WebElement userIcon = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
-				//assertTrue("AON SOLUTIONS: Incorrect login", userIcon.isDisplayed());
-
-				console.success("login", "DONE.");				
-			}
-			fail("Login denied.");
+			app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+//			try {
+				WebElement userIcon = wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
+				if (!userIcon.isDisplayed())
+					fail("User icon didn't load properly");
+//			}catch(WebDriverException e) {
+//				e.printStackTrace();
+//				fail("Login failed");
+////					usernameInput.clear();
+////					AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
+////					passwordInput.clear();
+////					AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
+////					loginButtonEl.click();
+//				
+//					
+//
+//				//WebElement userIcon = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
+//				//assertTrue("AON SOLUTIONS: Incorrect login", userIcon.isDisplayed());
+//
+//				console.success("login", "DONE.");				
+//			}
+//			fail("Login denied.");
 
 		} catch (NoSuchElementException e) {
 			String message = "AON SOLUTIONS : The element does not exist";
 			fail(message);
-		} catch (WebDriverException e) {
+		} catch (WebDriverException e) {			
 			String message = "AON SOLUTIONS : The webapp is not responding";
 			e.printStackTrace();
 			fail(message);
 		} catch (Exception e) {
 			String message = "AON SOLUTIONS : Unexpected exception";
+			e.printStackTrace();
 			fail(message);
 		}
 	}
