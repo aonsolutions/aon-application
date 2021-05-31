@@ -1,7 +1,9 @@
+import { AonCard } from "../../components/aon-card.js";
 import { AonDate } from "../../components/aon-date.js";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
+import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
 import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utils.js";
 
@@ -174,4 +176,18 @@ export const createIconButton = ({attributes, events}, parent) => {
   if(events) setEvents(date, events);
   parent.appendChild(date);
   return date;
+}
+
+export const createCard = (attributes, parent) => {
+  const aonCard = setAttributes(new AonCard(), {
+      ...attributes,
+      flex:"true"
+  });
+  parent.appendChild(aonCard);
+}
+
+
+export const createToolbar= (attributes, parent) => {
+  let toolbar = setAttributes( new AonToolbar(), attributes);
+  parent.appendChild(toolbar);
 }

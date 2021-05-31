@@ -1,8 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { domainId, getAuth, getDomainUserRoles, getPeriod, getTaskHoldersUser, getWeekDayObj } from "../../services/service.js";
-import { formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
+import { domainId, getAuth, getDomainUserRoles, getPeriod, getTaskHoldersUser } from "../../services/service.js";
+import {  isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
 import { SigninSidenav, SIGNIN_VIEWS } from "./signinEnums.js";
@@ -53,21 +53,13 @@ export class AonSignin extends AonElement {
   }
 
   filterInit(){
-    if(this.isEmployee()){
-      const weekDayObj = getWeekDayObj();
-      this._filter = { 
-        period: SigninSidenav.PERIOD.THIS_WEEK.id,
-        group:"DAY",
-        startDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekFirst) ),
-        endDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekLast) )
-      };
-    } else {
-      this._filter = { 
-        period: SigninSidenav.PERIOD.TODAY.id,
-        group:"DAY",
-        startDate: formatDateOrigin(new Date()),
-        endDate: formatDateOrigin(new Date())
-      };
+    const periodEnums = SigninSidenav.PERIOD;
+    const period = getPeriod(this.isEmployee() ? periodEnums.THIS_WEEK.id : periodEnums.TODAY.id);
+    this._filter = { 
+      group:"DAY",
+      period: period.value,
+      startDate: period.startDate,
+      endDate: period.endDate
     }
   }
   paintView() {

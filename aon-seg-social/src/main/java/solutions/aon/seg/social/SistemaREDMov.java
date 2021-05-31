@@ -673,7 +673,7 @@ class SistemaREDMov {
 		return null;
 	}
 	
-	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
+	private static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
 			@Override
 			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}

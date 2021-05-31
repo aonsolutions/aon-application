@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, getWeekDayObj, saveTimeControl} from '../../services/service.js';
+import {getPeriod, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser, setDateTimestampDay, formatDateOrigin } from '../../services/utils.js';
+import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
@@ -241,32 +241,34 @@ export class AonSign extends AonElement {
   async totalHourWeek(){
     try {
       if(this._taskHolder){
-        const weekDayObj = getWeekDayObj();
+        const period = getPeriod("this_week");
         let filter = {
           taskHolderId:this._taskHolder, 
           group:"DAY",
-          startDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekFirst) ),
-          endDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekLast) )
+          startDate: period.startDate,
+          endDate: period.endDate
         };
         let datos = await getTaskHolderTimeControl(filter);
         if(datos){
           let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in")>=0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
-          let content = this.getElement(this.CONTENT);
-          const id = "totalHour";
-          const div = this.getElement(id) || this.createElement('div');
-          div.id = id;
-          div.style.marginTop = "10px";
-          div.style.color = "grey";
-          div.style.fontSize = "12px";
-          div.style.cursor = "default";
-          div.dataset.sumHour = sumHour;
-          div.innerHTML = "Horas semana actual: ";
-          let span = this.createElement(TAG.SPAN);
-          span.style.fontWeight = 800;
-          span.id = id+"Span";
-          div.appendChild(span);
-          content.append(div);
-          this.updateTotalHour();
+          if(sumHour>0){
+            let content = this.getElement(this.CONTENT);
+            const id = "totalHour";
+            const div = this.getElement(id) || this.createElement(TAG.DIV);
+            div.id = id;
+            div.style.marginTop = "10px";
+            div.style.color = "grey";
+            div.style.fontSize = "12px";
+            div.style.cursor = "default";
+            div.dataset.sumHour = sumHour;
+            div.innerHTML = "Horas semana actual: ";
+            const span = this.createElement(TAG.SPAN);
+            span.style.fontWeight = 800;
+            span.id = id+"Span";
+            div.appendChild(span);
+            content.append(div);
+            this.updateTotalHour();
+          }
         }
       }
     } catch (error) {console.log(error);}
