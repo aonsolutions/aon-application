@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.tools.Console;
 import com.esferalia.aon.gwt.payroll.tools.Console.Status;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -275,9 +276,6 @@ public class DefaultPayrollUnitTest {
 			console.success("DONE.");
 			console.jump();
 
-			
-			
-			
 		}
 		
 		/** Deductions */
@@ -294,6 +292,7 @@ public class DefaultPayrollUnitTest {
 			
 			compareSalaryDraftLog("Deduction type", draftDeductionType, salaryDeductionType);
 			assertWithLog("Draft -> Salary", "Deduction type not matching", draftDeductionType.ordinal() , salaryDeductionType.ordinal());
+			
 			console.success("DONE.");
 			console.jump();
 
@@ -309,6 +308,10 @@ public class DefaultPayrollUnitTest {
 		
 		
 		/** Embargos */
+		for(int i = 0; i < draft.getEmbargos().size(); i++) {
+			Deduction draftEmbargos = draft.getEmbargos().get(i);
+			Embargo salaryEmbargos = salary.getEmbargos().get(i);			
+		}
 		
 	}
 
