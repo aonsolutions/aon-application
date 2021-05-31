@@ -5,12 +5,12 @@ import java.net.URL;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 public class AppiumTools {
 
@@ -29,6 +29,20 @@ public class AppiumTools {
 	
 	public static void fillInput(WebDriver driver, String selector, String text) {
 		((JavascriptExecutor)driver).executeScript("document.querySelector('"+selector+"').value='" + text + "'");	
+	}
+	
+	public static void humanType (WebElement element, String text) throws InterruptedException {
+		for (int i=0;i<text.length(); i++) {
+			element.sendKeys(""+text.charAt(i));
+//			Thread.sleep(25);
+			while (element.getAttribute("value") == null) {
+				element.sendKeys(""+text.charAt(i));
+			}
+			while (element.getAttribute("value").length() == i) {
+				element.sendKeys(""+text.charAt(i));
+			}
+				
+		}
 	}
 	
 }
