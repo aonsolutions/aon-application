@@ -482,7 +482,9 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 		Double hours = 0.00;
 		for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
 			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
-				hours += Double.parseDouble(journeyDuration.getExpression());
+				String expression = journeyDuration.getExpression();
+				expression = expression.replace(",", ".");
+				hours += Double.parseDouble(expression);
 			}
 		}
 		return hours / 40;
