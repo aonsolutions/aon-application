@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractJourneyDuration implements Serializable {
 	
@@ -99,14 +100,17 @@ public class ContractJourneyDuration implements Serializable {
 				for(JourneyDuration journey : jouneryEntry.getValue()) {
 					if(!visitedDays.contains(journey.getName()) && journey.getExpression() != "0") {
 						visitedDays.add(journey.getName());
-						hours += Double.parseDouble(((null == journey.getExpression() || "" == journey.getExpression() || "NL" == journey.getExpression()) ? "0" : journey.getExpression()));
-						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
-						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression());
+						String expression = journey.getExpression();
+						if(AonStringUtils.isNotBlank(expression))
+							expression = expression.replace(",", ".");
+						hours += Double.parseDouble(((null == expression || "" == expression || "NL" == expression) ? "0" : expression));
+						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
+						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == expression || "" == expression) ? "NL" : expression);
 						
 					}
 				}
