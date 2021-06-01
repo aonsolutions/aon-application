@@ -45,8 +45,11 @@ public class CertificatesServlet extends HttpServlet {
 		String fileName = req.getParameter("filename");
 		
 		// Get extension and parse to MimeType
-		String certificateTypeStr = req.getParameter("certificatetype");
+		String certificateTypeStr = req.getParameter("certificateType");
 		CertificateType certificateType = AonStringUtils.equalsIgnoreCase(certificateTypeStr, "0") ? CertificateType.SEPE : CertificateType.TGSS;
+		
+		// Get extension and parse to MimeType
+		String password = req.getParameter("password");
 		
 		// Get currentUser
 		String currentUser = req.getParameter("currentUser");
@@ -54,7 +57,6 @@ public class CertificatesServlet extends HttpServlet {
 		// Get currentUser
 		String domainName = req.getParameter("currentDomain");
 		
-
 		if(AonStringUtils.isEmpty(currentUser)) {
 			String token = req.getParameter("token");
 			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
@@ -63,11 +65,14 @@ public class CertificatesServlet extends HttpServlet {
 		
 		// Get FilePart
 		Part filePart = req.getPart("uploader");
+		byte data [];
 		
 		try ( InputStream is = filePart.getInputStream() ){
-				byte data [] = toByteArray(is);
-				JooqDigitalCertificate.setDigitalCertificateData(domainName, currentUser, mimeType, fileName, certificateType, data, rattachId, raddinfoId);
-		}		
+				data = toByteArray(is);
+		}
+		
+		JooqDigitalCertificate.setDigitalCertificateData(domainName, currentUser, mimeType, fileName, certificateType, data, password, rattachId, raddinfoId);
+		
 	}
 	
 	private byte getMimeType(String extension) {
