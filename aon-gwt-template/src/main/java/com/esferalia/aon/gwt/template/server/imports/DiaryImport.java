@@ -264,14 +264,20 @@ public class DiaryImport {
 		}	
 		
 		if(IConstants.FACTURA.equalsIgnoreCase(title)) {	
-			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
+			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
+					CellType.NUMERIC == cell.getCellTypeEnum() 
+						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
+						: o.toString());
 			invoice = o != null && !o.toString().isBlank();
 			return;
 		}
 		
 		if(IConstants.DOCUMENTO.equalsIgnoreCase(title)) {
 			if(!invoice) {
-				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
+				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
+					CellType.NUMERIC == cell.getCellTypeEnum() 
+						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
+						: o.toString());
 			}
 			return;
 		}
