@@ -231,7 +231,10 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		.forEach(salary -> {
 			List<IContractPayment> payments = new ArrayList<IContractPayment>();
 			
-			salary.getPayments().stream().distinct().forEach( salaryPayment -> 
+			
+			salary.getPayments().stream()
+			.filter( p -> p.getAmount() == null || p.getAmount() == 0.00)
+			.distinct().forEach( salaryPayment -> 
 			getSalaryPaymentOf(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
