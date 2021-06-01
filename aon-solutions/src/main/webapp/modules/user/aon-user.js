@@ -118,14 +118,16 @@ export class AonUser extends AonElement {
 		this.innerHTML = this.isMobile() 
 			? `
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-				<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
-				<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
-				<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
+				<div class="aonMobileSubContent">
+					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
+					<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
+				</div>
 			` 
 			: `
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-				<div style="display:flex;width:100%;">
-					<div id="aonConfigurationUserDiv" class="aonSubContent" style="width:50%;">
+				<div style="display:flex;width:100%;" class="aonSubContent">
+					<div id="aonConfigurationUserDiv" style="width:50%;">
 						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
 						<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 					</div>
