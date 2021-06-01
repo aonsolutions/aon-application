@@ -422,12 +422,6 @@ public class SistemaRED {
 		}
 	}
 
-	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException {
-
-		return SistemaREDMov.sendMov(certificateInputStream, certificatePassword, certificateType, employee);
-	}
-
 	public static void movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String situation, String regimen, String ctaCti, String nss, Date fecha)
 			throws SegSocialException {
@@ -703,6 +697,11 @@ public class SistemaRED {
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+	}
+	
+	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SegSocialException{
+		SistemaREDMov.validateCert(certificateInputStream, certificatePassword, certificateType);
 	}
 	
 

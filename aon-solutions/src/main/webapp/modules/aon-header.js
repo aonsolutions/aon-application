@@ -210,14 +210,17 @@ export class AonHeader extends AonElement {
 					let options = [{
 							name: fichajeText,
 							icon: 'alarm',
+							id: 'dialogAlarm',
 							fn: () => this.aonFichar(signin)
 						}, {
 							name: 'Configuración',
 							icon: 'settings',
+							id: 'dialogSettings',
 							fn: () => this.aonConfiguration()
 						}, {
 							name: 'Cerrar Sesión',
 							icon: 'input',
+							id: 'dialogLogout',
 							fn: () => {
 								this.activeTimecontrol= false;
 								closeSession();
@@ -234,10 +237,12 @@ export class AonHeader extends AonElement {
 					let options = [{
 							name: 'Configuración',
 							icon: 'settings',
+							id: 'dialogSettings',
 							fn: () => this.aonConfiguration()
 						}, {
 							name: 'Cerrar Sesión',
 							icon: 'input',
+							id: 'dialogLogout',
 							fn: () => closeSession()
 						}];
 						d.setMenuOptions(options, top, left);

@@ -71,6 +71,11 @@ const getWeekDayObj = () =>  ({
     dayWeekLast: new Date().getLastDayOfWeek()
 });
 
+/**
+ * 
+ * @param {value:string} data 
+ * @returns return obj or array
+ */
 export const getPeriod = (data) => {
   const {now, dayWeekFirst, dayWeekLast} = getWeekDayObj(); 
   const year = now.getFullYear();
@@ -97,8 +102,8 @@ export const getPeriod = (data) => {
     {
       name: "Semana anterior",
       value: "last_week",
-      startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst.getDate() -7)  ),
-      endDate: formatDateOrigin( new Date().setDate(dayWeekLast.getDate() - 6) )
+      startDate: formatDateOrigin(  dayWeekFirst.addDay(-7)  ),
+      endDate: formatDateOrigin( dayWeekLast.addDay(-7) )
     },
     {
       name: "Mes actual",
@@ -127,10 +132,10 @@ export const getPeriod = (data) => {
     {
       name: "Personalizado",
       value: "personalized",
-    },
+    }
   ];
 
   if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
   
-  return jsonValues
+  return jsonValues;
 }

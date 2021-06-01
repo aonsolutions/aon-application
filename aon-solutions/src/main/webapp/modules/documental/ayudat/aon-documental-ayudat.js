@@ -35,6 +35,11 @@ export class AonDocumentalAyudat extends AonElement {
         this.buildData();
     }
 
+    paintView(){
+        this.createApplication(this.AON_DOCUMENTA_AYUDAT, MSG.DOCUMENTARY, new AonApplication() );
+        this.applicationEl = this.getApplication();
+    }
+    
     async buildData(){
         this.applicationEl.startLoader();
         await getAccessBidoq().then(async ({datos, message})=>{
@@ -53,10 +58,6 @@ export class AonDocumentalAyudat extends AonElement {
             console.error(e);
         });
         this.applicationEl.stopLoader();
-    }
-    paintView(){
-        this.createApplication(this.AON_DOCUMENTA_AYUDAT, MSG.DOCUMENTARY, new AonApplication() );
-        this.applicationEl = this.getApplication();
     }
 
     setUsers(users) {

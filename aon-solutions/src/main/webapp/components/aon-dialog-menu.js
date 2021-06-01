@@ -121,6 +121,7 @@ export class AonDialogMenu extends AonElement {
 		content.appendChild(ul);
 		options.forEach((item, i) => {
 			let li = document.createElement('li');
+			if(item.id) li.id = item.id;
 			li.className = 'aonAppLi';
 			li.style.padding = '10px';
 			li.style.cursor = 'pointer';
