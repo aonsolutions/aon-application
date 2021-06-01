@@ -25,6 +25,12 @@
   overflow-y: auto;
 }
 
+.aonMobileSubContent {
+  position: relative;
+  height: calc(100vh - 202px);
+  overflow-y: auto;
+}
+
 .aonMobileSidenav {
   position: relative;
   flex-basis: 0px;
