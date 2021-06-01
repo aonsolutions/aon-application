@@ -6,7 +6,7 @@ import { FiscalOptions, FISCAL_VIEWS } from "./FiscalEnums.js";
 import { AonTax } from "./tax/aon-tax.js";
 import { AonApplication } from "../../components/aon-application.js";
 
-class AonFiscal extends AonElement {
+export class AonFiscal extends AonElement {
   AON_FISCAL;
   dur;
   constructor() {

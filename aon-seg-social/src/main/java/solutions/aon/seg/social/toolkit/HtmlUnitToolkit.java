@@ -49,7 +49,25 @@ public class HtmlUnitToolkit {
 
 			return webClient;
 		} catch (RuntimeException e) {
+			e.printStackTrace();
 			throw new InvalidCertificateException();
+		}
+	}
+	
+	public static WebClient getWebClientCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SegSocialException {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
+			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+					certificateType);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			return webClient;
+		} catch (RuntimeException e) {
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 

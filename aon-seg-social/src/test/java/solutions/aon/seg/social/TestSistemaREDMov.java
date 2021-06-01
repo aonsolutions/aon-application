@@ -68,7 +68,6 @@ public class TestSistemaREDMov {
 	@Ignore
 	public void nafxipf() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
-
 		   Employee employee = SistemaREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "garcia", "perez");
 		   System.out.println(employee.getNss());
 		} catch (NotExistingYetException e) {} catch (IOException e) {
@@ -78,6 +77,16 @@ public class TestSistemaREDMov {
 		} catch (FailingHttpStatusCodeException e) {
 			assertTrue(true);
 		}
+	}
+
+	@Test
+	@Ignore
+	public void testValidateCert() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("SEPE.p12")){
+		    SistemaREDMov.validateCert(certificateInputStream, "aon@FNMT", "pkcs12");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 	}
 
 }
