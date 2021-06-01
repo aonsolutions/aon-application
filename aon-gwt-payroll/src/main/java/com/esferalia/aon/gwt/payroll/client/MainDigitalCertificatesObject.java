@@ -18,35 +18,18 @@ public class MainDigitalCertificatesObject {
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
-	private List<DigitalCertificate> digitalCertificateList;
+	private DigitalCertificate digitalCertificateTGSS;
+	private List<DigitalCertificate> digitalCertificateSEPEList;
 	private List<SecondaryUserCertificate> secondaryUsers;
 	
 	private Integer enterpriseId;
 	
 	public MainDigitalCertificatesObject() {
 		super();
-		this.digitalCertificateList = new ArrayList<DigitalCertificate>();
+		this.digitalCertificateTGSS = null;
+		this.digitalCertificateSEPEList = new ArrayList<DigitalCertificate>();
 		this.secondaryUsers = new ArrayList<SecondaryUserCertificate>();
 		this.enterpriseId = null;
-	}
-	
-	public void getDigitalCertificates(Consumer<List<DigitalCertificate>> success, Consumer<Throwable> failure){
-		
-		impl.getDigitalCertificates(new AsyncCallback<List<DigitalCertificate>>() {
-			
-			@Override
-			public void onSuccess(List<DigitalCertificate> digitalCertificateListDB) {
-				digitalCertificateList = digitalCertificateListDB;
-				
-				getEnterpriseId(s -> {
-					success.accept(digitalCertificateListDB);	
-				}, f -> {});	
-			}
-
-			@Override
-			public void onFailure(Throwable caught) { }
-		});
-		
 	}
 	
 	public void getEnterpriseId(Consumer<Integer> success, Consumer<Throwable> failure){
@@ -65,13 +48,15 @@ public class MainDigitalCertificatesObject {
 		
 	}
 	
-	public void setDigitalCertificates(Consumer<Void> success, Consumer<Throwable> failure){
+	
+	public void getDigitalCertificateTGSS(Consumer<DigitalCertificate> success, Consumer<Throwable> failure){
 		
-		impl.setDigitalCertificates(digitalCertificateList, new AsyncCallback<Void>() {
+		impl.getDigitalCertificateTGSS(new AsyncCallback<DigitalCertificate>() {
 			
 			@Override
-			public void onSuccess(Void accept) {
-				success.accept(accept);	
+			public void onSuccess(DigitalCertificate digitalCertificateTGSSIn) {
+				digitalCertificateTGSS = digitalCertificateTGSSIn;
+				success.accept(digitalCertificateTGSS);	
 			}
 
 			@Override
@@ -80,14 +65,28 @@ public class MainDigitalCertificatesObject {
 		
 	}
 	
-	public void deleteDigitalCertificate(CertificateType certificateType, Consumer<Void> success, Consumer<Throwable> failure){
-		impl.deleteDigitalCertificate(certificateType, new AsyncCallback<Void>() {
+	public void getDigitalCertificatesSEPE(Consumer<List<DigitalCertificate>> success, Consumer<Throwable> failure){
+		
+		impl.getDigitalCertificatesSEPE(new AsyncCallback<List<DigitalCertificate>>() {
+			
+			@Override
+			public void onSuccess(List<DigitalCertificate> digitalCertificateSEPEListIn) {
+				digitalCertificateSEPEList = digitalCertificateSEPEListIn;
+				success.accept(digitalCertificateSEPEList);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
+	public void deleteDigitalCertificate(DigitalCertificate digitalCertificate, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.deleteDigitalCertificate(digitalCertificate, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
-				getDigitalCertificates(s -> {
-					success.accept(result);	
-				}, f -> {});
+				success.accept(result);
 			}
 
 			@Override
@@ -197,10 +196,6 @@ public class MainDigitalCertificatesObject {
 
 	// ----------------------------------------------------------- GETTERS
 	
-	public List<DigitalCertificate> getDigitalCertificateList(){
-		return digitalCertificateList;
-	}
-	
 	public List<SecondaryUserCertificate> getSecondaryUsers(boolean showInactives){
 		List<SecondaryUserCertificate> activeUsers = new ArrayList<SecondaryUserCertificate>();
 		
@@ -218,6 +213,14 @@ public class MainDigitalCertificatesObject {
 	
 	// ----------------------------------------------------------- AUXILIAR METHODS
 	
+	public DigitalCertificate getDigitalCertificateTGSS() {
+		return digitalCertificateTGSS;
+	}
+
+	public List<DigitalCertificate> getDigitalCertificateSEPEList() {
+		return digitalCertificateSEPEList;
+	}
+
 	public String checkIPFType(String ipf) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 
@@ -229,10 +232,11 @@ public class MainDigitalCertificatesObject {
 	
 	public boolean hasMoraThanOneSEPECertificates() {
 		int sepeCertificates = 0;
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) {
+		for(DigitalCertificate digitalCertificate : digitalCertificateSEPEList) {
 			if(digitalCertificate.getType() == CertificateType.SEPE)
 				sepeCertificates++;
 		}
 		return sepeCertificates > 1;
 	}
+
 }
