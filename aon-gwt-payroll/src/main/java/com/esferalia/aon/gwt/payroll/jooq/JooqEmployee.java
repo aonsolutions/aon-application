@@ -1640,13 +1640,16 @@ public class JooqEmployee {
 				 for(JourneyDuration journey : entry.getValue()) {
 					 java.util.Date endDateAux = journey.getEndDate();
 					  
-					 if(null != journey.getExpression() && "NL" != journey.getExpression())
+					 if(null != journey.getExpression() && "NL" != journey.getExpression()) {
+						 String expression = journey.getExpression();
+						 expression = expression.replace(",", ".");
+						
 						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+								.values(domain, journey.getName(), contractData.getContractId(), expression, 
 										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
 								.execute();
-					 else {
+					 } else {
 						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 								.values(domain, journey.getName(), contractData.getContractId(), null, 
