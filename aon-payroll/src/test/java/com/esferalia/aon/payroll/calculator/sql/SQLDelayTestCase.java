@@ -665,6 +665,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testERTEIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -761,6 +762,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	
 
 	@Test
+	@Ignore
 	public void testERTEIV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
