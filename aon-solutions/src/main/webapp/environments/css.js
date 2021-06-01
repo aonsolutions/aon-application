@@ -123,6 +123,7 @@ export const AON_MOBILE_MENU = 'aonMobileMenu';
 export const AON_MOBILE_SIDENAV = 'aonMobileSidenav';
 export const AON_MOBILE_DESKTOP_COMPANY = 'aonMobileDesktopCompany';
 export const AON_MOBILE_DESKTOP_COMPANY_NAME = 'aonMobileDesktopCompanyName';
+export const AON_MOBILE_SUB_CONTENT = 'aonMobileSubContent';
 
  // aon-loader.css
 

@@ -6,7 +6,7 @@ import {ToolbarType} from '../../models/enums.js';
 import '../../components/aon-card.js';
 import '../../components/aon-viewer.js';
 
-import { MSG } from '../../environments/environments.js';
+import { MSG, CSS } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 
@@ -23,7 +23,7 @@ export class AonMobileDocument extends AonDocument {
     this.FILE_CARD = this.FILE + 'Card';
     this.innerHTML = `
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="DOCUMENTO"> </aon-toolbar>
-      <div>
+      <div class="${CSS.AON_MOBILE_SUB_CONTENT}">
         <aon-card id="${this.FILE_CARD}" title="${MSG.FILE}" style="display:none;"> </aon-card>
         <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
       </div>
