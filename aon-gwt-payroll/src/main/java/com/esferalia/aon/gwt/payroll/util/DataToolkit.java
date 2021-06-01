@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import java.util.regex.Pattern;
+
 public class DataToolkit {
 	/**
 	 * Get safe value
@@ -32,10 +34,19 @@ public class DataToolkit {
 		try{
 			parsed = Double.parseDouble(value);
 		}
-		catch(NumberFormatException ignored) {}
+		catch(Exception ignored) {}
 		
 		return parsed;
 	}
 
+	/**
+	 * Returns if a string IS a number
+	 * @param string -The string to evaluate
+	 * @return true | false
+	 */
+	public static boolean isNumber(String string) {
+		Pattern pattern = Pattern.compile("\\d*\\.?\\d*");
+		return pattern.matcher(string).matches();
+	}
 	
 }

@@ -132,6 +132,24 @@ public class ContingencyBases {
 		return total;
 	}
 
+	@Override
+	public String toString() {
+		return "ContingencyBases [monthlyAmount=" + monthlyAmount + ", extraProrationAmount=" + extraProrationAmount
+				+ ", commonContBase=" + commonContBase + ", commonContType=" + commonContType
+				+ ", commonContApEnterprise=" + commonContApEnterprise + ", professionalContBase="
+				+ professionalContBase + ", atEpType=" + atEpType + ", atEpApEnterprise=" + atEpApEnterprise
+				+ ", unemploymentType=" + unemploymentType + ", unemploymentApEnterprise=" + unemploymentApEnterprise
+				+ ", profesFormType=" + profesFormType + ", profesFormApEnterprise=" + profesFormApEnterprise
+				+ ", fogasaType=" + fogasaType + ", fogasaApEnterprise=" + fogasaApEnterprise + ", forceMajeureBase="
+				+ forceMajeureBase + ", forceMajeureType=" + forceMajeureType + ", forceMajeureApEnterprise="
+				+ forceMajeureApEnterprise + ", noStructBase=" + noStructBase + ", noStructType=" + noStructType
+				+ ", noStructApEnterprise=" + noStructApEnterprise + ", irpfEsp=" + irpfEsp + ", irpfRetribDiner="
+				+ irpfRetribDiner + ", total=" + total + "]";
+	}
+
+
+
+
 	public static class ContingencyBasesBuilder {
 
 		private Optional<Double> monthlyAmount;
@@ -346,7 +364,7 @@ public class ContingencyBases {
 			c.total					   = this.total;
 
 			return c;
-		}
-
+		}		
+		
 	}
 }

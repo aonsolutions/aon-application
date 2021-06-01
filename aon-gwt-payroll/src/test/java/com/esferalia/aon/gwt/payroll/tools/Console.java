@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.tools;
 
+import static com.esferalia.aon.gwt.payroll.tools.Console.Separator.ARROW;
+
 import java.text.DecimalFormat;
 
 public class Console {
@@ -26,6 +28,26 @@ public class Console {
 			return this.name;
 		}
 		
+	}
+	
+	public static enum Separator {
+		
+		EQUAL("="),
+		COLON(","),
+		PLUS("+"),
+		ARROW("->"),
+		ARROW_REVERSE("<-"),
+		;
+		
+		private String separator;
+		
+		private Separator(String separator) {
+			this.separator = separator;
+		}
+		
+		public String getSeparator() {
+			return this.separator;
+		}
 	}
 	
 	public Console() {
@@ -58,9 +80,18 @@ public class Console {
 	 * @param message
 	 */
 	public void log(Status status, Object title, Object message) {
-		System.out.println(format(status.getName(), title + "", message + ""));		
+		System.out.println(format(status.getName(), title + "", message + "", ARROW));		
 	}
 	
+	/**
+	 * Create a LOG
+	 * @param status
+	 * @param title
+	 * @param message
+	 */
+	public void log(Status status, Object title, Object message, Separator separator) {
+		System.out.println(format(status.getName(), title + "", message + "", separator));		
+	}
 	
 	/**
 	 * Create an info LOG
@@ -138,10 +169,11 @@ public class Console {
 	 * @param category - The category
 	 * @param title - The title
 	 * @param message - The message
+	 * @param separator - The separator
 	 * @return String with formatted message
 	 */
-	private String format(String category,String title, String message) {
-		return "[" + category + "] [" + duration() + "] " + title + " >> " + message; 
+	private String format(String category,String title, String message, Separator separator) {
+		return "[" + category + "] [" + duration() + "] " + title + " " + separator.getSeparator() + " " + message; 
 	}
 	
 	/**

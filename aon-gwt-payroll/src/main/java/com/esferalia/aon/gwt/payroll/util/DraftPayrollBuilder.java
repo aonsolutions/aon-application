@@ -34,6 +34,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
@@ -58,11 +59,12 @@ public class DraftPayrollBuilder {
 	 * Method to generate a PDF payroll from an ISalary and place it on the OutputStream passed as parameter
 	 * @param outputStream The OutputStream on which will be written the PDF
 	 * @param salary An ISalary object
+	 * @return 
 	 * @throws CanNotCreatePdfException
 	 * @throws SalaryException
 	 */
 	@SuppressWarnings("static-access")
-	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
+	public static DefaultPayroll generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
 		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 
@@ -394,8 +396,11 @@ public class DraftPayrollBuilder {
 			dpb.setPayrollTotal(salary.getTotalLiquid());
 			
 			Optional<InputStream> optLogo = Utilities.getSignature(domainName);
-			dpt.print(outputStream, dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
+			
+			DefaultPayroll result = dpb.build();
+			dpt.print(outputStream, result, optLogo, Optional.ofNullable(new Locale("es")));
 
+			return result;
 	}
 	
 	

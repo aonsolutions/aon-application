@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.payroll.server.pdf;
 
+import static com.esferalia.aon.gwt.payroll.tools.Console.Separator.EQUAL;
 import static com.esferalia.aon.gwt.payroll.tools.TestTools.assertWithLog;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,13 +19,35 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.tools.Console;
+import com.esferalia.aon.gwt.payroll.tools.Console.Separator;
 import com.esferalia.aon.gwt.payroll.tools.Console.Status;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
+import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+
+/**
+ *  #################################################################################
+ * 	# TO DO																			#
+ *  #################################################################################
+ *  #  1. Context data vs Contigency bases;						  (Draft -> Salary)	#
+ *	#  2. Deductions 											  (Draft -> Salary)	#
+ * 	#  3. Payrolls   											  (Draft -> Salary) #
+ * 	#  4. Embargos												  (Draft -> Salary) #	
+ * 	#  5. Total payments, total deductions, TOTAL PAYROLL.		  (Draft -> Salary) #
+ *  #################################################################################
+ * 
+ * */
+
+
+
 
 public class DefaultPayrollUnitTest {
 
@@ -37,9 +62,22 @@ public class DefaultPayrollUnitTest {
 		console.start(testName.getMethodName());
 	}
 	
-	public <T> void compareSalaryDraftLog(String name,T draftObj ,T salaryObj) {
-		console.log(Status.COMPARING,"Draft " + name, draftObj);
-		console.log(Status.COMPARING,"Salary " + name, salaryObj);
+	private <T> void assertDraftToSalary(String name,T draftObj ,T salaryObj) {
+		console.log(Status.COMPARING,"Draft " + name, draftObj, EQUAL);
+		console.log(Status.COMPARING,"Salary " + name, salaryObj, EQUAL);
+		
+		assertWithLog("Draft -> Salary", name + " not matching", draftObj, salaryObj);
+		console.success("DONE");
+		console.jump();
+	}
+	
+	private <T> void assertSalaryToPayroll(String name,T draftObj ,T payrollObj) {
+		console.log(Status.COMPARING,"Salary " + name, payrollObj, EQUAL);
+		console.log(Status.COMPARING,"Payroll " + name, draftObj, EQUAL);
+		
+		assertWithLog("Draft -> Salary",  name + " not matching", draftObj, payrollObj);
+		console.success("DONE");
+		console.jump();
 	}
 	
 	@Test
@@ -50,6 +88,7 @@ public class DefaultPayrollUnitTest {
 	public void SalaryTranspileTest() {
 		
 		SalaryDraft draft = new SalaryDraft();
+		
 		
 		/** Salary basic data */
 		
@@ -90,7 +129,7 @@ public class DefaultPayrollUnitTest {
 		for (int i = 0; i < Deduction.Type.values().length; i++) {
 			Deduction deduction = new Deduction();
 			deduction.setType(Deduction.Type.values()[i]);
-			deduction.setAmount(null);
+			deduction.setAmount(100.99);
 			deduction.setDescription("10.99%");		
 			
 			draft.addDeduction(deduction);
@@ -128,6 +167,12 @@ public class DefaultPayrollUnitTest {
 		}
 		
 		assertDraftToSalary(draft,salary);
+		DefaultPayroll payrollPDF = JooqPayrollBuilder.buildDefaultPayrollFromSalary(new DefaultPayrollBuilder(), salary);
+		
+		console.jump();
+		console.log(Status.RUN, payrollPDF.getDeductions());	
+		
+		assertSalaryToDefaultPayroll(salary, payrollPDF);
 	}
 
 	
@@ -137,7 +182,7 @@ public class DefaultPayrollUnitTest {
 	 * with EVERY parameter being null.
 	 */
 	public void SalaryEmptyTranspileTest() {
-		
+
 	}
 	
 	
@@ -191,74 +236,24 @@ public class DefaultPayrollUnitTest {
 		console.jump();
 		console.start("Comparing Draft & Salary");
 		
-		compareSalaryDraftLog("CGC", draftCGC,salaryCGC);
-		assertWithLog("Draft -> Salary", "Common contingency base not matching", draftCGC, salaryCGC);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("CGP", draftCGP,salaryCGP);
-		assertWithLog("Draft -> Salary", "Professional contingency base not matching", draftCGP, salaryCGP);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("End date", draftEndDate, salaryEndDate);
-		assertWithLog("Draft -> Salary", "End date not matching", draftEndDate, salaryEndDate);
-		console.success("DONE");
-		console.jump();
+		assertDraftToSalary("CGC", draftCGC,salaryCGC);
+		assertDraftToSalary("CGP", draftCGP,salaryCGP);
+		assertDraftToSalary("End date", draftEndDate, salaryEndDate);
 		
  		/** Employee data */
-		compareSalaryDraftLog("Employee category", draftCategory, salaryCategory);
-		assertWithLog("Draft -> Salary", "Employee category not matching", draftCategory, salaryCategory);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Employee document", draftEmployeeDocument, draftEmployeeDocument);
-		assertWithLog("Draft -> Salary", "Employee document not matching",draftEmployeeDocument, salaryEmployeeDocument);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Employee name", draftEmployeeName, salaryEmployeeName);
-		assertWithLog("Draft -> Salary", "Employee name not matching", draftEmployeeName, salaryEmployeeName);
-		console.success("DONE");
-		console.jump();
-		
-		
-		compareSalaryDraftLog("Employee name", draftEmployeeName, salaryEmployeeName);
-		assertWithLog("Draft -> Salary", "Employee quote group bases not matching", draftEmployeeQuoteGroup, salaryEmployeeQuoteGroup);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Employee seniority date", draftEmployeeSeniorityDate, salaryEmployeeSeniorityDate);
-		assertWithLog("Draft -> Salary", "Employee seniority date not matching", draftEmployeeSeniorityDate, salaryEmployeeSeniorityDate );
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Employee SS number", draftEmployeeSS, salaryEmployeeSS);
-		assertWithLog("Draft -> Salary", "Employee SS number not matching", draftEmployeeSS, salaryEmployeeSS);
-		console.success("DONE");
-		console.jump();
+		assertDraftToSalary("Employee category", draftCategory, salaryCategory);
+		assertDraftToSalary("Employee document", draftEmployeeDocument, salaryEmployeeDocument);
+		assertDraftToSalary("Employee name", draftEmployeeName, salaryEmployeeName);
+		assertDraftToSalary("Employee quote group", draftEmployeeQuoteGroup, salaryEmployeeQuoteGroup);
+		assertDraftToSalary("Employee seniority date", draftEmployeeSeniorityDate, salaryEmployeeSeniorityDate);
+		assertDraftToSalary("Employee SS number", draftEmployeeSS, salaryEmployeeSS);
 		
 		/** Enterprise data */
-		compareSalaryDraftLog("Enterprise address", draftEnterpriseAddress, salaryEnterpriseAddress);
-		assertWithLog("Draft -> Salary", "Enterprise address not matching", draftEnterpriseAddress, salaryEnterpriseAddress);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Enterprise CCC", draftEnterpriseCCC, salaryEnterpriseCCC);
-		assertWithLog("Draft -> Salary", "Enterprise CCC not matching", draftEnterpriseCCC, salaryEnterpriseCCC);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Enterprise document", draftEnterpriseDocument, salaryEnterpriseDocument);
-		assertWithLog("Draft -> Salary", "Enterprise Document not matching", draftEnterpriseDocument, salaryEnterpriseDocument);
-		console.success("DONE");
-		console.jump();
-		
-		compareSalaryDraftLog("Enterprise name", draftEnterpriseName, salaryEnterpriseName);
-		assertWithLog("Draft -> Salary", "Enterprise name not matching", draftEnterpriseName, salaryEnterpriseName);
-		console.success("DONE");
-		console.jump();
-				
+		assertDraftToSalary("Enterprise address", draftEnterpriseAddress, salaryEnterpriseAddress);
+		assertDraftToSalary("Enterprise CCC", draftEnterpriseCCC, salaryEnterpriseCCC);
+		assertDraftToSalary("Enterprise document", draftEnterpriseDocument, salaryEnterpriseDocument);
+		assertDraftToSalary("Enterprise name", draftEnterpriseName, salaryEnterpriseName);
+
 		/** Payments */
 		console.jump();
 		console.start("Comparing Draft & Salary --> PAYMENTS");
@@ -271,10 +266,7 @@ public class DefaultPayrollUnitTest {
 			Type draftPaymentType = draftPayment.getType();
 			PaymentType salaryPaymentType = salaryPayment.getPaymentType();
 		
-			compareSalaryDraftLog("Payment type", draftPaymentType, salaryPaymentType);
-			assertWithLog("Draft -> Salary", "Payment type not matching", draftPaymentType.ordinal() , salaryPaymentType.ordinal());
-			console.success("DONE.");
-			console.jump();
+			assertDraftToSalary("Payment type", "CRA_" + draftPaymentType.ordinal(), "CRA_" + salaryPaymentType.ordinal());
 
 		}
 		
@@ -290,28 +282,133 @@ public class DefaultPayrollUnitTest {
 			com.esferalia.aon.gwt.payroll.shared.Deduction.Type draftDeductionType = draftDeduction.getType();
 			DeductionType salaryDeductionType = salaryDeduction.getDeductionType();
 			
-			compareSalaryDraftLog("Deduction type", draftDeductionType, salaryDeductionType);
-			assertWithLog("Draft -> Salary", "Deduction type not matching", draftDeductionType.ordinal() , salaryDeductionType.ordinal());
-			
-			console.success("DONE.");
-			console.jump();
+			assertDraftToSalary("Deduction type", draftDeductionType.ordinal(), salaryDeductionType.ordinal());
 
 			String draftDeductionDescription =  draftDeductionType.getDescription();
 			String salaryDeductionDescription = salaryDeduction.getDescription();
 			
-			compareSalaryDraftLog("Deduction description", draftDeductionDescription, salaryDeductionDescription);
-			assertWithLog("Draft -> Salary", "Deduction description not matching",draftDeductionDescription , salaryDeductionDescription);
-			console.success("DONE.");
-			console.jump();
-			
+			assertDraftToSalary("Deduction description", draftDeductionDescription, salaryDeductionDescription);
 		}
 		
 		
 		/** Embargos */
 		for(int i = 0; i < draft.getEmbargos().size(); i++) {
+			@SuppressWarnings("unused")
 			Deduction draftEmbargos = draft.getEmbargos().get(i);
+			@SuppressWarnings("unused")
 			Embargo salaryEmbargos = salary.getEmbargos().get(i);			
+		
+			/**
+			 * Some test stuff here
+			 */
+			
+			
 		}
+		
+	}
+	
+	
+	/**
+	 * Checks conversion between salary (Occam) and payroll (in-payroll)
+	 * @param salary
+	 * @param payroll
+	 */
+	public void assertSalaryToDefaultPayroll(Salary salary, DefaultPayroll payroll) {
+
+		Double payrollCGC = payroll.getContingencies().get().getCommonContBase().orElse(null);
+		Double salaryCGC = salary.getCommonContingenciesBase();
+		
+		Double payrollCGP = payroll.getContingencies().get().getProfessionalContBase().orElse(null);
+		Double salaryCGP = salary.getProfessionalContingenciesBase();
+		
+		String payrollCategory = payroll.getProfessionalGroup().orElse(null);
+		String salaryCategory = salary.getEmployeeCategory();
+		
+		String payrollEmployeeDocument =  payroll.getNif().orElse(null);
+		String salaryEmployeeDocument = salary.getEmployeeDocument();
+		
+		String payrollEmployeeName =  payroll.getEmployee().orElse(null);
+		String salaryEmployeeName = salary.getEmployeeName();
+		
+		Date payrollEmployeeSeniorityDate = payroll.getAntiquity().orElse(null);
+		Date salaryEmployeeSeniorityDate = salary.getEmployeeSeniorityDate();
+		
+		String payrollEmployeeSS = payroll.getNss().orElse(null);
+		String salaryEmployeeSS = salary.getEmployeeSSNumber();
+		
+		String payrollEnterpriseAddress = payroll.getAddress().orElse(null);
+		String salaryEnterpriseAddress = salary.getEnterpriseAddress();
+		
+		String payrollEnterpriseCCC = payroll.getCcc().orElse(null);
+		String salaryEnterpriseCCC = salary.getEnterpriseCCC();
+		
+		String payrollEnterpriseDocument = payroll.getCif().orElse(null);
+		String salaryEnterpriseDocument = salary.getEnterpriseDocument();
+		
+		String payrollEnterpriseName = payroll.getEnterprise().orElse(null);
+		String salaryEnterpriseName =  salary.getEnterpriseName();
+
+		
+		console.jump();
+		console.start("Comparing Salary & PDF Default payroll");
+		
+		/**
+		 * Comparing the Contingency bases
+		 */
+		
+		assertSalaryToPayroll("Common contingencies",payrollCGC,salaryCGC);	
+		assertSalaryToPayroll("Professional contingencies",payrollCGP,salaryCGP);
+		
+		/**
+		 * Comparing payroll basic data
+		 */
+
+		assertSalaryToPayroll("Employee name", payrollEmployeeName, salaryEmployeeName);
+		assertSalaryToPayroll("Category", payrollCategory, salaryCategory);
+		assertSalaryToPayroll("Employee document", payrollEmployeeDocument, salaryEmployeeDocument);
+		assertSalaryToPayroll("Employee seniority date", payrollEmployeeSeniorityDate, salaryEmployeeSeniorityDate);
+		assertSalaryToPayroll("Employee ss", payrollEmployeeSS, salaryEmployeeSS);
+		assertSalaryToPayroll("Enterprise Address", payrollEnterpriseAddress, salaryEnterpriseAddress);
+		assertSalaryToPayroll("Enterprise CCC", payrollEnterpriseCCC, salaryEnterpriseCCC);
+		assertSalaryToPayroll("Enterprise document", payrollEnterpriseDocument, salaryEnterpriseDocument);
+		assertSalaryToPayroll("Enterprise name", payrollEnterpriseName, salaryEnterpriseName);
+		
+		/**
+		 * Comparing payments 
+		 */
+		
+		Map<Integer, ArrayList<PDFPayment>> payments = payroll.getAccruals().get();
+		console.log(Status.RUN, "Payments",payments);
+		
+		payments.keySet().forEach(cra -> {
+			 ArrayList<PDFPayment> paymentsForCra = payments.get(cra);
+			 paymentsForCra.forEach(payment ->{
+				 console.log(Status.TEST, "CRA_" + cra, payment.getDescription(), Separator.COLON);
+			 });
+		});
+		
+		
+		/**
+		 * Comparing deductions
+		 */
+		
+		Map<Integer, ArrayList<PDFDeduction>> deductions = payroll.getDeductions().get();
+		deductions.keySet().forEach(id -> {
+			ArrayList<PDFDeduction> deductionsForID = deductions.get(id);
+			deductionsForID.forEach(deduction -> {
+				 console.log(Status.TEST, "ID_" + id, deduction.getPercent() + " " + deduction.getDescription(), Separator.COLON);
+			});
+		});
+		
+		
+		/**
+		 * Getting embargos
+		 */
+		
+		
+		
+		
+		
 		
 	}
 

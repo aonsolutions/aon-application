@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
@@ -23,8 +25,8 @@
 					<module>com.esferalia.aon.gwt.payroll.Payroll</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
-					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
-					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
+						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
+						<compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
@@ -37,21 +39,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.7.0</version>
-				<configuration>
-					<includes>**/GWT*.java</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin-->
+			<!--plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId> 
+				<version>2.7.0</version> <configuration> <includes>**/GWT*.java</includes> 
+				</configuration> <executions> <execution> <goals> <goal>test</goal> </goals> 
+				</execution> </executions> </plugin -->
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>replacer</artifactId>
@@ -61,7 +52,7 @@
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>replace</goal>
-						</goals>                   
+						</goals>
 					</execution>
 				</executions>
 				<configuration>
@@ -70,54 +61,54 @@
 						<include>**/gwt/clean/clean.css</include>
 					</includes>
 					<regexFlags>
-					    <regexFlag>MULTILINE</regexFlag>
-					    <regexFlag>CASE_INSENSITIVE</regexFlag>
+						<regexFlag>MULTILINE</regexFlag>
+						<regexFlag>CASE_INSENSITIVE</regexFlag>
 					</regexFlags>
 					<replacements>
 						<replacement>
 							<token>^([a-z: \t,]*)\{$</token>
 							<value>/** $1 */
-.disabled-by-aon {</value>
-						</replacement>         
+								.disabled-by-aon {</value>
+						</replacement>
 					</replacements>
 				</configuration>
 			</plugin>
-           	<plugin>
-			<groupId>com.igormaznitsa</groupId>
-			<artifactId>jcp</artifactId>
-			<executions>
-				<execution>
-			        <id>preprocessSources</id>
-			       	<phase>generate-sources</phase>
-			       	<goals>
-	               	<goal>preprocess</goal>
-			        </goals>
-				</execution>
-			</executions>
-            </plugin>
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-surefire-plugin</artifactId>
-			  <configuration>
-			    <systemProperties>
-			      <property>
-			        <name>javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema</name>
-			        <value>com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory</value>
-			      </property>
-			    </systemProperties>
-			  </configuration>
+				<groupId>com.igormaznitsa</groupId>
+				<artifactId>jcp</artifactId>
+				<executions>
+					<execution>
+						<id>preprocessSources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>preprocess</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema</name>
+							<value>com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory</value>
+						</property>
+					</systemProperties>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 
 	<dependencies>
-	    <dependency>
-	      <groupId>javax.servlet</groupId>
-	      <artifactId>javax.servlet-api</artifactId>
-	      <version>3.1.0</version>
-	      <scope>provided</scope>
-	    </dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -159,16 +150,16 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-	 		<groupId>com.vaadin.polymer</groupId>
-	   		<artifactId>vaadin-gwt-polymer-elements</artifactId>
-	   		<version>1.7.0.0</version>
-	   	 	<scope>provided</scope>
+			<groupId>com.vaadin.polymer</groupId>
+			<artifactId>vaadin-gwt-polymer-elements</artifactId>
+			<version>1.7.0.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
- 			<groupId>net.aonsolutions.polymer</groupId>
- 			<artifactId>aon.gwt.polymer</artifactId>
- 			<version>${project.version}</version> 
-  			<scope>provided</scope>
+			<groupId>net.aonsolutions.polymer</groupId>
+			<artifactId>aon.gwt.polymer</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
@@ -177,17 +168,13 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-		      <groupId>org.apache.poi</groupId>
-		      <artifactId>poi-ooxml</artifactId>
-		      <version>3.17</version>
-		      <scope>compile</scope>
-	    </dependency>
-		<!--dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.resources</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.17</version>
 			<scope>compile</scope>
-		</dependency-->
+		</dependency>
+		<!--dependency> <groupId>com.code.aon</groupId> <artifactId>aon.ui.resources</artifactId> 
+			<version>${project.version}</version> <scope>compile</scope> </dependency -->
 
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
@@ -219,14 +206,14 @@
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.aonsolutions</groupId>
 			<artifactId>aon.api</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-			
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.visualization</artifactId>
@@ -251,7 +238,7 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.sepe</artifactId>
@@ -267,39 +254,39 @@
 		</dependency>
 
 		<dependency>
-		   <groupId>com.esferalia.aon</groupId>
-		   <artifactId>aon.in.payroll</artifactId>
-		   <version>${project.version}</version>
-		   <scope>compile</scope>
-		 </dependency>
-
-       	<dependency>
-			<groupId>com.code.aon</groupId>
-	        <artifactId>aon.google.apis</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.in.payroll</artifactId>
 			<version>${project.version}</version>
-	        <scope>compile</scope>
-	        <exclusions>
-	        	<exclusion>
-	        		<artifactId>httpclient</artifactId>
-	        		<groupId>org.apache.httpcomponents</groupId>
-	        	</exclusion>
-	        </exclusions>
-       	</dependency>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
-		   <groupId>com.code.aon</groupId>
-		   <artifactId>aon-jasperreports</artifactId>
-		   <version>${project.version}</version>
-		   <scope>runtime</scope>
-		 </dependency>
-		 
-		 
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.google.apis</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>httpclient</artifactId>
+					<groupId>org.apache.httpcomponents</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
-		   <groupId>net.tascalate.javaflow</groupId>
-		   <artifactId>net.tascalate.javaflow.api</artifactId>
-		   <version>2.2.1</version>
-		   <scope>runtime</scope>
-		 </dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-jasperreports</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>net.tascalate.javaflow</groupId>
+			<artifactId>net.tascalate.javaflow.api</artifactId>
+			<version>2.2.1</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -325,6 +312,13 @@
 			<artifactId>pdf-renderer</artifactId>
 			<version>1.0.5</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>0.15</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Yes I now it's beta version, but what hell it's aon. -->
@@ -353,11 +347,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.json</groupId>
-    		<artifactId>json</artifactId>
-    		<version>20180813</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180813</version>
 		</dependency>
-    	<dependency>
+		<dependency>
 			<groupId>org.openoffice</groupId>
 			<artifactId>juh</artifactId>
 			<version>3.2.1</version>
@@ -399,68 +393,68 @@
 			<version>8.0.13</version>
 			<scope>test</scope>
 		</dependency>
-	    <dependency>
-	      <groupId>com.esferalia.aon</groupId>
-	      <artifactId>aon.payroll</artifactId>
-	      <type>test-jar</type>
-	      <version>${project.version}</version>
-	      <scope>test</scope>
-	    </dependency>
-	    
 		<dependency>
-		    <groupId>com.github.javafaker</groupId>
-		    <artifactId>javafaker</artifactId>
-		    <version>1.0.2</version>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.payroll</artifactId>
+			<type>test-jar</type>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-	    
-  </dependencies>
-  <profiles>
-    <profile>
-    <id>dev</id>
-    <activation>
-      <property>
-        <name>gwt.working</name>
-        <value>true</value>
-      </property>
-    </activation>
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <configuration>
-            <draftCompile>true</draftCompile>
-	    	<module>com.esferalia.aon.gwt.payroll.DevelopmentPayroll</module>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
-    </profile>
 
-    <profile>
-    <id>server</id>
-    <activation>
-      <property>
-        <name>gwt.skip</name>
-        <value>true</value>
-      </property>
-    </activation>
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <executions>
-            <execution>
-            	<phase>none</phase>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </build>
-    </profile>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
+		</dependency>
 
-  </profiles>
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<property>
+					<name>gwt.working</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>gwt-maven-plugin</artifactId>
+						<configuration>
+							<draftCompile>true</draftCompile>
+							<module>com.esferalia.aon.gwt.payroll.DevelopmentPayroll</module>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>server</id>
+			<activation>
+				<property>
+					<name>gwt.skip</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>gwt-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 
 </project>

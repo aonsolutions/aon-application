@@ -223,51 +223,57 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setDeductionTotal(salary.getTotalDeduction());
 
 				ArrayList<String> inserted = new ArrayList<String>();
-
 				HashMap<Integer, ArrayList<PDFDeduction>> deductionMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
-				salary.getDeductions().stream().sorted(Comparator.comparing(d -> {
-					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription()
-							: Utilities.chooseDescription(d.getDeductionType());
-				})).forEach(d -> {
-					DeductionType deductionType = d.getDeductionType();
-
-					if (deductionType == null)
-						return;
-
-					List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));
+				
+				try{
 					
-					ContextData cd = percList != null ? percList.get(0) : null;
-					Double percent = null;
-					if (cd != null) {
-						if (cd.getExpression() != null)
-							percent = Double.parseDouble(cd.getExpression());
-						else
-							percent = -1d;
-					}
+					salary.getDeductions().stream().sorted(Comparator.comparing(d -> {
+						return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : Utilities.chooseDescription(d.getDeductionType());
+					})).forEach(d -> {
+	
+						DeductionType deductionType = d.getDeductionType();
+	
+						if (deductionType == null)
+							return;
+	
+						List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));
+						
+						ContextData cd = percList != null ? percList.get(0) : new ContextData();
 
-					int type = Utilities.chooseType(deductionType);
-					String description = d.getDescription();
-
-					if (description == null || description.isEmpty()) {
-						description = Utilities.chooseDescription(deductionType);
-					}
-
-					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), description, percent);
-					if (!deductionMap.containsKey(type))
-						deductionMap.put(type, new ArrayList<PDFDeduction>());
-
-					if (deductionMap.get(type).stream().anyMatch(ded -> equalsIgnoreCase(ded.getDescription().get(),
-							pdfDeductionEntry.getDescription().get()))) {
-						PDFDeduction ded = deductionMap.get(type).stream()
-								.filter(d1 -> equalsIgnoreCase(d1.getDescription().get(),
-										pdfDeductionEntry.getDescription().get()))
-								.findFirst().get();
-
-						ded.setAmount(ded.getAmount().get() + pdfDeductionEntry.getAmount().get());
-					} else
-						deductionMap.get(type).add(pdfDeductionEntry);
-					inserted.add(Utilities.getDeductionType(deductionType.ordinal()));
-				});
+						
+						Double percent = null;
+					
+						if (cd != null) {
+							percent = DataToolkit.safeParseDouble(cd.getExpression(), -1);
+						}
+	
+						int type = Utilities.chooseType(deductionType);
+						String description = d.getDescription();
+	
+						if (description == null || description.isEmpty()) {
+							description = Utilities.chooseDescription(deductionType);
+						}
+	
+						PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), description, percent);
+						if (!deductionMap.containsKey(type))
+							deductionMap.put(type, new ArrayList<PDFDeduction>());
+	
+						if (deductionMap.get(type).stream().anyMatch(ded -> equalsIgnoreCase(ded.getDescription().get(),
+								pdfDeductionEntry.getDescription().get()))) {
+							PDFDeduction ded = deductionMap.get(type).stream()
+									.filter(d1 -> equalsIgnoreCase(d1.getDescription().get(),
+											pdfDeductionEntry.getDescription().get()))
+									.findFirst().get();
+	
+							ded.setAmount(ded.getAmount().get() + pdfDeductionEntry.getAmount().get());
+						} else
+							deductionMap.get(type).add(pdfDeductionEntry);
+						inserted.add(Utilities.getDeductionType(deductionType.ordinal()));
+					});
+					
+				} catch( Exception e) {
+					e.printStackTrace();
+				}
 
 				if (deductionMap.get(1) == null)
 					deductionMap.put(1, new ArrayList<PDFDeduction>());
@@ -301,6 +307,7 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setDeductions(deductionMap);
 
 			}
+		
 
 			// COSTS
 			Double totalEnterprise = 0d;
@@ -429,7 +436,7 @@ public class JooqPayrollBuilder {
 				payrollBuilder.setContingencies(costBuilder.build());
 			}
 			payrollBuilder.setPayrollTotal(salary.getTotalLiquid());
-
+			
 			return payrollBuilder.build();
 		}
 	}
@@ -495,10 +502,14 @@ public class JooqPayrollBuilder {
 	private static void setEmployeeRelatedData(DefaultPayrollBuilder payrollBuilder, Salary salary) {
 		payrollBuilder.setAntiquity(salary.getEmployeeSeniorityDate());
 
-		String employeeName = salary.getEmployeeName().trim();
-		if (employeeName != null && employeeName.length() > 1 && employeeName.charAt(0) == ',')
-			employeeName = employeeName.substring(1).trim();
-
+		String employeeName = salary.getEmployeeName();
+		if(employeeName != null) {
+			employeeName.trim();
+			
+			if (employeeName != null && employeeName.length() > 1 && employeeName.charAt(0) == ',')
+				employeeName = employeeName.substring(1).trim();
+		}
+		
 		payrollBuilder.setEmployee(employeeName);
 		payrollBuilder.setNif(salary.getEmployeeDocument());
 		payrollBuilder.setNss(salary.getEmployeeSSNumber());
