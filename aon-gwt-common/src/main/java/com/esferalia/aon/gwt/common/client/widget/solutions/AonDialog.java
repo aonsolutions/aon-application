@@ -58,14 +58,15 @@ public class AonDialog extends AonCustomDialog {
 	}
 	
 	private void showDialog() {
-		center();
-    	show();
-		
+		// Show center
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-	        public void execute() {
-	        	okButton.setFocus(true);        	
-	        }
-	    });
+			@Override
+			public void execute() {
+				center();
+				show();
+				okButton.setFocus(true); 
+			}
+		});
 	}
 	
 	private void getBtnPanel() {
