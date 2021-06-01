@@ -325,6 +325,62 @@ public class FinanceDAO {
 			insert(ctx, finance);
 		}
 	}
+	// --------------------------------------------
+	// ------ FINANCE FRACCIONAMIENTO -------------
+	// --------------------------------------------
+	public static LinkedList<Finance> fraction(AONContext ctx, Finance origin, LinkedList<Finance> fractions) {
+		LinkedList<Finance> result = new LinkedList<Finance>();
+		Finance original = FinanceValidation.validateFraction(ctx, origin,fractions);
+		double originalAmount = original.getAmount();
+		int count = 1;
+		for (Finance fin : fractions) {
+			Finance fraction = null;
+			if (count == 1) {
+				fraction = original;
+			} else {
+				fraction = new Finance()	
+					.setInvoice(original.getInvoice())
+					.setPayMethod(original.getPayMethod())
+					.setPayMethodType(original.getPayMethodType())
+					.setPayMethodName(original.getPayMethodName())
+					.setRegistry(original.getRegistry())
+					.setScope(original.getScope())
+					.setDomain(original.getDomain())
+					.setPayment(original.isPayment())
+					.setRegistryDocument(original.getRegistryDocument())
+					.setRegistryDocumentType(original.getRegistryDocumentType())
+					.setRegistryDocumentCountry(original.getRegistryDocumentCountry())
+					.setRegistryName(original.getRegistryName())
+					.setRegistryAccountId(original.getRegistryAccountId())
+					.setRegistryAccountCode(original.getRegistryAccountCode())
+					.setRegistryAccountDescription(original.getRegistryAccountDescription())
+					.setConcept(original.getConcept())
+					.setDueDate(original.getDueDate())
+					.setBankAccount(original.getBankAccount())
+					.setBankAlias(original.getBankAlias())
+					.setBic(original.getBic())
+					.setChequeNumber(original.getChequeNumber())
+					.setFinanceStatus(original.getFinanceStatus())
+					.setSecurityLevel(original.getSecurityLevel())
+					.setRemarks(original.getRemarks())
+					.setManual(original.isManual())
+					.setAdvance(original.isAdvance())
+					.setPayroll(original.isPayroll())
+					.setPrepayment(original.isPrepayment())
+					.setSourceId(original.getSourceId())
+					;
+			}
+			fraction.setAmount(fin.getAmount());
+			fraction.setExpenses(fin.getExpenses());
+			Integer fractionId = save(ctx, fraction);
+			fraction = getFinance(ctx, fractionId);
+			String description = "Fracci\u00F3n " + count + " de " + fractions.size(); 
+			FinanceTrackingDAO.fraction(ctx, fraction, description,originalAmount);
+			result.add(fraction);
+			count++;
+		}
+		return result;
+	}
 	
 	
 	// -------------------------------------------------------------
@@ -420,7 +476,7 @@ public class FinanceDAO {
 				.setId(record.getValue(FINANCE.ID))
 				.setDomain(record.getValue(FINANCE.DOMAIN))
 				.setPayment(AonEnumUtils.getBoolean( record.getValue(FINANCE.PAYMENT)) )
-				.setRegistry(new RegistryOldDAO.RegistryFiller().apply(record))
+				.setRegistry(new RegistryDAO.RegistryFiller().apply(record))
 				.setRegistryDocument(record.getValue(FINANCE.RDOCUMENT))
 				.setRegistryDocumentType(DocumentType.safeValueOf(record.getValue(FINANCE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(FINANCE.RDOCUMENT_COUNTRY)))

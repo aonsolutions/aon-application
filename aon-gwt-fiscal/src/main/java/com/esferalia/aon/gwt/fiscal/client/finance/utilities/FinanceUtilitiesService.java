@@ -24,4 +24,8 @@ public interface FinanceUtilitiesService extends RemoteService {
 	// Chequeo de integridad de vencimientos en facturas 
 	FinanceUtilitiesResult financeInvoiceIntegrity(String domainName, String user, Domain domain) throws AonCoreException;
 	Finance financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance) throws AonCoreException;
+	
+	// Fix de ayudat (Borrar) 
+	FinanceUtilitiesResult ayudatFix(String domainName, String user, Domain domain) throws AonCoreException;
+	
 }
