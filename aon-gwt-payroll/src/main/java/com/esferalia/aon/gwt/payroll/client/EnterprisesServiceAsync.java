@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -139,14 +138,14 @@ public interface EnterprisesServiceAsync {
 	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback);
 	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
-	void getDigitalCertificates(String currentDomainName, String currentUser, String token, AsyncCallback<List<DigitalCertificate>> asyncCallback);
-	void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback);
+	void getDigitalCertificateTGSS(String currentDomainName, String currentUser, AsyncCallback<DigitalCertificate> asyncCallback);
+	void getDigitalCertificatesSEPE(String currentDomainName, AsyncCallback<List<DigitalCertificate>> asyncCallback);
 	void getMainCCCInfoDataBase(String currentDomainName, String currentUser, AsyncCallback<MainCCCInfo> asyncCallback);
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback);
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> asyncCallback);
-	void deleteDigitalCertificate(String currentDomainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> asyncCallback);
+	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback);
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback);
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
@@ -189,5 +188,6 @@ public interface EnterprisesServiceAsync {
 	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
+	
 	
 }
