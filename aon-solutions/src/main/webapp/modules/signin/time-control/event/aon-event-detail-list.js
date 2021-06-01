@@ -102,6 +102,13 @@ export class AonEventDetailList extends AonElement {
       let aonToolbar =  new AonToolbar();
       aonToolbar.id = this.TOOLBAR;
       aonToolbar.type = ToolbarType.SECONDARY;
+      // try {// change style fixed
+      //   aonToolbar.style.position = "fixed";
+      //   aonToolbar.style.width = "100%";
+      //   aonToolbar.style.top = "101px";
+      //   this.applicationEl.getContent().style.top = "140px";
+      // } catch (error) {}
+    
       this.appendChild(aonToolbar);
     } 
 

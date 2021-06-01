@@ -56,6 +56,11 @@ public class Sepe {
 		return Contrato.getContratoData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
+	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SepeException{
+		Contrato.validateCert(certificateInputStream, certificatePassword, certificateType);
+	}
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 	}

@@ -1,9 +1,11 @@
 import {AonDocumentAyudat} from './aon-document-ayudat.js';
 import {ToolbarType} from '../../../models/enums.js';
-import { MSG } from '../../../environments/environments.js';
+import { MSG, TAG } from '../../../environments/environments.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
-import '../../../components/aon-card.js';
-import '../../../components/aon-viewer.js';
+import { AonToolbar } from '../../../components/aon-toolbar.js';
+import { AonCard } from '../../../components/aon-card.js';
+import { setAttributes } from '../../../services/utils.js';
+import { AonViewer } from '../../../components/aon-viewer.js';
 
 export class AonMobileDocumentAyudat extends AonDocumentAyudat {
 
@@ -17,13 +19,7 @@ export class AonMobileDocumentAyudat extends AonDocumentAyudat {
     this.initialize();
     this.id = DOCUMENTAL_VIEWS.AON_DOCUMENT_MOBILE_AYUDAT;
     this.FILE_CARD = this.FILE + 'Card';
-    this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="DOCUMENTO"> </aon-toolbar>
-      <div>
-        <aon-card id="${this.FILE_CARD}" title="${MSG.FILE}" style="display:none;"> </aon-card>
-        <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
-      </div>
-    `;
+    this.paintView();
 
     this.buildData();
     this.buildDocumentToolbar();
@@ -36,10 +32,40 @@ export class AonMobileDocumentAyudat extends AonDocumentAyudat {
     }
   }
 
+  paintView(){
+    let aonToolbar = setAttributes(new AonToolbar(),{
+      id: this.TOOLBAR,
+      type: ToolbarType.SECONDARY,
+      title: "DOCUMENTO"
+    });
+    this.appendChild(aonToolbar);
+
+    let div = this.createElement(TAG.DIV);
+    this.appendChild(div);
+
+    let aonCard = setAttributes(new AonCard(),{
+      id: this.FILE_CARD,
+      title: MSG.FILE
+    });
+    aonCard.style.display = "none";
+    div.appendChild(aonCard);
+
+    aonCard = setAttributes(new AonCard(),{
+      id: this.DATA_CARD,
+      title: MSG.FILE_DATA
+    });
+    div.appendChild(aonCard);
+  }
+  
   openFileCard() {
     let fileCard = this.getElement(this.FILE_CARD);
-    let w = this.getElement(fileCard.CONTENT).offsetWidth;
-    fileCard.setContentHTML(`<aon-viewer type="${this.getContentType()}" file="${this.data.image}" width="${w}"></aon-viewer>`);
+    const width = this.getElement(fileCard.CONTENT).offsetWidth;
+    const aonViewer = setAttributes(new AonViewer(),{
+      type: this.getContentType(),
+      file: this.data.image, 
+      width
+    });
+    fileCard.setContent(aonViewer);
     fileCard.cleanSection2();
     fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
   }

@@ -16,7 +16,9 @@ export class AonAccounting extends AonElement {
 
 	dur;
 	AON_ACCOUNTING;
-
+	constructor() {
+		super();
+	}
 	connectedCallback () {
 		this.initialize();
 

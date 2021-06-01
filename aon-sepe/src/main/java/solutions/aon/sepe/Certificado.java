@@ -10,6 +10,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -262,9 +263,9 @@ public class Certificado {
 	
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
-			String error = htmlPage.querySelector("#contenido > form > p.formAviso").getVisibleText();
-			if(!error.isEmpty()) 
-				throw new SepeException(error);
+			DomNode error = htmlPage.querySelector("#contenido > form > p.formAviso");
+			if(error!=null && !error.getVisibleText().isEmpty()) 
+				throw new SepeException(error.getVisibleText());
 		} catch (NullPointerException e) {}
 	}
 	

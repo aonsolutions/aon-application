@@ -4,7 +4,7 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
 
-class AonMessenger extends AonElement {
+export class AonMessenger extends AonElement {
     AON_MESSENGER;
 	FILTER
 

@@ -48,6 +48,23 @@ public class HtmlUnitToolkit {
 		catch(RuntimeException e) {throw new InvalidCertificateException();}
 	}
 	
+	public static WebClient getWebClientCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SepeException {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
+			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+					certificateType);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			return webClient;
+		} catch (RuntimeException e) {
+			throw new SepeException(e.getMessage());
+		}
+	}
+	
 	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
 			@Override

@@ -16,7 +16,7 @@ import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 
 
-class AonLaboral extends AonElement {
+export class AonLaboral extends AonElement {
 
   AON_LABORAL;
   dur;

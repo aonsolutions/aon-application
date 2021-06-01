@@ -4,21 +4,17 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { rootPanel } from "../services/gwtLoader.js";
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
-import {
-  getDomainUserRoles,
-  closeSession
-} from "../services/service.js";
+import { getDomainUserRoles, closeSession } from "../services/service.js";
 import { AonDocumentalAyudat } from "./documental/ayudat/aon-documental-ayudat.js";
 import { AonDocumental } from "./documental/aon-documental.js";
+import { AonMessenger } from "./messenger/aon-messenger.js";
+import { AonAccounting } from "./accounting/aon-accounting.js";
+import { AonFiscal } from  "./fiscal/aon-fiscal.js";
+import { AonInvoicePanel } from "./invoice/aon-invoice-panel.js";
+import { AonSignin } from "./signin/aon-signin.js";
+import { AonLaboral } from "./laboral/aon-laboral.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
-import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
-   PAYROLL, ACCOUNTING, FISCAL} from "../services/app.js"
-
-import "./signin/aon-signin.js";
-import "./invoice/aon-invoice-panel.js";
-import "./laboral/aon-laboral.js";
-import "./fiscal/aon-fiscal.js";
-import "./messenger/aon-messenger.js";
+import { MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER, PAYROLL, ACCOUNTING, FISCAL } from "../services/app.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -34,11 +30,11 @@ export class AonMobileMenu extends AonElement {
   }
 
   get company() {
-    return this.getAttribute("company");
+    return this.getAttribute(CONSTANT.COMPANY);
   }
 
   set company(company) {
-    this.setAttribute("company", company);
+    this.setAttribute(CONSTANT.COMPANY, company);
   }
 
   get user() {
@@ -104,10 +100,10 @@ export class AonMobileMenu extends AonElement {
 
   reload() {
     waitEl(`#${this.id}Sidenav`).then(async(menu)=>{
-      const r = await getDomainUserRoles({});
-      this.dur = new DomainUserRoles(r);
-      menu.innerHTML = '';
-      this.buildMenu();
+        const r = await getDomainUserRoles({});
+        this.dur = new DomainUserRoles(r);
+        menu.innerHTML = '';
+        this.buildMenu();
      });
   }
 
@@ -270,43 +266,51 @@ export class AonMobileMenu extends AonElement {
       return {
         name: app.title,
         aonIcon: "aon_seg_social",
-        fn: () =>rootPanel(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`)
+        fn: () =>{
+          const aonLaboral = new AonLaboral();
+          aonLaboral.title = MSG.COMUNICA;
+          this.rootPanel(aonLaboral);
+        }
       };
     else if(PAYROLL.app === app.app)
       return {
         name: app.title,
         aonIcon: "aon_seg_social",
-        fn: () => rootPanel(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`),
+        fn: () => {
+          const aonLaboral   = new AonLaboral();
+          aonLaboral.title = MSG.PAYROLL;
+          this.rootPanel(aonLaboral);
+        }
       };
     else if(TIMECONTROL.app === app.app)
       return {
         name: app.title,
         icon: "alarm_on",
-        fn: () => rootPanel("<aon-signin></aon-signin>")
+        fn: () => this.rootPanel(new AonSignin())
       };
     else if(INVOICE.app === app.app)
       return {
         name: app.title,
         icon: "receipt",
-        fn: () => rootPanel('<aon-invoice-panel></aon-invoice-panel>')
+        fn: () => this.rootPanel(new AonInvoicePanel())
       };
     else if(MESSENGER.app === app.app)
       return {
         name: "Solicitudes",
         icon: "message",
-        fn: () => this.isBeta() ? rootPanel(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
+        fn: () => this.isBeta() ? this.rootPanel(new AonMessenger()) :  alert('en desarrollo')
       };
     else if(FISCAL.app === app.app)
       return {
         name: "Fiscal",
         icon: "receipt",
-        fn: () => rootPanel('<aon-fiscal></aon-fiscal>')
+        fn: () => this.rootPanel(new AonFiscal())
       };
     else if(ACCOUNTING.app === app.app)
       return {
         name: "Contabilidad",
         icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-        fn: () =>  rootPanel('<aon-accounting></aon-accounting>')
+        fn: () => this.rootPanel(new AonAccounting())
       };
     return undefined;
   }

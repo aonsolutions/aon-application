@@ -65,6 +65,12 @@ export class AonEventList extends AonElement {
     this.build();
   }
 
+  // disconnectedCallback(){
+    // const toolbarEl = this.getElement(this.TOOLBAR);
+    // if(toolbarEl) toolbarEl.remove();
+    // this.applicationEl.getContent().style.top = "102px";
+  // }
+
   async build() {
     this.paintView();
     if(this.isMobile()){
@@ -88,6 +94,9 @@ export class AonEventList extends AonElement {
       aonToolbar.id = this.TOOLBAR;
       aonToolbar.type = ToolbarType.SECONDARY;
       this.appendChild(aonToolbar);
+      // this.applicationEl.getToolbar().parentNode.insertBefore(aonToolbar, this.applicationEl.getToolbar().nextSibling);
+      // this.applicationEl.getContent().style.top = "140px";
+      // document.querySelector(".aonMobileApplicationContent").style.top = "140px";
     } 
     
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
