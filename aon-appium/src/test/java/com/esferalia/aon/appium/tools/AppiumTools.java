@@ -22,7 +22,7 @@ public class AppiumTools {
 		capabilities.setCapability(MobileCapabilityType.APP, apk);
 		capabilities.setCapability("chromedriverExecutable", driver);
 		capabilities.setCapability("avd", "android11");
-		capabilities.setCapability(MobileCapabilityType.FULL_RESET, false);
+//		capabilities.setCapability(MobileCapabilityType.FULL_RESET, true);
 		capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
 		return new AppiumDriver<MobileElement>(new URL(appiumServiceUrl),capabilities);
 	}

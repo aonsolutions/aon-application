@@ -153,7 +153,7 @@ public abstract class AbstractTestCase {
 			
 //			wait.until(ExpectedConditions.visibilityOf(loginButtonEl));
 			
-			Thread.sleep(1000);
+//			Thread.sleep(1000);
 			
 			WebElement loginButtonEl = wait
 					.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonLoginSignin")));
@@ -186,6 +186,7 @@ public abstract class AbstractTestCase {
 
 		} catch (NoSuchElementException e) {
 			String message = "AON SOLUTIONS : The element does not exist";
+			e.printStackTrace();
 			fail(message);
 		} catch (WebDriverException e) {			
 			String message = "AON SOLUTIONS : The webapp is not responding";
@@ -215,6 +216,15 @@ public abstract class AbstractTestCase {
 	 * @throws Exception
 	 */
 	public static void tearDownAfterClass() throws Exception {
+		
+//		WebDriverWait wait = new WebDriverWait(app, 10);
+//		WebElement userIcon = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderUserButtonIcon")));
+//		userIcon.click();
+//		WebElement closeSeason = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
+//		closeSeason.click();
+//		app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+//		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#aonHeaderDialogUserOptionDialogMenuContent > ul :nth-child(3)")));
+		app.resetApp();
 		app.quit();
 		appiumService.stop();
 	}
