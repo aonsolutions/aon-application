@@ -1,10 +1,8 @@
 package com.esferalia.aon.appium;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -15,26 +13,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.UnhandledAlertException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.esferalia.aon.appium.id.AonIdHeader;
+import com.esferalia.aon.appium.id.AonIdLogin;
 import com.esferalia.aon.appium.tools.AppiumTools;
 import com.esferalia.aon.appium.tools.Console;
-import com.google.common.collect.ImmutableMap;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 public abstract class AbstractTestCase {
@@ -126,63 +118,41 @@ public abstract class AbstractTestCase {
 			
 			app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 
-			WebElement usernameInput = app.findElement(By.id("aonLoginUserInput"));
-			WebElement passwordInput = app.findElement(By.id("aonLoginPasswordInput"));
+			WebElement usernameInput = app.findElement(By.id(AonIdLogin.USER_INPUT));
+			WebElement passwordInput = app.findElement(By.id(AonIdLogin.PASSWORD_INPUT));
 			System.out.println(usernameInput);
 
 			String username = "usuario@aonsolutions.org";
 			String password = "org";
 
 			wait.until(ExpectedConditions.visibilityOf(usernameInput));
-//			AppiumTools.humanType(usernameInput, username);
 			usernameInput.click();
 			app.hideKeyboard();
 			usernameInput.sendKeys(username);
-//			AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
-//			wait.until(ExpectedConditions.visibilityOf(passwordInput));
-//			AppiumTools.humanType(passwordInput, password);
+			
+			WebDriverWait wait2 = new WebDriverWait(app, 2);
+			
+			do {
+			AppiumTools.fillInput(app, "#"+AonIdLogin.PASSWORD_INPUT, "");
 			passwordInput.click();
 			app.hideKeyboard();
 			passwordInput.sendKeys(password);
-//			AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
-			WebDriverWait wait2 = new WebDriverWait(app, 10);
-//			try {
-//				Alert alert = wait2.until(ExpectedConditions.alertIsPresent());
-//				System.out.println(alert.getText());
-//			} catch (Exception e) {}
+			} while (!passwordInput.getAttribute("value").equals(password));
 			
-//			wait.until(ExpectedConditions.visibilityOf(loginButtonEl));
 			
-//			Thread.sleep(1000);
 			
+			Thread.sleep(1000);
+		
 			WebElement loginButtonEl = wait
-					.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonLoginSignin")));
+					.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdLogin.LOGIN_SUBMIT)));
 			
 			
 			loginButtonEl.click();
 			
-			app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-//			try {
-				WebElement userIcon = wait2.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
-				if (!userIcon.isDisplayed())
-					fail("User icon didn't load properly");
-//			}catch(WebDriverException e) {
-//				e.printStackTrace();
-//				fail("Login failed");
-////					usernameInput.clear();
-////					AppiumTools.fillInput(app, "#" + usernameInput.getAttribute("id"), username);
-////					passwordInput.clear();
-////					AppiumTools.fillInput(app, "#" + passwordInput.getAttribute("id"), password);
-////					loginButtonEl.click();
-//				
-//					
-//
-//				//WebElement userIcon = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
-//				//assertTrue("AON SOLUTIONS: Incorrect login", userIcon.isDisplayed());
-//
-//				console.success("login", "DONE.");				
-//			}
-//			fail("Login denied.");
+			
+			WebElement userIcon = wait2.until(ExpectedConditions.presenceOfElementLocated(By.id(AonIdHeader.USER_BUTTON)));
+			if (!userIcon.isDisplayed())
+				fail("User icon didn't load properly");
 
 		} catch (NoSuchElementException e) {
 			String message = "AON SOLUTIONS : The element does not exist";
@@ -216,14 +186,6 @@ public abstract class AbstractTestCase {
 	 * @throws Exception
 	 */
 	public static void tearDownAfterClass() throws Exception {
-		
-//		WebDriverWait wait = new WebDriverWait(app, 10);
-//		WebElement userIcon = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderUserButtonIcon")));
-//		userIcon.click();
-//		WebElement closeSeason = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderUserButtonIconButton")));
-//		closeSeason.click();
-//		app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-//		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#aonHeaderDialogUserOptionDialogMenuContent > ul :nth-child(3)")));
 		app.resetApp();
 		app.quit();
 		appiumService.stop();
