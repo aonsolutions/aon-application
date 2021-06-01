@@ -61,5 +61,11 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		AON.start();
 		fsa.financeInvoiceIntegrityFix(domainName, user, domain, finance, new AsyncCallbackWrapper<Finance>(callback));
 	}
+	
+	@Override
+	public void ayudatFix(String domainName, String user, Domain domain, AsyncCallback<FinanceUtilitiesResult> callback) {
+		AON.start();
+		fsa.ayudatFix(domainName, user, domain, new AsyncCallbackWrapper<FinanceUtilitiesResult>(callback));
+	}
 
 }

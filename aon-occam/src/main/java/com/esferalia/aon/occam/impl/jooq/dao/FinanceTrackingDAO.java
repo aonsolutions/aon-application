@@ -123,7 +123,7 @@ public class FinanceTrackingDAO {
 				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE_TRACKING.ID)
 				.fetchOne();
-		ctx.log().info("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID));
+		ctx.log().info("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
 		return record.getValue(FINANCE_TRACKING.ID); 
 	}
 	
@@ -258,6 +258,7 @@ public class FinanceTrackingDAO {
 			FinanceValidation.validatePay(ctx, finance);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {
+				ctx.log().info(" \t (pay + accounting) ----- ");
 				tracking.setDescription(AonStringUtils.abbreviate( 
 					tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
 				AccountEntry[] entries = FinanceEntryDAO.getPayFinanceEntry(ctx, tracking);
@@ -268,9 +269,13 @@ public class FinanceTrackingDAO {
 					pay(ctx, tracking, entry);
 				}
 				return tracking.setFinance(FinanceDAO.getFinance(ctx, tracking.getFinance().getId()));
-			} 
-			// TODO ¿Si no se quiere contabilizar el pago?
-			throw new AonCoreException(AonError.FINANCE_TRACKING_NO_BANK_ACCOUNT.getMessage());
+			} else {
+				tracking.setDomain(finance.getDomain())
+				  .setRecorded(false);
+				ctx.log().info(" \t (only pay) ----- ");
+				Integer trackingId = _pay(ctx, tracking);		
+				return getFinanceTracking(ctx, trackingId);
+			}
 		} catch (Throwable t) {
 			ctx.log().info(" ----- [ERROR] " + t.getMessage());
 			throw t;
@@ -279,14 +284,20 @@ public class FinanceTrackingDAO {
 		}
 	}
 	
+	private static Integer _pay(AONContext ctx,FinanceTracking tracking) {
+		FinanceValidation.validatePay(ctx, tracking);
+		updateFinanceStatus(ctx,tracking.getFinance().getId(),FinanceStatus.PAID);
+		tracking.setType(FinanceTrackingType.PAID);
+		Integer trackingId = insert(ctx, tracking);
+		return trackingId;
+	}
+	
 	public static void pay(AONContext ctx,FinanceTracking tracking,AccountEntry entry) {
 		tracking.setDomain(ctx.getDomainId())
 		  .setTrackingDate(entry.getEntryDate())
-		  .setType(FinanceTrackingType.PAID)
 		  .setRecorded(true)
 		;
-		updateFinanceStatus(ctx,tracking.getFinance().getId(),FinanceStatus.PAID);
-		Integer trackingId = insert(ctx, tracking);
+		Integer trackingId = _pay(ctx, tracking); 
 		ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
 			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
@@ -306,6 +317,7 @@ public class FinanceTrackingDAO {
 			FinanceValidation.validateReturn(ctx, tracking);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {
+				ctx.log().info(" \t (pay + accounting) ----- ");
 				tracking.setDescription(AonStringUtils.abbreviate( 
 						tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
 				AccountEntry[] entries = FinanceEntryDAO.getReturnFinanceEntry(ctx, tracking);
@@ -316,9 +328,14 @@ public class FinanceTrackingDAO {
 					tracking = returnFinance(ctx,tracking, entry);
 				}
 				return tracking.setFinance(FinanceDAO.getFinance(ctx, tracking.getFinance().getId()));
+			} else {
+				ctx.log().info(" \t (only pay) ----- ");
+				Finance fin = FinanceDAO.getFinance(ctx, tracking.getFinance().getId());
+				tracking.setDomain(fin.getDomain())
+					.setRecorded(false);
+				Integer trackingId = _returnFinance(ctx, tracking);		
+				return getFinanceTracking(ctx, trackingId);
 			}
-			// TODO ¿Si no se quiere contabilizar el pago?
-			throw new AonCoreException(AonError.FINANCE_TRACKING_NO_BANK_ACCOUNT.getMessage());
 		} catch (Throwable t) {
 			ctx.log().info(" ----- [ERROR] " + t.getMessage());
 			throw t;
@@ -327,9 +344,15 @@ public class FinanceTrackingDAO {
 		}
 	}
 	
+	private static Integer _returnFinance(AONContext ctx,FinanceTracking ft) {
+		updateFinanceStatus(ctx,ft.getFinance().getId(),FinanceStatus.RETURNED);
+		ft.setType(FinanceTrackingType.RETURNED);
+		Integer trackingId = insert(ctx, ft);
+		return trackingId;
+	}
+	
 	private static FinanceTracking returnFinance(AONContext ctx,FinanceTracking ft,AccountEntry entry) {
 		ft.setTrackingDate(entry.getEntryDate())
-		  .setType(FinanceTrackingType.RETURNED)
 		  .setRecorded(true)
 		;
 		updateFinanceStatus(ctx,ft.getFinance().getId(),FinanceStatus.RETURNED);
@@ -344,6 +367,34 @@ public class FinanceTrackingDAO {
 		return getFinanceTracking(ctx, trackingId);
 	}
 	
+	// --------------------------------------------------------------------------
+	// ---- GRABACIÓN DEL FRACCIONAMIENTO DE UN VENCIMIENTO  UN VENCIMIENTO -----
+	// --------------------------------------------------------------------------
+	
+	public static Integer fraction(AONContext ctx, Finance finance, String description,double originalAmount) {
+		ctx.log().info(" ----- START FINANCE FRACTION ----- ");
+		try {
+			ctx.checkWrite();
+			FinanceTracking ft = new FinanceTracking()
+					.setFinance(finance)
+					.setDomain(ctx.getDomainId())
+					.setTrackingDate(new Date())
+					.setType(FinanceTrackingType.FRACTIONED)
+					.setDescription(description)
+					.setRegistryBank(null)
+					.setPayMethodTypeDetail(null)
+					.setBankStatementLink(null)
+					.setAmount(originalAmount)
+					.setRecorded(false);
+			return insert(ctx, ft);
+		} catch (Throwable t) {
+			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			throw t;
+		} finally {
+			ctx.log().info(" ----- END FINANCE SETTLE ----- ");
+		}
+	}
+
 	// -------------------------------------------------------------
 	// ---------------------------- MAP ----------------------------
 	// -------------------------------------------------------------

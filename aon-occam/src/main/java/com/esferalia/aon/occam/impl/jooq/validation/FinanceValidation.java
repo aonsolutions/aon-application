@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -185,6 +186,22 @@ public class FinanceValidation {
 	};
 
 	/**
+	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
+	 */
+	private static BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_FRACTION = (finance,ctx) -> {
+		if (!finance.isPending() && !finance.isReturned()) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_FRACTIONED.getMessage());
+	};
+
+	/**
+	 * El vencimiento debe estar pendiente o devuelto para ser pagado.
+	 */
+	private static BiConsumer<FinanceTracking,AONContext> CHECK_DATE_FOR_PAYING = (tracking,ctx) -> {
+		if (tracking.getTrackingDate() == null) 
+			throw new AonCoreException(AonError.FINANCE_TRACKING_WITHOUT_DATE.getMessage());
+	};
+
+	/**
 	 * El vencimiento debe estar pgado para ser devuelto.
 	 */
 	private static BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_RETURNING = (finance,ctx) -> {
@@ -199,6 +216,15 @@ public class FinanceValidation {
 		}
 		CHECK_PENDING_FOR_SETTLING
 			.accept(finance, ctx);
+		return finance;
+	}
+
+	public static Finance validateFractionTracking(AONContext ctx, Integer financeId) {
+		Finance finance = FinanceDAO.getFinance(ctx, financeId);
+		if (finance == null ) {
+			if (finance == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		CHECK_PENDING_FOR_FRACTION.accept(finance, ctx);
 		return finance;
 	}
 
@@ -241,10 +267,11 @@ public class FinanceValidation {
 		if (original == null ) {
 			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
-		CHECK_PENDING_FOR_PAYING
-			.accept(original, ctx);
-		CHECK_AMOUNT_ZERO
-			.accept(finance, ctx);
+		CHECK_PENDING_FOR_PAYING.accept(original, ctx);
+		CHECK_AMOUNT_ZERO.accept(finance, ctx);
+	}
+	public static void validatePay(AONContext ctx, FinanceTracking financeTracking) {
+		CHECK_DATE_FOR_PAYING.accept(financeTracking, ctx);
 	}
 
 	public static void validateReturn(AONContext ctx, FinanceTracking financeTracking) {
@@ -255,9 +282,26 @@ public class FinanceValidation {
 		if (original == null ) {
 			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		}
-		CHECK_PENDING_FOR_RETURNING
-			.accept(original, ctx);
-		CHECK_TRACKING_AMOUNT_ZERO
-			.accept(financeTracking, ctx);
+		CHECK_PENDING_FOR_RETURNING.accept(original, ctx);
+		CHECK_TRACKING_AMOUNT_ZERO.accept(financeTracking, ctx);
+	}
+
+	public static Finance validateFraction(AONContext ctx, Finance finance, LinkedList<Finance> fractions) {
+		Finance original = FinanceDAO.getFinance(ctx, finance.getId());
+		if (original == null ) {
+			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		CHECK_PENDING_FOR_FRACTION.accept(original, ctx);
+		if (fractions == null || fractions.size() == 0) {
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_FRACTIONED_LIST.getMessage());
+		}
+		double amount = 0;
+		for ( Finance fin : fractions) {
+			amount = AonMathUtils.round(amount + fin.getAmount());
+		}
+		if ( !AonMathUtils.equals(amount, original.getAmount())) {
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_FRACTIONED_AMOUNT.getMessage());
+		}
+		return original; 
 	}
 }
