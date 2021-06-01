@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -228,7 +230,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			.and(p.getEndDateProperty().ge(getStart())))
 		.forEach(salary -> {
 			List<IContractPayment> payments = new ArrayList<IContractPayment>();
-			salary.getPayments().forEach( salaryPayment -> 
+			
+			salary.getPayments().stream().distinct().forEach( salaryPayment -> 
 			getSalaryPaymentOf(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);

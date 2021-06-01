@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class Salary implements Serializable {
 
@@ -86,6 +87,36 @@ public class Salary implements Serializable {
 		
 		public PaymentType getPaymentType() {
 			return paymentType;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null ) {
+				return false;
+			}
+			if ( !(obj instanceof Payment) ){
+				return false;
+			}
+			
+			Payment payment = (Payment) obj;
+			
+			return 
+			AonUtils.equals(this.name, payment.name)
+//			&& AonUtils.equals(this.irpf, payment.irpf)
+			&& AonUtils.equals(this.quote, payment.quote)
+			&& AonUtils.equals(this.amount, payment.amount)
+			&& AonUtils.equals(this.expression, payment.expression)
+			&& AonUtils.equals(this.description, payment.description)
+			&& AonUtils.equals(this.paymentType, payment.paymentType)
+			;
+		}
+		
+		@Override
+		public int hashCode() {
+			return AonUtils.hashCode(description);
 		}
 
 	}
