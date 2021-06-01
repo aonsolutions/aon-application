@@ -33,6 +33,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-tgss-fie.png")
 	ImageResource aonIconTgssFie();
 	
+	@Source("icons/aon-icon-sepe.png")
+	ImageResource aonIconSepe();
+	
 	@Source("icons/aon-icon-sepe-c2.png")
 	ImageResource aonIconSepeC2();
 	
