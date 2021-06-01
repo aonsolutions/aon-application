@@ -22,6 +22,9 @@ public interface FinanceUtilitiesServiceAsync {
 	// Chequeo de integridad de vencimientos en facturas 
 	void financeInvoiceIntegrity(String domainName, String user, Domain domain,AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException;
 	void financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException;
+
+	// Fix de ayudat (Borrar) 
+	void ayudatFix(String domainName, String user, Domain domain, AsyncCallback<FinanceUtilitiesResult> callback);
 	
 	
 }

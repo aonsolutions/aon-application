@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -123,6 +124,17 @@ public class FinanceUtilities extends MainEntryPoint{
 			}
 		});
 		
+		if ( domain != null && AonNumberUtils.equals(domain.getId(),7138)) {
+			AyudaTFix ayudaTFix = new AyudaTFix(getDomainName(),getUser(),domain);
+			checksPanel.add(ayudaTFix.getSidebarWidget());
+			ayudaTFix.addSelectionHandler( new SelectionHandler<FinanceUtilities.IOption>() {
+				@Override
+				public void onSelection(SelectionEvent<IOption> event) {
+					content.setWidget( ayudaTFix );
+				}
+			});
+		}
+
 		sidebarMenu.add(checksDisclosurePanel);
 		
 		dockLayoutPanel.add( content );
