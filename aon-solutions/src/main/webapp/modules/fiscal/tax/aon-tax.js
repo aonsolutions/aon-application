@@ -17,6 +17,8 @@ export class AonTax extends AonElement {
   TABLE_ID;
   BANKS;
   DIALOG_CHECKBOX;
+  searchFilter;
+  _list;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -82,6 +84,8 @@ export class AonTax extends AonElement {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter() );
+    this.applicationEl.addSearchOption();
+    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
   async buildFilter() {
@@ -270,11 +274,11 @@ export class AonTax extends AonElement {
   createFooterDialog(resp, dialog){
     const buttonAccept = dialog.addSendAction(() => this.save(resp,dialog));
     const divAction = this.getElement(dialog.ACTION);
-    const div = this.createElement("div");
+    const div = this.createElement(TAG.DIV);
     const checkBox = new AonCheckbox();
-    const span = this.createElement('span');
+    const span = this.createElement(TAG.SPAN);
     span.style.color = "grey";
-    span.style.fontSize= "12px";
+    span.style.fontSize = "12px";
     span.style.fontWeight= 500;
     span.textContent = "Acepto los datos reflejados";
     checkBox.id = this.DIALOG_CHECKBOX;
@@ -291,31 +295,33 @@ export class AonTax extends AonElement {
   async getData() {
     let data = [];
     try {
-      const datos = await getModelsFiscal();
-      if (datos) {
-        sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
-          let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
-          let color = "";
-          if("PENDING"===resp.status) {
-            color = "fin"
-          } else if("FINISHED"===resp.status) {
-            color = "in"
-          }
-          const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${
-            TAX_ENUMS.TAX_MODEL_NUMBER[resp.model]
-          }</div>`;
-          const obj = {
-            ...resp,
-            lettersHtml,
-            resultFormat:formatNumber(resp.result, 2, "EUR"),
-            periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
-            statusText: TAX_ENUMS.TAX_STATUS[resp.status],
-            modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
-            typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
-            newModel
-          };
-          data.push(obj);
-        });
+      if(this.searchFilter && !isEmptyObject(this._list)){
+        data = this._list.filter(({newModel, modelText, periodText, year, statusText})=> this.includeSearch(newModel) || this.includeSearch(modelText) || this.includeSearch(statusText) || this.includeSearch(periodText) || this.includeSearch(year));
+      } else {
+        const datos = await getModelsFiscal();
+        if (datos) {
+          data = sortBy(datos,'year','desc').filter(el=>"PENDING"!==el.status).map((resp) => {
+            let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
+            let color = "";
+            if("PENDING"===resp.status)       color = "fin";
+            else if("FINISHED"===resp.status) color = "in";
+
+            const lettersHtml = /*html*/`<div class="profile-letters size ${color}">${
+              TAX_ENUMS.TAX_MODEL_NUMBER[resp.model]
+            }</div>`;
+            return {
+              ...resp,
+              lettersHtml,
+              resultFormat:formatNumber(resp.result, 2, "EUR"),
+              periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
+              statusText: TAX_ENUMS.TAX_STATUS[resp.status],
+              modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
+              typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
+              newModel
+            }
+          });
+        }
+        this._list = data;
       }
     } catch (e) {
       console.log(e);
@@ -413,13 +419,22 @@ export class AonTax extends AonElement {
     try {
       const form = {...resp,...this.getFormValues()};
       await setModelStatus(form);
-      await this.getTable(); //reload
+      await this.getTable();
       this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
     } catch (error) {
       this.showToast(error);
     }
     dialog.close();
     this.applicationEl.stopLoading();
+  }
+
+  search(detail){
+    this.searchFilter = detail;
+    this.getTable();
+  }
+
+  includeSearch(str){
+    return this.searchFilter && str && str.toString().toLowerCase().includes(this.searchFilter.toLowerCase());
   }
 
 }

@@ -15,7 +15,7 @@ export const TR = 'tr';
 export const TD = 'td';
 export const CANVAS = 'canvas';
 export const BUTTON = 'button';
-
+export const SECTION = 'section';
 
 // COMPONENTS
 

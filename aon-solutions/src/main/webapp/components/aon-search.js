@@ -1,6 +1,12 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { serializeForm, setAttributes } from '../services/utils.js';
 import { AonIconButton } from './aon-icon-button.js';
 import {AonElement} from './AonElement.js';
+
+import {AonInput} from './aon-input.js';
+import {AonDate} from './aon-date.js';
+import {AonSelect} from './aon-select.js';
+
 
 export class AonSearch extends AonElement {
 
@@ -35,28 +41,6 @@ export class AonSearch extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
-
-
-		// this.innerHTML = `
-		// <div id="aon-search-div" style="height: 40px;">
-		// 	<aon-icon-button id="aon-search-button" icon="search"></aon-icon-button>
-		// 	<input title="Búsqueda" id="search-input"
-		// 		autocomplete="off" placeholder="Búsqueda" class="aonSearchBox">
-		// </div>
-		// `;
-		// this.setAttribute('opened', true);
-		// let div = document.getElementById('aon-search-div');
-		// let input = document.getElementById('search-input');
-		// input.addEventListener('keyup', () => {
-		// 	this.value = input.value;
-	    // 	this.dispatchEvent(new Event('keyup'));
-		// });
-
-
-		// let search = document.getElementById('aon-search-button');
-		// search.addEventListener('click', () => {
-
-		// });
 	}
 
 	initialize() {
@@ -81,10 +65,8 @@ export class AonSearch extends AonElement {
 		searchButton.icon = MATERIAL_ICONS.SEARCH;
 		searchButton.title = MSG.SEARCH;
 		span.appendChild(searchButton);
-;
 
-		// let form = this.createElement(TAG.FORM);
-		// span.appendChild(form);
+
 
 		let input = this.createElement(TAG.INPUT);
 		input.id = this.SEARCH_INPUT;
@@ -102,15 +84,9 @@ export class AonSearch extends AonElement {
 		advancedButton.id = this.ADVANCED_BUTTON;
 		advancedButton.icon = MATERIAL_ICONS.ARROW_DROP_DOWN;
 		span.appendChild(advancedButton);
-	
-		// let advanced = this.createElement('div');
-		// advanced.style.display = 'none';
-		// advanced.className = 'aonDialog';
-		
-		// this.appendChild(advanced);
 
 		advancedButton.addEventListener(EVENT.CLICK, () => {
-			this.buildOptions();
+			this.open();
 		})
 		
 		input.addEventListener(EVENT.KEYUP, () => {
@@ -149,16 +125,26 @@ export class AonSearch extends AonElement {
 			}
 		});
 
-		let options = this.createElement('div');
+		let options = this.createElement(TAG.DIV);
 		options.id = this.OPTIONS;
+		options.style.padding = "0 10px";
 		options.className = CSS.AON_INPUT_LIST_OPTIONS;
-	    options.style.width = span.clientWidth;
+		options.style.maxHeight = "none";
 		this.appendChild(options);
 	}
 
-	buildOptions(options) {
-		this.clearElementById(this.OPTIONS);
+	 open(){
 	  	let div = this.getElement(this.OPTIONS);
+		div.style.width = this.clientWidth;
+		if(div.classList.contains('is-visible')) 
+			div.classList.remove('is-visible');
+		else 
+			div.classList.add('is-visible');
+	  }
+
+	  buildOptions(options) {
+		this.clearElementById(this.OPTIONS);
+		  let div = this.getElement(this.OPTIONS);
 		div.style.width = this.getElement(this.SPAN).clientWidth;
 		// div.classList.add('is-visible');
 		// div.innerHTML = 'HOLAA';
@@ -173,6 +159,54 @@ export class AonSearch extends AonElement {
 			}
 		});
 	  }
+
+	  buildOptionsFilter(inputs){
+		this.clearElementById(this.OPTIONS);
+		let div = this.getElement(this.OPTIONS);
+		let form = this.createElement(TAG.FORM);
+		form.id  = this.id+"Form";
+		form.action = "#";
+		div.appendChild(form);
+		inputs.forEach((attributes) => {
+			let el = this.getInput(attributes);
+			if(el) form.appendChild(el);
+		});
+		let button = this.createElement(TAG.BUTTON);
+		button.textContent = "Aceptar";
+		button.className = "aonButton";
+		button.style.padding = "0.5rem 1rem"; 
+		// button.style.top = "184px";
+		// button.style.position = "absolute";
+		// button.style.left = 0;
+		// button.style.right = 0;
+		// button.style.marginRight = "auto";
+		// button.style.marginLeft  = "auto";
+		div.appendChild(button);
+	  }
+
+
+	  getInput(attributes) {
+		let html = undefined;
+		switch (attributes.type) {
+		  case CONSTANT.TEXT:
+			html = setAttributes(new AonInput(), attributes);
+			break;
+		  case CONSTANT.SELECT:
+			html = setAttributes(new AonSelect(), attributes);
+			break;
+		  case CONSTANT.DATE:
+			html = setAttributes(new AonDate(), attributes);
+			break;
+		}
+		return html;
+	  }
+
+
+		getValues() {
+			const form = this.getElement(`${this.id}Form`);
+			return serializeForm(form);
+		}
+
 
 	  closeOptions() {
 		let div = this.getElement(this.OPTIONS);

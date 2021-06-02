@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
-import "./aon-icon-button.js";
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { AonIconButton } from './aon-icon-button.js';
 
 export class AonCard extends AonElement {
  	CARD;
@@ -38,7 +38,7 @@ export class AonCard extends AonElement {
 	}
 
 	get flex() {
-		return "true" == this.getAttribute('flex');
+		return CONSTANT.TRUE == this.getAttribute('flex');
 	}
 
 	set flex(v) {
@@ -73,30 +73,30 @@ export class AonCard extends AonElement {
 	}
 
 	build() {
-		let div = this.createElement('div');
+		let div = this.createElement(TAG.DIV);
 		div.id = this.CARD;
     	div.className = 'aonCard';
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 
-		let title = this.createElement('div');
+		let title = this.createElement(TAG.DIV);
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
-		let section1 = this.createElement('section');
+		let section1 = this.createElement(TAG.SECTION);
 		section1.id = this.TITLE_SECTION1;
 		section1.className = 'aonCardTitleSection';
 		section1.innerHTML = this.title;
 		title.appendChild(section1);
 
-		let section2 = this.createElement('section');
+		let section2 = this.createElement(TAG.SECTION);
 		section2.id = this.TITLE_SECTION2;
 		section2.className = 'aonCardTitleSection aonCardTitleSectionEnd';
 		title.appendChild(section2);
 
 		div.appendChild(title);
 
-		let content = this.createElement('div');
+		let content = this.createElement(TAG.DIV);
 		content.id = this.CONTENT;
 		div.appendChild(content);
 	}
@@ -109,16 +109,19 @@ export class AonCard extends AonElement {
 	addTitleButton(name, icon, selected, fn) {
 		let id = this.TITLE_SECTION2 + name + 'Button';
 		let background = selected ? 'lightgray' : 'transparent';
-		let btn = `<aon-icon-button id="${id}" icon="${icon}" style="position:relative;" title="${name}" background="${background}"></aon-icon-button>`
-		let span = this.createElement('span');
+		let aib = new AonIconButton();
+		aib.id = id;
+		aib.icon = icon;
+		aib.title = name;
+		aib.addEventListener(EVENT.CLICK, fn);
+		aib.background = background;
+		aib.style.position = "relative";
+		let span = this.createElement(TAG.SPAN);
 		span.id = id + "Span";
-		span.innerHTML = btn;
-
+		span.appendChild(aib);
+		
 		let title = this.getElement(this.TITLE_SECTION2);
 		title.appendChild(span);
-
-		let button = this.getElement(id);
-		button.addEventListener('click', fn);
 	}
 
 	getSection1() {

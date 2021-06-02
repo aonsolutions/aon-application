@@ -15,6 +15,8 @@ import { AonTable } from "../../../components/aon-table.js";
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
+  searchFilter;
+  _list;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -84,6 +86,8 @@ export class AonPayrollList extends AonElement {
       filterEl.openFilter()
     );
     if(this.isMobile())this.buildToolbarMobile();
+    this.applicationEl.addSearchOption();
+    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
 
@@ -119,15 +123,14 @@ export class AonPayrollList extends AonElement {
     });
      // ----------PERIOD END ------------
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE, (ev)=>periodEl.value = "personalized");
-    this.getElement("endDate").addEventListener(EVENT.CHANGE, (ev)=>periodEl.value = "personalized");
+    this.getElement("startDate").addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");
+    this.getElement("endDate").addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");
   }
 
   async getTable() {
     this.applicationEl = await waitEl("#aonLaboral");
     this.applicationEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
+    this.isMobile() ? await this.getTableMobile() :  this.getTableDesk();
     this.applicationEl.stopLoader();
   }
 
@@ -152,8 +155,8 @@ export class AonPayrollList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("Nombre", "string", "name", "30%");
       aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
-      aonTable.addColumn("F. Inicio", "date", "startDate", "10%");
-      aonTable.addColumn("F. Fin", "date", "endDate", "10%");
+      aonTable.addColumn("F. Inicio", "date", "startDateP", "10%");
+      aonTable.addColumn("F. Fin", "date", "endDateP", "10%");
       aonTable.addColumn("Bruto", "number", "totalPayment", "10%");
       aonTable.addColumn("Deducciones", "number", "totalDeduction", "10%");
       aonTable.addColumn("Líquido", "number", "totalLiquid", "10%");
@@ -161,8 +164,8 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          res.startDate = formatDate(res.startDate);
-          res.endDate = formatDate(res.endDate);
+          res.startDateP =  formatDate(res.startDate);
+          res.endDateP   = formatDate(res.endDate);
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -178,7 +181,7 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
 
-        let isEmployee = this.applicationParentEl.isEmployee();
+        const isEmployee = this.applicationParentEl.isEmployee();
 
         resp.map((res, idx) => {
           let options = {};
@@ -202,63 +205,64 @@ export class AonPayrollList extends AonElement {
 
   async getData() {
     let isEmployee = this.applicationParentEl.isEmployee();
-    this.applicationEl.startLoader();
     let data = [];
-    try {
-      let filter = null;
-      try {filter = {...this.applicationParentEl._filter};} catch (error) {}
 
-      let datos = null;
-      if(isEmployee){
-        datos = await getEmployeeSalaries(filter);
+    try {
+      if(this.searchFilter && !isEmptyObject(this._list)){
+        data = this._list.filter(({name, workplaceName, endDate})=> this.includeSearch(name) || this.includeSearch(workplaceName));
       } else {
-        datos = await getEnterpriseSalaries(filter);
-      }
-      if (!isEmptyObject(datos)) {
-        if(isEmployee){
-          datos = sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date());
-        } else {
-          datos = sortBy(datos, 'employeeName', 'asc');
+        let filter = this.applicationParentEl._filter;
+        let datos = isEmployee ? await getEmployeeSalaries(filter) : await getEnterpriseSalaries(filter);
+        if (!isEmptyObject(datos)) {
+          datos = isEmployee ? sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date()) : sortBy(datos, 'employeeName', 'asc');
+          data = datos.map(({
+              contract,
+              employeeName:name,
+              endDate,
+              id,
+              startDate,
+              totalDeduction,
+              totalLiquid,
+              totalPayment,
+              type,
+              workplaceName,
+            }) => {
+                const lettersType = this.applicationParentEl.getTypeSalaryText(type);
+                const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
+                return {
+                  id,
+                  lettersHtml,
+                  contract,
+                  type,
+                  workplaceName,
+                  name,
+                  startDate,
+                  endDate,
+                  totalDeduction: formatNumber(totalDeduction, 2, "EUR"),
+                  totalLiquid: formatNumber(totalLiquid, 2, "EUR"),
+                  totalPayment: formatNumber(totalPayment, 2, "EUR"),
+                }
+            }
+          );
+          this._list = data;
         }
-        datos.map(({
-            contract,
-            employeeName,
-            endDate,
-            id,
-            startDate,
-            totalDeduction,
-            totalLiquid,
-            totalPayment,
-            type,
-            workplaceName,
-          }) => {
-              const lettersType = this.applicationParentEl.getTypeSalaryText(type);
-              const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
-              const obj = {
-                id,
-                lettersHtml,
-                contract,
-                name: employeeName,
-                startDate,
-                endDate,
-                totalDeduction: formatNumber(totalDeduction, 2, "EUR"),
-                totalLiquid: formatNumber(totalLiquid, 2, "EUR"),
-                totalPayment: formatNumber(totalPayment, 2, "EUR"),
-                type,
-                workplaceName,
-              };
-              data.push(obj);
-          }
-        );
       }
     } catch (e) {
       console.log(e);
     }
-    this.applicationEl.stopLoader();
     return data;
   }
 
-  aonEvent({ target }, data) {
+  search(detail){
+    this.searchFilter = detail;
+    this.getTable();
+  }
+
+  includeSearch(str){
+    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
+  }
+
+  aonEvent({ }, data) {
     const parent = this.applicationParentEl;
     if(parent) parent.getSalary({salaryId:data.id});
   }

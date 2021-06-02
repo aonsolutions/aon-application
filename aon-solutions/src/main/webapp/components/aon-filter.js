@@ -1,7 +1,7 @@
 import { AonElement } from "./AonElement.js";
 import { serializeForm } from "../services/utils.js";
 import { CONSTANT } from '../environments/environments.js';
-import "./aon-dialog.js";
+import { AonDialog } from "./aon-dialog.js";
 
 export class AonFilter extends AonElement {
   DIALOG;
@@ -35,16 +35,17 @@ export class AonFilter extends AonElement {
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
-    this.eventListener();
   }
 
-  build() {}
-  eventListener(){}
-
+  build() {
+    this.paintView();
+  }
+  
   paintView() {
-    this.innerHTML = `<aon-dialog id="${this.DIALOG}"> </aon-dialog>`;
+    let d = new AonDialog();
+    d.id = this.DIALOG;
+    this.appendChild(d);
   }
 
   openFilter() {

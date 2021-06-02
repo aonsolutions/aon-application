@@ -9,7 +9,7 @@ import { AonTable } from "../../../components/aon-table.js";
 export class AonContractList extends AonElement {
   TABLE_ID;
   searchFilter;
-  _contracts;
+  _list;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -98,18 +98,16 @@ export class AonContractList extends AonElement {
       aonTable.createAonDialog();
       try {
         const resp = await this.getData();
-        if(resp){
-          aonTable.removeAllLi();
-          resp.map((res, idx) => {
-            let options = {
-              icon: "assignment",
-              title: ` ${res.surName} ${res.name}`,
-              subtitle: `(${res.document}) ${setDate(res.startDate)}`,
-            };
-            if (res.contractType) options.option = this.getOptions(res);
-            aonTable.addLi(options, idx);
-          });
-        }
+        aonTable.removeAllLi();
+        resp.map((res, idx) => {
+          let options = {
+            icon: "assignment",
+            title: ` ${res.surName} ${res.name}`,
+            subtitle: `(${res.document}) ${setDate(res.startDate)}`,
+          };
+          if (res.contractType) options.option = this.getOptions(res);
+          aonTable.addLi(options, idx);
+        });
       } catch (e) {
         console.log(e);
       }
@@ -136,13 +134,12 @@ export class AonContractList extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this.searchFilter && !isEmptyObject(this._contracts)){
-        data = this._contracts.filter(({name, document, ssNumber})=> this.includeSearch(name) || this.includeSearch(document) || this.includeSearch(ssNumber));
+      if(this.searchFilter && !isEmptyObject(this._list)){
+        data = this._list.filter(({name, document, ssNumber})=> this.includeSearch(name) || this.includeSearch(document) || this.includeSearch(ssNumber));
       } else {
         const contracts = await getContracts({ allEmployees: false });
-        contracts.map(
+        data = contracts.map(
           ({ employeeInfo, contractInfo: { startDate, contractType, completeCCC, agreementCategory, workplaceName} }) => {
-            
             contractType = Number.parseInt(contractType);
             if (contractType)      employeeInfo.contractType = contractType;
             if (startDate)         employeeInfo.startDate = startDate;
@@ -154,11 +151,10 @@ export class AonContractList extends AonElement {
             } else {
               employeeInfo.contractType = undefined;
             }
-
-            data.push(employeeInfo);
+            return employeeInfo;
           }
         );
-        this._contracts = data;
+        this._list = data;
       }
     } catch (e) {
       console.log(e);
