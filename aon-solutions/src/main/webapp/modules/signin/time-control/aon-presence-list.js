@@ -1,15 +1,19 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { isEmptyObject, setAttributes, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonFilter } from "../../../components/aon-filter.js";
+import { AonIconButton } from "../../../components/aon-icon-button.js";
+import { AonSwitch } from "../../../components/aon-switch.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
+  searchFilter;
+  _list;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -57,6 +61,7 @@ export class AonPresenceList extends AonElement {
     this.buildToolbar();
     await this.buildFilter();
     await this.getTable();
+    // document.querySelector("aon-search").buildOptionsFilter(PRESENCE_FILTER);
   }
 
   paintView() {
@@ -74,8 +79,9 @@ export class AonPresenceList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
     this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter());
-    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel()
-   );
+    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel());
+    this.applicationEl.addSearchOption();
+    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
 
@@ -83,12 +89,13 @@ export class AonPresenceList extends AonElement {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs(PRESENCE_FILTER);
 
-    // let filterFormEl = aonFilter.getFormEl();
-    // let aonSwitch = new AonSwitch();
-    // aonSwitch.name = "linked";
-    // aonSwitch.title = "Usuarios vinculados";
-    // aonSwitch.checked = true;
-    // filterFormEl.appendChild(aonSwitch);
+    let filterFormEl = aonFilter.getFormEl();
+    let aonSwitch = new AonSwitch();
+    aonSwitch.name = "linked";
+    aonSwitch.title = "Usuarios activos";
+    aonSwitch.checked = true;
+    aonSwitch.disabled = true;
+    filterFormEl.appendChild(aonSwitch);
 
     aonFilter.addEventListener(EVENT.APPLY_FILTER, ({detail}) => {
       if(detail) this.applicationParenEl.setDataFilter(detail);
@@ -169,47 +176,52 @@ export class AonPresenceList extends AonElement {
   async getData() {
     let data = [];
     try {
-      let filter = null;
-      try {filter = {...this.applicationParenEl._filter};} catch (error) {}
-
-      const  datos = await getTimeControlList(filter);
-      if (datos) {
-        await sortBy(datos, 'last_date', 'desc').map(
-          async ({
-            time,
-            last_date,
-            status,
-            coordinates,
-            last_location,
-            task_holder: { id: taskHolderId, name },
-          }) => {
-            if (last_date) {
-              const newStatus = status.toLowerCase();
-              const lettersName = StringTwoLetters(name);
-              const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-              const textStatus = await getStatus(newStatus);
-              let nameLocation = "";
-              if (last_location && last_location.name) {
-                nameLocation = last_location.name;
-              } else if(!isEmptyObject(coordinates)) {
-                nameLocation = `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
+      if(this.searchFilter && !isEmptyObject(this._list)){
+        data = this._list.filter(({name, nameLocation})=> this.includeSearch(name) ||  this.includeSearch(nameLocation));
+      } else {
+        let filter = null;
+        try {filter = {...this.applicationParenEl._filter};} catch (error) {}
+        const datos = await getTimeControlList(filter);
+        if (datos) {
+          await sortBy(datos, 'last_date', 'desc').map(
+            async ({
+              time,
+              last_date,
+              status,
+              coordinates,
+              last_location,
+              task_holder: { id: taskHolderId, name },
+            }) => {
+              if (last_date) {
+                const newStatus = status.toLowerCase();
+                const lettersName = StringTwoLetters(name);
+                const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
+                const textStatus = await getStatus(newStatus);
+                let nameLocation = "";
+                if (last_location && last_location.name) {
+                  nameLocation = last_location.name;
+                } else if(!isEmptyObject(coordinates)) {
+                  let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
+                  nameLocation = aib.outerHTML;
+                }
+                const obj = {
+                  name,
+                  lettersHtml,
+                  last_date,
+                  coordinates,
+                  last_location,
+                  nameLocation,
+                  taskHolderId,
+                  textStatus: textStatus.name,
+                  status: newStatus,
+                  duration: timeHour(Number(time)),
+                };
+                data.push(obj);
               }
-              const obj = {
-                lettersHtml,
-                textStatus: textStatus.name,
-                status: newStatus,
-                name: `${name}`,
-                duration: timeHour(Number(time)),
-                last_date,
-                coordinates,
-                last_location,
-                nameLocation,
-                taskHolderId,
-              };
-              data.push(obj);
             }
-          }
-        );
+          );
+          this._list = data;
+        }
       }
     } catch (e) {
       console.log(e);
@@ -231,6 +243,15 @@ export class AonPresenceList extends AonElement {
 		}
 		this.applicationEl.stopLoading();
 	}
+
+  search(detail){
+    this.searchFilter = detail;
+    this.getTable();
+  }
+
+  includeSearch(str){
+    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
+  }
 
   aonEvent({ target }, data) {
     const parent = this.applicationParenEl;

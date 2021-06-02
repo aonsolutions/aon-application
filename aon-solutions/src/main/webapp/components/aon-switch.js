@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, TAG, EVENT } from '../environments/environments.js';
 
 export class AonSwitch extends AonElement {
 
@@ -98,15 +98,22 @@ export class AonSwitch extends AonElement {
 
 	connectedCallback () {
     this.initialize();
-		this.innerHTML = `
-      <label class="aonSwitch">
-        <input id="${this.INPUT}" name="${this.name || this.INPUT}" type="checkbox">
-        <span id="${this.TITLE}"></span>
-      </label>
-		`;
+    let label = this.createElement(TAG.LABEL);
+    label.className = "aonSwitch";
+    this.appendChild(label);
 
-    let input = this.getElement(this.INPUT);
-    input.addEventListener('change', () => {
+    let input = this.createElement(TAG.INPUT);
+    input.id   = this.INPUT;
+    input.name = this.name || this.INPUT ;
+    input.type = "checkbox";
+    if(this.disabled =="true") input.disabled = this.disabled;
+    label.appendChild(input);
+
+    let span = this.createElement(TAG.SPAN);
+    span.id = this.TITLE;
+    label.appendChild(span);
+
+    input.addEventListener(EVENT.CHANGE, () => {
       this.value = input.value;
       this.checked = input.checked;
     });
@@ -114,8 +121,7 @@ export class AonSwitch extends AonElement {
 			input.setAttribute(CONSTANT.READONLY, CONSTANT.READONLY);
 		}
    
-    let title = this.getElement(this.TITLE);
-		title.innerHTML = this.hasAttribute(CONSTANT.TITLE)
+		span.innerHTML = this.hasAttribute(CONSTANT.TITLE)
 			? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
     let boolean = false
     if(this.checked && this.checked==CONSTANT.TRUE) {

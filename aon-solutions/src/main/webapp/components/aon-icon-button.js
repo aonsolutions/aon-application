@@ -86,11 +86,11 @@ export class AonIconButton extends AonElement {
   }
 
   get title() {
-    return this.getAttribute("title");
+    return this.getAttribute(CONSTANT.TITLE);
   }
 
   set title(title) {
-    this.setAttribute("title", title);
+    this.setAttribute(CONSTANT.TITLE, title);
   }
 
   get background() {
@@ -175,8 +175,8 @@ export class AonIconButton extends AonElement {
       ? this.getAttribute("color")
       : "#5f6368";
     button.style.backgroundColor = background;
-    if (this.hasAttribute("title")) {
-      button.title = this.getAttribute("title");
+    if (this.hasAttribute(CONSTANT.TITLE)) {
+      button.title = this.getAttribute(CONSTANT.TITLE);
     }
 
     if (this.getAttribute(CONSTANT.DISABLED)) {
