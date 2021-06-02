@@ -665,7 +665,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
-	@Ignore
 	public void testERTEIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -762,7 +761,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	
 
 	@Test
-	@Ignore
 	public void testERTEIV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -862,8 +860,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//
 		org.junit.Assert.assertEquals(100.00 * 11 , salary.getCommonBase(), DELTA);
 		
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * 21 / 30 + 50.00 * 6, salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * 21 / 30 + 50.00 * 6 , salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * 22 / 30.00 + 50.00 * 6, salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(100.00 * 1 + 100.00 * 9 / 30.00 + 50 * 22 / 30.00 + 50.00 * 6 , salary.getTotalPayment(), DELTA);
 
 	}
 	
@@ -955,8 +953,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals(1500.00  , salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(1500.00  , salary.getTotalPayment(), DELTA);
 		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
 
 	}
