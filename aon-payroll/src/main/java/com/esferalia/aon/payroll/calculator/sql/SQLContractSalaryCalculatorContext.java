@@ -507,7 +507,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException;
 	}
 
-	private class ContractExpressionContext extends ExpressionContext {
+	protected class ContractExpressionContext extends ExpressionContext {
 
 		private ContractExpressionContext(ExpressionContext expressionContext, NotFoundHandler notFoundHandler) {
 			super(expressionContext, notFoundHandler);
