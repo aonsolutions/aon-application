@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -123,6 +125,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
 				break;
+			case "/print_configuration":
+				response(req, resp, getPrintConfiguration(api));
+				break;
+	
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -139,6 +145,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, setInvoice(api));
+				break;
+			case "/print_configuration":
+				response(req, resp, setPrintConfiguration(api));
 				break;
 			case "/selfconta":
 				response(req, resp, setSelfcontaInvoice(api));
@@ -465,6 +474,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return file;
 	}
+	
+	private JSONObject getPrintConfiguration(AonApiData api) {
+		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser());
+		return PrintInvoiceConfigurationJSON.toJSON(pic);
+	}
+	
+	private JSONObject setPrintConfiguration(AonApiData api) {
+		PrintInvoiceConfiguration pic = PrintInvoiceConfigurationJSON.fromJSON(api.getData());
+		AON_SOLUTIONS.savePrintInvoiceConfiguration(api.getDomain(), api.getUser(), pic);
+		return getPrintConfiguration(api);
+	}
+	
 
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);

@@ -3,7 +3,14 @@ import { openFileUrl } from "./fileService.js";
 import { API_URL } from "../environments/environments.js";
 
 
+// PRINT CONFIGURATION
+
+export const getPrintInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/print_configuration`, data);
+
+export const savePrintInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/print_configuration`, data);
+
 // INVOICE
+
 export const invoiceSelection = (inv) => invoice = inv;
 
 export const getInvoice = (id) => get(`${API_URL}/invoice`, { id });
