@@ -75,6 +75,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -98,15 +99,12 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
@@ -142,6 +140,7 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.sepe.Contrato;
+import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
 
 /**
@@ -3003,6 +3002,32 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public void verifyCertificate(String domainName, String userLogin, CertificateType certificateType) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = null;
+			
+			if(certificateType == CertificateType.TGSS) {
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+			}
+			
+			if(certificateType == CertificateType.SEPE) {
+				certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+			}
+			
+		} catch (SQLException | SepeException | SegSocialException e) {
+			throw new RuntimeException(e.getMessage());
+		} 
 	}
 
 }

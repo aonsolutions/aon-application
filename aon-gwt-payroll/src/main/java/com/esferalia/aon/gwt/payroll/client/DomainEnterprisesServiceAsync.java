@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -521,6 +522,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseId(getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -534,7 +539,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }
