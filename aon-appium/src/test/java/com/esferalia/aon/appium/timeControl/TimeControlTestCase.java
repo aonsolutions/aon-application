@@ -56,8 +56,10 @@ public class TimeControlTestCase extends AbstractTestCase {
 	public void filterTest() {
 		try {
 			WebDriverWait wait = new WebDriverWait(app, 10);
-			defaultFilter(app);
+			openFilter(app);
+			currentWeekFilter(app);
 			previousWeekFilter(app);
+			currentMonthFilter(app);
 			
 			By by = By.id(AonIdTimeControl.FILTER_CLOSE);
 			ExpectedCondition<WebElement> cnd = ExpectedConditions.visibilityOfElementLocated(by);
@@ -71,8 +73,7 @@ public class TimeControlTestCase extends AbstractTestCase {
 	}
 	
 	
-
-	private static void defaultFilter(AppiumDriver<MobileElement> app) throws InterruptedException {
+	private static void openFilter (AppiumDriver<MobileElement> app) {
 		WebDriverWait wait = new WebDriverWait(app, 10);
 		app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 			
@@ -99,23 +100,33 @@ public class TimeControlTestCase extends AbstractTestCase {
 			
 		} while (failed && failcount < 10);
 		
-		WebElement groupBy = null;
-		
 		do {
 			failed = false;
 			filterElem.click();
 			try {
-				groupBy = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("groupInput")));
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_GROUP_BY)));
 			} catch (Exception e) {
 				failed = true;
 			}
 		} while (failed == true);
-		if (!groupBy.getAttribute("value").equalsIgnoreCase("dia")&&!groupBy.getAttribute("value").equalsIgnoreCase("día"))
-			fail("Group by input not set to 'DÍA' by default");
+	}
+	private static void currentWeekFilter(AppiumDriver<MobileElement> app) throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(app, 10);
 		
-		WebElement period = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("periodInput")));
-		if (!period.getAttribute("value").equalsIgnoreCase("Semana actual"))
-			fail("Period input not set to 'Semana actual' by default");
+		WebElement period = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_PERIOD)));
+		
+		period.click();
+		
+		WebElement currentWeek = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#"+AonIdTimeControl.PERIOD_DROPDOWN_DIV+" > ul > li:nth-child(3)")));
+		
+		currentWeek.click();
+		
+//		if (!groupBy.getAttribute("value").equalsIgnoreCase("dia")&&!groupBy.getAttribute("value").equalsIgnoreCase("día"))
+//			fail("Group by input not set to 'DÍA' by default");
+//		
+//		WebElement period = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_PERIOD)));
+//		if (!period.getAttribute("value").equalsIgnoreCase("Semana actual"))
+//			fail("Period input not set to 'Semana actual' by default");
 		
 		
 		WebElement dateFromInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_START_DATE)));
@@ -160,6 +171,31 @@ public class TimeControlTestCase extends AbstractTestCase {
 		checkWeeklyDate(cal.getTime(), dFromStr, dToStr);
 		
 	}
+	
+	private static void currentMonthFilter(AppiumDriver<MobileElement> app) {
+		WebDriverWait wait = new WebDriverWait(app, 10);
+		WebElement period = app.findElement(By.id(AonIdTimeControl.FILTER_PERIOD));/*wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_PERIOD)));*/
+		period.click();
+		WebElement previousWeek = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#"+AonIdTimeControl.PERIOD_DROPDOWN_DIV+" > ul > li:nth-child(5)")));
+		previousWeek.click();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		WebElement dateFromInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_START_DATE)));
+		String dFromStr = dateFromInput.getAttribute("value");
+		
+		WebElement dateToInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdTimeControl.FILTER_END_DATE)));
+		String dToStr = dateToInput.getAttribute("value");
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		
+		checkMonthlyDate(cal.getTime(), dFromStr, dToStr);
+		
+	}
 
 	private static void checkWeeklyDate(Date realFirstWeekDate, String dFromStr, String dToStr) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -195,6 +231,27 @@ public class TimeControlTestCase extends AbstractTestCase {
 				fail("Weekly Start Date does not match");
 			if (!endDate.equals(cal.getTime()))
 				fail("Weekly End Date does not match");
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+			fail("Unparseable date/s");
+		}
+	}
+	
+	private static void checkMonthlyDate(Date realFirstMonthDate, String dFromStr, String dToStr) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date startDate = df.parse(dFromStr);
+			Date endDate = df.parse(dToStr);
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(realFirstMonthDate);
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			
+			if (!startDate.equals(realFirstMonthDate))
+				fail("Monthly Start Date does not match");
+			if (!endDate.equals(cal.getTime()))
+				fail("Monthly End Date does not match");
 			
 		} catch (ParseException e) {
 			e.printStackTrace();
