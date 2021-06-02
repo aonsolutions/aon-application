@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -45,7 +46,6 @@ import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
-import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
@@ -643,4 +643,17 @@ public class AON_SOLUTIONS {
 			return ItemJSON.toJSON(items);
 		}
 	}
+	
+	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(Domain domain, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getFinance().getPrintInvoiceConfiguration(ctx);
+		}
+	}
+	
+	public static PrintInvoiceConfiguration savePrintInvoiceConfiguration(Domain domain, User user, PrintInvoiceConfiguration pic) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getFinance().savePrintInvoiceConfiguration(ctx, pic);
+		}
+	}
+
 }
