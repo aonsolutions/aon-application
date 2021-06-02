@@ -1,5 +1,4 @@
 import {AonElement} from '../components/AonElement.js';
-import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
@@ -13,6 +12,8 @@ import './example/aon-example.js';
 import './imports/aon-imports.js';
 import './documental/aon-documental.js';
 import './invoice/aon-invoice-panel.js';
+
+import * as GWT from "../gwt/gwt.js";
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -76,6 +77,7 @@ export class AonMenu extends AonElement {
 	}
 
 	init() {
+		this.setAttribute('opened', true);
 		if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
 			getDomainUserRoles({}).then(r => {
 				this.dur = new DomainUserRoles(r);
@@ -90,7 +92,6 @@ export class AonMenu extends AonElement {
 
 	toogle() {
 		let aonMenuSidenav = this.getElement('aonMenuSidenav');
-		let rootPanel = this.getElement('rootPanel');
 		if(this.getAttribute('opened')) {
 			this.close();
 		} else if(this.getAttribute('app')){
@@ -98,7 +99,7 @@ export class AonMenu extends AonElement {
 			this.setAttribute('opened', true);
 		} else {
 			aonMenuSidenav.style.width = '60px';
-			rootPanel.style.marginRight = '60px';
+			this.getRootPanel().style.marginRight = '60px';
 			this.setAttribute('opened', true);
 		}
 	}
@@ -106,28 +107,28 @@ export class AonMenu extends AonElement {
 	appSelection(app) {
 		switch(app){
     	case Apps.DOCUMENTAL.app:
-				rootPanel('<aon-documental></aon-documental>')
+				this.rootPanelHtml('<aon-documental></aon-documental>')
 				break;
     	case Apps.ACCOUNTING.app:
 				if(this.getDur().isAccountingManager()) {
 					this.buildAppMenu(Apps.ACCOUNTING);
-				} else rootPanel('<aon-accounting></aon-accounting>');
+				} else this.rootPanelHtml('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
 				if(this.getDur().isFiscalManager()) {
 					this.buildAppMenu(Apps.FISCAL);
-				} else rootPanel('<aon-fiscal></aon-fiscal>');
+				} else this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
 				if(this.getDur().isPayrollManager()) {
 					this.buildAppMenu(Apps.PAYROLL);
-				} else rootPanel('<aon-laboral></aon-laboral>');
+				} else this.rootPanelHtml('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.INVOICE.app:
-				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				break;
 			case Apps.TIMECONTROL.app:
-				rootPanel('<aon-signin></aon-signin>');
+				this.rootPanelHtml('<aon-signin></aon-signin>');
 				break;
 			case AuxApps.TOOLS.app:
 				this.buildAppMenu(AuxApps.TOOLS);
@@ -139,7 +140,6 @@ export class AonMenu extends AonElement {
 		this.innerHTML = `
 			<div id="aonMenuSidenav" class="aonMenuSidenav"></div>
 		`;
-		let rootPanel = this.getElement('rootPanel');
 		let aonMenuSidenav = this.getElement('aonMenuSidenav');
 
 		aonMenuSidenav.addEventListener('mouseover', () => {
@@ -162,10 +162,10 @@ export class AonMenu extends AonElement {
 			aonMenuSidenav.style.transitionDuration = '500ms';
 			if(this.getAttribute('opened')) {
 				aonMenuSidenav.style.width = '60px';
-				rootPanel.style.marginRight = '60px';
+				this.getRootPanel().style.marginRight = '60px';
 			} else {
 				aonMenuSidenav.style.width = '0px';
-				rootPanel.style.marginRight = '0px';
+				this.getRootPanel().style.marginRight = '0px';
 			}
 			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 				item.style.display = 'none';
@@ -175,10 +175,10 @@ export class AonMenu extends AonElement {
 
 		if(this.getAttribute('opened')) {
 			aonMenuSidenav.style.width = '60px';
-			rootPanel.style.marginRight = '60px';
+			this.getRootPanel().style.marginRight = '60px';
 		} else {
 			aonMenuSidenav.style.width = '0px';
-			rootPanel.style.marginRight = '0px';
+			this.getRootPanel().style.marginRight = '0px';
 		}
 		this.buildMenu();
 	}
@@ -233,7 +233,7 @@ export class AonMenu extends AonElement {
 			if(this.getDur().isAdmin()) {
 				let aonMenuAddButton = this.getElement('aonMenuAddButton');
 				aonMenuAddButton.addEventListener(EVENT.CLICK, () => {
-					rootPanel('<aon-marketplace id="aonMarketplace" > </aon-marketplace>');
+					this.rootPanelHtml('<aon-marketplace id="aonMarketplace" > </aon-marketplace>');
 				});
 			}
 		}
@@ -340,11 +340,11 @@ export class AonMenu extends AonElement {
 		let launchButton = this.getElement('aon-menu-sidenav-app-launch-button');
 		launchButton.addEventListener(EVENT.CLICK, () => {
 			if(Apps.ACCOUNTING.app === app.app) {
-				rootPanel('<aon-accounting></aon-accounting>');
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
 			} else if(Apps.FISCAL.app === app.app) {
-				rootPanel('<aon-fiscal></aon-fiscal>');
+				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
 			} else if(Apps.PAYROLL.app === app.app) {
-				rootPanel('<aon-laboral></aon-laboral>');
+				this.rootPanelHtml('<aon-laboral></aon-laboral>');
 			}
 		});
 		let closeButton = this.getElement('aon-menu-sidenav-app-close-button');
@@ -394,19 +394,18 @@ export class AonMenu extends AonElement {
 		li.appendChild(a);
 		li.addEventListener(EVENT.CLICK, () => {
 			if(subapp.content) {
-				rootPanel(subapp.content);
+				this.rootPanelHtml(subapp.content);
 			} else if(subapp.initAction) {
 				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
-			} else startModule(subapp.module, subapp.entryPoint);
+			} else GWT.startModule(subapp.module, subapp.entryPoint);
 
 			let aonMenuSidenav = this.getElement('aonMenuSidenav');
-			let rp = this.getElement('rootPanel');
 			if(this.getAttribute('opened')) {
 				aonMenuSidenav.style.width = '60px';
-				rp.style.marginRight = '60px';
+				this.getRootPanel().style.marginRight = '60px';
 			} else {
 				aonMenuSidenav.style.width = '0px';
-				rp.style.marginRight = '0px';
+				this.getRootPanel().style.marginRight = '0px';
 			}
 			this.buildMenu();
 		});
@@ -445,9 +444,8 @@ export class AonMenu extends AonElement {
 
 	close() {
 		let aonMenuSidenav = this.getElement('aonMenuSidenav');
-		let rootPanel = this.getElement('rootPanel');
 		aonMenuSidenav.style.width = '0px';
-		rootPanel.style.marginRight = '0px';
+		this.getRootPanel().style.marginRight = '0px';
 		this.removeAttribute('opened');
 	}
 

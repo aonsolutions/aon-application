@@ -1,6 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
 import { login, getManifest, rememberPassword, getCompanies, getUser, getUserAppRole, actionMobile } from "../../services/service.js";
-import { rootPanel } from "../../services/gwtLoader.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -223,14 +222,14 @@ export class AonLogin extends AonElement {
         localStorage.removeItem('aon_domain_id');
         localStorage.removeItem('aon_domain_name');
         localStorage.removeItem('aon_domain_login');
-        window.loadScripts();
+      
         this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){
             this.companySelection(companies[0]);
           } else {
             this.getElement("aonHome").showMenu(false);
-            rootPanel(this.isMobile()
+            this.rootPanelHtml(this.isMobile()
               ? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
               : '<aon-parent id="aonParent"></aon-parent>');
           }
@@ -279,7 +278,7 @@ export class AonLogin extends AonElement {
           aonHeader.setAttribute('company', JSON.stringify(company));
           aonHeader.setAttribute('user', JSON.stringify(user));
         }
-        rootPanel(this.isMobile()
+        this.rootPanelHtml(this.isMobile()
           ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
           : '<aon-desktop id="aonDesktop"></aon-desktop>');
         let aonDesktop = this.getElement('aonDesktop');

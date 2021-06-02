@@ -1,7 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
-import {rootPanel} from '../services/gwtLoader.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
 import './configuration/aon-configuration.js';
@@ -80,7 +79,7 @@ export class AonMobileHeader extends AonElement {
 
 		let aonHeaderCompanyListButton = this.getElement('aonHeaderCompanyListButton');
 		aonHeaderCompanyListButton.addEventListener(EVENT.CLICK, () => {
-			rootPanel('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+			this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
 		});
 
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
@@ -181,7 +180,7 @@ export class AonMobileHeader extends AonElement {
 	}
 
 	aonConfiguration() {
-		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
+		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
 		let aonConfiguration = this.getElement('aon-configuration');
 		if(this.getAttribute('company')){
 			aonConfiguration.setAttribute('company', this.getAttribute('company'));
@@ -205,7 +204,7 @@ export class AonMobileHeader extends AonElement {
 			aonLogo.style.marginLeft = "21px";
 		}
 		aonLogo.addEventListener('click', () => {
-			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+			this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 		});
 	}
 

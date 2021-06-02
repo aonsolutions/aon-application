@@ -1,5 +1,4 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import {rootPanel} from '../../services/gwtLoader.js';
 import { MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/components.js';
 import '../../components/aon-icon.js';
@@ -219,16 +218,17 @@ export class AonMobileDesktop extends AonElement {
 		
 			ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, 'inbox', inboxCount, () => {
 				if(inboxCount > 0) {
-					rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+					this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				}
 			}));
 			ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
 				if(rejectedCount > 0) {
-					rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+					this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 				}
 			}));
 		}
-		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
+		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() 
+			? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
 
 		getTimeControl().then(r => {
 			let div2 = this.createElement('div');

@@ -91,6 +91,23 @@ export class AonElement extends HTMLElement{
     return this.getElement(this.ROOT_PANEL);
   }
 
+
+  rootPanel(element) {
+    let rp = this.getRootPanel();
+    if(rp) {
+      this.clearElement(rp);
+      rp.appendChild(element);
+    }
+  }
+
+  rootPanelHtml(html) {
+    let rp = this.getRootPanel();
+    if(rp) {
+      this.clearElement(rp);
+      rp.innerHTML = html;
+    }
+  }
+
   rootPanel(element) {
     this.clearElementById(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);
