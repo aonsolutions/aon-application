@@ -233,6 +233,7 @@ export const QUOTA = MSG.QUOTA;
 
 export const RADIO = "Radio"; // TODO
 export const RECEIVED = MSG.RECEIVED;
+export const REGISTER = "Registro"; // TODO
 export const RECEIVEDS = MSG.RECEIVEDS;
 export const RECENTS = MSG.RECENTS;
 export const RECORD = MSG.RECORD;

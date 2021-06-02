@@ -13,7 +13,7 @@ import {
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
-import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
 import { AonFilter } from "../../../../components/aon-filter.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
@@ -67,6 +67,10 @@ export class AonEventDetailList extends AonElement {
     this.build();
   }
 
+  disconnectedCallback() {
+    if (this.applicationEl) this.applicationEl.removeFloatOption();
+  }
+
   initialize() {
     this.id = this.id || SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST;
     this.TABLE_ID = this.id + "Table";
@@ -77,9 +81,6 @@ export class AonEventDetailList extends AonElement {
     this.applicationParentEl.periodSideNavDisplay(true);
   }
 
-  disconnectedCallback() {
-    if (this.applicationEl) this.applicationEl.removeFloatOption();
-  }
 
   async build() {
     this.paintView();
@@ -102,19 +103,15 @@ export class AonEventDetailList extends AonElement {
       let aonToolbar =  new AonToolbar();
       aonToolbar.id = this.TOOLBAR;
       aonToolbar.type = ToolbarType.SECONDARY;
-      // try {// change style fixed
-      //   aonToolbar.style.position = "fixed";
-      //   aonToolbar.style.width = "100%";
-      //   aonToolbar.style.top = "101px";
-      //   this.applicationEl.getContent().style.top = "140px";
-      // } catch (error) {}
-    
       this.appendChild(aonToolbar);
     } 
 
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    this.appendChild(aonTable);
+    let div = this.createElement(TAG.DIV);
+    if(this.isMobile()) div.className = CSS.AON_MOBILE_SUB_CONTENT;
+    div.appendChild(aonTable);
+    this.appendChild(div);
   }
 
   buildToolbarDesk() {

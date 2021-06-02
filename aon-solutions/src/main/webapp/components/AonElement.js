@@ -122,12 +122,11 @@ export class AonElement extends HTMLElement{
 		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
 
-  clearTimeAction() {
-    clearTimeout(this.TIME_ACTION);
-    clearTimeout(null);
+  clearIntervalAction() {
+    clearInterval(this.TIME_ACTION);
   }
 
-  setTimeAction(tm){
+  setIntervalAction(tm){
     this.TIME_ACTION = tm;
   }
 
