@@ -1,7 +1,6 @@
 import { AonElement } from "../components/AonElement.js";
 import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import { rootPanel } from "../services/gwtLoader.js";
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
 import { getDomainUserRoles, closeSession } from "../services/service.js";
@@ -117,7 +116,7 @@ export class AonMobileMenu extends AonElement {
     this.addMenuButton({
       name: 'Home',
       icon: 'home',
-      fn: () => rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
+      fn: () => this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
     });
 
     let apps = [];
@@ -157,7 +156,7 @@ export class AonMobileMenu extends AonElement {
       this.addMenuButton({
         name: 'Configuration',
         icon: 'settings',
-        fn: () => rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>')
+        fn: () => this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>')
       });
       count++;
     }
@@ -166,7 +165,7 @@ export class AonMobileMenu extends AonElement {
       this.addMenuButton({
         name: 'Help',
         icon: 'help_outline',
-        fn: () => rootPanel('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+        fn: () => this.rootPanelHtml('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
       });
       count++;
     }

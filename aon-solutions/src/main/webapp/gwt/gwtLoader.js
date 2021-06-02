@@ -40,7 +40,6 @@
 			if (script.src != null && script.src.indexOf(search) != -1) {
 				let parent = script.parentNode;
 				parent.removeChild(script);
-				break;
 			}
 		}
 
@@ -50,7 +49,6 @@
 			if (iframe.src != null && iframe.id == module) {
 				let parent = iframe.parentNode;
 				parent.removeChild(iframe);
-				break;
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies, getUser} from  '../../services/service.js';
-import {rootPanel} from '../../services/gwtLoader.js';
 import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
@@ -160,7 +159,7 @@ export class AonMobileParent extends AonElement {
             aonHeader.setAttribute('company', JSON.stringify(company));
             aonHeader.setAttribute('user', JSON.stringify(user));
           }
-          rootPanel(this.isMobile()
+          this.rootPanelHtml(this.isMobile()
             ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
             : '<aon-desktop id="aonDesktop"></aon-desktop>');
           let aonDesktop = document.getElementById('aonDesktop');
