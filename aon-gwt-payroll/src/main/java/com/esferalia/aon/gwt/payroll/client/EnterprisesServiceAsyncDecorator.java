@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -608,17 +607,17 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getCNOs(currentDomainName, new AsyncCallbackWrapper<Map<String, CNO>>(callback));
 	}
-
+	
 	@Override
-	public void getDigitalCertificates(String currentDomainName, String currentUser, String token, AsyncCallback<List<DigitalCertificate>> callback) {
+	public void getDigitalCertificateTGSS(String currentDomainName, String currentUser, AsyncCallback<DigitalCertificate> callback) {
 		AON.start();
-		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, token, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
+		enterprisesServiceAsync.getDigitalCertificateTGSS(currentDomainName, currentUser, new AsyncCallbackWrapper<DigitalCertificate>(callback));
 	}
 
 	@Override
-	public void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> callback) {
+	public void getDigitalCertificatesSEPE(String currentDomainName, AsyncCallback<List<DigitalCertificate>> callback) {
 		AON.start();
-		enterprisesServiceAsync.setDigitalCertificates(currentDomainName, currentUser, token, digitalCertificateList, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.getDigitalCertificatesSEPE(currentDomainName, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
 	}
 
 	@Override
@@ -652,9 +651,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteDigitalCertificate(String currentDomainName, String currentUser, CertificateType type, AsyncCallback<Void> callback) {
+	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, currentUser, type, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -819,6 +818,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void setComunicaEnterpriseSettings(String domainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.setComunicaEnterpriseSettings(domainName, currentUser, comunicaEnterpriseSettings, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getEnterpriseId(String domainName, AsyncCallback<Integer> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseId(domainName, new AsyncCallbackWrapper<Integer>(callback));
 	}
 
 }

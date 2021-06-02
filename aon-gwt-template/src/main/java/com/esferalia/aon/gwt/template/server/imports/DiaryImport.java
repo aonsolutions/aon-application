@@ -24,9 +24,11 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
@@ -262,14 +264,20 @@ public class DiaryImport {
 		}	
 		
 		if(IConstants.FACTURA.equalsIgnoreCase(title)) {	
-			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
+			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
+					CellType.NUMERIC == cell.getCellTypeEnum() 
+						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
+						: o.toString());
 			invoice = o != null && !o.toString().isBlank();
 			return;
 		}
 		
 		if(IConstants.DOCUMENTO.equalsIgnoreCase(title)) {
 			if(!invoice) {
-				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
+				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
+					CellType.NUMERIC == cell.getCellTypeEnum() 
+						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
+						: o.toString());
 			}
 			return;
 		}
@@ -389,9 +397,23 @@ public class DiaryImport {
 			if(ae.getEntry().getEntryType() == null) {
 				ae.getEntry().setEntryType(AccountEntryType.MANUAL);
 			}
-
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ae.getEntry());
+			if(ae.getEntry().getDetails().size() > 0) {
+				String docNumber = ae.getEntry().getDetails().get(0).getDocumentNumber();
+				
+				Invoice invoice = AON.getInvoice(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getReferenceCodeProperty().eq(docNumber)));
+				if(invoice != null && invoice.getId() != null) {
+					AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), user.getLogin(), invoice.getId());
+					if(ai != null) {
+						throw new Exception("Ya existe un asiento de la factura " + invoice.getReferenceCode());
+					}
+				}
+			}
+		
+			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ae.getEntry());	
 		} catch (Exception e) {
+			e.printStackTrace();
 			error.setError(false);
 			error.setTextError("Línea " + ae.getLine() + ": " + e.getMessage());
  		}

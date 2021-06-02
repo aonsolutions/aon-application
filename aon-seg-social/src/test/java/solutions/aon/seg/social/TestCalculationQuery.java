@@ -16,11 +16,6 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.Calculations;
-import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaRED.LiquidationType;
-import solutions.aon.seg.social.SistemaRED.Regime;
-import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;

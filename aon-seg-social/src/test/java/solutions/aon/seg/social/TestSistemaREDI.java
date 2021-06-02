@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Repeatable;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +18,6 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -187,12 +185,12 @@ public class TestSistemaREDI {
 			  fail("Should have returned a pdf");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -205,12 +203,12 @@ public class TestSistemaREDI {
 			  fail("Should have returned a pdf");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -225,10 +223,10 @@ public class TestSistemaREDI {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -242,12 +240,12 @@ public class TestSistemaREDI {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (ParseException e) {
 			fail("Wrong data input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -262,12 +260,12 @@ public class TestSistemaREDI {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -282,12 +280,12 @@ public class TestSistemaREDI {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -301,12 +299,12 @@ public class TestSistemaREDI {
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -323,12 +321,12 @@ public class TestSistemaREDI {
 		  byte[] pdf=SistemaREDI.getContributionInformationCCC(certificateInputStream, "jg@FNMT", "pkcs12","0111", "01105360062", d);
 		  if(!(pdf.length>0))
 			  fail("Should have returned a pdf");
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -339,14 +337,14 @@ public class TestSistemaREDI {
 		  byte[] pdf=SistemaREDI.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  if(!(pdf.length>0))
 			  fail("Should have returned a pdf");
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -357,14 +355,14 @@ public class TestSistemaREDI {
 			c.add(Calendar.YEAR, 1);
 		  Date d=c.getTime();
 		  byte[] pdf=SistemaREDI.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-		} catch(InvalidDataException e) {
-			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch(InvalidDataException e) {
+			assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -376,14 +374,14 @@ public class TestSistemaREDI {
 		  byte[] pdf=SistemaREDI.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105760562", d);
 		} catch(invalidCccException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (ParseException e) {
 			fail("Wrong data input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -396,14 +394,14 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (CertificateNotFoundException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -416,14 +414,14 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -435,14 +433,14 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -459,8 +457,6 @@ public class TestSistemaREDI {
 			  if(!(pdf.length>0))
 				  fail("Should have returned a pdf");  
 		  }
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -469,6 +465,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -481,8 +479,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (invalidCccException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -491,6 +487,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -502,9 +500,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -513,6 +508,9 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			System.out.println(e.getClass());
+			fail(e.getMessage());
 		}
 	}
 	
@@ -525,9 +523,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -537,6 +532,10 @@ public class TestSistemaREDI {
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
 		}
+		 catch (SegSocialException e) {
+				System.out.println(e.getClass());
+				fail(e.getMessage());
+			}
 	}
 	
 	
@@ -548,8 +547,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (NotAllowedContributionAccount e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -558,6 +555,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
 		}
 	}
 	
@@ -572,15 +571,15 @@ public class TestSistemaREDI {
 		  fail("Should have thrown an exception");
 		} catch (InvalidDataException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			System.out.println(e.getClass());
+			fail("SegSocialException");
 		}
 	}
 	
@@ -592,9 +591,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(CertificateNotFoundException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -603,6 +599,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -615,9 +613,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -626,6 +621,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -637,9 +634,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -648,6 +642,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -667,8 +663,6 @@ public class TestSistemaREDI {
 			  if(!(pdf.length>0))
 				  fail("Should have returned a pdf");  
 		  }
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -677,6 +671,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -689,8 +685,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (invalidCccException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -699,6 +693,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -710,8 +706,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -720,6 +714,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -732,8 +728,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -742,6 +736,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -754,8 +750,6 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (WrongRegimeException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {			
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -764,6 +758,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -778,15 +774,14 @@ public class TestSistemaREDI {
 		  fail("Should have thrown an exception");
 		} catch (InvalidDataException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -798,9 +793,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(CertificateNotFoundException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -809,6 +801,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -821,9 +815,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -832,6 +823,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -843,9 +836,6 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
 		} catch (IOException e1) {
@@ -854,6 +844,8 @@ public class TestSistemaREDI {
 			  assertTrue(true);
 		} catch (InterruptedException e) {
 			fail("Interrupted exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -865,12 +857,12 @@ public class TestSistemaREDI {
 		  byte[] pdf=SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 		  if(!(pdf.length>0))
 			  fail("Should have returned a pdf");
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -882,13 +874,12 @@ public class TestSistemaREDI {
 			  fail("Shouldn't have returned a pdf");
 		} catch (WrongIdentifierException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -900,12 +891,12 @@ public class TestSistemaREDI {
 			  fail("Shouldn't have returned a pdf");
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -915,12 +906,12 @@ public class TestSistemaREDI {
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "sdsa", "01105360062");
 			  fail("Shouldn't have returned a pdf");
-		} catch (SegSocialException e) {
-			System.out.println(e.getMessage());
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			
 		}
 	}
 	
@@ -933,12 +924,12 @@ public class TestSistemaREDI {
 		  fail("Shouldn't have returned a pdf");
 		} catch(CertificateNotFoundException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -950,12 +941,12 @@ public class TestSistemaREDI {
 		  fail("Shouldn't have returned a pdf");
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -968,12 +959,12 @@ public class TestSistemaREDI {
 		  fail("Shouldn't have returned a pdf");
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -988,13 +979,12 @@ public class TestSistemaREDI {
 				fail("Not taking well idc dates");
 			}
 		}
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1010,13 +1000,12 @@ public class TestSistemaREDI {
 				  "011005185924", 
 				  new Date());
 		  PDDocument.load(data);
-		} catch (SegSocialException e) {
-			System.out.println(e.getMessage());
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1028,12 +1017,12 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (invalidCccException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1044,12 +1033,12 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1061,13 +1050,12 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			System.out.println(e.getClass());
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1079,12 +1067,12 @@ public class TestSistemaREDI {
 			fail("Should have returned a pdf");  
 		} catch (NotAllowedContributionAccount e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 
@@ -1097,13 +1085,12 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(CertificateNotFoundException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1115,13 +1102,12 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1132,13 +1118,12 @@ public class TestSistemaREDI {
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		}
-		catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1173,12 +1158,12 @@ public class TestSistemaREDI {
 				fail("Not picking up some dates");
 			}
 		}
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1190,12 +1175,12 @@ public class TestSistemaREDI {
 			Collection<Date> dates=SistemaREDI.getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105760562");
 		} catch(invalidCccException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1207,12 +1192,12 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (CertificateNotFoundException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1224,12 +1209,12 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1240,12 +1225,12 @@ public class TestSistemaREDI {
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (SegSocialException e) {
-			fail("SegSocialException");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1260,12 +1245,12 @@ public class TestSistemaREDI {
 			  }
 		}  catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1280,10 +1265,10 @@ public class TestSistemaREDI {
 			  }
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1298,12 +1283,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1318,12 +1303,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1339,12 +1324,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1359,12 +1344,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		}catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1379,12 +1364,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1399,12 +1384,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -1419,12 +1404,12 @@ public class TestSistemaREDI {
 			
 		} catch (FailingHttpStatusCodeException e) {
 			
-		} catch (SegSocialException e) {
-			fail(e.getMessage());
 		} catch (ParseException e) {
 			fail("Wrongly written date");
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (SegSocialException e) {
+			fail(e.getMessage());
 		}
 	}
 	

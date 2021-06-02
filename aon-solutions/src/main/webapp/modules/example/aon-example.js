@@ -38,6 +38,7 @@ export class AonExample extends AonElement {
 			}
 			aonView.id = view;
 			if(filter) aonView.filter = filter;
+			if(data) aonView.data = data;
 			this.applicationEl.setContent(aonView);
 		  resolve(true);
 		});

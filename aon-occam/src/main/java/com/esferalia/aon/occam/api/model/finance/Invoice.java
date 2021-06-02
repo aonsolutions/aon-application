@@ -78,7 +78,7 @@ public class Invoice implements Serializable, HasAudit {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
-	
+
 	private Byte status;
 	
 	private String siiStatus;
@@ -86,6 +86,8 @@ public class Invoice implements Serializable, HasAudit {
 	private LinkedList<InvoiceDetail> details;
 	private LinkedList<InvoiceBreakdown> breakdown;
 	private LinkedList<Finance> finances;
+
+	private String tediCategory;
 	
 	public Integer getId() {
 		return id;
@@ -543,6 +545,17 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setStatus(Byte status) {
 		this.status = status;
+		return this;
+	}
+	
+	// TEDI CATEGORY - ACCOUNT CODE
+	
+	public String getTediCategory() {
+		return tediCategory;
+	}
+	
+	public Invoice setTediCategory(String category) {
+		this.tediCategory = category;
 		return this;
 	}
 	

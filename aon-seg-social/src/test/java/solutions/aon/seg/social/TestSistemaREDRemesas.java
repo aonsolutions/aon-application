@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -23,6 +24,7 @@ import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.exception.invalid.outOfTimeException;
 
+@Ignore
 public class TestSistemaREDRemesas {
 
 	

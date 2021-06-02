@@ -123,6 +123,7 @@ export const AON_MOBILE_MENU = 'aonMobileMenu';
 export const AON_MOBILE_SIDENAV = 'aonMobileSidenav';
 export const AON_MOBILE_DESKTOP_COMPANY = 'aonMobileDesktopCompany';
 export const AON_MOBILE_DESKTOP_COMPANY_NAME = 'aonMobileDesktopCompanyName';
+export const AON_MOBILE_SUB_CONTENT = 'aonMobileSubContent';
 
  // aon-loader.css
 
@@ -142,6 +143,8 @@ export const AON_INPUT_LIST_OPTIONS_ITEM = 'aonInputListOptionsItem';
 export const AON_INPUT_NOT_EMPTY = 'aonInputNotEmpty';
 export const IS_VISIBLE = 'aon-visible';
 export const AON_INPUT_ICON_LABEL = 'aonInputIconLabel';
+export const AON_INPUT_IOS = 'aonInputIos';
+
 // aon-input-loading.css
 
 export const AON_ICON_CONTAINER = 'aonIconContainer';
@@ -266,6 +269,10 @@ export const NO_FOCUS = "noFocus";
 export const CONTENT_EDITABLE = "contentEditable";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
+
+// aon-textarea 
+
+export const AON_TEXTAREA = 'aonTextarea';
 
 /**
  * Name to CSS variable conversion.

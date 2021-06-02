@@ -1,17 +1,15 @@
-import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-
-import {AonElement, AonIconButton} from '../../components/components.js';
+import { MSG, TAG } from '../../environments/environments.js';
+import {AonElement} from '../../components/components.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../../components/aon-suggestion.js';
-
 import '../signin/aon-sign.js';
 import '../invoice/aon-invoice-panel.js';
 import './aon-mobile-parent.js';
 import '../messenger/aon-messenger.js';
-
-import { MSG, TAG, MATERIAL_ICONS } from '../../environments/environments.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 export class AonMobileDesktop extends AonElement {
 
@@ -54,10 +52,21 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	connectedCallback () {
+		this.initialize();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.build();
+		});
+	}
+
+	initialize() {
 		this.id = 'aonDesktop';
 		this.SUGGESTION = this.id + 'Suggestion';
-		this.build();
-  }
+	}
+
+	getDur() {
+		return this.dur;
+	}
 
 	build() {
 		this.innerHTML = '';
@@ -197,26 +206,28 @@ export class AonMobileDesktop extends AonElement {
 		ul.className = 'aonClip';
 		div.appendChild(ul);
 
-		let inboxCount = 0;
-		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
-			inboxCount = notice.invoice.inbox.count;
-		}
-
-		let rejectedCount = 0;
-		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
-			rejectedCount = notice.invoice.rejected.count;
-		}
-
-		ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, 'inbox', inboxCount, () => {
-			if(inboxCount > 0) {
-				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+		if(this.getDur().isInvoice()){			
+			let inboxCount = 0;
+			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+				inboxCount = notice.invoice.inbox.count;
 			}
-		}));
-		ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
-			if(rejectedCount > 0) {
-				rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+
+			let rejectedCount = 0;
+			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+				rejectedCount = notice.invoice.rejected.count;
 			}
-		}));
+		
+			ul.appendChild(this.buildNotificationsLi(MSG.PENDING_INVOICES, 'inbox', inboxCount, () => {
+				if(inboxCount > 0) {
+					rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+				}
+			}));
+			ul.appendChild(this.buildNotificationsLi(MSG.REJECTED_INVOICES, 'report', rejectedCount, () => {
+				if(rejectedCount > 0) {
+					rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+				}
+			}));
+		}
 		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
 
 		getTimeControl().then(r => {

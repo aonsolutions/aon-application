@@ -91,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.client.CalendarService;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
+import com.esferalia.aon.gwt.payroll.client.Wnd;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
@@ -800,7 +801,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Date endDate = calendar.getTime();
 
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, startDate, endDate,
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", startDate, endDate,
 					cost.getEnterpriseId(), cost.getWorkplaceId(), types);
 
 			byte bytes[] = oos.toByteArray();

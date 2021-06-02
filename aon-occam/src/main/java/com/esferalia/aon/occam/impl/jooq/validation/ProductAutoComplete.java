@@ -7,14 +7,19 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProductAutoComplete {
 	
 	public static BiConsumer<AONContext, Product> COMPLETE_DOMAIN = (ctx, product) -> {
-		Domain domain = AON.getDomain(ctx.getDomainName(), product.getDomain().getId(), ctx.getUser());
-		product.setDomain(domain);
+		if(product.getDomain() == null || product.getDomain().getId() == null) {
+			Domain domain = AON.getDomain(ctx.getDomainName(), product.getDomain().getId(), ctx.getUser());
+			product.setDomain(domain);
+		}
 	};
 	
 	public static BiConsumer<AONContext, Product> COMPLETE_NAME = (ctx, product) -> {
@@ -45,14 +50,27 @@ public class ProductAutoComplete {
 			product.setStatus(ProductStatus.ACTIVE);
 		}
 	};
+	
+	public static BiConsumer<AONContext, Product> COMPLETE_VAT = (ctx, product) -> {
+		if (product.getVat() != null && product.getVat().getId() == null) {
+			Tax t = TaxDAO.getTax(ctx, f -> f.getPercentageProperty().eq(product.getVat().getPercentage())
+					.and(f.getSurchargeProperty().eq(product.getVat().getSurcharge())
+					.and(f.getTaxTypeProperty().eq(TaxType.VAT.value()))));
+			if(t.getId() == null) {
+				t = TaxDAO.save(ctx, product.getVat());
+			}
+			ctx.log().info("\t saving product: autocomplete VAT: " + t.getId() + " - " + t.getName());
+			product.setVat(t);
+		}
+	};
 
 	public static void autoComplete(AONContext ctx, Product product) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_NAME)
 		.andThen(COMPLETE_BOOLEANS)
 		.andThen(COMPLETE_STATUS)
+		.andThen(COMPLETE_VAT)
 			.accept(ctx, product);
-
 	}
 
 }

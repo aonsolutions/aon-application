@@ -12,11 +12,11 @@ import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
 import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
-import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
+import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 
 
-class AonLaboral extends AonElement {
+export class AonLaboral extends AonElement {
 
   AON_LABORAL;
   dur;
@@ -225,7 +225,10 @@ class AonLaboral extends AonElement {
     this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
         this.applicationEl.startLoading();
         try {
-          await postDeleteMov(data);
+          await postDeleteMov({
+            ...data,
+            nombre: data.nombre || data.name
+          });
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
           if(this._movements){
             this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
@@ -278,11 +281,7 @@ class AonLaboral extends AonElement {
             aonView.setFilter({type: 'system'});
             break;
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
-            if(this.isMobile()){
               aonView = new AonContractList();
-            } else {
-              GWT.load(GWT.MAIN_CONTRATA, this.applicationEl.CONTENT);
-            }
             break;
           case PAYROLL_VIEWS.AON_CERT:
               GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);

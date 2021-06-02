@@ -491,9 +491,9 @@ public class MainCRANew extends MainEntryPoint {
 				if(cra.getIsConsignment()) {
 					String message = "";
 					for(CCCInfo cccInfo : cra.getIncludeCCCs()) {
-						message += cccInfo.toString() + "\n";
+						message += cccInfo.toString() + "<br>";
 					}
-					AonDialog dialog = new AonDialog("CCCs", new HTML(message));
+					AonDialog dialog = new AonDialog("CRA (" + cra.getIncludeCCCs().size() + " CCCs)", new HTML(message));
 					dialog.info();
 				}
 					

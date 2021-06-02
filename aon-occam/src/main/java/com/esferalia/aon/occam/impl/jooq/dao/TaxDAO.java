@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -54,6 +56,56 @@ public class TaxDAO {
 		return getTaxs(ctx, filter)
 			.findFirst()
 			.orElse(new Tax());
+	}
+	
+	public static Tax update(AONContext ctx, Tax tax) {
+		Timestamp now = new Timestamp(new java.util.Date().getTime());
+		ctx.checkWrite();
+		ctx.getDslContext().update(TAX)
+			.set(TAX.DOMAIN, tax.getDomain())
+			.set(TAX.NAME, tax.getName())
+			.set(TAX.TAX_TYPE, tax.getType().value())
+			.set(TAX.PERCENTAGE, tax.getPercentage())
+			.set(TAX.SURCHARGE, tax.getSurcharge())
+			.set(TAX.START_DATE, new java.sql.Date(tax.getStartDate().getTime()))
+			.set(TAX.VAT_DEDUCTION_TYPE, tax.getVatDeductionType().value())
+			.set(TAX.WITHHOLDING_TYPE, tax.getWithholdingType().value())
+			.set(TAX.SALES_ACCOUNT, tax.getSalesAccount().getId())
+			.set(TAX.PURCHASE_ACCOUNT, tax.getPurchaseAccount().getId())
+			.set(TAX.MODIFICATION_USER, ctx.getUser())
+			.set(TAX.MODIFICATION_DATE, now)
+			.where(TAX.ID.eq(tax.getId()))
+			.execute();	
+		return tax;
+	}
+	
+	public static Tax insert(AONContext ctx, Tax tax) {
+		Timestamp now = new Timestamp(new java.util.Date().getTime());
+		ctx.checkWrite();
+		Integer id = ctx.getDslContext().insertInto(TAX)
+			.set(TAX.DOMAIN, tax.getDomain())
+			.set(TAX.NAME, tax.getName())
+			.set(TAX.TAX_TYPE, tax.getType().value())
+			.set(TAX.PERCENTAGE, tax.getPercentage())
+			.set(TAX.SURCHARGE, tax.getSurcharge())
+			.set(TAX.START_DATE, new java.sql.Date(tax.getStartDate().getTime()))
+			.set(TAX.VAT_DEDUCTION_TYPE, tax.getVatDeductionType() != null ? tax.getVatDeductionType().value() : null)
+			.set(TAX.WITHHOLDING_TYPE, tax.getWithholdingType() != null ? tax.getWithholdingType().value() : null)
+			.set(TAX.SALES_ACCOUNT, tax.getSalesAccount() != null ? tax.getSalesAccount().getId() : null)
+			.set(TAX.PURCHASE_ACCOUNT, tax.getPurchaseAccount()!= null ? tax.getPurchaseAccount().getId() : null)
+			.set(TAX.CREATION_USER, ctx.getUser())
+			.set(TAX.CREATION_DATE, now)
+			.set(TAX.MODIFICATION_USER, ctx.getUser())
+			.set(TAX.MODIFICATION_DATE, now)
+			.returning(TAX.ID).fetchOne().getValue(TAX.ID);
+			
+		return tax.setId(id);
+	}
+	
+	public static Tax save(AONContext ctx, Tax tax) {
+		return tax.getId() != null
+			? update(ctx, tax)
+			: insert(ctx, tax); 
 	}
 	
 	

@@ -1086,7 +1086,7 @@ button:disabled, button[disabled]{
 }
 
 .active, .aonDot:hover {
-  background-color: #717171;
+  /* background-color: #717171; */
 }
 
 /* Fading animation */
@@ -1202,8 +1202,7 @@ button:disabled, button[disabled]{
     background-color: transparent;
 }
 
-.materialScroll::-webkit-scrollbar-thumb
-{
+.materialScroll::-webkit-scrollbar-thumb{
     border-radius: 4px;
     background-color: var(--aonLightGray);
 }
@@ -1214,12 +1213,11 @@ button:disabled, button[disabled]{
       for this, so we hide it.
     */
     scrollbar-width: none;
-
 }
 
 .iconArrow::after {
   content: "\25BE";
   position: absolute;
   left: 28px;
-  top: 9px;
+  top: 4px;
 }

@@ -40,16 +40,6 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 
 class SistemaREDMov {
-	
-//	  Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"ipfxnaf.html");
-
-	//HANDLE THE EXCEPTIONS OF Mov METHOD
-	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException{
-		try {return employee;} 
-		catch (Exception e) {throw new SegSocialException(e);}
-	}
-	
 	//HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
@@ -61,7 +51,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 
@@ -73,7 +63,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 	
@@ -85,7 +75,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 	
@@ -102,7 +92,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 	
@@ -116,7 +106,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 	
@@ -130,7 +120,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
 	
@@ -144,8 +134,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
-		return;
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
 	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
@@ -158,7 +147,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
 	public static void cambioGrupCtz(final InputStream certificateInputStream, 
@@ -170,8 +159,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
-		return;
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
 	public static void cambioOcupacion(final InputStream certificateInputStream, 
@@ -183,8 +171,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
-		return;
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}	
 	
 	public static void cambioCatProf(final InputStream certificateInputStream, 
@@ -196,7 +183,7 @@ class SistemaREDMov {
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
-		catch (Exception e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return;
 	}	
 	
@@ -518,12 +505,10 @@ class SistemaREDMov {
 	
 	private static void handleSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException{
 		try {
-			String error=htmlPage.querySelector("#ARQContenMensaje>ul >.mensajeError").getVisibleText();
-			if(!error.isEmpty()) {
-				throw new InvalidDataException(error);
-			}
+			DomNode error=htmlPage.querySelector("#ARQContenMensaje>ul >.mensajeError");
+			if(error!=null && !error.getVisibleText().isEmpty()) 
+				throw new InvalidDataException(error.getVisibleText());
 		} catch (NullPointerException e) {}
-		
 	}
 	
 	private static String identity(String ipf) {
@@ -570,7 +555,6 @@ class SistemaREDMov {
 		}
 		return identity;
 	}
-	
 	
 	private static HtmlPage firstPageAltaBaja(WebClient webClient,
 			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident, Date fecha) throws Exception {
@@ -673,22 +657,26 @@ class SistemaREDMov {
 		return null;
 	}
 	
-	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
+	public static void validateCert(
+			final InputStream certificateInputStream, final String certificatePassword, final String certificateType
+	) throws SegSocialException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {			
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+			DomNode section = htmlPage.querySelector("#segsocial section");
+			if(section!=null && section.getVisibleText().toLowerCase().indexOf("no autorizado")>=0) {
+				DomNode error = section.querySelector("p");
+				if(error!=null && !error.getVisibleText().isEmpty()) throw new SegSocialException(error.getVisibleText());
+			}
+		} catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}
+	
+	private static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
-			@Override
-			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}
-			
-			@Override
-			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {}
-			
-			@Override
-			public void scriptException(HtmlPage page, ScriptException scriptException) {}
-			
-			@Override
-			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {}
-			
-			@Override
-			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {}
+			@Override public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}
+			@Override public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {}
+			@Override public void scriptException(HtmlPage page, ScriptException scriptException) {}
+			@Override public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {}
+			@Override public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {}
 		};
 	}
 	

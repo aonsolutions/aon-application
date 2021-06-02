@@ -59,18 +59,23 @@ export const getGroups = (data) =>
         value: "YEAR",
       },
     ];
-    if (data) {
-      jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-    }
+
+    if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+    
     resolve(jsonValues);
   });
 
-export const getWeekDayObj = () =>  ({
+const getWeekDayObj = () =>  ({
     now: new Date(),
-    dayWeekFirst: new Date().getFirstDayOfWeek().getDate(),
-    dayWeekLast: new Date().getLastDayOfWeek().getDate()
+    dayWeekFirst: new Date().getFirstDayOfWeek(),
+    dayWeekLast: new Date().getLastDayOfWeek()
 });
 
+/**
+ * 
+ * @param {value:string} data 
+ * @returns return obj or array
+ */
 export const getPeriod = (data) => {
   const {now, dayWeekFirst, dayWeekLast} = getWeekDayObj(); 
   const year = now.getFullYear();
@@ -91,14 +96,14 @@ export const getPeriod = (data) => {
     {
       name: "Semana actual",
       value: "this_week",
-      startDate: formatDateOrigin( new Date().setDate(dayWeekFirst) ),
-      endDate: formatDateOrigin( new Date().setDate(dayWeekLast) )
+      startDate: formatDateOrigin( dayWeekFirst ),
+      endDate: formatDateOrigin( dayWeekLast )
     },
     {
       name: "Semana anterior",
       value: "last_week",
-      startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst -7)  ),
-      endDate: formatDateOrigin( new Date().setDate(dayWeekLast -7) )
+      startDate: formatDateOrigin(  dayWeekFirst.addDay(-7)  ),
+      endDate: formatDateOrigin( dayWeekLast.addDay(-7) )
     },
     {
       name: "Mes actual",
@@ -122,15 +127,15 @@ export const getPeriod = (data) => {
       name: "Año anterior",
       value: "last_year",
       startDate: formatDateOrigin(new Date(year-1, 0, 1)),
-      endDate:formatDateOrigin(new Date(year-1, 12, 0))
+      endDate: formatDateOrigin(new Date(year-1, 12, 0))
     },
     {
       name: "Personalizado",
       value: "personalized",
-    },
+    }
   ];
-  if (data) {
-    jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-  }
-    return jsonValues
+
+  if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+  
+  return jsonValues;
 }

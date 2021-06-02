@@ -156,5 +156,13 @@ public class TestContrato {
 		}
 	}
 	
-	
+	@Test
+	@Ignore
+	public void testValidateCert() {
+		try (InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
+			Contrato.validateCert(certificateInputStream, "aon@FNMT", "pkcs12");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

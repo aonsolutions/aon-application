@@ -31,6 +31,7 @@ import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrato {
+//    Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testContrato.html");
 	
 	public static String contrato(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Contract cto) throws SepeException {
@@ -162,7 +163,6 @@ public class Contrato {
 			
 			handleSepeExceptions(htmlPage);
 			
-//	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testContrato.html");
 	        return ide;
 		} 
 	}
@@ -511,14 +511,6 @@ public class Contrato {
 		  return htmlPage;
 	}
 	
-	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
-		try {
-			String error = htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText();
-			if(!error.isEmpty()) 
-				throw new SepeException(error);
-		} catch (NullPointerException e) {}
-	}
-	
 	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException {
 		String href = null;
         String oneCodCto = codCto.substring(0,1);
@@ -573,6 +565,28 @@ public class Contrato {
 		form.getInputByName("nass").setValueAttribute(cto.getNss()); 
 		htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 		return htmlPage;
+	}
+	
+	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType)  throws SepeException {
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {
+	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
+	        DomNode fielset = htmlPage.querySelector("form > fieldset");
+	        if(fielset!=null && !fielset.getVisibleText().isEmpty() && fielset.getVisibleText().indexOf("errores")>=0) {
+	        	DomNode error =  fielset.querySelector("p");
+	        	if(error!=null && !error.getVisibleText().isEmpty())  throw new SepeException(error.getVisibleText());
+	        }	        
+		}
+		catch (Exception e) {throw new SepeException(e.getMessage());}
+	}
+	
+	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
+		try {
+			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
+			if(error!=null && !error.getVisibleText().isEmpty()) 
+				throw new SepeException(error.getVisibleText());
+		} catch (NullPointerException e) {}
 	}
 	
 	public enum FirmType {

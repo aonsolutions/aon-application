@@ -34,10 +34,13 @@ export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
 export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
+export const ACTIVITY = 'Actividad';
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
+export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
+export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
@@ -97,7 +100,9 @@ export const DEACTIVATE = MSG.DEACTIVATE;
 export const DELETE = MSG.DELETE;
 export const DELETE_CATEGORY = MSG.DELETE_CATEGORY;
 export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_DETAIL = MSG.DELETE; // TODO
 export const DELETE_FILE = MSG.DELETE_FILE;
+export const DELETE_FINANCE = MSG.DELETE; // TODO
 export const DELETE_FOREVER = MSG.DELETE_FOREVER;
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = MSG.DELETE_FOREVER_INVOICE_CONFIRMATION;
 export const DELETE_TAG = MSG.DELETE_TAG;
@@ -226,12 +231,13 @@ export const QUOTA = MSG.QUOTA;
 
 // ----- R
 
-export const RADIO = "Radio";
+export const RADIO = "Radio"; // TODO
 export const RECEIVED = MSG.RECEIVED;
 export const RECEIVEDS = MSG.RECEIVEDS;
 export const RECENTS = MSG.RECENTS;
 export const RECORD = MSG.RECORD;
 export const RECORD_INVOICE = MSG.RECORD_INVOICE;
+export const RECOVER_PASSWORD = 'Recuperar Contraseña'; // TODO
 export const RECTIFIED = MSG.RECTIFIED;
 export const RECTIFY = MSG.RECTIFY;
 export const RECTIFY_INVOICE = MSG.RECTIFY_INVOICE;
@@ -247,7 +253,7 @@ export const REQUESTS = MSG.REQUESTS;
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
-export const RESUME_COSTS = "Resumen de costes";
+export const RESUME_COSTS = "Resumen de costes"; // TODO
 
 // ----- S
 
@@ -268,12 +274,12 @@ export const SHOW_FILE = MSG.SHOW_FILE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
-export const STATUS = "Estado";
+export const STATUS = "Estado"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;
 export const SURCHARGE = MSG.SURCHARGE;
-export const SURCHARGE_RE = 'R.E.';
+export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 
@@ -311,14 +317,15 @@ export const USERS = MSG.USERS;
 // ----- V
 
 export const VAT = MSG.VAT;
-export const VIEW_PAYROLL = "Ver nómina";
-export const VIEW_PAYROLLS = "Ver nóminas";
+export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
+export const VIEW_PAYROLL = "Ver nómina"; // TODO
+export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 
 // ----- W
 
 export const WEB = MSG.WEB;
 export const WITHHOLDING = MSG.WITHHOLDING;
-export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca';
+export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 
 // ----- X
 
@@ -328,26 +335,25 @@ export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca';
 
 
 //-------------DAYS
-const SUNDAY = "domingo";
-const MONDAY = "lunes";
-const TUESDAY = "martes";
-const WEDNESDAY = "miercoles";
-const THURSDAY = "jueves";
-const FRIDAY = "viernes";
-const SATURDAY = "sabado";
-export const DAYS = [SUNDAY, MONDAY, TUESDAY,WEDNESDAY, THURSDAY, FRIDAY, SATURDAY];
+export const SUNDAY = "domingo"; 
+export const MONDAY = "lunes";  
+export const TUESDAY = "martes"; 
+export const WEDNESDAY = "miercoles"; 
+export const THURSDAY = "jueves"; 
+export const FRIDAY = "viernes"; 
+export const SATURDAY = "sabado"; 
 
 //-------------MONTHS
-const JANUARY   = "enero";
-const FEBRUARY  = "febrero";
-const MARCH     = "marzo";
-const APRIL     = "abril";
-const MAY       = "mayo";
-const JUNE      = "junio";
-const JULY      = "julio";
-const AUGUST    = "agosto";
-const SEPTEMBER = "septiembre";
-const OCTOBER   = "octubre";
-const NOVEMBER  = "noviembre";
-const DECEMBER  = "diciembre";
-export const MONTHS = [JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER];
+export const JANUARY   = "enero"; 
+export const FEBRUARY  = "febrero"; 
+export const MARCH     = "marzo"; 
+export const APRIL     = "abril"; 
+export const MAY       = "mayo"; 
+export const JUNE      = "junio"; 
+export const JULY      = "julio"; 
+export const AUGUST    = "agosto"; 
+export const SEPTEMBER = "septiembre"; 
+export const OCTOBER   = "octubre"; 
+export const NOVEMBER  = "noviembre"; 
+export const DECEMBER  = "diciembre"; 
+

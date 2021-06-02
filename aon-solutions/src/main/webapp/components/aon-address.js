@@ -41,6 +41,14 @@ export class AonAddress extends AonElement {
     this.setAttribute(CONSTANT.TITLE, title);
   }
 
+  get readonly() {
+    return this.getAttribute(CONSTANT.READONLY);
+  }
+
+  set readonly(readonly) {
+    this.setAttribute(CONSTANT.READONLY, readonly);
+  }
+
 	constructor() {
 		super();
 	}
@@ -143,23 +151,27 @@ export class AonAddress extends AonElement {
     let address = this.getElement(this.ADDRESS);
     if (address) {
       address.value = value.address;
+      address.readonly = this.isReadonly();
       address.addEventListener(EVENT.CHANGE, () => this.updateAddress());
     }
 
     let zip = this.getElement(this.ZIP);
     if (zip) {
       zip.value = value.zip;
+      zip.readonly = this.isReadonly();
       zip.addEventListener(EVENT.CHANGE, () => this.updateZip());
     }
 
     let city = this.getElement(this.CITY);
     if (city) {
       city.value = value.city;
+      city.readonly = this.isReadonly();
       city.addEventListener(EVENT.CHANGE, () => this.updateCity());
     }
     let province = this.getElement(this.PROVINCE);
     if (province) {
       province.value = value.province;
+      province.readonly = this.isReadonly();
       province.addEventListener(EVENT.CHANGE, () => this.updateProvince());
     }
 
@@ -170,6 +182,7 @@ export class AonAddress extends AonElement {
           return { value: c.iso2, name: c.nombre };
         })
       );
+      country.readonly = this.isReadonly();
       country.value = value.country;
       country.addEventListener(EVENT.SELECT, () => this.updateCountry());
     }
@@ -222,6 +235,10 @@ export class AonAddress extends AonElement {
     }
   }
 
+  isReadonly() {
+    return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
+      && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
 }
 
 if(!window.customElements.get(TAG.AON_ADDRESS)){

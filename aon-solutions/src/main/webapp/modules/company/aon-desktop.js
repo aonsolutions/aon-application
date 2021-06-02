@@ -4,7 +4,7 @@ import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../servic
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { MSG } from '../../environments/environments.js';
+import { MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import '../../components/aon-icon.js';
@@ -151,9 +151,9 @@ export class AonDesktop extends AonElement {
 				img: 'assets/apps/bidoq.png',
 				fn: () =>{
 					getAccessBidoq().then(r => {
-						let data = JSON.parse(r);
-						if(data && data.datos && data.datos.ruta) {
-							open(data.datos.respuesta);
+						const {datos} = r;
+						if(datos && datos.ruta) {
+							open(datos.respuesta);
 						} else {
 							open('https://mispapeles.es/');
 						}
@@ -175,36 +175,36 @@ export class AonDesktop extends AonElement {
 
 		getTimeControl().then(r => {
 			aonDesktop.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
-			let aonHeader = document.getElementById('aonHeader');
+			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
 
-		let div = document.createElement('div');
+		let div = this.createElement(TAG.DIV);
 		div.style.marginLeft = '100px';
 		div.style.marginRight = '100px';
 		aonDesktop.setContent(div);
 
-		let banner = document.createElement('div');
+		let banner = this.createElement(TAG.DIV);
 		banner.style.marginTop = '20px';
 
-		let bannerImg = document.createElement('img');
+		let bannerImg = this.createElement(TAG.IMG);
 		bannerImg.src = 'assets/img/atp_img_publi.jpg';
 		bannerImg.style.width = '100%';
 		bannerImg.style.maxWidth = '1117px';
 		banner.appendChild(bannerImg);
-		let divSlide = document.createElement('div');
+		let divSlide = this.createElement(TAG.DIV);
 		divSlide.innerHTML = '<aon-stat></aon-stat>'
 		div.appendChild(divSlide);
 
 		div.appendChild(this.buildTitle('DISPONIBLES'));
 
-		let ul = document.createElement('ul');
+		let ul = this.createElement(TAG.UL);
 		ul.className = 'list-group';
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
-					let li = document.createElement('li');
+					let li = this.createElement(TAG.LI);
 					li.className = 'list-group-item aonAppLi';
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
@@ -212,23 +212,23 @@ export class AonDesktop extends AonElement {
 					li.addEventListener('click', () => {
 						this.appSelection(Apps[key].app);
 					});
-					let span = document.createElement('span');
+					let span = this.createElement(TAG.SPAN);
 					span.style.margin = '20px';
 
 					if(Apps[key].icon) {
 						span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="30px"></aon-icon>`;
 					} else {
-						let img = document.createElement('img');
+						let img = this.createElement(TAG.IMG);
 						img.style.width = '30px';
 						img.src = Apps[key].logo;
 						span.appendChild(img);
 					}
-					let span2 = document.createElement('span');
+					let span2 = this.createElement(TAG.SPAN);
 					span2.className = 'aonAppTitle';
 					span2.innerHTML = Apps[key].title;
 					span.appendChild(span2);
 
-					let buttons = document.createElement('span');
+					let buttons = this.createElement(TAG.SPAN);
 					buttons.style.position = 'absolute';
 					buttons.style.right = '10px';
 
@@ -243,7 +243,7 @@ export class AonDesktop extends AonElement {
 				}
 			}
   	} else {
-			let li = document.createElement('li');
+			let li = this.createElement(TAG.LI);
 			li.className = 'list-group-item aonAppLi';
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
@@ -251,17 +251,17 @@ export class AonDesktop extends AonElement {
 			li.addEventListener('click', () => {
 				rootPanel('<aon-configuration></aon-configuration>');
 			});
-			let span = document.createElement('span');
+			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
 			span.innerHTML = `<aon-icon icon="aon_app" color="black" size="30px"></aon-icon>`;
 
-			let span2 = document.createElement('span');
+			let span2 = this.createElement(TAG.SPAN);
 			span2.className = 'aonAppTitle';
 			span2.innerHTML = MSG.CONFIGURATION;
 			span.appendChild(span2);
 
-			let buttons = document.createElement('span');
+			let buttons = this.createElement(TAG.SPAN);
 			buttons.style.position = 'absolute';
 			buttons.style.right = '10px';
 
@@ -278,7 +278,7 @@ export class AonDesktop extends AonElement {
 	}
 
 	buildTitle(title) {
-		let div = document.createElement('div');
+		let div = this.createElement(TAG.DIV);
 		div.style.color = 'gray';
 		div.style.paddingTop = '20px';
 		div.style.paddingBottom = '20px';
@@ -318,13 +318,7 @@ export class AonDesktop extends AonElement {
 
 	development(title) {
 		let aonApplication = this.getApplication();
-		let d = document.getElementById(aonApplication.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(title);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		aonApplication.development(title);
 	}
 
 	isApp(app) {

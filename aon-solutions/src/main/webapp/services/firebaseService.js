@@ -1,32 +1,18 @@
+import { CONFIG_FB, EVENT, VAPIDKEY_FB } from "../environments/environments";
+
 export class FirebaseService {
-  VAPIDKEY;
-  config;
   TOKEN;
 
   constructor() {
-    this.VAPIDKEY =
-      "BCH91WxACVIpylkYRMj3xSpIfrzjz7Ixnctcj25BPMBZKSbGeKjJFIdaRsJGQ3F-SXVFGD0cr4outWLCFwemIkE";
-    this.config = {
-      apiKey: "AIzaSyDeUk7hHabedCzkA7qBoHRu43VC7N9CJOs",
-      authDomain: "aon-solutions-d69a4.firebaseapp.com",
-      databaseURL: "https://aon-solutions-d69a4.firebaseio.com",
-      projectId: "aon-solutions-d69a4",
-      storageBucket: "aon-solutions-d69a4.appspot.com",
-      messagingSenderId: "292041697338",
-      appId: "1:292041697338:web:81dbe6e044074cbc58ed03",
-      measurementId: "G-7MQDKLET0Y",
-    };
-
     this.init();
   }
 
   init() {
-    firebase.initializeApp(this.config);
+    if(firebase && !firebase.apps.length)
+      firebase.initializeApp(CONFIG_FB);
   }
 
-  getMessagingObject = () => {
-    return firebase.messaging();
-  };
+  getMessagingObject = () => firebase.messaging();
 
   getTokenFB = async () => {
     const messaging = this.getMessagingObject();
@@ -34,7 +20,7 @@ export class FirebaseService {
     let token = null;
     if (permission) {
       token = await messaging
-        .getToken({ vapidKey: this.VAPIDKEY })
+        .getToken({ vapidKey: VAPIDKEY_FB })
         .catch((err) => {
           console.warn("An error occurred while retrieving token. ", err);
           return null;
@@ -68,7 +54,7 @@ export class FirebaseService {
         title: payload.notification.title,
         body: payload.notification.body,
       };
-      window.dispatchEvent( new CustomEvent('receivedNotification', {detail:options}));
+      window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:options}));
       if (payload.data && payload.data.click_action_web) {
         options["click_action"] = payload.data.click_action_web;
       }
@@ -81,7 +67,5 @@ export class FirebaseService {
     }
   }
 
-  getFirebase() {
-    return firebase;
-  }
+  getFirebase = () => firebase;
 }

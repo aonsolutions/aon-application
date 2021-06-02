@@ -1,36 +1,49 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceAutoComplete {
@@ -190,7 +203,7 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
-			if(inv.getRegistryData().getId() == null) {
+			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
@@ -234,26 +247,110 @@ public class InvoiceAutoComplete {
 	};
 	
 	/**
-	 * Aseguramos el nombre del titular de la factura.
+	 * Aseguramos los detalles de la factura.
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
+		if((inv.getDetails() == null || inv.getDetails().size() == 0) && inv.getBreakdown() != null) {		
+			Account acc = ACCOUNTING.getAccount(ctx.getContext(), inv.getTediCategory());
+			LinkedList<InvoiceDetail> invoiceDetails = new LinkedList<>();
+			InvoiceBreakdown ret = inv.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
+			inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).forEach(b -> {
+				LinkedList<InvoiceTax> invoiceTax = new LinkedList<>();
+				if(ret != null) {
+					InvoiceTax it1 = new InvoiceTax()
+							.setDomain(inv.getDomain())
+							.setBase(b.getBase())
+							.setPercentage(ret.getPercentage())
+							.setQuota(b.getBase() * ret.getPercentage() / 100)
+							.setTaxType(TaxType.RETENTION)
+							.setWithholding(true)
+							.setWithholdingType(b.getWithholdingType());
+					invoiceTax.add(it1);
+				}
+				
+				InvoiceTax it = new InvoiceTax()
+						.setDomain(inv.getDomain())
+						.setTaxType(TaxType.VAT)
+						.setBase(b.getBase())
+						.setPercentage(b.getPercentage())
+						.setQuota(b.getQuota())
+						.setSurcharge(b.getSurcharge())
+						.setSurchargeQuota(b.getSurchargeQuota())
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						.setDeductiblePercent(100.0)
+						.setDeductibleQuota(b.getQuota());
+				invoiceTax.add(it);
+				
+				InvoiceDetail id = new InvoiceDetail()
+						.setAccount(acc.getId())
+						.setAccountCode(acc.getCode())
+						.setAccountDescription(acc.getDescription())
+						.setDescription(AonStringUtils.isBlank(acc.getDescription()) 
+								? "IVA " + b.getPercentage() : acc.getDescription())
+						.setDomain(inv.getDomain())
+						.setInvoice(inv)
+						.setInvoiceTaxes(invoiceTax)
+						.setPrice(b.getBase())
+						.setQuantity(1)
+						.setTaxableBase(b.getBase())
+						.setSource(InvoiceSource.TEDI)
+						.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
+				invoiceDetails.add(id);
+			});
+			inv.setDetails(invoiceDetails);
+		}
 		inv.getDetails().stream().forEach(detail -> {
 
 			detail.setDomain(inv.getDomain());
 			
+			InvoiceTax it = new InvoiceTax();
 			for(Integer i = 0;  i< detail.getInvoiceTaxes().size() ; i++ ) {
 				detail.getInvoiceTaxes().get(i).setDomain(inv.getDomain());
+				if(TaxType.VAT.equals(detail.getInvoiceTaxes().get(i).getTaxType()))
+					it = detail.getInvoiceTaxes().get(i);
 			}
 			
 			if(detail.getWorkPlace() == null) {
 				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
 			}
+			
 			if(detail.getAccount() == null && detail.getAccountCode() != null) {
 				Account acc = AccountDAO.get(ctx.getContext(), detail.getAccountCode());
 				if(acc != null && acc.getId() != null) {
 					detail.setAccount(acc.getId());
 					detail.setAccountDescription(acc.getDescription());
 				}
+			}
+						
+			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
+					&& (detail.getItem() == null || detail.getItem().getId() == null)
+					&& detail.getAccountCode() != null) {
+				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDescriptionProperty().eq(detail.getDescription()).or(f.getProductCodeProperty().eq(detail.getAccountCode())));
+				if(i.getId() == null) {
+					Product p = new Product();
+					p.setDomain(new Domain().setId(detail.getDomain()));
+					p.setCode(detail.getAccountCode());
+					p.setName(detail.getDescription());
+					p.setVat(new Tax()
+						.setName("IVA " + it.getPercentage())
+						.setDomain(detail.getDomain())
+						.setPercentage(it.getPercentage())
+						.setStartDate(new Date())
+						.setType(TaxType.VAT)
+						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+						.setSalesAccount(new Account())
+						.setPurchaseAccount(new Account()));
+					
+					i = new Item()
+							.setDomain(new Domain().setId(detail.getDomain()))
+							.setProduct(p)
+							.setDescription(detail.getDescription())
+							.setPrice(detail.getPrice());
+					
+					i = ItemDAO.save(ctx.getContext(), i);
+
+				}
+				detail.setItem(new OldItem().setId(i.getId()));
 			}
 		});
 	};
@@ -269,6 +366,8 @@ public class InvoiceAutoComplete {
 			if(finance.getFinanceStatus() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
+			
+			finance.setPayment(!inv.isSales());
 			
 			if(finance.getPayMethod() == null && finance.getPayMethodType() != null) {
 				PayMethod pm = PayMethodDAO.get(ctx.getContext(), f -> f.getTypeProperty().eq(finance.getPayMethodType().value()));
@@ -313,6 +412,19 @@ public class InvoiceAutoComplete {
 		}
 	};
 	
+
+	/**
+	 * Aseguramos la base imponible de la factura.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_TAXABLE_BASE = (inv,ctx) -> {
+		if(inv.getTaxableBase() == 0) {
+			Double taxableBase = inv.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
+					.mapToDouble(r -> r.getBase()).sum();
+			
+			inv.setTaxableBase(AonMathUtils.round(taxableBase));
+		}
+	};
+	
 	public static void completeInvoice(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
@@ -328,6 +440,7 @@ public class InvoiceAutoComplete {
 	}
 	
 	public static void completeInvoice2(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
+
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
@@ -342,6 +455,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_DETAILS)
 		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_FINANCES)
+		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 
 	}

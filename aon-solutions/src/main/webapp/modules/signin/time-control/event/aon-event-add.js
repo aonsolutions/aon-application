@@ -18,10 +18,8 @@ import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
 import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
-import "../../../../components/aon-card.js";
-import "../../../../components/aon-input.js";
-import "../../../../components/aon-date.js";
-import "../../../../components/aon-select.js";
+import { createFormEvent, createCardEvent } from "../../createComponent.js";
+import { createToolbar } from "../../../notification/createComponent.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -74,43 +72,16 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
+    
+    createToolbar({ id: this.TOOLBAR, type: ToolbarType.SECONDARY}, this);
 
-    const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
-    const aonCardCoordinate = ` <div class="aonCol-sm-12"><aon-card id="${this.id}CardCoordinate" title="Coordenadas" visible="false" flex="true"></aon-card> </div>`;
-    const form = `
-        <form id="${this.id}Form" action="#" onsubmit="return false;">
-            <div id="${this.id}Div">
-                <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}CardEvent" title="Datos del evento" flex="true"></aon-card>
-                </div>
-                ${aonCardCoordinate}
-            </div>
-        </form>`;
-
-    this.innerHTML = aonToolbar + form;
+    createFormEvent(this.id, this);
 
     this.applicationEl.removeToolbarOptions();
 
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
-    aonCardEvent.setContentHTML( /*html*/`
-            <div class="aonCol-sm-6 aonCol-md-3">
-             <aon-input name="name" id="name" description="Nombre" type="text"></aon-input>
-            </div>
-            <div class="aonCol-sm-6 aonCol-md-2">
-                <aon-select name="status" id="status" title="Estado"></aon-select>
-            </div>
-            <div class="aonCol-sm-6 aonCol-md-3">
-                <aon-select name="location" id="location" title="Ubicación"></aon-select>
-            </div>
-            <div class="aonCol-sm-6 aonCol-md-2">
-                <aon-date name="date" id="date" title="Fecha"></aon-date>
-            </div>
-            <div class="aonCol-sm-6 aonCol-md-2">
-              <aon-input name="time" id="time" description="Hora" type="time"></aon-input>
-            </div>
-            <aon-input name="id" id="id" type="text" visible="false"></aon-input>
-            <aon-input name="coordinates" id="coordinates" type="text" visible="false"></aon-input>
-        `);
+    createCardEvent(aonCardEvent.getContent());
+
     if (!this.isMobile()) this.paintViewMap();
   }
 
@@ -126,15 +97,17 @@ export class AonEventAdd extends AonElement {
       iframe.style.border = 0;
       iframe.style.height = "400px";
       iframe.style.width = "100%";
-      iframe.src = `https://maps.google.es/maps?q=${coordinates.latitude},${coordinates.longitude}&z=${zoom}&output=embed&hl=es`;
+      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${coordinates.latitude},${coordinates.longitude}&zoom=${zoom}&language=es`;
       aonMap.setContent(iframe);
       aonMap.setAttribute("visible", true);
     }
   }
 
   async initLists() {
-    await this.listStatus();
-    await this.listLocation();
+    await Promise.all([
+      this.listStatus(),
+      this.listLocation()
+    ]).catch(()=>null)
     this.setValues();
   }
 

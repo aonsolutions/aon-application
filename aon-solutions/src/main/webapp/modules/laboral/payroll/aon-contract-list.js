@@ -1,13 +1,15 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getContracts } from "../../../services/service.js";
-import { setDate } from "../../../services/utils.js";
+import { isEmptyObject, setDate } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { CONSTANT } from "../../../environments/environments.js";
+import { CONSTANT, EVENT } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 
 export class AonContractList extends AonElement {
   TABLE_ID;
+  searchFilter;
+  _contracts;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -30,7 +32,6 @@ export class AonContractList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this.applicationToolbarEl = this.getElement(this.applicationEl.TOOLBAR);
   }
 
   connectedCallback() {
@@ -44,33 +45,71 @@ export class AonContractList extends AonElement {
     this.appendChild(aonTable);
   }
 
-  async build() {
+  build() {
+    this.buildToobar();
+    this.getTable();
+  }
+
+  buildToobar() {
     this.applicationEl.removeToolbarOptions();
-    this.applicationToolbarEl.setAttribute("option", "Contratos");
+    this.applicationEl.addToolbarTitle("Contratos");
+    this.applicationEl.addSearchOption();
+    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+  }
+
+
+  async getTable(){
     this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
     this.applicationEl.stopLoader();
   }
 
-  async getTableDesk() {}
 
-  async getTableMobile() {
-    const aonCtaTable = this.getElement(this.TABLE_ID);
-    if (aonCtaTable) {
-      aonCtaTable.createAonDialog();
+  async getTableDesk() {
+    const aonTable = this.getElement(this.TABLE_ID);
+    if (aonTable) {
+      aonTable.removeColumns();
+      aonTable.addColumn("Nombre", "string", "name", "20%");
+      aonTable.addColumn("DNI/NIE", "string", "document", "10%");
+      aonTable.addColumn("Nª SS", "string", "ssNumber", "10%");
+      aonTable.addColumn("Tipo contrato", "string", "contractType", "10%");
+      aonTable.addColumn("Centro trabajo", "string", "workplaceName", "10%");
+      aonTable.addColumn("Categoría", "string", "agreementCategory", "10%");
+      aonTable.addColumn("Fecha inicio", "date", "startDate", "10%");
+      aonTable.addColumn("Opción", "fn", "option", "5%");
       try {
         const resp = await this.getData();
-        aonCtaTable.removeAllLi();
-        resp.map((res, idx) => {
-          let options = {
-            icon: "assignment",
-            title: ` ${res.surName} ${res.name}`,
-            subtitle: `(${res.document}) ${setDate(res.startDate)}`,
-          };
+        aonTable.removeRows();
+        resp.map((res) => {
+          let options = { ...res, name:`${res.surName} ${res.name}`}
           if (res.contractType) options.option = this.getOptions(res);
-          aonCtaTable.addLi(options, idx);
+          aonTable.addRow(options);
         });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  async getTableMobile() {
+    const aonTable = this.getElement(this.TABLE_ID);
+    if (aonTable) {
+      aonTable.createAonDialog();
+      try {
+        const resp = await this.getData();
+        if(resp){
+          aonTable.removeAllLi();
+          resp.map((res, idx) => {
+            let options = {
+              icon: "assignment",
+              title: ` ${res.surName} ${res.name}`,
+              subtitle: `(${res.document}) ${setDate(res.startDate)}`,
+            };
+            if (res.contractType) options.option = this.getOptions(res);
+            aonTable.addLi(options, idx);
+          });
+        }
       } catch (e) {
         console.log(e);
       }
@@ -97,30 +136,44 @@ export class AonContractList extends AonElement {
   async getData() {
     let data = [];
     try {
-      const contracts = await getContracts({ allEmployees: false });
-      contracts.map(
-        ({ employeeInfo, contractInfo: { startDate, contractType, completeCCC } }) => {
-          contractType = Number.parseInt(contractType);
-          if (contractType) {
-            employeeInfo.contractType = contractType;
-          }
-          if (startDate) {
-            employeeInfo.startDate = startDate;
-          }
-          if(completeCCC){
-            employeeInfo.regime = completeCCC.toString().substr(0,4);
-            employeeInfo.ctaCti = completeCCC.toString().substr(4);
-          } else {
-            employeeInfo.contractType = undefined;
-          }
+      if(this.searchFilter && !isEmptyObject(this._contracts)){
+        data = this._contracts.filter(({name, document, ssNumber})=> this.includeSearch(name) || this.includeSearch(document) || this.includeSearch(ssNumber));
+      } else {
+        const contracts = await getContracts({ allEmployees: false });
+        contracts.map(
+          ({ employeeInfo, contractInfo: { startDate, contractType, completeCCC, agreementCategory, workplaceName} }) => {
+            
+            contractType = Number.parseInt(contractType);
+            if (contractType)      employeeInfo.contractType = contractType;
+            if (startDate)         employeeInfo.startDate = startDate;
+            if (agreementCategory) employeeInfo.agreementCategory = agreementCategory;
+            if (workplaceName)     employeeInfo.workplaceName = workplaceName;
+            if (completeCCC) {
+              employeeInfo.regime = completeCCC.toString().substr(0,4);
+              employeeInfo.ctaCti = completeCCC.toString().substr(4);
+            } else {
+              employeeInfo.contractType = undefined;
+            }
 
-          data.push(employeeInfo);
-        }
-      );
+            data.push(employeeInfo);
+          }
+        );
+        this._contracts = data;
+      }
     } catch (e) {
       console.log(e);
     }
     return data;
   }
+
+  search(detail){
+    this.searchFilter = detail;
+    this.getTable();
+  }
+
+  includeSearch(str){
+    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
+  }
+
 }
 window.customElements.define("aon-contract-list", AonContractList);

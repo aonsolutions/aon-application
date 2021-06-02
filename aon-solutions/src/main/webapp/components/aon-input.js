@@ -1,7 +1,5 @@
 import { AonElement } from "./AonElement.js";
-
-import "./aon-icon-button.js";
-
+import { AonIconButton } from "./aon-icon-button.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS} from '../environments/environments.js'
 
 export class AonInput extends AonElement {
@@ -221,8 +219,14 @@ export class AonInput extends AonElement {
     label.style.width = "100%";
 
     let input = this.createElement(TAG.INPUT);
+
+    if(this.iOS()) {
+      label.classList.add(CSS.AON_INPUT_IOS)
+      input.classList.add(CSS.AON_INPUT_IOS);
+    }
+
     if(this.autocomplete) input.autocomplete =this.autocomplete;
-    input.required = true;
+    // input.required = true;
     input.id = this.INPUT;
     input.name = this.getAttribute(CONSTANT.NAME);
     input.style.textOverflow = "ellipsis";
@@ -281,11 +285,10 @@ export class AonInput extends AonElement {
 
     if (this.isTypeList()) {
       this.addIcon(MATERIAL_ICONS.ARROW_DROP_DOWN);
-
-      let span = this.createElement(TAG.SPAN);
-      span.id = this.SPAN;
-      span.style.width = "100%";
-      div.appendChild(span);
+      let sp = this.createElement(TAG.SPAN);
+      sp.id = this.SPAN;
+      sp.style.width = "100%";
+      div.appendChild(sp);
     }
   }
 
@@ -299,7 +302,11 @@ export class AonInput extends AonElement {
     iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
     iconLabel.id = this.ICON;
     iconLabel.setAttribute("for", this.INPUT);
-    iconLabel.innerHTML = `<aon-icon-button id="${this.ICON_LABEL}" icon="${icon}" noHover="true"></aon-icon-button>`;
+    let aonIconButton = new AonIconButton();
+    aonIconButton.id = this.ICON_LABEL;
+    aonIconButton.icon = icon;
+    aonIconButton.noHover = "true";
+    iconLabel.appendChild(aonIconButton);
 
     if (color) this.getElement(this.ICON_LABEL).color = color;
   }
@@ -309,12 +316,33 @@ export class AonInput extends AonElement {
     if (iconLabel) iconLabel.remove();
   }
 
+  getIcon(){
+    return this.getElement(this.ICON);
+  }
+
   addIconButton(icon, fn) {
     this.addIcon(icon);
     this.getElement(this.ICON_LABEL).addEventListener(EVENT.CLICK, (event) => {
       event.preventDefault();
       fn();
     });
+  }
+
+  addAonIcon(aonIcon){
+    let div = this.getElement(this.DIV);
+    let iconLabel = this.getElement(this.ICON);
+    if (!iconLabel) {
+      iconLabel = this.createElement(TAG.LABEL);
+      div.appendChild(iconLabel);
+    }
+    iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+    iconLabel.id = this.ICON;
+    iconLabel.setAttribute("for", this.INPUT);
+    let aonIconButton = new AonIconButton();
+    aonIconButton.id = this.ICON_LABEL;
+    aonIconButton.aonIcon = aonIcon;
+    aonIconButton.noHover = "true";
+    iconLabel.appendChild(aonIconButton);
   }
 
   buildOptions() {

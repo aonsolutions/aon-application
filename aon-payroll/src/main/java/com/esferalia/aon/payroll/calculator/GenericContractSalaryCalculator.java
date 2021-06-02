@@ -1280,6 +1280,31 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return results;
 	}
 	
+	protected List<ITimedResult<Double>> checkCra0055Results(IContractPayment contractPayment, List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) 
+	{
+		return
+		results.stream()
+		.filter( r -> r.getValue() != null )
+		.filter( r -> r.getValue() > 0.00  )
+		.filter( r -> {
+			try {
+				double quoteDays = 
+				expressionContext.eval(QUOTE_DAYS.getName(), r.getPeriod().getStart(), r.getPeriod().getEnd(), Number.class)
+				.stream()
+				.filter( q -> q.getValue() != null )
+				.filter( q -> q.getValue().doubleValue() > 0.00  )
+				.collect(Collectors.summingDouble( q -> q.getValue().doubleValue()))
+				;
+				
+				return quoteDays > 0.00;
+			} catch ( Exception e ) {
+				return false ;
+			}
+		})
+		.collect(Collectors.toList());
+		
+	}
+
 	protected void fixBaseCgcMin(ExpressionContext expressionContext, Date start, Date end,
 			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 			List<Period> offPeriods, Double rawCgcbase, Double cgcBase) throws AonException {
@@ -1401,12 +1426,16 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				}
 			} 
 			
+			
 			if ( !results.isEmpty() && 
 					contractPaymentType == PaymentType.CRA_0004 && 
 					contractPayment.getSalaryType() == SalaryType.SALARY ) {
 				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
 					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
-			}			
+			} else if (contractPaymentType == PaymentType.CRA_0055) {
+				results = checkCra0055Results(contractPayment, results, start, end, expressionContext);
+				
+			}
 			
 			double resultsDouble = results.stream().filter( r -> r.getValue() != null ).collect(Collectors.summingDouble( r -> r.getValue() ));		
 
@@ -1565,6 +1594,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			return expression.getScope() == ExpressionScope.AGREEMENT;
 		}
 		);
+	}
+
+	protected static boolean isPermanentPayment(IContractPayment payment, Period p) {
+		Date firstDayOfMonth = AonDateUtils.getMonthFirstDay(p.getStart());
+		Date lastDayOfMonth = AonDateUtils.getMonthLastDay(p.getEnd());
+		return Period.compare(payment.getStartDate(), firstDayOfMonth) < 0 
+				&& Period.compare(payment.getEndDate(), lastDayOfMonth) > 0;
 	}
 
 	// ---------------------------------------------------------------- Private

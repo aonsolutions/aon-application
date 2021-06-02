@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -388,16 +387,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), getToken(), asyncCallback);
-	}
-
-	public void setDigitalCertificates(List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), getToken(), digitalCertificateList, asyncCallback);
+	public void getDigitalCertificateTGSS(AsyncCallback<DigitalCertificate> asyncCallback) {
+		enterprisesServiceAsync.getDigitalCertificateTGSS(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void deleteDigitalCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
+	public void getDigitalCertificatesSEPE(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
+		enterprisesServiceAsync.getDigitalCertificatesSEPE(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void deleteDigitalCertificate(DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
 	}
 	
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
@@ -518,6 +517,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicaEnterpriseSettings(getCurrentDomainName(), getCurrentUser(), comunicaEnterpriseSettings, asyncCallback);
 	}
 	
+	public void getEnterpriseId(AsyncCallback<Integer> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseId(getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -531,5 +534,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

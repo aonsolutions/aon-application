@@ -1,5 +1,5 @@
 import {webkitRequestMobile} from '../services/service.js';
-import { CONSTANT, TAG } from "../environments/environments.js";
+import { TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL;

@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.DOMAIN;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.USER;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
@@ -35,13 +38,14 @@ public class RemunerationRecordServlet extends HttpServlet {
 		resp.setContentType(MimeType.MS_EXCEL.getName());
 		resp.setHeader("Content-disposition", "attachment; filename=\"RegistroRetributivo."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		
-		String domain = req.getServerName();
+		String domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName()) : req.getServerName();
+		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		String enterpriseIdStr = req.getParameter("enterpriseId");
 		String yearStr = req.getParameter("year");
 		Integer year = yearStr != null && !yearStr.isEmpty() ? Integer.parseInt(yearStr) : null;
 		Integer enterpriseId = enterpriseIdStr != null && !enterpriseIdStr.isEmpty() ? Integer.parseInt(enterpriseIdStr) : null; 
 		try (OutputStream os = resp.getOutputStream();) {
-			RemunerationRecord.generateExcel(os, domain, Optional.ofNullable(enterpriseId), year);
+			RemunerationRecord.generateExcel(os, domainName, user, Optional.ofNullable(enterpriseId), year);
 			resp.getOutputStream().flush();
 			resp.flushBuffer();
 		}

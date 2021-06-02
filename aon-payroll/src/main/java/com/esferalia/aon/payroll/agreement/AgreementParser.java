@@ -128,6 +128,7 @@ public class AgreementParser {
 		put("ANTIGUEDAD_2_QUINQUENIOS_MENSUAL", "A_QUINQUENIOS_2_MENSUAL");
 		put("ANTIGUEDAD_3_QUINQUENIOS_MENSUAL", "A_QUINQUENIOS_3_MENSUAL");
 		put("ANTIGUEDAD_4_QUINQUENIOS_MENSUAL", "A_QUINQUENIOS_4_MENSUAL");
+		put("ANTIGUEDAD_DIARIO", "ANTIGUEDAD_DIARIO");
 		put("ANTIGUEDAD_MENSUAL", "ANTIGUEDAD_MENSUAL");
 		put("APARTAMENTO_1_LLAVE_MENSUAL", "A_1LLAVE_MENSUAL");
 		put("APARTAMENTO_2_LLAVES_MENSUAL", "A_2LLAVES_MENSUAL");
@@ -158,6 +159,8 @@ public class AgreementParser {
 		put("AYUDA_VIVIENDA_TRAMO_1_ANUAL", "A_VIVIENDA_T1_ANUAL");
 		put("AYUDA_VIVIENDA_TRAMO_2_ANUAL", "A_VIVIENDA_T2_ANUAL");
 		put("BIENIOS_MENSUAL", "BIENIOS_MENSUAL");
+		put("BASE_DE_CALCULO_PARA_PLUSES_DIARIO", "BASE_CALCULO_PLUSES");
+		put("BASE_DE_CALCULO_PARA_PLUSES_MENSUAL", "BASE_CALCULO_PLUSES");
 		put("BOLSA_DE_ESTUDIOS_ANUAL", "B_ESTUDIOS_ANUAL");
 		put("BOLSA_DE_ESTUDIOS_MENSUAL", "B_ESTUDIOS_MENSUAL");
 		put("BOLSA_DE_VACACIONES_ANUAL", "B_VACACIONES_ANUAL");
@@ -203,6 +206,8 @@ public class AgreementParser {
 		put("COMPLEMENTO_NO_SALARIAL_DIARIO", "COMPL_NO_SALARIAL_DIA");
 		put("COMPLEMENTO_NO_SALARIAL_MENSUAL", "COMPL_NO_SALARIAL_MEN");
 		put("COMPLEMENTO_PERSONAL_DE_ANTIGUEDAD_MENSUAL", "IMPORTE_ANTIGUEDAD");
+		put("COMPLEMENTO_PERSONAL_DIARIO", "COMPLEMENTO_PERSONAL");
+		put("COMPLEMENTO_PERSONAL_MENSUAL", "COMPLEMENTO_PERSONAL");
 		put("COMPLEMENTO_PERSONAL_REPARTO_HORAS", "COMPL_PER_REPARTO_H");
 		put("COMPLEMENTO_POR_EXPERIENCIA_ANUAL", "COMPL_EXPERIENCIA");
 		put("COMPLEMENTO_POR_PROYECTO_ANUAL", "COMPL_PROYECTO");
@@ -245,6 +250,7 @@ public class AgreementParser {
 		put("DIETA_INTERNACIONAL_DIARIO", "DIETA_INTERNACIONAL");
 		put("DIETA_ITALIA_DIARIO", "DIETA_ITALIA");
 		put("DIETA_JORNADA_COMPLETA_DIARIO", "DIETA_JORN_COMPLETA");
+		put("DIETA_KILOMETRAJE_DIARIO", "DIETA_KILOMETRAJE");
 		put("DIETA_KILOMETRAJE_HORAS", "DIETA_KILOMETRAJE_H");
 		put("DIETA_MATERIALES_PELIGROSOS_DIARIO", "D_MAT_PELIGROSOS");
 		put("DIETA_MEDIA_JORNADA_DIARIO", "DIETA_MEDIA_JORN");
@@ -341,7 +347,8 @@ public class AgreementParser {
 		put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_MENSUAL", "P_E_VERANO_Y_NAVIDAD_M");
 		put("PAGA_EXTRA_MARZO_MENSUAL", "PAGA_EXTRA_MARZO");
 		put("PAGA_EXTRA_SIN_ANTIGUEDAD_MENSUAL", "P_EXTRA_SIN_ANTIGUEDAD_M");
-		put("PAGA_EXTRA_VERANO_MENSUAL", "P_E_VERANO_M");
+		put("PAGA_EXTRA_NAVIDAD_MENSUAL", "PAGA_EXTRA_NAVIDAD");
+		put("PAGA_EXTRA_VERANO_MENSUAL", "PAGA_EXTRA_VERANO");
 		put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
 		put("PENSIONES_MENSUAL", "PENSIONES_M");
 		put("PERNOCTA_Y_DESAYUNO_DIARIO", "PERNOC_DESAYUNO_D");
@@ -357,6 +364,8 @@ public class AgreementParser {
 		put("PLUS_CARENCIA_DE_INCENTIVOS_DIARIO", "PLUS_CARENCIA_INCENT_D");
 		put("PLUS_CARENCIA_DE_INCENTIVOS_MENSUAL", "PLUS_CARENCIA_INCENT_M");
 		put("PLUS_CENTRO_DE_SALUD_HORAS", "PLUS_CENT_SALUD_H");
+		put("PLUS_COMPENSACION_ANUAL", "PLUS_COMPENSACION");
+		put("PLUS_COMPENSACION_MENSUAL", "PLUS_COMPENSACION");
 		put("PLUS_CONVENIO_ANUAL", "PLUS_CONVENIO");
 		put("PLUS_CONVENIO_DIARIO", "PLUS_CONVENIO");
 		put("PLUS_CONVENIO_HORAS", "PLUS_CONVENIO_HORAS");
@@ -404,6 +413,7 @@ public class AgreementParser {
 		put("PLUS_FESTIVOS_ESPECIALES_DIARIO", "PLUS_FESTIVO_ESP");
 		put("PLUS_FESTIVO_NOCTURNO_DIARIO", "P_FESTIVO_NOCT_D");
 		put("PLUS_FIESTAS_PATRONALES_ANUAL", "P_FIESTAS_PATRONALES_A");
+		put("PLUS_FORMACION_ANUAL", "PLUS_FORMACION");
 		put("PLUS_FUNCIONAL_INSPECCION_CON_PERNOCA_ANUAL", "P_FUNC_INSPECCION_CP");
 		put("PLUS_FUNCIONAL_INSPECCION_SIN_PERNOCA_ANUAL", "P_FUNC_INSPECCION_SP");
 		put("PLUS_GERIATRICO_HORAS", "PLUS_GERIATRICO_H");
@@ -422,6 +432,8 @@ public class AgreementParser {
 		put("PLUS_NOCTURNIDAD_ANUAL", "P_NOCTURNIDAD_A");
 		put("PLUS_NOCTURNIDAD_CON_ANTIGUEDAD_MENSUAL", "P_NOCTURNIDAD_ANTIG");
 		put("PLUS_NOCTURNIDAD_DIARIO", "PLUS_NOCTURNIDAD");
+		put("PLUS_NOCTURNIDAD_HASTA_3_HORAS_DIARIO", "PLUS_NOCTURNIDAD_3H");
+		put("PLUS_NOCTURNIDAD_HASTA_3_HORAS_MENSUAL", "PLUS_NOCTURNIDAD_3H");
 		put("PLUS_NOCTURNIDAD_HORAS", "PLUS_NOCTURNIDAD_H");
 		put("PLUS_NOCTURNIDAD_MENSUAL", "PLUS_NOCTURNIDAD_M");
 		put("PLUS_NOCTURNIDAD_RVOG_ANUAL", "P_NOCT_RVOG_A");
@@ -436,6 +448,8 @@ public class AgreementParser {
 		put("PLUS_PENOSIDAD_3_CIRCUNSTANCIAS_DIARIO", "P_PENOSIDAD_3_CIRCUNS");
 		put("PLUS_PENOSIDAD_3_CIRCUNSTANCIAS_MENSUAL", "P_PENOSIDAD_3_CIRCUNS");
 		put("PLUS_PENOSIDAD_DIARIO", "PLUS_PENOSIDAD");
+		put("PLUS_PENOSIDAD_MEDIA_JORNADA_DIARIO", "PLUS_PENOSIDAD_MJ");
+		put("PLUS_PENOSIDAD_MEDIA_JORNADA_MENSUAL", "PLUS_PENOSIDAD_MJ");
 		put("PLUS_PENOSIDAD_MENSUAL", "PLUS_PENOSIDAD");
 		put("PLUS_PERMANENCIA_ANUAL", "PLUS_PERMANENCIA");
 		put("PLUS_PROLONGACION_DE_JORNADA_DIARIO", "P_PROLONGACION_J");
@@ -589,6 +603,7 @@ public class AgreementParser {
 		put("RETRIBUCION_FIJA_MENSUAL", "RETRIBUCION_FIJA_M");
 		put("RETRIBUCION_FIJA_RVOG_ANUAL", "RETRIB_FIJA_RVOG_A");
 		put("RETRIBUCION_FIJA_RVOG_MENSUAL", "RETRIB_FIJA_RVOG_M");
+		put("ROPA_TRABAJO_INTEMPERIE_ANUAL", "ROPA_TRABAJO_INTEMPERIE");
 		put("ROPA_TRABAJO_PERSONAL_MOSTRADOR_MENSUAL", "ROPA_TRABAJO_PERSONAL");
 		put("ROPA_TRABAJO_TRAJE_CHAQUETA_MENSUAL", "ROPA_TRABAJO_TRAJE");
 		put("SALARIO_12_PAGAS_MENSUAL", "SALARIO_12P_M");
@@ -618,16 +633,20 @@ public class AgreementParser {
 		put("SEGURO_COMPLEMENTARIO_ANUAL", "SEGURO_COMPLEMENT_A");
 		put("SEGURO_CONVENIO_ANUAL", "SEG_CONVENIO_ANUAL");
 		put("SEGURO_DE_ACCIDENTES_ANUAL", "SEGURO_DE_ACCIDENTES_A");
+		put("SEGURO_DE_ACCIDENTES_DE_TRABAJO_ANUAL", "SEGURO_ACC");
 		put("SEGURO_DE_MUERTE_ANUAL", "SEGURO_DE_MUERTE");
 		put("SEGURO_GRAN_INVALIDEZ_ANUAL", "SEGURO_GRAN_INVALIDEZ");
+		put("SEGURO_INVALIDEZ_PERMANENTE_O_MUERTE_POR_ACCIDENTE_LABORAL_ANUAL", "SEGURO_INVALIDEZ_PERMANENTE");
 		put("SERVICIO_EXTRA_AYDTE_COCINA_DIARIO", "S_E_AYDTE_COCINA_D");
 		put("SERVICIO_EXTRA_AYUDANTE_DIARIO", "S_E_AYUDANTE_D");
 		put("SERVICIO_EXTRA_CAMARERO_DIARIO", "S_E_CAMARERO_D");
 		put("SERVICIO_EXTRA_CAMARERO_FESTIVOS_DIARIO", "S_E_CAMARERO_FEST_D");
 		put("SERVICIO_EXTRA_COBRADOR_DIARIO", "S_E_COBRADOR_D");
 		put("SERVICIO_EXTRA_COCINERO_DIARIO", "S_E_COCINERO_D");
+		put("SERVICIO_EXTRA_HASTA_4_HORAS_DIARIO", "SERVICIO_EXTRA_H4H");
 		put("SERVICIO_EXTRA_LAVAPLATOS_DIARIO", "S_E_LAVAPLATOS_D");
 		put("SERVICIO_EXTRA_LAVAPLATOS_FESTIVOS_DIARIO", "S_E_LAVAPLATOS_FEST_D");
+		put("SERVICIO_EXTRA_MAS_4_HORAS_HORAS", "SERVICIO_EXTRA_M4H");
 		put("SERVICIO_EXTRA_MENSUAL", "SERVICIO_E_MENSUAL");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_A5_ANUAL", "SIST_INCENT_PROMO_A5_A");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_A5_MENSUAL", "S_INCENT_PROMO_A5_M");
@@ -648,6 +667,7 @@ public class AgreementParser {
 		put("TRANSPORTE_INTERNACIONAL__CENA_DIARIO", "TRANS_INTER_CENA");
 		put("TRANSPORTE_INTERNACIONAL__COMIDA_DIARIO", "TRANS_INTER_COMIDA");
 		put("TRANSPORTE_INTERNACIONAL__DESAYUNO_DIARIO", "TRANS_INTER_DESAY");
+		put("TRIENIOS_HORAS", "TRIENIOS_HORAS");
 		put("TRIENIOS_MENSUAL", "TRIENIOS_MENSUAL");
 		put("TURNICIDAD_ANUAL", "TURNICIDAD_ANUAL");
 		put("TURNICIDAD_DIARIO", "TURNICIDAD_DIARIO");
@@ -1031,6 +1051,9 @@ public class AgreementParser {
 	}
 	
 	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode) {
+		boolean hasWinterPay = false;
+		boolean hasSummerPay = false;
+		
 		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
 		// Variables not insert
 		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
@@ -1096,6 +1119,12 @@ public class AgreementParser {
 				String realName = variablesNameMap.getOrDefault(lvlData.getName(), null);
 				
 				if(null != realName) {
+					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && AonStringUtils.containsIgnoreCase(realName, "VERANO"))
+						hasSummerPay = true;
+					
+					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && AonStringUtils.containsIgnoreCase(realName, "NAVIDAD"))
+						hasWinterPay = true;
+					
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
 						.set(AGREEMENT_LEVEL_DATA.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_LEVEL_DATA.NAME, realName)
@@ -1150,7 +1179,7 @@ public class AgreementParser {
 				
 				Integer paymentConceptId = paymentConceptRecord.getId();
 				
-				dslContext.insertInto(AGREEMENT_PAYMENT)
+				AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 						.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
@@ -1162,65 +1191,129 @@ public class AgreementParser {
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.returning(AGREEMENT_PAYMENT.ID)
+						.fetchOne();
+				
+				Integer agreementPaymentId = agreementPaymentRecord.getId();
+				
+				// Summen agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/1")
+						.set(AGREEMENT_EXTRA.END_DATE, "30/6")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
 						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
+				
+				// Winter agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/7")
+						.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
+						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
+				
+				// BenefitsPLUS_FIESTAS_PATRONALES_ANUAL agreement extra
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "BENEFICIOS")) {
+					dslContext.insertInto(AGREEMENT_EXTRA)
+						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+						.set(AGREEMENT_EXTRA.START_DATE, "1/1 -1")
+						.set(AGREEMENT_EXTRA.END_DATE, "31/12 -1")
+						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/3")
+						.execute();
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)2)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+						.execute();
+				}
 			}
 		}
 		
 		Integer paymentConceptId = insertOrGetPaymentConceptExtraPay(dslContext);
+		AgreementPaymentRecord agreementPaymentRecord = null;
+		Integer agreementPaymentId = null;
 		
-		AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
-			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
-			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
-			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-			.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
-			.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
-			.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-			.returning(AGREEMENT_PAYMENT.ID)
-			.fetchOne();
+		if(!hasSummerPay) {
 		
-		Integer agreementPaymentId = agreementPaymentRecord.getId();
+			agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
+				.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
+				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
+				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+				.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+				.returning(AGREEMENT_PAYMENT.ID)
+				.fetchOne();
+			
+			agreementPaymentId = agreementPaymentRecord.getId();
+			
+			dslContext.insertInto(AGREEMENT_EXTRA)
+				.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+				.set(AGREEMENT_EXTRA.START_DATE, "1/1")
+				.set(AGREEMENT_EXTRA.END_DATE, "30/6")
+				.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
+				.execute();
+			
+		}
 		
-		dslContext.insertInto(AGREEMENT_EXTRA)
+		if(!hasWinterPay) {
+		
+			agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
+				.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
+				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
+				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+				.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+				.returning(AGREEMENT_PAYMENT.ID)
+				.fetchOne();
+			
+			agreementPaymentId = agreementPaymentRecord.getId();
+			
+			dslContext.insertInto(AGREEMENT_EXTRA)
 			.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 			.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-			.set(AGREEMENT_EXTRA.START_DATE, "1/1")
-			.set(AGREEMENT_EXTRA.END_DATE, "30/6")
-			.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
+			.set(AGREEMENT_EXTRA.START_DATE, "1/7")
+			.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+			.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 			.execute();
-		
-		agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
-			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
-			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
-			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
-			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-			.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
-			.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
-			.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
-			.returning(AGREEMENT_PAYMENT.ID)
-			.fetchOne();
-		
-		agreementPaymentId = agreementPaymentRecord.getId();
-		
-		dslContext.insertInto(AGREEMENT_EXTRA)
-		.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
-		.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
-		.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-		.set(AGREEMENT_EXTRA.START_DATE, "1/7")
-		.set(AGREEMENT_EXTRA.END_DATE, "31/12")
-		.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
-		.execute();
+			
+		}
 		
 		// Set agreement_data is ServiAgreement
 		

@@ -65,7 +65,7 @@ export class AonLocationAdd extends AonElement {
   }
 
 
-  async build() {
+  build() {
     this.paintView();
     this.buildToolbar();
   }
@@ -126,6 +126,7 @@ export class AonLocationAdd extends AonElement {
     iframe.frameborder = 0;
     iframe.style = "border:0;height: 400px;width: 100%;";
     if (data && data.latitude && data.longitude) {
+      iframe.loading = "lazy";
       iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
     } else {
       iframe = this.iframeOnload(iframe, zoom);

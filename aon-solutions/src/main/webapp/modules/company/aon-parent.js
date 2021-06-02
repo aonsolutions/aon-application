@@ -1,12 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-
+import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
 import './aon-desktop.js';
-
-import { MSG } from '../../environments/environments.js';
 
 export class AonParent extends AonElement {
 
@@ -29,7 +27,7 @@ export class AonParent extends AonElement {
 		});
 
 		let searchBox = this.getElement('aonHeaderSearchBox');
-		searchBox.addEventListener('keyup', () => {
+		searchBox.addEventListener(EVENT.KEYUP, () => {
 			this.init({value: searchBox.value});
 		});
 	}
@@ -176,8 +174,8 @@ export class AonParent extends AonElement {
 
  	build(companies) {
 		let aonParent = this.getElement('aonParentMain');
-		let content = document.createElement('div');
-		let div = document.createElement('div');
+		let content = this.createElement(TAG.DIV);
+		let div = this.createElement(TAG.DIV);
 		div.style.borderBottom = '1px solid #5f6368';
 		div.style.marginTop = '15px';
 		div.style.marginLeft = '20px';
@@ -187,7 +185,7 @@ export class AonParent extends AonElement {
 		div.innerHTML = 'EMPRESAS';
 		content.appendChild(div);
 
-		let ul = document.createElement('ul');
+		let ul = this.createElement('ul');
 		ul.className = 'list-group';
 		ul.style.marginLeft= '20px';
 		ul.style.marginRight= '20px';
@@ -200,39 +198,35 @@ export class AonParent extends AonElement {
 	}
 
 	buildLi(company, color) {
-		let li = document.createElement('li');
+		let li = this.createElement(TAG.LI);
 		li.className = 'aonLi';
 		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
-		li.addEventListener('click', () => {
+		li.addEventListener(EVENT.CLICK, () => {
 			this.companySelection(company);
 		});
 
-		li.addEventListener('mouseover', () => {
+		li.addEventListener(EVENT.MOUSEOVER, () => {
 			li.style.backgroundColor = '#ddd';
 		});
 
-		li.addEventListener('mouseleave', () => {
+		li.addEventListener(EVENT.MOUSELEAVE, () => {
 			li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		});
 
-		li.addEventListener('contextmenu', () => {
-
-		});
-
-		let span = document.createElement('span');
+		let span = this.createElement(TAG.SPAN);
 		span.className = 'aonLiSpan';
 
-		let i = document.createElement('i');
+		let i = this.createElement('i');
 		i.className = 'material-icons aonAvatar';
 
 		if(company.parent) i.innerHTML = 'apartment';
 		else if(company.shared) i.innerHTML = 'share';
 		else if(!company.active) i.innerHTML = 'domain_disabled';
 		else i.innerHTML = 'business';
-		let span2 = document.createElement('span');
+		let span2 = this.createElement(TAG.SPAN);
 		span2.innerHTML = company.name;
 
-		let span3 = document.createElement('span');
+		let span3 = this.createElement(TAG.SPAN);
 		span3.className = 'aonLiSpanSubtitle';
 		span3.innerHTML = company.document;
 
@@ -241,8 +235,8 @@ export class AonParent extends AonElement {
 		span.appendChild(span3);
 		li.appendChild(span);
 
-		let sp = document.createElement('span');
-		let i2 = document.createElement('i');
+		let sp = this.createElement(TAG.SPAN);
+		let i2 = this.createElement('i');
 		i2.className = 'material-icons aonAvatar';
 		i2.innerHTML = 'keyboard_arrow_right';
 		sp.appendChild(i2);
@@ -275,8 +269,6 @@ export class AonParent extends AonElement {
 
 		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
-
-		let aonLogo = this.getElement('aonLogo');
 
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);

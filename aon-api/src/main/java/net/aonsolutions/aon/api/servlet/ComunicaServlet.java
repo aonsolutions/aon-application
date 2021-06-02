@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,6 @@ import net.aonsolutions.aon.api.notification.NotificationRequest;
 import solutions.aon.aws.SES;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -124,7 +122,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Collection<Employee> getMovements(Domain domain, String login, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception {
+			  final String certificateType) throws Exception {
 		ArrayList<Employee> employees = new ArrayList<>();
 	
 		byte[] cert = certificateInputStream.readAllBytes();
@@ -148,7 +146,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Collection<Employee> ipfxnaf(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception {
+			  final String certificateType) throws Exception {
 			String nss = api.getParams().optString("nss");
 			if(nss.isEmpty()) {
 				throw new Exception("nss requerido");
@@ -160,7 +158,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Employee sendAlta(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception{
+			  final String certificateType) throws Exception{
 		validateAlta(api);
 		//first screen
 		String regimen = api.getData().optString("regimen");
@@ -207,7 +205,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Employee sendBaja(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception{
+			  final String certificateType) throws Exception{
 		//first screen
 		String regimen = api.getData().optString("regime");
 		String ctaCti = api.getData().optString("ctaCti");
@@ -237,7 +235,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Boolean movDelete(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception {
+			  final String certificateType) throws Exception {
 
 		//first screen
 		String situation = api.getData().getString("situation");
@@ -269,7 +267,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Employee nafxipf(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception{
+			  final String certificateType) throws Exception{
 		String ipf = api.getParams().optString("ipf");
 		String apellido1 =  api.getParams().optString("apellido1");
 		String apellido2 =  api.getParams().optString("apellido2");
@@ -277,7 +275,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Employee getEmployee(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception{
+			  final String certificateType) throws Exception{
 		String regimen = api.getParams().optString("regime");
 		String ccc =  api.getParams().optString("ctaCti");
 		String nss =  api.getParams().optString("nss");
@@ -286,7 +284,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	private Map<String, Object> updateContrato(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException, Exception {
+			  final String certificateType) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		List<String> errors = new ArrayList<String>();
 		map.put("grup_ctz_edit", false);

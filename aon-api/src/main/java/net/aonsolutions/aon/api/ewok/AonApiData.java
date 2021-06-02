@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class AonApiData implements Serializable{
@@ -20,6 +21,7 @@ public class AonApiData implements Serializable{
 	private JSONObject data;
 	private JSONObject params;
 	private String path;
+	private DomainUserRoles dur;
 	
 	public AonApiData() {
 		
@@ -78,5 +80,17 @@ public class AonApiData implements Serializable{
 		this.path = path;
 		return this;
 	}
+	
+
+	public DomainUserRoles getDur() {
+		return dur;
+	}
+
+	public AonApiData setDur(DomainUserRoles dur) {
+		this.dur = dur;
+		return this;
+	}
+	
+	
 	
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceBreakdown implements Serializable {
 
@@ -14,6 +15,7 @@ public class InvoiceBreakdown implements Serializable {
 	private double quota;
 	private double surcharge;
 	private double surchargeQuota;
+	private WithholdingType withholdingType;
 	
 	public TaxType getTaxType() {
 		return taxType;
@@ -60,6 +62,15 @@ public class InvoiceBreakdown implements Serializable {
 	}
 	public InvoiceBreakdown setSurchargeQuota(double surchargeQuota) {
 		this.surchargeQuota = surchargeQuota;
+		return this;
+	}
+	
+	public WithholdingType getWithholdingType() {
+		return withholdingType;
+	}
+	
+	public InvoiceBreakdown setWithholdingType(WithholdingType withholdingType) {
+		this.withholdingType = withholdingType;
 		return this;
 	}
 

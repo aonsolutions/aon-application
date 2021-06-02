@@ -14,6 +14,7 @@ import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CSS, CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { ToolbarType } from '../../models/enums.js';
+import { getCompanyActivities } from '../../services/companyService.js';
 import { getInvoiceAccounts } from '../../services/invoiceService.js';
 import { Paymethods } from '../../services/paymethod.js';
 import { getItems } from '../../services/productService.js';
@@ -58,6 +59,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 		// let form = this.createElement(TAG.FORM);
 		// this.appendChild(form);
 		let div = this.createElement(TAG.DIV);
+		div.className = CSS.AON_MOBILE_SUB_CONTENT;
 		this.appendChild(div);
 
     	let file = this.createElement(TAG.DIV);
@@ -162,7 +164,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			
 			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
-			
+			number.disabled = CONSTANT.TRUE;			
 		} else {
 
 			// ----- REFERENCE
@@ -241,7 +243,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 		category.id = this.CATEGORY;
 		category.title = MSG.CATEGORY;
 		category.autocomplete = true;
-		//category.readonly = this.invoice.isReadonly();
+		category.readonly = this.invoice.isReadonly();
 		category.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setCategory(category.value);
 			if(this.autosave) this.save();
@@ -280,6 +282,62 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 		card.style.width = '50%';
 		parent.appendChild(card);
 
+		let dialog = this.getElement(this.DIALOG_BLANK);
+		card.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => {
+			let div = this.createElement(TAG.DIV);
+			div.style.margin = '15px';
+			let button  = this.getElement(card.TITLE_SECTION2 + MSG.OPTIONS + 'Button');
+
+			// ----- VAT ACCRUAL PAYMENT - CRITERIO DE CAJA
+
+			let accrual = new AonSwitch();
+			accrual.id = this.VAT_ACCRUAL_PAYMENT;
+			accrual.title = MSG.VAT_ACCRUAL_PAYMENT;
+			accrual.readonly = this.invoice.isReadonly();
+			accrual.checked = this.invoice.isVatAccrualPayment();
+			div.appendChild(accrual);
+			accrual.addEventListener(EVENT.CHANGE, () => {
+				this.invoice.setVatAccrualPayment(accrual.checked);
+			});
+
+			// ----- SURCHARGE - RECARGO DE EQUIVALENCIA
+
+			let surcharge = new AonSwitch();
+			surcharge.id = this.SURCHARGE;
+			surcharge.title = MSG.SURCHARGE_RE;
+			surcharge.readonly = this.invoice.isReadonly();
+			surcharge.addEventListener(EVENT.CHANGE, () => {
+				this.invoice.setSurcharge(surcharge.checked);
+				this.reload();
+				if(this.autosave) this.save();
+			});
+			div.appendChild(surcharge);
+			surcharge.checked = this.invoice.isSurcharge();
+
+			// ----- REGIMEN ESPECIAL AGRARIO
+
+			let farmer = new AonSwitch();
+			farmer.id = this.WITHHOLDING_FARMER;
+			farmer.title = MSG.WITHHOLDING_FARMER;
+			farmer.readonly = this.invoice.isReadonly();
+			farmer.addEventListener(EVENT.CHANGE, () => {
+				this.invoice.setWithholdingFarmer(farmer.checked);
+				this.reload();
+				if(this.autosave) this.save();
+			});
+			div.appendChild(farmer);
+			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+				this.invoice.setWithholdingFarmer(false);
+				farmer.setDisabled(true);
+			}
+			farmer.checked = this.invoice.isWithholdingFarmer();
+	
+			const top  = button.getBoundingClientRect().top;
+			const left = button.getBoundingClientRect().left;
+			dialog.setContent(div, top, left);
+			dialog.open();
+		});
+
 		let table = new AonBasicTable();
 		table.id = this.TAX_TABLE;
 		card.setContent(table);
@@ -293,9 +351,10 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 		transaction.title = MSG.TRANSACTION_TYPE;
 		transaction.options = JSON.stringify(Transactions);
 		transaction.value = this.invoice.transaction;
-		// transaction.readonly = this.invoice.isReadonly();
+		transaction.readonly = this.invoice.isReadonly();
 		transaction.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setTransaction(transaction.value);
+			this.setFocus(transaction.id);
 			this.reload();
 			if(this.autosave) this.save();
 		});
@@ -303,44 +362,62 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 
 		table.addRow(); // ----- ROW 2
 
-		// ----- SURCHARGE
 
-		let surcharge = new AonSwitch();
-		surcharge.id = this.SURCHARGE;
-		surcharge.title = MSG.SURCHARGE_RE;
-		surcharge.readonly = this.invoice.isReadonly();
-		surcharge.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setSurcharge(surcharge.checked);
-			this.setFocus(surcharge.id);
-			this.reload();
+		// ----- ACTIVITY TYPE
+
+		let activity = new AonSelect();
+		activity.id = this.ACTIVITY;
+		activity.title = MSG.ACTIVITY;
+		activity.readonly = this.invoice.isReadonly();
+		activity.addEventListener(EVENT.SELECT, () => {
+			this.invoice.setActivity(activity.value);
 			if(this.autosave) this.save();
 		});
-		table.addCell(surcharge);
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-			this.invoice.setSurcharge(false);
-			surcharge.setDisabled(true);
-		}
-		surcharge.checked = this.invoice.isSurcharge();
+		table.addCell(activity, '2');
+		getCompanyActivities({}).then(activities => {
+			let acts = activities.map(a => { return {value: a.id, name: a.description}});
+			activity.options = JSON.stringify(acts);
+			activity.value = this.invoice.getActivity();
+		});
+
+		// ----- SURCHARGE
+
+		// let surcharge = new AonSwitch();
+		// surcharge.id = this.SURCHARGE;
+		// surcharge.title = MSG.SURCHARGE_RE;
+		// surcharge.readonly = this.invoice.isReadonly();
+		// surcharge.addEventListener(EVENT.CHANGE, () => {
+		// 	this.invoice.setSurcharge(surcharge.checked);
+		// 	this.setFocus(surcharge.id);
+		// 	this.reload();
+		// 	if(this.autosave) this.save();
+		// });
+		// table.addCell(surcharge);
+		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+		// 	this.invoice.setSurcharge(false);
+		// 	surcharge.setDisabled(true);
+		// }
+		// surcharge.checked = this.invoice.isSurcharge();
 		
 
 		// ----- WITHHOLDING FARMER
 
-		let farmer = new AonSwitch();
-		farmer.id = this.WITHHOLDING_FARMER;
-		farmer.title = MSG.WITHHOLDING_FARMER;
-		farmer.readonly = this.invoice.isReadonly();
-		farmer.addEventListener(EVENT.CHANGE, () => {
-			this.invoice.setWithholdingFarmer(farmer.checked);
-			this.setFocus(farmer.id);
-			this.reload();
-			if(this.autosave) this.save();
-		});
-		table.addCell(farmer);
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
-			this.invoice.setWithholdingFarmer(false);
-			farmer.setDisabled(true);
-		}
-		farmer.checked = this.invoice.isWithholdingFarmer();
+		// let farmer = new AonSwitch();
+		// farmer.id = this.WITHHOLDING_FARMER;
+		// farmer.title = MSG.WITHHOLDING_FARMER;
+		// farmer.readonly = this.invoice.isReadonly();
+		// farmer.addEventListener(EVENT.CHANGE, () => {
+		// 	this.invoice.setWithholdingFarmer(farmer.checked);
+		// 	this.setFocus(farmer.id);
+		// 	this.reload();
+		// 	if(this.autosave) this.save();
+		// });
+		// table.addCell(farmer);
+		// if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+		// 	this.invoice.setWithholdingFarmer(false);
+		// 	farmer.setDisabled(true);
+		// }
+		// farmer.checked = this.invoice.isWithholdingFarmer();
 
 		// ----- TAXES
 		
@@ -379,7 +456,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			addButton.icon = MATERIAL_ICONS.ADD;
 			
 			addButton.addEventListener('click', () => {
-				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
+				this.setFocus(this.TAX_PERCENTAGE + this.invoice.taxes.length);
 				this.invoice.addTax();
 				this.reload();
 				if(this.autosave) this.save();

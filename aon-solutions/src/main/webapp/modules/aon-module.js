@@ -1,12 +1,9 @@
 import { AonElement } from '../components/AonElement.js';
 import { rootPanel } from '../services/gwtLoader.js';
-
-import { getToken, saveAuthDevice , getCompanies, getUser, getUserAppRole } from '../services/service.js';
+import { getToken , getCompanies, getUser, getUserAppRole } from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
-
-import { EVENT, TAG } from '../environments/environments.js'; 
-
+import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
 
 export class AonModule extends AonElement {

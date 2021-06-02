@@ -22,8 +22,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.jooq.tables.records.RaddinfoRecord;
-import com.esferalia.aon.jooq.tables.records.RattachRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
 public class JooqDigitalCertificate {
@@ -42,96 +40,54 @@ public class JooqDigitalCertificate {
 	// 													GET DIGITAL CERTIFICATES
 	// --------------------------------------------------------------------------------------------------------------------------------------
 	
-	public static List<DigitalCertificate> getDigitalCertificates(Connection conn, Integer domainId, Integer userId) {
-		return getDigitalCertificatesDB(DSL.using(conn, getDefaultSettings()), domainId, userId);
-	}
-
-	private static List<DigitalCertificate> getDigitalCertificatesDB(DSLContext dslContext, Integer domainId, Integer userId) {
-		System.out.println("getDigitalCertificatesDB() -> Domain ID : " + domainId + " User ID : " + userId);
+	public static DigitalCertificate getDigitalCertificateTGSS(Connection connection, Integer domainId, Integer userId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		
-		List<DigitalCertificate> digitalCertificates = new ArrayList<DigitalCertificate>();
-		
-		// TGSS CERTIFICATE
-		checkOrCreateTGSS(dslContext, digitalCertificates, domainId, userId);
-		
-		// SEPE CERTIFICATE
-		checkOrCreateSEPE(dslContext, digitalCertificates, domainId, userId);
-		
-		return digitalCertificates;
-	}
-
-	private static void checkOrCreateTGSS(DSLContext dslContext, List<DigitalCertificate> digitalCertificates, Integer domainId, Integer userId) {
 		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
 		Integer registryUserId = userRecord.get(USER.REGISTRY);
 		
-		// If null create registry
-		if(null == registryUserId)
-			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
-		
-		Result<Record> employeeCertificateRecords = dslContext.select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(registryUserId))
-				.and(RATTACH.TYPE.eq((byte)4))
-				.fetch();
-		
-		Record tgssDigitalCertificatePasswordRecord = dslContext.select().from(RADDINFO)
-				.where(RADDINFO.REGISTRY.eq(registryUserId))
-				.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-				.fetchOne();
-		
-		if(employeeCertificateRecords.isNotEmpty()) {
-			Record employeeCertificateRecord = employeeCertificateRecords.get(0);
+		if(null != registryUserId) {
+			Result<Record> employeeCertificateRecords = dslContext.select().from(RATTACH)
+					.where(RATTACH.REGISTRY.eq(registryUserId))
+					.and(RATTACH.TYPE.eq((byte)4))
+					.fetch();
 			
-			insertTgssDigitalCertiticate(dslContext, registryUserId, employeeCertificateRecord, tgssDigitalCertificatePasswordRecord, digitalCertificates);
+			Result<Record> tgssDigitalCertificatePasswordRecords = dslContext.select().from(RADDINFO)
+					.where(RADDINFO.REGISTRY.eq(registryUserId))
+					.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
+					.fetch();
+			
+			if(employeeCertificateRecords.isNotEmpty()) {
 				
-		} else {
-			 RattachRecord employeeCertificateRecord = dslContext.insertInto(RATTACH)
-				.set(RATTACH.DOMAIN, domainId)
-				.set(RATTACH.REGISTRY, registryUserId)
-				.set(RATTACH.MIMETYPE, (byte)36)
-				.set(RATTACH.DATA, DSL.castNull(RATTACH.DATA))
-				.set(RATTACH.TYPE, (byte)4)
-				.returning()
-				.fetchOne();
-			 
-			   RaddinfoRecord employeeCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryUserId)
-					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
-					.set(RADDINFO.VALUE, "")
-					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-					.returning()
-					.fetchOne();
-			 
-			 insertTgssDigitalCertiticate(dslContext, registryUserId, employeeCertificateRecord, employeeCertificatePasswordRecord, digitalCertificates);
+				Record employeeCertificateRecord = employeeCertificateRecords.get(0);
+				java.util.Date updateDate = null == employeeCertificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(employeeCertificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+				
+				DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
+				tgssDigitalCertiticate.setRattachId(employeeCertificateRecord.get(RATTACH.ID));
+				tgssDigitalCertiticate.setType(CertificateType.TGSS);
+				tgssDigitalCertiticate.setDescription(employeeCertificateRecord.get(RATTACH.DESCRIPTION));
+				tgssDigitalCertiticate.setConfidential(employeeCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
+				tgssDigitalCertiticate.setHasCertificate(null == employeeCertificateRecord.get(RATTACH.DATA) ? false : true);
+				tgssDigitalCertiticate.setUpdateDate(updateDate);
 			
-		}		
-		
-	}
-	
-	private static void insertTgssDigitalCertiticate(DSLContext dslContext, Integer registryUserId, Record employeeCertificateRecord, Record employeeCertificatePasswordRecord, List<DigitalCertificate> digitalCertificates) {
-		java.util.Date updateDate = null == employeeCertificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(employeeCertificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-		
-		DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
-		tgssDigitalCertiticate.setRattachId(employeeCertificateRecord.get(RATTACH.ID));
-		tgssDigitalCertiticate.setType(CertificateType.TGSS);
-		tgssDigitalCertiticate.setDescription(employeeCertificateRecord.get(RATTACH.DESCRIPTION));
-		tgssDigitalCertiticate.setConfidential(employeeCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
-		tgssDigitalCertiticate.setHasCertificate(null == employeeCertificateRecord.get(RATTACH.DATA) ? false : true);
-		tgssDigitalCertiticate.setUpdateDate(updateDate);
-	
-		
-		
-		if(null != employeeCertificatePasswordRecord) {
-			tgssDigitalCertiticate.setPassword(employeeCertificatePasswordRecord.get(RADDINFO.VALUE));
-			tgssDigitalCertiticate.setRaddinfoId(employeeCertificatePasswordRecord.get(RADDINFO.ID));
+				if(null != tgssDigitalCertificatePasswordRecords && tgssDigitalCertificatePasswordRecords.isNotEmpty()) {
+					Record tgssDigitalCertificatePasswordRecord = tgssDigitalCertificatePasswordRecords.get(0);
+					tgssDigitalCertiticate.setPassword(tgssDigitalCertificatePasswordRecord.get(RADDINFO.VALUE));
+					tgssDigitalCertiticate.setRaddinfoId(tgssDigitalCertificatePasswordRecord.get(RADDINFO.ID));
+				}
+				
+				return tgssDigitalCertiticate;
+			}
 		}
 		
-	
-		// Add certificate to list
-		digitalCertificates.add(tgssDigitalCertiticate);
+		return null;
 	}
 
-	private static void checkOrCreateSEPE(DSLContext dslContext, List<DigitalCertificate> digitalCertificates, Integer domainId, Integer userId) {
+	public static List<DigitalCertificate> getDigitalCertificatesSEPE(Connection connection, Integer domainId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		List<DigitalCertificate> digitalCertificates = new ArrayList<DigitalCertificate>();
+		
 		Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
 				.where(ENTERPRISE.DOMAIN.eq(domainId))
 				.fetchOne(ENTERPRISE.REGISTRY);
@@ -143,59 +99,178 @@ public class JooqDigitalCertificate {
 		
 		if(enterpriseCertificateRecords.isNotEmpty()) {
 			
-			Record enterpriseCertificatePasswordRecord = dslContext.select().from(RADDINFO)
-					.where(RADDINFO.REGISTRY.eq(registryEntepriseId))
-					.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-					.fetchOne();
-			
 			for(Record enterpriseCertificateRecord : enterpriseCertificateRecords) {
-				insertSepeDigitalCertiticate(dslContext, registryEntepriseId, enterpriseCertificateRecord, enterpriseCertificatePasswordRecord, digitalCertificates);
-			}
+				List<Record> enterpriseCertificatePasswordRecords = dslContext.select().from(RADDINFO)
+						.where(RADDINFO.REGISTRY.eq(registryEntepriseId))
+						.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
+						.fetch();
 			
-		} else {
-			 RattachRecord enterpriseCertificateRecord = dslContext.insertInto(RATTACH)
-				.set(RATTACH.DOMAIN, domainId)
-				.set(RATTACH.REGISTRY, registryEntepriseId)
-				.set(RATTACH.MIMETYPE, (byte)32)
-				.set(RATTACH.DATA, DSL.castNull(RATTACH.DATA))
-				.set(RATTACH.TYPE, (byte)4)
-				.returning()
-				.fetchOne();
-			 
-			 RaddinfoRecord enterpriseCertificatePasswordRecord = dslContext.insertInto(RADDINFO)
-				.set(RADDINFO.DOMAIN, domainId)
-				.set(RADDINFO.REGISTRY, registryEntepriseId)
-				.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
-				.set(RADDINFO.VALUE, "")
-				.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-				.returning()
-				.fetchOne();
-			 
-			 insertSepeDigitalCertiticate(dslContext, registryEntepriseId, enterpriseCertificateRecord, enterpriseCertificatePasswordRecord, digitalCertificates);
-			 
+				Record enterpriseCertificatePasswordRecord = null;
+				if(!enterpriseCertificatePasswordRecords.isEmpty())
+					enterpriseCertificatePasswordRecord = enterpriseCertificatePasswordRecords.get(0);
+			
+				java.util.Date updateDate = null == enterpriseCertificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(enterpriseCertificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+				
+				DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
+				tgssDigitalCertiticate.setRattachId(enterpriseCertificateRecord.get(RATTACH.ID));
+				tgssDigitalCertiticate.setType(CertificateType.SEPE);
+				tgssDigitalCertiticate.setDescription(enterpriseCertificateRecord.get(RATTACH.DESCRIPTION));
+				tgssDigitalCertiticate.setConfidential(enterpriseCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
+				tgssDigitalCertiticate.setHasCertificate(null == enterpriseCertificateRecord.get(RATTACH.DATA) ? false : true);
+				tgssDigitalCertiticate.setUpdateDate(updateDate);
+				
+				if(null != enterpriseCertificatePasswordRecord) {
+					tgssDigitalCertiticate.setPassword(enterpriseCertificatePasswordRecord.get(RADDINFO.VALUE));
+					tgssDigitalCertiticate.setRaddinfoId(enterpriseCertificatePasswordRecord.get(RADDINFO.ID));
+				}
+			
+				// Add certificate to list
+				digitalCertificates.add(tgssDigitalCertiticate);
+			}
+		}
+		
+		return digitalCertificates;
+	}
+	
+	// --------------------------------------------------------------------------------------------------------------------------------------
+	// 													DELETE DIGITAL CERTIFICATES
+	// --------------------------------------------------------------------------------------------------------------------------------------
+
+	public static void deleteDigitalCertificate(Connection conn, Integer domainId, DigitalCertificate digitalCertificate) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
+		dslContext.delete(RATTACH)
+			.where(RATTACH.ID.eq(digitalCertificate.getRattachId()))
+			.execute();
+	
+		dslContext.delete(RADDINFO)
+			.where(RADDINFO.ID.eq(digitalCertificate.getRaddinfoId()))
+			.execute();
+	}
+
+	// --------------------------------------------------------------------------------------------------------------------------------------
+	// 													SET DIGITAL CERTIFICATES (CERTIFICATE SERVLET)
+	// --------------------------------------------------------------------------------------------------------------------------------------
+
+	public static void setDigitalCertificateData(String domainName, String userLogin, byte mimeType, String fileName, CertificateType certificateType, byte[] data, String password, Integer rattachId, Integer raddinfoId) {
+		
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			// TGSS CERTIFICATE
+			if(certificateType == CertificateType.TGSS)
+				updateCreateTGSSCertificate(dslContext, domainId, userId, mimeType, fileName, data, password, rattachId, raddinfoId);
+			
+			// SEPE CERTIFICATE
+			if(certificateType == CertificateType.SEPE)
+				updateCreateSEPECertificate(dslContext, domainId, mimeType, fileName, data, password, rattachId, raddinfoId);
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
 		
 	}
-	
-	private static void insertSepeDigitalCertiticate(DSLContext dslContext, Integer registryEnterpriseId, Record enterpriseCertificateRecord, Record enterpriseCertificatePasswordRecord, List<DigitalCertificate> digitalCertificates) {
-		java.util.Date updateDate = null == enterpriseCertificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(enterpriseCertificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+
+	private static void updateCreateTGSSCertificate(DSLContext dslContext, Integer domainId, Integer userId, byte mimeType, String fileName, byte[] data, String password, Integer rattachId, Integer raddinfoId) {
+		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+		Integer registryUserId = userRecord.get(USER.REGISTRY);
 		
+		// User Registry
+		if(null == registryUserId)
+			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
 		
-		DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
-		tgssDigitalCertiticate.setRattachId(enterpriseCertificateRecord.get(RATTACH.ID));
-		tgssDigitalCertiticate.setType(CertificateType.SEPE);
-		tgssDigitalCertiticate.setDescription(enterpriseCertificateRecord.get(RATTACH.DESCRIPTION));
-		tgssDigitalCertiticate.setConfidential(enterpriseCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
-		tgssDigitalCertiticate.setHasCertificate(null == enterpriseCertificateRecord.get(RATTACH.DATA) ? false : true);
-		tgssDigitalCertiticate.setUpdateDate(updateDate);
+		// RAddInfo Password
+		if(null == raddinfoId)
+			dslContext.insertInto(RADDINFO)
+					.set(RADDINFO.DOMAIN, domainId)
+					.set(RADDINFO.REGISTRY, registryUserId)
+					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+					.set(RADDINFO.VALUE, password)
+					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+					.execute();
+		else
+			dslContext.update(RADDINFO)
+				.set(RADDINFO.VALUE, password)
+				.where(RADDINFO.ID.eq(raddinfoId))
+				.execute();
 		
-		if(null != enterpriseCertificatePasswordRecord) {
-			tgssDigitalCertiticate.setPassword(enterpriseCertificatePasswordRecord.get(RADDINFO.VALUE));
-			tgssDigitalCertiticate.setRaddinfoId(enterpriseCertificatePasswordRecord.get(RADDINFO.ID));
-		}
-	
-		// Add certificate to list
-		digitalCertificates.add(tgssDigitalCertiticate);
+		// RAttach Data	
+		if(null == rattachId)
+			dslContext.insertInto(RATTACH)
+				.set(RATTACH.DOMAIN, domainId)
+				.set(RATTACH.REGISTRY, registryUserId)
+				.set(RATTACH.MIMETYPE, (byte)36)
+				.set(RATTACH.TYPE, (byte)4)
+				.set(RATTACH.DATA, data)
+				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+				.set(RATTACH.DESCRIPTION, fileName)
+				.execute();
+		else
+			if(null != data && data.length > 0)
+				dslContext.update(RATTACH)
+					.set(RATTACH.DATA, data)
+					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(RATTACH.DESCRIPTION, fileName)
+					.where(RATTACH.ID.eq(rattachId))
+					.execute();
+			else
+				dslContext.update(RATTACH)
+					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(RATTACH.DESCRIPTION, fileName)
+					.where(RATTACH.ID.eq(rattachId))
+					.execute();
+	}
+
+	private static void updateCreateSEPECertificate(DSLContext dslContext, Integer domainId, byte mimeType, String fileName, byte[] data, String password, Integer rattachId, Integer raddinfoId) {
+		Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
+				.where(ENTERPRISE.DOMAIN.eq(domainId))
+				.fetchOne(ENTERPRISE.REGISTRY);
+		
+		// RAddInfo Password
+		if(null == raddinfoId)
+			dslContext.insertInto(RADDINFO)
+					.set(RADDINFO.DOMAIN, domainId)
+					.set(RADDINFO.REGISTRY, registryEntepriseId)
+					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+					.set(RADDINFO.VALUE, password)
+					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+					.execute();
+		else
+			dslContext.update(RADDINFO)
+				.set(RADDINFO.VALUE, password)
+				.where(RADDINFO.ID.eq(raddinfoId))
+				.execute();
+		
+		// RAttach Data	
+		if(null == rattachId)
+			dslContext.insertInto(RATTACH)
+				.set(RATTACH.DOMAIN, domainId)
+				.set(RATTACH.REGISTRY, registryEntepriseId)
+				.set(RATTACH.MIMETYPE, (byte)36)
+				.set(RATTACH.TYPE, (byte)4)
+				.set(RATTACH.DATA, data)
+				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+				.set(RATTACH.DESCRIPTION, fileName)
+				.execute();
+		else
+			if(null != data)
+				dslContext.update(RATTACH)
+					.set(RATTACH.DATA, data)
+					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(RATTACH.DESCRIPTION, fileName)
+					.where(RATTACH.ID.eq(rattachId))
+					.execute();
+			else
+				dslContext.update(RATTACH)
+					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(RATTACH.DESCRIPTION, fileName)
+					.where(RATTACH.ID.eq(rattachId))
+					.execute();
 	}
 	
 	private static Integer createRegistryForUser(DSLContext dslContext, Record userRecord, Integer domainId) {
@@ -216,178 +291,6 @@ public class JooqDigitalCertificate {
 			.execute();
 		
 		return registryUserId;
-	}
-
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// 													SET DIGITAL CERTIFICATES
-	// --------------------------------------------------------------------------------------------------------------------------------------
-
-	public static void setDigitalCertificates(Connection conn, Integer domainId, Integer userId, List<DigitalCertificate> digitalCertificateList) {
-		setDigitalCertificatesDB(DSL.using(conn, getDefaultSettings()), domainId, userId, digitalCertificateList);
-	}
-
-	private static void setDigitalCertificatesDB(DSLContext dslContext, Integer domainId, Integer userId, List<DigitalCertificate> digitalCertificateList) {
-		System.out.println("setDigitalCertificatesDB() -> Domain ID : " + domainId + " User ID : " + userId);
-		
-		for(DigitalCertificate digitalCertificate : digitalCertificateList) {
-			// TGSS CERTIFICATE
-			if(digitalCertificate.getType() == CertificateType.TGSS)
-				updateTGSSCertificate(dslContext, domainId, userId, digitalCertificate);
-			
-			// SEPE CERTIFICATE
-			
-			if(digitalCertificate.getType() == CertificateType.SEPE)
-				updateSEPECertificate(dslContext, domainId, userId, digitalCertificate);
-				
-		}
-	}
-
-	private static void updateTGSSCertificate(DSLContext dslContext, Integer domainId, Integer userId, DigitalCertificate digitalCertificate) {
-		Timestamp modificationDate = new Timestamp(new java.util.Date().getTime());
-		
-		dslContext.update(RATTACH)
-			.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
-			.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
-			.set(RATTACH.MODIFICATION_DATE, modificationDate)
-			.where(RATTACH.ID.eq(digitalCertificate.getRattachId()))
-			.execute();
-		
-		dslContext.update(RADDINFO)
-		.set(RADDINFO.VALUE, digitalCertificate.getPassword())
-		.where(RADDINFO.ID.eq(digitalCertificate.getRaddinfoId()))
-		.execute();
-	}
-	
-	private static void updateSEPECertificate(DSLContext dslContext, Integer domainId, Integer userId, DigitalCertificate digitalCertificate) {
-		Timestamp modificationDate = new Timestamp(new java.util.Date().getTime());
-		
-		dslContext.update(RATTACH)
-			.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
-			.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
-			.set(RATTACH.MODIFICATION_DATE, modificationDate)
-			.where(RATTACH.ID.eq(digitalCertificate.getRattachId()))
-			.execute();
-		
-		dslContext.update(RADDINFO)
-			.set(RADDINFO.VALUE, digitalCertificate.getPassword())
-			.where(RADDINFO.ID.eq(digitalCertificate.getRaddinfoId()))
-			.execute();
-		
-	}
-	
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// 													DELETE DIGITAL CERTIFICATES
-	// --------------------------------------------------------------------------------------------------------------------------------------
-
-	public static void deleteDigitalCertificate(Connection conn, Integer domainId, Integer userId, CertificateType type) {
-		deleteDigitalCertificateDB(DSL.using(conn, getDefaultSettings()), domainId, userId, type);
-	}
-
-	private static void deleteDigitalCertificateDB(DSLContext dslContext, Integer domainId, Integer userId, CertificateType type) {
-		// TGSS CERTIFICATE
-		if(type == CertificateType.TGSS)
-			deleteTGSSCertificate(dslContext, userId);
-			
-		// SEPE CERTIFICATE
-		if(type == CertificateType.SEPE)
-			deleteSEPECertificate(dslContext, domainId);
-	
-	}
-	
-	private static void deleteTGSSCertificate(DSLContext dslContext, Integer userId) {
-		Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
-		Integer registryUserId = userRecord.get(USER.REGISTRY);
-		
-		dslContext.delete(RATTACH)
-			.where(RATTACH.ID.eq(
-					dslContext.select(RATTACH.ID).from(RATTACH)
-						.where(RATTACH.REGISTRY.eq(registryUserId))
-						.and(RATTACH.TYPE.eq((byte)4))
-						.fetchOne(RATTACH.ID)))
-			.execute();
-		
-		dslContext.delete(RADDINFO)
-		.where(RADDINFO.ID.eq(
-				dslContext.select(RADDINFO.ID).from(RADDINFO)
-					.where(RADDINFO.REGISTRY.eq(registryUserId))
-					.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-					.fetchOne(RADDINFO.ID)))
-		.execute();
-		
-	}
-	
-	private static void deleteSEPECertificate(DSLContext dslContext, Integer domainId) {
-		Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
-				.where(ENTERPRISE.DOMAIN.eq(domainId))
-				.fetchOne(ENTERPRISE.REGISTRY);
-		
-		dslContext.delete(RATTACH)
-			.where(RATTACH.ID.eq(
-					dslContext.select(RATTACH.ID).from(RATTACH)
-						.where(RATTACH.REGISTRY.eq(registryEntepriseId))
-						.and(RATTACH.TYPE.eq((byte)4))
-						.fetchOne(RATTACH.ID)))
-			.execute();
-		
-		dslContext.delete(RADDINFO)
-			.where(RADDINFO.ID.eq(
-					dslContext.select(RADDINFO.ID).from(RADDINFO)
-						.where(RADDINFO.REGISTRY.eq(registryEntepriseId))
-						.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
-						.fetchOne(RADDINFO.ID)))
-			.execute();
-			
-	}
-
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// 													SET DIGITAL CERTIFICATES (DATA [])
-	// --------------------------------------------------------------------------------------------------------------------------------------
-
-
-	public static void setDigitalCertificateData(String domainName, String userLogin, byte mimeType, String fileName, CertificateType certificateType, byte[] data, Integer rattachId, Integer raddinfoId) {
-		
-		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			
-			System.out.println("setDigitalCertificateData() -> Domain ID : " + domainId + " User ID : " + userId);
-			
-			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-			
-			// TGSS CERTIFICATE
-			if(certificateType == CertificateType.TGSS)
-				updateTGSSCertificateData(dslContext, domainId, userId, mimeType, fileName, data, rattachId);
-			
-			// SEPE CERTIFICATE
-			if(certificateType == CertificateType.SEPE)
-				updateSEPECertificateData(dslContext, domainId, mimeType, fileName, data,  rattachId);
-			
-		}catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		
-	}
-
-	private static void updateTGSSCertificateData(DSLContext dslContext, Integer domainId, Integer userId, byte mimeType, String fileName, byte[] data, Integer rattachId) {
-		dslContext.update(RATTACH)
-			.set(RATTACH.DATA, data)
-			.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-			.set(RATTACH.DESCRIPTION, fileName)
-			.where(RATTACH.ID.eq(rattachId))
-			.execute();
-	}
-
-	private static void updateSEPECertificateData(DSLContext dslContext, Integer domainId, byte mimeType, String fileName, byte[] data, Integer rattachId) {
-		Timestamp modificationDate = new Timestamp(new java.util.Date().getTime());
-		
-		dslContext.update(RATTACH)
-			.set(RATTACH.DATA, data)
-			.set(RATTACH.MODIFICATION_DATE, modificationDate)
-			.set(RATTACH.DESCRIPTION, fileName)
-			.where(RATTACH.ID.eq(rattachId))
-			.execute();
 	}
 	
 }

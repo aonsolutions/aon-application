@@ -24,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -214,9 +213,9 @@ public interface EnterprisesService extends RemoteService {
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 
-	List<DigitalCertificate> getDigitalCertificates(String currentDomainName, String currentUser, String token);
+	DigitalCertificate getDigitalCertificateTGSS(String currentDomainName, String currentUser);
 
-	void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList);
+	List<DigitalCertificate> getDigitalCertificatesSEPE(String currentDomainName);
 
 	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
 
@@ -228,7 +227,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Map<String, String> getPayMethods(String currentDomainName);
 
-	void deleteDigitalCertificate(String currentDomainName, String currentUser, CertificateType certificateType);
+	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser);
 
@@ -292,5 +291,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser,
 			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
+
+	Integer getEnterpriseId(String currentDomainName);
 	
 }
