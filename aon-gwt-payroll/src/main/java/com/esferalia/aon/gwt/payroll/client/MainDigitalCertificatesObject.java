@@ -95,13 +95,12 @@ public class MainDigitalCertificatesObject {
 		
 	}
 	
-	public void getSecondaryUsers(Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
+	public void verifyCertificate(CertificateType certificateType, Consumer<Void> success, Consumer<Throwable> failure){
 		
-		impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
+		impl.verifyCertificate(certificateType, new AsyncCallback<Void>() {
 			
 			@Override
-			public void onSuccess(List<SecondaryUserCertificate> result) {
-				secondaryUsers = result;
+			public void onSuccess(Void result) {
 				success.accept(result);	
 			}
 
@@ -109,6 +108,28 @@ public class MainDigitalCertificatesObject {
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+		});
+		
+	}
+	
+	public void getSecondaryUsers(Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
+		
+		verifyCertificate(CertificateType.TGSS, s -> {
+			impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
+				
+				@Override
+				public void onSuccess(List<SecondaryUserCertificate> result) {
+					secondaryUsers = result;
+					success.accept(result);	
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
+			});
+		}, f -> {
+			failure.accept(f);
 		});
 		
 	}

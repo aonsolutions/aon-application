@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -824,6 +825,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEnterpriseId(String domainName, AsyncCallback<Integer> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEnterpriseId(domainName, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.verifyCertificate(domainName, currentUser, certificateType, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }
