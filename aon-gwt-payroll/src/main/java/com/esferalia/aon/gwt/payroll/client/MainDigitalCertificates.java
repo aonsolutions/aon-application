@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
@@ -40,7 +42,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainDigitalCertificates extends MainEntryPoint{
@@ -155,16 +156,16 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private void initSecondaryTable() {
 		secondayUsersPanel.setVisible(false);
 		
+		secondaryUserDeckPanel.showWidget(0);
+		
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
-//		loadingBtn.addStyleName(style.loadingPanel());
+		loadingBtn.addStyleName(style.loadingPanel());
 		
 		Label loadingL = new Label("Accediendo al sistema RED para consultar los usuarios secundarios...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
 		loadingPanel.add(loadingBtn);
 		loadingPanel.add(loadingL);
-		
-		secondaryUserDeckPanel.showWidget(0);
 	}
 	
 	// ------------------------------------------------------ onModuleLoad
@@ -287,6 +288,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private void insertTGSSRow() {
 		DigitalCertificate digitalTGSSCertificate = mainDigitalCertificatesObject.getDigitalCertificateTGSS();
 		certificateTGSSDataTable.clear();
+		certificateTGSSDataTable.resize(0, 0);
+		certificateTGSSDataTable.resizeColumns(2);
 		
 		insertCertificateRow(digitalTGSSCertificate, CertificateType.TGSS, certificateTGSSDataTable);
 	}
@@ -296,6 +299,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private void insertSEPERows() {
 		List<DigitalCertificate> digitalSEPECertificates = mainDigitalCertificatesObject.getDigitalCertificateSEPEList();
 		certificateSEPEDataTable.clear();
+		certificateSEPEDataTable.resize(0, 0);
+		certificateSEPEDataTable.resizeColumns(2);
 		
 		if(digitalSEPECertificates.isEmpty())
 			insertCertificateRow(null, CertificateType.SEPE, certificateSEPEDataTable);
@@ -425,11 +430,16 @@ public class MainDigitalCertificates extends MainEntryPoint{
 			formPanel.submit();
 		});
 		
-		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconValid());
+		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconVerify());
 		verifyButton.addClickHandler(e -> {
-			// TODO: verifyCertificate
+			mainDigitalCertificatesObject.verifyCertificate(certificateType, s -> {
+				AonDialog dialog = new AonDialog("Certificado", new HTML("Certificado validado correctamente"));
+				dialog.warning();
+			}, f -> {
+				AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+				dialog.warning();
+			});
 		});
-		verifyButton.setEnabled(false);
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
@@ -439,8 +449,11 @@ public class MainDigitalCertificates extends MainEntryPoint{
 				insertSecondaryUsersRows();
 			}, f -> {
 				secondayUsersPanel.setVisible(false);
+				AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+				dialog.warning();
 			});
 		});
+		secondaryUsersButton.setVisible(false);
 		
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
 		deleteButton.addClickHandler(e -> {
@@ -449,13 +462,17 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		// Buttons visibility
 		if(null == digitalCertificate || !digitalCertificate.getHasCertificate()) {
+			fileButton.setVisible(true);
+			deleteButton.setVisible(false);
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
-			deleteButton.setVisible(false);
 		} else {
-//			verifyButton.setVisible(true);
-			secondaryUsersButton.setVisible(true);
+			fileButton.setVisible(false);
 			deleteButton.setVisible(true);
+			if(certificateType == CertificateType.TGSS)
+				secondaryUsersButton.setVisible(true);
+			else
+				verifyButton.setVisible(true);
 		}
 		
 		buttonsPanel.add(fileButton);

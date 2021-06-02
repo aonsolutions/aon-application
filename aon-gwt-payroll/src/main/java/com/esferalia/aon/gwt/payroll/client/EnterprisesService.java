@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -293,5 +294,7 @@ public interface EnterprisesService extends RemoteService {
 			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
 
 	Integer getEnterpriseId(String currentDomainName);
+
+	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType);
 	
 }
