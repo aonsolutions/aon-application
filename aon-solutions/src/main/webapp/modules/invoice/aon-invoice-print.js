@@ -8,12 +8,15 @@ import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
 import { MSG } from "../../environments/environments.js";
+import { getPrintInvoiceConfiguration, savePrintInvoiceConfiguration } from '../../services/invoiceService.js';
 
 export class AonInvoicePrint extends AonElement {
 
   DATA;
   DATA_CARD;
   FILE;
+
+  printConfiguration;
 
   get id() {
     return this.getAttribute('id');
@@ -39,8 +42,10 @@ export class AonInvoicePrint extends AonElement {
         </div>
       </div>
     `;
-
-    this.build();
+    getPrintInvoiceConfiguration().then(r => {
+      this.printConfiguration = r;
+      this.build();
+    })
   }
 
   initialize() {
@@ -69,22 +74,18 @@ export class AonInvoicePrint extends AonElement {
       let offset2 = dataDiv.getBoundingClientRect();
   		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
     }
-
     this.buildData();
   }
 
+  save() {
+    savePrintInvoiceConfiguration(this.printConfiguration);
+  }
+
   reloadFile() {
-    let config =  {
-      header: this.getElement('aonInvoicePrintConfigurationHeader').value,
-      footer: this.getElement('aonInvoicePrintConfigurationFooter').value,
-      detailed: this.getElement('aonInvoicePrintConfigurationDetailed').checked,
-      adjust: this.getElement('aonInvoicePrintConfigurationAdjust').checked
-    }
     let fileDiv = this.getElement(this.FILE);
-    let json = btoa(JSON.stringify(config));
+    let json = btoa(JSON.stringify(this.printConfiguration));
     let url = '/ms/api/download_invoice_pdf_ak?json=' + json;
     fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
-
   }
 
   buildData() {
@@ -102,7 +103,12 @@ export class AonInvoicePrint extends AonElement {
 		tdHeader.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationHeader" title="${MSG.HEADER}" min="0" max="200"></aon-slider>`;
 		tr.appendChild(tdHeader);
 		let header = document.getElementById('aonInvoicePrintConfigurationHeader');
-    header.addEventListener('change', () => this.reloadFile());
+    header.setValue(this.printConfiguration.header);
+    header.addEventListener('change', () => {
+      this.printConfiguration.header = header.value;
+      this.save();
+      this.reloadFile();
+    });
 
     let tr2 = document.createElement('tr');
     table.appendChild(tr2);
@@ -112,7 +118,12 @@ export class AonInvoicePrint extends AonElement {
     tdFooter.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationFooter" title="${MSG.FOOTER}" min="0" max="200"></aon-slider>`;
     tr2.appendChild(tdFooter);
     let footer = document.getElementById('aonInvoicePrintConfigurationFooter');
-    footer.addEventListener('change', () => this.reloadFile());
+    footer.setValue(this.printConfiguration.footer);
+    footer.addEventListener('change', () => {
+      this.printConfiguration.footer = footer.value;
+      this.save();
+      this.reloadFile();
+    });
 
     let tr3 = document.createElement('tr');
     table.appendChild(tr3);
@@ -122,7 +133,12 @@ export class AonInvoicePrint extends AonElement {
     tdAdjust.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationAdjust" title="${MSG.BACKGROUND_ADJUST}"></aon-switch>`;
     tr3.appendChild(tdAdjust);
     let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
-    adjust.addEventListener('change', () => this.reloadFile());
+    adjust.checked = this.printConfiguration.adjust;
+    adjust.addEventListener('change', () => {
+      this.printConfiguration.adjust = adjust.checked;
+      this.save();
+      this.reloadFile()
+    });
 
     let tdBackground= document.createElement('td');
     tdBackground.setAttribute('colspan', '1');
@@ -138,7 +154,12 @@ export class AonInvoicePrint extends AonElement {
     tdDetailed.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationDetailed" title="${MSG.DETAILED}"></aon-switch>`;
     tr4.appendChild(tdDetailed);
     let detailed = document.getElementById('aonInvoicePrintConfigurationDetailed');
-    detailed.addEventListener('change', () => this.reloadFile());
+    detailed.checked = this.printConfiguration.detailed;
+    detailed.addEventListener('change', () => {
+      this.printConfiguration.detailed = detailed.checked;
+      this.save();
+      this.reloadFile()
+    });
   }
 
 }

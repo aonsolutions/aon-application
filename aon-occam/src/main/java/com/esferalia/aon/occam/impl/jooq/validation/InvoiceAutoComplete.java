@@ -282,9 +282,9 @@ public class InvoiceAutoComplete {
 				invoiceTax.add(it);
 				
 				InvoiceDetail id = new InvoiceDetail()
-						.setAccount(acc.getId())
-						.setAccountCode(acc.getCode())
-						.setAccountDescription(acc.getDescription())
+						.setAccount( acc != null ? acc.getId(): null)
+						.setAccountCode(acc != null ? acc.getCode() : null)
+						.setAccountDescription(acc != null ? acc.getDescription() : null)
 						.setDescription(AonStringUtils.isBlank(acc.getDescription()) 
 								? "IVA " + b.getPercentage() : acc.getDescription())
 						.setDomain(inv.getDomain())
