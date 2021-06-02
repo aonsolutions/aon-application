@@ -6,10 +6,8 @@ import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { CONSTANT, MSG } from "../../../../environments/environments.js";
-import "../../../../components/aon-card.js";
-import "../../../../components/aon-input.js";
-import "../../../../components/aon-number.js";
+import { CONSTANT, CSS, MSG, TAG } from "../../../../environments/environments.js";
+import { createCard, createForm, createInput, createToolbar } from "../../../notification/createComponent.js";
 
 
 export class AonLocationAdd extends AonElement {
@@ -66,41 +64,88 @@ export class AonLocationAdd extends AonElement {
 
 
   build() {
+    this.applicationEl.removeToolbarOptions();
     this.paintView();
     this.buildToolbar();
   }
 
   paintView() {
 
-    const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
-    const form = `
-        <form id="${this.id}Form" action="#" onsubmit="return false;">
-            <div id="${this.id}Div">
-                <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}Card" title="Datos de la ${this.NAME}" flex="true"></aon-card>
-                </div>
-            </div>
-        </form>`;
+    createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
 
-    this.innerHTML = aonToolbar + form;
+    const form = createForm(this.id+"Form");
+    this.appendChild(form.element);
+    let div = this.createElement(TAG.DIV);
+    div.id = this.id+"Div";
+    const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+    div.className = className;
+    form.appendChild(div);
+    let div2 = this.createElement(TAG.DIV);
+    div2.className = CSS.AON_COL_SM_12;
+    div.appendChild(div2);
+    
+    const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
-    this.applicationEl.removeToolbarOptions();
+    let divG = this.createElement(TAG.DIV);
+    divG.className = CSS.AON_COL_XS_10;
+    aonCard.appendChild(divG);
+    createInput({
+      attributes:{
+        name:"description",
+        id:"description" ,
+        description:MSG.NAME,
+        type:"text"
+      }
+    }, divG);
 
-    let aonCard = this.getElement(`${this.id}Card`);
-    aonCard.setContentHTML(`
-            <div class="aonCol-xs-10">
-              <aon-input name="description" id="description" description="${MSG.NAME}" type="text"></aon-input>
-            </div>
-            <div class="aonCol-xs-2">
-              <aon-number name="radio" id="radio" description="${MSG.RADIO}" type="text"></aon-number>
-            </div>
-            <div class="aonCol-xs-12">
-             <div id="${this.id}Map" title="Mapa"></div>
-            </div>
-            <aon-input name="latitude" id="latitude" type="text" visible="false"></aon-input>
-            <aon-input name="longitude" id="longitude" type="text" visible="false"></aon-input>
-            <aon-input name="id" id="id" type="text" visible="false"></aon-input>
-        `);
+    divG = this.createElement(TAG.DIV);
+    divG.className = CSS.AON_COL_XS_2;
+    aonCard.appendChild(divG);
+    createInput({
+      attributes:{
+        name:"radio",
+        id:"radio" ,
+        description:MSG.RADIO,
+        type:"text"
+      }
+    }, divG);
+
+
+    divG = this.createElement(TAG.DIV);
+    divG.className = CSS.AON_COL_XS_12;
+    aonCard.appendChild(divG);
+    let divM = this.createElement(TAG.DIV);
+    divM.id = this.id+"Map";
+    divM.title = "Mapa";
+    divG.appendChild(divM);
+
+    createInput({
+      attributes:{
+        name:"latitude",
+        id:"latitude" ,
+        type:"text",
+        visible:"false",
+      }
+    }, aonCard);
+
+    createInput({
+      attributes:{
+        name:"longitude",
+        id:"longitude" ,
+        type:"text",
+        visible:"false",
+      }
+    }, aonCard);
+
+    createInput({
+      attributes:{
+        name:"id",
+        id:"id" ,
+        type:"text",
+        visible:"false",
+      }
+    }, aonCard);
+
   }
 
   buildToolbar(){
@@ -108,9 +153,9 @@ export class AonLocationAdd extends AonElement {
     toolbarEl.removeButtons();
     if(this.data && this.data.id){
       toolbarEl.addButton2(ACTION.DELETE, () =>this.delete());
-      toolbarEl.title = "Edición";
+      toolbarEl.title = MSG.EDIT;
     } else {
-      toolbarEl.title = "Registro";
+      toolbarEl.title = MSG.REGISTER;
     }
     toolbarEl.addButton2(ACTION.SAVE, () => this.save());
     toolbarEl.addButton2(ACTION.BACK, () => this.back());
@@ -124,7 +169,9 @@ export class AonLocationAdd extends AonElement {
     let iframe = this.createElement("iframe");
     iframe.id = iframeId;
     iframe.frameborder = 0;
-    iframe.style = "border:0;height: 400px;width: 100%;";
+    iframe.style.border = 0;
+    iframe.style.height = "400px";
+    iframe.style.width = "100%";
     if (data && data.latitude && data.longitude) {
       iframe.loading = "lazy";
       iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
@@ -144,7 +191,8 @@ export class AonLocationAdd extends AonElement {
       if (pos) {
         iframe.contentWindow.showNewMap = function () {
           let mapContainer = doc.createElement("div");
-          mapContainer.setAttribute("style", "width: 100%; height:100%;");
+          mapContainer.style.width = "100%"; 
+          mapContainer.style.height = "100%"; 
           doc.body.appendChild(mapContainer);
           const mapOptions = {
             center: new this.google.maps.LatLng(pos.latitude, pos.longitude),
