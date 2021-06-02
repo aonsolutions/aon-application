@@ -237,10 +237,10 @@ public class JooqPayrollBuilder {
 							return;
 	
 						List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));
+						System.out.println("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()) + " | "+ deductionType.name() + " | " + percList);
+						
 						
 						ContextData cd = percList != null ? percList.get(0) : new ContextData();
-
-						
 						Double percent = null;
 					
 						if (cd != null) {
@@ -430,8 +430,8 @@ public class JooqPayrollBuilder {
 					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
 					costBuilder.setIrpfEsp(Optional.ofNullable(salary.getInkindIrpfBase()));
 					costBuilder.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
-					costBuilder.setNoStructBase(Optional.of(nonStructBase[0]));
-					costBuilder.setForceMajeureBase(Optional.of(forceMajeureBase[0]));
+					costBuilder.setNoStructBase(Optional.ofNullable(salary.getNonEstructuralOvertimeBase()));
+					costBuilder.setForceMajeureBase(Optional.of(salary.getEstructuralOvertimeBase()));
 				}
 				payrollBuilder.setContingencies(costBuilder.build());
 			}

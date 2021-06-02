@@ -146,7 +146,7 @@ public class Utilities {
 		case 6:
 			return 2;
 		case 7:
-			return  3;
+			return 3;
 		case 8:
 			return 4;
 		default:

@@ -4,8 +4,12 @@ import static com.esferalia.aon.gwt.payroll.tools.Console.Separator.EQUAL;
 import static com.esferalia.aon.gwt.payroll.tools.TestTools.assertWithLog;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,11 +27,14 @@ import com.esferalia.aon.gwt.payroll.tools.Console.Separator;
 import com.esferalia.aon.gwt.payroll.tools.Console.Status;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
@@ -38,9 +45,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
  * 	# TO DO																			#
  *  #################################################################################
  *  #  1. Context data vs Contigency bases;						  (Draft -> Salary)	#
- *	#  2. Deductions 											  (Draft -> Salary)	#
  * 	#  3. Payrolls   											  (Draft -> Salary) #
- * 	#  4. Embargos												  (Draft -> Salary) #	
  * 	#  5. Total payments, total deductions, TOTAL PAYROLL.		  (Draft -> Salary) #
  *  #################################################################################
  * 
@@ -63,8 +68,8 @@ public class DefaultPayrollUnitTest {
 	}
 	
 	private <T> void assertDraftToSalary(String name,T draftObj ,T salaryObj) {
-		console.log(Status.COMPARING,"Draft " + name, draftObj, EQUAL);
-		console.log(Status.COMPARING,"Salary " + name, salaryObj, EQUAL);
+		console.log(Status.COMPARE,"Draft " + name, draftObj, EQUAL);
+		console.log(Status.COMPARE,"Salary " + name, salaryObj, EQUAL);
 		
 		assertWithLog("Draft -> Salary", name + " not matching", draftObj, salaryObj);
 		console.success("DONE");
@@ -72,12 +77,20 @@ public class DefaultPayrollUnitTest {
 	}
 	
 	private <T> void assertSalaryToPayroll(String name,T draftObj ,T payrollObj) {
-		console.log(Status.COMPARING,"Salary " + name, payrollObj, EQUAL);
-		console.log(Status.COMPARING,"Payroll " + name, draftObj, EQUAL);
+		console.log(Status.COMPARE,"Salary " + name, payrollObj, EQUAL);
+		console.log(Status.COMPARE,"Payroll " + name, draftObj, EQUAL);
 		
 		assertWithLog("Draft -> Salary",  name + " not matching", draftObj, payrollObj);
 		console.success("DONE");
 		console.jump();
+	}
+	
+	private Deduction newDeduction(Deduction.Type type, double amount, String description) {
+		Deduction deduction = new Deduction();
+		deduction.setType(type);
+		deduction.setAmount(amount);
+		deduction.setDescription(description);		
+		return deduction;
 	}
 	
 	@Test
@@ -89,74 +102,91 @@ public class DefaultPayrollUnitTest {
 		
 		SalaryDraft draft = new SalaryDraft();
 		
-		
 		/** Salary basic data */
-		
 		console.info("Draft","Setting basic salary data.");
-		draft.setCgcBase(null);
-		draft.setCgpBase(null);
-		draft.setEndDate(null);
+		draft.setCgcBase(20d);
+		draft.setCgpBase(20.70d);
+		draft.setNonHExtraBase(30.70);
+		draft.sethExtraBase(27.70);
+		draft.setEndDate(new Date());
+		draft.setStartDate(new Date());
+		draft.setTotalPayment(2535.95);
+		draft.setTotalLiquid(2305.95);
+		draft.setTotalDeduction(230.0);
 		
  		/** Employee data */
 		console.info("Draft","Setting basic employee data.");
-		draft.setEmployeeAgreementCategory(null);
-		draft.setEmployeeDocument(null);
-		draft.setEmployeeName(null);
-		draft.setEmployeeQuoteGroup(null);
-		draft.setEmployeeSeniorityDate(null);
-		draft.setEmployeeSS(null);
+		draft.setEmployeeAgreementCategory("PROGRAMADOR");
+		draft.setEmployeeDocument("58034566T");
+		draft.setEmployeeName("EGUSQUIZA VÁZQUEZ, AKETZA");
+		draft.setEmployeeQuoteGroup("01");
+		draft.setEmployeeSeniorityDate(new Date());
+		draft.setEmployeeSS("17263546576879");
 		 
 		/** Enterprise data */
 		console.info("Draft","Setting basic enterprise data.");
-		draft.setEnterpriseAddress(null);
-		draft.setEnterpriseCCC(null);
-		draft.setEnterpriseDocument(null);
-		draft.setEnterpriseName(null);
+		//draft.setEnterpriseAddress("Avenida de los floreros 2, Atlantis del norte");
+		draft.setEnterpriseCCC("183723498918");
+		draft.setEnterpriseDocument("1928346398X");
+		draft.setEnterpriseName("Pdf4You S.L");
+		draft.setTimeUnits(30);
 		
 		/** Payments  */
 		console.info("Draft","Setting payments.");
 		for (int i = 0; i < Type.values().length; i++) {
 			Payment cra = new Payment();
 			cra.setType(Type.values()[i]);
-			cra.setAmount(null);
-			cra.setDescription(null);
+			cra.setAmount(100d);
+			cra.setDescription("Una descripcion estupenda");
 			
 			draft.addPayment(cra);
 		}
 		
 		/** Deductions */
 		console.info("Draft","Setting deductions.");
-		for (int i = 0; i < Deduction.Type.values().length; i++) {
-			Deduction deduction = new Deduction();
-			deduction.setType(Deduction.Type.values()[i]);
-			deduction.setAmount(100.99);
-			deduction.setDescription("10.99%");		
-			
-			draft.addDeduction(deduction);
-		}
+		draft.addDeduction(newDeduction(Deduction.Type.ADVANCE_PAYMENT, 100.00, "Avance del mes"));
+		draft.addDeduction(newDeduction(Deduction.Type.COMMON_CONTINGENCY, 100.00, "Contingencias comunes"));
+		draft.addDeduction(newDeduction(Deduction.Type.IN_KIND, 100.00, "En especie."));
+		draft.addDeduction(newDeduction(Deduction.Type.IRPF, 100.00, "Irpf."));
 		
 		/** Embargos */
 		console.info("Draft","Setting embargos.");
-		for (int i = 0; i < Deduction.Type.values().length; i++) {
+		for (int i = 0; i < 2; i++) {
 			Deduction embargo = new Deduction();
-			embargo.setType(Deduction.Type.values()[i]);
-			embargo.setAmount(0d);
-			embargo.setDescription("10%");		
+			embargo.setType(Deduction.Type.EMBARGO);
+			embargo.setAmount(i + 0d);
+			embargo.setDescription("Hola soy un embargo :)");		
 			
 			draft.addEmbargo(embargo);
 		}
 		
 		/** Context data */
 		console.info("Draft","Setting context variables.");
-		for (int i = 0; i < ContextVariable.values().length; i++) {		
-		    draft.addVariable(
-		    	ContextVariable.values()[i].getName(), 
-		    	null, 
-		    	null, 
-		    	null
-		    );
-		}
+	    draft.addVariable(ContextVariable.BASE_SALARY,1108.70,new Date(), new Date());
+	    draft.addVariable(ContextVariable.LIQUID,1108.70,new Date(), new Date());
+	    draft.addVariable(ContextVariable.WORKED_DAYS.getName(),30.80,new Date(), new Date());
+	    draft.addVariable(ContextVariable.QUOTE_GROUP.getName(),"Grupo 1",new Date(), new Date());
+	    
+	    /** Enterprise costs */
+	    draft.addVariable(ContextVariable.FOGASA_ENTERPRISE.getName(),20.80,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGC_BASE.getName(),99.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGP_BASE.getName(),109.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IT_ENTERPRISE.getName(),15.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IMS_ENTERPRISE.getName(),6.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.UNEMPLOY_ENTERPRISE.getName(),60.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.FP_ENTERPRISE.getName(),20.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.PRORATION,30.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),7.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),7.99,new Date(), new Date());
 		
+	    /** Deduction context data */
+	    draft.addVariable(ContextVariable.IRPF_PERCENT.getName(),7.99,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_ADELANTO",17.99,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_CGC",18.99,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_CGP",16.99,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_EN_ESPECIE",19.99,new Date(), new Date());
+	    
+	    
 		Salary salary = null;
 		
 		try {
@@ -173,6 +203,17 @@ public class DefaultPayrollUnitTest {
 		console.log(Status.RUN, payrollPDF.getDeductions());	
 		
 		assertSalaryToDefaultPayroll(salary, payrollPDF);
+		
+		FileOutputStream out;
+		try {
+			out = new FileOutputStream(new File("TestPayroll.pdf"));
+			PdfMaker.printDefaultPayroll(out, payrollPDF, null, null);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	
@@ -300,10 +341,16 @@ public class DefaultPayrollUnitTest {
 		
 			/**
 			 * Some test stuff here
-			 */
-			
-			
+			 */			
 		}
+		
+		Map<String, List<ContextData>> data = salary.getContextData();
+		data.entrySet().forEach(type -> {
+			type.getValue().forEach(var ->{
+				console.log(Status.TEST, type.getKey() + " | " + var.getExpression());
+			});
+		});
+		
 		
 	}
 	
@@ -387,7 +434,6 @@ public class DefaultPayrollUnitTest {
 			 });
 		});
 		
-		
 		/**
 		 * Comparing deductions
 		 */
@@ -396,7 +442,7 @@ public class DefaultPayrollUnitTest {
 		deductions.keySet().forEach(id -> {
 			ArrayList<PDFDeduction> deductionsForID = deductions.get(id);
 			deductionsForID.forEach(deduction -> {
-				 console.log(Status.TEST, "ID_" + id, deduction.getPercent() + " " + deduction.getDescription(), Separator.COLON);
+				 console.log(Status.TEST, id, deduction.getPercent().orElse(-1d) + " | " + deduction.getDescription().orElse("empty") + " | " + deduction.getAmount().orElse(-1d), Separator.ARROW_REVERSE);
 			});
 		});
 		

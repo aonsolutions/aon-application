@@ -16,8 +16,9 @@ public class Console {
 		WARNING("Warning"),
 		SUCCESS("Success"),
 		TEST("Test"),
-		WAITING("Waiting"),
-		COMPARING("Comparing");
+		WAIT("Wait"),
+		SET("Set"),
+		COMPARE("Compare");
 		
 		private String name;
 		private Status(String name) {
@@ -173,7 +174,7 @@ public class Console {
 	 * @return String with formatted message
 	 */
 	private String format(String category,String title, String message, Separator separator) {
-		return "[" + category + "] [" + duration() + "] " + title + " " + separator.getSeparator() + " " + message; 
+		return "[" + fillSpaces(category,10) + "] [" + duration() + "] " + title + " " + separator.getSeparator() + " " + message; 
 	}
 	
 	/**
@@ -183,8 +184,13 @@ public class Console {
 	 * @return String with formatted message
 	 */
 	private String format(String category,String message) {
-		return "[" + category + "] [" + duration() + "] "  + message; 
+		return "[" + fillSpaces(category,10) + "] [" + duration() + "] "  + message; 
 	}
+	
+	private String fillSpaces(String str, int maxChars) {
+		return str;
+	}
+	
 	
 	/**
 	 * Current test duration
@@ -193,10 +199,10 @@ public class Console {
 	public String duration() {
 		long end = System.nanoTime();
 		double difference = (end - start) / 1e6;
-		DecimalFormat formatter = new DecimalFormat("#.##");
+		DecimalFormat formatter = new DecimalFormat("000.00");
 		
 	    if(difference < 1000) return formatter.format(difference) + " ms";
-		else return  formatter.format(difference/1000) + "s";	
+		else return  formatter.format(difference/1000) + " s";	
 	}
 	
 	

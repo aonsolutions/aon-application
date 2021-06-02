@@ -501,7 +501,7 @@ public class DraftPayrollBuilder {
 		salary.setInkindIrpfBase(inkindIrpfBase == null ? 0 : inkindIrpfBase);
 		
 		salary.setEnterpriseName(draft.getEnterpriseName());
-		salary.setEnterpriseDocument(draft.getEmployeeDocument());
+		salary.setEnterpriseDocument(draft.getEnterpriseDocument());
 		salary.setEnterpriseCCC(draft.getEnterpriseCCC());
 		salary.setEnterpriseAddress(draft.getEnterpriseAddress());
 		salary.setEndDate(draft.getEndDate());
@@ -509,6 +509,7 @@ public class DraftPayrollBuilder {
 		salary.setEmployeeName(draft.getEmployeeName());		
 		salary.setEmployeeDocument(draft.getEmployeeDocument());
 		salary.setEmployeeCategory(draft.getEmployeeAgreementCategory());
+		
 		
 		List<Variable> contextData = draft.getContext();
 		for (Variable variable : contextData) {
