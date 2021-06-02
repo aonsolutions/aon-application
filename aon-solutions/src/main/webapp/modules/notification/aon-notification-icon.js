@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
-import { getTotalNotification } from '../../services/service.js';
+import { getTotalNotification, saveAuthDevice } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { AonNotification } from './aon-notification.js';
 import { createBadge, createIconButton, createSpan } from './createComponent.js';
@@ -80,8 +80,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-                    let aonModule = this.getModule();
-					if(aonModule) aonModule.saveTokenFcm(token);
+					saveAuthDevice({token});
 				}
 			} 
 		} catch(e){}

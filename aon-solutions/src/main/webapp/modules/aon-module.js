@@ -1,5 +1,4 @@
 import { AonElement } from '../components/AonElement.js';
-import { rootPanel } from '../services/gwtLoader.js';
 import { getToken , getCompanies, getUser, getUserAppRole } from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
@@ -49,7 +48,7 @@ export class AonModule extends AonElement {
 					this.companySelection(companies[0]);
 				} else {
 					this.getElement(this.AON_HOME).showMenu(false);
-					rootPanel(this.isMobile()
+					this.rootPanelHtml(this.isMobile()
 					 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
 					 	: '<aon-parent id="aonParent"></aon-parent>');
 				}
@@ -86,7 +85,7 @@ export class AonModule extends AonElement {
 					aonHeader.setAttribute('company', JSON.stringify(company));
 					aonHeader.setAttribute('user', JSON.stringify(user));
 				}
-				rootPanel(this.isMobile()
+				this.rootPanelHtml(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');

@@ -1,7 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
-import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-dialog-menu.js';
 import '../components/aon-icon-button.js';
@@ -116,7 +115,7 @@ export class AonHeader extends AonElement {
 		if(!this.isMobile()) {
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				rootPanel(this.isMobile()
+				this.rootPanelHtml(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
@@ -133,11 +132,11 @@ export class AonHeader extends AonElement {
 					let options = [{
 						name: 'Solicitudes',
 						icon: 'assignment',
-						fn: () =>this.isBeta() ? rootPanel(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
+						fn: () =>this.isBeta() ? this.rootPanelHtml(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
 					}, {
 						name: 'Ayuda',
 						icon: 'help_outline',
-						fn: () => rootPanel('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+						fn: () => this.rootPanelHtml('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
 					}];
 					if(this.dur.isDev()) {
 						options.push({
@@ -189,7 +188,7 @@ export class AonHeader extends AonElement {
 			localStorage.removeItem('aon_domain_name');
 			localStorage.removeItem('aon_domain_login');
 			clearDurum();
-			rootPanel('<aon-parent id="aonParent"></aon-parent>');
+			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => {
@@ -300,20 +299,20 @@ export class AonHeader extends AonElement {
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
-				rootPanel(this.isMobile()
+				this.rootPanelHtml(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {
-				rootPanel('<aon-parent id="aonParent"></aon-parent>');
+				this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 			}
 		})
 
 	}
 
 	aonConfiguration() {
-		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
+		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
 		let aonConfiguration = this.getElement('aon-configuration');
 		if(this.getAttribute('company')){
 			aonConfiguration.setAttribute('company', this.getAttribute('company'));
