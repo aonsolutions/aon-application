@@ -45,7 +45,7 @@ export class AonToast extends AonElement {
 	}
 
 	paintView(){
-		const el = newComponent({
+		newComponent({
 			type:TAG.DIV,
 			id: this.DIV,
 			styles:{
@@ -56,8 +56,7 @@ export class AonToast extends AonElement {
 				fontSize: "17px",
 				wordWrap: "break-word",
 			}
-		});
-		this.innerHTML = el.element.outerHTML;
+		}).appendTo(this);
 	}
 
 	start(options) {
