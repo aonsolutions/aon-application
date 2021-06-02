@@ -1,18 +1,19 @@
+import { CSS } from "../../environments/environments.js";
 import { createDate, createDiv, createForm, createInput, createSelect, createCard } from "../notification/createComponent.js";
 
 export const createFormEvent = (id, parent) => {
     const form = createForm(id+"Form");
     parent.appendChild(form.element);
-
-    const div = createDiv({id: id+"Div"});
+    const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+    const div = createDiv({id: id+"Div",classes:[className]});
     div.appendTo(form);
 
     let divC;
-    divC = createDiv({classes:["aonCol-sm-12"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12]})
     divC.appendTo(div.element);
     createCard({id: id+"CardEvent", title:"Datos del evento"}, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-12"]});
+    divC = createDiv({classes:[CSS.AON_COL_SM_12]});
     divC.appendTo(div.element);
     createCard({id: id+"CardCoordinate", title:"Coordenadas", visible:"false"}, divC.element);
   

@@ -9,7 +9,7 @@ import {
 import { ToolbarType } from "../../../../models/enums.js";
 import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
-import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import * as ACTION from '../../../actions.js';
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
@@ -65,12 +65,6 @@ export class AonEventList extends AonElement {
     this.build();
   }
 
-  // disconnectedCallback(){
-    // const toolbarEl = this.getElement(this.TOOLBAR);
-    // if(toolbarEl) toolbarEl.remove();
-    // this.applicationEl.getContent().style.top = "102px";
-  // }
-
   async build() {
     this.paintView();
     if(this.isMobile()){
@@ -94,14 +88,14 @@ export class AonEventList extends AonElement {
       aonToolbar.id = this.TOOLBAR;
       aonToolbar.type = ToolbarType.SECONDARY;
       this.appendChild(aonToolbar);
-      // this.applicationEl.getToolbar().parentNode.insertBefore(aonToolbar, this.applicationEl.getToolbar().nextSibling);
-      // this.applicationEl.getContent().style.top = "140px";
-      // document.querySelector(".aonMobileApplicationContent").style.top = "140px";
     } 
     
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
-    this.appendChild(aonTable);
+    let div = this.createElement(TAG.DIV);
+    if(this.isMobile()) div.className = CSS.AON_MOBILE_SUB_CONTENT;
+    div.appendChild(aonTable);
+    this.appendChild(div);
   }
 
   async getTable() {
