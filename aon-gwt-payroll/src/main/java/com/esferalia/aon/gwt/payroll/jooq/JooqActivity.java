@@ -240,12 +240,12 @@ public class JooqActivity {
 			
 				if(hasHerefity) {
 					geozoneRecords = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()).or(GEOZONE.CODE.eq(cccInfo.getGeozoneCode())))
 							.and(GEOZONE.DOMAIN.eq(parentDomain))
 							.fetch();
 				}else {
 					geozoneRecords = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()).or(GEOZONE.CODE.eq(cccInfo.getGeozoneCode())))
 							.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
 							.fetch();
 				}
@@ -254,7 +254,7 @@ public class JooqActivity {
 				if(null == geozoneRecords || geozoneRecords.isEmpty()) {
 					//TODO: No existe este geozone
 					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()).or(GEOZONE.CODE.eq(cccInfo.getGeozoneCode())))
 							.fetch();
 					
 					if(gezoneRecordsInfo.isNotEmpty())
