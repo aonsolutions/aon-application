@@ -295,6 +295,6 @@ public interface EnterprisesService extends RemoteService {
 
 	Integer getEnterpriseId(String currentDomainName);
 
-	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType);
+	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType) throws IllegalArgumentException;
 	
 }

@@ -3005,7 +3005,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void verifyCertificate(String domainName, String userLogin, CertificateType certificateType) {
+	public void verifyCertificate(String domainName, String userLogin, CertificateType certificateType) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -3026,7 +3026,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			
 		} catch (SQLException | SepeException | SegSocialException e) {
-			throw new RuntimeException(e.getMessage());
+			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 

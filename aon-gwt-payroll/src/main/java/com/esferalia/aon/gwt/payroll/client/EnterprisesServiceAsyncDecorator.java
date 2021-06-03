@@ -828,7 +828,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) {
+	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.verifyCertificate(domainName, currentUser, certificateType, new AsyncCallbackWrapper<Void>(callback));
 	}
