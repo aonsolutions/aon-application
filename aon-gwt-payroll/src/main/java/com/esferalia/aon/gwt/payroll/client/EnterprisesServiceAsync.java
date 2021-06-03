@@ -189,6 +189,6 @@ public interface EnterprisesServiceAsync {
 	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
-	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback);
+	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }
