@@ -136,7 +136,7 @@ export class AonEventAdd extends AonElement {
       }
       toolbarEl.title = MSG.EDIT;
     } else {
-      toolbarEl.title = "Registro";
+      toolbarEl.title = MSG.REGISTER;
     }
     if(!this.applicationParentEl.isEmployee()){
       toolbarEl.addButton2(ACTION.SAVE, () => this.save());

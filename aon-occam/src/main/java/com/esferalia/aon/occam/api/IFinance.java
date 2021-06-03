@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -132,10 +133,18 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************************** PAY_METHOD *********
 	// 	***********************************************
+	
 	public PayMethod getPayMethod(AONContext ctx, String name);
 	public LinkedList<PayMethod> getPayMethods(AONContext ctx);
 	public PayMethod savePayMethod(AONContext ctx, PayMethod payMethod);
 	public void deletePayMethod(AONContext ctx,Integer id);
+	
+	// 	***********************************************
+	// 	********* PRINT INVOICE CONFIGURATION *********
+	// 	***********************************************
+
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx);
+	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
 	
 }
 	

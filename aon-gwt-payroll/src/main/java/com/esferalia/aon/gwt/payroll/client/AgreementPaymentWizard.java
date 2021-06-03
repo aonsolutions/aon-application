@@ -810,15 +810,23 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private void checkPartiality() {
 		String extraPayTypeValue = extraPayType.getSelectedValue();
 		String expression = paymentExpression.getValue();
+		String paymentTypeValue = paymentType.getSelectedValue();
 		
 		if(hasPartiality && (AonStringUtils.containsIgnoreCase(expression, "DIAS_EFECTIVOS") || AonStringUtils.containsIgnoreCase(expression, "FRACCIONAR") ||
 				AonStringUtils.containsIgnoreCase(expression, "HORAS_TRABAJADAS") || AonStringUtils.containsIgnoreCase(expression, "JORNADAS_REALES") ||
 				AonStringUtils.containsIgnoreCase(extraPayTypeValue, "VARIABLE"))) {
-			paymentExpression.setValue(paymentExpression.getValue() + " * COEFICIENTE_PARCIALIDAD");
+			if(AonStringUtils.containsIgnoreCase(extraPayTypeValue, "VARIABLE") && AonStringUtils.equalsIgnoreCase(paymentTypeValue, "PAGA_EXTRA"))
+				paymentExpression.setValue(paymentExpression.getValue() + " * DIAS_TRABAJADOS / DIAS_MES");
+			else
+				paymentExpression.setValue(paymentExpression.getValue() + " * COEFICIENTE_PARCIALIDAD");
 		} else {
 			String paymentExpressionValue = paymentExpression.getValue();
 			if(AonStringUtils.containsIgnoreCase(paymentExpressionValue, " * COEFICIENTE_PARCIALIDAD")) {
 				String newExpression = paymentExpressionValue.split(" \\* COEFICIENTE_PARCIALIDAD")[0];
+				paymentExpression.setValue(newExpression.trim());
+			}
+			if(AonStringUtils.containsIgnoreCase(paymentExpressionValue, " * DIAS_TRABAJADOS / DIAS_MES")) {
+				String newExpression = paymentExpressionValue.split(" \\* DIAS_TRABAJADOS / DIAS_MES")[0];
 				paymentExpression.setValue(newExpression.trim());
 			}
 		}

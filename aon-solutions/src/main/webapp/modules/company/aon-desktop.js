@@ -2,7 +2,6 @@ import {AonElement} from '../../components/AonElement.js';
 import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
-import {rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
@@ -100,7 +99,7 @@ export class AonDesktop extends AonElement {
 					icon: 'inbox',
 					fn: () => {
 						if(inboxCount > 0) {
-							rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+							this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 						}
 					}
 				}, {
@@ -109,13 +108,13 @@ export class AonDesktop extends AonElement {
 					icon: 'report',
 					fn: () => {
 						if(rejectedCount > 0) {
-							rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 						}
 					}
 				}, {
 					name: 'Solicitudes',
 					icon: 'assignment',
-					fn: () => this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud')
+					fn: () => this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud')
 				}
 			];
 			aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
@@ -249,7 +248,7 @@ export class AonDesktop extends AonElement {
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
 			li.addEventListener('click', () => {
-				rootPanel('<aon-configuration></aon-configuration>');
+				this.rootPanelHtml('<aon-configuration></aon-configuration>');
 			});
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
@@ -293,25 +292,25 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(aonDocumental);
 				break;
 			case Apps.ACCOUNTING.app:
-				rootPanel('<aon-accounting></aon-accounting>');
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
-				rootPanel('<aon-fiscal></aon-fiscal>');
+				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.COMUNICA.app:
-				rootPanel(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
+				this.rootPanelHtml(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
 				break;
 			case Apps.PAYROLL.app:
-				rootPanel(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
+				this.rootPanelHtml(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
 				break;
 			case Apps.INVOICE.app:
-				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				break;
 			case Apps.TIMECONTROL.app:
-				rootPanel('<aon-signin></aon-signin>');
+				this.rootPanelHtml('<aon-signin></aon-signin>');
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? rootPanel('<aon-messenger></aon-messenger>') : this.development('Solicitud');
+				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');
 				break;
 		}
 	}

@@ -22,6 +22,7 @@ public interface IJsonNames {
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
+	String ADJUST = "adjust";
 	String ADMINISTRATION = "administration";
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
@@ -76,6 +77,7 @@ public interface IJsonNames {
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
 	String DEADLINE = "deadline";
 	String DESCRIPTION = "description";
+	String DETAILED = "detailed";
 	String DETAILS = "details";
 	String DISCOUNT = "discount";
 	String DOCUMENT_COUNTRY = "documentCountry";
@@ -108,6 +110,7 @@ public interface IJsonNames {
 	String FILE_NAME = "fileName";
 	String FINANCE_PARAMS = "financeParams";	
 	String FINANCES = "finances";
+	String FOOTER = "footer";
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
@@ -119,6 +122,7 @@ public interface IJsonNames {
 	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
 	String HAS_IN_PERIOD_PREVIOUS_AMOUNTS = "hasInPeriodPreviousAmounts";
 	String HAS_OPENING_AMOUNTS = "hasOpeningAmounts";
+	String HEADER = "header";
 	String HEADER_TEXT = "headerText";
 	String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	String HIDE_FILTER = "hideFilter";

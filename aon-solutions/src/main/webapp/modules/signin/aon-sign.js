@@ -44,7 +44,7 @@ export class AonSign extends AonElement {
   }
 
   disconnectedCallback(){
-    this.clearTimeAction();
+    this.clearIntervalAction();
   }
 
   build(){
@@ -56,7 +56,7 @@ export class AonSign extends AonElement {
     }
 
     if(this._taskHolders.length > 1){
-      let company = this.createElement('div');
+      let company = this.createElement(TAG.DIV);
       company.style.marginLeft = '20px';
       company.style.width = '200px';
       this.appendChild(company);
@@ -78,12 +78,12 @@ export class AonSign extends AonElement {
 
     }
 
-    let time = this.createElement('div');
+    let time = this.createElement(TAG.DIV);
     time.style.fontSize = '30px';
     time.id = this.TIME;
     time.innerHTML = "00:00:00";
     this.appendChild(time);
-    let div = this.createElement('div');
+    let div = this.createElement(TAG.DIV);
     if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
     this.appendChild(div);
@@ -94,7 +94,7 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
 		if(content){
       this.clearElement(content);
-      let button = this.createElement('button');
+      let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Entrada";
       button.className = 'aonButton';
       button.style.backgroundColor = '#86D364';
@@ -114,7 +114,7 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
-      let button = this.createElement('button');
+      let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Vuelta";
       button.className = 'aonButton';
       button.style.backgroundColor = '#86D364';
@@ -134,7 +134,7 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
-      let button = this.createElement('button');
+      let button = this.createElement(TAG.BUTTON);
       button.id = this.id+"Salida";
       button.className = 'aonButton';
       button.style.backgroundColor = '#DC4D30';
@@ -145,7 +145,7 @@ export class AonSign extends AonElement {
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
       content.appendChild(button);
   
-      let button2 = this.createElement('button');
+      let button2 = this.createElement(TAG.BUTTON);
       button2.className = 'aonButton';
       button2.style.backgroundColor = '#F39F1D';
       button2.style.marginRight = '10px';
@@ -180,37 +180,38 @@ export class AonSign extends AonElement {
   buildSignin(signin) {
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
+    timeEl.style.cursor = "default";
+    let time = signin.time;
+    this.clearIntervalAction();
     if(signin.status === 'in') {
-      const time = signin.time + (new Date().getTime() - signin.in_date);
+      time = signin.time + (new Date().getTime() - signin.in_date);
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
-      this.clearTimeAction();
       this.timeAction(time);
-    } else if(signin.status === 'pause') {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
+    } else if(signin.status === 'pause' && aonUserConnected) {
+      aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
-      this.clearTimeAction();
-      if(timeEl)timeEl.innerHTML = timePaser(signin.time);
-    } else {
-      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
+    } else if(aonUserConnected) {
+      aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
-      this.clearTimeAction();
-      if(timeEl)timeEl.innerHTML = timePaser(signin.time);
     }
+    this.changeTime(time);
     this.divLastTime(signin);
   }
 
   timeAction(time) {
-    let timeDiv = this.getElement(this.TIME);
-    if(timeDiv && time>0){
-      timeDiv.innerHTML = timePaser(time);
-      timeDiv.style.cursor = "default";
-    } else this.clearTimeAction();
-    this.setTimeAction(setTimeout( () => {
-      const newTime = time + 1000;
-      this.timeAction(newTime);
+    let newTime = time;
+    let interval = setInterval(()=>{
+      newTime = newTime + 1000;
+      this.changeTime(newTime);
       this.updateTotalHour();
-    }, 1000));
+    }, 1000);
+    this.setIntervalAction(interval);
+  }
+
+  changeTime(time){
+    let timeDiv = this.getElement(this.TIME);
+    if( timeDiv && time>0 ) timeDiv.innerHTML = timePaser(time);
   }
 
   divLastTime(signin){
@@ -226,7 +227,7 @@ export class AonSign extends AonElement {
         break;
       }
       const id = 'lastTimeUser';
-      const div = this.getElement(id) || this.createElement('div');
+      const div = this.getElement(id) || this.createElement(TAG.DIV);
       div.id = id;
       div.style.marginTop = "10px";
       div.style.color = "grey";

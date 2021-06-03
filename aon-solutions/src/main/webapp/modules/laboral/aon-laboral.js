@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { setValueName } from "../../services/utils.js";
+import { setValueName, waitEl } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -117,6 +117,7 @@ export class AonLaboral extends AonElement {
         let aon_cert = PayrollOptions.AON_CERT;
         aon_cert.fn = () => {
           this.applicationEl.removeToolbarOptions();
+          if(window.innerWidth && window.innerWidth < 900){ this.applicationEl.closeSidenav(); }
           this.showView(PAYROLL_VIEWS.AON_CERT);
         }
         conf.push(aon_cert);
@@ -126,7 +127,6 @@ export class AonLaboral extends AonElement {
 
     let iconContract = this.getElement(this.applicationEl.SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");
     if(iconContract){iconContract.style.marginLeft = "3px";}
-
   }
 
   async getSalary(data){

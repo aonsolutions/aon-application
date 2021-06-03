@@ -1,6 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
-import {rootPanel} from '../../services/gwtLoader.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
@@ -284,7 +283,7 @@ export class AonParent extends AonElement {
 				aonHeader.setAttribute('company', JSON.stringify(company));
 				aonHeader.setAttribute('user', JSON.stringify(user));
 
-				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = this.getElement('aonDesktop');
 				aonDesktop.setAttribute('company', JSON.stringify(company));
 				aonDesktop.setAttribute('user', JSON.stringify(user));

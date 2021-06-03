@@ -91,6 +91,23 @@ export class AonElement extends HTMLElement{
     return this.getElement(this.ROOT_PANEL);
   }
 
+
+  rootPanel(element) {
+    let rp = this.getRootPanel();
+    if(rp) {
+      this.clearElement(rp);
+      rp.appendChild(element);
+    }
+  }
+
+  rootPanelHtml(html) {
+    let rp = this.getRootPanel();
+    if(rp) {
+      this.clearElement(rp);
+      rp.innerHTML = html;
+    }
+  }
+
   rootPanel(element) {
     this.clearElementById(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);
@@ -122,12 +139,11 @@ export class AonElement extends HTMLElement{
 		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
 
-  clearTimeAction() {
-    clearTimeout(this.TIME_ACTION);
-    clearTimeout(null);
+  clearIntervalAction() {
+    clearInterval(this.TIME_ACTION);
   }
 
-  setTimeAction(tm){
+  setIntervalAction(tm){
     this.TIME_ACTION = tm;
   }
 

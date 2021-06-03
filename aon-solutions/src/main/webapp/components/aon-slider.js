@@ -52,14 +52,14 @@ export class AonSlider extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-    let min = this.min || 0;
-    let max = this.max || 100;
+    	let min = this.min || 0;
+    	let max = this.max || 100;
 
 		this.innerHTML = `
-      <label class="${CSS.AON_SLIDER}">
-        <input id="${this.INPUT}" type="range" min="${min}" max="${max}">
-        <span>${this.title}</span>
-      </label>
+      		<label class="${CSS.AON_SLIDER}">
+      		  <input id="${this.INPUT}" type="range" min="${min}" max="${max}">
+        		<span>${this.title}</span>
+      		</label>
 		`;
 
 		let input = this.getElement(this.INPUT);
@@ -72,6 +72,11 @@ export class AonSlider extends AonElement {
 
 	initialize() {
 		this.INPUT = this.id + 'Input';
+	}
+
+	setValue(value) {
+		this.value = value;
+		this.getElement(this.INPUT).value = value;
 	}
 }
 

@@ -1,8 +1,8 @@
 import {AonElement} from './AonElement.js';
 import {ToolbarType} from '../models/enums.js';
 import { AonSearch } from './aon-search.js';
-import { CONSTANT, EVENT } from '../environments/environments.js';
-import './aon-icon-button.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { AonIconButton } from './aon-icon-button.js';
 
 export class AonToolbar extends AonElement {
 	HEADER;
@@ -40,11 +40,11 @@ export class AonToolbar extends AonElement {
 	}
 
 	get type() {
-		return this.getAttribute('type');
+		return this.getAttribute(CONSTANT.TYPE);
 	}
 
 	set type(type) {
-		this.setAttribute('type', type);
+		this.setAttribute(CONSTANT.TYPE, type);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -64,7 +64,7 @@ export class AonToolbar extends AonElement {
 
 	toogleSidenav(fn) {
 		let menu = this.getElement(this.TITLE_SECTION_MENU);
-		if(menu) menu.addEventListener('click', fn);
+		if(menu) menu.addEventListener(EVENT.CLICK, fn);
 	}
 
 	connectedCallback () {
@@ -82,23 +82,23 @@ export class AonToolbar extends AonElement {
 	}
 
 	build() {
-		let type = this.hasAttribute('type') ? this.getAttribute('type') : ToolbarType.APPLICATION;
+		let type = this.hasAttribute(CONSTANT.TYPE) ? this.getAttribute(CONSTANT.TYPE) : ToolbarType.APPLICATION;
 
-		let header = document.createElement('header');
+		let header = this.createElement('header');
 		header.id = this.HEADER;
 		if(ToolbarType.SECONDARY === type) {
 			header.className = "aonSecondaryToolbar";
 
-			let toolSection = document.createElement('section');
+			let toolSection = this.createElement(TAG.SECTION);
 			toolSection.id = this.TOOL_SECTION;
 			toolSection.className = "aonToolbarSection";
 			header.appendChild(toolSection);
 
-			let titleSection = document.createElement('section');
+			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;
 			titleSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
-			let title = document.createElement('span');
+			let title = this.createElement(TAG.SPAN);
 			title.id = this.TITLE_SECTION_SPAN;
 			title.className = 'aonSecondaryToolbarTitle';
 			title.innerHTML = this.getTitle().toUpperCase();
@@ -107,18 +107,21 @@ export class AonToolbar extends AonElement {
 		} else {
 			header.className = "aonToolbar";
 
-			let titleSection = document.createElement('section');
+			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;
 			titleSection.className = "aonToolbarSection";
-			titleSection.innerHTML = `<aon-icon-button id="${this.TITLE_SECTION_MENU}" icon="menu"></aon-icon-button>`;
+			let aib = new AonIconButton();
+			aib.id = this.TITLE_SECTION_MENU;
+			aib.icon  = "menu";
+			titleSection.appendChild(aib);
 
-			let title = document.createElement('span');
+			let title = this.createElement(TAG.SPAN);
 			title.id = this.TITLE_SECTION_SPAN;
 			title.className = 'aonToolbarTitle';
 			title.innerHTML = this.getTitle();
 			titleSection.appendChild(title);
 
-			let option = document.createElement('span');
+			let option = this.createElement(TAG.SPAN);
 			option.id = this.TITLE_SECTION_OPTION;
 			option.style.color = 'gray';
 			option.style.fontSize = '14px';
@@ -127,7 +130,7 @@ export class AonToolbar extends AonElement {
 
 			header.appendChild(titleSection);
 
-			let toolSection = document.createElement('section');
+			let toolSection = this.createElement(TAG.SECTION);
 			toolSection.id = this.TOOL_SECTION;
 			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
@@ -144,8 +147,8 @@ export class AonToolbar extends AonElement {
 	}
 
 	addSeparator() {
-		let span = document.createElement('span');
-		let hr = this.createElement('hr');
+		let span = this.createElement(TAG.SPAN);
+		let hr = this.createElement(TAG.TR);
 		hr.className = 'aonSeparator';
 		span.appendChild(hr);
 
@@ -158,18 +161,18 @@ export class AonToolbar extends AonElement {
 	addButton(name, icon, fn) {
 		const id = this.TOOL_SECTION + name + 'Button';
 		if(this.getElement(id) == null) {
-			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
-			let span = document.createElement('span');
-			span.innerHTML= button;
+			let aib = new AonIconButton();
+			aib.id = id;
+			aib.icon  = icon;
+			aib.addEventListener(EVENT.CLICK, fn);
+			let span = this.createElement(TAG.SPAN);
+			span.appendChild(aib);
 
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
-
-			let b = document.getElementById(id);
-			b.addEventListener('click', fn);
 		}
 	}
 
@@ -189,34 +192,39 @@ export class AonToolbar extends AonElement {
 
 	addButton2(action, fn) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
-		let span = document.createElement('span');
-		if(action.aonIcon) {
-			span.innerHTML= `<aon-icon-button id="${id}" aonIcon="${action.aonIcon}" title="${action.name}"> </aon-icon-button>`;
-		} else {
-			span.innerHTML= `<aon-icon-button id="${id}" icon="${action.icon}" title="${action.name}"> </aon-icon-button>`;
-		}
+		let span = this.createElement(TAG.SPAN);
+		let aib = new AonIconButton();
+		aib.id = id;
+		aib.title = action.name;
+		aib.addEventListener(EVENT.CLICK, fn);
+		if(action.aonIcon){
+			aib.aonIcon = action.aonIcon;
+		} else 
+			aib.icon = action.icon;
+		
+		span.appendChild(aib);
+
 		let toolSection = this.getElement(this.TOOL_SECTION);
 		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 		if(toolSection.children.length > 0) {
 			toolSection.insertBefore(span, toolSection.children[0]);
 		} else toolSection.appendChild(span);
-
-		let b = document.getElementById(id);
-		b.addEventListener('click', fn);
+		
 	}
 
 	addButtonTitle(action, fn) {
 		const id = this.TITLE_SECTION + action.id + 'Button';
 		if(this.getElement(id) == null) {
-			let span = document.createElement('span');
+			let span = this.createElement(TAG.SPAN);
 			// span.style.marginRight = '20px';
-			span.innerHTML = `<aon-icon-button id="${id}" icon="${action.icon}" title="${action.name}"> </aon-icon-button>`;
-
+			let aib = new AonIconButton();
+			aib.id = id;
+			aib.icon  = action.icon;
+			aib.title = action.name;
+			aib.addEventListener(EVENT.CLICK, fn);
+			span.appendChild(aib);
 			let titleSection = this.getElement(this.TITLE_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
-
-			let b = document.getElementById(id);
-			b.addEventListener('click', fn);
 		}
 	}
 
@@ -224,10 +232,10 @@ export class AonToolbar extends AonElement {
 		const id = this.TOOL_SECTION + 'Title';
 		if(this.getElement(id) == null) {
 			this.addSeparator();
-			let span = document.createElement('span');
+			let span = this.createElement(TAG.SPAN);
+			span.id = id;
 			span.style.marginRight = "10px";
 			if(title) span.innerHTML = title.toString().toUpperCase();
-			span.id = id;
 			let titleSection = this.getElement(this.TOOL_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
 		}
@@ -245,19 +253,21 @@ export class AonToolbar extends AonElement {
 
 	toogleNav() {
 		this.dispatchEvent(new CustomEvent('toogle'));
-		let sidenav = this.id + 'Sidenav';
-		let content = this.id + 'Content';
-		if(document.getElementById(sidenav).style.width === "250px"){
-			document.getElementById(sidenav).style.width = "0px";
-			document.getElementById(content).style.marginLeft = "0px";
+		const sidenav = this.id + 'Sidenav';
+		const content = this.id + 'Content';
+		const sidenavEl = this.getElement(sidenav);
+		const contentEl = this.getElement(content);
+		if(sidenavEl.style.width === "250px"){
+			sidenavEl.style.width = "0px";
+			contentEl.style.marginLeft = "0px";
 		} else {
-			document.getElementById(sidenav).style.width = "250px";
-			document.getElementById(content).style['margin-left'] = "250px";
+			sidenavEl.style.width = "250px";
+			contentEl.style.marginLeft = "250px";
 		}
 	}
 
 	getTitle() {
-		return this.hasAttribute('title') ? this.getAttribute('title') : '';
+		return this.hasAttribute(CONSTANT.TITLE) ? this.getAttribute(CONSTANT.TITLE) : '';
 	}
 }
 if(!window.customElements.get('aon-toolbar')){

@@ -1,7 +1,7 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { TAG } from "../../environments/environments.js";
+import { CSS, TAG } from "../../environments/environments.js";
 import { formatDateOrigin, setAttributes } from "../../services/utils.js";
 import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
@@ -23,19 +23,20 @@ export const createFormComunica = (id, parent) => {
     const form = createForm(id+"Form");
     parent.appendChild(form.element);
 
-    const div = createDiv({id: id+"Div"});
+    const className = parent.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
+    const div = createDiv({id: id+"Div", classes:[className]});
     div.appendTo(form);
 
     let divC;
-    divC = createDiv({classes:["aonCol-sm-12"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12]})
     divC.appendTo(div.element);
     createCard({id: id+"EmpresaCard", title:"Datos de la empresa"}, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]});
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]});
     divC.appendTo(div.element);
     createCard({id: id+"TrabajadorCard", title:"Datos del trabajador"}, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]});
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]});
     divC.appendTo(div.element);
     createCard({id: id+"ContratoCard", title:"Datos del contrato"}, divC.element);
 
@@ -44,7 +45,7 @@ export const createFormComunica = (id, parent) => {
 
 export const createCardEnterprise = (parent) => {
     let divC;
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-4"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -55,7 +56,7 @@ export const createCardEnterprise = (parent) => {
     }, divC.element);
  
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-4"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -65,15 +66,14 @@ export const createCardEnterprise = (parent) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-4"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
     divC.appendTo(parent);
-    let aonConvenio = new AonSuggestion();
-    aonConvenio.addEventListener("keyup", ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
-    setAttributes(aonConvenio,{
+    let aonConvenio = setAttributes(new AonSuggestion(),{
         id:"convenio",
         title:"Convenio (opcional)",
         name:"convenio"
     });
+    aonConvenio.addEventListener("keyup", ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
     divC.appendChild(aonConvenio);
 
     createInput({
@@ -88,7 +88,7 @@ export const createCardEnterprise = (parent) => {
 
 export const createCardContract = (parent, id, isButton) => {
     let divC;
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -103,7 +103,7 @@ export const createCardContract = (parent, id, isButton) => {
         }
     }, divC.element);
  
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     const dateContract = createDate({
         attributes:{
@@ -113,7 +113,7 @@ export const createCardContract = (parent, id, isButton) => {
         }
     }, divC.element)
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -123,7 +123,7 @@ export const createCardContract = (parent, id, isButton) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-12", "aonCol-md-6"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -141,7 +141,7 @@ export const createCardContract = (parent, id, isButton) => {
     })
     divH.appendTo(parent);
 
-    divC = createDiv({classes:["aonCol-xs-6", "aonCol-sm-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH.element);
     createSelect({
         attributes:{
@@ -151,7 +151,7 @@ export const createCardContract = (parent, id, isButton) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:["aonCol-xs-6", "aonCol-sm-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH.element);
     let numberC = setAttributes(new AonNumber(),{
         id:"horas_convenio", 
@@ -163,7 +163,7 @@ export const createCardContract = (parent, id, isButton) => {
     divC.appendChild(numberC);
 
 
-    divC = createDiv({classes:["aonCol-xs-6", "aonCol-sm-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH.element);
     numberC = setAttributes(new AonNumber(),{
         id:"horas", 
@@ -173,7 +173,7 @@ export const createCardContract = (parent, id, isButton) => {
     })
     divC.appendChild(numberC);
 
-    divC = createDiv({classes:["aonCol-xs-6", "aonCol-sm-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH.element);
     numberC = setAttributes(new AonNumber(),{
         id:"coefparcial", 
@@ -211,7 +211,7 @@ export const createCardContract = (parent, id, isButton) => {
 export const createCardEmployee = (parent, id) => {
     let divT;
     divT = createDiv({
-        classes:["aonCol-sm-12", "aonCol-md-4"],
+        classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4],
         styles:{
             paddingTop: "18px",
             paddingBottom: "10px"
@@ -239,7 +239,7 @@ export const createCardEmployee = (parent, id) => {
     divReiniciar.appendChild(span);
     createIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
 
-    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-4"] })
+    divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4] })
     divT.appendTo(parent);
     let divNss = createDiv({ attributes:{id: id+"NssDiv"} });
     divNss.appendTo(divT.element);
@@ -253,7 +253,7 @@ export const createCardEmployee = (parent, id) => {
     }, divNss.element);
 
 
-    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-4"] })
+    divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4] })
     divT.appendTo(parent);
     let divDni = createDiv({ attributes:{id: id+"DniDiv"} });
     divDni.appendTo(divT.element);
@@ -269,7 +269,7 @@ export const createCardEmployee = (parent, id) => {
 
     let divSurnames = createDiv({ attributes:{id:"div_apellidos", hidden:true} });
     divSurnames.appendTo(parent);
-    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
+    divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6] })
     divT.appendTo(divSurnames.element);
     createInput({
         attributes:{
@@ -280,7 +280,7 @@ export const createCardEmployee = (parent, id) => {
         }
     }, divT.element);
     
-    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-6"] })
+    divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6] })
     divT.appendTo(divSurnames.element);
     createInput({
         attributes:{
@@ -291,7 +291,7 @@ export const createCardEmployee = (parent, id) => {
         }
     }, divT.element);
 
-    divT = createDiv({ classes:["aonCol-sm-12", "aonCol-md-12", "aonCol-xs-12"] })
+    divT = createDiv({ classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_12, CSS.AON_COL_XS_12] })
     divT.appendTo(parent);
     createInput({
         attributes:{

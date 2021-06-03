@@ -49,7 +49,7 @@ export const createContent = (text) => createSpan({
 
 export const createTitle = (text) => createSpan({
   text,
-  classes:["aonColorPrimary"]
+  classes:[CSS.AON_COLOR_PRIMARY]
 }); 
 
 export const createDivFooter = () => createDiv({
@@ -184,10 +184,12 @@ export const createCard = (attributes, parent) => {
       flex:"true"
   });
   parent.appendChild(aonCard);
+  return aonCard;
 }
 
 
 export const createToolbar= (attributes, parent) => {
   let toolbar = setAttributes( new AonToolbar(), attributes);
   parent.appendChild(toolbar);
+  return toolbar;
 }
