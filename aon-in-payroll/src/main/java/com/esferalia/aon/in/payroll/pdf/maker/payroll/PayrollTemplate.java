@@ -211,7 +211,7 @@ public class PayrollTemplate {
 		String cif		   = text("CIF") + ": " + safeString(p.getCif());
 		String cotizGroup  = text("G.COTIZ") + ": " + safeString(p.getQuotationGroup());
 		String antiquDate  = text("FECHA ANTIGUEDAD") + ": "
-				+ safeString(formatDate(p.getAntiquity().get(), dateFormat));
+				+ safeString(formatDate(p.getAntiquity().orElse(null), dateFormat));
 		String dayTotal	   = text("TOTAL DIAS") + ": " + safeInteger(p.getTotalDays());
 
 		String liquidPeriod = text("PERIODO LIQUIDACION") + ": del "
@@ -378,7 +378,7 @@ public class PayrollTemplate {
 
 						y -= 15;
 
-						if (localTotal != 0)
+//						if (localTotal != 0)
 							m.getValue().stream().forEach(n ->
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
@@ -386,7 +386,7 @@ public class PayrollTemplate {
 								String entryPercent = (n.getPercent().isEmpty()) ? ""
 										: toLatinNumber(n.getPercent().get()) + " % ";
 
-								if (n.getAmount().isPresent() && n.getAmount().get() != 0)
+								if (n.getAmount().isPresent() ) //n.getAmount().get() != 0
 								{
 									PdfText quantity = new PdfText(x, y, 60, 15, contents, entryPercent, BLACK,
 											HELVETICA, fontSize, RIGHT);

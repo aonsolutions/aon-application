@@ -45,7 +45,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
  * 	# TO DO																			#
  *  #################################################################################
  *  #  1. Context data vs Contigency bases;						  (Draft -> Salary)	#
- * 	#  3. Payrolls   											  (Draft -> Salary) #
+ * 	#  3. Payments   											  (Draft -> Salary) #
  * 	#  5. Total payments, total deductions, TOTAL PAYROLL.		  (Draft -> Salary) #
  *  #################################################################################
  * 
