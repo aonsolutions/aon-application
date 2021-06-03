@@ -522,7 +522,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseId(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) {
+	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
 	}
 	
