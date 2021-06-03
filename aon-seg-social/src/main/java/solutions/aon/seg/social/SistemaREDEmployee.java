@@ -1,6 +1,7 @@
 package solutions.aon.seg.social;
 
 import static solutions.aon.seg.social.exception.InvalidCertificateException.checkCertificate;
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getSSCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
@@ -60,9 +61,7 @@ class SistemaREDEmployee {
 			try {
 				employees.addAll(getEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType,
 						regimen, ccc));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			} catch (Exception e) {}
 			try {
 				employees.addAll(getPrevEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType,
 						regimen, ccc));
@@ -73,10 +72,14 @@ class SistemaREDEmployee {
 		} catch (IOException e) {
 			throw new InvalidCertificateException();
 		}
+		catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+		}
+		return null;
 
 	}
 
-	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
+	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
 	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
 
@@ -176,7 +179,7 @@ class SistemaREDEmployee {
 
 		verifyData(new Object[] { regimen, ccc });
 		checkCertificate(certificateInputStream);
-
+		
 		try {
 			return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 		} catch (FailingHttpStatusCodeException e) {
@@ -329,17 +332,13 @@ class SistemaREDEmployee {
 		try {
 			return getEmployeeImpl(certificateInputStream, certificatePassword, certificateType, ccc, nss);
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new StatusCodeException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException | InterruptedException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
 		}
+		return null;
 	}
 
 	// RETURNS AN EMPLOYEE
@@ -448,6 +447,9 @@ class SistemaREDEmployee {
 			} catch (Exception e) {
 				throw new InvalidDataException();
 			}
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
 		}
+		return null;
 	}
 }

@@ -9,6 +9,7 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.*;
 import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 import java.io.FileNotFoundException;
