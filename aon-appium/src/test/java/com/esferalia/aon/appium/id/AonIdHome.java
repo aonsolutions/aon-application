@@ -58,7 +58,8 @@ public class AonIdHome {
 	
 	// #S
 	// ----------------------------------------------------
-
+	public static final String SIGNIN_BUTTONS_CONTAINER = "aonSignContent";
+	
 	// #T
 	// ----------------------------------------------------
 
