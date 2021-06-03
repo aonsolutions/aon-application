@@ -133,6 +133,15 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			const left = button.getBoundingClientRect().left;
 			dialog.setContent(div, top, left);
 			dialog.open();
+
+			service.setWidth('150px');
+			service.setMarginBottom('10px');
+
+			investment.setWidth('150px');
+			investment.setMarginBottom('10px');
+
+			rectified.setWidth('150px');
+			rectified.setMarginBottom('10px');
 		});
 
 		let table = new AonBasicTable();
@@ -334,8 +343,17 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 	
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
-			dialog.setContent(div, top, left);
+			dialog.setContent(div, top, left, '225px');
 			dialog.open();
+
+			farmer.setWidth('200px');
+			farmer.setMarginBottom('10px');
+
+			surcharge.setWidth('200px');
+			surcharge.setMarginBottom('10px');
+
+			accrual.setWidth('200px');
+			accrual.setMarginBottom('10px');
 		});
 
 		let table = new AonBasicTable();
