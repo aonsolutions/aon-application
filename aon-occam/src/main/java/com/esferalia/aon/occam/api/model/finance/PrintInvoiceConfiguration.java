@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class PrintInvoiceConfiguration {
 	
@@ -17,8 +19,21 @@ public class PrintInvoiceConfiguration {
 	
 	}
 
+	@Deprecated
 	public InputStream getBackgroundImage() {
 		return background.getData() != null ? new ByteArrayInputStream(background.getData()) : null;
+	}
+	
+	@Deprecated
+	public PrintInvoiceConfiguration setBackgroundImage(InputStream is) {
+		if(background == null) background = new Attach();
+		try {
+			byte[] data = AonIOUtils.toByteArray(is);
+			background.setData(data); 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return this;
 	}
 
 	public Attach getBackground() {
