@@ -201,7 +201,7 @@ export class AonDialog extends AonElement {
 		return document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 	}
 
-	setContent(widget, top, left) {
+	setContent(widget, top, left, width) {
 		let content = document.getElementById(this.getAttribute(CONSTANT.ID) + 'DialogContent');
 		content.innerHTML = '';
 		content.appendChild(widget);
@@ -209,6 +209,10 @@ export class AonDialog extends AonElement {
 			let dialog = this.getElement(this.DIALOG);
 			content.style.top = top + 'px' || '90px';
 			content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
+		}
+
+		if(width) {
+			content.style.width = width;
 		}
 	}
 

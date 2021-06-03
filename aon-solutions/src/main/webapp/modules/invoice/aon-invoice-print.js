@@ -143,6 +143,7 @@ export class AonInvoicePrint extends AonElement {
     tr3.appendChild(tdAdjust);
     let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
     adjust.checked = this.printConfiguration.adjust;
+    adjust.setWidth('135px');
     adjust.addEventListener('change', () => {
       this.printConfiguration.adjust = adjust.checked;
       this.save();
@@ -178,6 +179,7 @@ export class AonInvoicePrint extends AonElement {
     tr4.appendChild(tdDetailed);
     let detailed = document.getElementById('aonInvoicePrintConfigurationDetailed');
     detailed.checked = this.printConfiguration.detailed;
+    detailed.setWidth('135px');
     detailed.addEventListener('change', () => {
       this.printConfiguration.detailed = detailed.checked;
       this.save();
