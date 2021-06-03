@@ -437,7 +437,7 @@ button:disabled, button[disabled]{
 .aonTable {
   width: 100%;
   border: 0px;
-  border-collapse: collapse;
+  border-spacing: 0px;
 }
 
 .aonTable thead {
@@ -483,13 +483,12 @@ button:disabled, button[disabled]{
   cursor: pointer;
   display: table;
   width: 100%;
-
-  position: relative;
   height: 48px;
   font-size: 12px;
   transition-duration: 0.18s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-property: background-color;
+  border-bottom: 1px solid #ddd;
 }
 
 .aonTable tbody tr:hover {
@@ -502,7 +501,6 @@ button:disabled, button[disabled]{
 
 .aonTable td {
   padding-left: 8px;
-  border-bottom: 1px solid #ddd;
 }
 
 .aonMenuSidenav {
@@ -778,8 +776,6 @@ button:disabled, button[disabled]{
 .aonProgress {
   background-color: #b3d4fc;
   display: none;
-  position: absolute;
-  top: 36px;
 }
 
 .aonProgress:before {

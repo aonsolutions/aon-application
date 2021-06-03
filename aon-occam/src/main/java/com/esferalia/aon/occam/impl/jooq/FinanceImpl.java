@@ -426,9 +426,9 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx) {
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> PrintInvoiceConfigurationDAO.get(ctx));
+				configuration -> PrintInvoiceConfigurationDAO.get(ctx, withData));
 	}
 
 	@Override

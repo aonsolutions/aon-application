@@ -28,6 +28,7 @@ public interface IJsonNames {
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
 	// ---------------------------------------------------------------------------------------------	[B] 
+	String BACKGROUND = "background";
 	String BALANCE_TYPE = "balanceType";
 	String BALANCE = "balance";
 	String BALANCES = "balances";
