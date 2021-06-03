@@ -168,8 +168,9 @@ export class AonToolbar extends AonElement {
 			let span = this.createElement(TAG.SPAN);
 			span.appendChild(aib);
 
+			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
-			toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+			toolSection.style.paddingRight = aonMenu.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
@@ -182,9 +183,10 @@ export class AonToolbar extends AonElement {
 		search.addEventListener(EVENT.SEARCH, (event) => {
 			this.dispatchEvent(new CustomEvent('search',{detail: event.detail}));
 		});
-
+		
+		let aonMenu = this.getElement('aonMenu');
 		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+		toolSection.style.paddingRight = aonMenu.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 		if(toolSection.children.length > 0) {
 			toolSection.insertBefore(search, toolSection.children[0]);
 		} else toolSection.appendChild(search);
@@ -204,8 +206,9 @@ export class AonToolbar extends AonElement {
 		
 		span.appendChild(aib);
 
+		let aonMenu = this.getElement('aonMenu');
 		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+		toolSection.style.paddingRight = aonMenu.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
 		if(toolSection.children.length > 0) {
 			toolSection.insertBefore(span, toolSection.children[0]);
 		} else toolSection.appendChild(span);

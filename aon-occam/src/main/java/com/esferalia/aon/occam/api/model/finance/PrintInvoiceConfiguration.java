@@ -1,28 +1,35 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 public class PrintInvoiceConfiguration {
 	
-	private InputStream backgroundImage;
 	private Integer header;
 	private Integer footer;
 	private Boolean detailed;
 	private Boolean adjustImage;
+	private Attach background;
 	
 	public PrintInvoiceConfiguration() {
 	
 	}
 
 	public InputStream getBackgroundImage() {
-		return backgroundImage;
+		return background.getData() != null ? new ByteArrayInputStream(background.getData()) : null;
 	}
 
-	public PrintInvoiceConfiguration setBackgroundImage(InputStream backgroundImage) {
-		this.backgroundImage = backgroundImage;
+	public Attach getBackground() {
+		return background;
+	}
+	
+	public PrintInvoiceConfiguration setBackground(Attach background) {
+		this.background = background;
 		return this;
 	}
-
+	
 	public Integer getHeader() {
 		return header;
 	}
