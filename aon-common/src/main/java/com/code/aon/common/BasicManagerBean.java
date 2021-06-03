@@ -35,20 +35,6 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BasicManagerBean.class);
 	
-	private transient Stack<Class<? extends ITransferObject>> pojoDependences;
-
-	/**
-	 * Return POJO dependences.
-	 * 
-	 * @return Stack<Class>
-	 */
-	private Stack<Class<? extends ITransferObject>> getPojoDependences() {
-		if (pojoDependences == null) {
-			pojoDependences = new Stack<Class<? extends ITransferObject>>();
-		}
-		return pojoDependences;
-	}
-
 	/**
 	 * Return when it is necessary to initialize and when not.
 	 * 
@@ -71,10 +57,14 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	
 	@Override
 	public void initializePOJO(ITransferObject to) throws ManagerBeanException {
+		_initializePOJO(to, new Stack<Class<? extends ITransferObject>>());
+	}
+	
+	private void _initializePOJO(ITransferObject to,Stack<Class<? extends ITransferObject>> pojoDependences) throws ManagerBeanException {
 		try {
 			Class<? extends ITransferObject> clazz = to.getClass();
 			LOGGER.debug("Initializing " + clazz.getName());
-			getPojoDependences().push(clazz);
+			pojoDependences.push(clazz);
 			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
 			LOGGER.debug("Found " + pds.length + " properties");
 			for (PropertyDescriptor pd : pds) {
@@ -84,9 +74,9 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 					if (ITransferObject.class.isAssignableFrom(fieldClass)) {
 						LOGGER.debug("Initializing TO " + name + " property");
 						ITransferObject childTO = (ITransferObject) fieldClass.newInstance();
-						if (!getPojoDependences().contains(fieldClass)) {
-							initializePOJO(childTO);
-							getPojoDependences().pop();
+						if (!pojoDependences.contains(fieldClass)) {
+							_initializePOJO(childTO,pojoDependences);
+							pojoDependences.pop();
 						}
 						PropertyUtils.setProperty(to, name, childTO);
 						LOGGER.debug("Assigned TO " + fieldClass + " to " + clazz.getName());
