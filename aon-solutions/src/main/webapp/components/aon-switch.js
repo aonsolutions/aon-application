@@ -153,6 +153,17 @@ export class AonSwitch extends AonElement {
       input.setAttribute(CONSTANT.DISABLED, disabled);
     } else input.removeAttribute(CONSTANT.DISABLED); 
   } 
+
+  setWidth(width) {
+    let span = this.getElement(this.TITLE);
+    span.style.width = width;
+  }
+
+  setMarginBottom(mb) {
+    let span = this.getElement(this.TITLE);
+    span.style.marginBottom = mb;
+  }
+
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);
