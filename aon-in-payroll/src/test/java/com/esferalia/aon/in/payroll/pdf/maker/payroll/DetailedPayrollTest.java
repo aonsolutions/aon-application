@@ -3,8 +3,10 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -107,7 +111,7 @@ public class DetailedPayrollTest {
 	
 
 	@Test
-	public void randomPrintTest() {
+	public void randomPrintTest() throws IOException {
 
 		System.out.println("\n\n-----------------------------------");
 		System.out.println(" PAYROLL CREATOR");
@@ -149,6 +153,19 @@ public class DetailedPayrollTest {
 			System.out.println(" Printing PDF file..... \n");
 			PdfMaker.printDefaultPayroll(out, builder.build(),DetailedPayrollTest.class.getResourceAsStream("logo.png"), new Locale("Es"));
 			System.out.println(" >> DONE.");
+			
+			PDDocument doc = PDDocument.load(new FileInputStream("./PayrollRandom.pdf"));
+			PDFMarkedContentExtractor contentExtractor = new PDFMarkedContentExtractor();
+			for (int i = 0; i < doc.getNumberOfPages(); i++) {
+				contentExtractor.processPage(doc.getPage(i));
+				contentExtractor.getMarkedContents().forEach( pdMarkedContent -> {
+                    System.out.println(pdMarkedContent.getTag()+" --> "+pdMarkedContent.getContents()+ " "+pdMarkedContent.getProperties());
+				});
+				
+			}
+			
+			
+			
 		} catch (CanNotCreatePdfException e)
 		{
 			e.printStackTrace();

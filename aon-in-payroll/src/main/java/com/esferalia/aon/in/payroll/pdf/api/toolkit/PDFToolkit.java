@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -94,6 +95,25 @@ public class PDFToolkit {
 		contents.newLineAtOffset(x, y);
 		contents.showText(content);
 		contents.endText();
+	}
+
+	/**
+	 * <p>
+	 * <b>Description:</b> <i>Draws a text. </i>
+	 * </p>
+	 * <p>
+	 * <b>Warning:</b> Use PdfText instead
+	 * </p>
+	 * 
+	 * @return void
+	 * @see PdfText
+	 */
+	public static void drawText(
+			PDPageContentStream contents, String content, Float x, Float y, Color color, PDFont font, float fontSize, String aName
+	) throws IOException {
+		contents.beginMarkedContent(COSName.getPDFName(aName));
+		drawText(contents, content, x, y, color, font, fontSize);
+		contents.endMarkedContent();
 	}
 
 	/**

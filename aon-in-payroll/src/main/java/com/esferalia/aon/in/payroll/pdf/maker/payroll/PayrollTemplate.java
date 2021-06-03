@@ -40,6 +40,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
@@ -233,25 +234,25 @@ public class PayrollTemplate {
 
 		y += 50;
 		x += 10;
-		drawText(contents, enterprise, x, y, BLACK, HELVETICA_BOLD, headerFontSize);
-		drawText(contents, employee, x + 280, y, BLACK, HELVETICA_BOLD, headerFontSize);
+		drawText(contents, enterprise, x, y, BLACK, HELVETICA_BOLD, headerFontSize, "ENTERPRISE_NAME");
+		drawText(contents, employee, x + 280, y, BLACK, HELVETICA_BOLD, headerFontSize, "EMPLOYEE_NAME");
 
 		y -= 13.5;
 		drawText(contents, address, x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, nif, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, nif, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_DOCUMENT");
 
-		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_SS_NUMBER");
 
 		y -= 13.5;
 		drawText(contents, safeString(p.getAddress2()), x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_CATEGORY");
 
 		y -= 13.5;
-		drawText(contents, ccc, x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, cotizGroup, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, ccc, x, y, BLACK, HELVETICA, headerFontSize, "ENTERPRISE_CCC");
+		drawText(contents, cotizGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_GROUP");
 
 		x += 100;
-		drawText(contents, cif, x + 30, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, cif, x + 30, y, BLACK, HELVETICA, headerFontSize, "ENTERPRISE_DOCUMENT");
 		drawText(contents, antiquDate, x + 280, y, BLACK, HELVETICA, headerFontSize);
 
 		y -= 25;
