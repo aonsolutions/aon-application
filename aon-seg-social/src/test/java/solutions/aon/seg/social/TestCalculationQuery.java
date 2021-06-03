@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.InvalidDateException;
 import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
@@ -41,7 +43,9 @@ public class TestCalculationQuery {
 			for (Liquidation liquidation : liq) {
 				System.out.println(liq);
 			}
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
@@ -60,7 +64,9 @@ public class TestCalculationQuery {
 			for (Liquidation liquidation : liq) {
 				System.out.println(liq);
 			}
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
@@ -80,7 +86,9 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (DataDoesNotExist e) {
 			
@@ -116,7 +124,9 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.GENERADAS_POR_LA_TGSS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (LiquidationDoesNotExist e) {
 			
@@ -136,7 +146,9 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL_ARTISTAS, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (WrongRegimeException e) {
 			
@@ -156,6 +168,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (UnfilledMandatory e) {
@@ -176,6 +190,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105369062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (invalidCccException e) {
@@ -194,6 +210,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch(CertificateNotFoundException e) {
@@ -212,6 +230,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch(InvalidCertificateException e) {
@@ -230,6 +250,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkc12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch(InvalidCertificateException e) {
@@ -261,6 +283,8 @@ public class TestCalculationQuery {
 			}
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -285,6 +309,8 @@ public class TestCalculationQuery {
 			}
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -304,7 +330,9 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			WorkerLiquidation liq=SistemaREDI.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","011005185924" ,"01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			System.out.println(liq);
-		}catch (FailingHttpStatusCodeException e) {
+		} catch (StatusCodeException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
@@ -321,6 +349,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			WorkerLiquidation liq=SistemaREDI.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			fail("Shouldn't find anything");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (DataDoesNotExist e) {
@@ -342,6 +372,8 @@ public class TestCalculationQuery {
 			for (WorkerLiquidation workerLiquidation : liq) {
 				System.out.println(liq);
 			}
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -359,6 +391,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<WorkerLiquidation> liq=SistemaREDI.WorkerCalculationQueriesByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			fail("Shouldn't find anything");
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (DataDoesNotExist e) {
@@ -398,6 +432,8 @@ public class TestCalculationQuery {
 			System.out.println(SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -417,6 +453,8 @@ public class TestCalculationQuery {
 			System.out.println(SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "010019805355", "011001022503", "011005185924"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -436,6 +474,8 @@ public class TestCalculationQuery {
 			System.out.println(SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -456,6 +496,8 @@ public class TestCalculationQuery {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -476,6 +518,8 @@ public class TestCalculationQuery {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -495,6 +539,8 @@ public class TestCalculationQuery {
 		} catch (DataDoesNotExist e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -514,6 +560,8 @@ public class TestCalculationQuery {
 		} catch (WrongRegimeException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -534,6 +582,8 @@ public class TestCalculationQuery {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -552,6 +602,8 @@ public class TestCalculationQuery {
 			System.out.println(SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105577910", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "011017250195"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -577,6 +629,8 @@ public class TestCalculationQuery {
 //			}
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -602,6 +656,8 @@ public class TestCalculationQuery {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -628,6 +684,8 @@ public class TestCalculationQuery {
 			
 		}  catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -658,6 +716,8 @@ public class TestCalculationQuery {
 			
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -675,6 +735,8 @@ public class TestCalculationQuery {
 			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111008520536"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -692,6 +754,8 @@ public class TestCalculationQuery {
 			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -710,6 +774,8 @@ public class TestCalculationQuery {
 		} catch (InvalidDateException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -730,6 +796,8 @@ public class TestCalculationQuery {
 			System.out.println("entra");
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -749,6 +817,8 @@ public class TestCalculationQuery {
 		} catch (WrongRegimeException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -768,6 +838,8 @@ public class TestCalculationQuery {
 		} catch (invalidCccException e) {
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -787,6 +859,8 @@ public class TestCalculationQuery {
 			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "010019805355", "011001022503", "011005185924"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (StatusCodeException e) {
+			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
