@@ -1,6 +1,7 @@
 package solutions.aon.seg.social;
 
 import static java.lang.Long.parseLong;
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getTrimmedById;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
@@ -24,7 +25,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.NotRespondingException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
@@ -42,15 +42,12 @@ class SistemaREDSecondaryUser {
 		try {
 			return getSecondaryUserByIpfImpl(certificateInputStream, certificatePassword, certificateType, ipf);
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException(e);
-			}
+			HandleStatusCodeException(e);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		
+		return null;
 	}
 
 	// GET THE SECONDARY USER BY IPF
@@ -189,7 +186,10 @@ class SistemaREDSecondaryUser {
 			String naf) throws SegSocialException {
 		try {
 			registerSecondaryUserImpl(certificateInputStream, certificatePassword, certificateType, typeIpf, nie, naf);
-		} catch (FailingHttpStatusCodeException | IOException e) {
+		} catch (FailingHttpStatusCodeException e){
+			HandleStatusCodeException(e);
+		}
+		catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}
@@ -197,7 +197,7 @@ class SistemaREDSecondaryUser {
 	// REGISTER SECONDARY USER
 	public static void registerSecondaryUserImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String typeIpf, final String ipf,
-			String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
+			String naf) throws IOException, SegSocialException {
 
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
@@ -226,6 +226,8 @@ class SistemaREDSecondaryUser {
 			HtmlSubmitInput finalSubmitButton = htmlPage.querySelector("#Sub2207101004_99");
 			finalSubmitButton.click();
 
+		} catch(FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
 		}
 	}
 

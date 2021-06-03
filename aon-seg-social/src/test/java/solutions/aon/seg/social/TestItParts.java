@@ -52,7 +52,8 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), null);
 		}
-		catch (InvalidDataException | StatusCodeException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (InvalidDataException | StatusCodeException e) {} 
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}

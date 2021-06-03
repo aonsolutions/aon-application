@@ -2,15 +2,23 @@ package solutions.aon.seg.social.toolkit;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
 import com.gargoylesoftware.css.parser.CSSException;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.WebResponseData;
 import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.javascript.host.fetch.Request;
 
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
@@ -49,7 +57,6 @@ public class HtmlUnitToolkit {
 
 			return webClient;
 		} catch (RuntimeException e) {
-			e.printStackTrace();
 			throw new InvalidCertificateException();
 		}
 	}
@@ -217,5 +224,18 @@ public class HtmlUnitToolkit {
 			}
 		}
 		return elem;
+	}
+	
+	
+	public static void simulateStatusCode(int code) {
+		
+		WebResponseData data = new WebResponseData(new byte[0], code, "Simulated " + code + " status", new ArrayList<>());
+		WebResponse response;
+		try {
+			response = new WebResponse(data, new WebRequest(new URL("http://www.fakeURL.com")), (long)10);
+			FailingHttpStatusCodeException exception = new FailingHttpStatusCodeException(response);
+			throw exception;
+		} catch (MalformedURLException ignore) {}
+
 	}
 }
