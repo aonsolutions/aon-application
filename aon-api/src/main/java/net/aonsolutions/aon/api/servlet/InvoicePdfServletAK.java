@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -31,18 +32,17 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API DOWNLOAD INVOICE PDF AK");
 		try {
+			
 			String param = req.getParameter("json");
 			param = new String(Base64.getDecoder().decode(param));
 			JSONObject json = new JSONObject(param);
-			
 
+			String domainName = json.optString("domain_name");
+			Integer domainId = json.optInt("domain_id");
+			String login = json.optString("login");
 			
-			PrintInvoiceConfiguration config = new PrintInvoiceConfiguration()
-					.setDetailed(json.optBoolean("detailed"))
-					.setAdjustImage(json.optBoolean("adjust"))
-					.setFooter(json.opt("footer") != null ? json.optInt("footer") : 100)
-					.setHeader(json.opt("header") != null ? json.optInt("header") : 100);
-			System.out.println(config.getHeader());
+			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			
 		
 			//InputStream is = new ByteArrayInputStream(json.toString().getBytes());
 			

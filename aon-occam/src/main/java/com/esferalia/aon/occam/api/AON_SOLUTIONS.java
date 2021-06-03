@@ -644,9 +644,15 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(Domain domain, User user) {
+	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(Domain domain, User user, Boolean withData) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getFinance().getPrintInvoiceConfiguration(ctx);
+			return getFinance().getPrintInvoiceConfiguration(ctx, withData);
+		}
+	}
+	
+	public static PrintInvoiceConfiguration getPrintInvoiceConfiguration(String domainName, Integer domainId, String login, Boolean withData) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getPrintInvoiceConfiguration(ctx, withData);
 		}
 	}
 	

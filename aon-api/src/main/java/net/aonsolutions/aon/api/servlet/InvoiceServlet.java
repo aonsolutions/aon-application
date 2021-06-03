@@ -476,7 +476,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getPrintConfiguration(AonApiData api) {
-		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser());
+		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser(), false);
 		return PrintInvoiceConfigurationJSON.toJSON(pic);
 	}
 	

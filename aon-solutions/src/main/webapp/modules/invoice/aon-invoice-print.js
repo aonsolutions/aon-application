@@ -7,14 +7,18 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import { MSG } from "../../environments/environments.js";
+import { EVENT, MSG } from "../../environments/environments.js";
 import { getPrintInvoiceConfiguration, savePrintInvoiceConfiguration } from '../../services/invoiceService.js';
+import { getReader } from '../../services/utils.js';
+
+import * as LS from '../../services/localStorageService.js';
 
 export class AonInvoicePrint extends AonElement {
 
   DATA;
   DATA_CARD;
   FILE;
+  INPUTFILE;
 
   printConfiguration;
 
@@ -33,6 +37,7 @@ export class AonInvoicePrint extends AonElement {
   connectedCallback () {
     this.initialize();
     this.innerHTML = `
+      <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file'>
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
@@ -53,6 +58,7 @@ export class AonInvoicePrint extends AonElement {
     this.DATA = this.id + 'Data';
     this.DATA_CARD = this.DATA + 'Card';
     this.FILE = this.id + 'File';
+    this.INPUTFILE = this.id + 'InputFile';
   }
 
   build() {
@@ -60,9 +66,7 @@ export class AonInvoicePrint extends AonElement {
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
 
-    let json = btoa(JSON.stringify({}));
-    let url = '/ms/api/download_invoice_pdf_ak?json=' + json;
-    fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+    this.reloadFile();
 
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';
@@ -82,8 +86,13 @@ export class AonInvoicePrint extends AonElement {
   }
 
   reloadFile() {
+    let objeto = {
+      domain_id: LS.getDomainId(),
+      domain_name: LS.getDomainName(),
+      login: LS.getDomainLogin()
+    };
     let fileDiv = this.getElement(this.FILE);
-    let json = btoa(JSON.stringify(this.printConfiguration));
+    let json = btoa(JSON.stringify(objeto));
     let url = '/ms/api/download_invoice_pdf_ak?json=' + json;
     fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
   }
@@ -145,6 +154,20 @@ export class AonInvoicePrint extends AonElement {
     tdBackground.innerHTML = `<aon-icon-button id="aonInvoicePrintConfigurationBackground" icon="add_photo_alternate"></aon-icon-button>`;
     tr3.appendChild(tdBackground);
     let background = document.getElementById('aonInvoicePrintConfigurationBackground');
+
+    let input = this.getElement(this.INPUTFILE);
+    input.addEventListener('change', () => {
+      getReader(input.files[0]).then(f => {
+        this.printConfiguration.background = f;
+        this.save();
+        this.reloadFile();
+      });
+    });
+
+    background.addEventListener(EVENT.CLICK, () => {
+      input.click();
+    })
+
 
     let tr4 = document.createElement('tr');
     table.appendChild(tr4);

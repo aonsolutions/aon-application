@@ -143,7 +143,7 @@ public interface IFinance {
 	// 	********* PRINT INVOICE CONFIGURATION *********
 	// 	***********************************************
 
-	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx);
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
 	
 }

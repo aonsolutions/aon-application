@@ -21,7 +21,8 @@ public enum DataAttachSource implements Serializable {
 	MOD131,
 	MOD390,
 	IMPORTATION,
-	SISTEMA_RED
+	SISTEMA_RED,
+	INVOICE_PRINT_CONFIGURATION
 	;
 
 	public byte value() {
