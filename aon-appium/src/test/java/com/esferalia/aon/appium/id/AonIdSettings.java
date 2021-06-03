@@ -1,10 +1,6 @@
 package com.esferalia.aon.appium.id;
 
-/**
- * A class containing application's navigation bar elements' ids
- *
- */
-public class AonIdNavigationBar {
+public class AonIdSettings {
     // #A
 	// ----------------------------------------------------
 	 
@@ -28,7 +24,6 @@ public class AonIdNavigationBar {
 	
 	// #H
 	// ----------------------------------------------------
-	public final static String HOME_BUTTON = "aonMobileMenuHomeButtonIcon";
 	
 	// #I
 	// ----------------------------------------------------
@@ -47,10 +42,12 @@ public class AonIdNavigationBar {
 
 	// #N
 	// ----------------------------------------------------
-
+	public static final String NAME_INPUT = "aonConfigurationUserCardNameInput";
+	
 	// #O
 	// ----------------------------------------------------
-
+	public static final String OPCIONES_TAG = "aonConfigurationUserCardTitleSection1";
+	
 	// #P
 	// ----------------------------------------------------
 	
@@ -62,11 +59,10 @@ public class AonIdNavigationBar {
 	
 	// #S
 	// ----------------------------------------------------
-	public final static String SETTINGS_BUTTON = "aonMobileMenuConfigurationButtonIcon";
-
+	public static final String SURNAMES_INPUT = "aonConfigurationUserCardSurnameInput";
+	
 	// #T
 	// ----------------------------------------------------
-	public final static String TIME_CONTROL_BUTTON = "aonMobileMenuControl HorarioButtonIcon";
 
 	// #U
 	// ----------------------------------------------------

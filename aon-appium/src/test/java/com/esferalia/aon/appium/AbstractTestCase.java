@@ -55,6 +55,7 @@ public abstract class AbstractTestCase {
 		apk = AbstractTestCase.class.getResource("aon-test.apk").getPath();
 		username = "usuario@aonsolutions.org";
 		password = "org";
+
 		console = new Console();
 	}
 
@@ -122,8 +123,8 @@ public abstract class AbstractTestCase {
 			WebElement passwordInput = app.findElement(By.id(AonIdLogin.PASSWORD_INPUT));
 			System.out.println(usernameInput);
 
-			String username = "usuario@aonsolutions.org";
-			String password = "org";
+//			String username = "usuario@aonsolutions.org";
+//			String password = "org";
 
 			wait.until(ExpectedConditions.visibilityOf(usernameInput));
 			usernameInput.click();
