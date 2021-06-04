@@ -190,6 +190,7 @@ export class AonToolbar extends AonElement {
 		if(toolSection.children.length > 0) {
 			toolSection.insertBefore(search, toolSection.children[0]);
 		} else toolSection.appendChild(search);
+		return search;
 	}
 
 	addButton2(action, fn) {

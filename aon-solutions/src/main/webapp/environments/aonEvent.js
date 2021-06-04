@@ -18,3 +18,6 @@ export const SELECT = 'select';
 export const SELECT_OPTION = 'selectOption';
 export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
+export const SEARCH_VALUE = 'searchValue';
+
+
