@@ -86,7 +86,7 @@ export class AonSearch extends AonElement {
 		span.appendChild(advancedButton);
 
 		advancedButton.addEventListener(EVENT.CLICK, () => {
-			this.open();
+			this.openOrClose();
 		})
 		
 		input.addEventListener(EVENT.KEYUP, () => {
@@ -125,65 +125,91 @@ export class AonSearch extends AonElement {
 			}
 		});
 
-		let options = this.createElement(TAG.DIV);
-		options.id = this.OPTIONS;
-		options.style.padding = "0 10px";
-		options.className = CSS.AON_INPUT_LIST_OPTIONS;
-		options.style.maxHeight = "none";
-		this.appendChild(options);
+		let divOpts = this.createElement(TAG.DIV);
+		divOpts.id = this.OPTIONS;
+		divOpts.className = CSS.AON_INPUT_LIST_OPTIONS;
+		divOpts.style.maxHeight = "none";
+		divOpts.style.padding = "10px";
+		divOpts.style.display = "none";
+
+		this.appendChild(divOpts);
 	}
 
-	 open(){
-	  	let div = this.getElement(this.OPTIONS);
-		div.style.width = this.clientWidth;
-		if(div.classList.contains('is-visible')) 
-			div.classList.remove('is-visible');
-		else 
-			div.classList.add('is-visible');
+	 openOrClose(){
+	  	let divOpts = this.getElement(this.OPTIONS);
+		divOpts.style.width = this.clientWidth;
+		if(divOpts.classList.contains('is-visible')){
+			divOpts.style.display = "none";
+			divOpts.classList.remove('is-visible');
+		} else {
+			divOpts.style.display = "block";
+			divOpts.classList.add('is-visible');
+		}
+			
 	  }
 
-	  buildOptions(options) {
-		this.clearElementById(this.OPTIONS);
-		  let div = this.getElement(this.OPTIONS);
-		div.style.width = this.getElement(this.SPAN).clientWidth;
-		// div.classList.add('is-visible');
-		// div.innerHTML = 'HOLAA';
-		//   div.appendChild(ul)
+	//   buildOptions(options) {
+		// this.clearElementById(this.OPTIONS);
+		// let divOpts = this.getElement(this.OPTIONS);
+		// divOpts.style.width = this.getElement(this.SPAN).clientWidth;
+		// divOpts.classList.add('is-visible');
+		// divOpts.innerHTML = 'HOLAA';
+		//   divOpts.appendChild(ul)
 	
-		document.addEventListener('click', function (event) {
-			let isClickInside = this.contains(event.target);
-			if (!isClickInside) {
-				if (div.classList.contains('is-visible')) {
-					div.classList.remove('is-visible');
-				}
-			}
-		});
-	  }
-
+		// document.addEventListener('click', function (event) {
+		// 	let isClickInside = this.contains(event.target);
+		// 	if (!isClickInside) {
+		// 		if (divOpts.classList.contains('is-visible')) {
+		// 			divOpts.classList.remove('is-visible');
+		// 		}
+		// 	}
+		// });
+	//   }
+	  /**
+	   * 
+	   * @param {array} inputs  examples [{
+			type: "select",
+			id: "period",
+			name: "period",
+			title: "Período",
+		},{
+			type: "date",
+			name: "startDate",
+			id: "startDate",
+			title: "Desde",
+		}]
+	   */
 	  buildOptionsFilter(inputs){
-		this.clearElementById(this.OPTIONS);
-		let div = this.getElement(this.OPTIONS);
-		let form = this.createElement(TAG.FORM);
-		form.id  = this.id+"Form";
-		form.action = "#";
-		div.appendChild(form);
+		let divOpts = this.getElement(this.OPTIONS);
+		divOpts.innerHTML = "";
+		let input = this.getElement(this.SEARCH_INPUT);
 		inputs.forEach((attributes) => {
 			let el = this.getInput(attributes);
-			if(el) form.appendChild(el);
+			if(el) divOpts.appendChild(el);
 		});
+
 		let button = this.createElement(TAG.BUTTON);
-		button.textContent = "Aceptar";
-		button.className = "aonButton";
+		button.textContent = MSG.ACCEPT;
+		button.classList.add(CSS.AON_BUTTON, CSS.AON_FLEX);
 		button.style.padding = "0.5rem 1rem"; 
-		// button.style.top = "184px";
-		// button.style.position = "absolute";
-		// button.style.left = 0;
-		// button.style.right = 0;
-		// button.style.marginRight = "auto";
-		// button.style.marginLeft  = "auto";
-		div.appendChild(button);
+		button.style.margin = "9px auto 0 auto";
+		button.addEventListener(EVENT.CLICK, ()=>{
+			this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE,{
+				detail: {
+					search:input.value,
+					...this.getValues()
+				}
+			}));
+			this.openOrClose();
+		});
+		divOpts.appendChild(button);
 	  }
 
+	  setContent(el){
+		this.clearElementById(this.OPTIONS);
+		let divOpts = this.getElement(this.OPTIONS);
+		divOpts.appendChild(el);
+	  }
 
 	  getInput(attributes) {
 		let html = undefined;
@@ -197,21 +223,26 @@ export class AonSearch extends AonElement {
 		  case CONSTANT.DATE:
 			html = setAttributes(new AonDate(), attributes);
 			break;
+		  case CONSTANT.HTML_ELEMENT:
+			const element = attributes.element;
+			delete attributes.type;
+			delete attributes.element;
+			html = setAttributes(element, attributes);
+			break;
 		}
 		return html;
 	  }
 
+ 	 getValues() {
+		let divOpts = this.getElement(this.OPTIONS);
+		return serializeForm(divOpts);
+	 }
 
-		getValues() {
-			const form = this.getElement(`${this.id}Form`);
-			return serializeForm(form);
-		}
-
-
-	  closeOptions() {
-		let div = this.getElement(this.OPTIONS);
-		if (div && div.classList.contains('is-visible')) {
-		  div.classList.remove('is-visible');
+     closeOptions() {
+		let divOpts = this.getElement(this.OPTIONS);
+		if (divOpts && divOpts.classList.contains('is-visible')) {
+		  divOpts.style.display = "none";
+		  divOpts.classList.remove('is-visible');
 		}
 	  }
 }

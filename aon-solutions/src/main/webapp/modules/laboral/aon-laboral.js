@@ -111,7 +111,10 @@ export class AonLaboral extends AonElement {
 
     if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;
-      aon_cta_list.fn = () =>  this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
+      aon_cta_list.fn = () =>{
+        this.applicationEl.removeToolbarOptions();
+        this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
+      }
       conf.push(aon_cta_list);
       if(!this.isMobile()){
         let aon_cert = PayrollOptions.AON_CERT;

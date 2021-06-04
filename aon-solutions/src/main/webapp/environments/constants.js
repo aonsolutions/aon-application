@@ -222,6 +222,8 @@ export const VISIBLE = 'visible';
 export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
 
+export const HTML_ELEMENT = 'htmlElement';
+
 // ----- X
 
 // ----- Y
