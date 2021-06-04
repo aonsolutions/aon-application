@@ -776,6 +776,8 @@ button:disabled, button[disabled]{
 .aonProgress {
   background-color: #b3d4fc;
   display: none;
+  /* position: absolute;
+  top: 36px; */
 }
 
 .aonProgress:before {
