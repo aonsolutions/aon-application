@@ -81,6 +81,17 @@ public class ImportPage extends AonTemplate2{
 				importFix();
 			}
 		});
+		
+		Boolean showRegistryEmptyFixButton = getDomain().getName().equals("b06844062-cezaragoza.aonsolutions.net");
+		Button registryEmptyFixButton = toolbar.addButton("Regenerar Clientes Vacíos", "aon-icon-segment");
+		registryEmptyFixButton.setVisible(showRegistryEmptyFixButton);
+		registryEmptyFixButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				importRegistryEmptyFix();
+			}
+		});
 		setToolbar(toolbar);
 	}
 	
@@ -107,6 +118,21 @@ public class ImportPage extends AonTemplate2{
 	
 	private void importFix() {
 		item.importFix(getDomain(), getUser(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("El proceso de correcci\u00f3n ha terminado.");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+	
+	private void importRegistryEmptyFix() {
+		item.importRegistryEmptyFix(getDomain(), getUser(), new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {

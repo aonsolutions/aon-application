@@ -2755,4 +2755,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	
+	@Override
+	public void importRegistryEmptyFix(Domain domain, User user) {
+		ImportFixer.fixEmptyCustomer(domain, user.getLogin());
+	}
+
+	
+	
+	
 }
