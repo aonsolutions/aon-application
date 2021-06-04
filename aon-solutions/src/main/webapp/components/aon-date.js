@@ -1,8 +1,8 @@
 import {AonElement} from './AonElement.js';
 import {setDate} from '../services/utils.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
-import './aon-input.js';
-import './aon-icon-button.js';
+import { AonInput } from './aon-input.js';
+import { AonIconButton } from './aon-icon-button.js';
 
 export class AonDate extends AonElement {
 
@@ -77,9 +77,11 @@ export class AonDate extends AonElement {
 
 	connectedCallback () {
     this.initialize();
-		this.innerHTML = `
-      <aon-input id="${this.INPUT}" description="${this.title}" autocomplete="off"></aon-input>
-		`;
+    let ai = new AonInput();
+    ai.id = this.INPUT;
+    ai.description  = this.title;
+    ai.autocomplete = "off";
+    this.appendChild(ai);
     this.build();
     this.buildDatepicker();
 	}
@@ -168,26 +170,39 @@ export class AonDate extends AonElement {
   buildDatepicker() {
     let input = this.getElement(this.INPUT);
     let div = this.getElement(input.DIV);
-    let span = this.getElement(input.SPAN) || this.createElement('span');
+    let span = this.getElement(input.SPAN) || this.createElement(TAG.SPAN);
     span.id = input.SPAN;
     div.appendChild(span);
 
-    let datepicker =  this.getElement(this.DATEPICKER) || this.createElement('div');
+    let datepicker =  this.getElement(this.DATEPICKER) || this.createElement(TAG.DIV);
     datepicker.id = this.DATEPICKER;
     datepicker.className = 'aonDatepicker';
     datepicker.style.width = '250px';
     span.appendChild(datepicker);
     let datepickerHeaderId =this.DATEPICKER +"Header";
-    let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement('div');
+    let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement(TAG.DIV);
     datepickerHeader.style.height = '50px';
     datepickerHeader.id = datepickerHeaderId;
 
-    datepickerHeader.innerHTML = `
-    <aon-icon-button id="${this.DATEPICKER_PREVIOUS}" icon="keyboard_arrow_left"></aon-icon-button>
-    <span id="${this.DATEPICKER_MONTH}"> ${this.getMonthName()} </span>
-    <span id="${this.DATEPICKER_YEAR}"> ${this.year} </span>
-    <aon-icon-button id="${this.DATEPICKER_NEXT}" icon="keyboard_arrow_right"></aon-icon-button>
-  `;
+    let aib1 = new AonIconButton();
+    aib1.id = this.DATEPICKER_PREVIOUS;
+    aib1.icon = "keyboard_arrow_left";
+    datepickerHeader.appendChild(aib1);
+
+    let span1 = this.createElement(TAG.SPAN);
+    span1.id = this.DATEPICKER_MONTH;
+    span1.textContent = this.getMonthName();
+    datepickerHeader.appendChild(span1);
+
+    let span2 = this.createElement(TAG.SPAN);
+    span2.id = this.DATEPICKER_YEAR;
+    span2.textContent = this.year;
+    datepickerHeader.appendChild(span2);
+
+    let aib2 = new AonIconButton();
+    aib2.id = this.DATEPICKER_NEXT;
+    aib2.icon = "keyboard_arrow_right";
+    datepickerHeader.appendChild(aib2);
 
     datepicker.appendChild(datepickerHeader);
 
@@ -223,9 +238,10 @@ export class AonDate extends AonElement {
     });
 
     let datepickerDays = this.createElement(TAG.DIV);
-    datepickerDays.innerHTML = `
-      <table id="${this.DATEPICKER_DAYS}" style="width:100%"></table>
-    `;
+    let table = this.createElement(TAG.TABLE);
+    table.id = this.DATEPICKER_DAYS;
+    table.style.width = "100%";
+    datepickerDays.appendChild(table);
 
     datepicker.appendChild(datepickerDays);
     this.buildCalendar();
@@ -244,10 +260,10 @@ export class AonDate extends AonElement {
   buildCalendar() {
     this.clearElementById(this.DATEPICKER_DAYS);
     let datepickerDaysTable = this.getElement(this.DATEPICKER_DAYS);
-    let trDays = this.createElement('tr');
+    let trDays = this.createElement(TAG.TR);
     datepickerDaysTable.appendChild(trDays);
     for(let d = 0; d < 7; d++) {
-      let td = this.createElement('td');
+      let td = this.createElement(TAG.TD);
       td.className = 'aonDatepickerDays aonDatepickerDaysTitle';
       td.innerHTML = this.getDayName(d);
       trDays.appendChild(td);
@@ -255,10 +271,10 @@ export class AonDate extends AonElement {
 
 
     for(let i = 0; i < 6; i++) {
-      let tr = this.createElement('tr');
+      let tr = this.createElement(TAG.TR);
       datepickerDaysTable.appendChild(tr);
       for(let j = 0; j < 7; j++) {
-        let td = this.createElement('td');
+        let td = this.createElement(TAG.TD);
         td.className = 'aonDatepickerDays'
         td.id = this.DATEPICKER_DAYS + i + j;
         tr.appendChild(td);
@@ -395,7 +411,7 @@ export class AonDate extends AonElement {
       this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     }
-    this.dispatchEvent(new CustomEvent('change', {detail: this.date}));
+    this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
   }
 
   addZero(d){

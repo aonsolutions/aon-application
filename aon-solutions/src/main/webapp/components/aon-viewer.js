@@ -1,13 +1,13 @@
 import { AonElement } from './AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
-import './aon-icon.js';
+import { AonIcon } from './aon-icon.js';
 import './aon-icon-button.js';
-
 
 export class AonViewer extends AonElement {
 
 	_scale;
-
+	AON_VIEWER_DIV;
+	AON_CANVAS_DIV;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -43,11 +43,13 @@ export class AonViewer extends AonElement {
 	constructor() {
 		super();
 		this._scale = 1;
+		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
+		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";
 	}
 
 	connectedCallback() {
 		let divCanvas = this.createElement(TAG.DIV);
-		divCanvas.id = 'aonViewerCanvasDiv';
+		divCanvas.id = this.AON_CANVAS_DIV;
 		divCanvas.style.width = '100%';
 		this.appendChild(divCanvas);
 
@@ -60,7 +62,7 @@ export class AonViewer extends AonElement {
 		}
 
 		let div = this.createElement(TAG.DIV);
-		div.id = 'aonViewerButtonsDiv';
+		div.id = this.AON_VIEWER_DIV;
 		div.style.display = 'none';
 		this.appendChild(div);
 
@@ -77,12 +79,12 @@ export class AonViewer extends AonElement {
 	}
 
 	removeButtons() {
-		let div = this.getElement('aonViewerButtonsDiv');
+		let div = this.getElement(this.AON_VIEWER_DIV);
 		div.innerHTML = '';
 	}
 
 	buildButtons() {
-		let div = this.getElement('aonViewerButtonsDiv');
+		let div = this.getElement(this.AON_VIEWER_DIV);
 		div.style.visibility = 'hidden';
 		div.style.display = "flex";
 		div.style.flexDirection = "column";
@@ -118,7 +120,7 @@ export class AonViewer extends AonElement {
 			ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
 			div.appendChild(ajustar);
 			this.getElement('aonViewerButtonsDivAjustar').addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll('canvas').forEach((item, i) => {
+				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => {
 					item.remove();
 				});
 				this._scale = 1;
@@ -130,7 +132,7 @@ export class AonViewer extends AonElement {
 			zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
 			div.appendChild(zoomPlus);
 			this.getElement('aonViewerButtonsDivZoomPlus').addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll('canvas').forEach((item, i) => {
+				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => {
 					item.remove();
 				});
 				this._scale = this._scale - 0.25;
@@ -142,7 +144,7 @@ export class AonViewer extends AonElement {
 			zoomMinus.style.marginTop = "4px";
 			div.appendChild(zoomMinus);
 			this.getElement('aonViewerButtonsDivZoomMinus').addEventListener(EVENT.CLICK, () => {
-				document.querySelectorAll('canvas').forEach((item, i) => {
+				document.querySelectorAll(TAG.CANVAS).forEach((item, i) => {
 					item.remove();
 				});
 				this._scale = this._scale + 0.25;
@@ -162,7 +164,7 @@ export class AonViewer extends AonElement {
 		this.appendChild(img);
 	}
 
-	notSupport(type) {
+	notSupport(type, reason) {
 		let div = this.createElement(TAG.DIV);
 		div.style.backgroundColor = 'rgba(128, 128, 128, 0.1)';
 		div.style.height = '100%';
@@ -171,29 +173,36 @@ export class AonViewer extends AonElement {
 
 		let div2 = this.createElement(TAG.DIV);
 		div2.style.margin = 'auto';
-		div2.innerHTML = this.getTypeIcon(type);
+		div2.appendChild(this.getTypeIcon(type));
 		let div3 = this.createElement(TAG.DIV);
-		div3.innerHTML = 'Vista previa no disponible';
+		div3.style.textAlign = "center";
+		div3.innerHTML = reason || 'Vista previa no disponible';
 		div2.appendChild(div3);
 		div.appendChild(div2);
 	}
 
 	getTypeIcon(type) {
+		let ai = new AonIcon();
+		ai.size = "160";
 		if (type.includes('pdf')) {
-			return `<aon-icon icon="aon_pdf" size="160"></aon-icon>`;
+			ai.icon = "aon_pdf";
 		} else if (type.includes('powerpoint') || type.includes('presentation')) {
-			return `<aon-icon icon="aon_powerpoint" size="160" color="orange"></aon-icon>`
+			ai.icon = "aon_powerpoint";
+			ai.color = "orange";
 		} else if (type.includes('excel') || type.includes('spreadsheet')) {
-			return `<aon-icon icon="aon_excel" size="160" color="green"></aon-icon>`
+			ai.icon = "aon_excel";
+			ai.color = "green";
 		} else if (type.includes('word') || type.includes('text')) {
-			return `<aon-icon icon="aon_word" size="160" color="cornflowerblue"></aon-icon>`
+			ai.icon = "aon_word";
+			ai.color = "cornflowerblue";
 		} else {
-			return `<aon-icon icon="aon_file" size="160"></aon-icon>`
+			ai.icon = "aon_file";
 		}
+		return ai;
 	}
 
 	printPdf(scalation) {
-		let div = this.getElement('aonViewerCanvasDiv');
+		let div = this.getElement(this.AON_CANVAS_DIV);
 		let width = this.getAttribute('width');
 		// this.innerHTML = `<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>`;
 		// let canvas = document.createElement('canvas');
@@ -206,6 +215,7 @@ export class AonViewer extends AonElement {
 
 		// Asynchronous download of PDF
 		//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
+		// this.file = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
 		let loadingTask = pdfjsLib.getDocument({
 			url: this.file,
@@ -257,10 +267,11 @@ export class AonViewer extends AonElement {
 			}
 		},  (reason)=> {
 			// PDF loading error
+			this.notSupport(this.type, "Blocked by CORS");
 			console.error(reason);
 		});
 	}
 }
-if (!window.customElements.get('aon-viewer')) {
-	window.customElements.define('aon-viewer', AonViewer);
+if (!window.customElements.get(TAG.AON_VIEWER)) {
+	window.customElements.define(TAG.AON_VIEWER, AonViewer);
 }

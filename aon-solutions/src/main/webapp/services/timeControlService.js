@@ -10,8 +10,7 @@ export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-h
 
 export const getTimeControlExcel = (data) => openFile(`${API_URL}/timecontrol/excel`, data);
 
-export const getStatus = (data) =>
-new Promise((resolve) => {
+export const getStatus = (data) => {
   let jsonValues = [
     {
       name: "Entrada",
@@ -29,8 +28,8 @@ new Promise((resolve) => {
   if (data) {
     jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
   }
-  resolve(jsonValues);
-});
+  return jsonValues;
+}
 
 
 export const getTimeControlList = (data) =>

@@ -242,21 +242,19 @@ export class AonEventList extends AonElement {
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
         datos = datos.filter(dt => new Date(dt.start_date) <= new Date());
-        await sortBy(datos, 'start_date', 'asc').map(
-          async (r) => {
+        sortBy(datos, 'start_date', 'asc').map((r) => {
             const newStatus = r.status.toLowerCase();
-            const textStatus = await getStatus(newStatus);
+            const textStatus = getStatus(newStatus);
             const numbDate =   this.getTimeNumber(group.value, r.start_date);
             const lettersHtml = `<div class="profile-letters ${ numbDate ? "font": ""} out">${group.name.substr(0,1)+numbDate}</div>`;
-            const obj = {
+            data.push({
               ...r,
               lettersHtml,
               textStatus: textStatus.name,
               status: newStatus,
               last_location: r.last_location,
               durationParse: timeHour(Number(r.time)),
-            };
-            data.push(obj);
+            });
           }
         );
       }

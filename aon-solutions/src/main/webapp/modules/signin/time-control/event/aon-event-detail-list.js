@@ -235,10 +235,10 @@ export class AonEventDetailList extends AonElement {
 
       const datos = await getTimeControlDetail(filter);
       if (datos) {
-        await sortBy(datos, "date", "asc").map(async (resp) => {
+        sortBy(datos, "date", "asc").map((resp) => {
           removeEmpty(resp);
           const newStatus = resp.status.toLowerCase();
-          const status = await getStatus(newStatus);
+          const status = getStatus(newStatus);
           const textStatus = status.name;
           const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
           let nameLocation = "";
@@ -247,15 +247,14 @@ export class AonEventDetailList extends AonElement {
           } else if (resp.coordinates) {
             nameLocation = `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
           }
-          const obj = {
+          data.push({
             ...resp,
             lettersHtml,
             textStatus,
             status: newStatus,
             nameLocation,
             dateParse: setDateTimestamp(resp.date),
-          };
-          data.push(obj);
+          });
         });
       }
     } catch (error) {

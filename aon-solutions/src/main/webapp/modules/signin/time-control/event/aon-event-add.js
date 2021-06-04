@@ -152,15 +152,9 @@ export class AonEventAdd extends AonElement {
   async listStatus() {
     let status = this.getElement("status");
     try {
-      const resp = await getStatus();
+      const resp = getStatus();
       status.options = JSON.stringify(
-        resp.map((r) => {
-          return {
-            ...r,
-            name: `${r.name}`,
-            value: r.value,
-          };
-        })
+        resp.map((r) => ({...r, name: `${r.name}`, value: r.value}))
       );
     } catch (error) {}
   }

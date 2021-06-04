@@ -50,6 +50,7 @@ export class AonPresenceList extends AonElement {
   initialize(){
     this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
     this.TABLE_ID = this.id + "Table";
+    this._list = [];
     this.applicationEl = this.getApplication();
     this.applicationParenEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Presencia");
@@ -59,9 +60,7 @@ export class AonPresenceList extends AonElement {
   async build(){
     this.paintView();
     this.buildToolbar();
-    await this.buildFilter();
     await this.getTable();
-    // document.querySelector("aon-search").buildOptionsFilter(PRESENCE_FILTER);
   }
 
   paintView() {
@@ -77,33 +76,41 @@ export class AonPresenceList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter());
-    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel());
-    this.applicationEl.addSearchOption();
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    if(!this.isMobile()) this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel());
+    this.buildToolbarSearch();
+    this.searchValueDefault();
   }
 
+  buildToolbarSearch(){
+    let btnSearch = this.applicationEl.addSearchOption();
+    
+    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => {
+      this.searchFilter = detail;
+      this.search();
+    });
 
-  async buildFilter() {
-    let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(PRESENCE_FILTER);
-
-    let filterFormEl = aonFilter.getFormEl();
-    let aonSwitch = new AonSwitch();
-    aonSwitch.name = "linked";
-    aonSwitch.title = "Usuarios activos";
-    aonSwitch.checked = true;
-    aonSwitch.disabled = true;
-    filterFormEl.appendChild(aonSwitch);
-
-    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({detail}) => {
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+      this._list = [];
       if(detail) this.applicationParenEl.setDataFilter(detail);
     });
 
+    let arrayNewFilter = PRESENCE_FILTER;
+    arrayNewFilter.push({
+      type: CONSTANT.HTML_ELEMENT,
+      element: new AonSwitch(),
+      id: "aonSwitchFilter",
+      name:"linked",
+      title:"Usuarios activos",
+      checked:true,
+      disabled:true
+    })
+    
+    btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
+  }
+
+  searchValueDefault(){
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriod());
-
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         const {startDate, endDate} = detail;
@@ -112,12 +119,8 @@ export class AonPresenceList extends AonElement {
       }
     });
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>{
-      periodEl.value = "personalized";
-    });
-    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>{
-      periodEl.value = "personalized";
-    });
+    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
+    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
   }
 
   async getTable() {
@@ -176,15 +179,14 @@ export class AonPresenceList extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this.searchFilter && !isEmptyObject(this._list)){
-        data = this._list.filter(({name, nameLocation})=> this.includeSearch(name) ||  this.includeSearch(nameLocation));
+      if(this._list.length){
+        data = this._list;
       } else {
         let filter = null;
         try {filter = {...this.applicationParenEl._filter};} catch (error) {}
         const datos = await getTimeControlList(filter);
         if (datos) {
-          await sortBy(datos, 'last_date', 'desc').map(
-            async ({
+          sortBy(datos, 'last_date', 'desc').map(({
               time,
               last_date,
               status,
@@ -196,7 +198,7 @@ export class AonPresenceList extends AonElement {
                 const newStatus = status.toLowerCase();
                 const lettersName = StringTwoLetters(name);
                 const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-                const textStatus = await getStatus(newStatus);
+                const {name:textStatus} = getStatus(newStatus);
                 let nameLocation = "";
                 if (last_location && last_location.name) {
                   nameLocation = last_location.name;
@@ -204,7 +206,7 @@ export class AonPresenceList extends AonElement {
                   let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
                   nameLocation = aib.outerHTML;
                 }
-                const obj = {
+                data.push({
                   name,
                   lettersHtml,
                   last_date,
@@ -212,20 +214,18 @@ export class AonPresenceList extends AonElement {
                   last_location,
                   nameLocation,
                   taskHolderId,
-                  textStatus: textStatus.name,
+                  textStatus,
                   status: newStatus,
                   duration: timeHour(Number(time)),
-                };
-                data.push(obj);
+                });
               }
             }
           );
           this._list = data;
+          if(this.searchFilter) data = this.filterSearch(["name", "nameLocation"], data);
         }
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) { console.log(e); }
     return data;
   }
 
@@ -235,22 +235,24 @@ export class AonPresenceList extends AonElement {
       let startYear = new Date().getFullYear();
       let {startDate} = this.applicationParenEl._filter;
 			if(startDate) {startYear = new Date(startDate).getFullYear();} 
-      startDate = startYear+"-01-01"; 
-      const endDate = startYear+"-12-31"; 
-			await getTimeControlExcel({startDate, endDate}); 
+			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31"}); 
 		} catch (error) {
       this.showToast(error);
 		}
 		this.applicationEl.stopLoading();
 	}
 
-  search(detail){
-    this.searchFilter = detail;
+  search(){
+    this._list = this.filterSearch(["name", "nameLocation"], this._list);
     this.getTable();
   }
 
-  includeSearch(str){
-    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
+  filterSearch(keys, lists){
+    let list = [];
+    if(this.searchFilter && lists.length){
+      list = lists.filter((lt)=> keys.some(key=>lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+    }
+    return list;
   }
 
   aonEvent({ target }, data) {
