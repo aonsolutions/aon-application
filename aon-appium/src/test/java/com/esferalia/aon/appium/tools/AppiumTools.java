@@ -29,9 +29,7 @@ public class AppiumTools {
 		capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "android11");
 		capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 		capabilities.setCapability(MobileCapabilityType.APP, apk);
-		capabilities.setCapability(MobileCapabilityType.SUPPORTS_LOCATION_CONTEXT, true);
 		capabilities.setCapability("chromedriverExecutable", driver);
-		capabilities.setCapability("locationServicesEnabled", true);
 		capabilities.setCapability("gpsEnabled", true);
 		capabilities.setCapability("avd", "android11");
 		capabilities.setCapability("autoGrantPermissions", true);
@@ -41,7 +39,7 @@ public class AppiumTools {
 		capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
 		
 		AppiumDriver<MobileElement> app = new AppiumDriver<MobileElement>(new URL(appiumServiceUrl),capabilities);
-		app.setLocation(new Location(42.867918, -2.697234, 0));
+		app.setLocation(new Location(42.8678439, -2.6972783, 0));
 		return app;
 	}
 	

@@ -1,17 +1,10 @@
 package solutions.aon.selenium.aio;
 
-import java.net.URL;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import solutions.aon.selenium.AbstractTestCase;
-import solutions.aon.selenium.solutions.TimeControlTestCase;
 
 public class AioBaseTestCase extends AbstractTestCase{
 
@@ -33,5 +26,16 @@ public class AioBaseTestCase extends AbstractTestCase{
 		headerOptionsFormLogout.click();
 	}
 	
+	protected static String getUrl() {
+		return System.getProperty("url", "https://general-payroll-test.aonsolutions.org/");
+	}
+
+	protected static String getUser() {
+		return System.getProperty("user", "admin");
+	}
+
+	protected static String getPassword() {
+		return System.getProperty("password", "org");
+	}
 	
 }
