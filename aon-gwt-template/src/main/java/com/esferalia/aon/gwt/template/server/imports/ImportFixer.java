@@ -5,6 +5,9 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -19,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 public class ImportFixer {
@@ -45,6 +49,18 @@ public class ImportFixer {
 			}
 
 		});
+	}
+	
+	public static void fixEmptyCustomer(Domain domain, String login) {
+		LinkedList<Integer> customers = AON.getCustomerStream(domain.getName(), domain.getId(), login, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getNameProperty().isNull()).and(f.getDocumentProperty().isNull()))
+				.map(r -> r.getId()).collect(Collectors.toCollection(LinkedList::new));
+		deleteCustomers(domain, login, customers);
+		deleteRaddress(domain, login, customers);
+		deleteRmedia(domain, login, customers);
+		deleteRegistries(domain, login, customers);
+		
 	}
 	
 	public static void fixCustomer(Domain domain, String login) {
@@ -185,6 +201,33 @@ public class ImportFixer {
 				.execute();
 		}
 		//customers.stream().forEach(id -> AON.deleteRegistry(domain.getName(), domain.getId(), login, id));
+	}
+	
+	private static void deleteRaddress(Domain domain, String login, LinkedList<Integer> customers) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+			ctx.getDslContext()
+				.delete(RADDRESS)
+				.where(RADDRESS.REGISTRY.in(customers))
+				.execute();
+		}
+	}
+	
+	private static void deleteRmedia(Domain domain, String login, LinkedList<Integer> customers) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+			ctx.getDslContext()
+				.delete(RMEDIA)
+				.where(RMEDIA.REGISTRY.in(customers))
+				.execute();
+		}
+	}
+	
+	private static void deleteRegistries(Domain domain, String login, LinkedList<Integer> customers) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+			ctx.getDslContext()
+				.delete(REGISTRY)
+				.where(REGISTRY.ID.in(customers))
+				.execute();
+		}
 	}
 	
 	private static void updateSupplierAccount(Domain domain, String login, Integer supplierId, Integer account) {
