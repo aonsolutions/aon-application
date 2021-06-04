@@ -2,18 +2,17 @@ import { AonElement } from '../../../components/AonElement.js';
 import { ToolbarType } from '../../../models/enums.js';
 import {  openFileUrl } from '../../../services/service.js';
 import { AonSelect } from '../../../components/aon-select.js';
-import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MSG, TAG } from '../../../environments/environments.js';
 import * as ACTION from '../../actions.js';
 import { extensionsType } from '../../../services/extensionsEnums.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { postBidoq } from '../../../services/bidoqService.js';
-import { setDateTimestamp } from '../../../services/utils.js';
-import '../../../components/aon-toolbar.js';
-import '../../../components/aon-date.js';
-import '../../../components/aon-input.js';
-import '../../../components/aon-viewer.js';
-import '../../../components/aon-switch.js';
-import '../../../components/aon-card.js';
+import { setAttributes, setDateTimestamp } from '../../../services/utils.js';
+import { AonViewer } from '../../../components/aon-viewer.js';
+import { AonToolbar } from '../../../components/aon-toolbar.js';
+import { AonCard } from '../../../components/aon-card.js';
+import { AonInput } from '../../../components/aon-input.js';
+
 
 export class AonDocumentAyudat extends AonElement {
 
@@ -38,19 +37,7 @@ export class AonDocumentAyudat extends AonElement {
 
   connectedCallback () {
     this.initialize();
-    this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.data.title}"> </aon-toolbar>
-      <div style="display:flex;">
-        <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-          <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
-        </div>
-        <div id="${this.FILE}" class="aonSubContent">
-
-        </div>
-      </div>
-    `;
-
-     this.build();
+    this.build();
   }
 
   initialize() {
@@ -66,27 +53,65 @@ export class AonDocumentAyudat extends AonElement {
     this.applicationEl.removeToolbarOptions();
   }
 
+
   build() {
-    let fileDiv = this.getElement(this.FILE);
+    this.paintView();
+    this.buildData();
+    this.buildDocumentToolbar();
+  }
+
+  paintView(){
+    let aonToolbar = setAttributes(new AonToolbar(),{
+      id: this.TOOLBAR,
+      type: ToolbarType.SECONDARY,
+      title: this.data.title
+    });
+    this.appendChild(aonToolbar);
+
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.AON_FLEX;
+    this.appendChild(div);
+
+    let dataDiv = setAttributes(this.createElement(TAG.DIV),{
+      id: this.DATA,
+      class: CSS.AON_SUB_CONTENT
+    });
+    dataDiv.style.width = "50%";
+    div.appendChild(dataDiv);
+
+    let aonCard = setAttributes(new AonCard(),{
+      id: this.DATA_CARD,
+      title: MSG.FILE_DATA
+    });
+    dataDiv.appendChild(aonCard);
+
+    let fileDiv = setAttributes(this.createElement(TAG.DIV),{
+      id: this.FILE,
+      class: CSS.AON_SUB_CONTENT
+    });
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
-    const urlFile = this.data.image;// encodeURI(this.data.image);
-		fileDiv.innerHTML = `<aon-viewer type="${this.getContentType()}" file="${urlFile}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+    div.appendChild(fileDiv);
 
-    let dataDiv = this.getElement(this.DATA);
-    dataDiv.style.width = '50%';
+    const type = this.getContentType();
+    const aonViewer = setAttributes(new AonViewer(),{
+      type,
+      file: this.data.image, 
+      width: fileDiv.offsetWidth
+    });
+    fileDiv.appendChild(aonViewer);
 
-		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null){
-      let offset1 = fileDiv.getBoundingClientRect();
-      fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
-
-      let offset2 = dataDiv.getBoundingClientRect();
-  		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+    if(type.indexOf("pdf")>=0){
+      aonViewer.createIframe();
     }
 
-    this.buildData();
+		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null){
+      const offset1 = fileDiv.getBoundingClientRect();
+      fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
 
-    this.buildDocumentToolbar();
+      const offset2 = dataDiv.getBoundingClientRect();
+  		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+    }
   }
 
   getContentType(){
@@ -111,7 +136,11 @@ export class AonDocumentAyudat extends AonElement {
 
     let tdName = this.createElement(TAG.TD);
     tdName.setAttribute('colspan', '2');
-		tdName.innerHTML = `<aon-input id="name" description="${MSG.NAME}"></aon-input>`;
+    let inp = setAttributes(new AonInput(),{
+      id: "name",
+      description: MSG.NAME
+    })
+    tdName.appendChild(inp)
 		tr2.appendChild(tdName);
 		let name = this.getElement('name');
     name.value = this.data.title;
@@ -132,12 +161,7 @@ export class AonDocumentAyudat extends AonElement {
     tr3.appendChild(tdCategory);
     const categories = this.applicationParentEl._folders;
     if(categories){
-      categorySelect.setOptions(categories.map(c => {
-        return {
-          value: c.carpetaID,
-          name: c.carpeta
-        }
-      }));
+      categorySelect.setOptions(categories.map(c => ({ value: c.carpetaID, name: c.carpeta})));
       if(this.data.service){
         categorySelect.value = parseInt(this.data.service);
       }
@@ -272,9 +296,9 @@ export class AonDocumentAyudat extends AonElement {
         tags: this._tags.map(t => t.id || t.value).join(",")
       });
       if(CONSTANT.SUCCESS  === message){
-        this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS})
+        this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
       } else {
-        this.showToast({message, type: CONSTANT.ERROR})
+        this.showToast({message, type: CONSTANT.ERROR});
       }
     } catch (error) {
       this.showError(error);

@@ -55,19 +55,26 @@ export class AonMobileDocumentAyudat extends AonDocumentAyudat {
       title: MSG.FILE_DATA
     });
     div.appendChild(aonCard);
+
+    
   }
   
   openFileCard() {
     let fileCard = this.getElement(this.FILE_CARD);
     const width = this.getElement(fileCard.CONTENT).offsetWidth;
+    const type = this.getContentType();
     const aonViewer = setAttributes(new AonViewer(),{
-      type: this.getContentType(),
+      type,
       file: this.data.image, 
       width
     });
     fileCard.setContent(aonViewer);
     fileCard.cleanSection2();
     fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
+
+    if(type.indexOf("pdf")>=0){
+      aonViewer.createIframe();
+    }
   }
 
   closeFileCard() {
