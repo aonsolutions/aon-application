@@ -103,6 +103,7 @@ public interface ITemplateAsync {
 			AsyncCallback<String> callback);
 	
 	void importFix(Domain domain, User user, AsyncCallback<Void> callback);
-	
+	void importRegistryEmptyFix(Domain domain, User user, AsyncCallback<Void> callback);
+
 	void insertFee(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 }
