@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl.DayHourExtraCompl;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObject {
@@ -185,7 +184,7 @@ public class EmployeeCalendarDraftObject {
 	public void addDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		CalendarDayType newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 		this.employeeCalendarInfo.getCalendarDaysType().addDayType(newCalendarDayType);
-		Window.alert(this.employeeCalendarInfo.getCalendarDaysType().toString(newCalendarDayType));
+//		Window.alert(this.employeeCalendarInfo.getCalendarDaysType().toString(newCalendarDayType));
 		this.employeeCalendarInfo.getCalendarDaysType().initMapDaysDayType();
 	}
 	
