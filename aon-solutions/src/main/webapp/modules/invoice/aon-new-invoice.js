@@ -24,10 +24,10 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Paymethods } from '../../services/paymethod.js';
-import { DIV } from '../../environments/aonTag.js';
 import { Transactions } from '../../services/transaction.js';
 import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIRPFPercentage, TaxIVAPercentage, TaxType, TaxVATPercentage } from './invoiceEnums.js';
 import { getItems} from '../../services/productService.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonNewInvoice extends AonElement {
 
@@ -43,8 +43,7 @@ export class AonNewInvoice extends AonElement {
 	FINANCE_CARD;
 	DATA;
 	FILE;
-	;
-
+	fileOpened;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -83,6 +82,7 @@ export class AonNewInvoice extends AonElement {
   	}
 
 	initialize(){
+		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.DATA = this.id + 'Data';
@@ -188,8 +188,7 @@ export class AonNewInvoice extends AonElement {
 
 	resize() {
 		if(!this.isMobile()){
-			console.log(window.innerWidth);
-			if(window.innerWidth && window.innerWidth > 1100){
+			if(window.innerWidth && window.innerWidth > 1100 && !this.fileOpened){
 				this.getElement(this.GENERAL).style.display='flex';
 				this.getElement(this.GENERAL_CARD).style.width = '50%';
 				this.getElement(this.TAX).style.width = '50%';			
@@ -295,6 +294,7 @@ export class AonNewInvoice extends AonElement {
 		this.appendChild(div);
 
 		let data = this.createElement(TAG.DIV);
+		data.style.width = this.fileOpened ? '50%' : '100%';
 		data.id = this.DATA;
 		data.className = CSS.AON_SUB_CONTENT;
 		data.style.width = '100%';
@@ -317,6 +317,10 @@ export class AonNewInvoice extends AonElement {
 		file.id  = this.FILE;
 		file.className = CSS.AON_SUB_CONTENT;
 		div.appendChild(file);
+
+		if(this.fileOpened) {
+			this.showFile();
+		}
 	}
 
 	buildCommentCard(parent) {
@@ -1300,11 +1304,13 @@ export class AonNewInvoice extends AonElement {
 		let fileDiv = this.getElement(this.FILE);
 		let dataDiv = this.getElement(this.DATA);
 		if(visible) {
+			this.fileOpened = false;
 			button.icon = 'visibility';
 			fileDiv.style.display = 'none'
 			dataDiv.style.width = '100%'
 			this.getElement(this.GENERAL).style.display = 'flex';
 		} else {
+			this.fileOpened = true;
 			button.icon = 'visibility_off';
 			fileDiv.style.display = 'block';
 			fileDiv.style.width = '50%';
@@ -1312,11 +1318,17 @@ export class AonNewInvoice extends AonElement {
 			this.getElement(this.GENERAL).style.display = 'block';
 
 			this.clearElement(fileDiv);
+
+			let json = this.getInvoice();
+			json.domain_id = LS.getDomainId();
+			json.domain_name = LS.getDomainName();
+			json.login = LS.getDomainLogin();
+
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
 				? 'application/pdf' : this.getInvoice().file.content_type;
 			viewer.file = !this.getInvoice().file && this.getInvoice().isEmitida()
-				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(this.getInvoice()))
+				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
 			fileDiv.appendChild(viewer);
@@ -1334,7 +1346,10 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	changeInvoice(invoice) {
-		if(invoice && !invoice.details){
+		let inv = new Invoice();
+		inv.createInvoice(invoice);
+
+		if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
 				let aip = document.querySelector('aon-invoice-panel');
 				aip.aonInvoice(invoice.type, inv);

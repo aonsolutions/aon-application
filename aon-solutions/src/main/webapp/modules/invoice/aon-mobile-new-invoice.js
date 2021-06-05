@@ -21,6 +21,7 @@ import { getItems } from '../../services/productService.js';
 import * as ACTION from '../actions.js';
 import { AonNewInvoice } from './aon-new-invoice.js';
 import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileNewInvoice extends AonNewInvoice {
 
@@ -934,8 +935,14 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
 				? 'application/pdf' : this.getInvoice().file.content_type;
+			
+			let json = this.getInvoice();
+			json.domain_id = LS.getDomainId();
+			json.domain_name = LS.getDomainName();
+			json.login = LS.getDomainLogin();
+			
 			viewer.file = !this.getInvoice().file && this.getInvoice().isEmitida()
-				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(this.getInvoice()))
+				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
 			fileDiv.appendChild(viewer);
