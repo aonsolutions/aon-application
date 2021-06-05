@@ -266,7 +266,7 @@ public class InvoiceTemplate {
 		y -= 60;
 		x  = 50;
 		drawBox(contents, x, y, 429, 15, BLACK);
-		drawText(contents, "Descripción", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawText(contents, "Descripci" + "\u00F3" + "n", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
 		x += 430;
 
 		drawBox(contents, x, y, 69, 15, BLACK);

@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.itextpdf.text.BadElementException;
@@ -30,7 +33,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediRegistry;
-import es.translogia.tedi.json.TediInvoiceJSON;
 
 
 @SuppressWarnings("serial")
@@ -41,19 +43,44 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		// TODO Auto-generated method stub
-		String param = req.getParameter("json");
-		param = new String(Base64.getDecoder().decode(param));
-		JSONObject json = new JSONObject(param);
-		TediInvoice invoice = TediInvoiceJSON.fromJSON(json);
-		File file = createPdf(invoice);
-		
+		LOGGER.info("AON API DOWNLOAD INVOICE PDF AK");
 		try {
-			responseFile(req, resp, file, MimeType.PDF);
+			
+			String param = req.getParameter("json");
+			param = new String(Base64.getDecoder().decode(param));
+			JSONObject json = new JSONObject(param);
+
+			String domainName = json.optString("domain_name");
+			Integer domainId = json.optInt("domain_id");
+			String login = json.optString("login");
+			
+			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			
+			//InputStream is = new ByteArrayInputStream(json.toString().getBytes());
+			PdfMaker.printInvoice(resp.getOutputStream(), json, config, null);
+//			PdfMaker.printDemoInvoice(resp.getOutputStream(), config, null);
+//			PdfMaker.printInvoice(resp.getOutputStream(), is, config, null );
+			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);
 		}
 	}
+	
+//	@Override
+//	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+//		// TODO Auto-generated method stub
+//		String param = req.getParameter("json");
+//		param = new String(Base64.getDecoder().decode(param));
+//		JSONObject json = new JSONObject(param);
+//		TediInvoice invoice = TediInvoiceJSON.fromJSON(json);
+//		File file = createPdf(invoice);
+//		
+//		try {
+//			responseFile(req, resp, file, MimeType.PDF);
+//		} catch (IOException e) {
+//			error(req, resp, e);
+//		}
+//	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {

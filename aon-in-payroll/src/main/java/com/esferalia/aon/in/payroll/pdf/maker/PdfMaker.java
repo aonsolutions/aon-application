@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetPrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplate;
@@ -34,6 +36,20 @@ public class PdfMaker {
 	 */
 	public static void printInvoice(OutputStream out, InputStream json, PrintInvoiceConfiguration config,
 			InputStream qrCode) throws CanNotCreatePdfException, JsonParseException {
+		InvoiceMaker.createWithJson(out, json, config, qrCode);
+	}
+	
+	/**
+	 * CREATE THE INVOICE WITH A JSON
+	 * 
+	 * @param out
+	 * @param json
+	 * @param config
+	 * @param qrCode
+	 * @throws CanNotCreatePdfException
+	 * @throws JsonParseException
+	 */
+	public static void printInvoice(OutputStream out, JSONObject json, PrintInvoiceConfiguration config, InputStream qrCode) {
 		InvoiceMaker.createWithJson(out, json, config, qrCode);
 	}
 

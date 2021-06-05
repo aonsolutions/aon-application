@@ -41,7 +41,7 @@ export class Invoice {
 
   constructor(type) {
     this.domain = localStorage.getItem('aon_domain_id');
-    this.type = type || 'emitida';
+    this.type = type || 'ticket';
     this.series = '';
     this.number = '';
     this.reference = '';
@@ -246,6 +246,10 @@ export class Invoice {
 
   isTicket() {
     return this.type.toLowerCase() === 'ticket';
+  }
+
+  isRawdoc() {
+    return this.isInbox() || this.isRejected() || this.isDraft();
   }
 
   isInbox() {
