@@ -1,6 +1,5 @@
 package com.esferalia.aon.in.payroll.pdf.maker.invoice;
 
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.parseDate;
 import static java.lang.Double.parseDouble;
 
 import java.io.BufferedReader;
@@ -13,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -24,7 +23,12 @@ import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceFinance;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceTax;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+
+import es.translogia.tedi.json.TediJSONUtils;
 
 public class InvoiceMaker {
 
@@ -32,80 +36,85 @@ public class InvoiceMaker {
 	public static void createWithJson(
 			OutputStream out, InputStream json, PrintInvoiceConfiguration config, InputStream qrCode
 	) throws CanNotCreatePdfException, JsonParseException {
-
 		JSONParser parser = new JSONParser();
-		try
-		{
+		try {
 			String text = new BufferedReader(new InputStreamReader(json, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 			Object obj = parser.parse(text);
 
 			JSONObject jsonObj		= (JSONObject) obj;
-			JSONObject receiver		= (JSONObject) jsonObj.get("receiver");
-			JSONObject addressInfo	= (JSONObject) receiver.get("address");
-			JSONArray  taxesInfo	= (JSONArray) jsonObj.get("taxes");
-			JSONArray  financesInfo	= (JSONArray) jsonObj.get("finances");
-			JSONArray  entriesInfo	= (JSONArray) jsonObj.get("details");
-
-			String reference  = (String) jsonObj.get("reference");
-			Date   date		  = PdfFormats.parseDate("" + jsonObj.get("date"), "yyyy-MM-dd");
-			String document	  = (String) receiver.get("document");
-			String name		  = (String) receiver.get("name");
-			String address	  = (String) addressInfo.get("address");
-			String addressLn2 = addressInfo.get("zip") + " " + addressInfo.get("city") + " " + addressInfo.get("province");
-
-			ArrayList<InvoiceTax>	  taxes	   = new ArrayList<>();
-			ArrayList<InvoiceFinance> finances = new ArrayList<>();
-			ArrayList<InvoiceEntry>	  entries  = new ArrayList<>();
-
-			for (Object tax : taxesInfo)
-			{
-				JSONObject taxObj = (JSONObject) tax;
-
-				double base	   = parseDouble("" + taxObj.get("base"));
-				double percent = parseDouble("" + taxObj.get("percentage"));
-				String type	   = (String) taxObj.get("type");
-				double quota   = parseDouble("" + taxObj.get("quota"));
-
-				taxes.add(new InvoiceTax(base, percent, type, quota));
-			}
-			for (Object finance : financesInfo)
-			{
-				JSONObject financeObj = (JSONObject) finance;
-
-				Date   dueDate	  = parseDate("" + financeObj.get("due_date"), "yyyy-MM-dd");
-				String payMethod  = (String) financeObj.get("paymethod");
-				String iban		  = (String) financeObj.get("iban");
-				double amount	  = Double.parseDouble("" + financeObj.get("amount"));
-
-				finances.add(new InvoiceFinance(dueDate, payMethod, iban, amount));
-			}
-			for (Object entry : entriesInfo)
-			{
-				JSONObject entryObj = (JSONObject) entry;
-
-				String description = (String) entryObj.get("description");
-				double quantity	   = Double.parseDouble("" + entryObj.get("quantity"));
-				double price	   = Double.parseDouble("" + entryObj.get("price"));
-				double discount	   = Double.parseDouble("" + entryObj.get("discount"));
-				double amount	   = Double.parseDouble("" + entryObj.get("amount"));
-
-				entries.add(new InvoiceEntry(description, quantity, price, discount, amount));
-			}
-
-			Invoice invoiceObj = new Invoice(config.getBackgroundImage(), config.getDetailed(), reference, date, document,
-					name, address, addressLn2, entries, taxes, finances, config.getFooter(), config.getHeader(),
-					qrCode);
-
-			InvoiceTemplate.create(out, invoiceObj, config.getAdjustImage());
-		} catch (CanNotCreatePdfException e)
-		{
-			throw e;
-		} catch (Exception e)
-		{
+			createWithJson(out, jsonObj, config, qrCode);
+		} catch (Exception e) {
 			throw new JsonParseException(e);
 		}
 	}
+	
+	public static void createWithJson(OutputStream out, JSONObject jsonObj, PrintInvoiceConfiguration config, InputStream qrCode) {
+		JSONObject receiver		= (JSONObject) jsonObj.get("receiver");
+		JSONObject addressInfo	= (JSONObject) receiver.get("address");
+		JSONArray  taxesInfo	= (JSONArray) jsonObj.get("taxes");
+		JSONArray  financesInfo	= (JSONArray) jsonObj.get("finances");
+		JSONArray  entriesInfo	= (JSONArray) jsonObj.get("details");
 
+		String reference  = (String) jsonObj.get("reference");
+		Date   date		  = PdfFormats.parseDate("" + jsonObj.get("date"), "yyyy-MM-dd");
+		String document	  = (String) receiver.get("document");
+		String name		  = (String) receiver.get("name");
+		String address	  = (String) addressInfo.get("address");
+		String addressLn2 = addressInfo.get("zip") + " " + addressInfo.get("city") + " " + addressInfo.get("province");
+
+		ArrayList<InvoiceTax>	  taxes	   = new ArrayList<>();
+		ArrayList<InvoiceFinance> finances = new ArrayList<>();
+		ArrayList<InvoiceEntry>	  entries  = new ArrayList<>();
+
+		for (Object tax : taxesInfo)
+		{
+			JSONObject taxObj = (JSONObject) tax;
+
+			
+			
+			Double base = JsonUtils.getDouble(taxObj, IJsonNames.BASE);
+			Double percent = JsonUtils.getDouble(taxObj, IJsonNames.PERCENTAGE);
+			String type = JsonUtils.getString(taxObj, IJsonNames.TYPE);
+			Double quota   = JsonUtils.getDouble(taxObj, IJsonNames.QUOTA);
+
+			taxes.add(new InvoiceTax(base, percent, type, quota));
+		}
+		for (Object finance : financesInfo)
+		{
+			JSONObject financeObj = (JSONObject) finance;
+			
+			Date dueDate = TediJSONUtils.parseDate(financeObj.optString(IJsonNames.DUE_DATE));
+			String payMethod  = (String) financeObj.get("paymethod");
+			String iban		  = (String) financeObj.get("iban");
+			double amount	  = Double.parseDouble("" + financeObj.get("amount"));
+
+			finances.add(new InvoiceFinance(dueDate, payMethod, iban, amount));
+		}
+		for (Object entry : entriesInfo)
+		{
+			JSONObject entryObj = (JSONObject) entry;
+
+			String description = (String) entryObj.get("description");
+			double quantity	   = Double.parseDouble("" + entryObj.get("quantity"));
+			double price	   = Double.parseDouble("" + entryObj.get("price"));
+			double discount	   = Double.parseDouble("" + entryObj.get("discount"));
+			double amount	   = Double.parseDouble("" + entryObj.get("amount"));
+
+			entries.add(new InvoiceEntry(description, quantity, price, discount, amount));
+		}
+
+		Invoice invoiceObj = new Invoice(config.getBackgroundImage(), config.getDetailed(), reference, date, document,
+				name, address, addressLn2, entries, taxes, finances, config.getFooter(), config.getHeader(),
+				qrCode);
+
+		try {
+			InvoiceTemplate.create(out, invoiceObj, config.getAdjustImage());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}
+	}
 	// CREATE DEMO
 	public static void demoPdf(OutputStream out, PrintInvoiceConfiguration config, InputStream qrCode)
 			throws IOException, CanNotCreatePdfException {
