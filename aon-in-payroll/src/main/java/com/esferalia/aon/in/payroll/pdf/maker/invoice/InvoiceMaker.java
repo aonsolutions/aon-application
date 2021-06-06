@@ -36,12 +36,9 @@ public class InvoiceMaker {
 	public static void createWithJson(
 			OutputStream out, InputStream json, PrintInvoiceConfiguration config, InputStream qrCode
 	) throws CanNotCreatePdfException, JsonParseException {
-		JSONParser parser = new JSONParser();
 		try {
 			String text = new BufferedReader(new InputStreamReader(json, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-			Object obj = parser.parse(text);
-
-			JSONObject jsonObj		= (JSONObject) obj;
+			JSONObject jsonObj = new JSONObject(text);
 			createWithJson(out, jsonObj, config, qrCode);
 		} catch (Exception e) {
 			throw new JsonParseException(e);
