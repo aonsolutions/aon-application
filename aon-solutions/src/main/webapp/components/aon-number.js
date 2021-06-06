@@ -176,6 +176,11 @@ export class AonNumber extends AonElement {
         input.type = 'text';
         input.autocomplete = "off"
         input.style.textAlign = 'right'
+
+        if(this.iOS()) {
+            label.classList.add(CSS.AON_INPUT_IOS)
+            input.classList.add(CSS.AON_INPUT_IOS);
+          }
         if ('date' === this.getAttribute(CONSTANT.TYPE)) {
             this.style.minWidth = '150px';
         }

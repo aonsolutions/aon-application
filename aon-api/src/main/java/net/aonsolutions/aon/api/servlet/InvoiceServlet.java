@@ -380,6 +380,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("reference", invoice.getReferenceCode());
 		json.put("name", invoice.getRegistryName());
 		json.put("total", invoice.getTotal());
+		json.put("status", InvoiceStatus.safeValueOf(invoice.getStatus()));
 		return json;
 	}
 	
