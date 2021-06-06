@@ -38,6 +38,7 @@ export const BADGE = 'badge';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
+export const CHANGE_TYPE = 'changeType';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';

@@ -2,6 +2,7 @@ import { CONSTANT } from "../../environments/environments.js";
 import { RegistryType } from "../../models/enums.js";
 import { round } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class Invoice {
 
@@ -38,6 +39,8 @@ export class Invoice {
   vat_accrual_payment; // boolean | criterio de caja
   surcharge; // boolean | recargo de equivalencia
   rectified; // boolean | rectificativa
+
+  creation_user;
 
   constructor(type) {
     this.domain = localStorage.getItem('aon_domain_id');
@@ -87,6 +90,7 @@ export class Invoice {
     this.surcharge = company.surcharge;
     this.vat_accrual_payment = company.vat_accrual_payment;
     this.withholding = false; //this.isEmitida() ? company.withholding : false;
+    this.creation_user = LS.getDomainLogin();
   }
 
   createInvoice(invoice) {
@@ -150,7 +154,16 @@ export class Invoice {
       this.vat_accrual_payment = invoice.vat_accrual_payment || company.vat_accrual_payment; // boolean | criterio de caja
       this.surcharge = invoice.surcharge || company.surcharge;
       this.rectified = invoice.rectified || false;
+      this.creation_user = invoice.creation_user || LS.getDomainLogin();
     }
+  }
+
+  getType() {
+    return this.type;
+  }
+
+  setType(type) {
+    this.type = type;
   }
 
   getActivity() {

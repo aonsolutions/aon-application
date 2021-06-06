@@ -38,6 +38,7 @@ export const BUSINESS_NAME = 'Raó Social';
 export const CANCEL = 'Cancel·lar';
 export const CATEGORY = 'Categoria';
 export const CATEGORIES = 'Categories';
+export const CHANGE_TYPE = 'Canviar Tipus';
 export const CITY = 'Ciudad';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
