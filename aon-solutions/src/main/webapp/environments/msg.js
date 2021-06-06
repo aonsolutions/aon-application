@@ -69,6 +69,7 @@ export const BUSINESS_NAME = MSG.BUSINESS_NAME;
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
 export const CATEGORIES = MSG.CATEGORIES;
+export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CITY = MSG.CITY;
 export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;

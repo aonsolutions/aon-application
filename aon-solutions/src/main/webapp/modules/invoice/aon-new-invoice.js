@@ -255,6 +255,10 @@ export class AonNewInvoice extends AonElement {
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
 
+			let changeType = ACTION.CHANGE_TYPE;
+			changeType.fn = () => this.changeType();
+			moreActions.push(changeType);
+
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
 		});
@@ -1446,6 +1450,66 @@ export class AonNewInvoice extends AonElement {
 		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
+	}
+
+	changeType() {
+		let types = [{
+			name: 'Emitida',
+			value: 'emitida',
+		}, {
+			name: 'Recibida',
+			value: 'recibida',
+		}, {
+			name: 'Ticket',
+			value: 'ticket',
+		}];
+
+		let type = new AonSelect();
+		type.id = this.TYPE;
+		type.title = MSG.TYPE;
+		type.setOptions(types);
+		type.value = this.getInvoice().type;
+
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.CHANGE_TYPE);
+		d.setContent(type);
+		d.addAcceptAction(() => {
+			this.getInvoice().setType(type.value);
+			this.reload();
+			if(this.autosave) this.save();
+		});
+		d.open();
+	}
+	
+	rectifyInvoice() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.RECTIFY_INVOICE);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	duplicateInvoice() {
+		let dupInv = this.invoice;
+		dupInv.id = undefined;
+		dupInv.date = new Date();
+		dupInv.series = undefined;
+		dupInv.number = undefined;
+		dupInv.reference = undefined;
+		if(dupInv.finances) {
+			dupInv.finances.forEach((item, i) => {
+				dupInv.finances[i].due_date = new Date();
+			});
+		}
+
+		let aip = document.querySelector('aon-invoice-panel');
+		aip.aonInvoice(dupInv.type, dupInv);
 	}
 
 	getCommentStatus(){
