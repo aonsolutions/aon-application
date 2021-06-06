@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice} from '../../services/service.js';
+import {getInvoices, getInvoice, getDomainUserRoles} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 
 import {setInvoices, addInvoices, setIndex} from './InvoiceCache.js';
@@ -8,10 +8,12 @@ import {setInvoices, addInvoices, setIndex} from './InvoiceCache.js';
 import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js'; 
 import { formatNumber } from '../../services/utils.js';
 import { AonMobileList } from '../../components/aon-mobile-list.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileInvoiceList extends AonMobileList {
   more;
-
+  dur;
   static get observedAttributes() {
     return [CONSTANT.FILTER];
   }
@@ -37,12 +39,19 @@ export class AonMobileInvoiceList extends AonMobileList {
 
   connectedCallback () {
     this.initialize();
-    this.init();
-    this.addEventListener('more', () => {
-      if(this.more)
-        this.loadMore()
-    });
+    getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+      this.init();
+      this.addEventListener('more', () => {
+        if(this.more)
+          this.loadMore()
+      });
+		});
   }
+
+  getDur() {
+		return this.dur;
+	}
 
   initialize() {
     super.initialize();
@@ -68,6 +77,9 @@ export class AonMobileInvoiceList extends AonMobileList {
     this.build();
 
     getInvoices(this.getFilter()).then(invoices => {
+      if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
+        invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
+      } 
       setInvoices(invoices);
       if(invoices.length == 0){   
         this.empty();

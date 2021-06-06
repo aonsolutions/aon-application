@@ -38,6 +38,7 @@ export const BUSINESS_NAME = 'Izen Sozial';
 export const CANCEL = 'Ezeztatu';
 export const CATEGORY = 'Kategoria';
 export const CATEGORIES = 'Kategoriak';
+export const CHANGE_TYPE = 'Mota Aldatu';
 export const CITY = 'Hiria';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';

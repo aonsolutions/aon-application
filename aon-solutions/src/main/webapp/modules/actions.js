@@ -30,6 +30,12 @@ export const BACK = {
     icon: MATERIAL_ICONS.ARROW_BACK
 };
 
+export const CHANGE_TYPE = {
+    id: CONSTANT.CHANGE_TYPE.initCap(),
+    name: MSG.CHANGE_TYPE,
+    icon: MATERIAL_ICONS.EDIT
+};
+
 export const COMMENT = {
     id: CONSTANT.COMMENT.initCap(),
     name: MSG.ADD_COMMENT,

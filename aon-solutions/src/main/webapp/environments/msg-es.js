@@ -38,6 +38,7 @@ export const BUSINESS_NAME = 'Razón Social';
 export const CANCEL = 'Cancelar';
 export const CATEGORY = 'Categoría';
 export const CATEGORIES = 'Categorías';
+export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CITY = 'Ciudad';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';

@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteInvoices,
-	 sendInvoiceMail, downloadInvoices, getUserAppRole } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getDomainUserRoles } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -12,11 +12,13 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.j
 
 import * as ACTION from '../actions.js';
 import { formatNumber } from '../../services/utils.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonInvoiceList extends AonElement {
 
 	more;
-	_roles;
+	dur;
 
 	static get observedAttributes() {
 		return [CONSTANT.FILTER];
@@ -45,11 +47,15 @@ export class AonInvoiceList extends AonElement {
 		this.innerHTML = `
 			<aon-table id='aonInvoiceTable' selectable='true'></aon-table>
 			`;
-		getUserAppRole().then(roles => {
-			this._roles = roles;
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
  	}
+
+	getDur() {
+		return this.dur;
+	}
 
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
@@ -114,7 +120,11 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
 			getInvoices(this.getFilter()).then(invoices => {
+				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
+					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
+				} 
 				setInvoices(invoices);
+				
 				aonInvoiceTable.removeRows();
 				aonInvoiceTable.selected = [];
 				this.removeInvoiceActions();
@@ -364,7 +374,7 @@ export class AonInvoiceList extends AonElement {
 	  	} else if(inv.isDraft()) {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox()){
-	  		if(this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER')){
+			if(this.getDur().isInvoiceManager()){
 	    		actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 	  		} else {
 	    	  actions = [send, download, addComment, deleteInvoice, rectify, duplicate];

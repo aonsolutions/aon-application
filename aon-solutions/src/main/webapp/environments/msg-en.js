@@ -38,6 +38,7 @@ export const BUSINESS_NAME = 'Business Name';
 export const CANCEL = 'Cancel';
 export const CATEGORY = 'Category';
 export const CATEGORIES = 'Categories';
+export const CHANGE_TYPE = 'Change Type';
 export const CITY = 'City';
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
