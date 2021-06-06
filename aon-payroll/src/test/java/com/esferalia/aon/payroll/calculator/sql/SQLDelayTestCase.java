@@ -983,6 +983,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	
 
 	@Test
+	@Ignore
 	public void testERTEV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
