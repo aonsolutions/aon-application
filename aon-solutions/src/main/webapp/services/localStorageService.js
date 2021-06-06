@@ -1,3 +1,5 @@
+import { CONSTANT } from "../environments/environments";
+
 export const COMPANY = 'company'; // TIENE QUE DESAPARECER!!
 export const ROOT_PANEL = 'rootPanel';
 
@@ -81,6 +83,11 @@ export const removeApplicationTop = () => {
 }
 
 export const getAonSolutions = () => get(AON_SOLUTIONS);
+
+export const isAonSolutions = () => {
+    const aon = get(AON_SOLUTIONS);
+    return  aon && CONSTANT.FALSE !== aon;
+}
 
 export const setAonSolutions = (value) => {
     set(AON_SOLUTIONS, value);

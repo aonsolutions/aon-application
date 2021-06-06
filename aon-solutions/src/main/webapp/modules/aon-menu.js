@@ -221,8 +221,8 @@ export class AonMenu extends AonElement {
 				if(this.getAttribute('opened'))
 					this.removeAttribute('opened');
 				else this.setAttribute('opened', true);
-
-				let toolSection = document.querySelector("[id*='aonToolbarToolSection']");
+				let toolSection = this.getElement(this.getApplication().getToolbar().TOOL_SECTION);
+				// let toolSection = document.querySelector("[id*='aonToolbarToolSection']");
 				if(toolSection) {
 					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 				}
