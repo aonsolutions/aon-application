@@ -1,5 +1,5 @@
 import {App, Role} from './enums.js';
-
+import * as LS from '../services/localStorageService.js';
 
 export class DomainUserRoles {
 
@@ -254,12 +254,12 @@ export class DomainUserRoles {
 
   isDocumentalPortal() {
 		return (this.hasDocumental() && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_PORTAL)))
-        || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT');
+        || (!LS.isAonSolutions() && (this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT')));
 	}
 
 	isDocumentalManager() {
 		return (this.hasDocumental() && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER)))
-        || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT_MANAGER');
+        || (!LS.isAonSolutions() && (this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT_MANAGER')));
 	}
 
   hasComunica() {

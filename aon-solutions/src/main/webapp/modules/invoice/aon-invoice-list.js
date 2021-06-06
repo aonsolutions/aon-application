@@ -8,7 +8,7 @@ import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
 import '../../components/aon-table.js';
 
-import { CONSTANT, MSG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { formatNumber } from '../../services/utils.js';
@@ -54,10 +54,11 @@ export class AonInvoiceList extends AonElement {
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		aonInvoiceTable.addColumn(MSG.DATE, 'date', 'dateTable', '10%');
-		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '25%');
+		aonInvoiceTable.addColumn(MSG.INVOICE_NUMBER, 'string', 'reference', '20%');
 		aonInvoiceTable.addColumn(MSG.HOLDER, 'string', 'name', '35%');
 		aonInvoiceTable.addColumn(MSG.AMOUNT, 'number', 'totalParse', '10%');
-		aonInvoiceTable.addColumn(MSG.PAYMETHOD, 'string', 'paymethod', '15%');
+		aonInvoiceTable.addColumn(MSG.PAYMETHOD, 'string', 'paymethod', '15%');	
+		aonInvoiceTable.addColumn('', 'icon', 'icon', '5%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
 		this.init();
@@ -100,6 +101,8 @@ export class AonInvoiceList extends AonElement {
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+					invoice.icon = this.getInvoiceStatusIcon(invoice);
+					invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
@@ -129,10 +132,36 @@ export class AonInvoiceList extends AonElement {
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+					invoice.icon = this.getInvoiceStatusIcon(invoice);
+					invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
 		}
+	}
+
+	getInvoiceStatusIcon(invoice) {
+		let inv = new Invoice();
+		inv.createInvoice(invoice);
+		if(inv.isRawdoc()) {
+			if(inv.isEmitida()) return MATERIAL_ICONS.UNARCHIVE;
+			if(inv.isRecibida()) return MATERIAL_ICONS.ARCHIVE;
+			if(inv.isTicket()) return MATERIAL_ICONS.RECEIPT;
+		} else {
+			if(inv.isAccounting()) return MATERIAL_ICONS.CHECK_CIRCLE;
+			if(inv.isPending()) return MATERIAL_ICONS.ERROR;
+ 		}
+	}
+
+	getInvoiceStatusIconColor(invoice) {
+		let inv = new Invoice();
+		inv.createInvoice(invoice);
+		if(inv.isRawdoc()) {
+			return "#5f6368";
+		} else {
+			if(inv.isAccounting()) return '#5cb85c';
+			if(inv.isPending()) return '#8A8A8A';
+ 		}
 	}
 
 	addInvoiceActions() {
