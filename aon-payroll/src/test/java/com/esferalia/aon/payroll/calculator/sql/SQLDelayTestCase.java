@@ -361,6 +361,122 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testDelaysExtrasII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.MARCH;
+						this.start = "01/01 -1";
+						this.end = "31/12 -1";
+						this.issue = "31/03";
+					}
+				}, 
+				},
+				new Payment[] {
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "SALARIO * DIAS_TRABAJADOS/DIAS_MES";
+						}
+					},
+//					new Payment() {
+//						{
+//							this.concept = conceptP.getId();
+//							this.expression = "TRACE('SALARIO:%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
+//						}
+//					}
+				},
+				new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30.00");
+						put("SALARIO", "1000.00");
+					}
+				});
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				new String[] {}, 
+				new String[] {}, 
+				category);
+		//@formatter:on
+		
+		
+
+		Date startDate = getFirstDayOfMonth(contract.getStartDate());
+		Date endDate = getLastDayOfMonth(startDate);
+		startDate = add(startDate,MONTH, 2);
+		endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+		setData(aonContext
+			, category
+			, "SALARIO"
+			, "1012.00"
+		);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(12 + 3, delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(12 + 3, delay.getCommonBase(), DELTA );
+		Assert.assertEquals(12 + 3, delay.getIrpfBase(), DELTA);
+		
+
+	}
+
+	@Test
 	public void testMaternityITI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -867,7 +983,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	
 
 	@Test
-	@Ignore
 	public void testERTEV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -876,9 +991,17 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put("DIAS_MES", "30.00");
+						put("PLUS_MENSUAL", "250.00");
+						put("SALARIO_MENSUAL", "1500.00");
+					}
+				},
 				new String[] {
-				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
-				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				"SALARIO_MENSUAL * DIAS_TRABAJADOS / DIAS_MES",
+				"PLUS_MENSUAL * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1200.00/12.00"
 				}, 
 				new String[] {
 					"BASE_CGC * 4.70/100", 
@@ -909,10 +1032,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					}
 				});
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfYear(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
-		for ( int i = 0 ; i < 11 ; i++ ) {
+		for ( int i = 0 ; i < 12 ; i++ ) {
 			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
@@ -923,8 +1046,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 			startDate = add(endDate, DAY_OF_MONTH, 1);
 			endDate = getLastDayOfMonth(startDate);
 		}
-		PaymentConceptRecord bono = addConcept(aonContext, "BONO", PaymentType.CRA_0005);
-		addPayment(aonContext, contract, contract.getStartDate(), null, bono, "BONO BENEFICIOS", "3000.00", "_P", "_P", PaymentType.CRA_0005, (byte) Month.DECEMBER.getValue());
+		
+		setData(aonContext, contract, "PLUS_MENSUAL", "275.00");
+		setData(aonContext, contract, "SALARIO_MENSUAL", "1550.00");
+		
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -953,9 +1078,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Salary salary = delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
-		org.junit.Assert.assertEquals(1500.00  , salary.getIrpfBase(), DELTA);
-		org.junit.Assert.assertEquals(1500.00  , salary.getTotalPayment(), DELTA);
-		org.junit.Assert.assertEquals( 3000.00 /12 * 11  , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 75*12  , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(75.00*6 + 75.00/2*5 + 75.00/30*9 + 75.00/2/30*21 , salary.getTotalPayment(), DELTA);
 
 	}
 

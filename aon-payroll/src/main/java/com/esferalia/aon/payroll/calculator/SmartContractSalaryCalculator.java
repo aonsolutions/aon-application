@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -1185,7 +1186,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					, issueDate									//chargeDate
 					, criteria);
 			if ( !extraCtx.next() )
-				return 0.00;
+				throw new NotNowException();
+				//return 0.00;
 			
 			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
 					@Override
@@ -1194,6 +1196,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					}
 			}
 			.calculate(extraCtx).getSalary().getTotalPayment();
+		} catch (NotNowException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new AonException(e);
 		} 
