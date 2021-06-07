@@ -1,4 +1,4 @@
-import { CONSTANT } from "../environments/environments";
+import { CONSTANT } from "../environments/environments.js";
 
 export const COMPANY = 'company'; // TIENE QUE DESAPARECER!!
 export const ROOT_PANEL = 'rootPanel';
