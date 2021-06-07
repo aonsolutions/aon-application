@@ -1457,18 +1457,18 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		// ---------------------------------------------------------------
 
 		// Entregas intracomunitarias de bienes y servicios
-		, CT_C59(Mod303Key.CT_C59, (mod, vat) -> !vat.isVatSurchargeRegime() && vat.isIntracommunitySales(),
+		, CT_C59(Mod303Key.CT_C59, (mod, vat) -> ventasIntracomunitarias( vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C59, mod, vat.getBase()), null, null, null)
 
 		// Exportaciones y operaciones asimiladas
 		,
 		CT_C60(Mod303Key.CT_C60,
-				(mod, vat) -> !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()),
+				(mod, vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C60, mod, vat.getBase()), null, null, null)
 
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el
 		// derecho a deducción
-		, CT_C61(Mod303Key.CT_C61, (mod, vat) -> !vat.isVatSurchargeRegime() && vat.isOtherISPSales(),
+		, CT_C61(Mod303Key.CT_C61, (mod, vat) -> ventasISPExtraComunitariasCanCeuServicios( vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C61, mod, vat.getBase()), null, null, null)
 
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen
@@ -1893,6 +1893,18 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 	private static boolean compensacionesRegAgrarioFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isFarmerRegime()
 				&& !vat.isRectification() && vat.isNationalPurchase();
+	}
+
+	public static boolean  ventasIntracomunitarias(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();
+	}
+	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
+	}
+	public static boolean  ventasISPExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
+		return !vat.isVatSurchargeRegime() 
+				&& (vat.isOtherISPSales()
+				|| (vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
 	}
 
 	private static Mod303ActivityFarmer ensureFarmerActivity(Mod303 mod, int idx) {
