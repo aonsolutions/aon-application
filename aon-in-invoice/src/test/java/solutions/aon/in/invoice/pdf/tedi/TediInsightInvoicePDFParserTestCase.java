@@ -9,12 +9,14 @@ import java.io.InputStream;
 import java.util.Date;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import es.translogia.tedi.ewok.TediInsightInvoice;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.pdf.InvoicePDFParser;
 import solutions.aon.in.invoice.tedi.TediInsightInvoiceBuilder;
 
+@Ignore
 public class TediInsightInvoicePDFParserTestCase {
 
 	
