@@ -1,7 +1,5 @@
 package com.esferalia.aon.in.payroll.pdf.maker.invoice;
 
-import static java.lang.Double.parseDouble;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import org.jooq.tools.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,7 +23,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceTax;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import es.translogia.tedi.json.TediJSONUtils;
 
@@ -46,18 +42,21 @@ public class InvoiceMaker {
 	}
 	
 	public static void createWithJson(OutputStream out, JSONObject jsonObj, PrintInvoiceConfiguration config, InputStream qrCode) {
-		JSONObject receiver		= (JSONObject) jsonObj.get("receiver");
-		JSONObject addressInfo	= (JSONObject) receiver.get("address");
-		JSONArray  taxesInfo	= (JSONArray) jsonObj.get("taxes");
-		JSONArray  financesInfo	= (JSONArray) jsonObj.get("finances");
-		JSONArray  entriesInfo	= (JSONArray) jsonObj.get("details");
+		JSONObject receiver		= jsonObj.optJSONObject(IJsonNames.RECEIVER);
+		JSONObject addressInfo	= receiver.optJSONObject(IJsonNames.ADDRESS);
+		JSONArray  taxesInfo	= jsonObj.optJSONArray(IJsonNames.TAXES);
+		JSONArray  financesInfo	= jsonObj.optJSONArray(IJsonNames.FINANCES);
+		JSONArray  entriesInfo	= jsonObj.optJSONArray(IJsonNames.DETAILS);
 
-		String reference  = (String) jsonObj.get("reference");
+		String reference  = JsonUtils.getString(jsonObj, IJsonNames.REFERENCE);
 		Date   date		  = PdfFormats.parseDate("" + jsonObj.get("date"), "yyyy-MM-dd");
-		String document	  = (String) receiver.get("document");
-		String name		  = (String) receiver.get("name");
-		String address	  = (String) addressInfo.get("address");
-		String addressLn2 = addressInfo.get("zip") + " " + addressInfo.get("city") + " " + addressInfo.get("province");
+		String document	  = JsonUtils.getString(receiver, IJsonNames.DOCUMENT);
+		String name		  = JsonUtils.getString(receiver, IJsonNames.NAME);
+		String address	  = JsonUtils.getString(addressInfo, IJsonNames.ADDRESS);
+		String zip = JsonUtils.optString(addressInfo, IJsonNames.ZIP);
+		String city = JsonUtils.optString(addressInfo, IJsonNames.CITY);
+		String province = JsonUtils.optString(addressInfo, IJsonNames.PROVINCE);
+		String addressLn2 = zip + " " + city + " " + province;
 
 		ArrayList<InvoiceTax>	  taxes	   = new ArrayList<>();
 		ArrayList<InvoiceFinance> finances = new ArrayList<>();
@@ -81,8 +80,8 @@ public class InvoiceMaker {
 			JSONObject financeObj = (JSONObject) finance;
 			
 			Date dueDate = TediJSONUtils.parseDate(financeObj.optString(IJsonNames.DUE_DATE));
-			String payMethod  = (String) financeObj.get("paymethod");
-			String iban		  = (String) financeObj.get("iban");
+			String payMethod = (String) financeObj.get("paymethod");
+			String iban = JsonUtils.getString(financeObj, IJsonNames.IBAN);
 			double amount	  = Double.parseDouble("" + financeObj.get("amount"));
 
 			finances.add(new InvoiceFinance(dueDate, payMethod, iban, amount));
