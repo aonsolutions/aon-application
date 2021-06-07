@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,7 +9,7 @@ public class EmployeeSegSocial implements Serializable {
 
 	private String nss;
 	private String name;
-	private Date birthDate;
+	private String birthDate;
 	private String ipf;
 	
 	private EmployeeSegSocial() {
@@ -17,7 +19,7 @@ public class EmployeeSegSocial implements Serializable {
 	public EmployeeSegSocial(String nss, String name, Date birthDate, String ipf) {
 		this.nss = nss;
 		this.name = name;
-		this.birthDate = birthDate;
+		this.birthDate = format(birthDate);
 		this.ipf = ipf;
 	}
 
@@ -30,7 +32,7 @@ public class EmployeeSegSocial implements Serializable {
 	}
 
 	public Date getBirthDate() {
-		return birthDate;
+		return Shared.parse(birthDate);
 	}
 
 	public String getIpf() {

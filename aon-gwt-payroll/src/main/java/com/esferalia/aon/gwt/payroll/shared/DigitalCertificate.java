@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,7 +20,7 @@ public class DigitalCertificate implements Serializable {
 	private Boolean confidential;
 	private String password;
 	private Boolean hasCertificate;
-	private Date updateDate;
+	private String updateDate;
 	private String description;
 	
 	public DigitalCertificate() {
@@ -73,11 +76,11 @@ public class DigitalCertificate implements Serializable {
 	}
 
 	public Date getUpdateDate() {
-		return updateDate;
+		return parse(updateDate);
 	}
 
 	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
+		this.updateDate = format(updateDate);
 	}
 
 	public String getDescription() {

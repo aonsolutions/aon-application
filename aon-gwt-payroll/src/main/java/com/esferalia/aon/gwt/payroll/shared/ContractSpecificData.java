@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,8 +9,8 @@ public class ContractSpecificData implements Serializable {
 	
 	private Integer id;
 	private String cno;
-	private Date calendarFormativeStartDate;
-	private Date calendarFormativeEndDate;
+	private String calendarFormativeStartDate;
+	private String calendarFormativeEndDate;
 	private String formativeLevel;
 	private String academicTitulation;
 	private Boolean profesionality; 
@@ -87,19 +89,19 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Date getCalendarFormativeStartDate() {
-		return calendarFormativeStartDate;
+		return parse(calendarFormativeStartDate);
 	}
 
 	public void setCalendarFormativeStartDate(Date calendarFormativeStartDate) {
-		this.calendarFormativeStartDate = calendarFormativeStartDate;
+		this.calendarFormativeStartDate = Shared.format(calendarFormativeStartDate);
 	}
 
 	public Date getCalendarFormativeEndDate() {
-		return calendarFormativeEndDate;
+		return parse(calendarFormativeEndDate);
 	}
 
 	public void setCalendarFormativeEndDate(Date calendarFormativeEndDate) {
-		this.calendarFormativeEndDate = calendarFormativeEndDate;
+		this.calendarFormativeEndDate = Shared.format(calendarFormativeEndDate);
 	}
 
 	public String getFormativeLevel() {

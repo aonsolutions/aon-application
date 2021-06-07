@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +27,8 @@ public class Events implements Serializable {
 
 		private String name;
 		private String value;
-		private Date endDate;
-		private Date startDate;
+		private String endDate;
+		private String startDate;
 
 		public String getName() {
 			return name;
@@ -36,11 +39,11 @@ public class Events implements Serializable {
 		}
 
 		public Date getStartDate() {
-			return startDate;
+			return parse(startDate);
 		}
 
 		public Date getEndDate() {
-			return endDate;
+			return parse(endDate);
 		}
 
 		public void setName(String name) {
@@ -52,11 +55,11 @@ public class Events implements Serializable {
 		}
 
 		public void setEndDate(Date endDate) {
-			this.endDate = endDate;
+			this.endDate = format(endDate);
 		}
 
 		public void setStartDate(Date startDate) {
-			this.startDate = startDate;
+			this.startDate = format(startDate);
 		}
 
 		@Override
@@ -80,27 +83,27 @@ public class Events implements Serializable {
 		}
 
 		public boolean isAt(Date date) {
-			return (compare(date, startDate) >= 0)
-					&& (compare(date, endDate) <= 0);
+			return (compare(date, getStartDate()) >= 0)
+					&& (compare(date, getEndDate()) <= 0);
 		}
 
 		public boolean isBetween(Date startDate, Date endDate ) {
-			return (compare(this.startDate, endDate ) <= 0)
-					&& (compare(this.endDate, startDate) >= 0);
+			return (compare(getStartDate(), endDate ) <= 0)
+					&& (compare(getEndDate(), startDate) >= 0);
 		}
 
 		private boolean before(Event event) {
-			return before(startDate, event.startDate);
+			return before(getStartDate(), event.getStartDate());
 		}
 
 		private List<Event> diff(Event event) {
 			List<Event> diff = new ArrayList<Event>(2);
-			if (before(event.startDate, startDate))
-				diff.add(clone(event, event.startDate,
-						min(event.endDate, add(startDate, -1))));
-			if (after(event.endDate, endDate))
-				diff.add(clone(event, max(event.startDate, add(endDate, 1)),
-						event.endDate));
+			if (before(event.getStartDate(), getStartDate()))
+				diff.add(clone(event, event.getStartDate(),
+						min(event.getEndDate(), add(getStartDate(), -1))));
+			if (after(event.getEndDate(), getEndDate()))
+				diff.add(clone(event, max(event.getStartDate(), add(getEndDate(), 1)),
+						event.getEndDate()));
 			return diff;
 		}
 		private static Date add(Date date, int days) {
@@ -111,6 +114,7 @@ public class Events implements Serializable {
 			prev.setDate(date.getDate() + days);
 			return prev;
 		}
+
 
 
 		private static int compare(Date date1, Date date2) {
@@ -143,8 +147,8 @@ public class Events implements Serializable {
 			Event clone = new Event();
 			clone.name = event.name;
 			clone.value = event.value;
-			clone.startDate = startdate;
-			clone.endDate = endDate;
+			clone.startDate = format(startdate);
+			clone.endDate = format(endDate);
 			return clone;
 		}
 	}

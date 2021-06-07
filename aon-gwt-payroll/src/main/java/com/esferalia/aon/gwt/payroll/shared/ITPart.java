@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,7 +16,7 @@ public class ITPart implements Serializable {
 	private String collegeNumber;
 	private Byte confirmOrderNumber;
 	private String cias;
-	private Date date;
+	private String date;
 	private Byte status;
 	
 	public ITPart() {
@@ -69,11 +72,11 @@ public class ITPart implements Serializable {
 	}
 
 	public Date getDate() {
-		return date;
+		return parse(date);
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
+		this.date = format(date);
 	}
 
 	public Byte getStatus() {

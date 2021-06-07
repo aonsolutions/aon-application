@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,7 +27,7 @@ public class Irpf implements Serializable {
 	public static class IrpfResult implements Serializable{
 		
 		private Integer id;
-		private Date effectiveDate;
+		private String effectiveDate;
 		
 		public Integer getId() {
 			return id;
@@ -36,11 +38,11 @@ public class Irpf implements Serializable {
 		}
 		
 		public Date getEffectiveDate() {
-			return effectiveDate;
+			return parse(effectiveDate);
 		}
 		
 		public void setEffectiveDate(Date effectiveDate) {
-			this.effectiveDate = effectiveDate;
+			this.effectiveDate = Shared.format(effectiveDate);
 		}
 		
 	}

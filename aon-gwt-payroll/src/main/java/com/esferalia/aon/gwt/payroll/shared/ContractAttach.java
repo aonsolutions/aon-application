@@ -14,7 +14,7 @@ public class ContractAttach implements Serializable {
 	private Byte type;
 	private Integer scope;
 	private Byte securityLevel;
-	private Date attachDate;
+	private String attachDate;
 	private String driveId;
 	
 	public ContractAttach() {
@@ -94,11 +94,11 @@ public class ContractAttach implements Serializable {
 	}
 
 	public Date getAttachDate() {
-		return attachDate;
+		return Shared.parse(attachDate);
 	}
 
 	public void setAttachDate(Date attachDate) {
-		this.attachDate = attachDate;
+		this.attachDate = Shared.format(attachDate);
 	}
 
 	public String getDriveId() {

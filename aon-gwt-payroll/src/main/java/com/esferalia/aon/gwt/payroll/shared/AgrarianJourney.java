@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,8 +11,8 @@ import java.util.Map;
 public class AgrarianJourney implements Serializable{
 
 	private Integer contractId;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private Integer totalDays;
 	
 	private String name;
@@ -22,8 +25,8 @@ public class AgrarianJourney implements Serializable{
 	public AgrarianJourney(Integer contractId, Date startDate, Date endDate){
 		super();
 		this.contractId = contractId;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDate = format(startDate);
+		this.endDate = format(endDate);
 		this.totalDays = endDate.getDate() - startDate.getDate() + 1;
 	}
 
@@ -36,19 +39,19 @@ public class AgrarianJourney implements Serializable{
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public Integer getTotalDays() {

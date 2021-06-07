@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,7 +18,7 @@ public class SecondaryUserCertificate implements Serializable {
 	private String ipf;
 	private String naf;
 	private String situation;
-	private Date situation_date;
+	private String situation_date;
 	private String telephone;
 	private String fax;
 	private String mobile;
@@ -40,7 +42,7 @@ public class SecondaryUserCertificate implements Serializable {
 		this.ipf = ipf;
 		this.naf = naf;
 		this.situation = situation;
-		this.situation_date = situation_date;
+		this.situation_date = Shared.format(situation_date);
 		this.telephone = telephone;
 		this.fax = fax;
 		this.mobile = mobile;
@@ -78,7 +80,7 @@ public class SecondaryUserCertificate implements Serializable {
 		return situation;
 	}
 	public Date getSituation_date() {
-		return situation_date;
+		return parse(situation_date);
 	}
 	public String getTelephone() {
 		return telephone;

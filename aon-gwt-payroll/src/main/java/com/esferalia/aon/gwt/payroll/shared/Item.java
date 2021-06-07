@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,8 +18,8 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	Integer id;
 	Short month;
 	Scope scope;
-	Date startDate;
-	Date endDate;
+	String startDate;
+	String endDate;
 	Double amount;
 	String name;
 	String expression;
@@ -81,27 +84,27 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	}
 	
 	public Long getEndDateTime() {
-		return null == endDate ? null : endDate.getTime();
+		return null == endDate ? null : getEndDate().getTime();
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 	
 	public Long getStartDateTime() {
-		return null == startDate ? null : startDate.getTime();
+		return null == startDate ? null : getStartDate().getTime();
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Double getAmount() {

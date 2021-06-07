@@ -50,7 +50,7 @@ public class CompositeDeduction extends Deduction {
 	public Date getEndDate() {
 		Date end = new Date(0); // January 1, 1970, 00:00:00
 		for (Deduction child : childs)
-			end = DateUtils.after(end, child.endDate);
+			end = DateUtils.after(end, child.getEndDate());
 		return end;
 	}
 
@@ -58,7 +58,7 @@ public class CompositeDeduction extends Deduction {
 	public Date getStartDate() {
 		Date start = null;
 		for (Deduction child : childs)
-			start = DateUtils.before(start, child.startDate);
+			start = DateUtils.before(start, child.getStartDate());
 		return start;
 	}
 

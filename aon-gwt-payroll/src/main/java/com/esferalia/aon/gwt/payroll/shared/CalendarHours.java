@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,8 +19,8 @@ public class CalendarHours implements Serializable {
 	public static class DayHours implements Serializable{
 		
 		public static class DayHour implements Serializable{
-			private Date startDate;
-			private Date endDate;
+			private String startDate;
+			private String endDate;
 			private Double value;
 			
 			public DayHour() {
@@ -25,26 +28,26 @@ public class CalendarHours implements Serializable {
 			}
 			
 			public DayHour(Date startDate, Date endDate, Double value) {
-				this.startDate = startDate;
-				this.endDate = endDate;
+				this.startDate = Shared.format(startDate);
+				this.endDate = format(endDate);
 				this.value = value;
 			}
 
 			public Date getStartDate() {
-				return startDate;
+				return Shared.parse(startDate);
 			}
 
 			public DayHour setStartDate(Date startDate) {
-				this.startDate = startDate;
+				this.startDate = Shared.format(startDate);
 				return this;
 			}
 
 			public Date getEndDate() {
-				return endDate;
+				return Shared.parse(endDate);
 			}
 
 			public DayHour setEndDate(Date endDate) {
-				this.endDate = endDate;
+				this.endDate = format(endDate);
 				return this;
 			}
 
@@ -436,8 +439,8 @@ public class CalendarHours implements Serializable {
 	private DayHours dayHours[] = new DayHours[7];
 	private Map<Date, Double> mapDaysHour;
 
-	private Date contractStartDate;
-	private static Date contractEndDate;
+	private String contractStartDate;
+	private static String contractEndDate;
 	
 	public CalendarHours() {
 		super();
@@ -460,19 +463,19 @@ public class CalendarHours implements Serializable {
 	}
 	
 	public Date getContractStartDate() {
-		return contractStartDate;
+		return parse(contractStartDate);
 	}
 
 	public void setContractStartDate(Date contractStartDate) {
-		this.contractStartDate = contractStartDate;
+		this.contractStartDate = format(contractStartDate);
 	}
 
 	public static Date getContractEndDate() {
-		return contractEndDate;
+		return parse(contractEndDate);
 	}
 
 	public void setContractEndDate(Date contractEndDate) {
-		this.contractEndDate = contractEndDate;
+		this.contractEndDate = format(contractEndDate);
 	}
 	
 	// -----------------------------------------------------

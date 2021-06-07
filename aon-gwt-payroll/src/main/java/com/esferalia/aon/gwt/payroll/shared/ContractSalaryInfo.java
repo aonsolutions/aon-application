@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class ContractSalaryInfo implements Serializable {
 	private String type;
-	private Date start;
-	private Date end;
+	private String start;
+	private String end;
 	private Double totalLiquid;
 	
 	public ContractSalaryInfo() {
@@ -20,16 +23,16 @@ public class ContractSalaryInfo implements Serializable {
 		this.type = type;
 	}
 	public Date getStart() {
-		return start;
+		return Shared.parse(start);
 	}
 	public void setStart(Date start) {
-		this.start = start;
+		this.start = format(start);
 	}
 	public Date getEnd() {
-		return end;
+		return parse(end);
 	}
 	public void setEnd(Date end) {
-		this.end = end;
+		this.end = format(end);
 	}
 	public Double getTotalLiquid() {
 		return totalLiquid;

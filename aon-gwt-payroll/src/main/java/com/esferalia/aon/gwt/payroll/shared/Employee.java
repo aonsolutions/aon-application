@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -161,10 +164,10 @@ public class Employee implements Serializable, HasId<Integer> {
 	private String secondSurname;
 	private String socialSecurity;
 
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 
-	private Date seniorityDate;
+	private String seniorityDate;
 
 	private String document;
 	
@@ -258,29 +261,29 @@ public class Employee implements Serializable, HasId<Integer> {
 	}
 	
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public Employee setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 		return this;
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return Shared.parse(endDate);
 	}
 
 	public Employee setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 		return this;
 	}
 	
 	public Date getSeniorityDate() {
-		return seniorityDate;
+		return parse(seniorityDate);
 	}
 
 	public Employee setSeniorityDate(Date seniorityDate) {
-		this.seniorityDate = seniorityDate;
+		this.seniorityDate = format(seniorityDate);
 		return this;
 	}
 

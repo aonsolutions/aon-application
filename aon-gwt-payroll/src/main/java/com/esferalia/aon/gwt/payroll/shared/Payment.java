@@ -372,12 +372,12 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 	
 	@Override
 	public Long getStartDateTime() {
-		return startDate.getTime();
+		return getStartDate().getTime();
 	}
 	
 	@Override
 	public Long getEndDateTime() {
-		return endDate.getTime();
+		return getEndDate().getTime();
 	}
 
 	@Override

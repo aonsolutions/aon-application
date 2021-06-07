@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,8 +18,8 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 public class CalendarHoursExtraCompl implements Serializable {
 	
 	public static class DayHourExtraCompl implements Serializable {
-		private Date startDate;
-		private Date endDate;
+		private String startDate;
+		private String endDate;
 		private Double value;
 		
 		public DayHourExtraCompl() {
@@ -24,26 +27,26 @@ public class CalendarHoursExtraCompl implements Serializable {
 		}
 		
 		public DayHourExtraCompl(Date startDate, Date endDate, Double value) {
-			this.startDate = startDate;
-			this.endDate = endDate;
+			this.startDate = format(startDate);
+			this.endDate = format(endDate);
 			this.value = value;
 		}
 
 		public Date getStartDate() {
-			return startDate;
+			return parse(startDate);
 		}
 
 		public DayHourExtraCompl setStartDate(Date startDate) {
-			this.startDate = startDate;
+			this.startDate = format(startDate);
 			return this;
 		}
 
 		public Date getEndDate() {
-			return endDate;
+			return parse(endDate);
 		}
 
 		public DayHourExtraCompl setEndDate(Date endDate) {
-			this.endDate = endDate;
+			this.endDate = format(endDate);
 			return this;
 		}
 
@@ -65,8 +68,8 @@ public class CalendarHoursExtraCompl implements Serializable {
 	private List<DayHourExtraCompl> dayHoursComplementary;
 	private Map<Date, Double> mapDayHoursComplementary;
 
-	private Date contractStartDate;
-	private static Date contractEndDate;
+	private String contractStartDate;
+	private static String contractEndDate;
 	
 	public CalendarHoursExtraCompl() {
 		super();
@@ -80,7 +83,7 @@ public class CalendarHoursExtraCompl implements Serializable {
 	}
 	
 	public Date getContractStartDate() {
-		return contractStartDate;
+		return parse(contractStartDate);
 	}
 
 	public void setDayHoursComplementary(List<DayHourExtraCompl> dayHoursComplementary) {
@@ -88,15 +91,15 @@ public class CalendarHoursExtraCompl implements Serializable {
 	}
 
 	public void setContractStartDate(Date contractStartDate) {
-		this.contractStartDate = contractStartDate;
+		this.contractStartDate = format(contractStartDate);
 	}
 
 	public static Date getContractEndDate() {
-		return contractEndDate;
+		return Shared.parse(contractEndDate);
 	}
 
 	public void setContractEndDate(Date contractEndDateIn) {
-		contractEndDate = contractEndDateIn;
+		contractEndDate = format(contractEndDateIn);
 	}
 	
 	public List<DayHourExtraCompl> getComplementaryHours() {

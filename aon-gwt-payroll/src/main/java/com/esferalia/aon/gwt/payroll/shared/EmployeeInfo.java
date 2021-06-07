@@ -16,7 +16,7 @@ public class EmployeeInfo implements Serializable{
 	private Integer employeeId; //Registry Id
 	
 	//Person Table
-	private Date birthdate;
+	private String birthdate;
 	private Byte gender;
 	private Byte civilStatus;
 	private String ssNumber;
@@ -195,11 +195,11 @@ public class EmployeeInfo implements Serializable{
 	}
 
 	public Date getBirthdate() {
-		return birthdate;
+		return Shared.parse(birthdate);
 	}
 
 	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
+		this.birthdate = Shared.format(birthdate);
 	}
 
 	public Byte getGender() {
