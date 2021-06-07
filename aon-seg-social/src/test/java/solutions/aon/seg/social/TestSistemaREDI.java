@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -32,6 +33,7 @@ import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.SituacionEmpresa;
 
+@Ignore
 public class TestSistemaREDI {
 
 	@Test
