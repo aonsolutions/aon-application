@@ -303,6 +303,13 @@ export class AonInvoicePanel extends AonElement {
 		}
 
 		if(this.isMobile()) {
+			
+			options.push({
+				name: MSG.UPLOAD_FILE,
+				icon: MATERIAL_ICONS.FILE_UPLOAD,
+				fn: () => this.addInvoiceFile()
+			});
+
 			options.push({
 				name: 'Camara',
 				icon: 'camera_alt',

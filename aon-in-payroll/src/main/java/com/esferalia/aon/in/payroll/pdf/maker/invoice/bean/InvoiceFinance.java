@@ -17,7 +17,7 @@ public class InvoiceFinance {
 	}
 
 	public static String splitIban(String iban) {
-		if(iban.length() < 14) return iban;
+		if(iban == null || iban.length() < 14) return iban;
 		return iban.substring(0, 4) + "." + iban.substring(4, 8) + "." + iban.substring(8, 12) + "."
 				+ iban.substring(12, 14) + "." + iban.substring(14);
 	}

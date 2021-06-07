@@ -18,6 +18,7 @@ import './css/aon.css';
 
 
 const load = () => {
+    window.setPosition = (pos) => setPosition(pos);
     LS.setAonSolutions(true);
     favicon();  
     loadScriptFirebase();
@@ -61,8 +62,6 @@ const loadScript = (url, module=false) => new Promise((resolve, reject) => {
 });
 
 const setWindowApp = () => {
-    window.setPosition = (pos) => setPosition(pos);
-
     window.setTokenFCM =  (token) => {
         window.tokenFCM = token;
         saveAuthDevice({tokenFCM:token});

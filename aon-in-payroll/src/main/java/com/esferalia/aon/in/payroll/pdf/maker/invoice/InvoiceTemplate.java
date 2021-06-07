@@ -31,6 +31,8 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRi
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.getLines;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class InvoiceTemplate {
@@ -134,8 +136,8 @@ public class InvoiceTemplate {
 					y		 = height - top - topInfoHeight - 5;
 					x		 = 50;
 				}
-
-				ArrayList<String> divided = (ArrayList<String>) getLines(entry.getDescription(), 240,
+				String description = new String(entry.getDescription().replaceAll("\t", " ").getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8") );
+				ArrayList<String> divided = (ArrayList<String>) getLines(description, 240,
 						PdfFonts.HELVETICA, 8);
 
 				float dy = y;
@@ -226,11 +228,11 @@ public class InvoiceTemplate {
 		drawBox(contents, x, y, 250, 80, LIGHT_GRAY);
 		x += 10;
 		y  = height - top - 45;
-
-		drawText(contents, invoice.getName(), x, y, BLACK, HELVETICA_BOLD, 12);
+		String str = new String(invoice.getName().replaceAll("\t", " ").getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8") );
+		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12);
 		y -= 15;
-
-		drawText(contents, invoice.getAddress(), x, y, BLACK, HELVETICA, 9);
+		if(invoice.getAddress() != null)
+			drawText(contents, invoice.getAddress(), x, y, BLACK, HELVETICA, 9);
 		y -= 10;
 
 		drawText(contents, invoice.getZipCityProvince(), x, y, BLACK, HELVETICA, 9);
@@ -361,13 +363,15 @@ public class InvoiceTemplate {
 		for (InvoiceFinance finance : invoice.getFinances())
 		{
 			x = 180;
-			drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").get(), x + 5f, y - 12, BLACK, HELVETICA, 7);
+			if(finance.getDueDate() != null)
+				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").get(), x + 5f, y - 12, BLACK, HELVETICA, 7);
 			x += 60;
 			
 			drawText(contents, finance.getPaymethod(), x + 5f, y - 12, BLACK, HELVETICA,
 					7);
 			x += 80;
-			drawText(contents, finance.getIban(), x + 5f, y - 12, BLACK, HELVETICA, 7);
+			if(finance.getIban() != null)
+				drawText(contents, finance.getIban(), x + 5f, y - 12, BLACK, HELVETICA, 7);
 			x += 160;
 			drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), BLACK, HELVETICA, 7, 5, -12);
 
