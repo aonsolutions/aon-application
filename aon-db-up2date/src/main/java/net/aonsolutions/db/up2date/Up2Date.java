@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.UpdateInvoiceSource;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2021Insert;
 import net.aonsolutions.db.up2date.irpf.IrpfNavarra2021Update;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionFinIRPFFix;
 import net.aonsolutions.db.up2date.payroll.IntegrityFix;
@@ -161,9 +162,10 @@ public class Up2Date {
     		//WorkAccidentInsuranceInsert.WORKACCIDENTINSURANCEINSERT
     		//InKindDeductionInsertRETA.INKIND_DEDUCTION_INSERT_RETA,
     		//UpdateInvoiceSource.UPDATE_INVOICE_SOURCE
-    		Bases2021Rollback.BASES2021ROLLBACK,
-    		IndemnizacionFinIRPFFix.INDEMNIZACIONFINIRPFFIX,
-    		IrpfNavarra2021Update.IRPFNAVARRA2021UPDATE
+    		//Bases2021Rollback.BASES2021ROLLBACK,
+    		//IndemnizacionFinIRPFFix.INDEMNIZACIONFINIRPFFIX,
+    		//IrpfNavarra2021Update.IRPFNAVARRA2021UPDATE,
+    		IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
     };
 
 
