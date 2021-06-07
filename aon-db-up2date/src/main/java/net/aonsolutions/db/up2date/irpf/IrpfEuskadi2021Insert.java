@@ -163,7 +163,8 @@ public class IrpfEuskadi2021Insert implements Update {
 			.execute();
 		dslContext
 			.delete(GEOZONE_IRPF)
-			.where(GEOZONE_IRPF.ID.in(geozone2021Irpfs))
+			.where(GEOZONE_IRPF.START_DATE.eq(_2021startDate))
+			.and(GEOZONE_IRPF.GEOZONE_CODE.in(GEOZONES))
 			.execute();
 		
 		int geozoneIrpfID = dslContext
