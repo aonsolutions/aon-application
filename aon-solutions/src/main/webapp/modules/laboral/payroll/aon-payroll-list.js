@@ -209,7 +209,7 @@ export class AonPayrollList extends AonElement {
 
     try {
       if(this.searchFilter && !isEmptyObject(this._list)){
-        data = this._list.filter(({name, workplaceName, endDate})=> this.includeSearch(name) || this.includeSearch(workplaceName));
+        data = this._list.filter(({name, workplaceName})=> this.includeSearch(name) || this.includeSearch(workplaceName));
       } else {
         let filter = this.applicationParentEl._filter;
         let datos = isEmployee ? await getEmployeeSalaries(filter) : await getEnterpriseSalaries(filter);
