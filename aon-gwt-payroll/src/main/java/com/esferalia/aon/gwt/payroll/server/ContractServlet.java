@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -132,6 +133,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private Object getEmployeeSalaries(AonApiData api) throws SQLException {
 		LOGGER.info("[GET]  EMPLOYEE SALARIES");
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
 		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 		
@@ -139,22 +141,30 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(document==null) {
 			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry())).getDocument();
 		}
-		
+
 		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
 		SalaryInfoFilter filter = getFilter(api);
 		filter.setWorkplaceId(api.getDomain().getId());
-		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(JooqPayrollSalaries.getSalariesByDocument(conn, filter, document));
+		List<SalaryInfo> salaries = JooqPayrollSalaries.getSalariesByDocument(conn, filter, document);
+
+		List<Object> list = new ArrayList<>();
+		salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
+		String jsonInString = gjson.toJson(list);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
 	private Object getEnterpriseSalaries(AonApiData api) throws SQLException {
 		LOGGER.info("[GET] ENTERPRISE SALARIES");
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
-		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(getSalaries(api, conn, Optional.ofNullable(company.getId())));
+		
+		List<SalaryInfo> salaries = getSalaries(api, conn, Optional.ofNullable(company.getId()));
+		
+		List<Object> list = new ArrayList<>();
+		salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
+		String jsonInString = gjson.toJson(list);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
@@ -302,6 +312,29 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(!api.getParams().optString("salaryType").isEmpty()) filter.setSalaryType(api.getParams().optInt("salaryType"));
 	
 		return filter;
+	}
+
+	private static JsonElement toJSONSalaryInfo(SalaryInfo salaryInfo) {
+		JSONObject json = new JSONObject();
+
+		try {
+			 json.put("contract", salaryInfo.getContract())
+			.put("domain", salaryInfo.getDomain())
+			.put("employeeName", salaryInfo.getEmployeeName())
+			.put("enterpriseId",salaryInfo.getEnterpriseId())
+			.put("enterpriseName", salaryInfo.getEnterpriseName())
+			.put("id", salaryInfo.getId())
+			.put("totalDeduction", salaryInfo.getTotalDecuction())
+			.put("totalLiquid", salaryInfo.getTotalLiquid())
+			.put("totalPayment", salaryInfo.getTotalPayment())
+			.put("type", salaryInfo.getType())
+			.put("workplaceId", salaryInfo.getWorkplaceId())
+			.put("workplaceName", salaryInfo.getWorkplaceName())
+			.put("startDate",  AonDateUtils.format( salaryInfo.getStartDate(), "yyyy-MM-dd"))
+            .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), "yyyy-MM-dd"));
+		} catch (JSONException e) {}
+		
+		return new JsonParser().parse(json.toString());
 	}
 
 }
