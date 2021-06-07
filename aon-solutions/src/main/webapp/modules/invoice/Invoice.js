@@ -43,9 +43,12 @@ export class Invoice {
   creation_user;
 
   constructor(type) {
+    
+    
     this.domain = localStorage.getItem('aon_domain_id');
     this.type = type || 'ticket';
-    this.series = '';
+    this.series = new Date().getFullYear();
+    this.serie = new Date().getFullYear();
     this.number = '';
     this.reference = '';
     this.date = new Date(Date.now());
