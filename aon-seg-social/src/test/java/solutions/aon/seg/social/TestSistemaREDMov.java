@@ -89,4 +89,27 @@ public class TestSistemaREDMov {
 		} 
 	}
 
+	@Test
+	@Ignore
+	public void testCambioGrupCtz() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		    SistemaREDMov.cambioGrupCtz(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "02", new Date());
+//		    "011101105360062"
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+	
+	@Test
+	@Ignore
+	public void testDeleteAltaConsolidada() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		    SistemaREDMov.altaConsolidadaDelete(certificateInputStream, "jg@FNMT", "pkcs12", null, "0111", "01105360062", "010022757387");
+//		    "011101105360062"
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+
+
 }
