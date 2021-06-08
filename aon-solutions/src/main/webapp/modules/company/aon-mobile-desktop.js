@@ -1,19 +1,19 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import { MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/components.js';
-import '../../components/aon-icon.js';
-import '../../components/aon-application.js';
-import '../../components/aon-suggestion.js';
-import '../signin/aon-sign.js';
-import '../invoice/aon-invoice-panel.js';
-import './aon-mobile-parent.js';
-import '../messenger/aon-messenger.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
+import { AonSign } from '../signin/aon-sign.js';
+import { AonMessenger } from '../messenger/aon-messenger.js';
+import '../invoice/aon-invoice-panel.js';
+// import '../../components/aon-suggestion.js';
+// import './aon-mobile-parent.js';
+// import '../../components/aon-application.js';
+// import '../../components/aon-icon.js';
 
 export class AonMobileDesktop extends AonElement {
 
 	SUGGESTION;
-
+	DIV_PARENT;
 	static get observedAttributes() {
 		return ['company'];
 	}
@@ -60,6 +60,7 @@ export class AonMobileDesktop extends AonElement {
 
 	initialize() {
 		this.id = 'aonDesktop';
+		this.DIV_PARENT = this.id + "DivParent";
 		this.SUGGESTION = this.id + 'Suggestion';
 	}
 
@@ -69,6 +70,12 @@ export class AonMobileDesktop extends AonElement {
 
 	build() {
 		this.innerHTML = '';
+		let divParent = this.createElement(TAG.DIV);
+		divParent.id = this.DIV_PARENT;
+		divParent.style.height = "100%";
+		divParent.style.display = "flex";
+		divParent.style.flexDirection = "column";
+		this.appendChild(divParent);
 		if(localStorage.getItem('company')) {
 			let company = JSON.parse(localStorage.getItem('company'));
 			localStorage.setItem('aon_domain_id', company.id);
@@ -87,23 +94,23 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	buildNotifications(notice) {
-		//let searchDiv = document.createElement('div');
+		//let searchDiv = document.createElement(TAG.DIV);
 		//searchDiv.id = 'aonHeaderCompany';
-		//this.appendChild(searchDiv)
+		//this.getElement(this.DIV_PARENT).appendChild(searchDiv)
 		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
 		let company = JSON.parse(localStorage.getItem('company'));
 
 		let cSpan = this.createElement(TAG.SPAN);
 		cSpan.innerHTML = company.name;
 		cSpan.className = 'aonMobileDesktopCompanyName';
-		this.appendChild(cSpan);
+		this.getElement(this.DIV_PARENT).appendChild(cSpan);
 
 		let companyDiv = this.createElement(TAG.DIV);
 		companyDiv.style.margin = '10px';
 		companyDiv.style.marginLeft = '50px';
 		companyDiv.style.marginRight = '50px';
 		companyDiv.style.textAlign = 'center';
-		this.appendChild(companyDiv);
+		this.getElement(this.DIV_PARENT).appendChild(companyDiv);
 
 		getCompanyHeaderInfo().then((pi) =>{
 			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
@@ -146,7 +153,7 @@ export class AonMobileDesktop extends AonElement {
 			});
 		}
 
-		document.addEventListener('click', ({target})=> {
+		document.addEventListener(EVENT.CLICK, ({target})=> {
 			let sg = this.getElement(this.SUGGESTION);
 			if(sg) {
 				let isClickInside = sg.contains(target);
@@ -191,17 +198,16 @@ export class AonMobileDesktop extends AonElement {
 		// 	menu.reload();
 		// });
 
-		let div = this.createElement('div');
+		let div = this.createElement(TAG.DIV);
 		div.style.paddingBottom = '25px';
-		div.style.borderBottom = '1px solid #ebebeb';
-		this.appendChild(div);
+		this.getElement(this.DIV_PARENT).appendChild(div);
 
-		let titleA = this.createElement('div');
+		let titleA = this.createElement(TAG.DIV);
 		titleA.className = 'aonSidenavTitle';
 		titleA.innerHTML = 'TAREAS PENDIENTES';
 		div.appendChild(titleA);
 
-		let ul = this.createElement('ul');
+		let ul = this.createElement(TAG.UL);
 		ul.className = 'aonClip';
 		div.appendChild(ul);
 
@@ -228,28 +234,43 @@ export class AonMobileDesktop extends AonElement {
 			}));
 		}
 		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() 
-			? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud')));
+			? this.rootPanel(new AonMessenger()) : this.development('Solicitud')));
 
 		getTimeControl().then(r => {
-			let div2 = this.createElement('div');
-			let titleB = this.createElement('div');
-			titleB.className = 'aonSidenavTitle';
-			titleB.innerHTML = 'CONTROL HORARIO';
-			div2.appendChild(titleB);
-			this.appendChild(div2);
-
-			let div3 = this.createElement('div');
+			let div2 = this.createElement(TAG.DIV);
+			if(!this.isMobile()){
+				div2.appendChild(this.createTitleTime());
+			}
+			this.getElement(this.DIV_PARENT).appendChild(div2);
+			let div3 = this.createElement(TAG.DIV);
 			div3.style.marginLeft = '25px';
-			div3.innerHTML = '<aon-sign></aon-sign>'
-			this.appendChild(div3);
+			if(this.isMobile()){
+				div3.style.marginTop = "auto";
+				div3.style.marginBottom = "10px";
+				div3.appendChild(this.createTitleTime());
+			}
+			div3.appendChild(new AonSign());
+			this.getElement(this.DIV_PARENT).appendChild(div3);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
 
 	}
 
+	createTitleTime(){
+		let div = this.createElement(TAG.DIV);
+		div.className = 'aonSidenavTitle';
+		div.innerHTML = 'CONTROL HORARIO';
+		div.style.borderTop = '1px solid #ebebeb';
+		div.style.textAlign = "left";
+		div.style.marginLeft = "0";
+		div.style.paddingTop = "10";
+		div.style.paddingLeft = "10";
+		return div;
+	}
+
 	buildNotificationsLi(name, icon, count, fn) {
-		let li = this.createElement('li');
+		let li = this.createElement(TAG.LI);
 		li.className = 'aonAppMenuSidenavList aonOpacity';
 		li.style.height = '40px';
 		li.style.lineHeight = '40px';
@@ -260,7 +281,7 @@ export class AonMobileDesktop extends AonElement {
 		i.innerHTML = icon;
 		li.appendChild(i);
 
-		let span = this.createElement('span');
+		let span = this.createElement(TAG.SPAN);
 		span.className = 'aonMenuItemSpan';
 		if(count > 0) {
 			span.innerHTML = name + ' (' + count + ')';
@@ -269,7 +290,7 @@ export class AonMobileDesktop extends AonElement {
 
 		li.appendChild(span);
 
-		let sp = this.createElement('span');
+		let sp = this.createElement(TAG.SPAN);
 		sp.style.position = 'absolute';
 		sp.style.right = '0px';
 
