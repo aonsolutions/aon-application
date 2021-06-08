@@ -8,7 +8,6 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedStr
 import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
-import static com.esferalia.aon.watson.util.AonStringUtils.containsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
@@ -172,10 +171,6 @@ public class JooqPayrollBuilder {
 			setEnterpriseRelatedData(payrollBuilder, salary);
 			setEmployeeRelatedData(payrollBuilder, salary);
 
-			// PAYMENTS
-			double nonStructBase[] = new double[] { 0d };
-			double forceMajeureBase[] = new double[] { 0d };
-
 			{
 				payrollBuilder.setAccrualTotal(salary.getTotalPayment());
 				HashMap<Integer, ArrayList<PDFPayment>> paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
@@ -189,16 +184,6 @@ public class JooqPayrollBuilder {
 							description = croppedString(description, 300, HELVETICA, 9f);
 						} catch (IOException ignored) {
 						}
-					}
-
-					// Structural
-					if (p.getPaymentType() == com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0002) {
-						nonStructBase[0] += p.getAmount();
-					}
-
-					// Force Majeure
-					if (p.getPaymentType() == com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0003) {
-						forceMajeureBase[0] += p.getAmount();
 					}
 
 					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
@@ -227,18 +212,19 @@ public class JooqPayrollBuilder {
 				
 				try{
 					
-					salary.getDeductions().stream().sorted(Comparator.comparing(d -> {
+					salary.getDeductions()
+					.stream()
+					.sorted(
+						Comparator.comparing(d -> {
 						return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : Utilities.chooseDescription(d.getDeductionType());
-					})).forEach(d -> {
+					}))
+					.forEach(d -> {
 	
 						DeductionType deductionType = d.getDeductionType();
-	
 						if (deductionType == null)
 							return;
 	
-						List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));
-						System.out.println("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()) + " | "+ deductionType.name() + " | " + percList);
-						
+						List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(deductionType.ordinal()));						
 						
 						ContextData cd = percList != null ? percList.get(0) : new ContextData();
 						Double percent = null;
@@ -261,8 +247,7 @@ public class JooqPayrollBuilder {
 						if (deductionMap.get(type).stream().anyMatch(ded -> equalsIgnoreCase(ded.getDescription().get(),
 								pdfDeductionEntry.getDescription().get()))) {
 							PDFDeduction ded = deductionMap.get(type).stream()
-									.filter(d1 -> equalsIgnoreCase(d1.getDescription().get(),
-											pdfDeductionEntry.getDescription().get()))
+									.filter(d1 -> equalsIgnoreCase(d1.getDescription().get(),pdfDeductionEntry.getDescription().get()))
 									.findFirst().get();
 	
 							ded.setAmount(ded.getAmount().get() + pdfDeductionEntry.getAmount().get());
@@ -271,9 +256,7 @@ public class JooqPayrollBuilder {
 						inserted.add(Utilities.getDeductionType(deductionType.ordinal()));
 					});
 					
-				} catch( Exception e) {
-					e.printStackTrace();
-				}
+				} catch( Exception e) {}
 
 				if (deductionMap.get(1) == null)
 					deductionMap.put(1, new ArrayList<PDFDeduction>());
@@ -431,7 +414,7 @@ public class JooqPayrollBuilder {
 					costBuilder.setIrpfEsp(Optional.ofNullable(salary.getInkindIrpfBase()));
 					costBuilder.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 					costBuilder.setNoStructBase(Optional.ofNullable(salary.getNonEstructuralOvertimeBase()));
-					costBuilder.setForceMajeureBase(Optional.of(salary.getEstructuralOvertimeBase()));
+					costBuilder.setForceMajeureBase(Optional.ofNullable(salary.getEstructuralOvertimeBase()));
 				}
 				payrollBuilder.setContingencies(costBuilder.build());
 			}

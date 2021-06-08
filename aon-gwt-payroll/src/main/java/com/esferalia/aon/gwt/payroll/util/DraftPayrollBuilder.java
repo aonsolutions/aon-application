@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFTyp
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION.DRAFT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -438,15 +439,8 @@ public class DraftPayrollBuilder {
 			if(lines.size() > 1)
 				payrollBuilder.setAddress2(lines.get(1));
 			
-			/**
-			 * @TODO 
-			 *  1 - Logo get
-			 *  2 - Address FIX
-			 */
-
-
-			
 			Optional<InputStream> optLogo = Utilities.getSignature(domainName);			
+			payrollBuilder.setImpressionType(DRAFT);
 			PdfMaker.printDefaultPayroll(outputStream, payrollBuilder.build(), optLogo.orElse(null), null);
 		} catch (CanNotCreatePdfException e) {
 			e.printStackTrace();
@@ -463,7 +457,7 @@ public class DraftPayrollBuilder {
 	 * @return
 	 */
 	public static Salary getOccamSalary(SalaryDraft draft){
-		
+
 		Salary salary = new Salary();
 		Type salaryType = draft.getType();
 		
@@ -483,6 +477,8 @@ public class DraftPayrollBuilder {
 		salary.setStartDate(draft.getStartDate());
 		salary.setEmployeeSSNumber(draft.getEmployeeSS());
 		salary.setEmployeeSeniorityDate(draft.getEmployeeSeniorityDate());
+		
+		//IT + CGC  (?)
 		salary.setRemuneration(draft.getRemuneration());
 		
 		salary.setCommonContingenciesBase(draft.getCgcBase());
@@ -537,7 +533,6 @@ public class DraftPayrollBuilder {
 		/**
 		 * Add embargos 
 		 */
-		
 		List<Deduction> embargos = draft.getEmbargos();
 		embargos.forEach(embargo -> addEmbargoToSalary(salary, embargo));
 		
@@ -601,20 +596,24 @@ public class DraftPayrollBuilder {
 	 * @param deduction
 	 */
 	public static void addCostToSalary(Salary salary, Deduction cost) {
-		/**
-		 * NEW SALARY METHODS!!!!
-		 * ------------------------------------------------
-		 * 
-		 * 	OKAY, LET'S GOooOooo.
-		 * 
-		 */
 		if (cost instanceof CompositeDeduction) {
 			CompositeDeduction compositeDeduction = (CompositeDeduction) cost;
 			for (Deduction child : compositeDeduction.getChilds()) {
 				addCostToSalary(salary, child);
 			}
 		} else {
+			
+			if(cost.getType() == null)
+				cost.setType(com.esferalia.aon.gwt.payroll.shared.Deduction.Type.OTHER);
+			
 			DeductionType type = DeductionType.values()[cost.getType().ordinal()];
+			
+			if(cost.getName()!= null && cost.getName().contains("IMS_E"))
+				type = DeductionType.IMS;
+			
+			if(cost.getName()!= null && cost.getName().contains("IT_E"))
+				type = DeductionType.IT;
+			
 			salary.addCost((byte) type.ordinal(), "", cost.getDescription(), cost.getAmount(), type);	
 		}
 	}

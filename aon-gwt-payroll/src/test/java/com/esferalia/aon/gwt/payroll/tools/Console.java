@@ -18,6 +18,7 @@ public class Console {
 		TEST("Test"),
 		WAIT("Wait"),
 		SET("Set"),
+		GET("Get"),
 		COMPARE("Compare");
 		
 		private String name;
