@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -461,7 +460,8 @@ class SistemaREDMov {
 		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00G";
 		  String fieldValue = "NueOcu";
 		  String fieldDate = "fecSit";
-		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, ocup, fieldValue, fieldDate, url);
+		  String newOcu = ocup.toUpperCase();
+		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, newOcu, fieldValue, fieldDate, url);
 	}
 	
 	private static void cambioCatProfImpl(final InputStream certificateInputStream, 
@@ -478,7 +478,7 @@ class SistemaREDMov {
 			final String certificatePassword, final String certificateType, 
 			String ipf, String regimen, String ctaCti, String nss, Date fecha, String newValue, String fieldValue, String fieldDate, String url) throws Exception  {
 		
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClientExplorer(certificateInputStream, certificatePassword, certificateType)) {
 	      webClient.getOptions().setJavaScriptEnabled(true);
 	      webClient.getOptions().setThrowExceptionOnScriptError(false);
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
@@ -499,58 +499,19 @@ class SistemaREDMov {
 		  formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen +  ctaCti);
 		  ((HtmlInput)htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValueAttribute("FORM");
 
-		  HtmlButton btnSubmit  = htmlPage.querySelector("#ENVIO_10");
-		  Page pageAux =  btnSubmit.click();
-		  System.out.println(pageAux);
-    	  if(pageAux instanceof XmlPage) {
-    		    XmlPage xmlPage = (XmlPage)pageAux;
-    		    handleSegSocialExceptions(xmlPage);
-    		    URL newUrl = new URL("https://w2.seg-social.es/ServiciosAfiliacionRED/templates/afrd/fw4/ATR40CambioGrupoCotizacion/AfrdPaFw4PantallaEdicion_ES.xsl");
-    		    Page ewq = webClient.openWindow(newUrl, "CL").getEnclosedPage();
-
-//    		    synchronized (htmlPage) {
-//    		    	htmlPage.wait(25000);
-//                }
-//                System.out.println(htmlPage.getUrl());
-//    		    Toolkit.buildFile(xmlPage.getWebResponse().getContentAsStream().readAllBytes(),"test.html");
-    		 
-//    		    System.out.println(xmlPage.asXml());
-//    		    DomNode form = xmlPage.querySelector("#FORMULARIO_1");
-    		    
-    		    
-    		    
-//    		    System.out.println(form);
-//    		    System.out.println(form.querySelector(fieldValue));
-//    		    System.out.println(form.querySelector(fieldDate));
-   
-//
-//				String nss = employeeHtml.querySelector("na5numsegsocialcompleto").getTextContent().trim();
-//	
-//				if(!nss.isEmpty()) {
-//					String ipf1 = employeeHtml.querySelector("ip6numero_documento").getTextContent();
-//					String name = employeeHtml.querySelector("nombre_completo").getTextContent().trim();
-//					String ident1 = employeeHtml.querySelector("codigo_tipo").getTextContent().trim();
-//				    builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
-//				} else {
-//					String messageError = "Sin datos para la consulta";
-//					DomNode textEl = xmlPage.querySelector("texto");
-//					if(textEl!=null && textEl.getTextContent()!=null) {
-//						messageError = textEl.getTextContent().trim();
-//					}
-//					throw new Exception(messageError);
-//				}
-
-			} else {
-				htmlPage = (HtmlPage) pageAux;
-				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}
-
-		  throw new Exception("No se ha realizado el cambio");
-//		  HtmlForm formDatos2 = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
-//		  formDatos2.getInputByName(fieldValue).setValueAttribute(newValue);
-//		  formDatos2.getInputByName(fieldDate).setValueAttribute(fr[0]+"/"+fr[1]+"/"+fr[2]);
-//		  htmlPage = formDatos2.getInputByName("SPM.ACC.CONFIRMAR").click();
-//		  handleSegSocialExceptions(htmlPage);
+		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_10")).click();
+		  handleNewSegSocialExceptions(htmlPage);
+		  
+		  formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
+		  formDatos.getInputByName(fieldValue).setValueAttribute(newValue);
+		  formDatos.getInputByName(fieldDate).setValueAttribute(fr[0]+"/"+fr[1]+"/"+fr[2]);
+		  
+		  htmlPage  = ((HtmlButton)htmlPage.querySelector("#ENVIO_6")).click();
+		  handleNewSegSocialExceptions(htmlPage);
+		  
+		  DomNode message=htmlPage.querySelector(".INFO.mensaje");
+		  if(message!=null && !message.getVisibleText().isEmpty()) 
+				System.out.println(message.getVisibleText());
 		} 
 	}
 	
@@ -566,6 +527,14 @@ class SistemaREDMov {
 		try {
 			DomNode error = xmlPage.querySelector("#MESSAGES");
 			if(error!=null && !error.getVisibleText().isEmpty() && error.getVisibleText().indexOf("realizada correctamente")<0) 
+				throw new InvalidDataException(error.getVisibleText());
+		} catch (NullPointerException e) {}
+	}
+	
+	private static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException{
+		try {
+			DomNode error=htmlPage.querySelector(".ERROR.mensaje");
+			if(error!=null && !error.getVisibleText().isEmpty()) 
 				throw new InvalidDataException(error.getVisibleText());
 		} catch (NullPointerException e) {}
 	}

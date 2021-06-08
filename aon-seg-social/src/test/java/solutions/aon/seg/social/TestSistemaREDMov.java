@@ -93,12 +93,24 @@ public class TestSistemaREDMov {
 	@Ignore
 	public void testCambioGrupCtz() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
-		    SistemaREDMov.cambioGrupCtz(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "02", new Date());
+		    SistemaREDMov.cambioGrupCtz(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "03", new Date());
 //		    "011101105360062"
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
+	
+	@Test
+	@Ignore
+	public void testCambioOcupacion() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		    SistemaREDMov.cambioOcupacion(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "0111", "01105360062", "010022757387", "G", new Date());
+//		    "011101105360062"
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+	
 	
 	@Test
 	@Ignore
