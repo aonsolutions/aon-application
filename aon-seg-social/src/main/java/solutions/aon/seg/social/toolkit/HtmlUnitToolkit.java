@@ -108,6 +108,25 @@ public class HtmlUnitToolkit {
 			throw new InvalidCertificateException();
 		}
 	}
+	
+	// GET THE WEB CLIENT OF INTERNET_EXPLOTER
+	public static WebClient getWebClientExplorer(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws InvalidCertificateException {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
+			disableLogging(webClient);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+					certificateType);
+
+			return webClient;
+		} catch (RuntimeException e) {
+			throw new InvalidCertificateException();
+		}
+	}
 
 	// GET TRIMMED STRING FROM HTML ELEMENT
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {

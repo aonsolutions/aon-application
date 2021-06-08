@@ -90,6 +90,6 @@ export class AonToast extends AonElement {
 		}
 	}
 }
-if(!window.customElements.get('aon-toast')){
-	window.customElements.define('aon-toast', AonToast);
+if(!window.customElements.get(TAG.AON_TOAST)){
+	window.customElements.define(TAG.AON_TOAST, AonToast);
 }
