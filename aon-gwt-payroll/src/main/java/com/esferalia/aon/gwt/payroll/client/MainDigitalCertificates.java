@@ -504,8 +504,13 @@ public class MainDigitalCertificates extends MainEntryPoint{
 			
 		// Fill fields
 		if(null != digitalCertificate) {
-			rattachIdHidden.setValue(digitalCertificate.getRattachId().toString());
-			raddinfoIdHidden.setValue(digitalCertificate.getRaddinfoId().toString());
+			rattachIdHidden.setValue(digitalCertificate.getRattachId()+"");
+			raddinfoIdHidden.setValue(digitalCertificate.getRaddinfoId()+"");
+			
+			String password = digitalCertificate.getPassword();
+			
+			if(AonStringUtils.isBlank(password))
+				passwordTB.setEnabled(true);
 			
 			passwordTB.setValue(digitalCertificate.getPassword());
 			passwordHidden.setValue(passwordTB.getValue());
