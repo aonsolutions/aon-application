@@ -2333,7 +2333,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public List<ContractClause> getContractClauses(String domainName, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.getContractClauses(connection, domainId, contractId);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			return JooqContrataContract.getContractClauses(connection, domainId, parentDomainId, contractId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2353,7 +2354,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public List<ContractClause> createContractClause(String domainName, ContractClause contractClause) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.createContractClause(connection, domainId, contractClause);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.createContractClause(connection, domainId, parentDomainId, contractClause);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2363,7 +2365,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public List<ContractClause> deleteContractClause(String domainName, ContractClause contractClause) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.deleteContractClause(connection, domainId, contractClause);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.deleteContractClause(connection, domainId, parentDomainId, contractClause);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
