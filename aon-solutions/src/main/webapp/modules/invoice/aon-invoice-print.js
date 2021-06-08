@@ -36,7 +36,19 @@ export class AonInvoicePrint extends AonElement {
 
   connectedCallback () {
     this.initialize();
-    this.innerHTML = `
+    this.innerHTML = this.isMobile() ? 
+        `
+          <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file'>
+          <div style="display:block;">
+            <div id="${this.DATA}" class="aonSubContent" style="width:100%">
+              <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
+            </div>
+            <div id="${this.FILE}" class="aonSubContent">
+
+            </div>
+          </div>
+        `
+      : `
       <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file'>
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
@@ -64,12 +76,12 @@ export class AonInvoicePrint extends AonElement {
   build() {
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
-    fileDiv.style.width = '50%';
+    fileDiv.style.width = this.isMobile() ? '100%' : '50%';
 
     this.reloadFile();
 
     let dataDiv = this.getElement(this.DATA);
-    dataDiv.style.width = '50%';
+    dataDiv.style.width = this.isMobile() ? '100%' : '50%';
 
 		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
       let offset1 = fileDiv.getBoundingClientRect();
@@ -134,31 +146,30 @@ export class AonInvoicePrint extends AonElement {
       this.reloadFile();
     });
 
-    let tr3 = document.createElement('tr');
-    table.appendChild(tr3);
-
-    let tdAdjust= document.createElement('td');
-    tdAdjust.setAttribute('colspan', '1');
-    tdAdjust.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationAdjust" title="${MSG.BACKGROUND_ADJUST}"></aon-switch>`;
-    tr3.appendChild(tdAdjust);
-    let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
-    adjust.checked = this.printConfiguration.adjust;
-    adjust.setWidth('135px');
-    adjust.addEventListener('change', () => {
-      this.printConfiguration.adjust = adjust.checked;
-      this.save();
-      this.reloadFile()
-    });
+    let tr4 = document.createElement('tr');
+    table.appendChild(tr4);
 
     let tdBackground= document.createElement('td');
-    tdBackground.setAttribute('colspan', '1');
-    tdBackground.innerHTML = `<aon-icon-button id="aonInvoicePrintConfigurationBackground" icon="add_photo_alternate"></aon-icon-button>`;
-    tr3.appendChild(tdBackground);
+    tdBackground.setAttribute('colspan', '2');
+    tdBackground.innerHTML = `
+      <span style="font-size: 14px;opacity: 0.87;"> Subir Fondo </span>
+      <aon-icon-button id="aonInvoicePrintConfigurationBackground" icon="add_photo_alternate"></aon-icon-button>
+      <aon-icon-button id="aonInvoicePrintConfigurationBackgroundRemove" icon="clear"></aon-icon-button>
+    `;
+    tr4.appendChild(tdBackground);
     let background = document.getElementById('aonInvoicePrintConfigurationBackground');
+
+    let backgroundRemove = document.getElementById('aonInvoicePrintConfigurationBackgroundRemove');
+    backgroundRemove.addEventListener('click', ()=> {
+      this.printConfiguration.backgroundRemove = true;
+      this.save();
+      this.reloadFile();
+    });
 
     let input = this.getElement(this.INPUTFILE);
     input.addEventListener('change', () => {
       getReader(input.files[0]).then(f => {
+        this.printConfiguration.backgroundRemove = false;
         this.printConfiguration.background = f;
         this.save();
         this.reloadFile();
@@ -170,13 +181,29 @@ export class AonInvoicePrint extends AonElement {
     })
 
 
-    let tr4 = document.createElement('tr');
-    table.appendChild(tr4);
+    let tr3 = document.createElement('tr');
+    table.appendChild(tr3);
+
+    let tdAdjust= document.createElement('td');
+    tdAdjust.setAttribute('colspan', '2');
+    tdAdjust.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationAdjust" title="${MSG.BACKGROUND_ADJUST}"></aon-switch>`;
+    tr3.appendChild(tdAdjust);
+    let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
+    adjust.checked = this.printConfiguration.adjust;
+    adjust.setWidth('135px');
+    adjust.addEventListener('change', () => {
+      this.printConfiguration.adjust = adjust.checked;
+      this.save();
+      this.reloadFile()
+    });
+
+    let tr5 = document.createElement('tr');
+    table.appendChild(tr5);
 
     let tdDetailed= document.createElement('td');
     tdDetailed.setAttribute('colspan', '2');
     tdDetailed.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationDetailed" title="${MSG.DETAILED}"></aon-switch>`;
-    tr4.appendChild(tdDetailed);
+    tr5.appendChild(tdDetailed);
     let detailed = document.getElementById('aonInvoicePrintConfigurationDetailed');
     detailed.checked = this.printConfiguration.detailed;
     detailed.setWidth('135px');

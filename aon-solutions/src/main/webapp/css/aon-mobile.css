@@ -4,6 +4,15 @@
   height: 60px;
 }
 
+.aonMobileHeaderCompany {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    top: 18px;
+    left: 15px;
+}
+
 .aonMobileLogo {
   position: absolute;
   margin-left: 15%;
