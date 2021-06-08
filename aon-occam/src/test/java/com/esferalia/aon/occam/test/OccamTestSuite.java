@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
-import com.esferalia.aon.occam.test.json.JsonTestSuite;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.occam.test.product.ProductTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
 	TaskHolderTestSuite.class,
 	FinanceTestSuite.class,
 	AccountingTestSuite.class,
+	FiscalTestSuite.class,
 //	JsonTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })

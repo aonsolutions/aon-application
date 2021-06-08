@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -296,8 +298,20 @@ public class AbstractOccamTest {
 		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.randomEnum( Administration.class, 10) ))
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
+		
+		ctx.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, newDomainId)
+			.set(APP_PARAM.NAME, AppParam.AON_BETA_ENABLED.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString());
+		ctx.log().info("App Param AON_BETA_ENABLED set to TRUE");
 
-		return domain;
+		ctx.getDslContext().insertInto(APP_PARAM)
+			.set(APP_PARAM.DOMAIN, newDomainId)
+			.set(APP_PARAM.NAME, AppParam.AON_ALPHA_ENABLED.toString())
+			.set(APP_PARAM.VALUE, Boolean.TRUE.toString());
+		ctx.log().info("App Param AON_ALPHA_ENABLED set to TRUE");
+
+	return domain;
 	}
 	
 	

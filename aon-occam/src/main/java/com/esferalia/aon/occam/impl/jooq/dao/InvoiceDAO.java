@@ -992,6 +992,10 @@ public class InvoiceDAO {
 					.setModificationUser(r.getValue(INVOICING_GROUP.MODIFICATION_USER));		
 		}
 	}
+	
+	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+		return getNextNumber(ctx, new Byte[]{type.value()} , series);
+	}
 
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = ctx.getDslContext()

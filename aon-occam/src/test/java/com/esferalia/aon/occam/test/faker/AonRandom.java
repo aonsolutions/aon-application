@@ -56,7 +56,9 @@ public class AonRandom {
         		?faker.lorem().characters(minLength, maxLength)
         		: null;
     }
-    
+    public static String string( int maxLength ) {
+    	return faker.lorem().characters(0, maxLength);
+    }
     public static String string( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
         		?faker.lorem().characters(0, maxLength)
