@@ -258,12 +258,14 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			this.invoice.setCategory(category.value);
 			if(this.autosave) this.save();
 		});
-		table.addCell(category);
+		table.addCell(category, '2');
 		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
 			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
 			category.options = JSON.stringify(accs);
 			category.value = this.invoice.getCategory();
 		});
+
+		table.addRow(); // ----- ROW 4 
 
 		// ----- PAYMETHOD
 
@@ -279,7 +281,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		table.addCell(paymethod)
+		table.addCell(paymethod, '2');
 		if(this.invoice.finances.length === 1) {
 			paymethod.value = this.invoice.finances[0].paymethod;
 		}

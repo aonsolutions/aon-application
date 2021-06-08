@@ -4,6 +4,7 @@ import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
+import './company/aon-mobile-parent.js';
 
 export class AonModule extends AonElement {
 
