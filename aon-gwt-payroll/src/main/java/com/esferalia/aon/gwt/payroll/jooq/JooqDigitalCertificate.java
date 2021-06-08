@@ -251,7 +251,7 @@ public class JooqDigitalCertificate {
 			dslContext.insertInto(RATTACH)
 				.set(RATTACH.DOMAIN, domainId)
 				.set(RATTACH.REGISTRY, registryEntepriseId)
-				.set(RATTACH.MIMETYPE, (byte)36)
+				.set(RATTACH.MIMETYPE, (byte)32)
 				.set(RATTACH.TYPE, (byte)4)
 				.set(RATTACH.DATA, data)
 				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
