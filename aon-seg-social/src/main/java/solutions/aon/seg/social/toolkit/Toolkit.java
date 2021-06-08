@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,8 +15,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
@@ -91,9 +94,12 @@ public class Toolkit {
 
 	// REMOVE NBFP CHARACTER FROMA A STRING
 	public static String removeNBSP(String cadena) {
-		String nbe = "" + (char) 160;
-		cadena = cadena.replace(nbe, "");
-		return cadena;
+		if (cadena != null) {
+			String nbe = "" + (char) 160;
+			cadena = cadena.replace(nbe, "");
+			return cadena;
+		} else
+			return null;
 	}
 
 	// RETURNS BOOLEAN FROM A STRING
@@ -232,6 +238,33 @@ public class Toolkit {
 	public static Float parseStringToFloat(String d) {
 		String newValue = removeNBSP(d.trim().replace(".", "").replace(',', '.'));
 		return parseFloat(removeNBSP(newValue));
+	}
+	
+	// CHECK DISPONIBILITY BEFORE TEST
+	public static boolean checkSiteDisponibility(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String url) {
+		
+		final String[] possibleFailKeyWords = 	{"FUERA DE SERVICIO"
+												, "SERVICIO APAGADO"
+												, "TEMPORALMENTE"
+												, "NO DISPONIBLE"
+												, "EN MANTENIMIENTO"};
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			HtmlPage htmlPage = webClient.getPage(url);
+			
+			String pageText = htmlPage.asXml().toUpperCase();
+			
+			for (String keyWord : possibleFailKeyWords) {
+				if (pageText.contains(keyWord))
+					return false;
+			}
+			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

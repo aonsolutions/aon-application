@@ -1,5 +1,6 @@
 package solutions.aon.seg.social.exception.invalid;
 
+import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
 
 public class InvalidDataException extends SegSocialException{
@@ -31,12 +32,19 @@ public class InvalidDataException extends SegSocialException{
 		case 3543:		throw new NoQueryData(msg);
 		case 3823:		throw new invalidCccException(msg);
 		case 3037:		throw new NoMoreDataException(msg);
-		case 4113:		throw new DataDoesNotExist(msg);
+		case 4113:
+		case 205:		throw new DataDoesNotExist(msg);
 		case 3053:		throw new InvalidDateException(msg);
 		case 7:			throw new WrongValueException(msg);
 		case 2204:		throw new WrongIdentifierException(msg);
 		case 3010:      throw new EmployeeNotRegisteredException("El empleado no está en situación de alta");
-		default:		throw new InvalidDataException(msg);
+		default:
+			if (msg != null) {
+				if (msg.toUpperCase().contains("SERVICIO")) {
+					throw new OutOfServiceException("Out of service");
+				}
+			}
+			throw new InvalidDataException(msg);
 		}
 	}
 }

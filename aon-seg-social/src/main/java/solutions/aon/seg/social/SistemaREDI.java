@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -335,7 +336,8 @@ class SistemaREDI {
 			}
 			Page page = jacadaform.getInputByValue("Continuar").click();
 			if ( !page.isHtmlPage() ) {
-				InputStream is = page.getWebResponse().getContentAsStream();
+				WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
+				InputStream is = response.getContentAsStream();
 				byte[] ret = is.readAllBytes();
 				is.close();
 				return ret;
@@ -347,7 +349,9 @@ class SistemaREDI {
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
-			InputStream is = labels.get(0).dblClick().getWebResponse().getContentAsStream();
+			page = labels.get(0).dblClick();
+			WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
+			InputStream is = response.getContentAsStream();
 			byte[] ret = is.readAllBytes();
 			is.close();
 			return ret;
