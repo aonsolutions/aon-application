@@ -37,8 +37,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Asserts {
 	
