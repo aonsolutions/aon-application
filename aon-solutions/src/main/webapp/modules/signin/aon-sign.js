@@ -48,7 +48,9 @@ export class AonSign extends AonElement {
   }
 
   build(){
-    this.style.textAlign= "center";
+    let divGeneral = this.createElement(TAG.DIV);
+    divGeneral.style.textAlign = "center";   
+    this.appendChild(divGeneral);
     if(this.isMobile()){
       this.parentNode.style.marginLeft = 0;
     } else {
@@ -59,7 +61,7 @@ export class AonSign extends AonElement {
       let company = this.createElement(TAG.DIV);
       company.style.marginLeft = '20px';
       company.style.width = '200px';
-      this.appendChild(company);
+      divGeneral.appendChild(company);
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
       select.title = 'Empresa';
@@ -82,11 +84,11 @@ export class AonSign extends AonElement {
     time.style.fontSize = '30px';
     time.id = this.TIME;
     time.innerHTML = "00:00:00";
-    this.appendChild(time);
+    divGeneral.appendChild(time);
     let div = this.createElement(TAG.DIV);
     if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
-    this.appendChild(div);
+    divGeneral.appendChild(div);
     getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
   }
 
