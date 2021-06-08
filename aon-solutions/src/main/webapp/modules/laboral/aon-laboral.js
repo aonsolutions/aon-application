@@ -318,7 +318,7 @@ export class AonLaboral extends AonElement {
   }
 
   isComunica(){
-    return this.getDur().isComunicaManager() || this.getDur().isComunicaPortal();
+    return this.getDur().isComunica() && (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal());
   }
 
   isEmployee(){
