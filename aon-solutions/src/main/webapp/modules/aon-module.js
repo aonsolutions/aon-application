@@ -36,6 +36,7 @@ export class AonModule extends AonElement {
 		let home = new AonHome();
 		home.id = this.AON_HOME;
 		this.appendChild(home);
+		this.orientationLocked();
 	}
 
 	load() {
@@ -95,6 +96,21 @@ export class AonModule extends AonElement {
 		});
 	}
 
+	async orientationLocked(){
+		// try {
+		// 	let orientKey = 'orientation';
+		// 	if ('mozOrientation' in screen) {
+		// 		orientKey = 'mozOrientation';
+		// 	} else if ('msOrientation' in screen) {
+		// 		orientKey = 'msOrientation';
+		// 	}
+
+		// 	let resp = await window.screen[orientKey].lock("portrait-primary");
+		// 	console.log(resp)
+		// } catch (error) {
+		// 	alert(error);
+		// }
+	}
 }
 if(!window.customElements.get(TAG.AON_MODULE)){
 	window.customElements.define(TAG.AON_MODULE, AonModule);

@@ -59,25 +59,26 @@ export class AonMobileMenu extends AonElement {
       this.reload();
     });
 
-		const height = window.innerHeight;
-    window.onresize = ({target})=> {
-      let bottom = "59px";
-      let display = "block";
-      let application = this.getApplication();
-      if((target.innerHeight +15) < height){
-        display = "none";
-        bottom = "1px";
+    if(this.android()){
+      const height = window.innerHeight;
+      window.onresize = ({target})=> {
+        let bottom = "59px";
+        let display = "block";
+        let application = this.getApplication();
+        if((target.innerHeight +15) < height){
+          display = "none";
+          bottom = "1px";
+        }
+        if(application && application.getContent())
+          application.getContent().style.bottom = bottom;
+        this.style.display = display;
       }
-      if(application && application.getContent())
-        application.getContent().style.bottom = bottom;
-      this.style.display = display;
-		}
+    }
   }
 
   initialize() {
     this.id = this.id || 'aonMobileMenu';
   }
-
 
   build() {
     const id = this.id + 'Sidenav';
