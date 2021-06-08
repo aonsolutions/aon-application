@@ -5589,8 +5589,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String formativeLvl) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
-			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, contractId, contractType,
+			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, parentDomainId, contractId, contractType,
 					formativeLvl);
 			JooqContrataContract.saveDraftContract(domainName, contractId, pdfBytes);
 			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
