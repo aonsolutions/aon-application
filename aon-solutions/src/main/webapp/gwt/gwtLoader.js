@@ -85,6 +85,8 @@
 				triggerModuleStart(module);
 			}
 		}
+		if(rootPanel.childNodes && rootPanel.childNodes.length > 0)
+			rootPanel.childNodes[0].style.inset = '0px';
 	}
 
 
