@@ -7,22 +7,33 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+
+import org.apache.commons.logging.LogFactory;
+
+import com.gargoylesoftware.css.parser.CSSErrorHandler;
 import com.gargoylesoftware.css.parser.CSSException;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.IncorrectnessListener;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebResponseData;
 import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.html.parser.HTMLParserListener;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.javascript.host.fetch.Request;
 
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 
@@ -48,6 +59,7 @@ public class HtmlUnitToolkit {
 			final String certificateType) throws InvalidCertificateException {
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+			disableLogging(webClient);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
@@ -99,7 +111,10 @@ public class HtmlUnitToolkit {
 
 	// GET TRIMMED STRING FROM HTML ELEMENT
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {
-		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
+		if (htmlPage.getElementById(id) != null)
+			return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
+		else
+			return null;
 	}
 
 	// GETS THE SS STATUS CODE
@@ -107,19 +122,23 @@ public class HtmlUnitToolkit {
 		String status;
 		try {
 			status = HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
-			status = Toolkit.removeNBSP(status).replace(" ", "");
-
-			if ((status.length() > 0) && (status.charAt(0) == '*'))
-				status = status.substring(1);
-			if (status.equals("") || status.contains("0350"))
-				return 3083;
-			if (!status.contains("*"))
-				if (!status.contains("-"))
-					throw new SegSocialException(status);
-				else
-					return Integer.parseInt(status.substring(0, status.indexOf("-")));
-
-			return Integer.parseInt(status.substring(0, status.indexOf("*")));
+			
+			if (status != null) {
+				status = Toolkit.removeNBSP(status).replace(" ", "");
+				if ((status.length() > 0) && (status.charAt(0) == '*'))
+					status = status.substring(1);
+				if (status.equals("") || status.contains("0350"))
+					return 3083;
+				if (!status.contains("*"))
+					if (!status.contains("-"))
+						throw new SegSocialException(status);
+					else
+						return Integer.parseInt(status.substring(0, status.indexOf("-")));
+				
+				return Integer.parseInt(status.substring(0, status.indexOf("*")));
+			} else
+				return null;
+			
 		} catch (ElementNotFoundException e) {
 			return 3083;
 		} catch (NumberFormatException nfe) {
@@ -237,5 +256,93 @@ public class HtmlUnitToolkit {
 			throw exception;
 		} catch (MalformedURLException ignore) {}
 
+	}
+	
+	//Method to disable all the HtmlUnit web client logs
+	public static void disableLogging (WebClient webClient) {
+		LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+
+		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF); 
+		java.util.logging.Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
+		WebClientOptions options = webClient.getOptions();
+		options.setCssEnabled(false);
+
+		webClient.setIncorrectnessListener(new IncorrectnessListener() {
+
+		    @Override
+		    public void notify(String arg0, Object arg1) {
+		        // TODO Auto-generated method stub
+
+		    }
+		});
+		webClient.setCssErrorHandler(new CSSErrorHandler() {
+
+			@Override
+			public void warning(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void error(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void fatalError(com.gargoylesoftware.css.parser.CSSParseException exception) throws CSSException {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		webClient.setJavaScriptErrorListener(new JavaScriptErrorListener() {
+
+		    @Override
+		    public void timeoutError(HtmlPage arg0, long arg1, long arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void scriptException(HtmlPage arg0, ScriptException arg1) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void malformedScriptURL(HtmlPage arg0, String arg1, MalformedURLException arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void loadScriptError(HtmlPage arg0, URL arg1, Exception arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		webClient.setHTMLParserListener(new HTMLParserListener() {
+
+			@Override
+			public void error(String message, URL url, String html, int line, int column, String key) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void warning(String message, URL url, String html, int line, int column, String key) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		options.setThrowExceptionOnFailingStatusCode(false);
+		options.setThrowExceptionOnScriptError(false);
 	}
 }
