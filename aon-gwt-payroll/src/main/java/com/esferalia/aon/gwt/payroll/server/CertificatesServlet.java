@@ -35,7 +35,7 @@ public class CertificatesServlet extends HttpServlet {
 		
 		// Get raddinfo Id
 		String raddinfoIdStr = req.getParameter("raddinfoId");
-		Integer raddinfoId = AonStringUtils.isBlank(raddinfoIdStr) ? null : Integer.parseInt(raddinfoIdStr);
+		Integer raddinfoId = (AonStringUtils.isBlank(raddinfoIdStr) || AonStringUtils.equals(raddinfoIdStr, "null")) ? null : Integer.parseInt(raddinfoIdStr);
 		
 		// Get extension and parse to MimeType
 		String extension = req.getParameter("extension");
