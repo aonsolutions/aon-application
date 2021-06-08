@@ -66,7 +66,7 @@ export class AonRegistry extends AonElement {
     this.clear();
 
     let div = this.createElement(TAG.DIV);
-    div.style.display = "flex";
+    div.style.display = this.isMobile() ? 'block' : 'flex';
     this.appendChild(div);
     
     let span1 = this.createElement(TAG.SPAN);
@@ -88,6 +88,10 @@ export class AonRegistry extends AonElement {
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     doc.addEventListener(EVENT.KEYUP, (e) => {
+      if(this.isMobile()) {
+        let options = this.getElement(this.OPTIONS);
+        options.style.marginTop = "-80px";
+      }
       if(e.key || e.keyCode) {
         if (e.keyCode == '38' || e.key == 'ArrowUp') {
           // up arrow
@@ -140,6 +144,10 @@ export class AonRegistry extends AonElement {
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     name.addEventListener(EVENT.KEYUP, (e) => {
+      if(this.isMobile()) {
+        let options = this.getElement(this.OPTIONS);
+        options.style.marginTop = "-16px";
+      }
       if(e.key || e.keyCode) {
         if (e.keyCode == '38' || e.key == 'ArrowUp') {
           // up arrow
