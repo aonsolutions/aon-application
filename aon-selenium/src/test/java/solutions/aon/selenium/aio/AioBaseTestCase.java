@@ -22,12 +22,13 @@ public class AioBaseTestCase extends AbstractTestCase{
 	}
 
 	protected static void logout(WebDriver driver) {
-		WebElement headerOptionsFormLogout = driver.findElement(By.id("headerOptionsForm:logout"));
+		WebElement headerOptionsFormLogout = driver.findElement(By.cssSelector("a[id='headerOptionsForm:logout']"));
 		headerOptionsFormLogout.click();
 	}
 	
 	protected static String getUrl() {
 		return System.getProperty("url", "https://general-payroll-test.aonsolutions.org/");
+//		return System.getProperty("url", "https://payroll-test.aonsolutions.net/");
 	}
 
 	protected static String getUser() {
