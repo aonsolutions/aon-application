@@ -158,7 +158,7 @@ export class AonMessengerChat extends AonElement {
         
         setTimeout(() => {
             const button = document.getElementById("aonMessengerSidenavAbiertas");
-            button?.click();
+            button.click();
         }, 250);
       })
       const titleSpan = bar.querySelector(".aonSecondaryToolbarTitle")
