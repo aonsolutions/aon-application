@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -90,6 +91,7 @@ public class DefaultPayrollUnitTest {
 	}
 	
 	@Test
+	@Ignore
 	/**
 	 * Testing random values filled Salary
 	 * transpiling (with assertions).

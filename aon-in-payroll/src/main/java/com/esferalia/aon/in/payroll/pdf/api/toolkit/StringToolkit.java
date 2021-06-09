@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.api.toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -97,4 +98,9 @@ public class StringToolkit {
 		return text.replaceAll(".*(" + regex + ").*","$1");
 	}
 
+	
+	public static String joinCharacterList(List<Object> list) {
+        return list.stream().map(String::valueOf).collect(Collectors.joining());
+	}
+	
 }

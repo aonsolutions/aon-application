@@ -20,6 +20,38 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawCostPe
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextCenter;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.AT_EP_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.AT_EP_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.CGC_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.CGC_BASE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.CGC_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.CGP_BASE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_CATEGORY;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_DOCUMENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_GROUP;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_NAME;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_SENIORITY;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EMPLOYEE_SS_NUMBER;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.ENTERPRISE_ADDRESS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.ENTERPRISE_CCC;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.ENTERPRISE_DOCUMENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.ENTERPRISE_NAME;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EXTRA_PRORRATION;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EXTR_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EXTR_BASE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.EXTR_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.FOGASA_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.FOGASA_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.FP_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.FP_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.IRPF_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.NEXTR_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.NEXTR_BASE;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.NEXTR_PERCENT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.REMUNERATION;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_COSTS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_AMOUNT;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_PERCENT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes.getType;
 import static java.util.ResourceBundle.getBundle;
@@ -40,22 +72,19 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRESION;
 
 /**
  * Class to print Payroll PDF file with PDFbox
@@ -224,6 +253,7 @@ public class PayrollTemplate {
 
 		enterprise = croppedString(enterprise, 255, HELVETICA_BOLD, fontSize);
 		employee   = croppedString(employee, 255, HELVETICA_BOLD, fontSize);
+		profesGroup = croppedString(profesGroup, 255, HELVETICA, fontSize);
 
 		drawBorderedBox(contents, x - 10, y - 85, 575, 120, LIGHT_GRAY);
 		drawTextCenter(contents, new PDRectangle(x, y + 4, 530, 100), title, BLACK, HELVETICA_BOLD, 12, 12);
@@ -234,26 +264,25 @@ public class PayrollTemplate {
 
 		y += 50;
 		x += 10;
-		drawText(contents, enterprise, x, y, BLACK, HELVETICA_BOLD, headerFontSize, "ENTERPRISE_NAME");
-		drawText(contents, employee, x + 280, y, BLACK, HELVETICA_BOLD, headerFontSize, "EMPLOYEE_NAME");
+		drawText(contents, enterprise, x, y, BLACK, HELVETICA_BOLD, headerFontSize, ENTERPRISE_NAME);
+		drawText(contents, employee, x + 280, y, BLACK, HELVETICA_BOLD, headerFontSize, EMPLOYEE_NAME);
 
 		y -= 13.5;
-		drawText(contents, address, x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, nif, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_DOCUMENT");
-
-		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_SS_NUMBER");
+		drawText(contents, address, x, y, BLACK, HELVETICA, headerFontSize, ENTERPRISE_ADDRESS);
+		drawText(contents, nif, x + 280, y, BLACK, HELVETICA, headerFontSize, EMPLOYEE_DOCUMENT);
+		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize, EMPLOYEE_SS_NUMBER);
 
 		y -= 13.5;
 		drawText(contents, safeString(p.getAddress2()), x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_CATEGORY");
+		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, EMPLOYEE_CATEGORY);
 
 		y -= 13.5;
-		drawText(contents, ccc, x, y, BLACK, HELVETICA, headerFontSize, "ENTERPRISE_CCC");
-		drawText(contents, cotizGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, "EMPLOYEE_GROUP");
+		drawText(contents, ccc, x, y, BLACK, HELVETICA, headerFontSize, ENTERPRISE_CCC);
+		drawText(contents, cotizGroup, x + 280, y, BLACK, HELVETICA, headerFontSize, EMPLOYEE_GROUP);
 
 		x += 100;
-		drawText(contents, cif, x + 30, y, BLACK, HELVETICA, headerFontSize, "ENTERPRISE_DOCUMENT");
-		drawText(contents, antiquDate, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, cif, x + 30, y, BLACK, HELVETICA, headerFontSize, ENTERPRISE_DOCUMENT);
+		drawText(contents, antiquDate, x + 280, y, BLACK, HELVETICA, headerFontSize, EMPLOYEE_SENIORITY);
 
 		y -= 25;
 		x -= 100;
@@ -384,8 +413,9 @@ public class PayrollTemplate {
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
 								String entryTxt = " por " + n.getDescription().orElse("");
-								String entryPercent = (n.getPercent().isEmpty()) ? ""
-										: toLatinNumber(n.getPercent().get()) + " % ";
+								
+								Double percent = n.getPercent().orElse(-1d);
+								String entryPercent = percent != -1 ? percent + " % " : "";
 
 								if (n.getAmount().isPresent() ) //n.getAmount().get() != 0
 								{
@@ -514,21 +544,21 @@ public class PayrollTemplate {
 				fogasaType = "";
 
 			String fogasaApEnt		= toLatinNumber(safeDouble(conts.getFogasaApEnterprise())) + " " + text("MONEDA");
-			String forceMajeureBase	= toLatinNumber(safeDouble(conts.getForceMajeureBase())) + " " + text("MONEDA");
+			String noStructBase	= toLatinNumber(safeDouble(conts.getForceMajeureBase())) + " " + text("MONEDA");
 
-			String forceMajeureType = drawCostPercentage(conts.getForceMajeureType());
-			if (forceMajeureType.contains("-1"))
-				forceMajeureType = "";
-
-			String forceMajeureApEnt = toLatinNumber(safeDouble(conts.getForceMajeureApEnterprise())) + " "
-					+ text("MONEDA");
-			String noStructBase		 = toLatinNumber(safeDouble(conts.getNoStructBase())) + " " + text("MONEDA");
-
-			String noStructType = drawCostPercentage(conts.getNoStructType());
+			String noStructType = drawCostPercentage(conts.getForceMajeureType());
 			if (noStructType.contains("-1"))
 				noStructType = "";
 
-			String noStructApEnt			= toLatinNumber(safeDouble(conts.getNoStructApEnterprise())) + " "
+			String noStructApEnt = toLatinNumber(safeDouble(conts.getForceMajeureApEnterprise())) + " "
+					+ text("MONEDA");
+			String forceMajeureBase		 = toLatinNumber(safeDouble(conts.getNoStructBase())) + " " + text("MONEDA");
+
+			String forceMajeureType = drawCostPercentage(conts.getNoStructType());
+			if (forceMajeureType.contains("-1"))
+				forceMajeureType = "";
+
+			String forceMajeureApEnt			= toLatinNumber(safeDouble(conts.getNoStructApEnterprise())) + " "
 					+ text("MONEDA");
 			String totalIrpf				= toLatinNumber(
 					safeDouble(conts.getIrpfEsp()) + conts.getIrpfRetribDiner().orElse(0.00)) + " " + text("MONEDA");
@@ -564,94 +594,66 @@ public class PayrollTemplate {
 			y -= 9;
 			x += 15;
 			drawText(contents, monthlyAmmountTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, HELVETICA, fontSize - 3,
-					5, 1);
-
-			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, HELVETICA, fontSize - 3, 5, 1 , REMUNERATION);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, HELVETICA,fontSize - 3, 5, 1 , CGC_BASE);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, HELVETICA, fontSize - 3, 5, 1, CGC_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, CGC_AMOUNT);
 
 			y -= 8;
 			drawText(contents, extraHourProrrationTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,fontSize - 3, 5, 1, EXTRA_PRORRATION);
 
 			y -= 12;
 			drawText(contents, profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
 
 			y -= 10;
 			drawText(contents, atEpTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), atEpType, BLACK, HELVETICA, fontSize - 3,
-					5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), atEpApEnt, BLACK, HELVETICA, fontSize - 3,
-					5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), atEpType, BLACK, HELVETICA, fontSize - 3, 5, 1, AT_EP_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), atEpApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, AT_EP_AMOUNT);
 
 			y -= 8;
 			drawText(contents, unemploymentTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), unemploymentType, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), unemploymentApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), unemploymentType, BLACK, HELVETICA, fontSize - 3, 5, 1, UNEMPLOYMENT_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), unemploymentApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, UNEMPLOYMENT_AMOUNT);
 
 			y -= 8;
-			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, HELVETICA, fontSize - 3, 5, 1, CGP_BASE);
 			drawText(contents, profesFormTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), profesFormType, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), profesFormApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), profesFormType, BLACK, HELVETICA, fontSize - 3, 5, 1, FP_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), profesFormApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, FP_AMOUNT);
 
 			y -= 8;
 			drawText(contents, fogasaTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), fogasaType, BLACK, HELVETICA, fontSize - 3,
-					5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), fogasaType, BLACK, HELVETICA, fontSize - 3, 5, 1, FOGASA_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), fogasaApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, FOGASA_AMOUNT);
 
 			y -= 12;
 			drawText(contents, extraHoursTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 2);
 
 			y -= 10;
-			drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, fontSize - 3);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA, fontSize - 3, 5, 1, EXTR_BASE);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA, fontSize - 3, 5, 1, EXTR_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, EXTR_AMOUNT);
 
 			y -= 8;
-			drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA,
-					fontSize - 3, 5, 1);
+			drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, fontSize - 3);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA, fontSize - 3, 5, 1, NEXTR_BASE);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA, fontSize - 3, 5, 1, NEXTR_PERCENT);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1, NEXTR_AMOUNT);
 
 			y -= 12;
 			x -= 15;
 			drawText(contents, irpfTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 3);
 			drawBox(contents, x, y - 2, 405, .2f, BLACK);
-			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, fontSize - 3,
-					5, 5);
-			drawTextRight(contents, new PDRectangle(x + 451, y - 5, 30, 10), totalContingenciesTitle, BLACK,
-					HELVETICA_BOLD, 6.5f, 5, 5);
-			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK,
-					HELVETICA_BOLD, 6.5f, 3, 5);
+			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, fontSize - 3, 5, 5, IRPF_AMOUNT);
+			drawTextRight(contents, new PDRectangle(x + 451, y - 5, 30, 10), totalContingenciesTitle, BLACK, HELVETICA_BOLD, 6.5f, 5, 5);
+			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK, HELVETICA_BOLD, 6.5f, 3, 5, TOTAL_COSTS);
 
 			if (p.getImpressionType() == IMPRESION.DRAFT)
 			{
-				drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK,
-						HELVETICA_BOLD,
-
-						6.5f, 5, 5);
-				drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK,
-						HELVETICA_BOLD, 6.5f, 3, 5);
+				drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK,HELVETICA_BOLD, 6.5f, 5, 5);
+				drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK,HELVETICA_BOLD, 6.5f, 3, 5);
 			}
 
 		}

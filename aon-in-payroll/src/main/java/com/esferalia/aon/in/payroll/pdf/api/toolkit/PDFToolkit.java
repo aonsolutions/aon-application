@@ -18,11 +18,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
@@ -221,6 +224,13 @@ public class PDFToolkit {
 		contents.newLineAtOffset(x, y);
 		contents.showText(content);
 		contents.endText();
+	}
+	
+	public static void drawTextRight(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginX, float marginY, String name) throws IOException {
+		contents.beginMarkedContent(COSName.getPDFName(name));
+		drawTextRight(contents, box, content, color, font, fontSize, marginX, marginY);
+		contents.endMarkedContent();
 	}
 
 	/**
@@ -571,4 +581,38 @@ public class PDFToolkit {
 			return toLatinNumber(safeDouble(percentage)) + " %";
 	}
 
+	/** 
+	 * Get content by tag in pdf page 
+	 * @param page - The page.
+	 * @param name - The name of the tag
+	 **/
+	public static Optional<PDMarkedContent> getContent(PDPage page, String name) {
+		
+		try {
+			PDFMarkedContentExtractor contentExtractor = new PDFMarkedContentExtractor();
+			contentExtractor.processPage(page);
+			List<PDMarkedContent> markedContents = contentExtractor.getMarkedContents();			
+			
+			for (PDMarkedContent pdMarkedContent : markedContents) {
+				if(pdMarkedContent.getTag() != null && pdMarkedContent.getTag().equals(name))
+					return Optional.ofNullable(pdMarkedContent);
+			}
+		} catch (IOException e) {}
+		return Optional.empty();
+	}
+
+	public static Optional<PDMarkedContent> getContent(PDDocument document, String name) {
+
+		PDPageTree pages = document.getPages();
+		for (PDPage page : pages) {
+			
+			Optional<PDMarkedContent> content = getContent(page, name);
+			if(content.isPresent())	
+				return content;				
+			
+		}
+		
+		return Optional.empty();
+	}
+	
 }
