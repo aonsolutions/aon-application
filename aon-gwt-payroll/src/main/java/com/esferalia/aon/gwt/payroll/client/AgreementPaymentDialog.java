@@ -48,8 +48,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		GASTOS_MANUTENCION_EXTRANJERO_DIARIO("0046 GASTOS MANUTENCI\u00D3N EXTRANJERO ", "G_MANUTENCION_EXT * DIAS_MANUNTECION_EXT"),
 		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE("0050 GASTOS LOCOMOCI\u00D3N SIN JUSTIFICANTE ", "IMPORTE_KMS * KMS"),
 		
-		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL"),
-		PAGA_EXTRA_BENEFICIOS("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL")
+		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE"),
+		PAGA_EXTRA_BENEFICIOS("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE")
 		;
 		
 		private String suggestName;
@@ -484,8 +484,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				
 				Extra newExtraSummer = new Extra();
 				newExtraSummer.setId(--nextDraftExtraId);
-				newExtraSummer.setIssueDate("31/07");
-				newExtraSummer.setStartDate("01/01");
+				newExtraSummer.setIssueDate("31/7");
+				newExtraSummer.setStartDate("01/07 -1");
 				newExtraSummer.setEndDate("30/06");
 				newExtraSummer.setDomain(newPaymentSummer.getDomain());
 				newExtraSummer.setPaymentId(newPaymentSummer.getId());
@@ -528,7 +528,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				Extra newExtraWinter = new Extra();
 				newExtraWinter.setId(--nextDraftExtraId);
 				newExtraWinter.setIssueDate("31/12");
-				newExtraWinter.setStartDate("01/07");
+				newExtraWinter.setStartDate("01/01");
 				newExtraWinter.setEndDate("31/12");
 				newExtraWinter.setDomain(newPaymentWinter.getDomain());
 				newExtraWinter.setPaymentId(newPaymentWinter.getId());
@@ -575,7 +575,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				
 				Extra newExtraBenefits = new Extra();
 				newExtraBenefits.setId(--nextDraftExtraId);
-				newExtraBenefits.setIssueDate("31/03");
+				newExtraBenefits.setIssueDate("31/3");
 				newExtraBenefits.setStartDate("01/01 -1");
 				newExtraBenefits.setEndDate("31/12 -1");
 				newExtraBenefits.setDomain(newPaymentBenefit.getDomain());
