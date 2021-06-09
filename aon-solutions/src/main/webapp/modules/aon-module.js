@@ -73,12 +73,11 @@ export class AonModule extends AonElement {
 		let aonHeader = this.getElement(home.AON_HEADER);
 		aonHeader.showCompanyOption(company);
 
-		if(!this.isMobile()){
-			
+		if(!this.isMobile()){			
 			let aonMenu = this.getElement(home.AON_MENU);
 			aonMenu.clear();
 			aonMenu.init();
-		}
+		} else aonHeader.companyIn();
 
 		getUser().then(user => {
 			LS.setDomainLogin(user.login);

@@ -98,12 +98,12 @@ export class AonMobileDesktop extends AonElement {
 		//searchDiv.id = 'aonHeaderCompany';
 		//this.getElement(this.DIV_PARENT).appendChild(searchDiv)
 		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
-		let company = JSON.parse(localStorage.getItem('company'));
+		// let company = JSON.parse(localStorage.getItem('company'));
 
-		let cSpan = this.createElement(TAG.SPAN);
-		cSpan.innerHTML = company.name;
-		cSpan.className = 'aonMobileDesktopCompanyName';
-		this.getElement(this.DIV_PARENT).appendChild(cSpan);
+		// let cSpan = this.createElement(TAG.SPAN);
+		// cSpan.innerHTML = company.name;
+		// cSpan.className = 'aonMobileDesktopCompanyName';
+		// this.getElement(this.DIV_PARENT).appendChild(cSpan);
 
 		let companyDiv = this.createElement(TAG.DIV);
 		companyDiv.style.margin = '10px';
@@ -119,7 +119,10 @@ export class AonMobileDesktop extends AonElement {
 			img.style.maxHeight = '100px';
 			img.style.position = 'relative';
 			img.src = url;
-			img.onerror = () =>companyDiv.style.display = 'none';
+			img.onerror = () => {
+				img.src = '../../assets/aon-logo2.png';
+				//companyDiv.style.display = 'none';
+			}
 			companyDiv.appendChild(img);
 			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
 		});

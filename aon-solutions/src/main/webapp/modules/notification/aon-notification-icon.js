@@ -11,6 +11,8 @@ export class AonNotificationIcon extends AonElement {
     AON_NOTIFICATION_ICON;
     BADGE;
     COUNT;
+    color;
+
     static get observedAttributes() {
         return [CONSTANT.BADGE];
     }
@@ -49,7 +51,9 @@ export class AonNotificationIcon extends AonElement {
         createIconButton({
             attributes:{
                 id:  "aonHeaderNotificationButton",
-                icon: "notifications"
+                icon: "notifications",
+                noHover: true,
+                color: this.color
             }
         }, notificationSpan);
         return notificationSpan;

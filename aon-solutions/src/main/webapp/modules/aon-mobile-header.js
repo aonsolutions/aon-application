@@ -204,8 +204,18 @@ export class AonMobileHeader extends AonElement {
 			aonLogo.style.marginLeft = "21px";
 		}
 		aonLogo.addEventListener('click', () => {
-			this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+			this.home();
 		});
+	}
+
+	home() {
+		if(LS.getCompany()) {
+			this.companyIn();
+			this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+		} else {
+			this.companyOut();
+			this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+		}
 	}
 
 	showCompanyOption(company) {

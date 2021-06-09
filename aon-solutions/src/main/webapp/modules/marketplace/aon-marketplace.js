@@ -82,7 +82,7 @@ export class AonMarketplace extends AonElement {
 
 	buildApps(apps, dur) {
 		let ul = document.createElement('ul');
-		ul.className = 'list-group';
+		ul.className = 'list-group-top';
 		ul.style.marginLeft = '60px';
 		ul.style.marginRight = '60px';
 		this.appendChild(ul);

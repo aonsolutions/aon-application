@@ -55,6 +55,16 @@ a {
   padding-left: 0;
   margin-bottom: 0;
   border-radius: .25rem;
+}
+
+.list-group-top {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 0;
+  border-radius: .25rem;
   border-top: 1px solid rgba(0,0,0,.125);
 }
 

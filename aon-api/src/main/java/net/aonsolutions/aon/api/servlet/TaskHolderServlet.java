@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.TaskHolderJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -51,6 +52,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
+				case "/":
+					response(req, resp, setTaskHolder(api));
+					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -69,6 +73,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			json.put("name", th.getName());
 			json.put("company", th.getDomain().getDescription());
 			json.put("domain_id", th.getDomain().getId());
+			json.put("domain_name", th.getDomain().getName());
 			array.put(json);
 		});
 		return array;
@@ -84,9 +89,16 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			json.put("name", th.getName());
 			json.put("company", th.getDomain().getDescription());
 			json.put("domain_id", th.getDomain().getId());
+			json.put("domain_name", th.getDomain().getName());
 			array.put(json);
 		});
 		return array;
+	}
+	
+	private JSONObject setTaskHolder(AonApiData api) {
+		TaskHolder th = TaskHolderJSON.fromJSON(api.getData());
+		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+		return TaskHolderJSON.toJSON(th);
 	}
 	
 }
