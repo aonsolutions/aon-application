@@ -4873,6 +4873,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						
 						agreementDraftObject.save(AgreementDraft.this);
 					}
+
+					@Override
+					protected void onGtzdoAccept(List<Payment> payments) {
+						if(!payments.isEmpty()) {
+							for(Payment payment : payments)
+								AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+							agreementDraftObject.save(AgreementDraft.this);
+						}
+					}
 				};
 				
 				wizard.showDialog();
