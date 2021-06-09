@@ -1,0 +1,100 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.GtzdoWizard.MyStyle">
+
+		.pagePanel{
+			display: flex;
+			flex-direction: column;
+			width: auto !important;
+		}
+		
+		.flexPanel{
+			display: flex;
+			gap: 15px;
+			padding: 5px 20px;
+			align-items: flex-end;
+		}
+		
+		.flexWrap{
+			flex-wrap: wrap;
+		}
+		
+		.w180{
+			width: 180px !important;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.title{
+			font-weight: bold;
+		}
+		
+		.scrollStyle {
+			margin-bottom: 10px;
+			max-height: 110px;
+		}
+		
+		.footerToolbar{
+			padding: 5px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-top: 2px solid;
+		}
+		
+		.footerOptionsToolbar{
+			display: flex;
+		    align-items: center;
+		}
+		
+		.maxWidth{
+			width: 100%;
+		}
+		
+	</ui:style>
+
+   	<g:HTMLPanel styleName="{style.pagePanel}"> 
+        <g:HTMLPanel ui:field="gtzdoFieldsPanel" styleName="{style.flexPanel} {style.flexWrap}">
+        	<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
+				<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
+				<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu" />
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="gtzdoTypePanel" styleName="{style.flexColumn}">
+				<g:Label styleName="{style.title}">Tipo IT</g:Label>
+				<g:ListBox ui:field="gtzdoType" styleName="aon-selectOneMenu" />
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="gtzdoPeriodicityPanel" styleName="{style.flexColumn}">
+				<g:Label styleName="{style.title}">Periocidad</g:Label>
+				<g:ListBox ui:field="gtzdoPeriodicityType" styleName="aon-selectOneMenu" />
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="gtzdoAboutPanel" styleName="{style.flexColumn}">
+				<g:Label styleName="{style.title}">Sobre</g:Label>
+				<g:ListBox ui:field="gtzdoAboutType" styleName="aon-selectOneMenu" />
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel ui:field="gtzdoTablePanel" styleName="{style.flexPanel} {style.flexWrap}">
+			<g:VerticalPanel styleName="{style.maxWidth}">
+    			<g:Grid ui:field="gtzdoDataTableHeader"></g:Grid>
+    			<g:HTMLPanel>
+    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;"/>
+    			</g:HTMLPanel>
+	    		<g:ScrollPanel ui:field="gtzdoScrollPanel" styleName="{style.scrollStyle}">
+	    			<g:Grid ui:field="gtzdoDataTable"></g:Grid>
+	    		</g:ScrollPanel>
+	    		<g:HTMLPanel ui:field="footerOptionsToolbarPanel" styleName="{style.footerToolbar}">
+	    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>
+	    		</g:HTMLPanel>
+    		</g:VerticalPanel>
+		</g:HTMLPanel>
+	</g:HTMLPanel> 
+</ui:UiBinder> 
+
