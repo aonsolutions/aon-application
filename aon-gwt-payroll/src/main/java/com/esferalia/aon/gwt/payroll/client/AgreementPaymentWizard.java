@@ -37,8 +37,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
@@ -53,11 +53,63 @@ import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
+	private class GtzdoWizardImplementation extends GtzdoWizard{
+
+		@Override
+		protected void onPaymentTypeChange(String paymentTypeValue) {
+			if(!AonStringUtils.equalsIgnoreCase(paymentTypeValue, "MEJORA_IT")) {
+				showFirstPage();
+				// Fire PaymentType
+				setSelectedValueLB(AgreementPaymentWizard.this.paymentType, paymentTypeValue);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), AgreementPaymentWizard.this.paymentType);
+			}
+		}
+		
+		@Override
+		protected void onShowPaymentAviables(String gtzdoAboutTypeValue) {
+			if(AonStringUtils.equalsIgnoreCase(gtzdoAboutTypeValue, "CALCULADO")) 
+				paymentsDataGridPanel.setVisible(true);
+			else
+				paymentsDataGridPanel.setVisible(false);
+		}
+
+		@Override
+		protected void getGtzdoPayments(List<Payment> payments) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void onDescriptionChange(String description) {
+			paymentDescription.setValue(description);
+			paymentDescriptionPos.setValue(55);
+		}
+
+		@Override
+		protected String getExpression() {
+			return paymentExpression.getValue();
+		}
+
+		@Override
+		protected void setExpression(String expression) {
+			paymentExpression.setValue(expression);
+		}
+
+		@Override
+		protected String getDescription() {
+			String description = null == paymentDescriptionPos.getValue() ? paymentDescription.getValue() : "[" + paymentDescriptionPos.getValue()  + "] " +  paymentDescription.getValue();
+			return description;
+		}
+		
+	}
+	
 	// -------------------------------------------- UiBinder
 	
 	interface AgreementPaymentDialogBinder extends UiBinder<Widget, AgreementPaymentWizard> {}
 
 	private static final AgreementPaymentDialogBinder binder = GWT.create(AgreementPaymentDialogBinder.class);
+	
+	// -------------------------------------------- PaymentSelectionModel
 	
 	// -------------------------------------------- PaymentsSelectionModel
 	
@@ -117,12 +169,16 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			}
 			
 			paymentExpression.setValue(expression);
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "MEJORA_IT"))
+				gtzdoWizard.checkTableFormula();
+			
 			fireSelectionChangeEvent();
 		}
 		
 	}
 	
 	// -------------------------------------------- PaymentsSelectionModel.Methods
+	
 	
 	private static String getVariableName(Payment payment) {
 		String name = payment.getName();
@@ -146,6 +202,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return null;
 	}
 	
+	
 	// -------------------------------------------- UiField
 	
 	@UiField
@@ -159,9 +216,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	DeckLayoutPanel deckPanel;
 	
 	@UiField
 	HTMLPanel firstPage;
@@ -182,13 +236,13 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	TextBox extraName;
 	
 	@UiField
+	HTMLPanel normalFieldsPanel;
+	
+	@UiField
 	HTMLPanel periodicityPanel;
 	
 	@UiField
 	ListBox periodicityType;
-	
-//	@UiField
-//	HTMLPanel secondPage;
 	
 	@UiField
 	HTMLPanel extraPayDatePanel;
@@ -214,23 +268,14 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	Button partialityButton;
 	
+	@UiField (provided = true)
+	GtzdoWizard gtzdoWizard;
+	
 	@UiField
 	HTMLPanel paymentsDataGridPanel;
 	
 	@UiField(provided = true)
 	DataGrid<Payment> paymentsDataGrid;
-	
-//	@UiField
-//	HTMLPanel prevNextButtons;
-//	
-//	@UiField
-//	Button firstButton;
-//	
-//	@UiField
-//	Button secondButton;
-//	
-//	@UiField
-//	HTMLPanel firstLine;
 	
 	@UiField
 	TextBox paymentConcept;
@@ -244,6 +289,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	@UiField
 	TextBox paymentDescription;
 	
+	@UiField
+	Label paymentExpressionTitle;
+	
 	@UiField(provided = true)
 	TextBox paymentExpression;
 	
@@ -252,13 +300,8 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	
 	// -------------------------------------------- Variables
 	
-//	private AonToolbarButton nextButton;
-//	private AonToolbarButton prevButton;
-	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
-	
-//	private Integer currentPage = 0;
 	
 	private Payment payment;
 	private Payment paymentExtra;
@@ -280,15 +323,12 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExpression.setEnabled(false);
 		paymentsDataGrid = providePaymentsDataGrid();
 		
+		gtzdoWizard = new GtzdoWizardImplementation();
+		
 		setWidget(binder.createAndBindUi(this));
 		
 		setAvailablePayments(aviablePayments);
-		
-//		initPrevNextButtons();
 		initFooterButtons();
-		
-		// DeckPanel
-		deckPanel.setAnimationVertical(false);
 		
 		// Hide extra default
 		extraPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -312,6 +352,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentType);
 		
 	}
+	
+	
+	// -------------------------------------------- ProvidePaymentsDataGrid
 
 	// -------------------------------------------- ProvidePaymentsDataGrid
 	
@@ -356,6 +399,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		return paymentsDataGrid;
 	}
 	
+	
 	// -------------------------------------------- Initialize View
 	
 	private void setAvailablePayments(Set<Payment> paymentsIn) {
@@ -368,6 +412,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentType.addItem("PLUS_SALARIAL", "PLUS_SALARIAL");
 		paymentType.addItem("PLUS_EXTRA_SALARIAL", "PLUS_EXTRA_SALARIAL");
 		paymentType.addItem("PAGA_EXTRA", "PAGA_EXTRA");
+		paymentType.addItem("MEJORA_IT", "MEJORA_IT");
 		
 		periodicityType.clear();
 		periodicityType.addItem("-", "-1");
@@ -432,7 +477,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		extraPayTypePanel.setVisible(visible);
 	}
 
-	
 	// -------------------------------------------- ToggleButton.Methods
 	
 	private void getEnableDisableButton(Button button, boolean disabled) {
@@ -451,46 +495,60 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 	// -------------------------------------------- UiHandler
 	
-//	@UiHandler("firstButton")
-//	void onFirstButtonClick(ClickEvent event) {
-//		showFirstPage();
-//	}
-	
 	@UiHandler("paymentType")
 	void onPaymentTypeChange(ChangeEvent event) {
-		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA")) {
-			paymentTypeListBox.setSelected(Payment.Type.CRA_0004);
-			setExtraPayFieldsVisible(true);
-			periodicityType.setEnabled(false);
-		} else {
-			paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
-			setExtraPayFieldsVisible(false);
-			periodicityType.setEnabled(true);
-		}
-		
-		// ExtraPayType
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraPayType);
-		enableOrDisablePayments();
-		
-		// Init Periodicity
-		initPeriodicityType(paymentType.getSelectedValue());
-		
-		// Extra panel
-		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "SALARIO_BASE"))
-			extraPanel.getElement().getStyle().setDisplay(Display.NONE);
-		else {
-			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_SALARIAL"))
-				extraLabel.setText("Descripci\u00F3n plus salarial");
-			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_EXTRA_SALARIAL"))
-				extraLabel.setText("Descripci\u00F3n plus extra salarial");
-			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA"))
-				extraLabel.setText("Descripci\u00F3n paga extra");
+		if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "MEJORA_IT")) {
+			showGtzdoPage();
+			gtzdoWizard.setPaymentType(paymentType.getSelectedValue());
+			paymentTypeListBox.setSelected(Payment.Type.CRA_0055);
+			enableOrDisablePayments();
 			
-			extraPanel.getElement().getStyle().clearDisplay();
+			paymentConcept.setValue("GARANTIZADO");
+			paymentExpressionTitle.setText("Expresion (Garantizado)");
+			paymentExpression.setValue("");
+			
+			gtzdoWizard.fireGtzdoType();
+		} else {
+			paymentExpressionTitle.setText("Expresion");
+			
+			showFirstPage();
+			
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA")) {
+				paymentTypeListBox.setSelected(Payment.Type.CRA_0004);
+				setExtraPayFieldsVisible(true);
+				periodicityType.setEnabled(false);
+				paymentExpression.setEnabled(true);
+			} else {
+				paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
+				setExtraPayFieldsVisible(false);
+				periodicityType.setEnabled(true);
+				paymentExpression.setEnabled(false);
+			}
+			
+			// ExtraPayType
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraPayType);
+			enableOrDisablePayments();
+			
+			// Init Periodicity
+			initPeriodicityType(paymentType.getSelectedValue());
+			
+			// Extra panel
+			if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "SALARIO_BASE"))
+				extraPanel.getElement().getStyle().setDisplay(Display.NONE);
+			else {
+				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_SALARIAL"))
+					extraLabel.setText("Descripci\u00F3n plus salarial");
+				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PLUS_EXTRA_SALARIAL"))
+					extraLabel.setText("Descripci\u00F3n plus extra salarial");
+				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedValue(), "PAGA_EXTRA"))
+					extraLabel.setText("Descripci\u00F3n paga extra");
+				
+				extraPanel.getElement().getStyle().clearDisplay();
+			}
+			
+			createUpdatePayment();
+			checkPartialityButton();
 		}
-		
-		createUpdatePayment();
-		checkPartialityButton();
 	}
 	
 	@UiHandler("periodicityType")
@@ -548,11 +606,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		}
 	}
 	
-//	@UiHandler("secondButton")
-//	void onSecondButtonClick(ClickEvent event) {
-//		showSecondPage();
-//	}
-	
 	@UiHandler("partialityButton")
 	void onPartialityButtonClick(ClickEvent event) {
 		Boolean oldValue = isActiveToggleButton(partialityButton);
@@ -565,31 +618,19 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	// -------------------------------------------- DeckPanel.Methods
 
 	private void showFirstPage() {
-		deckPanel.showWidget(deckPanel.getWidgetIndex(firstPage));
-		deckPanel.animate(500);
-//		addFirstButtonFill();
+		firstPage.setVisible(true);
+		gtzdoWizard.setVisible(false);
+		dockLayoutPanel.setHeight("420px");
+		centerDialog();
+	}
+	
+	private void showGtzdoPage() {
+		firstPage.setVisible(false);
+		gtzdoWizard.setVisible(true);
+		dockLayoutPanel.setHeight("555px");
+		centerDialog();
 	}
 
-//	private void showSecondPage() {
-//		deckPanel.showWidget(deckPanel.getWidgetIndex(secondPage));
-//		deckPanel.animate(500);
-//		addSecondButtonFill();
-//	}
-
-	// -------------------------------------------- ButtonsPanel.Methods
-	
-//	private void addFirstButtonFill() {
-//		secondButton.removeStyleName(style.buttonFillPage());
-//		firstLine.removeStyleName(style.lineFill());
-//		
-//		firstButton.addStyleName(style.buttonFillPage());
-//	}
-//
-//	private void addSecondButtonFill() {
-//		firstButton.addStyleName(style.buttonFillPage());
-//		secondButton.addStyleName(style.buttonFillPage());
-//		firstLine.addStyleName(style.lineFill());
-//	}
 	
 	// -------------------------------------------- Payment
 	
@@ -629,25 +670,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		
 		String paymentTypeValue = paymentType.getSelectedValue();
 		String periodicityTypeValue = periodicityType.getSelectedItemText();
-		
-		
-		/**
-		 * 
-		if(AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_SALARIAL") || AonStringUtils.equalsIgnoreCase(paymentType, "PLUS_EXTRA_SALARIAL")) {
-			periodicityType.clear();
-			periodicityType.addItem("MENSUAL", " * DIAS_TRABAJADOS / DIAS_MES");
-			periodicityType.addItem("DIAS TRABAJADOS", " * DIAS_TRABAJADOS");
-			periodicityType.addItem("DIAS EFECTIVOS", " * DIAS_EFECTIVOS");
-			periodicityType.addItem("HORAS TRABAJADAS", " * HORAS_TRABAJADAS");
-			periodicityType.addItem("FIJO", "FIJO");
-		}
-		
-		if(AonStringUtils.equalsIgnoreCase(paymentType, "PAGA_EXTRA")) {
-			periodicityType.clear();
-			periodicityType.addItem("ANUAL", "ANUAL");
-			periodicityType.addItem("PRORRATEO", "PRORRATEO");
-		}*/
-		
+			
 		if(AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE")) {
 			switch (periodicityTypeValue) {
 				case "ANUAL":
@@ -870,43 +893,6 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			return false;
 		}
 	}
-
-	// -------------------------------------------- FooterButtons
-	
-//	private void initPrevNextButtons() {
-//		prevButton = new AonToolbarButton("Anterior", AON.CSS.aonIconPrev());
-//		prevButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				prevPage();
-//			}
-//		});
-//		prevNextButtons.add(prevButton);
-//		
-//		nextButton = new AonToolbarButton("Siguiente", AON.CSS.aonIconNext());
-//		nextButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				nextPage();
-//			}
-//
-//		});
-//		prevNextButtons.add(nextButton);
-//	}
-//	
-//	private void nextPage() {
-//		if(currentPage < 1) {
-//			currentPage++;
-//			showSecondPage();
-//		}
-//	}
-//
-//	private void prevPage() {
-//		if(currentPage > 0) {
-//			currentPage--;
-//			showFirstPage();
-//		}
-//	}
 	
 	// -------------------------------------------- FooterButtons
 	
@@ -936,6 +922,9 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 				if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "PAGA_EXTRA")) {
 					createExtraPayment();
 					onExtraAccept(paymentExtra, extra);
+				} else if(AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
+					List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
+					onGtzdoAccept(gtzdoPayments);
 				} else {
 					createPayment();
 					onAccept(payment);
@@ -1011,7 +1000,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 	private void createExtra() {
 		String periodicityValue = periodicityType.getSelectedValue();
 		
-		if(AonStringUtils.equalsIgnoreCase(periodicityValue, "PRORRATEO"))
+		if(AonStringUtils.equalsIgnoreCase(periodicityValue, "PRORRATEO") || AonStringUtils.isBlank(extraPayDate.getValue()))
 			extra = null;
 		else {
 			extra.setId(-1);
@@ -1052,11 +1041,26 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		extra.setStartDate("01/" + monthStr + " -1");
 		extra.setEndDate(lastDayOfPreviusMonthIssueDate.getDate() + "/" + (DateUtils.getMonth(lastDayOfPreviusMonthIssueDate) + 1));
 	}
+	
+	// -------------------------------------------- Auxiliar Methods
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
 
 	// -------------------------------------------- Abstract Methods
 	
 	protected abstract void onAccept(Payment payment);
 	protected abstract void onExtraAccept(Payment payment, Extra extra);
+	protected abstract void onGtzdoAccept(List<Payment> payments);
 	
 	// -------------------------------------------- ExtraPayment.Methods
 	
@@ -1119,6 +1123,16 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			public void execute() {
 				center();
 				show();
+			}
+		});
+	}
+	
+	private void centerDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				center();
 			}
 		});
 	}
