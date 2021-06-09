@@ -550,7 +550,7 @@ export class AonUser extends AonElement {
 					roles.push(roleB);
 				}
 
-				if (app && app.access && aonSwitch.isChecked() && this.isEnterprise()) {
+				if (app && app.access && this.isEnterprise()) {
 					let rolePortal = app.app.toUpperCase() + '_PORTAL';
 					let roleC = {
 						app: app ? app.app : 'ADMIN',
