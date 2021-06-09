@@ -14,6 +14,7 @@ import { AonSignin } from "./signin/aon-signin.js";
 import { AonLaboral } from "./laboral/aon-laboral.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER, PAYROLL, ACCOUNTING, FISCAL } from "../services/app.js";
+import * as LS from '../services/localStorageService.js';
 
 export class AonMobileMenu extends AonElement {
 
@@ -117,7 +118,7 @@ export class AonMobileMenu extends AonElement {
     this.addMenuButton({
       name: 'Home',
       icon: 'home',
-      fn: () => this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
+      fn: () => this.home()
     });
 
     let apps = [];
@@ -313,6 +314,18 @@ export class AonMobileMenu extends AonElement {
         fn: () => this.rootPanel(new AonAccounting())
       };
     return undefined;
+  }
+
+  home() {
+    if(LS.getCompany()) {
+      let aonHeader = this.getElement("aonHeader");
+      aonHeader.companyIn();
+      this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+    } else {
+      let aonHeader = this.getElement("aonHeader");
+      aonHeader.companyOut();
+      this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+    }
   }
 }
 

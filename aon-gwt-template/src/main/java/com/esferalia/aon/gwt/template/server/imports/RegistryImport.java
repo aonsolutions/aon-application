@@ -275,10 +275,12 @@ public class RegistryImport extends Import {
 			return error;
 		}
 		RegistryImportClass r = rvs.get(index);
-		if(r.getLine() == 141 || r.getLine() == 114) {
-			System.out.println("AAA");
-		}
+	
 		try {
+			if(r.getRegistry() != null && AonStringUtils.isBlank(r.getRegistry().getDocument()) && AonStringUtils.isBlank(r.getRegistry().getName())) {
+				throw new Exception("El Documento y la Razón Social no pueden estar vacíos.");
+			}
+			
 			LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
 				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
 			Registry reg = new Registry();

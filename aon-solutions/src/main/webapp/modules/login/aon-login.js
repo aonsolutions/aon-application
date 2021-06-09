@@ -269,7 +269,7 @@ export class AonLogin extends AonElement {
       let aonMenu = this.getElement('aonMenu');
       aonMenu.clear();
       aonMenu.init();
-    }
+    } else aonHeader.companyIn();
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);

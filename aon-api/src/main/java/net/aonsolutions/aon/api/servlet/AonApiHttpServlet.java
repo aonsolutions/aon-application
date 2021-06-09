@@ -87,7 +87,7 @@ public class AonApiHttpServlet extends HttpServlet{
 			domain = AonStringUtils.isBlank(domainName)
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
-		}catch (Exception e) {}
+		} catch (Exception e) {}
 		api.setDomain(domain);
 		
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
