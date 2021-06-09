@@ -78,7 +78,7 @@ export const buildMobileChat = (parent, data) => {
   
                 setTimeout(() => {
                     const button = document.getElementById("aonMessengerSidenavAbiertas");
-                    button?.click();
+                    button.click();
                 }, 250);
             });
 
@@ -261,7 +261,7 @@ export const buildMobileChat = (parent, data) => {
             
             setTimeout(() => {
                 const button = document.getElementById("aonMessengerSidenavAbiertas");
-                button?.click();
+                button.click();
             }, 250);
         })
 

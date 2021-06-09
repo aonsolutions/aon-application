@@ -17,8 +17,17 @@ import './css/aon-textarea.css';
 import './css/aon.css';
 
 
+window.setPosition = (pos) => setPosition(pos);
+window.setTokenFCM =  (token) => {
+    window.tokenFCM = token;
+    saveAuthDevice({tokenFCM:token});
+}
+
+window.setNotificationAction = (data) =>  {
+    window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
+}
+
 const load = () => {
-    window.setPosition = (pos) => setPosition(pos);
     LS.setAonSolutions(true);
     favicon();  
     loadScriptFirebase();
@@ -62,15 +71,6 @@ const loadScript = (url, module=false) => new Promise((resolve, reject) => {
 });
 
 const setWindowApp = () => {
-    window.setTokenFCM =  (token) => {
-        window.tokenFCM = token;
-        saveAuthDevice({tokenFCM:token});
-    }
-
-    window.setNotificationAction = (data) =>  {
-        window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
-    }
-    
     waitEl(TAG.AON_NOTIFICATION_ICON).then(aonNotificationIcon=>{
         aonNotificationIcon.initializeFB();
         aonNotificationIcon.getTotalNotification();
