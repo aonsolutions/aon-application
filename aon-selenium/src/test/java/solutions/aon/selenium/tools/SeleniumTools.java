@@ -1,9 +1,15 @@
 package solutions.aon.selenium.tools;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -203,5 +209,32 @@ public class SeleniumTools {
 	
 		JavascriptExecutor js = (JavascriptExecutor) browser;
 		js.executeScript(script);
+	}
+	
+	//The way to get elements clicked without random 'StaleElementReferenceException' exceptions
+	public static boolean retryingFindClick(WebDriver driver, By by) {
+	    boolean result = false;
+	    int attempts = 0;
+	    while(attempts < 4) {
+	        try {
+	            driver.findElement(by).click();
+	            result = true;
+	            break;
+	        } catch(StaleElementReferenceException e) {
+	        }
+	        attempts++;
+	    }
+	    return result;
+	}
+	
+	public static String getDownloadPath() {
+		String downloadFolder = System.getProperty("user.home") + File.separator + "Descargas";
+		
+		Path downloadPath = Paths.get(downloadFolder);
+		
+		if (!Files.exists(downloadPath))
+			downloadFolder = System.getProperty("user.home") + File.separator + "Downloads";
+		
+		return downloadFolder;
 	}
 }
