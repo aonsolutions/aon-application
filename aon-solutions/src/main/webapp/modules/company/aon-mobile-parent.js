@@ -151,6 +151,7 @@ export class AonMobileParent extends AonElement {
 
       let aonHeader = this.getElement(home.AON_HEADER);
       aonHeader.showCompanyOption(company);
+	  aonHeader.companyIn();
 	  this.getElement(aonHeader.COMPANY_LIST).style.display = 'block';
       getUser().then(user => {
         localStorage.setItem('aon_domain_login', user.login);

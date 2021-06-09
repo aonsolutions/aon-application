@@ -190,11 +190,11 @@ export class AonSign extends AonElement {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
       this.timeAction(time);
-    } else if(signin.status === 'pause' && aonUserConnected) {
-      aonUserConnected.style.backgroundColor = '#F39F1D';
+    } else if(signin.status === 'pause') {
+      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
-    } else if(aonUserConnected) {
-      aonUserConnected.style.backgroundColor = '#DC4D30';
+    } else {
+      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
     }
     this.changeTime(time);

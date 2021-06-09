@@ -6,6 +6,7 @@ import { AonMobileHeader } from './aon-mobile-header.js';
 import { AonMobileMenu } from './aon-mobile-menu.js';
 
 import { CSS, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
+import { AonNewMobileHeader } from './aon-new-mobile-header.js';
 
 export class AonHome extends AonElement {
 
@@ -79,7 +80,8 @@ export class AonHome extends AonElement {
 	}
 
 	buildMobile() {
-		let aonMobileHeader = new AonMobileHeader();
+		let aonMobileHeader = new AonNewMobileHeader();
+		// let aonMobileHeader = new AonMobileHeader();
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
 
