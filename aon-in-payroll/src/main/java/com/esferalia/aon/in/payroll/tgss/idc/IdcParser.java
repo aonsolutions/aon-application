@@ -25,6 +25,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class IdcParser {
 	
@@ -137,17 +138,23 @@ public class IdcParser {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
 					optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)){
 					
-					endDate = simpleDateFormat.parse(optional.get().group("end"));
+					//String end = optional.get().group("end");
+					if ( optional.get().group("end") != null )
+						endDate = simpleDateFormat.parse(optional.get().group("end"));
 					
 					String code = optional.get().group("code");
 					String description = optional.get().group("description");
 					String portTipo = optional.get().group("tipo");
 					String quota = optional.get().group("quota");
 					Date start = simpleDateFormat.parse(optional.get().group("start"));
-					Date end = simpleDateFormat.parse(optional.get().group("end"));
 					
-					if ( !start.equals(startDate) || !end.equals(endDate)) 
+					Date end = null;
+					if ( optional.get().group("end") != null )
+						end = simpleDateFormat.parse(optional.get().group("end"));
+					
+					if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
 						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
+					
 					onEmployeeQuotePEC(listener, nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 					
 					startDate = start;
@@ -208,7 +215,6 @@ public class IdcParser {
 			if ( AonStringUtils.isBlank(line) )
 				continue;
 			line = AonStringUtils.trim(line);
-			System.out.println(line);
 			Matcher matcher = pattern.matcher(line) ;
 			if ( !matcher.matches() ) {
 				continue;
@@ -307,7 +313,7 @@ public class IdcParser {
 	//37 EXONE.ERE.F.MAY.COMP 85,00  01   CUOTA EMPRESARIAL 14-05-2020 31-05-2020 FD4
 	private static final Pattern EMPLOYEE_QUOTE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+).*$"
+	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)?.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TOTAL CLV NFL
