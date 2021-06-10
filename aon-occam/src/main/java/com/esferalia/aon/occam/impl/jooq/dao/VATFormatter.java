@@ -13,6 +13,7 @@ import org.jooq.tools.json.JSONObject;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -49,12 +50,14 @@ public class VATFormatter {
 //	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
 //	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	protected static final String SPAN_MSG_ORANGE= "<span style=\"color: orange;\">{0}</span>";
+	protected static final String SPAN_MSG_BLUE = "<span style=\"color: royalblue;\">{0}</span>";
 	protected static final String SPAN_MSG_GRAY= "<span style=\"color: gray;\">{0}</span>";
 	protected static final String SPAN_MSG_RED= "<span style=\"color: red;\">{0}</span>";
 
 	protected static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)";
 	
-	private static final String HEADER = AonStringUtils.repeat(" ", 2)
+	private static final String getHeader( Mod303 mod303) {
+		String header = AonStringUtils.repeat(" ", 2)
 			+ AonStringUtils.rightPad("TIPO",6)
 			+ AonStringUtils.rightPad("TRAN.",6)
 			+ "S I A R C "
@@ -71,131 +74,177 @@ public class VATFormatter {
 			+ AonStringUtils.leftPad("% RE",8)
 			+ AonStringUtils.leftPad("CUOTA RE",15)
 			+ AonStringUtils.leftPad("% DED.",8)
-			+ AonStringUtils.leftPad("CUOTA DED.",15)
-			+ AonStringUtils.SPACE
+			+ AonStringUtils.leftPad("CUOTA DED.",15);
+		if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+			header = header 
+				+ AonStringUtils.leftPad("% PRO.",8)
+				+ AonStringUtils.leftPad("CUOTA PRO.",15); 
+		}
+		header = header + AonStringUtils.SPACE
 			+ AonStringUtils.rightPad("N\u00BA REFERENCIA.",25)
 			+ AonStringUtils.repeat(" ", 2)
-			;
-
+		;
+		return header;
+	}
+			
+	
 	public static String formatInvoices(String title, String subtitle, Collection<VatContext> list) {
+		return formatInvoices(title, subtitle, list, null);
+	}
+	
+	public static String formatInvoices(String title, String subtitle, Collection<VatContext> list, Mod303 mod303) {
 		StringBuilder buf = new StringBuilder();
-		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", HEADER.length())));
+		String header = getHeader(mod303);
+		int length = header.length();
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", length)));
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.center(title, HEADER.length()));
+		buf.append(AonStringUtils.center(title, length));
 		buf.append(CL_DIV_BOLD);
 		if (AonStringUtils.isNotBlank(subtitle)) {
 			subtitle = AonStringUtils.abbreviate(subtitle, 200);
 			buf.append(OP_DIV_BOLD);
-			buf.append(AonStringUtils.center(subtitle, HEADER.length()));
+			buf.append(AonStringUtils.center(subtitle, length));
 			buf.append(CL_DIV_BOLD);
 		}
-		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.leftPad(LEGEND, HEADER.length())));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.leftPad(LEGEND, length)));
 		
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.repeat("-", HEADER.length())); 
+		buf.append(AonStringUtils.repeat("-", length)); 
 		buf.append(CL_DIV_BOLD);
 		buf.append(OP_DIV_BOLD);
-		buf.append(HEADER);
+		buf.append(header);
 		buf.append(CL_DIV_BOLD);
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.repeat("-", HEADER.length()));
+		buf.append(AonStringUtils.repeat("-", length));
 		buf.append(CL_DIV_BOLD);
 		
 		if (list == null || list.size() == 0) {
-			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", HEADER.length())));
+			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", length)));
 			buf.append(NO_DATA);			
-			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", HEADER.length())));
+			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", length)));
 		}
 		
 		double sumBase = 0;
 		double sumQuota = 0;
 		double sumReQuota = 0;
 		double sumDedQuota = 0;
+		double sumProratedQuota = 0;
 		for (VatContext vat : list) {
-			buf.append( mapToHtml(vat));
+			buf.append(OP_DIV);
+			buf.append(AonStringUtils.repeat(" ", 2));
+			buf.append(AonStringUtils.rightPad(AonStringUtils.substring(vat.getInvoiceType().getDescription(),0,4) ,6));
+			buf.append(AonStringUtils.rightPad(AonStringUtils.substring(vat.getTransaction().getDescription(),0,4) ,6));
+			buf.append((vat.isService()?'S':' ') );
+			buf.append(' ');
+			buf.append((vat.isInvestment()?'I':' '));
+			buf.append(' ');
+			buf.append((vat.isFarmerRegime()?'A':' '));
+			buf.append(' ');
+			buf.append((vat.isRectification()?'R':' '));
+			buf.append(' ');
+			buf.append((vat.isVatAccrualRegime()? MessageFormat.format(SPAN_MSG_RED ,'C'):' '));
+			buf.append(' ');
+			buf.append(AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8));
+			buf.append(AonStringUtils.rightPad(vat.getDocumentNumber(),15));
+			buf.append(AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.SPACE),15));
+			buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getRegistryName(),29),30));
+			buf.append((
+					  AonDateUtils.isSameDay(vat.getIssueDate(), vat.getTaxDate())
+						?FMT.format(vat.getIssueDate())
+						:MessageFormat.format(SPAN_MSG_ORANGE,FMT.format(vat.getIssueDate()))
+					  ));
+			buf.append(AonStringUtils.SPACE);
+			buf.append(AonStringUtils.rightPad(FMT.format(vat.getTaxDate()),12));					
+			buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getVatDeductionType()!=null
+							?vat.getVatDeductionType().getName()
+							:AonStringUtils.SPACE ,9),10));
+			buf.append(AonStringUtils.leftPad(DEC.format(vat.getBase()),15));		
+			buf.append(AonStringUtils.leftPad(DEC.format(vat.getPercentage()) + AonStringUtils.PERCENT,8));
+			buf.append(AonStringUtils.leftPad(DEC.format(vat.getQuota()),15));
+			buf.append(AonStringUtils.leftPad(DEC.format(vat.getSurchargePercent()) + AonStringUtils.PERCENT,8));
+			buf.append(AonStringUtils.leftPad(DEC.format(vat.getSurchargeQuota()),15));
+			buf.append(AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductiblePercent()) + AonStringUtils.PERCENT,8));
+			buf.append(AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductibleQuota()),15));
+			double proratedQuota = vat.getDeductibleQuota();
+			if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+				if ( vat.getActivity() == null) {
+					proratedQuota = AonMathUtils.round(proratedQuota * mod303.getProratePercent() / 100);
+					buf.append(MessageFormat.format(SPAN_MSG_BLUE, AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8)));
+					buf.append(MessageFormat.format(SPAN_MSG_BLUE, AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(proratedQuota),15)));
+				} else {
+					buf.append(AonStringUtils.leftPad(AonStringUtils.SPACE,8));
+					buf.append(AonStringUtils.leftPad(DEC.format(proratedQuota),15));
+				}
+			}
+			buf.append(AonStringUtils.SPACE);
+			buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getReferenceCode(),25),25)); 
+			buf.append(AonStringUtils.repeat(" ", 2));
+			buf.append(CL_DIV);
+			
 			sumBase = sumBase + vat.getBase();
 			sumQuota = sumQuota + vat.getQuota();
 			sumReQuota = sumReQuota + vat.getSurchargeQuota();
 			sumDedQuota = sumDedQuota + (vat.isSales()?0:vat.getDeductibleQuota());
+			sumProratedQuota = sumProratedQuota + (vat.isSales()?0:proratedQuota);
 		}
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.repeat("-", HEADER.length()));
+		buf.append(AonStringUtils.repeat("-", length));
 		buf.append(CL_DIV_BOLD);
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.repeat(" ", 2)
-				+ AonStringUtils.repeat(" ", 6)
-				+ AonStringUtils.repeat(" ", 6)
-				+ AonStringUtils.repeat(" ", 10)
-				+ AonStringUtils.repeat(" ", 8)
-				+ AonStringUtils.repeat(" ", 15)
-				+ AonStringUtils.repeat(" ", 15)
-				+ AonStringUtils.leftPad(" ",30)
-				+ AonStringUtils.leftPad(" ",10)
-				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(" ",10)
-				+ AonStringUtils.rightPad("TOTAL:",10)				
-				+ AonStringUtils.leftPad(DEC.format(sumBase),17)
-				+ AonStringUtils.leftPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)
-				+ AonStringUtils.leftPad(" ",8)
-				+ AonStringUtils.leftPad(DEC.format(sumReQuota),15)
-				+ AonStringUtils.leftPad(" ",8)
-				+ AonStringUtils.leftPad(AonMathUtils.isZero(sumDedQuota)? " " : DEC.format(sumDedQuota),15)
-				+ AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(" ",25)
-				+ AonStringUtils.repeat(" ", 2)
-				);
+		buf.append(AonStringUtils.repeat(" ", 2));
+		buf.append(AonStringUtils.repeat(" ", 6));
+		buf.append(AonStringUtils.repeat(" ", 6));
+		buf.append(AonStringUtils.repeat(" ", 10));
+		buf.append(AonStringUtils.repeat(" ", 8));
+		buf.append(AonStringUtils.repeat(" ", 15));
+		buf.append(AonStringUtils.repeat(" ", 15));
+		buf.append(AonStringUtils.leftPad(" ",30));
+		buf.append(AonStringUtils.leftPad(" ",10));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.leftPad(" ",10));
+		buf.append(AonStringUtils.rightPad("TOTAL:",10));				
+		buf.append(AonStringUtils.leftPad(DEC.format(sumBase),17));
+		buf.append(AonStringUtils.leftPad(" ",8));
+		buf.append(AonStringUtils.leftPad(DEC.format(sumQuota),15));
+		buf.append(AonStringUtils.leftPad(" ",8));
+		buf.append(AonStringUtils.leftPad(DEC.format(sumReQuota),15));
+		buf.append(AonStringUtils.leftPad(" ",8));
+		buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(sumDedQuota)? " " : DEC.format(sumDedQuota),15));
+		if ( mod303 != null && mod303.hasProrate() && mod303.isSpecialProrate()) {
+			buf.append(AonStringUtils.leftPad(" ",8));
+			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(sumProratedQuota)? " " : DEC.format(sumProratedQuota),15));
+		}
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(" ",25));
+		buf.append(AonStringUtils.repeat(" ", 2));
 		buf.append(CL_DIV_BOLD);
 		buf.append(OP_DIV_BOLD);
-		buf.append(AonStringUtils.repeat("-", HEADER.length()));
+		buf.append(AonStringUtils.repeat("-", length));
 		buf.append(CL_DIV_BOLD);
+		if ( mod303 != null && mod303.hasProrate() && !mod303.isSpecialProrate()) {
+			double proratedQuota = AonMathUtils.round(sumDedQuota * mod303.getProratePercent() / 100);
+			buf.append(OP_DIV_BOLD);
+			buf.append(AonStringUtils.repeat(" ", 102));
+			buf.append(AonStringUtils.SPACE);
+			buf.append(AonStringUtils.rightPad("PRORRATA GENERAL:",20));				
+			buf.append(AonStringUtils.leftPad(DEC.format(mod303.getProratePercent()) + AonStringUtils.PERCENT,8));
+			buf.append(AonStringUtils.leftPad(" ",25));
+			buf.append(AonStringUtils.leftPad(" ",23));
+			buf.append(AonStringUtils.leftPad(" ",15));
+			buf.append(AonStringUtils.leftPad(AonMathUtils.isZero(proratedQuota)? " " : DEC.format(proratedQuota),15));
+			buf.append(AonStringUtils.SPACE);
+			buf.append(AonStringUtils.rightPad(" ",25));
+			buf.append(AonStringUtils.repeat(" ", 2));
+			buf.append(CL_DIV_BOLD);
+			buf.append(OP_DIV_BOLD);
+			buf.append(AonStringUtils.repeat("-", length));
+			buf.append(CL_DIV_BOLD);
+		}
+		
 		return MessageFormat.format(MAIN_DIV_MSG,buf.toString());
 
 	}
 
-
-	private static String mapToHtml(VatContext vat) {
-		return OP_DIV
-				+ AonStringUtils.repeat(" ", 2)
-				+ AonStringUtils.rightPad(AonStringUtils.substring(vat.getInvoiceType().getDescription(),0,4) ,6)
-				+ AonStringUtils.rightPad(AonStringUtils.substring(vat.getTransaction().getDescription(),0,4) ,6)
-				+ (vat.isService()?'S':' ') 
-				+ ' '
-				+ (vat.isInvestment()?'I':' ')
-				+ ' '
-				+ (vat.isFarmerRegime()?'A':' ')
-				+ ' '
-				+ (vat.isRectification()?'R':' ')
-				+ ' '
-				+ (vat.isVatAccrualRegime()? MessageFormat.format(SPAN_MSG_RED ,'C'):' ')
-				+ ' '
-				+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8)
-				+ AonStringUtils.rightPad(vat.getDocumentNumber(),15)
-				+ AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getRegistryDocument(), AonStringUtils.SPACE),15)
-				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getRegistryName(),29),30)
-				+ (
-				  AonDateUtils.isSameDay(vat.getIssueDate(), vat.getTaxDate())
-					?FMT.format(vat.getIssueDate())
-					:MessageFormat.format(SPAN_MSG_ORANGE,FMT.format(vat.getIssueDate()))
-				  )
-				+ AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(FMT.format(vat.getTaxDate()),12)					
-				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getVatDeductionType()!=null
-						?vat.getVatDeductionType().getName()
-						:AonStringUtils.SPACE ,9),10)		
-				+ AonStringUtils.leftPad(DEC.format(vat.getBase()),15)		
-				+ AonStringUtils.leftPad(DEC.format(vat.getPercentage()) + AonStringUtils.PERCENT,8)
-				+ AonStringUtils.leftPad(DEC.format(vat.getQuota()),15)
-				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargePercent()) + AonStringUtils.PERCENT,8)
-				+ AonStringUtils.leftPad(DEC.format(vat.getSurchargeQuota()),15)
-				+ AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductiblePercent()) + AonStringUtils.PERCENT,8)
-				+ AonStringUtils.leftPad(vat.isSales()?AonStringUtils.SPACE:DEC.format(vat.getDeductibleQuota()),15)
-				+ AonStringUtils.SPACE
-				+ AonStringUtils.rightPad(AonStringUtils.abbreviate(vat.getReferenceCode(),25),25) 
-				+ AonStringUtils.repeat(" ", 2)
-				+ CL_DIV
-				;
-	}
 
 
 	public static String formatSummary(String title, Collection<VatSummaryContext> list) {

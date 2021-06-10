@@ -2,14 +2,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -26,7 +28,7 @@ import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
-public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
+public class NewDeclarationPopup<T extends FiscalModel> extends AonCustomDialog {
 	
 	protected int row = 0;
 	private AdministrationListBox admonList = new AdministrationListBox();
@@ -38,6 +40,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private Label defaultVatRegimeLabel = new Label();
 	private ListBox defaultVatRegime = new ListBox();
 	private DoubleBox prorate = new DoubleBox(7);
+	private CheckBox specialProrate = new CheckBox("Especial");
 	private PeriodListBox periodList = new PeriodListBox(true);
 	
 	public NewDeclarationPopup(final Mod303 mod303 ,final Model303Callback callback) {
@@ -51,21 +54,20 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
 		tab.setCellSpacing(0);
-		tab.setStyleName(AON.AON_CSS.aonMarginTop());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		tab.setStyleName(AON.CSS.aonMarginTop());
+		tab.addStyleName(AON.CSS.aonMarginBottom());
+		tab.addStyleName(AON.CSS.aonTable());
 		ColumnFormatter cf = tab.getColumnFormatter();
 		cf.setWidth(0, "130px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
 		cf.setWidth(1, "250px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
 
 		// ADMINISTRATION
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -80,6 +82,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 								defaultVatRegime.setVisible(admonList.getValue() == Administration.COMMON_TERRITORY);
 								mod303.setPeriod(result.getPeriod());
 								mod303.ensureDetail(result.getProrateKey()).setAmount(result.getProratePercent());
+								mod303.ensureDetail(result.getProrateTypeKey()).setDescription(result.getSpecialProrateValue());
+								mod303.ensureDetail(result.getPreviousProrateKey()).setAmount(result.getPreviousProratePercent());
 								populate(result);
 							}
 			
@@ -95,9 +99,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		row++;
 
 		// YEAR
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.year()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
@@ -111,9 +114,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		row++;
 		
 		// PERIOD
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		periodList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -124,24 +126,45 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		row++;
 		
 		// PORCENTAJE DE PRORRATA
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.prorrataPercent()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		FlowPanel proratePanel = new FlowPanel(); 
 		prorate.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				if (prorate.getValue() == null) prorate.setValue(100.0,false); 
 				mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorate.getValue());
+				specialProrate.setVisible(mod303.hasProrate());
+				if (!mod303.hasProrate()) {
+					specialProrate.setValue(false);
+					mod303.setSpecialProrateValue( specialProrate.getValue() );
+				}
 			}
 		});
-		tab.setWidget(row, 1, prorate);
+		
+		specialProrate.setStyleName(AON.CSS.aonMarginLeft());  
+		specialProrate.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mod303.setSpecialProrateValue( specialProrate.getValue() );
+				Period p = periodList.getValue();
+				if ( p != null && !p.isFirstPeriod() && diffCalculation.getValue()) {
+					String msg = "Si modifica el tipo de prorrata con el c\u00E1lculo por diferencia activo, revise los valores resultantes en IVA deducible.";
+					MessageDialog.show("AVISO", msg);
+				}
+			}
+		});
+		proratePanel.add(prorate);
+		proratePanel.add(specialProrate);
+		tab.setWidget(row, 1, proratePanel);
 		row++;
 
 		// REGIMEN IVA POR DEFECTO
 		defaultVatRegimeLabel.setText("Destinar Fras. sin actividad a");
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, defaultVatRegimeLabel);
 		defaultVatRegimeLabel.setVisible(mod303.isAEAT());
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
 		defaultVatRegime.addItem(VATRegime.GENERAL.getName());
 		defaultVatRegime.addItem(VATRegime.SIMPLIFIED.getName());
@@ -172,7 +195,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		});
 		complementary.setVisible(mod303.isComplementaryDeclarationAvailable());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, complementary);
 		row++;
 		
@@ -191,7 +213,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		});
 		replacement.setVisible(mod303.isReplacementDeclarationAvailable());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
 		row++;
 		
@@ -206,7 +227,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, withoutActivity);
 		row++;
 		
@@ -221,18 +241,17 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, diffCalculation);
 		row++;
 
 		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		buttonsPanel.setStyleName(AON.CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
 		Button acceptButton = new Button();
-		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept());
 		
 		acceptButton.addClickHandler(new ClickHandler() {
@@ -245,8 +264,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		});
 		buttonsPanel.add(acceptButton);
 		Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
 		cancelButton.addClickHandler(new ClickHandler() {
 
@@ -267,5 +286,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		yearBox.setValue(mod303.getYear());
 		periodList.setValue(mod303.getPeriod());
 		prorate.setValue(mod303.ensureDetail(mod303.getProrateKey()).getAmount());
+		specialProrate.setValue(mod303.isSpecialProrate());
+		specialProrate.setVisible(mod303.hasProrate());
 	}
 }
