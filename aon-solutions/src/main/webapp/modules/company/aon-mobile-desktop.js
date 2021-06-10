@@ -62,6 +62,10 @@ export class AonMobileDesktop extends AonElement {
 		this.id = 'aonDesktop';
 		this.DIV_PARENT = this.id + "DivParent";
 		this.SUGGESTION = this.id + 'Suggestion';
+		this.COMPANY_DIV = this.id + 'CompanyDiv';
+		this.PENDING_TASK = this.id + 'PendingTask';
+		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
+		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
 	}
 
 	getDur() {
@@ -105,7 +109,8 @@ export class AonMobileDesktop extends AonElement {
 		// cSpan.className = 'aonMobileDesktopCompanyName';
 		// this.getElement(this.DIV_PARENT).appendChild(cSpan);
 
-		let companyDiv = this.createElement(TAG.DIV);
+		let companyDiv = this.getElement(this.COMPANY_DIV) || this.createElement(TAG.DIV);
+		companyDiv.id = this.COMPANY_DIV;
 		companyDiv.style.margin = '10px';
 		companyDiv.style.marginLeft = '50px';
 		companyDiv.style.marginRight = '50px';
@@ -123,6 +128,7 @@ export class AonMobileDesktop extends AonElement {
 				img.src = '../../assets/aon-logo2.png';
 				//companyDiv.style.display = 'none';
 			}
+			this.clearElement(companyDiv);
 			companyDiv.appendChild(img);
 			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
 		});
@@ -201,10 +207,11 @@ export class AonMobileDesktop extends AonElement {
 		// 	menu.reload();
 		// });
 
-		let div = this.createElement(TAG.DIV);
+		let div = this.getElement(this.PENDING_TASK) || this.createElement(TAG.DIV);
+		div.id = this.PENDING_TASK;
 		div.style.paddingBottom = '25px';
 		this.getElement(this.DIV_PARENT).appendChild(div);
-
+		this.clearElement(div);
 		let titleA = this.createElement(TAG.DIV);
 		titleA.className = 'aonSidenavTitle';
 		titleA.innerHTML = 'TAREAS PENDIENTES';
@@ -240,16 +247,20 @@ export class AonMobileDesktop extends AonElement {
 			? this.rootPanel(new AonMessenger()) : this.development('Solicitud')));
 
 		getTimeControl().then(r => {
-			let div2 = this.createElement(TAG.DIV);
+			let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
+			div2.id = this.TIMECONTROL_TITLE;
 			if(!this.isMobile()){
+				this.clearElement(div2);
 				div2.appendChild(this.createTitleTime());
 			}
 			this.getElement(this.DIV_PARENT).appendChild(div2);
-			let div3 = this.createElement(TAG.DIV);
+			let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+			div3.id = this.TIMECONTROL_SIGN;
 			div3.style.marginLeft = '25px';
 			if(this.isMobile()){
 				div3.style.marginTop = "auto";
 				div3.style.marginBottom = "10px";
+				this.clearElement(div3);
 				div3.appendChild(this.createTitleTime());
 			}
 			div3.appendChild(new AonSign());

@@ -44,8 +44,9 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 		this.appendChild(invoiceToolbar);
 		invoiceToolbar.removeButtons();
 
-    if(this.getInvoice().isInbox()){
-      invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+    	if(this.getInvoice().isInbox()){
+      		if(this.getInvoice().isEmitida())
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
