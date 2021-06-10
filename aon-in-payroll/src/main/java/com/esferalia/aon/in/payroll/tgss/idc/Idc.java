@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class Idc {
 			return contractData;
 		}
 	}
-	
+
 	public static  Map<ContextVariable,Object> getContractData(byte data []) throws IOException, UnknownPDFException {
 		try ( InputStream is = new ByteArrayInputStream(data)) {
 			return getContractData(is);
@@ -50,4 +51,18 @@ public class Idc {
 		IdcParser.parse(is, contractDataListener);
 		return contractDataListener.getContractData();
 	}
+	
+	
+	public static Collection<Bonus> getSSBonuses (byte pdf []) throws IOException, UnknownPDFException {
+		try (InputStream is = new ByteArrayInputStream(pdf)){
+			return getSSBonuses(is);
+		}
+	}
+	
+	public static Collection<Bonus> getSSBonuses (InputStream is) throws IOException, UnknownPDFException {	
+		BonusListener  ssBonusListener = new BonusListener();
+		IdcParser.parse(is, ssBonusListener );
+		return ssBonusListener.getSSBonuses();
+	}
+	
 }

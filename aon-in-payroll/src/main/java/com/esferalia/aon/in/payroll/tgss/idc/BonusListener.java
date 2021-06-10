@@ -53,6 +53,7 @@ class BonusListener  implements IdcListener {
 			//put("19", "BONIFICACIÓN SPEE CON CARGO A HACIENDA");
 			put("37", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO COMPLETO");
 			put("41", "BONIFICACIÓN PROGRAMA FOMENTO DE EMPLEO. CUANTÍA DIARIA");
+			put("42", "RED.CUOTA SS-CUANTÍA");
 			//put("46", "BONIFICACIÓN SISTEMA NACIONLA GARANTÍA JUVENIL");
 			//put("48", "BONIFICACIÓN - CUANTÍA - SIN HORAS COMPLEMENTARIAS");
 			//put("51", "BONIFICACIÓN SEA TRANSFORMACIÓN EN INDEFINIDO. CUANTÍA MENSUAL");
@@ -68,10 +69,13 @@ class BonusListener  implements IdcListener {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
-			put("16",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
+			put("16",  "MIN(%s, %.2f)"); 																	// 
+//			put("16",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
+
+			put("51",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 
 		}
 	};
@@ -170,8 +174,6 @@ class BonusListener  implements IdcListener {
 			(percent / 100.00)
 			
 			);
-		
-		System.out.println(formula);
 		
 		return formula;
 	}

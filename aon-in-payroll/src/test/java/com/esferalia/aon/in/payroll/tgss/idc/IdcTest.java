@@ -33,12 +33,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -766,9 +768,12 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 	protected Salary calculate(Collection<Bonus> ssBonuses,Collection<Data> datas) throws ExpressionException, SQLException, SalaryException {
 		Date bonusDate = ssBonuses.stream().map( b -> b.getStartDate()).sorted().findFirst().orElseThrow();
-		
-		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(bonusDate));
-		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(bonusDate));
+		return calculate(ssBonuses, datas, bonusDate);
+	}
+
+	protected Salary calculate(Collection<Bonus> ssBonuses,Collection<Data> datas, Date date) throws ExpressionException, SQLException, SalaryException {
+		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
+		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -781,6 +786,96 @@ public class IdcTest extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
 		Salary salary = builder.calculate(ctx);
 		return salary;
+	}
+
+	@Test
+	public void testIdcIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf") ){
+			Collection<Bonus> ssBonuses = Idc.getSSBonuses(is);
+			assertEquals(4, ssBonuses.size());
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.MARCH);
+			
+			Date march = calendar.getTime();
+			
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), march);
+			double totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			assertEquals(totalCost/30.00 * 14, salary.getTotalEnterprise(), DELTA);
+			
+			calendar.set(Calendar.MONTH,Calendar.APRIL);
+			Date april = calendar.getTime();
+			salary = calculate(ssBonuses, Collections.emptyList(), april);
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+			Date may = calendar.getTime();
+			salary = calculate(ssBonuses, Collections.emptyList(), may);
+			totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			assertEquals(totalCost/30.00 * 18.00 * 0.40, salary.getTotalEnterprise(), DELTA);
+			
+			calendar.set(Calendar.MONTH,Calendar.JUNE);
+			Date june = calendar.getTime();
+			salary = calculate(ssBonuses, Collections.emptyList(), june);
+			totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			assertEquals(totalCost*0.55, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcIVBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcIV.pdf") ){
+			Collection<Bonus> ssBonuses = Idc.getSSBonuses(is);
+			assertEquals(0, ssBonuses.size());
+			// ***SIN SITUACIONES***
+		}
+	}
+
+	@Test
+	public void testIdcVBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcV.pdf") ){
+			Collection<Bonus> ssBonuses = Idc.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,18);
+			calendar.set(Calendar.MONTH,Calendar.JANUARY);
+
+			Date january18 = calendar.getTime();
+			Bonus bonus = ssBonuses.stream().findFirst().get();
+			
+			Assert.assertEquals( january18 , bonus.getStartDate());
+			Assert.assertNull( bonus.getEndDate());
+			
+			
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date january = calendar.getTime();
+			
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), january);
+			double totalCost = salary.getSalaryCosts().stream()
+			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			assertEquals(totalCost/30*17, salary.getTotalEnterprise(), DELTA);
+			
+		}
 	}
 
 	@Test
