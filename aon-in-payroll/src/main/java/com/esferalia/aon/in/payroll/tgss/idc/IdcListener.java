@@ -20,6 +20,11 @@ public interface IdcListener {
 	default void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
 	};
 
+	default void onEmployeePerido(String ssNum, String ccc, String gc, Date startDate, Date endDate) {
+		onEmployeePerido(ssNum, ccc, startDate, endDate);
+		onEmployeeQuoteGroup(gc);
+	};
+
 	default void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
 	};
 
@@ -29,11 +34,12 @@ public interface IdcListener {
 	default void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
 	};
 
-//	default void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, String colectivo,
-//			String legislacion) {
-//	};
-
 	default void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
+	};
+
+	default void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
+			String quota, String colective, Date start, Date end) {
+		onEmployeeQuotePEC(ssNum, ccc, code, description, portTipo, quota, start, end);
 	};
 
 	default void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
