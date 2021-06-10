@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod303Declaration {
 	
@@ -30,7 +31,17 @@ public abstract class Mod303Declaration {
 			mod.ensureDetail(key).addAmount(amount);
 		}
 	}
-	
+
+	protected static void addProrrated(Mod303Key key,Mod303 mod,VatContext vat) {
+		double amount = vat.getDeductibleQuota();
+		if (mod.isSpecialProrate()) {
+			if (mod.getProratePercent() != 0 && mod.getProratePercent() != 100 && vat.getActivity() == null) {
+				amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);	
+			}				
+		}
+		add( key, mod, amount);
+	}
+
 	protected static void set(Mod303Key key,Mod303 mod,double amount) {
 		if (key.isDiffEnabled()) {
 			mod.ensureDetail(key).setAccumulatedAmount(amount);	

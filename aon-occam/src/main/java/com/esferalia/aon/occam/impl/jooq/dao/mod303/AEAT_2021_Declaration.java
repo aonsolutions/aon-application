@@ -46,7 +46,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 	public static boolean accept(Mod303 mod) {
 		return mod.isAEAT() && mod.getYear() >= 2021;
 	}
-
+	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { Mod303Key.CT_C29, Mod303Key.CT_C31,
 			Mod303Key.CT_C33, Mod303Key.CT_C35, Mod303Key.CT_C37, Mod303Key.CT_C39, Mod303Key.CT_C41,
 			Mod303Key.CT_C42 };
@@ -182,28 +182,28 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		CT_C28(Mod303Key.CT_C28, (mod, vat) -> operacionesInterioresCorrientesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C28, mod, vat.getBase()), null, null, null),
 		CT_C29(Mod303Key.CT_C29, (mod, vat) -> operacionesInterioresCorrientesFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C29, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C29, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en operaciones interiores con bienes de inversión
 		,
 		CT_C30(Mod303Key.CT_C30, (mod, vat) -> operacionesInterioresInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C30, mod, vat.getBase()), null, null, null),
 		CT_C31(Mod303Key.CT_C31, (mod, vat) -> operacionesInterioresInversionFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C31, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C31, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en las importaciones de bienes corrientes
 		,
 		CT_C32(Mod303Key.CT_C32, (mod, vat) -> importacionesCorrientesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C32, mod, vat.getBase()), null, null, null),
 		CT_C33(Mod303Key.CT_C33, (mod, vat) -> importacionesCorrientesFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C33, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C33, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en las importaciones de bienes de inversión
 		,
 		CT_C34(Mod303Key.CT_C34, (mod, vat) -> importacionesInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C34, mod, vat.getBase()), null, null, null),
 		CT_C35(Mod303Key.CT_C35, (mod, vat) -> importacionesInversionFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C35, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C35, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes y
 		// servicios corrientes
@@ -211,7 +211,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		CT_C36(Mod303Key.CT_C36, (mod, vat) -> adqIntracomunitariasCorrientesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C36, mod, vat.getBase()), null, null, null),
 		CT_C37(Mod303Key.CT_C37, (mod, vat) -> adqIntracomunitariasCorrientesFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C37, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C37, mod, vat), null, null, null)
 
 		// Por cuotas soportadas en adquisiciones intracomunitarias de bienes de
 		// inversión
@@ -219,18 +219,18 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		CT_C38(Mod303Key.CT_C38, (mod, vat) -> adqIntracomunitariasInversionFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C38, mod, vat.getBase()), null, null, null),
 		CT_C39(Mod303Key.CT_C39, (mod, vat) -> adqIntracomunitariasInversionFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C39, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C39, mod, vat), null, null, null)
 
 		// Rectificación de deducciones
 		,
 		CT_C40(Mod303Key.CT_C40, (mod, vat) -> rectificaciónDeduccionesFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C40, mod, vat.getBase()), null, null, null),
 		CT_C41(Mod303Key.CT_C41, (mod, vat) -> rectificaciónDeduccionesFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C41, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C41, mod, vat), null, null, null)
 
 		// Compensaciones Régimen Especial A.G. y P.
 		, CT_C42(Mod303Key.CT_C42, (mod, vat) -> compensacionesRegAgrarioFilter(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C42, mod, vat.getDeductibleQuota()), null, null, null)
+				(ctx, mod, vat) -> addProrrated(Mod303Key.CT_C42, mod, vat), null, null, null)
 
 		// Regularización inversiones
 		, CT_C43(Mod303Key.CT_C43)
