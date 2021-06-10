@@ -93,7 +93,7 @@ export const createSpanFloat = () => createSpan({
   id: "aonNotificationFloatSpan",
   styles:{
     position: "fixed",
-    right: "20px",
+    right: "6%",
     bottom: "70px"
   }
 });

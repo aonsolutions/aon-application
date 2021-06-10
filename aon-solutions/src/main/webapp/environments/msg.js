@@ -188,7 +188,7 @@ export const MODEL_190 = MSG.MODEL_190;
 export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_USER = MSG.MY_USER;
-
+export const MSG_SENT = "Mensaje enviado";
 
 // ----- N
 
