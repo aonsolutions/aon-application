@@ -448,12 +448,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
-
-		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		for ( int i = 0 ; i  < 2 ; i++) {
-			addBonus(userLogin, domainName, domainId, userId, AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -i), regime, ccc, nafs);
-		}
-		
+		addBonus(userLogin, domainName, domainId, userId, new Date(), regime, ccc, nafs);
 	}
 
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
