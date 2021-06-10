@@ -8,14 +8,13 @@ import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
 
 export class AonSign extends AonElement {
-
   _taskHolders;
   _taskHolder;
-
   AON_SIGN;
   CONTENT;
   TIME;
-
+  TIME_ACTIVE;
+  TOTAL_HOUR;
   get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -29,10 +28,12 @@ export class AonSign extends AonElement {
   }
 
   connectedCallback () {
+    this.TIME_ACTIVE = false;
     this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
+    this.TOTAL_HOUR = "totalHour";
     this.applicationEl = this.getApplication();
     getTaskHoldersUser().then(r => {
       if(r.length > 0) {
@@ -44,7 +45,7 @@ export class AonSign extends AonElement {
   }
 
   disconnectedCallback(){
-    this.clearIntervalAction();
+    this.TIME_ACTIVE = false;
   }
 
   build(){
@@ -65,12 +66,8 @@ export class AonSign extends AonElement {
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
       select.title = 'Empresa';
-      select.options = JSON.stringify(this._taskHolders.map(c => {
-        return {
-          value: c.id,
-          name: c.company
-        }
-      }));
+      select.options = JSON.stringify(this._taskHolders.map(c => ({value: c.id, name: c.company})
+      ));
       select.addEventListener(EVENT.CHANGE, () => {
         this._taskHolder = select.value;
         getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
@@ -80,11 +77,14 @@ export class AonSign extends AonElement {
 
     }
 
-    let time = this.createElement(TAG.DIV);
-    time.style.fontSize = '30px';
-    time.id = this.TIME;
-    time.innerHTML = "00:00:00";
-    divGeneral.appendChild(time);
+    if(!this.getElement(this.TIME)){
+      let time = this.createElement(TAG.DIV);
+      time.style.fontSize = '30px';
+      time.id = this.TIME;
+      time.innerHTML = "00:00:00";
+      divGeneral.appendChild(time);
+    }
+
     let div = this.createElement(TAG.DIV);
     if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
@@ -184,11 +184,12 @@ export class AonSign extends AonElement {
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
     let time = signin.time;
-    this.clearIntervalAction();
+    this.TIME_ACTIVE = false;
     if(signin.status === 'in') {
       time = signin.time + (new Date().getTime() - signin.in_date);
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
+      this.TIME_ACTIVE = true;
       this.timeAction(time);
     } else if(signin.status === 'pause') {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
@@ -201,14 +202,14 @@ export class AonSign extends AonElement {
     this.divLastTime(signin);
   }
 
-  timeAction(time) {
-    let newTime = time;
-    let interval = setInterval(()=>{
-      newTime = newTime + 1000;
-      this.changeTime(newTime);
-      this.updateTotalHour();
-    }, 1000);
-    this.setIntervalAction(interval);
+  async timeAction(time) {
+    this.changeTime(time);
+    this.updateHour();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const aonSign = document.querySelector(`#`+this.id)
+    if(aonSign && this.TIME_ACTIVE) {
+      this.timeAction(time+ 1000);
+    }
   }
 
   changeTime(time){
@@ -219,14 +220,17 @@ export class AonSign extends AonElement {
   divLastTime(signin){
     let content = this.getElement(this.CONTENT);
     if(content && signin && signin.last_date){
-      let textStatus = "entrada";
+      let textStatus = null;
       switch(signin.status){
         case "pause":
           textStatus = 'pausa';
-        break;
+          break;
         case "out":
           textStatus = 'salida';
-        break;
+          break;
+        default:
+          textStatus = "entrada";
+          break;
       }
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement(TAG.DIV);
@@ -256,9 +260,8 @@ export class AonSign extends AonElement {
           let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in")>=0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
           if(sumHour>0){
             let content = this.getElement(this.CONTENT);
-            const id = "totalHour";
-            const div = this.getElement(id) || this.createElement(TAG.DIV);
-            div.id = id;
+            const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
+            div.id = this.TOTAL_HOUR;
             div.style.marginTop = "10px";
             div.style.color = "grey";
             div.style.fontSize = "12px";
@@ -267,19 +270,19 @@ export class AonSign extends AonElement {
             div.innerHTML = "Horas semana actual: ";
             const span = this.createElement(TAG.SPAN);
             span.style.fontWeight = 800;
-            span.id = id+"Span";
+            span.id = this.TOTAL_HOUR+"Span";
             div.appendChild(span);
             content.append(div);
-            this.updateTotalHour();
+            this.updateHour();
           }
         }
       }
     } catch (error) {console.log(error);}
   }
 
-  updateTotalHour(){
+  updateHour(){
     try {
-      const div = this.getElement("totalHour");
+      const div = this.getElement(this.TOTAL_HOUR);
       const dataset = div.dataset;
       if(dataset){
         const hour = Number(dataset.sumHour);

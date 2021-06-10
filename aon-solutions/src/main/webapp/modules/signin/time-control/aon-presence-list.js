@@ -6,7 +6,6 @@ import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
-import { AonFilter } from "../../../components/aon-filter.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 
@@ -50,11 +49,11 @@ export class AonPresenceList extends AonElement {
   initialize(){
     this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
     this.TABLE_ID = this.id + "Table";
-    this._list = [];
     this.applicationEl = this.getApplication();
     this.applicationParenEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Presencia");
     this.applicationParenEl.periodSideNavDisplay(true);
+    this._list = [];
   }
   
   async build(){
@@ -64,11 +63,6 @@ export class AonPresenceList extends AonElement {
   }
 
   paintView() {
-    let aonFilter = new AonFilter();
-    aonFilter.id = this.id+"Filter";
-    aonFilter.title = MSG.FILTERS;
-    this.appendChild(aonFilter);
-
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
@@ -250,7 +244,7 @@ export class AonPresenceList extends AonElement {
   filterSearch(keys, lists){
     let list = [];
     if(this.searchFilter && lists.length){
-      list = lists.filter((lt)=> keys.some(key=>lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
     }
     return list;
   }
