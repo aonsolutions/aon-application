@@ -231,11 +231,11 @@ public abstract class Workplace extends ResizeComposite{
 			});
 			
 			// If only one activity, selected it and fire event
-			if(agreementListBox.getItemCount() == 2){
-				agreementListBox.setSelectedIndex(1);
-				Integer agreementId = Integer.valueOf(agreementListBox.getSelectedValue());
-				onWorkplaceAgreementChange(agreementId);
-			}
+//			if(agreementListBox.getItemCount() == 2){
+//				agreementListBox.setSelectedIndex(1);
+//				Integer agreementId = Integer.valueOf(agreementListBox.getSelectedValue());
+//				onWorkplaceAgreementChange(agreementId);
+//			}
 			
 			workplaceAgreementWidget = agreementListBox;
 		}
