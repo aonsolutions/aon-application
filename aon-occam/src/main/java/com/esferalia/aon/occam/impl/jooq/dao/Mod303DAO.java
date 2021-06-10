@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Record1;
 import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
@@ -194,7 +193,7 @@ public class Mod303DAO extends FiscalModelDAO {
 	private static void initializeProrrate(AONContext ctx, Mod303 mod303) {
 		if (mod303.getProrateKey() != null) {
 			ctx.checkRead();
-			Record1<Double> percent = ctx.getDslContext()
+			Double percent = ctx.getDslContext()
 					.select(FS_MODEL_DETAIL.AMOUNT)
 					.from(FS_MODEL)
 					.innerJoin(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
@@ -206,14 +205,31 @@ public class Mod303DAO extends FiscalModelDAO {
 					.orderBy(FS_MODEL.PERIOD.desc())
 					.fetch()
 					.stream()
+					.map( rec -> rec.getValue(FS_MODEL_DETAIL.AMOUNT))
+					.findFirst()
+					.orElse(null);
+			String type = ctx.getDslContext()
+					.select(FS_MODEL_DETAIL.DESCRIPTION)
+					.from(FS_MODEL)
+					.innerJoin(FS_MODEL_DETAIL).on(FS_MODEL.ID.equal(FS_MODEL_DETAIL.FS_MODEL))
+					.where(FS_MODEL.DOMAIN.eq(ctx.getDomainId()))
+					.and(FS_MODEL.MODEL.eq(FiscalModelType.M303.getValue()))
+					.and(FS_MODEL.ADMINISTRATION.eq(mod303.getAdministration().getValue()))
+					.and(FS_MODEL.YEAR.eq(mod303.getYear()))
+					.and(FS_MODEL_DETAIL.TYPE.eq( mod303.getProrateTypeKey().getValue()))
+					.orderBy(FS_MODEL.PERIOD.desc())
+					.fetch()
+					.stream()
+					.map( rec -> rec.getValue(FS_MODEL_DETAIL.DESCRIPTION))
 					.findFirst()
 					.orElse(null);
 			double perc = 100;
 			if (percent != null) {
-				perc = percent.getValue(FS_MODEL_DETAIL.AMOUNT);
+				perc = percent.doubleValue();
 				if (AonMathUtils.isZero(perc)) perc = 100;
 			}
 			mod303.ensureDetail(mod303.getProrateKey()).setAmount(perc);
+			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(type);
 		}
 	}
 	
@@ -276,11 +292,12 @@ public class Mod303DAO extends FiscalModelDAO {
 				}
 			});
 		}
-
-		if (mod303.getProratePercent() != 0 && mod303.getProratePercent() != 100) {
-			for (Mod303Key key : dec.getProrateKeys()) {
-				FiscalModelDetail det = mod303.ensureDetail(key);
-				det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
+		if (!mod303.isSpecialProrate()) {
+			if (mod303.getProratePercent() != 0 && mod303.getProratePercent() != 100 && dec.getProrateKeys() != null) {
+				for (Mod303Key key : dec.getProrateKeys()) {
+					FiscalModelDetail det = mod303.ensureDetail(key);
+					det.setAccumulatedAmount(AonMathUtils.round(det.getAccumulatedAmount() * mod303.getProratePercent() / 100));
+				}
 			}
 		}
 		for (FiscalModelDetail detail : mod303.getMap().values()) {
@@ -388,6 +405,17 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 
 	// -------------------------------------------------------------------- INVOICES
+	private static boolean isProrated(final Mod303 mod303, IModelScript<Mod303Key> script) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		if ( dec.getProrateKeys() != null ) {
+			for (Mod303Key pk : dec.getProrateKeys()) {
+				for (Mod303Key sk :script.getKeys()) {
+					if (pk == sk) return true;			
+				}
+			}
+		}
+		return false;
+	}
 	
 	private static String getInvoicesInfo(AONContext ctx, final Mod303 mod303
 			, final IModelScript<Mod303Key> script, IMod303KeyDAO keyDAO) {
@@ -399,6 +427,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			,getVatBreakdown(ctx, mod303, true)
 					.filter( br ->  keyDAO.acceptValue(mod303, br) )	
 					.collect(Collectors.toCollection(LinkedList::new))
+			, (isProrated(mod303, script)?mod303:null)
 		);
 	}
 	
@@ -412,6 +441,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			,getAccrualBreakdown(ctx, mod303,true)
 					.filter( br ->  br.isSales()  )	
 					.collect(Collectors.toCollection(LinkedList::new))
+			, (isProrated(mod303, script)?mod303:null)
 		);
 	}
 	private static String getAccrualInputInvoicesInfo(AONContext ctx, final Mod303 mod303
@@ -424,6 +454,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			,getAccrualBreakdown(ctx, mod303,true)
 					.filter( br ->  !br.isSales()  )	
 					.collect(Collectors.toCollection(LinkedList::new))
+			, (isProrated(mod303, script)?mod303:null)
 		);
 	}
 	private static String getDiffInAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303
