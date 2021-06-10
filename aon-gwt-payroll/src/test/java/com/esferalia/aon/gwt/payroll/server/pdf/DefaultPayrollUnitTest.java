@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -23,15 +22,14 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.tools.Console;
-import com.esferalia.aon.gwt.payroll.tools.Console.Separator;
 import com.esferalia.aon.gwt.payroll.tools.Console.Status;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -91,47 +89,74 @@ public class DefaultPayrollUnitTest {
 	}
 	
 	@Test
-	@Ignore
+	
 	/**
 	 * Testing random values filled Salary
 	 * transpiling (with assertions).
 	 */
 	public void SalaryTranspileTest() {
 		
-		Faker data = new Faker();
 		SalaryDraft draft = new SalaryDraft();
+		
+		Double cgcBase = 2100d;
+		Double cgpBase = 2250d;
+		Double nextrBase = 30d;
+		Double extrBase = 30d;
+		Date startDate = new Date();
+		Date endDate = new Date();
+		Double totalPayment = 2500d;
+		Double totalDeduction = 500d;
+		Double totalLiquid = 2000d;
+		Double remuneration = 2120d;
+		Double irpfBase = 2100d;
+		Double totalEnterprise = 3000d;
+		
+		String employeeName = "JHON SMITH MCLENNAN, ANDREW JR";
+		String employeeDocument = "12348673412X";
+		String employeeSS = "17263546576879";
+		String employeeCategory = "PROGRAMADOR JEFE";
+		Date employeeSeniorityDate = new Date();
+		String employeeQuoteGroup = "01";
+		
+		String enterpriseName = "Pdf4You S.L";
+		String enterpriseDocument = "1928346398X";
+		String enterpriseCCC = "183723498918";
+		String enterpriseAddress = "Avenida de los floreros 2, Atlantis del norte";		
+
 		
 		/** Salary basic data */
 		console.info("Draft","Setting basic salary data.");
-		draft.setCgcBase(2100d);
-		draft.setCgpBase(2250d);
-		draft.setNonHExtraBase(30d);
-		draft.sethExtraBase(30d);
-		draft.setEndDate(new Date());
-		draft.setStartDate(new Date());
-		draft.setTotalPayment(2500d);
-		draft.setTotalLiquid(2000d);
-		draft.setRemuneration(2120d);
-		draft.setIrpfBase(2100d);
-		draft.setTotalDeduction(500d);
-		draft.setTotalEnterprise(3000d);
+		draft.setCgcBase(cgcBase);
+		draft.setCgpBase(cgpBase);
+		draft.setNonHExtraBase(nextrBase);
+		draft.sethExtraBase(extrBase);
+		draft.setStartDate(startDate);
+		draft.setEndDate(endDate);
+		
+		draft.setTotalPayment(totalPayment);
+		draft.setTotalDeduction(totalDeduction);
+		draft.setTotalLiquid(totalLiquid);
+		draft.setRemuneration(remuneration);
+		draft.setIrpfBase(irpfBase);
+		draft.setTotalEnterprise(totalEnterprise);
 		
 
  		/** Employee data */
 		console.info("Draft","Setting basic employee data.");
-		draft.setEmployeeAgreementCategory("PROGRAMADOR JEFE");
-		draft.setEmployeeDocument("12348673412X");
-		draft.setEmployeeName("JHON SMITH MCLENNAN, ANDREW JR");
-		draft.setEmployeeQuoteGroup("01");
-		draft.setEmployeeSeniorityDate(new Date());
-		draft.setEmployeeSS("17263546576879");
+		draft.setEmployeeAgreementCategory(employeeCategory);
+		draft.setEmployeeDocument(employeeDocument);
+		draft.setEmployeeName(employeeName);
+		draft.setEmployeeQuoteGroup(employeeQuoteGroup);
+		draft.setEmployeeSeniorityDate(employeeSeniorityDate);
+		draft.setEmployeeSS(employeeSS);
 		 
 		/** Enterprise data */
 		console.info("Draft","Setting basic enterprise data.");
-		//draft.setEnterpriseAddress("Avenida de los floreros 2, Atlantis del norte");
-		draft.setEnterpriseCCC("183723498918");
-		draft.setEnterpriseDocument("1928346398X");
-		draft.setEnterpriseName("Pdf4You S.L");
+		draft.setEnterpriseName(enterpriseName);
+		draft.setEnterpriseDocument(enterpriseDocument);
+		draft.setEnterpriseCCC(enterpriseCCC);
+//		draft.setEnterpriseAddress(enterpriseAddress);
+		
 		draft.setTimeUnits(30);
 		
 		/** Payments  */
@@ -147,95 +172,140 @@ public class DefaultPayrollUnitTest {
 		
 		/** Deductions */
 		console.info("Draft","Setting deductions.");
-		draft.addDeduction(newDeduction(Deduction.Type.ADVANCE_PAYMENT, 100.00, "Avance del mes"));
-		draft.addDeduction(newDeduction(Deduction.Type.COMMON_CONTINGENCY, 100.00, "Contingencias comunes"));
-		draft.addDeduction(newDeduction(Deduction.Type.IN_KIND, 100.00, "En especie."));
-		draft.addDeduction(newDeduction(Deduction.Type.IRPF, 100.00, "Irpf."));
+		
+		Deduction advancePaymentDeduction = newDeduction(Deduction.Type.ADVANCE_PAYMENT, 100.00, "Avance del mes");
+		Deduction commonContingenciesDeduction = newDeduction(Deduction.Type.COMMON_CONTINGENCY, 100.00, "Contingencias comunes");
+		Deduction inkindDeduction = newDeduction(Deduction.Type.IN_KIND, 100.00, "En especie.");
+		Deduction irpfDeduction = newDeduction(Deduction.Type.IRPF, 100.00, "Irpf.");
+		
+		draft.addDeduction(advancePaymentDeduction);
+		draft.addDeduction(commonContingenciesDeduction);
+		draft.addDeduction(inkindDeduction);
+		draft.addDeduction(irpfDeduction);
 		
 		/** Embargos */
 		console.info("Draft","Setting embargos.");
-		for (int i = 0; i < 2; i++) {
-			Deduction embargo = new Deduction();
-			embargo.setType(Deduction.Type.EMBARGO);
-			embargo.setAmount(i + 0d);
-			embargo.setDescription("Hola soy un embargo :)");		
-			
-			draft.addEmbargo(embargo);
-		}
 		
+		Deduction noSenseEmbargo = newDeduction(Deduction.Type.EMBARGO, "no sense embargo", 10, "embargo de manutencion :)");
+		Deduction secondEmbargo  = newDeduction(Deduction.Type.EMBARGO, "second embargo", 78.156, "listo >.<");
+
+		draft.addEmbargo(noSenseEmbargo);
+		draft.addEmbargo(secondEmbargo);
 		
 		/** Costs **/
 		console.info("Draft","Setting costs");
 	   
+		Deduction fogasaCost = newDeduction(Deduction.Type.FOGASA, 20.12, "Fogasa");
+		Deduction cgcCost = newDeduction(Deduction.Type.COMMON_CONTINGENCY, 20.13, "Contingencias comunes");
+		Deduction unemploymentCost = newDeduction(Deduction.Type.UNEMPLOYMENT, 20.14, "Desempleo");
+		Deduction fpCost = newDeduction(Deduction.Type.JOB_TRAINING, 20.15, "Formación profesional");
+		Deduction nextrCost = newDeduction(Deduction.Type.NON_STRUCTURAL_OVERTIME, 20.16, "H extras no estructurales");
+		Deduction extrCost = newDeduction(Deduction.Type.STRUCTURAL_OVERTIME, 20.17, "H extras estructurales");
+		Deduction cgpCost = newDeduction(Deduction.Type.PROFESSIONAL_CONTINGENCY, 20.18, "H extras estructurales");
+		Deduction irpfCost = newDeduction(Deduction.Type.IRPF, 20.19, "IRPF");
+		Deduction imsCost = newDeduction(Deduction.Type.OTHER, "IMS_E", 20.19, "");
+		Deduction itCost = newDeduction(Deduction.Type.OTHER, "IT_E", 20.19,"");		
 		
-		draft.addCost(newDeduction(Deduction.Type.FOGASA, 20.12, "Fogasa"));
-	    draft.addCost(newDeduction(Deduction.Type.COMMON_CONTINGENCY, 20.13, "Contingencias comunes"));
-	    draft.addCost(newDeduction(Deduction.Type.UNEMPLOYMENT, 20.14, "Desempleo"));
-	    draft.addCost(newDeduction(Deduction.Type.JOB_TRAINING, 20.15, "Formación profesional"));
-	    draft.addCost(newDeduction(Deduction.Type.NON_STRUCTURAL_OVERTIME, 20.16, "H extras no estructurales"));
-	    draft.addCost(newDeduction(Deduction.Type.STRUCTURAL_OVERTIME, 20.17, "H extras estructurales"));
-	    draft.addCost(newDeduction(Deduction.Type.PROFESSIONAL_CONTINGENCY, 20.18, "H extras estructurales"));
-	    draft.addCost(newDeduction(Deduction.Type.IRPF, 20.19, "IRPF"));
-	    draft.addCost(newDeduction(Deduction.Type.OTHER, "IMS_E", 20.19, ""));
-	    draft.addCost(newDeduction(Deduction.Type.OTHER, "IT_E", 20.19,""));
-		
+		draft.addCost(fogasaCost);
+	    draft.addCost(cgcCost);
+	    draft.addCost(unemploymentCost);
 	    
+	    draft.addCost(fpCost);
+	    draft.addCost(nextrCost);
+	    draft.addCost(extrCost);
+	    draft.addCost(cgpCost);
+	    draft.addCost(irpfCost);
+	    draft.addCost(imsCost);
+	    draft.addCost(itCost);
+
+
+	    Double baseSalaryVariable = 1108.70;
+	    Double liquitVariable = 1108.70;
+	    Double workedDaysVariable = 30d;
+	    String quoteGroupVariable = "Grupo 1";
+	    Double fogasaEnterpriseVariable = 20.80;
+	    Double cgcBaseVariable = 99.99;
+	    Double cgcEnterpriseVariable = 7.99;
+	    Double cgpBaseVariable = 109.99;
+	    Double cgcBaseEnterpriseVariable = 109.99;
+	    Double imsEnterpriseVariable = 6.99;
+	    Double imsRateVariable = 1.99;
+	    Double itEnterpriseVariable = 15.99;
+	    Double itRate = 15.99;
+	    Double unemployEnterpriseVariable = 60.99;
+	    Double fpEnterpriseVariable = 29.9;
+	    Double prorrationVariable = 30.99;
+	    Double nextrVariable = 7.99;
+	    Double extrVariable = 7.99;
+	    Double irpfBaseVariable = 7.99;
 	    
 		/** Context data */
 		console.info("Draft","Setting context variables.");
-	    draft.addVariable(ContextVariable.BASE_SALARY,1108.70,new Date(), new Date());
-	    draft.addVariable(ContextVariable.LIQUID,1108.70,new Date(), new Date());
-	    draft.addVariable(ContextVariable.WORKED_DAYS.getName(),30.80,new Date(), new Date());
-	    draft.addVariable(ContextVariable.QUOTE_GROUP.getName(),"Grupo 1",new Date(), new Date());
+	    draft.addVariable(ContextVariable.BASE_SALARY,baseSalaryVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.LIQUID,liquitVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.WORKED_DAYS.getName(),workedDaysVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.QUOTE_GROUP.getName(),quoteGroupVariable,new Date(), new Date());
 	    
 	    /** Enterprise costs */
-	    draft.addVariable(ContextVariable.FOGASA_ENTERPRISE.getName(),20.80,new Date(), new Date());
+	    draft.addVariable(ContextVariable.FOGASA_ENTERPRISE.getName(),fogasaEnterpriseVariable,new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.CGC_BASE.getName(),99.99,new Date(), new Date());
-	    draft.addVariable(ContextVariable.CGC_ENTERPRISE.getName(),7.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGC_BASE.getName(),cgcBaseVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGC_ENTERPRISE.getName(),cgcEnterpriseVariable,new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.CGP_BASE.getName(),109.99,new Date(), new Date());
-	    draft.addVariable(ContextVariable.CGP_BASE_ENTERPRISE.getName(),109.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGP_BASE.getName(), cgpBaseVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.CGP_BASE_ENTERPRISE.getName(),cgcBaseEnterpriseVariable,new Date(), new Date());
 	   
-	    draft.addVariable(ContextVariable.IMS_ENTERPRISE.getName(),6.99,new Date(), new Date());
-	    draft.addVariable(ContextVariable.IMS_RATE.getName(),1.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IMS_ENTERPRISE.getName(),imsEnterpriseVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IMS_RATE.getName(),imsRateVariable,new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.IT_ENTERPRISE.getName(),15.99,new Date(), new Date());
-	    draft.addVariable(ContextVariable.IT_RATE.getName(),15.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IT_ENTERPRISE.getName(), itEnterpriseVariable,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IT_RATE.getName(),itRate,new Date(), new Date());
 	  
-	    draft.addVariable(ContextVariable.UNEMPLOY_ENTERPRISE.getName(),60.99,new Date(), new Date());	    
+	    draft.addVariable(ContextVariable.UNEMPLOY_ENTERPRISE.getName(), unemployEnterpriseVariable, new Date(), new Date());	    
 	    
-	    draft.addVariable(ContextVariable.FP_ENTERPRISE.getName(),29.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.FP_ENTERPRISE.getName(), fpEnterpriseVariable, new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.PRORATION,30.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.PRORATION, prorrationVariable, new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),7.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(), nextrVariable,new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),7.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(), extrVariable,new Date(), new Date());
 	    
-	    draft.addVariable(ContextVariable.IRPF_BASE.getName(),7.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IRPF_BASE.getName(), irpfBaseVariable, new Date(), new Date());
 	   
 	    /** Enterprise costs percentage */
-	    draft.addVariable("PORCENTAJE_CGC_E",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_CGP_E",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_FOGASA",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_EXTR_E",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_NEXTR_E",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_FP_E",7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_DESMPL_E",7.99,new Date(), new Date());
+	    Double gcgPercentE = 7.99;
+	    Double gcpPercentE = 7.99;
+	    Double fogasaPercentE = 7.99;
+	    Double extrPercentE = 7.99;
+	    Double nextrPercentE = 7.99;
+	    Double fpPercentE = 7.99;
+	    Double unemploymentPercentE = 7.99;
+	    Double irpfPercentE = 7.99;
+	    Double advancePaymentPercent = 17.99; 
+	    Double cgcPercent = 18.99;
+	    Double cgpPercent = 16.99;
+	    Double inkindPercent = 19.99;
+	    
+	    draft.addVariable("PORCENTAJE_CGC_E",gcgPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_CGP_E",gcpPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_FOGASA",fogasaPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_EXTR_E",extrPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_NEXTR_E",nextrPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_FP_E",fpPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_DESMPL_E",unemploymentPercentE,new Date(), new Date());
 	     
 	    /** Deduction context data */
-	    draft.addVariable(ContextVariable.IRPF_PERCENT.getName(),7.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_ADELANTO",17.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_CGC",18.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_CGP",16.99,new Date(), new Date());
-	    draft.addVariable("PORCENTAJE_EN_ESPECIE",19.99,new Date(), new Date());
+	    draft.addVariable(ContextVariable.IRPF_PERCENT.getName(),irpfPercentE,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_ADELANTO",advancePaymentPercent,new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_CGC", cgcPercent, new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_CGP", cgpPercent, new Date(), new Date());
+	    draft.addVariable("PORCENTAJE_EN_ESPECIE", inkindPercent, new Date(), new Date());
 	    
 		Salary salary = null;
 		try {
 			salary = getOccamSalary(draft);
 		}catch (Exception e) {
-			e.printStackTrace();
 			fail("Unexpected exception");
 		}
 		
@@ -253,17 +323,6 @@ public class DefaultPayrollUnitTest {
 		catch (FileNotFoundException e) {}
 		catch (CanNotCreatePdfException e) {}
 	}
-
-	
-	@Test
-	/**
-	 * Test case trying the Salary transpile 
-	 * with EVERY parameter being null.
-	 */
-	public void SalaryEmptyTranspileTest() {
-				
-	}
-	
 	
 	/**
 	 * Assert data form draft to Salary (occam)
@@ -339,15 +398,7 @@ public class DefaultPayrollUnitTest {
 		Double draftProrrationValue = 0d;
 		Double salaryProrrationValue = 0d;
 		
-		//AT EP
-		Double draftAtEpBase = 
-				(Double) draft.getContext().get(7).getValue() +
-				(Double) draft.getContext().get(8).getValue(); 		
-		
- 		String salaryAtEpBase = "" + salary.getContextData().get("IMS_E").get(0).getExpression();	
- 				 				
- 		console.info( salary.getContextData().get("TARIFA_IMS").get(0).getExpression() + "!!!!");
- 		
+		//AT EP 		
  		Double draftAtEpPercent = 0d;
  		Double salaryAtEpPercent = 0d;
  		
@@ -355,34 +406,25 @@ public class DefaultPayrollUnitTest {
  		Double salaryAtEpValue = 0d;
  		
  		//UNEMPLOYMENT
-		Double draftUnemploymentBase = 0d;
-		Double salaryUnemploymentBase = 0d;	
-		
 		Double draftUnemploymentPercent = 0d;
 		Double salaryUnemploymentPercent = 0d;
 		
 		Double draftUnemploymentValue = 0d;
 		Double salaryUnemploymentValue = 0d;
 
-		//JOB TRAINIG
-		Double draftFpBase = 0d;
-		Double salaryFpBase = 0d;
-		
+		//JOB TRAINIG		
 		Double draftFpPercent = 0d;
 		Double salaryFpPercent = 0d;
 		
 		Double draftFpValue = 0d;
 		Double salaryFpValue = 0d;
 		
-		//FOGASA
-		Double draftFogasaBase = 0d;
-		Double salaryFogasaBase = 0d;
-		
+		//FOGASA		
 		Double draftFogasaPercent = 0d;
 		Double salaryFogasaPercent = 0d;
 		
 		Double draftFogasaValue = 0d;
-		Double salaryFogasavalue = 0d;
+		Double salaryFogasaValue = 0d;
 		
 		//IRPF
 		Double draftIrpfBase = draft.getIrpfBase();
@@ -396,8 +438,27 @@ public class DefaultPayrollUnitTest {
 		console.jump();
 		console.start("Comparing Draft & Salary");
 		
-		assertDraftToSalary("CGC", draftCgcBase,salaryCgcBase);
-		assertDraftToSalary("CGP", draftCgpBase,salaryCgpBase);
+		assertDraftToSalary("CGC BASE", draftCgcBase,salaryCgcBase);
+		assertDraftToSalary("CGC PERCENT", draftCgcPercent,salaryCgcPercent);
+		assertDraftToSalary("CGC VALUE", draftCgcValue,salaryCgcValue);
+		
+		
+		assertDraftToSalary("CGP BASE", draftCgpBase,salaryCgpBase);
+		assertDraftToSalary("CGP PERCENT", draftCgpPercent,salaryCgpPercent);
+		assertDraftToSalary("CGP VALUE", draftCgpValue,salaryCgpValue);
+
+		assertDraftToSalary("AT/EP PERCENT", draftAtEpPercent,salaryAtEpPercent);
+		assertDraftToSalary("AT/EP VALUE", draftAtEpValue,salaryAtEpValue);
+		
+		assertDraftToSalary("UNEMPLOYMENT PERCENT", draftUnemploymentPercent,salaryUnemploymentPercent);
+		assertDraftToSalary("UNEMPLOYMENT VALUE", draftUnemploymentValue,salaryUnemploymentValue);
+		
+		assertDraftToSalary("FP PERCENT", draftFpPercent,salaryFpPercent);
+		assertDraftToSalary("FP VALUE", draftFpValue,salaryFpValue);
+		
+		assertDraftToSalary("FOGASA PERCENT", draftFogasaPercent,salaryFogasaPercent);
+		assertDraftToSalary("FOGASA VALUE", draftFogasaValue,salaryFogasaValue);
+		
 		assertDraftToSalary("End date", draftEndDate, salaryEndDate);
 		
  		/** Employee data */
@@ -546,14 +607,12 @@ public class DefaultPayrollUnitTest {
 		/**
 		 * Comparing the Contingency bases
 		 */
-		
 		assertSalaryToPayroll("Common contingencies",payrollCGC,salaryCGC);	
 		assertSalaryToPayroll("Professional contingencies",payrollCGP,salaryCGP);
 		
 		/**
 		 * Comparing payroll basic data
 		 */
-
 		assertSalaryToPayroll("Employee name", payrollEmployeeName, salaryEmployeeName);
 		assertSalaryToPayroll("Category", payrollCategory, salaryCategory);
 		assertSalaryToPayroll("Employee document", payrollEmployeeDocument, salaryEmployeeDocument);
@@ -567,39 +626,14 @@ public class DefaultPayrollUnitTest {
 		/**
 		 * Comparing payments 
 		 */
-		
 		Map<Integer, ArrayList<PDFPayment>> payments = payroll.getAccruals().get();
-		console.log(Status.RUN, "Payments",payments);
 		
 		payments.keySet().forEach(cra -> {
 			 ArrayList<PDFPayment> paymentsForCra = payments.get(cra);
 			 paymentsForCra.forEach(payment ->{
-				 console.log(Status.TEST, "CRA_" + cra, payment.getDescription() + " AMOUNT: " + payment.getAmount(), Separator.COLON);
+//				 console.log(Status.TEST, "CRA_" + cra, payment.getDescription() + " AMOUNT: " + payment.getAmount(), Separator.COLON);
 			 });
 		});
-		
-		/**
-		 * Comparing deductions
-		 */
-		
-		Map<Integer, ArrayList<PDFDeduction>> deductions = payroll.getDeductions().get();
-		deductions.keySet().forEach(id -> {
-			ArrayList<PDFDeduction> deductionsForID = deductions.get(id);
-			deductionsForID.forEach(deduction -> {
-				// console.log(Status.TEST, id, deduction.getPercent().orElse(-1d) + " | " + deduction.getDescription().orElse("empty") + " | " + deduction.getAmount().orElse(-1d), Separator.ARROW_REVERSE);
-			});
-		});
-		
-		
-		/**
-		 * Getting embargos
-		 */
-		
-		
-		
-		
-		
-		
 	}
 
 }

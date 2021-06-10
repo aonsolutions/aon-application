@@ -52,7 +52,7 @@ public class PayrollTemplateTags {
 	
 	/** TOTALS **/
 	public static final String TOTAL_PAYMENTS = "TOTAL_PAYMENTS";
-	public static final String TOTAL_DEDCUTIONS = "TOTAL_DEDUCTIONS";
+	public static final String TOTAL_DEDUCTIONS = "TOTAL_DEDUCTIONS";
 	public static final String TOTAL_COSTS = "TOTAL_COSTS";
 	public static final String TOTAL_PAYROLL = "TOTAL_PAYROLL";
 	

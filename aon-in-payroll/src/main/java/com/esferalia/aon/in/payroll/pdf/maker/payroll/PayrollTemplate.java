@@ -50,6 +50,9 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.NEXTR_PERCENT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.REMUNERATION;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_COSTS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_DEDUCTIONS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_PAYMENTS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_PAYROLL;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_AMOUNT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_PERCENT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
@@ -366,7 +369,7 @@ public class PayrollTemplate {
 				});
 		y -= 5;
 
-		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), paymentTotal, BLACK, HELVETICA, fontSize, 7, 5);
+		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), paymentTotal, BLACK, HELVETICA, fontSize, 7, 5, TOTAL_PAYMENTS);
 		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), paymentTotalTitle, BLACK, HELVETICA, fontSize, 5,5);
 	}
 
@@ -442,7 +445,7 @@ public class PayrollTemplate {
 				});
 		y -= 15;
 
-		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), deductionTotal, BLACK, HELVETICA, fontSize, 5, 5);
+		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), deductionTotal, BLACK, HELVETICA, fontSize, 5, 5, TOTAL_DEDUCTIONS);
 		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), deductionTotalTitle, BLACK, HELVETICA, fontSize,
 				5, 5);
 
@@ -461,14 +464,11 @@ public class PayrollTemplate {
 		PdfBox b = new PdfBox(495, y - 3, 80, 22, LIGHT_GRAY, contents);
 		b.draw();
 
-		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), payrollTotal, BLACK, HELVETICA_BOLD, fontSize, 5,
-				5);
-		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), payrollTotalTitle, BLACK, HELVETICA_BOLD,
-				fontSize, 5, 5);
+		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), payrollTotal, BLACK, HELVETICA_BOLD, fontSize, 5, 5,TOTAL_PAYROLL);
+		drawTextRight(contents, new PDRectangle(x + 265, y, 200, 25), payrollTotalTitle, BLACK, HELVETICA_BOLD, fontSize, 5, 5);
 
 		y -= 20;
-		drawTextRight(contents, new PDRectangle(x + 455, y, 100, 25), employeeSign, BLACK, HELVETICA, fontSize - 2, 5,
-				5);
+		drawTextRight(contents, new PDRectangle(x + 455, y, 100, 25), employeeSign, BLACK, HELVETICA, fontSize - 2, 5, 5);
 	}
 
 	public void drawFooter() throws IOException {

@@ -42,6 +42,9 @@ import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.NEXTR_PERCENT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.REMUNERATION;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_COSTS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_DEDUCTIONS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_PAYMENTS;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.TOTAL_PAYROLL;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_AMOUNT;
 import static com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags.UNEMPLOYMENT_PERCENT;
 
@@ -65,10 +68,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.tools.Console;
 import com.esferalia.aon.gwt.payroll.tools.Console.Status;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplateTags;
 import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 public class DefaultPayrollIntegrationTest {
@@ -103,6 +102,9 @@ public class DefaultPayrollIntegrationTest {
 		draft.sethExtraBase(279.3);
 		draft.setNonHExtraBase(129.3);
 		draft.setTotalEnterprise(767.23);
+		draft.setTotalPayment(1700.55);
+		draft.setTotalDeduction(124.90d);
+		draft.setTotalLiquid(1666d);
 		
 		/** Filling employee data **/
 		draft.setEmployeeName("ANTONIO DE LA VEGA AMATISTO RODIGUEZ PEREZ LÓPEZ");
@@ -291,6 +293,10 @@ public class DefaultPayrollIntegrationTest {
 			
 			String totalCosts = "";
 			
+			String totalPayments = "";
+			String totalDeductions = "";
+			String totalPayroll = "";
+						
 			/** Getting data markers **/
 			Optional<PDMarkedContent> empNameMark = getContent(document, EMPLOYEE_NAME);
 			Optional<PDMarkedContent> empDocumentMark = getContent(document, EMPLOYEE_DOCUMENT);
@@ -590,12 +596,42 @@ public class DefaultPayrollIntegrationTest {
 			assertData("TOTAL IRPF", irpfTotal.trim(), toLatinNumber(draft.getIrpfBase() + draft.getInkindIrpfBase()));
 			assertData("TOTAL COSTS", totalCosts.trim(), toLatinNumber(draft.getTotalEnterprise()));
 		
+			
+			console.jump();
+			console.log(Status.RUN,"TOTAL COST DATA");
+			console.line();
+			
+			Optional<PDMarkedContent> totalPaymentsMark = getContent(document, TOTAL_PAYMENTS);	
+			Optional<PDMarkedContent> totalDeductionMark = getContent(document, TOTAL_DEDUCTIONS);	
+			Optional<PDMarkedContent> totalPayrollMark = getContent(document, TOTAL_PAYROLL);	
+			
+			if(totalPaymentsMark.isPresent())
+				totalPayments = joinCharacterList(totalPaymentsMark.get().getContents());
+			
+			if(totalDeductionMark.isPresent())
+				totalDeductions = joinCharacterList(totalDeductionMark.get().getContents());
+			
+			if(totalPayrollMark.isPresent())
+				totalPayroll = joinCharacterList(totalPayrollMark.get().getContents());			
+			
+			totalPayments = removeSpecialChars(totalPayments);
+			totalDeductions = removeSpecialChars(totalDeductions);
+			totalPayroll = removeSpecialChars(totalPayroll);
+			
+			console.log(GET, "TOTAL PAYMENTS", totalPayments, ARROW_REVERSE);
+			console.log(GET, "TOTAL DEDUCTIONS", totalDeductions, ARROW_REVERSE);
+			console.log(GET, "TOTAL PAYROLL", totalPayroll, ARROW_REVERSE);
+			
+			console.jump();
+			console.start("COMPARING DATA");
+			assertData("TOTAL PAYMENTS", totalPayments.trim(), toLatinNumber(draft.getTotalPayment()));
+			assertData("TOTAL DEDUCTIONS", totalDeductions.trim(), toLatinNumber(draft.getTotalDeduction()));
+			assertData("TOTAL PAYROLL", totalPayroll.trim(), toLatinNumber(draft.getTotalLiquid()));
+			
+			
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		}
-			
-	
-		
+		}	
 	}
 	
 	
