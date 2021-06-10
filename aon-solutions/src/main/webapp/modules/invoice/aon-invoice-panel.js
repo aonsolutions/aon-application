@@ -261,7 +261,7 @@ export class AonInvoicePanel extends AonElement {
 		const left = button.getBoundingClientRect().left;
 
 		if((height - top) < (height / 2)) {
-				top = top - (ayudat ? 170 : 135);
+				top = top - (ayudat ? 205 : 170);
 		}
 
 		let d = document.getElementById('aonDialogAddOption');
