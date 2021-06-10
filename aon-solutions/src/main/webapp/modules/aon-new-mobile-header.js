@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
+import {actionMobile, closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
@@ -274,6 +274,8 @@ export class AonNewMobileHeader extends AonElement {
 	}
 
 	companyIn() {
+		actionMobile({ action: "statusBar", statusBar: true});
+
 		this.parent = false;
 		let div = this.getElement(this.WEB);
 		div.style.backgroundColor = '#002469';
@@ -299,6 +301,8 @@ export class AonNewMobileHeader extends AonElement {
 	}
 
 	companyOut() {
+		actionMobile({ action: "statusBar", statusBar: false});
+
 		this.parent = true;
 		let div = this.getElement(this.WEB);
 		div.style.backgroundColor = 'white';
