@@ -85,6 +85,10 @@
 .aon_icon_book { background-image: iconBook;}
 @url iconList aonIconList;
 .aon_icon_list { background-image: iconList;}
+@url iconCompare aonIconCompare;
+.aon_icon_compare { background-image: iconCompare;}
+@url iconData aonIconData;
+.aon_icon_data { background-image: iconData;}
 @url iconHistory aonIconHistory;
 .aon_icon_history { background-image: iconHistory;}
 @url iconUndo aonIconUndo;
@@ -249,6 +253,8 @@
 .aon_icon_preview { background-image: iconPreview;}
 @url iconAeat aonIconAeat;
 .aon_icon_aeat { background-image: iconAeat;}
+@url iconAeatBw aonIconAeatBw;
+.aon_icon_aeat_bw { background-image: iconAeatBw;}
 @url iconAraba aonIconAraba;
 .aon_icon_araba { background-image: iconAraba;}
 @url iconBizkaia aonIconBizkaia;
@@ -257,6 +263,26 @@
 .aon_icon_gipuzkoa { background-image: iconGipuzkoa;}
 @url iconNavarra aonIconNavarra;
 .aon_icon_navarra { background-image: iconNavarra;}
+@url iconModelFinish aonIconModelFinish;
+.aon_icon_model_finish { background-image: iconModelFinish;}
+@url iconModelSent aonIconModelSent;
+.aon_icon_model_sent { background-image: iconModelSent;}
+@url iconModelReopen aonIconModelReopen;
+.aon_icon_model_reopen { background-image: iconModelReopen;}
+@url iconAd aonIconAd;
+.aon_icon_ad { background-image: iconAd;}
+@url iconId aonIconId;
+.aon_icon_id { background-image: iconId;}
+@url iconLetterD aonIconLetterD;
+.aon_icon_letter-d { background-image: iconLetterD;}
+@url iconLetterE aonIconLetterE;
+.aon_icon_letter-e { background-image: iconLetterE;}
+@url iconLetterG aonIconLetterG;
+.aon_icon_letter-g { background-image: iconLetterG;}
+@url iconLetterR aonIconLetterR;
+.aon_icon_letter-r { background-image: iconLetterR;}
+@url iconLetterS aonIconLetterS;
+.aon_icon_letter-s { background-image: iconLetterS;}
 
 /* BASICS */
 .aon_selector {
@@ -409,6 +435,9 @@
 }
 .aon_font_larger{
 	font-size: larger;
+}
+.aon_font_x_larger{
+	font-size: x-large;
 }
 .aon_font_medium_important{
 	font-size: medium !important;
@@ -1214,6 +1243,29 @@
 	width: auto;
 }
 
+.aon_check_button {
+	background-image: iconSend;
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	height: 30px;
+	overflow: visible;
+	padding-left: 25px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
+.aon_check_button:hover, .aon_check_button:focus	{
+	background-color: #FBEDB6;
+}
+
+
 .aon_send_button_small {
 	background-image: iconSend;
 	background-attachment: scroll;
@@ -1481,3 +1533,75 @@
 	height: 100%;
 	margin-top: 10px;
 }
+
+.aon_group {
+	border: 1px solid #CCCCCC;
+	margin: 1em 0;
+	padding: 0 0 0.5em;
+}
+.aon_group_title {
+	background-color: #FFFFFF;
+	background-image: none;
+	border: 0 none;
+	display: inline;
+	font-size: 0.9em;
+	font-weight: bold;
+	padding: 0 0.5em 2px;
+	position: relative;
+	top: -1em;
+}
+
+.aon_group_body {
+	color: #4B4B4B;
+	padding: 0 1em;
+}
+
+.aon_fiscal_box {
+	border: 0.5px solid #AAA;
+	color: #AAA;
+	font-family: Fixed, monospace !important;
+	font-size: 0.9em;
+	padding: 2px 2px 2px 3px;
+	text-align: center;
+	display: inline;
+}
+
+.aon_fiscal_box_error {
+	border: 0.5px solid #880000;
+	color: white;
+	background-color: #880000;
+}
+
+.aon_toast {
+	position: absolute;
+	color: #333;
+	width: 300px;
+	background-color: seashell;
+	top: 160px;
+	right: 15px;
+	border: 0.5px solid #999;
+	border-radius: 10px;
+	animation-name: aon-toast;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+}
+
+.aon_toast .aon_widget_close {
+	border: 1px solid darkgray;
+}
+
+@keyframes aon-toast { 
+	0% {top: 160px;right: -300px;}
+	100%{top:160px;right:15px;}
+}
+.aon_toast_header {
+	display: flex;
+	padding-left: 10px;
+	font-weight: bold;
+	margin-top: 3px;
+}
+
+.aon_toast_content {
+	padding: 10px;
+}
+

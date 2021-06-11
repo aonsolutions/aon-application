@@ -729,6 +729,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Nombre, raz\u00F3n social o denominaci\u00F3n")
 	String nameCompanyName();
 
+	@DefaultMessage("Nombre y apellidos")
+	String nameSurname();
+
 	@DefaultMessage("Apellidos y Nombre, raz\u00F3n social o denominaci\u00F3n")
 	String companyName();
 
@@ -744,6 +747,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Estado")
 	String status();
 	
+	@DefaultMessage("Gestionar estado")
+	String statusManagement();
+
 	@DefaultMessage("Estado Vto.")
 	String financeStatus();
 
