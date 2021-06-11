@@ -77,14 +77,17 @@ export class AonSignin extends AonElement {
       {
         ...SigninSidenav.LOCATION,
         fn: () =>this.showView(SIGNIN_VIEWS.AON_LOCATION_LIST)
-      },
-      {
+      }
+    ];
+
+    if(this.getDur().isAlpha()) {
+      options.push({
         icon: "bar_chart",
         name: "Estadisticas",
         id: "statistics",
         fn: () => this.showView(SIGNIN_VIEWS.AON_STATISTICS)
-      },
-    ];
+      });
+    }
 
     if( this.isEmployee()) {
       delete options[1];
@@ -181,8 +184,8 @@ export class AonSignin extends AonElement {
               this.periodSideNavDisplay(false);
             break;
           case SIGNIN_VIEWS.AON_STATISTICS:
-            aonView = this.isBeta() ? new AonStatistics() : this.applicationEl.development();
-          break;
+            aonView = new AonStatistics();// : this.applicationEl.development();
+            break;
           case SIGNIN_VIEWS.AON_LOCATION_ADD:
             aonView = new AonLocationAdd();
             if(data){
