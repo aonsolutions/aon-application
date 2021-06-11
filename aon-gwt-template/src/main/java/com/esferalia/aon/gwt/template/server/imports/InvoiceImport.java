@@ -178,7 +178,9 @@ public class InvoiceImport {
 		if(o == null) return;
 	
 		if("TIPO OPERACIÓN".equalsIgnoreCase(title)
-				|| "TIPO OPERACION".equalsIgnoreCase(title)) {
+				|| "TIPO OPERACION".equalsIgnoreCase(title)
+				|| "TIPO DE OPERACIÓN".equalsIgnoreCase(title)
+				|| "TIPO DE OPERACION".equalsIgnoreCase(title)) {
 			inv.setType(InvoiceOpType.safeValueOf(o.toString().trim()));
 			return;
 		}
