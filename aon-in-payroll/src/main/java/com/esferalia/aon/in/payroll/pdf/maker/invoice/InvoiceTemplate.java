@@ -186,9 +186,9 @@ public class InvoiceTemplate {
 					y		 = height - top - topInfoHeight - 5;
 					x		 = 50;
 				}
-
+				String description = new String(entry.getDescription().replaceAll("\t", " ").getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8") );
 				PDFToolkit.drawText(contents,
-						PDFToolkit.croppedString(entry.getDescription(), 420, PdfFonts.HELVETICA, 8), x + 5, y,
+						PDFToolkit.croppedString(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
 						PdfColors.BLACK, PdfFonts.HELVETICA, 8);
 				x += 430;
 				PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15),
