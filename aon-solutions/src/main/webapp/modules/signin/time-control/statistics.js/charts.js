@@ -1,22 +1,11 @@
-export const getRandomColor = () => {
-  // let letters = "0123456789ABCDEF".split("");
-  // let color = "#";
-  // for (let i = 0; i < 6; i++) {
-  //   color += letters[Math.floor(Math.random() * 16)];
-  // }
-  return "#76A7FA";
-  // return color;
-};
-
-export const charts = (div, data) => {
-  return new Promise((resolve) => {
+export const charts = (div, data) => new Promise((resolve) => {
     const drawBasic = () => {
       
       let table = google.visualization.arrayToDataTable([
         [
           "Days",
           "Horas",
-          { role: "style" },
+          "Average"
         ],
         ...data
       ]);
@@ -28,30 +17,27 @@ export const charts = (div, data) => {
           textStyle: {
             bold: true,
           },
+          gridlines:{
+            color: '#fff' //lines white
+          }
         },
         hAxis: {
           textStyle: {
             bold: true,
             fontSize: 11,
             fontName: "sans-serif",
-          },
+          }
         },
         seriesType: "bars",
-        // series: { 
-        //   0: { 
-        //     type: "line", 
-        //     color: "#002469" 
-        //   } 
-        // },
-        // trendlines: {
-        //   1: {
-        //     color: 'purple',
-        //     lineWidth: 10,
-        //     opacity: 0.2,
-        //     type: 'exponential'
-        //   }
-        // }
-        
+        series: { 
+          1: {
+            type: 'line',
+            lineWidth: 2,
+            color:"#808080",
+            labelInLegend: false,
+            visibleInLegend: false
+          }
+        },
       };
 
       const chart = new google.visualization.ComboChart(div);
@@ -60,10 +46,10 @@ export const charts = (div, data) => {
       resolve(chart);
     };
 
-    google.charts.load("current", {
-      packages: ["corechart", "bar"],
-      language: "es",
-    });
-    google.charts.setOnLoadCallback(drawBasic);
+  google.charts.load("current", {
+    packages: ["corechart", "bar"],
+    language: "es",
   });
-};
+  google.charts.setOnLoadCallback(drawBasic);
+});
+

@@ -13,8 +13,8 @@ export class AonSign extends AonElement {
   AON_SIGN;
   CONTENT;
   TIME;
-  TIME_ACTIVE;
-  TOTAL_HOUR;
+  TIME_ID;
+  // TOTAL_HOUR;
   get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -28,12 +28,12 @@ export class AonSign extends AonElement {
   }
 
   connectedCallback () {
-    this.TIME_ACTIVE = false;
     this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
     this.TOTAL_HOUR = "totalHour";
+    this.TIME_ID = "TIME_ID";
     this.applicationEl = this.getApplication();
     getTaskHoldersUser().then(r => {
       if(r.length > 0) {
@@ -45,7 +45,7 @@ export class AonSign extends AonElement {
   }
 
   disconnectedCallback(){
-    this.TIME_ACTIVE = false;
+    localStorage.removeItem(this.TIME_ID);
   }
 
   build(){
@@ -184,13 +184,14 @@ export class AonSign extends AonElement {
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
     let time = signin.time;
-    this.TIME_ACTIVE = false;
+    localStorage.removeItem(this.TIME_ID);
     if(signin.status === 'in') {
       time = signin.time + (new Date().getTime() - signin.in_date);
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
-      this.TIME_ACTIVE = true;
-      this.timeAction(time);
+      let timeId =  Math.random();
+      localStorage.setItem(this.TIME_ID, timeId);
+      this.timeAction(time, timeId);
     } else if(signin.status === 'pause') {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
@@ -202,13 +203,20 @@ export class AonSign extends AonElement {
     this.divLastTime(signin);
   }
 
-  async timeAction(time) {
+  async timeAction(time, id) {
+    
     this.changeTime(time);
+
     this.updateHour();
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const aonSign = document.querySelector(`#`+this.id)
-    if(aonSign && this.TIME_ACTIVE) {
-      this.timeAction(time+ 1000);
+
+    const aonSign = document.querySelector(`#`+this.id);
+
+    const timeIdStorage = parseFloat(localStorage.getItem(this.TIME_ID));
+
+    if(aonSign && (id ===  timeIdStorage)) {
+      this.timeAction(time+ 1000, id);
     }
   }
 
