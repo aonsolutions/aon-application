@@ -72,9 +72,8 @@ export class AonAltaDirecta extends AonElement {
         let aonEmployeeCard = this.getElement(`${this.id}TrabajadorCard`);
         createCardEmployee(aonEmployeeCard.getContent(),  this.id);
  
-        const isButton = this.isMobile() && (this.isAlta() || !this.data);
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createCardContract(aonContratoCard.getContent(), this.id, isButton);
+        createCardContract(aonContratoCard.getContent());
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -90,7 +89,7 @@ export class AonAltaDirecta extends AonElement {
         const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
   
-        if(this.data){
+        if(this.data && !this.isMobile()){
             toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => {
                 ev.preventDefault();
                 let rect = ev.target.getBoundingClientRect();
@@ -121,7 +120,7 @@ export class AonAltaDirecta extends AonElement {
         if(this.isAlta()) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
-        if(!this.isMobile() && (this.isAlta() || !this.data) )  // ALTA
+        if((this.isAlta() || !this.data) )  // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
         if(this.data){ //DELETE
@@ -148,8 +147,6 @@ export class AonAltaDirecta extends AonElement {
     }
 
     eventListener() {
-        let aonAltaDirectaSubmit = this.getElement(`${this.id}Submit`);
-        if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener(EVENT.CLICK, () => this.formSubmit());
 
         this.getElement('centro_trabajo').addEventListener(EVENT.CHANGE, (ev) => this.listCuentaCotizacion(ev));
 
