@@ -9,4 +9,12 @@ public class AonTextBox extends TextBox {
 		super();
 		setStyleName(AON.CSS.aonInputText());
 	}
+	
+	public void decorateAsError() {
+		addStyleName(AON.CSS.aonInputError());
+	}
+	public void decorateAsValid() {
+		removeStyleName(AON.CSS.aonInputError());
+	}
+	
 }

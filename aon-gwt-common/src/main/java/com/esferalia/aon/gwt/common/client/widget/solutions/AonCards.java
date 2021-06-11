@@ -17,6 +17,10 @@ public class AonCards extends ScrollPanel {
 		private FlowPanel menuPanel = new FlowPanel();
 		
 		public AonCard() {
+			this(true);
+		}
+		
+		public AonCard(boolean withMenu) {
 			setStyleName(AON.CSS.aonCard());
 			
 			
@@ -27,20 +31,28 @@ public class AonCards extends ScrollPanel {
 			
 			cardTab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonCardTitle());
 			
-			menuPanel.setStyleName(AON.CSS.aonCardFooter());
-			cardTab.setWidget(0, 1, menuPanel);
+			if (withMenu) {
+				menuPanel.setStyleName(AON.CSS.aonCardFooter());
+				cardTab.setWidget(0, 1, menuPanel);
+				cardTab.getCellFormatter().setStyleName(0, 1, AON.CSS.aonBorderLeft());
+				cardTab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonMarginTop());
+				cardTab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonVerticalAlignTop());
+				cardTab.getFlexCellFormatter().setRowSpan(0, 1, 2);
+			}
 			
-			cardTab.getCellFormatter().setStyleName(0, 1, AON.CSS.aonBorderLeft());
-			cardTab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonMarginTop());
-			cardTab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonVerticalAlignTop());
-			cardTab.getFlexCellFormatter().setRowSpan(0, 1, 2);
 			setWidget(cardTab);
 		}
 		
-		public AonCard(Widget title, Widget body ) {
-			this();
-			setTitle( title );
+		public AonCard(boolean withMenu, Widget title, Widget body ) {
+			this(withMenu);
+			if (title !=null) {
+				setTitle( title );
+			}
 			setBody( body );
+		}
+		
+		public AonCard(Widget title, Widget body ) {
+			this(true, title,body);
 		}
 		
 		protected void setBody(Widget body) {
@@ -76,6 +88,10 @@ public class AonCards extends ScrollPanel {
 		attachContainer();
 	}
 	
+	public AonCard addCard(boolean withMenu, Widget title, Widget body ) {
+		AonCard card = new AonCard(withMenu, title, body);
+		return addCard(card);
+	}
 	
 	public AonCard addCard(Widget title, Widget body ) {
 		AonCard card = new AonCard(title, body);

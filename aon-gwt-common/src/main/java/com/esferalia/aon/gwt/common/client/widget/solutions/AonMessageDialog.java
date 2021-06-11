@@ -57,7 +57,7 @@ public class AonMessageDialog extends AonCustomDialog {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
 					hide();
-					callback.onAccept();;	
+					if (callback != null) callback.onAccept();;	
 				}
 			}
 		});
@@ -67,7 +67,7 @@ public class AonMessageDialog extends AonCustomDialog {
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
 				hide();
-				callback.onAccept();
+				if (callback != null) callback.onAccept();
 			}
 		});
     	buttons.add(okButton);
@@ -75,7 +75,7 @@ public class AonMessageDialog extends AonCustomDialog {
     	addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				callback.onClose();
+				if (callback != null) callback.onClose();
 			}
 		});
     	panel.add(buttons);
