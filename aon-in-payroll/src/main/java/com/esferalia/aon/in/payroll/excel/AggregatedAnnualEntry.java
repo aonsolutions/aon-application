@@ -20,6 +20,7 @@ public class AggregatedAnnualEntry {
 	private Double inKindIrpfBase;
 	private Double totalIrpfBase;
 	private String workplace;
+	private Double rlc;
 	
 	
 	private Collection<Payment> payments;
@@ -121,6 +122,12 @@ public class AggregatedAnnualEntry {
 	}
 	public void setWorkplace(String workplace) {
 		this.workplace = workplace;
+	}
+	public Double getRlc() {
+		return rlc;
+	}
+	public void setRlc(Double rlc) {
+		this.rlc = rlc;
 	}
 	
 }

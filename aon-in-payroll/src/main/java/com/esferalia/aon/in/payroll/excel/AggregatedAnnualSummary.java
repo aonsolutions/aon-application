@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -45,6 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
 
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -59,13 +62,16 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AggregatedAnnualSummary {
 	
 	private static final String TOTAL_NAME = "TOTALES";
+	private static final String[] BOLD_FIELDS = {"TOTAL BRUTO","TOTAL LÍQUIDO","COSTE EMPRESA","RLC","BASE IRPF TOTAL","COSTE DIARIO"};
 	private static final String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
+	private static final String[]  cra1ConceptOrder= {"Salario Base", "Pluses Salariales", "Otros Conceptos Salariales"};
 	private static final Visitor<String> DEDUCTION_VISITOR = new DeductionType.Visitor<String>() {
 		public String visitCommonContigency(DeductionType deductionType) {
 			return "CONTNGENCIAS COMUNES";
@@ -118,29 +124,7 @@ public class AggregatedAnnualSummary {
 			return "IMS";
 		}
 	};
-	
-	private static Enterprise getEnterpriseById (AONContext aonContext, Integer enterpriseId) {
-		return AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), enterpriseId);
-	}
-	
-	private static Enterprise getEnterpriseByWorkplaceId (AONContext aonContext, Integer workplaceId) {
-		Workplace workplace = AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), f -> f.getIdProperty().eq(workplaceId));
-		Integer enterpriseId = workplace.getEnterprise();
-		return getEnterpriseById(aonContext, enterpriseId);
-	}
-	
-	private static Enterprise pickEnterpriseFromDomain (AONContext aonContext) {
-		EnterpriseRecord registry = aonContext.getDslContext()
-		.select()
-		.from(ENTERPRISE)
-		.where(ENTERPRISE.DOMAIN.eq(aonContext.getDomainId()))
-		.fetchOneInto(ENTERPRISE);
-		
-		Integer enterpriseId = registry.getRegistry();
-		
-		return getEnterpriseById(aonContext, enterpriseId);
-	}
-	
+
 	public static void writeExcel (OutputStream oos, String domainName, String user, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, boolean complete) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -181,7 +165,6 @@ public class AggregatedAnnualSummary {
 		}
 		
 	}
-
 	protected static void getExcel(OutputStream oos, Integer year,
 			Map<String, AggregatedAnnualYearlyEntry> entries, String enterpriseName, String enterpriseDocument, boolean complete) {
 		try (Workbook wb = new XSSFWorkbook()) {
@@ -191,60 +174,9 @@ public class AggregatedAnnualSummary {
 			
 			int firstDataRow = 0;
 			
-			DataFormat format = wb.createDataFormat();
 			
 			//STYLES
-			CellStyle monthCellStyle = wb.createCellStyle();
-			monthCellStyle.setBorderTop(BorderStyle.THIN);
-			monthCellStyle.setBorderBottom(BorderStyle.THIN);
-			monthCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-			monthCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
-			
-			CellStyle rightBorderCellStyle = wb.createCellStyle();
-			rightBorderCellStyle.setBorderRight(BorderStyle.THIN);
-			rightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-			
-			CellStyle topRightBorderCellStyle = wb.createCellStyle();
-			topRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
-			topRightBorderCellStyle.setBorderTop(BorderStyle.THIN);
-			topRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-			topRightBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-			topRightBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
-			topRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-
-			CellStyle topLeftBorderCellStyle = wb.createCellStyle();
-			topLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
-			topLeftBorderCellStyle.setBorderTop(BorderStyle.THIN);
-			topLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-			topLeftBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-			topLeftBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
-			topLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-			
-			CellStyle topLeftBorderCellStyleNoBottom = wb.createCellStyle();
-			topLeftBorderCellStyleNoBottom.setBorderLeft(BorderStyle.THIN);
-			topLeftBorderCellStyleNoBottom.setBorderTop(BorderStyle.THIN);
-			topLeftBorderCellStyleNoBottom.setDataFormat(format.getFormat("#,###,##0.#0"));
-			
-			CellStyle leftBorderCellStyle = wb.createCellStyle();
-			leftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
-			leftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-			
-			CellStyle bottomBorderCellStyle = wb.createCellStyle();
-			bottomBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-			bottomBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-
-			CellStyle bottomLeftBorderCellStyle = wb.createCellStyle();
-			bottomLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-			bottomLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
-			bottomLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-
-			CellStyle bottomRightBorderCellStyle = wb.createCellStyle();
-			bottomRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
-			bottomRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
-			bottomRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
-			
-			CellStyle numberCellStyle = wb.createCellStyle();
-			numberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+			Map<String, CellStyle> stylesMap = getCellStyles(wb);
 			
 			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas = new LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>>();
 			LinkedHashMap<String, LinkedHashMap<String, String>> totalSheetFormulas = new LinkedHashMap<String, LinkedHashMap<String, String>>();
@@ -294,59 +226,51 @@ public class AggregatedAnnualSummary {
 				
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.createRow(2);
 				cell = row.createCell(0);
 				cell.setCellValue("NIF Empresa:");
 				cell = row.createCell(1);
 				cell.setCellValue(entry.getNif() != null ? entry.getNif() : "");
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.getRow(2);
 				cell = row.createCell(3);
 				cell.setCellValue("Empresa:");
 				cell = row.createCell(4);
 				cell.setCellValue(enterpriseName != null ? enterpriseName : "");
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.createRow(3);
 				cell = row.createCell(0);
-				cell.setCellValue("Centro de Trabajo:");
+				cell.setCellValue("Centro Trabajo:");
 				cell = row.createCell(1);
 				cell.setCellValue(entry.getWorkplace() != null ? entry.getWorkplace() : "");
-				
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.createRow(5);
 				cell = row.createCell(0);
 				cell.setCellValue("NIF Empleado:");
 				cell = row.createCell(1);
 				cell.setCellValue(entry.getNif() != null ? entry.getNif() : "");
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.getRow(5);
 				cell = row.createCell(3);
 				cell.setCellValue("Empleado:");
 				cell = row.createCell(4);
 				cell.setCellValue(entry.getEmployeeName() != null ? entry.getEmployeeName() : "");
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = sheet.createRow(6);
 				//ORGANIZING INFO
 				LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<String>();
 				LinkedHashSet<String> deductionConceptsSet = new LinkedHashSet<String>();
 				Pattern noWords = Pattern.compile("[A-Za-z]+");
-				entry.getMonthlyEntries().values().stream().map(e -> e.getPayments()).forEach(payments -> {
-					payments.stream()
-					.filter(p -> p != null)
-					.sorted(Comparator.comparing(p -> p.getPaymentType() != null ? p.getPaymentType() : PaymentType.values()[PaymentType.values().length -1]))
-					.map(p -> {
-						if (p.getDescription() != null) {
-							Matcher matcher = noWords.matcher(p.getDescription());
-							if (matcher.find())
-								return p.getDescription();
-							else
-								return p.getName();
-						} else
-							return p.getName();
-					})
-					.forEach(name -> paymentConceptsSet.add(name));
-				});
+				
+				paymentConceptsSet = getOrderedPaymentConcepts(entry);
+				
 				
 				entry.getMonthlyEntries().values().stream().map(e -> e.getDeductions()).forEach(deductions-> {
 					if (deductions != null) {
@@ -387,30 +311,38 @@ public class AggregatedAnnualSummary {
 				cell = row.createCell(0);
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue("CONCEPTO");
+				cell.setCellStyle(stylesMap.get("importantCellStyle"));
 				int[] cellNum = {3};
 				Arrays.stream(months).forEach(month -> {
 					Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]++);
 					monthCell.setCellType(CellType.STRING);
 					monthCell.setCellValue(month);
-					monthCell.setCellStyle(monthCellStyle);
+					monthCell.setCellStyle(stylesMap.get("monthCellStyle"));
 				});
 				
 				Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]);
 				monthCell.setCellType(CellType.STRING);
 				monthCell.setCellValue("TOTAL");
-				monthCell.setCellStyle(topRightBorderCellStyle);
+				monthCell.setCellStyle(stylesMap.get("topRightBorderCellStyle"));
 				
-				row.getCell(3).setCellStyle(topLeftBorderCellStyle);
+				row.getCell(3).setCellStyle(stylesMap.get("topLeftBorderCellStyle"));
 				firstDataRow = row.getRowNum() + 1;
+				
 				//PAYMENTS
+				
 				LinkedHashSet<String> conceptSet = orderedConcepts.get("payments");
 				paymentConceptsSet.forEach(concept -> {
 					Row paymentRow = sheet.createRow(sheet.getLastRowNum()+1);
 					sheet.addMergedRegion(new CellRangeAddress(paymentRow.getRowNum(), paymentRow.getRowNum(), 0, 2));
 					Cell paymentCell = paymentRow.createCell(0);
 					paymentCell.setCellType(CellType.STRING);
-					if (concept != null)
-						paymentCell.setCellValue(removeUnderscore(concept));
+					if (concept != null) {
+						String definitive = getDefinitivePaymentConcept(concept);
+						
+						paymentCell.setCellValue(removeUnderscore(definitive));
+							
+					}
+					
 					int[] amountCellNum = {3};
 					conceptSet.add(concept);
 					
@@ -428,7 +360,7 @@ public class AggregatedAnnualSummary {
 							Collection<Payment> paym = entry.getMonthlyEntries().get(month).getPayments();
 							double amount = paym.stream().filter(p -> {
 								if (p != null) {
-									String desc = p.getDescription() != null ? p.getDescription() : p.getName();
+									String desc = choosePaymentName(p);
 									if (desc != null) {
 										Matcher matcher = noWords.matcher(desc);
 										if (!matcher.find())
@@ -444,7 +376,7 @@ public class AggregatedAnnualSummary {
 							}).mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0).sum();
 							if (amount != 0d)
 								amountCell.setCellValue(amount);
-							amountCell.setCellStyle(numberCellStyle);
+							amountCell.setCellStyle(stylesMap.get("numberCellStyle"));
 						}
 					});
 					Cell totalCell = paymentRow.createCell(amountCellNum[0]);
@@ -456,7 +388,7 @@ public class AggregatedAnnualSummary {
 				
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//TOTAL RAW
-				putDataRow("Total Bruto", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("TOTAL BRUTO", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//DEDUCTIONS
@@ -492,7 +424,7 @@ public class AggregatedAnnualSummary {
 								}).mapToDouble(d -> d.getAmount()!= null ? d.getAmount() : 0).sum();
 								if (amount != 0d)
 									amountCell.setCellValue(amount);
-								amountCell.setCellStyle(numberCellStyle);
+								amountCell.setCellStyle(stylesMap.get("numberCellStyle"));
 							}
 						});
 						Cell totalCell = deductionRow.createCell(amountCellNum[0]);
@@ -501,7 +433,6 @@ public class AggregatedAnnualSummary {
 						totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
 				});
 				
-				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
@@ -535,45 +466,51 @@ public class AggregatedAnnualSummary {
 					totalDedCell.setCellType(CellType.NUMERIC);
 					if (ent != null && ent.getTotalDeduction() != null)
 						totalDedCell.setCellValue(ent.getTotalDeduction());
-					totalDedCell.setCellStyle(numberCellStyle);
+					totalDedCell.setCellStyle(stylesMap.get("numberCellStyle"));
 				});
 				
 				Cell totalCell = row.createCell(totalDeductionCellNum[0]);
 				totalCell.setCellType(CellType.FORMULA);
 				int rRowNum = totalCell.getRowIndex()+1;
 				totalCell.setCellFormula("SUM(D"+rRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+rRowNum+")");
-				
-				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//TOTAL LIQUID
-				putDataRow("TOTAL LÍQUIDO", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("TOTAL LÍQUIDO", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//EXTRA PRORATION
-				putDataRow("PRORRATA PAGAS EXTRAS", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("PRORRATA PAGAS EXTRAS", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//BONUSES
-				putDataRow("BONIFICACIONES/REDUCCIONES", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BONIFICACIONES/REDUCCIONES", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//ENTERPRISE SS
-				putDataRow("SEG.SOCIAL EMPRESA", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("SEG.SOCIAL EMPRESA", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//ENTERPRISE COST
-				putDataRow("COSTE EMPRESA", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("COSTE EMPRESA", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				//RLC
+				putDataRow("RLC", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//CC BASE
-				putDataRow("BASE CONTINGENCIAS COMUNES", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE CONTINGENCIAS COMUNES", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IT BASE
-				putDataRow("BASE ACCIDENTES", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE ACCIDENTES", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF MONEY BASE
-				putDataRow("BASE IRPF DINERARIA", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF DINERARIA", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF IN-KIND BASE
-				putDataRow("BASE IRPF EN ESPECIE", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF EN ESPECIE", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF TOTAL BASE
-				putDataRow("BASE IRPF TOTAL", complete, numberCellStyle, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF TOTAL", complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				row = sheet.createRow(sheet.getLastRowNum() +1);
+
 				//DAYS AND HOURS
 				{
 					LinkedHashSet<String> dahNames = new LinkedHashSet<String>();
@@ -581,35 +518,31 @@ public class AggregatedAnnualSummary {
 						if (dah != null)
 							dah.keySet().forEach(key -> dahNames.add(key));
 					});
+					
 					if (!dahNames.isEmpty()) {
 						LinkedHashSet<String> dahSet = orderedConcepts.get("daysAndHours");
-						dahNames.forEach(dahName -> {
+						
+						String[] topConcepts = {"DIAS_TRABAJADOS", "HORAS_NOMINA", "DIAS_NOMINA", "COSTE_DIARIO"};
+						row = sheet.createRow(sheet.getLastRowNum() +1);
+						for (String str : topConcepts) {
 							Row dahRow = sheet.createRow(sheet.getLastRowNum() +1);
-							sheet.addMergedRegion(new CellRangeAddress(dahRow.getRowNum(), dahRow.getRowNum(), 0, 2));
-							Cell dahCell = dahRow.createCell(0);
-							dahCell.setCellType(CellType.STRING);
-							dahCell.setCellValue(removeUnderscore(dahName));
-							dahSet.add(dahName);
-							
-							int[] cNum = {3};	
-							Arrays.stream(months).forEach(month -> {
-								Map<String, Double> dah = entry.getMonthlyEntries().get(month) != null ? entry.getMonthlyEntries().get(month).getDaysAndHours() : null;
-								Cell dCell = dahRow.createCell(cNum[0]);
-								
-								String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
-								
-								putPaymentAndDaHFormula(entry.getWorkplace(), totalsFormulas, dahName, month, formula, complete);
-								
-								dCell.setCellType(CellType.NUMERIC);
-								dCell.setCellStyle(numberCellStyle);
-								if (dah != null && dah.get(dahName) != null) {
-									dCell.setCellValue(dah.get(dahName));
-								}
-								cNum[0]++;
-							});
-							dahCell = dahRow.createCell(cNum[0]);
-							int realRowNum = dahCell.getRowIndex()+1;
-							dahCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(dahCell.getColumnIndex()-1)+realRowNum+")");
+							createDahRow(complete, stylesMap, totalsFormulas, nif, entry, sheet, dahSet, str,
+									dahRow);
+						}
+						
+						row = sheet.createRow(sheet.getLastRowNum() +1);
+						row = sheet.createRow(sheet.getLastRowNum() +1);
+						
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+						cell = row.createCell(0);
+						cell.setCellType(CellType.STRING);
+						cell.setCellValue("INFORMACIÓN ADICIONAL");
+						
+						
+						dahNames.stream().filter(str -> !AonArrayUtils.constainsIgnoreCase(topConcepts, str)).forEach(dahName -> {
+							Row dahRow = sheet.createRow(sheet.getLastRowNum() +1);
+							createDahRow(complete, stylesMap, totalsFormulas, nif, entry, sheet, dahSet, dahName,
+									dahRow);
 						});
 					}
 					
@@ -625,8 +558,7 @@ public class AggregatedAnnualSummary {
 			//RESIZE AND SOME STYLES
 			for (Sheet sheet : wb) {
 				if (!totalsFormulas.keySet().contains(sheet.getSheetName()))
-					resizeSheet(firstDataRow, rightBorderCellStyle, topLeftBorderCellStyleNoBottom, leftBorderCellStyle,
-						bottomBorderCellStyle, bottomLeftBorderCellStyle, bottomRightBorderCellStyle, sheet);
+					resizeSheet(firstDataRow, stylesMap, sheet);
 			}
 			
 			//TOTALS
@@ -646,27 +578,31 @@ public class AggregatedAnnualSummary {
 				
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = totalSheet.createRow(2);
 				cell = row.createCell(0);
 				cell.setCellValue("NIF Empresa:");
 				cell = row.createCell(1);
 				cell.setCellValue(enterpriseDocument != null ? enterpriseDocument : "");
-
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
+				
 				row = totalSheet.getRow(2);
 				cell = row.createCell(3);
 				cell.setCellValue("Empresa:");
 				cell = row.createCell(4);
 				cell.setCellValue(enterpriseName != null ? enterpriseName : "");
+				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
 				row = totalSheet.createRow(3);
 				
 				if (!workplace.equals(TOTAL_NAME)) {
 					totalSheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 2));
 					cell = row.createCell(0);
-					cell.setCellValue("Centro de trabajo:");
+					cell.setCellValue("Centro Trabajo:");
 					cell = row.createCell(1);
 					cell.setCellValue(workplace != null ? workplace : "");
+					cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 					
 					row = totalSheet.createRow(4);
 				}
@@ -678,35 +614,39 @@ public class AggregatedAnnualSummary {
 				cell = row.createCell(0);
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue("CONCEPTO");
+				cell.setCellStyle(stylesMap.get("importantCellStyle"));
 				int[] cellNum = {3};
 				Arrays.stream(months).forEach(month -> {
 					Cell monthCell = totalSheet.getRow(totalSheet.getLastRowNum()).createCell(cellNum[0]++);
 					monthCell.setCellType(CellType.STRING);
 					monthCell.setCellValue(month);
-					monthCell.setCellStyle(monthCellStyle);
+					monthCell.setCellStyle(stylesMap.get("monthCellStyle"));
 				});
 				
 				Cell monthCell = totalSheet.getRow(totalSheet.getLastRowNum()).createCell(cellNum[0]);
 				monthCell.setCellType(CellType.STRING);
 				monthCell.setCellValue("TOTAL");
-				monthCell.setCellStyle(topRightBorderCellStyle);
+				monthCell.setCellStyle(stylesMap.get("topRightBorderCellStyle"));
 				
-				row.getCell(3).setCellStyle(topLeftBorderCellStyle);
+				row.getCell(3).setCellStyle(stylesMap.get("topLeftBorderCellStyle"));
 				
 				firstDataRow = row.getRowNum() + 1;
 				
 				//PAYMENTS
 				LinkedHashSet<String> paymentsSet = orderedConcepts.get("payments");
+				
+				orderSet(paymentsSet);
+				
 				paymentsSet.forEach(pay -> {
 					Row pRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
-					totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, pRow, months, pay);
+					totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, pRow, months, pay);
 				});
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//RAW
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "Total Bruto");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "TOTAL BRUTO", true);
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
@@ -715,70 +655,95 @@ public class AggregatedAnnualSummary {
 					LinkedHashSet<String> deductionsSet = orderedConcepts.get("deductions");
 					deductionsSet.forEach(ded -> {
 						Row dRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
-						totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, dRow, months, spaDeduction(ded));
+						totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, dRow, months, spaDeduction(ded));
 					});
 				}
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
-				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//TOTAL LIQUID
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "TOTAL LÍQUIDO");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "TOTAL LÍQUIDO", true);
 				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//EXTRA PAY PRO.
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "PRORRATA PAGAS EXTRAS");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "PRORRATA PAGAS EXTRAS");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//BONUSES
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "BONIFICACIONES/REDUCCIONES");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "BONIFICACIONES/REDUCCIONES");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//ENTERPRISE SS
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "SEG.SOCIAL EMPRESA");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "SEG.SOCIAL EMPRESA");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//ENTERPRISE COST
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "COSTE EMPRESA");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "COSTE EMPRESA", true);
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+				//RLC
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "RLC", true);
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//CC BASE
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "BASE CONTINGENCIAS COMUNES");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "BASE CONTINGENCIAS COMUNES");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//MONEY IRPF BASE
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF DINERARIA");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF DINERARIA");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 								
 				//IN-KIND IRPF BASE
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF EN ESPECIE");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF EN ESPECIE");
 				
 				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//TOTAL IRPF BASE
-				totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF TOTAL");
+				totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, row, months, "BASE IRPF TOTAL", true);
+				
+				row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
 				
 				//DAYS AND HOURS
 				{
 					LinkedHashSet<String> dahSet = orderedConcepts.get("daysAndHours");
-					dahSet.forEach(dah -> {
+					String[] topConcepts = {"DIAS_TRABAJADOS", "HORAS_NOMINA", "DIAS_NOMINA", "COSTE_DIARIO"};
+					
+					for (int i=0; i<topConcepts.length; i++) {
+						if (dahSet.contains(topConcepts[i])) {
+							Row dRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+							if(topConcepts[i].equals("COSTE_DIARIO"))
+								totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, dRow, months, topConcepts[i], true);
+							else
+								totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, dRow, months, topConcepts[i]);
+						}						
+					}
+					row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+					row = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
+					
+					totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+					cell = row.createCell(0);
+					cell.setCellType(CellType.STRING);
+					cell.setCellValue("INFORMACIÓN ADICIONAL");
+					
+					dahSet.stream().filter(str -> !AonArrayUtils.constainsIgnoreCase(topConcepts, str)).forEach(dah -> {
 						Row dRow = totalSheet.createRow(totalSheet.getLastRowNum() + 1);
-						totalsCellCreator(numberCellStyle, totalsFormulas.get(workplace), totalSheet, dRow, months, dah);
+						totalsCellCreator(stylesMap, totalsFormulas.get(workplace), totalSheet, dRow, months, dah);
 					});
 				}
 
 				
 				totalSheet.createFreezePane(3, firstDataRow - 1, 3, firstDataRow -1);
 				
-				resizeSheet(firstDataRow, rightBorderCellStyle, topLeftBorderCellStyleNoBottom, leftBorderCellStyle,
-						bottomBorderCellStyle, bottomLeftBorderCellStyle, bottomRightBorderCellStyle, totalSheet);
+				resizeSheet(firstDataRow,stylesMap, totalSheet);
 				
 			}
 			
@@ -790,17 +755,148 @@ public class AggregatedAnnualSummary {
 		} catch (IOException e) {}
 	}
 
-	private static void putDataRow(String dataName, boolean complete, CellStyle numberCellStyle,
+	
+	private static int assignNumber (String str) {
+		if (str.equals(cra1ConceptOrder[0]))
+			return 0;
+		else if (str.equals(cra1ConceptOrder[1]))
+			return 1;
+		else if (str.equals(cra1ConceptOrder[2]))
+			return 2;
+		else {
+			try {
+				return PaymentType.valueOf(str).ordinal() + 2;
+			} catch (Exception e) {
+				return PaymentType.values().length + 2;
+			}
+		}
+	}
+	
+	private static Enterprise getEnterpriseById (AONContext aonContext, Integer enterpriseId) {
+		return AON.getEnterprise(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), enterpriseId);
+	}
+	
+	private static Enterprise getEnterpriseByWorkplaceId (AONContext aonContext, Integer workplaceId) {
+		Workplace workplace = AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), f -> f.getIdProperty().eq(workplaceId));
+		Integer enterpriseId = workplace.getEnterprise();
+		return getEnterpriseById(aonContext, enterpriseId);
+	}
+	
+	private static Enterprise pickEnterpriseFromDomain (AONContext aonContext) {
+		EnterpriseRecord registry = aonContext.getDslContext()
+		.select()
+		.from(ENTERPRISE)
+		.where(ENTERPRISE.DOMAIN.eq(aonContext.getDomainId()))
+		.fetchOneInto(ENTERPRISE);
+		
+		Integer enterpriseId = registry.getRegistry();
+		
+		return getEnterpriseById(aonContext, enterpriseId);
+	}
+	
+	private static void orderSet(LinkedHashSet<String> paymentsSet) {
+		TreeMap<Integer, String> withOrder = new TreeMap<Integer, String>();
+		paymentsSet.forEach(str -> withOrder.put(assignNumber(str), str));
+		paymentsSet.clear();
+		paymentsSet.addAll(withOrder.values());
+	}
+
+	private static void createDahRow(boolean complete, Map<String, CellStyle> stylesMap,
+			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas, String nif,
+			AggregatedAnnualYearlyEntry entry, Sheet sheet, LinkedHashSet<String> dahSet, String dahName, Row dahRow) {
+		sheet.addMergedRegion(new CellRangeAddress(dahRow.getRowNum(), dahRow.getRowNum(), 0, 2));
+		Cell dahCell = dahRow.createCell(0);
+		dahCell.setCellType(CellType.STRING);
+		dahCell.setCellValue(removeUnderscore(dahName));
+		dahSet.add(dahName);
+		
+		int[] cNum = {3};	
+		Arrays.stream(months).forEach(month -> {
+			Map<String, Double> dah = entry.getMonthlyEntries().get(month) != null ? entry.getMonthlyEntries().get(month).getDaysAndHours() : null;
+			Cell dCell = dahRow.createCell(cNum[0]);
+			
+			String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
+			
+			putPaymentAndDaHFormula(entry.getWorkplace(), totalsFormulas, dahName, month, formula, complete);
+			
+			dCell.setCellType(CellType.NUMERIC);
+			dCell.setCellStyle(stylesMap.get(AonStringUtils.equalsIgnoreCase(dahName, "COSTE_DIARIO") ? "boldNumberCellStyle" : "numberCellStyle"));
+			if (dah != null && dah.get(dahName) != null) {
+				dCell.setCellValue(dah.get(dahName));
+			}
+			cNum[0]++;
+		});
+		dahCell = dahRow.createCell(cNum[0]);
+		int realRowNum = dahCell.getRowIndex()+1;
+		dahCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(dahCell.getColumnIndex()-1)+realRowNum+")");
+	}
+
+	private static String getDefinitivePaymentConcept(String concept) {
+		if (concept != null) {
+			String definitive = concept;
+			if (concept.contains("CRA_00")) {
+				try {
+					PaymentType type = PaymentType.valueOf(concept);
+					definitive = CraTypes.getType(type.ordinal(), new Locale("es", "ES"));
+					String craNum = "[" + concept.substring(concept.indexOf('_') + 1) + "] ";
+					definitive = craNum + definitive;
+				} catch (Exception e) {}
+			} else if (AonArrayUtils.constainsIgnoreCase(cra1ConceptOrder, concept)){
+				definitive = "[0001] " + definitive;
+			}
+			return definitive;
+		}
+		return null;
+	}
+
+	private static LinkedHashSet<String> getOrderedPaymentConcepts(AggregatedAnnualYearlyEntry entry) {
+		LinkedHashSet<String> paymentConceptsSet = new LinkedHashSet<String>();
+		
+		entry.getMonthlyEntries().values().stream().map(e -> e.getPayments()).forEach(payments -> {
+			payments.stream()
+			.filter(p -> p != null)
+			.map(p -> {
+				if (p.getPaymentType() != null) {
+					return choosePaymentName(p);
+				} else
+					return p.getName();
+			})
+			.forEach(name -> paymentConceptsSet.add(name));
+		});
+		
+		orderSet(paymentConceptsSet);
+		return paymentConceptsSet;
+	}
+
+	private static String choosePaymentName(Payment payment) {
+		if (payment.getPaymentType() == PaymentType.CRA_0001) {
+			if (AonStringUtils.containsIgnoreCase(payment.getName(), "SALARIO")) {
+				return "Salario Base";
+			} else if (AonStringUtils.containsIgnoreCase(payment.getName(), "PLUS")) {
+				return "Pluses Salariales";
+			} else {
+				return "Otros Conceptos Salariales";
+			}
+		} else if (payment.getPaymentType() != null) {
+			return payment.getPaymentType().name();
+		}
+		return "Otros conceptos";
+	}
+
+	private static void putDataRow(String dataName, boolean complete, Map<String, CellStyle> stylesMap,
 			LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totalsFormulas, String nif,
 			AggregatedAnnualYearlyEntry entry, Sheet sheet, Row row) {
+		
 		Cell cell;
 		{
 			cell = row.createCell(0);
 			cell.setCellType(CellType.STRING);
 			cell.setCellValue(dataName);
+			
 			int cellInd = 3;
 			boolean hasContent = false;
 			for (String month : months) {
+				CellStyle amountCellStyle = stylesMap.get("numberCellStyle");
 				AggregatedAnnualEntry ent = entry.getMonthlyEntries().get(month);
 				cell = row.createCell(cellInd++);
 				
@@ -813,11 +909,13 @@ public class AggregatedAnnualSummary {
 				Double amount = null;
 				if (ent != null) {
 					switch (dataName) {
-					case "Total Bruto":
+					case "TOTAL BRUTO":
 						amount = ent.getTotalRaw();
+						amountCellStyle = stylesMap.get("boldNumberCellStyle");
 						break;
 					case "TOTAL LÍQUIDO":
 						amount = ent.getTotalLiquid();
+						amountCellStyle = stylesMap.get("boldNumberCellStyle");
 						break;
 					case "PRORRATA PAGAS EXTRAS":
 						amount = ent.getExtraProrration();
@@ -830,6 +928,7 @@ public class AggregatedAnnualSummary {
 						break;
 					case "COSTE EMPRESA":
 						amount = ent.getEnterpriseCost();
+						amountCellStyle = stylesMap.get("boldNumberCellStyle");
 						break;
 					case "BASE CONTINGENCIAS COMUNES":
 						amount = ent.getCcBase();
@@ -845,6 +944,11 @@ public class AggregatedAnnualSummary {
 						break;
 					case "BASE IRPF TOTAL":
 						amount = ent.getTotalIrpfBase();
+						amountCellStyle = stylesMap.get("boldNumberCellStyle");
+						break;
+					case "RLC":
+						amount = ent.getRlc();
+						amountCellStyle = stylesMap.get("boldNumberCellStyle");
 						break;
 					default:
 						amount = null;
@@ -856,7 +960,7 @@ public class AggregatedAnnualSummary {
 					hasContent = true;
 					cell.setCellValue(amount);
 				}
-				cell.setCellStyle(numberCellStyle);
+				cell.setCellStyle(amountCellStyle);
 			}
 			cell = row.createCell(cellInd);
 			cell.setCellType(CellType.FORMULA);
@@ -971,19 +1075,42 @@ public class AggregatedAnnualSummary {
 		}
 	}
 
-	private static void resizeSheet(int firstDataRow, CellStyle rightBorderCellStyle,
-			CellStyle topLeftBorderCellStyleNoBottom, CellStyle leftBorderCellStyle, CellStyle bottomBorderCellStyle,
-			CellStyle bottomLeftBorderCellStyle, CellStyle bottomRightBorderCellStyle, Sheet sheet) {
+	private static void resizeSheet(int firstDataRow, Map<String, CellStyle> stylesMap, Sheet sheet) {
 		int maxCells[] = {0};
 		int[] firstDataRowArr = {firstDataRow};
 		sheet.rowIterator().forEachRemaining(r -> {
+			CellStyle left = stylesMap.get("leftBorderCellStyle");
+			CellStyle right = stylesMap.get("rightBorderCellStyle");
+			if (r.getCell(0) != null && AonArrayUtils.constainsIgnoreCase(BOLD_FIELDS, r.getCell(0).getStringCellValue())) {
+				left = stylesMap.get("leftBorderCellStyleBold");
+				right = stylesMap.get("rightBorderCellStyleBold");
+			}
+			
+			
 			Cell cel = r.getCell(15) != null ? r.getCell(15) : r.createCell(15);
-			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? rightBorderCellStyle : cel.getCellStyle());
+			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? right : cel.getCellStyle());
 			cel = r.getCell(3) != null ? r.getCell(3) : r.createCell(3);
-			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? leftBorderCellStyle : cel.getCellStyle());
+			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? left : cel.getCellStyle());
 
 			cel = r.getCell(0) != null ? r.getCell(0) : r.createCell(0);
-			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? leftBorderCellStyle : cel.getCellStyle());
+			
+			
+			CellStyle conceptStyle = stylesMap.get("leftBorderCellStyle");
+			if (cel.getCellTypeEnum() == CellType.STRING) {
+				switch (cel.getStringCellValue()) {
+					case "TOTAL BRUTO":
+					case "TOTAL LÍQUIDO":
+					case "BASE IRPF TOTAL":
+					case "COSTE EMPRESA":
+					case "RLC":
+					case "COSTE DIARIO":
+					case "INFORMACIÓN ADICIONAL":
+						conceptStyle = stylesMap.get("importantCellStyle");
+						break;
+				}
+			}
+			
+			cel.setCellStyle(r.getRowNum() > firstDataRowArr[0] - 1 ? conceptStyle : cel.getCellStyle());
 			
 			int cellCount[] = {0};
 			r.forEach(c -> {
@@ -999,40 +1126,49 @@ public class AggregatedAnnualSummary {
 		Row lastRow = sheet.getRow(lastRowNum);
 		for (int i=0; i<=14;i++) {
 			Cell lastRowCell = lastRow.getCell(i) != null ? lastRow.getCell(i) : lastRow.createCell(i);
-			lastRowCell.setCellStyle(bottomBorderCellStyle);
+			lastRowCell.setCellStyle(stylesMap.get("bottomBorderCellStyle"));
 		}
 		
 		{
 			Cell lastRowCell = lastRow.getCell(0) != null ? lastRow.getCell(0) : lastRow.createCell(0);
-			lastRowCell.setCellStyle(bottomLeftBorderCellStyle);
+			lastRowCell.setCellStyle(stylesMap.get("bottomLeftBorderCellStyle"));
 			lastRowCell = lastRow.getCell(3) != null ? lastRow.getCell(3) : lastRow.createCell(3);
-			lastRowCell.setCellStyle(bottomLeftBorderCellStyle);
+			lastRowCell.setCellStyle(stylesMap.get("bottomLeftBorderCellStyle"));
 			lastRowCell = lastRow.getCell(15) != null ? lastRow.getCell(15) : lastRow.createCell(15);
-			lastRowCell.setCellStyle(bottomRightBorderCellStyle);
+			lastRowCell.setCellStyle(stylesMap.get("bottomRightBorderCellStyle"));
 			if (sheet.getRow(firstDataRow) != null) {
 				Cell firstConceptCell = sheet.getRow(firstDataRow).getCell(0) != null ? sheet.getRow(firstDataRow).getCell(0) : sheet.getRow(firstDataRow).createCell(0);
-				firstConceptCell.setCellStyle(topLeftBorderCellStyleNoBottom);
+				firstConceptCell.setCellStyle(stylesMap.get("topLeftBorderCellStyleNoBottom"));
 			}
 		}
 	}
-
-	private static void totalsCellCreator(CellStyle numberCellStyle,
+	
+	private static void totalsCellCreator(Map<String, CellStyle> stylesMap,
 			LinkedHashMap<String, LinkedHashMap<String, String>> totalsFormulas, Sheet totalSheet, Row row,
 			String[] months, String field) {
+		totalsCellCreator(stylesMap,totalsFormulas, totalSheet, row,months, field, false);
+	}
+	private static void totalsCellCreator(Map<String, CellStyle> stylesMap,
+			LinkedHashMap<String, LinkedHashMap<String, String>> totalsFormulas, Sheet totalSheet, Row row,
+			String[] months, String field, boolean important) {
 		Cell cell;
 		{
 			LinkedHashMap<String, String> rawFormulas = totalsFormulas.get(field);
 			totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 			cell = row.createCell(0);
 			cell.setCellType(CellType.STRING);
-			cell.setCellValue(removeUnderscore(field));
+			if (field.contains("CRA_00") || AonArrayUtils.constainsIgnoreCase(cra1ConceptOrder, field)) {
+				cell.setCellValue(getDefinitivePaymentConcept(field));
+			} else {
+				cell.setCellValue(removeUnderscore(field));				
+			}
 			int[] cNum = {3};
 			if (rawFormulas != null) {
 				for (String month : months) {
 					String formula = rawFormulas.get(month);
 					Cell formulaCell = row.createCell(cNum[0]++);
 					formulaCell.setCellType(CellType.FORMULA);
-					formulaCell.setCellStyle(numberCellStyle);
+					formulaCell.setCellStyle(stylesMap.get(important ? "boldNumberCellStyle" : "numberCellStyle"));
 					formulaCell.setCellFormula(formula);
 				}
 				cell = row.createCell(cNum[0]);
@@ -1046,6 +1182,7 @@ public class AggregatedAnnualSummary {
 	public static Map<String, AggregatedAnnualYearlyEntry> getEntries (AONContext aonContext, Condition condition) {
 		LinkedHashMap<Integer, String> idsAndWorkplaces = new LinkedHashMap<Integer, String>();
 		 
+		//EACH SALARY'S WORKPLACE
 		aonContext.getDslContext()
 				.select(SALARY.ID, WORKPLACE.DESCRIPTION)
 				.from(SALARY)
@@ -1147,7 +1284,22 @@ public class AggregatedAnnualSummary {
 					} catch (NumberFormatException e) {}
 				}
 			});
+			
+			if (data.containsKey("DIAS_TRABAJADOS")) {
+				Double days = data.get("DIAS_TRABAJADOS");
+				if (days != null && days > 0) {
+					Double dailyCost = entry.getEnterpriseCost() / days;
+					data.put("COSTE_DIARIO", dailyCost);
+				}
+			}
+			
+			
 			entry.setDaysAndHours(data);
+		}
+		
+		if (s.getTotalSSContributions() != null || (enterpriseSS != null && enterpriseSS != 0d)) {
+			Double totalSS = safeSum(s.getTotalSSContributions(), enterpriseSS);
+			entry.setRlc(safeSum(entry.getRlc(), totalSS));
 		}
 	}
 	
@@ -1175,4 +1327,103 @@ public class AggregatedAnnualSummary {
 		return dedName;
 	}
 	
+	private static Map<String, CellStyle> getCellStyles(Workbook wb) {
+		LinkedHashMap<String, CellStyle> stylesMap = new LinkedHashMap<String, CellStyle>();
+		
+		DataFormat format = wb.createDataFormat();
+		
+		CellStyle monthCellStyle = wb.createCellStyle();
+		monthCellStyle.setBorderTop(BorderStyle.THIN);
+		monthCellStyle.setBorderBottom(BorderStyle.THIN);
+		monthCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		monthCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+		stylesMap.put("monthCellStyle", monthCellStyle);
+		
+		CellStyle rightBorderCellStyle = wb.createCellStyle();
+		rightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+		rightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("rightBorderCellStyle", rightBorderCellStyle);
+		
+		CellStyle topRightBorderCellStyle = wb.createCellStyle();
+		topRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+		topRightBorderCellStyle.setBorderTop(BorderStyle.THIN);
+		topRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+		topRightBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		topRightBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+		topRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("topRightBorderCellStyle", topRightBorderCellStyle);
+		
+		CellStyle topLeftBorderCellStyle = wb.createCellStyle();
+		topLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+		topLeftBorderCellStyle.setBorderTop(BorderStyle.THIN);
+		topLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+		topLeftBorderCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		topLeftBorderCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
+		topLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("topLeftBorderCellStyle", topLeftBorderCellStyle);
+		
+		CellStyle topLeftBorderCellStyleNoBottom = wb.createCellStyle();
+		topLeftBorderCellStyleNoBottom.setBorderLeft(BorderStyle.THIN);
+		topLeftBorderCellStyleNoBottom.setBorderTop(BorderStyle.THIN);
+		topLeftBorderCellStyleNoBottom.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("topLeftBorderCellStyleNoBottom", topLeftBorderCellStyleNoBottom);
+		
+		CellStyle leftBorderCellStyle = wb.createCellStyle();
+		leftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+		leftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("leftBorderCellStyle", leftBorderCellStyle);
+		
+		CellStyle bottomBorderCellStyle = wb.createCellStyle();
+		bottomBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+		bottomBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("bottomBorderCellStyle", bottomBorderCellStyle);
+		
+		CellStyle bottomLeftBorderCellStyle = wb.createCellStyle();
+		bottomLeftBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+		bottomLeftBorderCellStyle.setBorderLeft(BorderStyle.THIN);
+		bottomLeftBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("bottomLeftBorderCellStyle", bottomLeftBorderCellStyle);
+		
+		CellStyle bottomRightBorderCellStyle = wb.createCellStyle();
+		bottomRightBorderCellStyle.setBorderBottom(BorderStyle.THIN);
+		bottomRightBorderCellStyle.setBorderRight(BorderStyle.THIN);
+		bottomRightBorderCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("bottomRightBorderCellStyle", bottomRightBorderCellStyle);
+		
+		CellStyle numberCellStyle = wb.createCellStyle();
+		numberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		stylesMap.put("numberCellStyle", numberCellStyle);
+		
+		Font boldFont = wb.createFont();
+		boldFont.setBold(true);
+		
+		CellStyle leftBorderCellStyleBold = wb.createCellStyle();
+		leftBorderCellStyleBold.setBorderLeft(BorderStyle.THIN);
+		leftBorderCellStyleBold.setDataFormat(format.getFormat("#,###,##0.#0"));
+		leftBorderCellStyleBold.setFont(boldFont);
+		stylesMap.put("leftBorderCellStyleBold", leftBorderCellStyleBold);
+		
+		CellStyle rightBorderCellStyleBold = wb.createCellStyle();
+		rightBorderCellStyleBold.setBorderRight(BorderStyle.THIN);
+		rightBorderCellStyleBold.setDataFormat(format.getFormat("#,###,##0.#0"));
+		rightBorderCellStyleBold.setFont(boldFont);
+		stylesMap.put("rightBorderCellStyleBold", rightBorderCellStyleBold);
+		
+		CellStyle boldNumberCellStyle = wb.createCellStyle();
+		boldNumberCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		boldNumberCellStyle.setFont(boldFont);
+		stylesMap.put("boldNumberCellStyle", boldNumberCellStyle);
+		
+		CellStyle importantCellStyle = wb.createCellStyle();
+		importantCellStyle.setBorderLeft(BorderStyle.THIN);
+		importantCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
+		importantCellStyle.setFont(boldFont);
+		stylesMap.put("importantCellStyle", importantCellStyle);
+		
+		CellStyle headerInfoCellStyle = wb.createCellStyle();
+		headerInfoCellStyle.setFont(boldFont);
+		stylesMap.put("headerInfoCellStyle", headerInfoCellStyle);
+		
+		return stylesMap;
+	}
 }
