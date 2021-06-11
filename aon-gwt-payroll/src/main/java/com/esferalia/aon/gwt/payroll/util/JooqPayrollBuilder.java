@@ -351,6 +351,7 @@ public class JooqPayrollBuilder {
 					costBuilder.setForceMajeureApEnterprise(Optional.ofNullable(forceMajeureApEnterprise));
 					costBuilder.setNoStructApEnterprise(Optional.ofNullable(noStructApEnterprise));
 
+					
 					// REMUNERATION AND PRO. EXT. BASE
 					costBuilder.setExtraProrationAmount(Optional.ofNullable(salary.getExtraProrationBase()));
 					costBuilder.setMonthlyAmount(Optional.ofNullable(salary.getRemuneration()));
@@ -408,13 +409,46 @@ public class JooqPayrollBuilder {
 
 				// SETTING BASES
 				{
+					
+					List<ContextData> structural = salary.getContextData("BASE_ESTR",salary.getStartDate(),salary.getEndDate());
+					Double structValue = -1.00;
+					
+					for (ContextData entry : structural) {
+						try {
+							structValue += Double.parseDouble(entry.getExpression());							
+						}catch(Exception ignored) {}
+					}
+					if(structValue != -1.00)
+						structValue ++;
+					
+					List<ContextData> nonStructural = salary.getContextData("BASE_NESTR",salary.getStartDate(),salary.getEndDate());
+					Double nonStructValue = -1.00;
+					
+					for (ContextData entry : nonStructural) {
+						try {
+							nonStructValue += Double.parseDouble(entry.getExpression());							
+						}catch(Exception ignored) {}
+					}
+					if(nonStructValue != -1.00)
+						nonStructValue ++;
+					
 					costBuilder.setCommonContBase(Optional.ofNullable(salary.getCommonContingenciesBase()));
 					costBuilder.setProfessionalContBase(Optional.ofNullable(salary.getProfessionalContingenciesBase()));
 					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
 					costBuilder.setIrpfEsp(Optional.ofNullable(salary.getInkindIrpfBase()));
 					costBuilder.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
-					costBuilder.setNoStructBase(Optional.ofNullable(salary.getNonEstructuralOvertimeBase()));
-					costBuilder.setForceMajeureBase(Optional.ofNullable(salary.getEstructuralOvertimeBase()));
+					
+					if(structValue != -1.00) 
+						costBuilder.setForceMajeureBase(Optional.ofNullable(structValue));
+					else
+						costBuilder.setForceMajeureBase(Optional.ofNullable(salary.getEstructuralOvertimeBase()));
+					
+					
+					if(nonStructValue != -1.00)
+						costBuilder.setNoStructBase(Optional.ofNullable(nonStructValue));
+					else
+						costBuilder.setNoStructBase(Optional.ofNullable(salary.getNonEstructuralOvertimeBase()));
+					
 				}
 				payrollBuilder.setContingencies(costBuilder.build());
 			}
