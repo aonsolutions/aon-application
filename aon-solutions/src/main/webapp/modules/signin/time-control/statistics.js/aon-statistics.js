@@ -53,7 +53,7 @@ export class AonStatistics extends AonElement {
     this.initialize();
     getDomainUserRoles({}).then(r=>{
       this.dur = new DomainUserRoles(r);
-      if(this.dur.isAlpha())this.build();
+      this.build();
     });
   }
 
