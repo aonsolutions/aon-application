@@ -2,10 +2,9 @@ import {webkitRequestMobile} from '../services/service.js';
 import { TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
-  ROOT_PANEL;
+  ROOT_PANEL = 'rootPanel';
   constructor () {
     super();
-    this.ROOT_PANEL = 'rootPanel';
   }
 
   isMobile() {

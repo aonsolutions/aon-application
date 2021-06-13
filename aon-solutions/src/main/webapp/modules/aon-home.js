@@ -2,11 +2,11 @@ import { AonElement } from '../components/AonElement.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonHeader } from './aon-header.js';
 import { AonMenu } from './aon-menu.js';
-import { AonMobileHeader } from './aon-mobile-header.js';
-import { AonMobileMenu } from './aon-mobile-menu.js';
+import { AonNewMobileHeader } from './aon-new-mobile-header.js';
+import { AonNewMobileMenu } from './aon-new-mobile-menu.js';
 
 import { CSS, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
-import { AonNewMobileHeader } from './aon-new-mobile-header.js';
+
 
 export class AonHome extends AonElement {
 
@@ -90,7 +90,7 @@ export class AonHome extends AonElement {
 		rootPanel.className = CSS.AON_MOBILE_ROOT_PANEL;
 		this.appendChild(rootPanel);
 
-		let aonMobileMenu = new AonMobileMenu();
+		let aonMobileMenu = new AonNewMobileMenu();
 		aonMobileMenu.id = this.AON_MOBILE_MENU;
 		this.appendChild(aonMobileMenu);
 	}
