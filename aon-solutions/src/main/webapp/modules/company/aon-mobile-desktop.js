@@ -1,23 +1,16 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/components.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSign } from '../signin/aon-sign.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import '../invoice/aon-invoice-panel.js';
 import { AonStatistics } from '../signin/time-control/statistics.js/aon-statistics.js';
-// import '../../components/aon-suggestion.js';
-// import './aon-mobile-parent.js';
-// import '../../components/aon-application.js';
-// import '../../components/aon-icon.js';
 
 export class AonMobileDesktop extends AonElement {
 
 	SUGGESTION;
 	DIV_PARENT;
-	static get observedAttributes() {
-		return ['company'];
-	}
 
 	get id() {
 		return this.getAttribute('id');
@@ -41,10 +34,6 @@ export class AonMobileDesktop extends AonElement {
 
 	set user(user) {
 		this.setAttribute('user', user);
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-
 	}
 
 	constructor () {
@@ -77,7 +66,9 @@ export class AonMobileDesktop extends AonElement {
 		this.innerHTML = '';
 		let divParent = this.createElement(TAG.DIV);
 		divParent.id = this.DIV_PARENT;
-		divParent.style.height = "100%";
+		divParent.style.height = '100%';
+		divParent.style.maxWidth = '100%';
+		divParent.style.overflowX = 'hidden';
 		divParent.style.display = "flex";
 		divParent.style.flexDirection = "column";
 		this.appendChild(divParent);
@@ -132,8 +123,8 @@ export class AonMobileDesktop extends AonElement {
 		});
 
 		if(localStorage.getItem('company')) {
-			let menu = document.querySelector('aon-mobile-menu');
-			menu.reload();
+			// let menu = document.querySelector('aon-mobile-menu');
+			// menu.reload();
 		} else {
 			getCompanies()
 			.then( companies => {
@@ -145,8 +136,8 @@ export class AonMobileDesktop extends AonElement {
 					getUser().then(user => {
 						localStorage.setItem('aon_domain_login', user.login);
 					});
-					let menu = document.querySelector('aon-mobile-menu');
-					menu.reload();
+					// let menu = document.querySelector('aon-mobile-menu');
+					// menu.reload();
 				}
 			});
 		}

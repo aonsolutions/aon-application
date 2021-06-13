@@ -1,0 +1,165 @@
+import {AonElement} from '../components/AonElement.js';
+import { Apps} from  '../services/app.js';
+import {getDomainUserRoles} from  '../services/service.js';
+
+import {DomainUserRoles} from '../models/DomainUserRoles.js';
+import { MSG, TAG } from '../environments/environments.js';
+import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.js';
+import { AonDocumental } from './documental/aon-documental.js';
+import '../components/aon-icon.js';
+import '../components/aon-application.js';
+import './marketplace/aon-marketplace.js';
+import './invoice/aon-invoice-panel.js';
+import './laboral/aon-laboral.js';
+import './messenger/aon-messenger.js';
+import './fiscal/aon-fiscal.js';
+import './accounting/aon-accounting.js';
+
+
+export class AonApps extends AonElement {
+
+	dur;
+
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	constructor () {
+		super();
+	}
+
+	connectedCallback () {
+		this.initialize();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.build();
+		});
+  	}
+
+	initialize(){
+
+	}
+
+	getDur() {
+		return this.dur;
+	}
+
+	build() {
+		this.appendChild(this.buildTitle('DISPONIBLES'));
+
+		let ul = this.createElement(TAG.UL);
+		ul.className = 'list-group';
+
+		for (let key in Apps){
+			if(this.isApp(Apps[key])) {
+				let li = this.createElement(TAG.LI);
+				li.className = 'list-group-item aonAppLi';
+				li.style.borderRight = '0px';
+				li.style.borderLeft = '0px';
+				li.style.cursor = 'pointer';
+				li.addEventListener('click', () => {
+					this.appSelection(Apps[key].app);
+				});
+				let span = this.createElement(TAG.SPAN);
+				span.style.margin = '20px';
+				if(Apps[key].icon) {
+					span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="30px"></aon-icon>`;
+				} else {
+					let img = this.createElement(TAG.IMG);
+					img.style.width = '30px';
+					img.src = Apps[key].logo;
+					span.appendChild(img);
+				}
+				let span2 = this.createElement(TAG.SPAN);
+				span2.className = 'aonAppTitle';
+				span2.innerHTML = Apps[key].title;
+				span.appendChild(span2);
+
+				let buttons = this.createElement(TAG.SPAN);
+				buttons.style.position = 'absolute';
+				buttons.style.right = '10px';
+
+				let i = this.createElement('i');
+				i.className = 'material-icons';
+				i.innerHTML = 'keyboard_arrow_right';
+				buttons.appendChild(i);
+
+				span.appendChild(buttons);
+				li.appendChild(span);
+				ul.appendChild(li);
+			}
+		}
+  	
+		this.appendChild(ul);
+	}
+
+	buildTitle(title) {
+		let div = this.createElement(TAG.DIV);
+		div.style.color = 'gray';
+		div.style.padding = '20px';
+		div.innerHTML = title;
+		return div;
+	}
+
+	appSelection(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
+				this.rootPanel(aonDocumental);
+				break;
+			case Apps.ACCOUNTING.app:
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
+				break;
+			case Apps.FISCAL.app:
+				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
+				break;
+			case Apps.COMUNICA.app:
+				this.rootPanelHtml(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
+				break;
+			case Apps.PAYROLL.app:
+				this.rootPanelHtml(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
+				break;
+			case Apps.INVOICE.app:
+				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
+				break;
+			case Apps.TIMECONTROL.app:
+				this.rootPanelHtml('<aon-signin></aon-signin>');
+				break;
+			case Apps.MESSENGER.app:
+				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');
+				break;
+		}
+	}
+
+	development(title) {
+		this.getApplication().development(title);
+	}
+
+	isApp(app) {
+		if(Apps.ACCOUNTING.app === app.app)
+			return this.getDur().isAccounting();
+		else if(Apps.FISCAL.app === app.app)
+			return this.getDur().isFiscal();
+		else if(Apps.COMUNICA.app === app.app)
+			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal() ) && !this.getDur().isPayroll();
+		else if(Apps.PAYROLL.app === app.app)
+			return this.getDur().isPayroll();
+		else if(Apps.DOCUMENTAL.app === app.app)
+			return this.getDur().isDocumental();
+		else if(Apps.TIMECONTROL.app === app.app)
+			return this.getDur().isTimecontrol();
+		else if(Apps.INVOICE.app === app.app)
+			return this.getDur().isInvoice();
+		else if(Apps.MESSENGER.app === app.app)
+			return this.getDur().isMessenger();
+		else return false;
+	}
+}
+
+if(!window.customElements.get('aon-apps')){
+	window.customElements.define('aon-apps', AonApps);
+}

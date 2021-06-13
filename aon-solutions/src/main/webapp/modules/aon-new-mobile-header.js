@@ -106,19 +106,19 @@ export class AonNewMobileHeader extends AonElement {
 		spanUser.appendChild(userButton);
 		div.appendChild(spanUser);
 
-		let spanNotification = this.createElement(TAG.SPAN);
-		spanNotification.id = this.USER;
-		spanNotification.classList.add(CSS.AON_RIGHT_60);
-		spanNotification.classList.add(CSS.AON_MOBILE_HEADER_BUTTON);
-		let notificationButton = new AonNotificationIcon();
-		notificationButton.id = this.NOTIFICATION_ICON;
-		if(!this.isParent()) notificationButton.color = 'white';
-		spanNotification.appendChild(notificationButton);
-		div.appendChild(spanNotification);
+		// let spanNotification = this.createElement(TAG.SPAN);
+		// spanNotification.id = this.USER;
+		// spanNotification.classList.add(CSS.AON_RIGHT_60);
+		// spanNotification.classList.add(CSS.AON_MOBILE_HEADER_BUTTON);
+		// let notificationButton = new AonNotificationIcon();
+		// notificationButton.id = this.NOTIFICATION_ICON;
+		// if(!this.isParent()) notificationButton.color = 'white';
+		// spanNotification.appendChild(notificationButton);
+		// div.appendChild(spanNotification);
 
 		let spanCompanyList = this.createElement(TAG.SPAN);
 		spanCompanyList.id = this.COMPANY_LIST;
-		spanCompanyList.classList.add(CSS.AON_RIGHT_100);
+		spanCompanyList.classList.add(CSS.AON_RIGHT_60);
 		spanCompanyList.classList.add(CSS.AON_MOBILE_HEADER_BUTTON);
 		let companyListButton = new AonIconButton();
 		companyListButton.id = this.COMPANY_LIST_BUTTON;
@@ -293,8 +293,8 @@ export class AonNewMobileHeader extends AonElement {
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = 'white';
 
-		let notificationButton = this.getElement(this.NOTIFICATION_BUTTON); //'aonHeaderNotificationButton');
-		notificationButton.color = 'white';
+		// let notificationButton = this.getElement(this.NOTIFICATION_BUTTON); //'aonHeaderNotificationButton');
+		// notificationButton.color = 'white';
 		
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = 'white';
@@ -313,8 +313,8 @@ export class AonNewMobileHeader extends AonElement {
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = '#5f6368';
 
-		let notificationButton = this.getElement(this.NOTIFICATION_BUTTON);
-		notificationButton.color = '#5f6368';
+		// let notificationButton = this.getElement(this.NOTIFICATION_BUTTON);
+		// notificationButton.color = '#5f6368';
 		
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = '#5f6368';

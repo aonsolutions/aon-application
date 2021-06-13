@@ -53,7 +53,7 @@ export class AonNotificationIcon extends AonElement {
                 id:  "aonHeaderNotificationButton",
                 icon: "notifications",
                 noHover: true,
-                color: this.color
+                color: this.color || '#5f6368'
             }
         }, notificationSpan);
         return notificationSpan;
