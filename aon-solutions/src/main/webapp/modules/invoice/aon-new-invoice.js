@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -548,7 +548,7 @@ export class AonNewInvoice extends AonElement {
 		paymethod.id = this.PAYMETHOD;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
-		paymethod.options = JSON.stringify(Paymethods);
+		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setPaymethod(paymethod.value);
@@ -557,9 +557,14 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
-		if(this.invoice.finances.length === 1) {
-			paymethod.value = this.invoice.finances[0].paymethod;
-		}
+		
+		getPaymethods({}).then(paymethods => {
+			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+			paymethod.options = JSON.stringify(pms);
+			if(this.invoice.finances.length === 1) {
+				paymethod.value = this.invoice.finances[0].paymethod;
+			}
+		});
 	}
 
 	buildTaxCard(parent) {
@@ -797,7 +802,7 @@ export class AonNewInvoice extends AonElement {
 		// taxType.value = getTaxTypeName(tax.type);
 
 		// ----- TAX PERCENT
-
+		tax.type = tax.type || tax.tax;
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '% ' + getTaxTypeName(tax.type, this.isMobile());
@@ -1189,7 +1194,7 @@ export class AonNewInvoice extends AonElement {
 		paymethod.id = this.FINANCE_PAYMETHOD + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
-		paymethod.options = JSON.stringify(Paymethods);
+		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
 			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
@@ -1198,7 +1203,12 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod);
-		paymethod.value = finance.paymethod;
+
+		getPaymethods({}).then(paymethods => {
+			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+			paymethod.options = JSON.stringify(pms);
+			paymethod.value = finance.paymethod;
+		});
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 
