@@ -245,8 +245,7 @@ export class AonMobileDesktop extends AonElement {
 		li.appendChild(span);
 
 		let sp = this.createElement(TAG.SPAN);
-		sp.style.position = 'absolute';
-		sp.style.right = '0px';
+		sp.style.float = 'right';
 
 		let i2 = this.createElement('i');
 		i2.className = 'material-icons aonAvatar';
