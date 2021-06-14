@@ -3487,7 +3487,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		if ( ctxMonthDays == naturalMonthDays )
 			return availableDays * factor;
-		
+
+		if ( isPartial(ctx, p) && isInIT(ctx, p) )
+			return availableDays * factor;
+					
 		Date ctxEndDate = getEndDate();
 		if ( getLastDayOfMonth(ctxEndDate).after(ctxEndDate))
 			return availableDays * factor;
@@ -3507,8 +3510,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return (availableDays + (30 - naturalMonthDays)) * factor;
 		//return (availableDays) + (30 - naturalMonthDays);
 	}
+
+	private boolean isPartial(ExpressionContext ctx, Period p) {
+		try {
+			return ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd())
+			.stream().map( v -> v.getValue(v.getPeriod()))
+			.filter( v -> v != null && v instanceof Number )
+			.anyMatch( v -> ((Number)v).doubleValue() < 1.00);
+		} catch ( Exception e) {
+			return false;
+		}
+	}
 	
-	
+	private boolean isInIT(ExpressionContext ctx, Period p) {
+		return getLeavesPeriods().size() > 0 ;
+	}
+
 	private Period getPeriod4Adjust(List<Pair<ContextVariable,ITimedVariable<Object>>> others) {
 		return 
 		others.stream().map(pair -> pair.snd)
