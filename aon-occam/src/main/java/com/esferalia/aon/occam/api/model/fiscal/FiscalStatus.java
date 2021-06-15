@@ -2,15 +2,17 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisitor;
+
 public enum FiscalStatus implements Serializable {
 	 
-	 PENDING("Pendiente")
-	,FINISHED("Finalizado")
-	,BATCHED("En Lote")
-	,BLOCKED("Bloqueado")
-	,SENT("Presentado")
-	,MISSING("Desconocido")
-	,CUSTOMER_CHECK("Envio a cliente")
+	PENDING("Pendiente")	{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor){ return visitor.visitPending();} },
+	FINISHED("Finalizado")	{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitFinished();} },
+	BATCHED("En Lote")		{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitBatched();} },
+	BLOCKED("Bloqueado")	{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitBlocked();} },
+	SENT("Presentado")		{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitSent();} },
+	MISSING("Desconocido")	{ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitMissing();} },
+	CUSTOMER_CHECK("Envio a cliente"){ @Override public <T> T visit(IFiscalStatusVisitor<T> visitor) { return visitor.visitCustomerCheck();} },
 	;
 	
 	private String name;
@@ -22,6 +24,8 @@ public enum FiscalStatus implements Serializable {
 	public String getName() {
 		return name;
 	}
+	
+	public abstract <T> T visit(IFiscalStatusVisitor<T> visitor);
 	
 	public static FiscalStatus safeValueOf( String i ) {
 		if (i == null) return null;

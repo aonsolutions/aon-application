@@ -58,4 +58,23 @@ public class EnumVisitors {
 		void visitM202();
 		void visitM303();
 	}
+	
+	public static interface IFiscalStatusVisitor<T> {
+		T visitPending();
+		T visitFinished();
+		T visitBatched();
+		T visitBlocked();
+		T visitSent();
+		T visitMissing();
+		T visitCustomerCheck();
+	}
+	
+	public static interface IAdministrationVisitor<T> {
+		T visitAlava();
+		T visitBizkaia();
+		T visitGipuzkoa();
+		T visitNavarra();
+		T visitCommonTerritory();
+		T visitUnknown();
+	}
 }

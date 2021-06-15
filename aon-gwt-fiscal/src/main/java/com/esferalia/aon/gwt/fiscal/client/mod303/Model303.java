@@ -79,7 +79,7 @@ public class Model303 extends MainEntryPoint {
 		public String getDomainName();
 		public String getUser();
 		public int getDomain();
-		
+		public Model303ModuleOptions getOptions();
 		public void onAccept(Mod303 mod303);
 		public void onCancel();
 		public void onNew();
@@ -124,6 +124,11 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void showError(String msg) {
 			Model303.this.showErrorPanel(msg);
+		}
+
+		@Override
+		public Model303ModuleOptions getOptions() {
+			return Model303.this.getOptions();
 		}
 
 		@Override
@@ -183,7 +188,8 @@ public class Model303 extends MainEntryPoint {
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
 		
-		model303Table = new Model303Table(new Model303Callback());
+		Model303Callback callback = new Model303Callback();
+		model303Table = new Model303Table(callback);
 		model303Table.addSelectionHandler(new SelectionHandler<Mod303>() {
 			
 			@Override
@@ -202,7 +208,7 @@ public class Model303 extends MainEntryPoint {
 			LOGGER.info("Access to Model303 new Model");
 			newModel(getOptions().getNewModel()); 
 		} else {
-			model303Table.refresh();;
+			model303Table.refresh( callback );;
 			LOGGER.info("Model303 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
@@ -371,7 +377,7 @@ public class Model303 extends MainEntryPoint {
 		cleanErrorPanel();
 		cleanBreakdownPanel();
 		declarationContainer.setWidget(model303Table);
-		model303Table.refresh();
+		model303Table.refresh( new Model303Callback() );
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
