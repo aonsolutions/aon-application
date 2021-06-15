@@ -44,79 +44,6 @@ public class JooqEnterpriseSalaryBuilder {
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
 	 * @param outputStream The OutputStream which will contain the pdf
 	 * @param domain The domain name
-	 * @param condition The condition to pick up the salaries
-	 * @param month A date containing the month and the year of the payroll
-	 * @param enterpriseId
-	 * @param workplaceId
-	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
-		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
-			DSLContext ctx = aonContext.getDslContext();
-			
-			Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
-			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = getEnterprisePayrolls(ctx, condition);
-			
-			if (enterpriseId == null || enterpriseId == 0)
-				enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-						, aonContext.getDomainId()
-						, aonContext.getUser()
-						, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
-			
-			AtomicInteger entId = new AtomicInteger(enterpriseId);
-			
-			String enterpriseName = AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), "", r -> r.getIdProperty().eq(entId.get())).getName();
-			
-			
-			Attach attach1 = AON.getAttach(
-					aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser(),
-					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
-							.and(f.getDomainProperty().eq(aonContext.getDomainId()))
-					, AttachType.REGISTRY
-					);
-			
-			byte[] byteLogo = attach1.getData();
-			
-			InputStream logo = null;
-			
-			try {
-				logo = new ByteArrayInputStream(byteLogo);
-			} catch (NullPointerException e) {
-			}
-			String subheader = "Empresa: ";
-			if (enterpriseName != null) {
-				subheader = subheader.concat(enterpriseName);
-			}
-			
-			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, month, null, subheader, payrolls, map);
-			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")));
-		} catch (CanNotCreatePdfException e) {			
-		} catch (IOException e) {}
-	}
-	/**
-	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
-	 * @param outputStream The OutputStream which will contain the pdf
-	 * @param domain The domain name
-	 * @param startDate The start date of the enterprise payroll
-	 * @param endDate The end date of the enterprise payroll
-	 * @param enterpriseId
-	 * @param workplaceId
-	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId) {
-		Condition condition;
-		if (workplaceId != null && workplaceId != 0)
-			condition = WORKPLACE.ID.eq(workplaceId);
-		else
-			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
-				, new java.sql.Date(endDate.getTime())));
-		generateEnterprisePayroll(outputStream, domain, user, condition, startDate, enterpriseId, workplaceId);
-	}
-	/**
-	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
-	 * @param outputStream The OutputStream which will contain the pdf
-	 * @param domain The domain name
 	 * @param startDate The start date of the enterprise payroll
 	 * @param endDate The end date of the enterprise payroll
 	 * @param enterpriseId
@@ -165,6 +92,61 @@ public class JooqEnterpriseSalaryBuilder {
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		
 		generateEnterprisePayroll(outputStream, domain, user, condition, month, enterpriseId, null);
+	}
+
+	/**
+	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
+	 * @param outputStream The OutputStream which will contain the pdf
+	 * @param domain The domain name
+	 * @param condition The condition to pick up the salaries
+	 * @param month A date containing the month and the year of the payroll
+	 * @param enterpriseId
+	 * @param workplaceId
+	 */
+	private static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
+		try (AONContext aonContext = AONContext.getAONContext(domain, user)) {
+			DSLContext ctx = aonContext.getDslContext();
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
+			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = getEnterprisePayrolls(ctx, condition);
+			
+			if (enterpriseId == null || enterpriseId == 0)
+				enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, aonContext.getUser()
+						, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+			
+			AtomicInteger entId = new AtomicInteger(enterpriseId);
+			
+			String enterpriseName = AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), "", r -> r.getIdProperty().eq(entId.get())).getName();
+			
+			
+			Attach attach1 = AON.getAttach(
+					aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+							.and(f.getDomainProperty().eq(aonContext.getDomainId()))
+					, AttachType.REGISTRY
+					);
+			
+			byte[] byteLogo = attach1.getData();
+			
+			InputStream logo = null;
+			
+			try {
+				logo = new ByteArrayInputStream(byteLogo);
+			} catch (NullPointerException e) {
+			}
+			String subheader = "Empresa: ";
+			if (enterpriseName != null) {
+				subheader = subheader.concat(enterpriseName);
+			}
+			
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, month, null, subheader, payrolls, map);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")));
+		} catch (CanNotCreatePdfException e) {			
+		} catch (IOException e) {}
 	}
 
 	/**

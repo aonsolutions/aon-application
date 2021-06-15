@@ -23,6 +23,7 @@ import org.apache.commons.cli.ParseException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.rnt.Liquidacion;
@@ -40,6 +41,8 @@ public class RNT {
 		
 		Liquidacion liquidacion = rnt.getLiquidacion();
 		
+		String tipo  = liquidacion.getTipo();
+		
 		String ccc = Utils.toString(liquidacion.getCcc());
 
 		Date startDate = Utils.toCalendar(liquidacion.getPeriodoDesde()).getTime();
@@ -49,6 +52,9 @@ public class RNT {
 				props->props.getCCCProperty().eq(ccc)
 					.and(props.getStartDateProperty().ge(startDate))
 					.and(props.getEndDateProperty().le(endDate))
+					.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
+					.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
+					.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
 		);
 		
 		
