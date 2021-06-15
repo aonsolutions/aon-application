@@ -7,7 +7,8 @@ public class AggregatedAnnualSummaryService {
 		YEAR("year"),
 		COMPLETE("complete"),
 		DOMAIN("domain"),
-		USER("user");
+		USER("user"),
+		TYPE("type");
 		private String name;
 		private Params (String name) {
 			this.name = name;
@@ -16,5 +17,10 @@ public class AggregatedAnnualSummaryService {
 			return name;
 		}
 		
+	}
+	
+	public static enum SummaryType {
+		MONTHLY,
+		QUARTERLY;
 	}
 }

@@ -1,5 +1,7 @@
 package com.esferalia.aon.in.payroll.excel;
 
+import static com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary.SummaryType.QUARTERLY;
+import static com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary.SummaryType.MONTHLY;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -18,17 +20,22 @@ import com.github.javafaker.Faker;
 public class AggregatedAnnualSummaryTestCase {
 	@Test
 	public void repeatTest() {
-		for (int i=0; i<10;i++)
+		for (int i=0; i<10;i++) {
 			test();
+		}
 	}
 	
 	private void test() {
 		Faker faker = new Faker(new Locale("es", "ES"));
+		AggregatedAnnualSummary.SummaryType type = faker.bool().bool() ? MONTHLY : QUARTERLY;
 		Map<String, AggregatedAnnualYearlyEntry> mainMap = new LinkedHashMap<String, AggregatedAnnualYearlyEntry>();
 		for (int i=0; i< faker.number().numberBetween(0, 10); i++) {
 			String[] months = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
+			String[] quarters = {"1º TRIM", "2º TRIM", "3º TRIM", "4º TRIM"};
+			String[] periods = type == MONTHLY ? months : quarters;
+			
 			Map<String, AggregatedAnnualEntry> map = new LinkedHashMap<String, AggregatedAnnualEntry>();
-			for (String month : months) {
+			for (String period : periods) {
 				AggregatedAnnualEntry entry = new AggregatedAnnualEntry();
 				entry.setAccBase(getAmount(faker));
 				entry.setBonuses(getAmount(faker));
@@ -70,7 +77,7 @@ public class AggregatedAnnualSummaryTestCase {
 				}
 				entry.setPayments(payments);
 				
-				map.put(month, entry);
+				map.put(period, entry);
 				
 			}
 			AggregatedAnnualYearlyEntry yearlyEntry = new AggregatedAnnualYearlyEntry(
@@ -80,7 +87,12 @@ public class AggregatedAnnualSummaryTestCase {
 					, map);
 			mainMap.put(faker.business().creditCardNumber(), yearlyEntry);
 		}
-		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream(), faker.number().numberBetween(2000, 2050), mainMap, faker.company().name(), faker.business().creditCardNumber(), faker.bool().bool());
+		AggregatedAnnualSummary.getExcel(OutputStream.nullOutputStream()
+				, faker.number().numberBetween(2000, 2050)
+				, mainMap, faker.company().name()
+				, faker.business().creditCardNumber()
+				, type
+				, faker.bool().bool());
 	}
 	private static Double getAmount(Faker faker) {
 		int probab = faker.number().numberBetween(0, 100);

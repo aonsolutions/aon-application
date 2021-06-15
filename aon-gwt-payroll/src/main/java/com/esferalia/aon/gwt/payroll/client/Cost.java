@@ -134,7 +134,7 @@ public class Cost extends ResizeComposite {
 			
 			addSeparator();
 			
-				MenuItem summaryItem = addItem("Resumen Anual Agregado", () -> {},
+				MenuItem summaryItem = addItem("Resumen Anual Agregado (.xsl, mensual)", () -> {},
 						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				summaryItem.setScheduledCommand(() -> {
 					availableYears.clear();
@@ -150,7 +150,7 @@ public class Cost extends ResizeComposite {
 						
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
-							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year),
+							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.MONTHLY),
 									AON.CSS.aonIconExcel(), style.cmd_btn());
 						}
 						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
@@ -165,7 +165,39 @@ public class Cost extends ResizeComposite {
 				});
 				
 				
-				MenuItem recordItem = addItem("Registro Retributivo", () -> {},
+				
+				MenuItem summaryQuarterlyItem = addItem("Resumen Anual Agregado (.xsl, trimestral)", () -> {},
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+				summaryQuarterlyItem.setScheduledCommand(() -> {
+					availableYears.clear();
+					if (costDocuments != null && costDocuments.getCosts() != null) {
+						costDocuments.getCosts()
+						.stream()
+						.map(c -> c.getYear())
+						.sorted(Comparator.reverseOrder())
+						.forEach(y -> availableYears.add(y));
+					}
+					
+					if (availableYears != null & !availableYears.isEmpty()) {
+						
+						aggregatedAnnualSummary = new ContextMenu();
+						for (Integer year : availableYears) {
+							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.QUARTERLY),
+									AON.CSS.aonIconExcel(), style.cmd_btn());
+						}
+						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
+						
+					
+					}
+					
+					PopupPanel ppp = new PopupPanel(true);
+					ppp.add(aggregatedAnnualSummary);
+					ppp.setPopupPosition(summaryQuarterlyItem.getAbsoluteLeft() + summaryQuarterlyItem.getOffsetWidth(), summaryQuarterlyItem.getAbsoluteTop());
+					ppp.show();
+				});
+				
+				
+				MenuItem recordItem = addItem("Registro Retributivo (.xsl)", () -> {},
 						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 				recordItem.setScheduledCommand(() -> {
 					availableYears.clear();
@@ -618,7 +650,7 @@ public class Cost extends ResizeComposite {
 		
 		formPanel.submit();
 	}
-	public void printAggregatedAnnualSummary (Integer year) {
+	public void printAggregatedAnnualSummary (Integer year, AggregatedAnnualSummaryService.SummaryType type) {
 		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
@@ -635,6 +667,7 @@ public class Cost extends ResizeComposite {
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.COMPLETE.getName(), "true"));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.USER.getName(), Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.TYPE.getName(), type.name()));
 		
 		
 		formPanel.add(flowPanel);
