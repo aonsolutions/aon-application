@@ -386,7 +386,6 @@ const sendMessage = (aonTextArea) => {
  * @param {*} funct - The Compile function.
  */
  const setSelectionMarkup = (element, funct, conditions) => {
-    
     /**
      * Get text and selected 
      * text start and end indexes
@@ -394,45 +393,29 @@ const sendMessage = (aonTextArea) => {
     const text = element.value;
     let start = element.dataset.start;
     let end = element.dataset.end;
-
     /**
      * If invalid index then return;
      */
     if (start == -1)  return;
-    
-    /**
-     * Calculate index of the next space
-     * and set endpoint there or on 
-     * the selection end.
-     */
-    let indexOfNextSpace = text.indexOf(" ",start);
-    if(indexOfNextSpace !== end)
-        indexOfNextSpace = end;
-    
-    /**
-     * If end has an invalid value, 
-     * then return. 
-     */
-    if(indexOfNextSpace == -1)
-        indexOfNextSpace = text.length
-
     /**
      * If conditions are valid,
      * then compile in markup.
      */
-    const selection = text.substr(start,indexOfNextSpace);
-    if (conditions(text, selection , start, indexOfNextSpace)){
+    const selection = text.substring(start, end);
+    if (conditions(text, selection , start, end)){
 
+        const compiled = funct(selection);
         let pre = "";
-        let compiled = funct(selection);
         let post = "";
 
         if(start !== 0)
             pre = text.substr(0, start);
         
-        if(indexOfNextSpace !== text.length)
-            post = text.substr(indexOfNextSpace, text.length);
+        if(end !== text.length)
+            post = text.substr(end, text.length);
 
         element.value = pre + compiled + post;
     }
 }
+
+

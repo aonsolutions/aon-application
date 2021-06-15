@@ -50,6 +50,7 @@ export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
+export const AVERAGE = "Media";// TODO
 
 // ----- B
 
@@ -57,7 +58,7 @@ export const BACK = MSG.BACK;
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
 export const BASE = MSG.BASE;
 export const BILLING = MSG.BILLING;
-export const BLOCKED_POPUP = "Ventana bloqueada!";
+export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BOOKING = MSG.BOOKING;
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
@@ -78,9 +79,9 @@ export const COMPANIES = MSG.COMPANIES;
 export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
 export const COMPONENTS = MSG.COMPONENTS;
-export const COMUNICA = "Comunic@";
-export const COMMUNICATE = "Comunicar";
-export const COMMUNICATE_CONFIRM = "Desea comunicar a la seguridad social?";
+export const COMUNICA = "Comunic@";// TODO
+export const COMMUNICATE = "Comunicar";// TODO
+export const COMMUNICATE_CONFIRM = "Desea comunicar a la seguridad social?";// TODO
 export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
@@ -154,6 +155,7 @@ export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 export const HEADER = MSG.HEADER;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
+export const HOURS = "Horas";
 
 // ----- I
 
@@ -337,25 +339,25 @@ export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 
 
 //-------------DAYS
-export const SUNDAY = "domingo"; 
-export const MONDAY = "lunes";  
-export const TUESDAY = "martes"; 
-export const WEDNESDAY = "miercoles"; 
-export const THURSDAY = "jueves"; 
-export const FRIDAY = "viernes"; 
-export const SATURDAY = "sabado"; 
+export const SUNDAY = "domingo"; // TODO
+export const MONDAY = "lunes";  // TODO
+export const TUESDAY = "martes"; // TODO
+export const WEDNESDAY = "miercoles"; // TODO
+export const THURSDAY = "jueves"; // TODO
+export const FRIDAY = "viernes"; // TODO
+export const SATURDAY = "sabado"; // TODO
 
 //-------------MONTHS
-export const JANUARY   = "enero"; 
-export const FEBRUARY  = "febrero"; 
-export const MARCH     = "marzo"; 
-export const APRIL     = "abril"; 
-export const MAY       = "mayo"; 
-export const JUNE      = "junio"; 
-export const JULY      = "julio"; 
-export const AUGUST    = "agosto"; 
-export const SEPTEMBER = "septiembre"; 
-export const OCTOBER   = "octubre"; 
-export const NOVEMBER  = "noviembre"; 
-export const DECEMBER  = "diciembre"; 
+export const JANUARY   = "enero"; // TODO
+export const FEBRUARY  = "febrero"; // TODO
+export const MARCH     = "marzo"; // TODO
+export const APRIL     = "abril"; // TODO
+export const MAY       = "mayo"; // TODO
+export const JUNE      = "junio"; // TODO
+export const JULY      = "julio"; // TODO
+export const AUGUST    = "agosto"; // TODO
+export const SEPTEMBER = "septiembre"; // TODO
+export const OCTOBER   = "octubre"; // TODO
+export const NOVEMBER  = "noviembre"; // TODO
+export const DECEMBER  = "diciembre"; // TODO
 

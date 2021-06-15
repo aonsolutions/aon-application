@@ -292,6 +292,31 @@ export class AonViewer extends AonElement {
 		iframe.src = this.file+"#zoom=FitH";
 		div.appendChild(iframe);
 	}
+
+	onScale(element) {
+		let scale = 1.0;
+		element.addEventListener('wheel', (ev) => {
+		  ev.preventDefault();
+		  let isPinch = ev.deltaY < 50;
+		  if (isPinch) {
+			// This is a pinch on a trackpad
+			let factor = 1 - 0.01 * ev.deltaY;
+			scale *= factor;
+		  } else {
+			// This is a mouse wheel
+			let strength = 1.4;
+			let factor = ev.deltaY < 0 ? strength : 1.0 / strength;
+			scale *= factor;
+		  }
+		  element.style.transform         = `scale(${scale})`;
+		  element.style["-moz-transform"] = `scale(${scale})`;
+		//   console.log(typeof  element.style.width, element.style.width);
+		//   const width  = parseFloat(element.style.width.replace("px", ""));
+		//   const height = parseFloat(element.style.height.replace("px", ""));
+		//   element.style.width  = width*scale;
+		//   element.style.height = height*scale;
+		});
+	}
 }
 if (!window.customElements.get(TAG.AON_VIEWER)) {
 	window.customElements.define(TAG.AON_VIEWER, AonViewer);

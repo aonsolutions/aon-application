@@ -35,6 +35,13 @@ export class AonMessengerChat extends AonElement {
     this.build();
   }
 
+  disconnectedCallback() {
+    if (this.getApplication()){
+      this.getApplication().removeFloatOption();
+      this.getApplication().removeToolbarOptions();
+    } 
+  }
+
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_CHAT;
     this.applicationEl = this.getApplication();
@@ -54,9 +61,8 @@ export class AonMessengerChat extends AonElement {
      * Switching between mobile and desktop
      */
     if (this.isMobile()){ 
-        this.paintMobile(data);
-    }
-    else { 
+      this.paintMobile(data);
+    } else { 
       this.paintDesktop(data);
     }
     /**
@@ -151,23 +157,23 @@ export class AonMessengerChat extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
     toolbar.title = "#" + data.id;
 
-    waitEl("#id").then(bar => {
+    waitEl(`#${toolbar.id}`).then(bar => {
       bar.addButton2(ACTIONS.BACK,() => {
-        mainView.element.style.opacity = "0";
+        mainView.element.style.opacity    = "0";
         mainView.element.style.transition = ".25s";
-        
         setTimeout(() => {
             const button = document.getElementById("aonMessengerSidenavAbiertas");
             button.click();
         }, 250);
-      })
-      const titleSpan = bar.querySelector(".aonSecondaryToolbarTitle")
+      });
+
+      const titleSpan = bar.querySelector(".aonSecondaryToolbarTitle");
 
       setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
 
       const status = createOutlinedMaterialIcon({
-        name: "info",
         color: CSS.variable(COLORS.ONLINE_GREEN),
+        name: "info",
         size: "20px"
       });
       status.element.style.marginLeft = "10px"
@@ -218,34 +224,32 @@ export class AonMessengerChat extends AonElement {
 
   paintMobile(data) {
     this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
-      
       /**
        * Hidding float button
        */
-       let button = document.querySelector("#aonMessengeraddButtonIconButton")
+      let button = document.querySelector("#aonMessengeraddButtonIconButton")
 
-       setStyles(button , {
-           transition : "0.25s",
-           opacity : 0
-       });
+      setStyles(button , {
+        transition : "0.25s",
+        opacity : 0
+      });
 
        setTimeout(() => {
-         button.style.display = "none";
+        button.style.display = "none";
        }, 100);
 
       /**
        * show writter
        */
-      setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex",});
+      setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex"});
       setTimeout(() => {
         setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
-          zIndex : 9,
-          opacity : 1,
-          left : 0,
+          zIndex:  9,
+          opacity: 1,
+          left: 0,
         });
-  
       }, 100);
-    } );
+    });
     const mainView = createMobileMainView();
     const chat = newComponent({
       classes: [CSS.FLEX_ROW],

@@ -113,11 +113,10 @@ export const createBadge = (id) => createSpan({
   id,
   styles:{
     position: "absolute", 
-    top: "22px",
     right: "3px",
     padding: "1px 4px",
     borderRadius: "50%",
-    background: "red",
+    background: "rgb(220, 77, 48)",
     color: "white",
     fontSize: "10px",
     fontWeight: 800,
