@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public enum SalaryType {
 
 	SALARY {
@@ -76,4 +79,13 @@ public enum SalaryType {
 	public byte value() {
 		return (byte) ordinal();
 	}
+	
+
+	public static final Collection<Byte> SALARIES = Arrays.asList(
+		SALARY.value(),
+		EXTRA.value(),
+		SETTLE.value(),
+		DELAY.value()
+	);
+
 }
