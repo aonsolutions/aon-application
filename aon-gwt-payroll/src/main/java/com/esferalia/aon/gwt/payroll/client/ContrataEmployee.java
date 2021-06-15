@@ -620,6 +620,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
 				break;
 			case 2:
+				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 				contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
 				break;
 			case 3:
@@ -651,17 +652,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
-					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
-						contrataEmployeeObject.getContractSpecificData(su -> {
-							exportContract.getElement().getStyle().clearDisplay();
-							showContractButtons();
-							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-						}, f -> {});
-					else {
-						exportContract.getElement().getStyle().clearDisplay();
-						showContractButtons();
-						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					}
+					exportContract.getElement().getStyle().clearDisplay();
+					showContractButtons();
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+//					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+//						contrataEmployeeObject.getContractSpecificData(su -> {
+//							exportContract.getElement().getStyle().clearDisplay();
+//							showContractButtons();
+//							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+//						}, f -> {});
+//					else {
+//						exportContract.getElement().getStyle().clearDisplay();
+//						showContractButtons();
+//						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+//					}
 				}, f -> {});
 				break;
 			case 3:
@@ -1448,6 +1452,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
 			break;
 		case 2:
+			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 			contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
 			break;
 		case 3:

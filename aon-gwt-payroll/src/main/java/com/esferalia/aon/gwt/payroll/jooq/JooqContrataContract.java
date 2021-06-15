@@ -108,7 +108,7 @@ public class JooqContrataContract {
 	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 				
-			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractType+"");
+			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, parentDomainId, contractId, contractType+"");
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
 			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, parentDomainId, contractId));
@@ -129,7 +129,7 @@ public class JooqContrataContract {
 			
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
-			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractTypeStr);
+			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, parentDomainId, contractId, contractTypeStr);
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
 			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, parentDomainId, contractId));
@@ -514,11 +514,11 @@ public class JooqContrataContract {
 	// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
 	// ------------------------------------------------------------------------------------------------------------------------
 
-	public static  Map<String, String> getContractOtherInfo(Connection conn, Integer domainId, Integer contractId, String contractType) {
-		return getContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractType);
+	public static  Map<String, String> getContractOtherInfo(Connection conn, Integer domainId, Integer parentDomainId, Integer contractId, String contractType) {
+		return getContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId, contractId, contractType);
 	}
 	
-	private static Map<String, String> getContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer contractId, String contractType) {
+	private static Map<String, String> getContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer contractId, String contractType) {
 		Map<String, String> contractOtherInfoMap = new HashMap<String, String>();
 		List<String> contractOtherDataNames = getContractOtherDataListNames(contractType);
 		
@@ -527,7 +527,7 @@ public class JooqContrataContract {
 		Result<Record> contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
 				.and(CONTRACT_INFO.CONTRACT.isNull())
-				.and(CONTRACT_INFO.DOMAIN.eq(domainId))
+				.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
 				.orderBy(CONTRACT_INFO.START_DATE.desc())
 				.fetch();
 		
@@ -554,11 +554,11 @@ public class JooqContrataContract {
 		return contractOtherInfoMap;
 	}
 	
-	public static  Map<String, String> setContractOtherInfo(Connection conn, Integer domainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
-		return setContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractType, contractOtherInfo);
+	public static  Map<String, String> setContractOtherInfo(Connection conn, Integer domainId, Integer parentDomainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
+		return setContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId, contractId, contractType, contractOtherInfo);
 	}
 	
-	private static Map<String, String> setContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
+	private static Map<String, String> setContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
 		Record2<Date, Date> contractRecord = dslContext.select(CONTRACT.START_DATE, CONTRACT.END_DATE).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		Date startDate = contractRecord.get(CONTRACT.START_DATE);
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
@@ -571,7 +571,16 @@ public class JooqContrataContract {
 			.execute();
 		
 		for(Entry<String, String> entry : contractOtherInfo.entrySet()) {
-			if(AonStringUtils.isNotBlank(entry.getValue())) {
+			Result<Record> parentOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
+					.where(CONTRACT_INFO.NAME.eq(entry.getKey()))
+					.and(CONTRACT_INFO.CONTRACT.isNull())
+					.and(CONTRACT_INFO.DOMAIN.eq(domainId).or(CONTRACT_INFO.DOMAIN.eq(parentDomainId)))
+					.orderBy(CONTRACT_INFO.START_DATE.desc())
+					.fetch();
+			
+			if(	AonStringUtils.isNotBlank(entry.getValue()) && 
+				(parentOtherDataRecords.isEmpty() || (!parentOtherDataRecords.isEmpty() && !AonStringUtils.equalsIgnoreCase(parentOtherDataRecords.get(0).get(CONTRACT_INFO.EXPRESSION), entry.getValue())))) {
+				
 				dslContext.insertInto(CONTRACT_INFO)
 					.set(CONTRACT_INFO.DOMAIN, domainId)
 					.set(CONTRACT_INFO.CONTRACT, contractId)
@@ -2042,35 +2051,35 @@ public class JooqContrataContract {
 	private static List<String> getContractOtherDataIndefiniteListNames(){
 		List<String> contractOtherDataNames = new ArrayList<String>();
 		
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NAME");
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NIF");
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_CHARGE");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NAME");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NIF");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_CHARGE");
-		contractOtherDataNames.add("FUNCTIONS");
-		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DISTANCE");
-		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DIST_ADDR");
-		contractOtherDataNames.add("DISC_WORK_DESCRIPTION");
-		contractOtherDataNames.add("DISC_WORK_ACTIVITY");
-		contractOtherDataNames.add("DISC_WORK_DURATION");
-		contractOtherDataNames.add("DISC_WORK_ESTIMATED_DURATION");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_HOURS");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_PERIOD");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_SCHEDULE");
-		contractOtherDataNames.add("DISC_AGREEMENT_COLLECTIVE");
-		contractOtherDataNames.add("FULL_TIME_WEEK_HOURS");
-		contractOtherDataNames.add("FULL_TIME_START_TIME");
-		contractOtherDataNames.add("FULL_TIME_END_TIME");
-		contractOtherDataNames.add("PARTIALLY_TIME_HOURS");
-		contractOtherDataNames.add("DEFAULT_JOURNAL_HOURS");
-		contractOtherDataNames.add("COMPLEMENTARY_HOURS");
-		contractOtherDataNames.add("TRIAL_DURATION");
-		contractOtherDataNames.add("SALARY_AMOUNT");
-		contractOtherDataNames.add("SALARY_PERIOD");
-		contractOtherDataNames.add("SALARY_CONCEPT");
-		contractOtherDataNames.add("HOLIDAYS");
-		contractOtherDataNames.add("SEPE_MUNICIPALITY");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("I_FUNCTIONS");
+		contractOtherDataNames.add("I_EMPLOYEE_CONTRACT_DISTANCE");
+		contractOtherDataNames.add("I_EMPLOYEE_CONTRACT_DIST_ADDR");
+		contractOtherDataNames.add("I_DISC_WORK_DESCRIPTION");
+		contractOtherDataNames.add("I_DISC_WORK_ACTIVITY");
+		contractOtherDataNames.add("I_DISC_WORK_DURATION");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIMATED_DURATION");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_JOURNAL_HOURS");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_JOURNAL_PERIOD");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_SCHEDULE");
+		contractOtherDataNames.add("I_DISC_AGREEMENT_COLLECTIVE");
+		contractOtherDataNames.add("I_FULL_TIME_WEEK_HOURS");
+		contractOtherDataNames.add("I_FULL_TIME_START_TIME");
+		contractOtherDataNames.add("I_FULL_TIME_END_TIME");
+		contractOtherDataNames.add("I_PARTIALLY_TIME_HOURS");
+		contractOtherDataNames.add("I_DEFAULT_JOURNAL_HOURS");
+		contractOtherDataNames.add("I_COMPLEMENTARY_HOURS");
+		contractOtherDataNames.add("I_TRIAL_DURATION");
+		contractOtherDataNames.add("I_SALARY_AMOUNT");
+		contractOtherDataNames.add("I_SALARY_PERIOD");
+		contractOtherDataNames.add("I_SALARY_CONCEPT");
+		contractOtherDataNames.add("I_HOLIDAYS");
+		contractOtherDataNames.add("I_SEPE_MUNICIPALITY");
 		contractOtherDataNames.add("I_OPT2_SEPE_MUNICIPALITY");
 		contractOtherDataNames.add("I_OPT2_DISABILITY_NO_SEVERE");
 		contractOtherDataNames.add("I_OPT2_DISABILITY_SEVERE");
@@ -2235,35 +2244,35 @@ public class JooqContrataContract {
 		
 		// ------------------------------------------------------- Indefinite Table
 		
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NAME");
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NIF");
-		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_CHARGE");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NAME");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NIF");
-		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_CHARGE");
-		contractOtherDataNames.add("FUNCTIONS");
-		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DISTANCE");
-		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DIST_ADDR");
-		contractOtherDataNames.add("DISC_WORK_DESCRIPTION");
-		contractOtherDataNames.add("DISC_WORK_ACTIVITY");
-		contractOtherDataNames.add("DISC_WORK_DURATION");
-		contractOtherDataNames.add("DISC_WORK_ESTIMATED_DURATION");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_HOURS");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_PERIOD");
-		contractOtherDataNames.add("DISC_WORK_ESTIM_SCHEDULE");
-		contractOtherDataNames.add("DISC_AGREEMENT_COLLECTIVE");
-		contractOtherDataNames.add("FULL_TIME_WEEK_HOURS");
-		contractOtherDataNames.add("FULL_TIME_START_TIME");
-		contractOtherDataNames.add("FULL_TIME_END_TIME");
-		contractOtherDataNames.add("PARTIALLY_TIME_HOURS");
-		contractOtherDataNames.add("DEFAULT_JOURNAL_HOURS");
-		contractOtherDataNames.add("COMPLEMENTARY_HOURS");
-		contractOtherDataNames.add("TRIAL_DURATION");
-		contractOtherDataNames.add("SALARY_AMOUNT");
-		contractOtherDataNames.add("SALARY_PERIOD");
-		contractOtherDataNames.add("SALARY_CONCEPT");
-		contractOtherDataNames.add("HOLIDAYS");
-		contractOtherDataNames.add("SEPE_MUNICIPALITY");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("I_ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("I_LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("I_FUNCTIONS");
+		contractOtherDataNames.add("I_EMPLOYEE_CONTRACT_DISTANCE");
+		contractOtherDataNames.add("I_EMPLOYEE_CONTRACT_DIST_ADDR");
+		contractOtherDataNames.add("I_DISC_WORK_DESCRIPTION");
+		contractOtherDataNames.add("I_DISC_WORK_ACTIVITY");
+		contractOtherDataNames.add("I_DISC_WORK_DURATION");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIMATED_DURATION");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_JOURNAL_HOURS");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_JOURNAL_PERIOD");
+		contractOtherDataNames.add("I_DISC_WORK_ESTIM_SCHEDULE");
+		contractOtherDataNames.add("I_DISC_AGREEMENT_COLLECTIVE");
+		contractOtherDataNames.add("I_FULL_TIME_WEEK_HOURS");
+		contractOtherDataNames.add("I_FULL_TIME_START_TIME");
+		contractOtherDataNames.add("I_FULL_TIME_END_TIME");
+		contractOtherDataNames.add("I_PARTIALLY_TIME_HOURS");
+		contractOtherDataNames.add("I_DEFAULT_JOURNAL_HOURS");
+		contractOtherDataNames.add("I_COMPLEMENTARY_HOURS");
+		contractOtherDataNames.add("I_TRIAL_DURATION");
+		contractOtherDataNames.add("I_SALARY_AMOUNT");
+		contractOtherDataNames.add("I_SALARY_PERIOD");
+		contractOtherDataNames.add("I_SALARY_CONCEPT");
+		contractOtherDataNames.add("I_HOLIDAYS");
+		contractOtherDataNames.add("I_SEPE_MUNICIPALITY");
 		contractOtherDataNames.add("I_OPT2_SEPE_MUNICIPALITY");
 		contractOtherDataNames.add("I_OPT2_DISABILITY_NO_SEVERE");
 		contractOtherDataNames.add("I_OPT2_DISABILITY_SEVERE");

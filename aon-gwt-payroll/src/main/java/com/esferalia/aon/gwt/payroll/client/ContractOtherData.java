@@ -507,43 +507,43 @@ public class ContractOtherData extends ResizeComposite {
 	@UiHandler("enterpriseAgentTB")
 	void onEnterpriseAgentTBChange(ValueChangeEvent<String> event) {
 		String value = enterpriseAgentTB.getValue();
-		setContractOtherData("ENTERPRISE_DIR_STAFF_NAME", value);
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME", value);
 	}
 	
 	@UiHandler("enterpriseAgentNIFTB")
 	void onEnterpriseAgentNIFTBChange(ValueChangeEvent<String> event) {
 		String value = enterpriseAgentNIFTB.getValue();
-		setContractOtherData("ENTERPRISE_DIR_STAFF_NIF", value);
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_NIF", value);
 	}
 	
 	@UiHandler("enterpriseAgentPositionTB")
 	void onEnterpriseAgentPositionTBChange(ValueChangeEvent<String> event) {
 		String value = enterpriseAgentPositionTB.getValue();
-		setContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE", value);
+		setContractOtherData("I_ENTERPRISE_DIR_STAFF_CHARGE", value);
 	}
 	
 	@UiHandler("minorAgentTB")
 	void onMinorAgentTBChange(ValueChangeEvent<String> event) {
 		String value = minorAgentTB.getValue();
-		setContractOtherData("LEGAL_REPRESENTATIVE_NAME", value);
+		setContractOtherData("I_LEGAL_REPRESENTATIVE_NAME", value);
 	}
 	
 	@UiHandler("minorAgentNIFTB")
 	void onMinorAgentNIFTBChange(ValueChangeEvent<String> event) {
 		String value = minorAgentNIFTB.getValue();
-		setContractOtherData("LEGAL_REPRESENTATIVE_NIF", value);
+		setContractOtherData("I_LEGAL_REPRESENTATIVE_NIF", value);
 	}
 	
 	@UiHandler("minorAgentQualityOfTB")
 	void onMinorAgentQualityOfTBChange(ValueChangeEvent<String> event) {
 		String value = minorAgentQualityOfTB.getValue();
-		setContractOtherData("LEGAL_REPRESENTATIVE_CHARGE", value);
+		setContractOtherData("I_LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
 	@UiHandler("doingFunctionsTB")
 	void onDoingFunctionsTBChange(ValueChangeEvent<String> event) {
 		String value = doingFunctionsTB.getValue();
-		setContractOtherData("FUNCTIONS", value);
+		setContractOtherData("I_FUNCTIONS", value);
 	}
 	
 	@UiHandler("distanceB")
@@ -552,57 +552,57 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean value = !oldValue;
 		getEnableDisableButton(distanceB, value);
 		if(value)
-			setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "true");
+			setContractOtherData("I_EMPLOYEE_CONTRACT_DISTANCE", "true");
 		else
-			setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "");
+			setContractOtherData("I_EMPLOYEE_CONTRACT_DISTANCE", "");
 	}
 	
 	@UiHandler("distanceAddressTB")
 	void onDistanceAddressTBChange(ValueChangeEvent<String> event) {
 		String value = distanceAddressTB.getValue();
-		setContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR", value);
+		setContractOtherData("I_EMPLOYEE_CONTRACT_DIST_ADDR", value);
 	}
 	
 	@UiHandler("discontinuousWorkTB")
 	void onDiscontinuousWorkTBChange(ValueChangeEvent<String> event) {
 		String value = discontinuousWorkTB.getValue();
-		setContractOtherData("DISC_WORK_DESCRIPTION", value);
+		setContractOtherData("I_DISC_WORK_DESCRIPTION", value);
 	}
 	
 	@UiHandler("intermittentCyclicalActivityTB")
 	void onIntermittentCyclicalActivityTBChange(ValueChangeEvent<String> event) {
 		String value = intermittentCyclicalActivityTB.getValue();
-		setContractOtherData("DISC_WORK_ACTIVITY", value);
+		setContractOtherData("I_DISC_WORK_ACTIVITY", value);
 	}
 	
 	@UiHandler("durationFDTB")
 	void onDurationFDTBChange(ValueChangeEvent<String> event) {
 		String value = durationFDTB.getValue();
-		setContractOtherData("DISC_WORK_DURATION", value);
+		setContractOtherData("I_DISC_WORK_DURATION", value);
 	}
 
 	@UiHandler("activityStimationDurationFDTB")
 	void onActivityStimationDurationFDTBChange(ValueChangeEvent<String> event) {
 		String value = activityStimationDurationFDTB.getValue();
-		setContractOtherData("DISC_WORK_ESTIMATED_DURATION", value);
+		setContractOtherData("I_DISC_WORK_ESTIMATED_DURATION", value);
 	}
 	
 	@UiHandler("journeyHoursFDTB")
 	void onJourneyHoursFDTBChange(ValueChangeEvent<String> event) {
 		String value = journeyHoursFDTB.getValue();
-		setContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS", value);
+		setContractOtherData("I_DISC_WORK_ESTIM_JOURNAL_HOURS", value);
 	}
 	
 	@UiHandler("journeyPeriodFDTB")
 	void onJourneyPeriodFDTBChange(ValueChangeEvent<String> event) {
 		String value = journeyPeriodFDTB.getValue();
-		setContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD", value);
+		setContractOtherData("I_DISC_WORK_ESTIM_JOURNAL_PERIOD", value);
 	}
 
 	@UiHandler("timeDistributionFDTB")
 	void onTimeDistributionFDTBChange(ValueChangeEvent<String> event) {
 		String value = timeDistributionFDTB.getValue();
-		setContractOtherData("DISC_WORK_ESTIM_SCHEDULE", value);
+		setContractOtherData("I_DISC_WORK_ESTIM_SCHEDULE", value);
 	}
 	
 	@UiHandler("partialTimeB")
@@ -611,39 +611,39 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean value = !oldValue;
 		getEnableDisableButton(partialTimeB, value);
 		if(value)
-			setContractOtherData("DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_YES");
+			setContractOtherData("I_DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_YES");
 		else
-			setContractOtherData("DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_NO");
+			setContractOtherData("I_DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_NO");
 	}
 	
 	@UiHandler("journeyHoursTCTB")
 	void onJourneyHoursTCTBChange(ValueChangeEvent<String> event) {
 		String value = journeyHoursTCTB.getValue();
-		setContractOtherData("FULL_TIME_WEEK_HOURS", value);
+		setContractOtherData("I_FULL_TIME_WEEK_HOURS", value);
 	}
 	
 	@UiHandler("startJourneyTCTB")
 	void onStartJourneyTCTBChange(ValueChangeEvent<String> event) {
 		String value = startJourneyTCTB.getValue();
-		setContractOtherData("FULL_TIME_START_TIME", value);
+		setContractOtherData("I_FULL_TIME_START_TIME", value);
 	}
 	
 	@UiHandler("endJourneyTCTB")
 	void onEndJourneyTCTBChange(ValueChangeEvent<String> event) {
 		String value = endJourneyTCTB.getValue();
-		setContractOtherData("FULL_TIME_END_TIME", value);
+		setContractOtherData("I_FULL_TIME_END_TIME", value);
 	}
 	
 	@UiHandler("journeyHoursTPTB")
 	void onJourneyHoursTPTBChange(ValueChangeEvent<String> event) {
 		String value = journeyHoursTPTB.getValue();
-		setContractOtherData("PARTIALLY_TIME_HOURS", value);
+		setContractOtherData("I_PARTIALLY_TIME_HOURS", value);
 	}
 	
 	@UiHandler("agreementJourneyHoursTB")
 	void onAgreementJourneyHoursTBChange(ValueChangeEvent<String> event) {
 		String value = agreementJourneyHoursTB.getValue();
-		setContractOtherData("DEFAULT_JOURNAL_HOURS", value);
+		setContractOtherData("I_DEFAULT_JOURNAL_HOURS", value);
 	}
 	
 	@UiHandler("complementaryHoursB")
@@ -652,45 +652,45 @@ public class ContractOtherData extends ResizeComposite {
 		Boolean value = !oldValue;
 		getEnableDisableButton(complementaryHoursB, value);
 		if(value)
-			setContractOtherData("COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_YES");
+			setContractOtherData("I_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_YES");
 		else
-			setContractOtherData("COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_NO");
+			setContractOtherData("I_COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_NO");
 	}
 	
 	@UiHandler("trialPeriodTB")
 	void onTrialPeriodTBChange(ValueChangeEvent<String> event) {
 		String value = trialPeriodTB.getValue();
-		setContractOtherData("TRIAL_DURATION", value);
+		setContractOtherData("I_TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("salaryAmountTB")
 	void onSalaryAmountTBChange(ValueChangeEvent<String> event) {
 		String value = salaryAmountTB.getValue();
-		setContractOtherData("SALARY_AMOUNT", value);
+		setContractOtherData("I_SALARY_AMOUNT", value);
 	}
 	
 	@UiHandler("salaryPeriodTB")
 	void onSalaryPeriodTBChange(ValueChangeEvent<String> event) {
 		String value = salaryPeriodTB.getValue();
-		setContractOtherData("SALARY_PERIOD", value);
+		setContractOtherData("I_SALARY_PERIOD", value);
 	}
 	
 	@UiHandler("salaryConceptTB")
 	void onSalaryConceptTBChange(ValueChangeEvent<String> event) {
 		String value = salaryConceptTB.getValue();
-		setContractOtherData("SALARY_CONCEPT", value);
+		setContractOtherData("I_SALARY_CONCEPT", value);
 	}
 	
 	@UiHandler("holidaysTB")
 	void onHolidaysTBChange(ValueChangeEvent<String> event) {
 		String value = holidaysTB.getValue();
-		setContractOtherData("HOLIDAYS", value);
+		setContractOtherData("I_HOLIDAYS", value);
 	}
 	
 	@UiHandler("sepeOfficeTB")
 	void onSepeOfficeTBChange(ValueChangeEvent<String> event) {
 		String value = sepeOfficeTB.getValue();
-		setContractOtherData("SEPE_MUNICIPALITY", value);
+		setContractOtherData("I_SEPE_MUNICIPALITY", value);
 	}
 	
 	@UiHandler("accreditedDisabilityTB")
@@ -1808,35 +1808,35 @@ public class ContractOtherData extends ResizeComposite {
 	}
 
 	private void fillContractOtherData() {
-		enterpriseAgentTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_NAME"));
-		enterpriseAgentNIFTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_NIF"));
-		enterpriseAgentPositionTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE"));
-		minorAgentTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_NAME"));
-		minorAgentNIFTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_NIF"));
-		minorAgentQualityOfTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_CHARGE"));
-		doingFunctionsTB.setValue(getContractOtherData("FUNCTIONS"));
-		getEnableDisableButton(distanceB, getContractOtherDataCB("EMPLOYEE_CONTRACT_DISTANCE"));
-		distanceAddressTB.setValue(getContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR"));
-		discontinuousWorkTB.setValue(getContractOtherData("DISC_WORK_DESCRIPTION"));
-		intermittentCyclicalActivityTB.setValue(getContractOtherData("DISC_WORK_ACTIVITY"));
-		durationFDTB.setValue(getContractOtherData("DISC_WORK_DURATION"));
-		activityStimationDurationFDTB.setValue(getContractOtherData("DISC_WORK_ESTIMATED_DURATION"));
-		journeyHoursFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS"));
-		journeyPeriodFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD"));
-		timeDistributionFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_SCHEDULE"));
-		getEnableDisableButton(partialTimeB, AonStringUtils.containsIgnoreCase(getContractOtherData("DISC_AGREEMENT_COLLECTIVE"), "YES"));
-		journeyHoursTCTB.setValue(getContractOtherData("FULL_TIME_WEEK_HOURS"));
-		startJourneyTCTB.setValue(getContractOtherData("FULL_TIME_START_TIME"));
-		endJourneyTCTB.setValue(getContractOtherData("FULL_TIME_END_TIME"));
-		journeyHoursTPTB.setValue(getContractOtherData("PARTIALLY_TIME_HOURS"));
-		agreementJourneyHoursTB.setValue(getContractOtherData("DEFAULT_JOURNAL_HOURS"));
-		getEnableDisableButton(complementaryHoursB, AonStringUtils.containsIgnoreCase(getContractOtherData("COMPLEMENTARY_HOURS"), "YES"));
-		trialPeriodTB.setValue(getContractOtherData("TRIAL_DURATION"));
-		salaryAmountTB.setValue(getContractOtherData("SALARY_AMOUNT"));
-		salaryPeriodTB.setValue(getContractOtherData("SALARY_PERIOD"));
-		salaryConceptTB.setValue(getContractOtherData("SALARY_CONCEPT"));
-		holidaysTB.setValue(getContractOtherData("HOLIDAYS"));
-		sepeOfficeTB.setValue(getContractOtherData("SEPE_MUNICIPALITY"));
+		enterpriseAgentTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNIFTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_NIF"));
+		enterpriseAgentPositionTB.setValue(getContractOtherData("I_ENTERPRISE_DIR_STAFF_CHARGE"));
+		minorAgentTB.setValue(getContractOtherData("I_LEGAL_REPRESENTATIVE_NAME"));
+		minorAgentNIFTB.setValue(getContractOtherData("I_LEGAL_REPRESENTATIVE_NIF"));
+		minorAgentQualityOfTB.setValue(getContractOtherData("I_LEGAL_REPRESENTATIVE_CHARGE"));
+		doingFunctionsTB.setValue(getContractOtherData("I_FUNCTIONS"));
+		getEnableDisableButton(distanceB, getContractOtherDataCB("I_EMPLOYEE_CONTRACT_DISTANCE"));
+		distanceAddressTB.setValue(getContractOtherData("I_EMPLOYEE_CONTRACT_DIST_ADDR"));
+		discontinuousWorkTB.setValue(getContractOtherData("I_DISC_WORK_DESCRIPTION"));
+		intermittentCyclicalActivityTB.setValue(getContractOtherData("I_DISC_WORK_ACTIVITY"));
+		durationFDTB.setValue(getContractOtherData("I_DISC_WORK_DURATION"));
+		activityStimationDurationFDTB.setValue(getContractOtherData("I_DISC_WORK_ESTIMATED_DURATION"));
+		journeyHoursFDTB.setValue(getContractOtherData("I_DISC_WORK_ESTIM_JOURNAL_HOURS"));
+		journeyPeriodFDTB.setValue(getContractOtherData("I_DISC_WORK_ESTIM_JOURNAL_PERIOD"));
+		timeDistributionFDTB.setValue(getContractOtherData("I_DISC_WORK_ESTIM_SCHEDULE"));
+		getEnableDisableButton(partialTimeB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_DISC_AGREEMENT_COLLECTIVE"), "YES"));
+		journeyHoursTCTB.setValue(getContractOtherData("I_FULL_TIME_WEEK_HOURS"));
+		startJourneyTCTB.setValue(getContractOtherData("I_FULL_TIME_START_TIME"));
+		endJourneyTCTB.setValue(getContractOtherData("I_FULL_TIME_END_TIME"));
+		journeyHoursTPTB.setValue(getContractOtherData("I_PARTIALLY_TIME_HOURS"));
+		agreementJourneyHoursTB.setValue(getContractOtherData("I_DEFAULT_JOURNAL_HOURS"));
+		getEnableDisableButton(complementaryHoursB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_COMPLEMENTARY_HOURS"), "YES"));
+		trialPeriodTB.setValue(getContractOtherData("I_TRIAL_DURATION"));
+		salaryAmountTB.setValue(getContractOtherData("I_SALARY_AMOUNT"));
+		salaryPeriodTB.setValue(getContractOtherData("I_SALARY_PERIOD"));
+		salaryConceptTB.setValue(getContractOtherData("I_SALARY_CONCEPT"));
+		holidaysTB.setValue(getContractOtherData("I_HOLIDAYS"));
+		sepeOfficeTB.setValue(getContractOtherData("I_SEPE_MUNICIPALITY"));
 		accreditedDisabilityTB.setValue(getContractOtherData("I_OPT2_SEPE_MUNICIPALITY"));
 		setSelectedValueLB(withoutDisabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_NO_SEVERE"));
 		setSelectedValueLB(disabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_SEVERE"));
@@ -1992,6 +1992,10 @@ public class ContractOtherData extends ResizeComposite {
 	
 	private boolean isActiveToggleButton(Button button) {
 		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	}
+	
+	public  Map<String, String> getContractInfo() {
+		return this.contractEmployeeInfo.getContractOtherData();
 	}
 
 }
