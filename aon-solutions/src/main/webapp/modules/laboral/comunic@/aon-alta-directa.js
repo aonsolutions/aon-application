@@ -37,6 +37,7 @@ export class AonAltaDirecta extends AonElement {
         this.ACTION = 'CREATE';
         this.id = this.id || PAYROLL_VIEWS.AON_ALTA_DIRECTA;
         this.TOOLBAR = this.id + 'Toolbar';
+        this._list = [];
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
     }

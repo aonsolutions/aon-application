@@ -49,6 +49,7 @@ export class AonLaboral extends AonElement {
     });
   }
 
+
   initialize(){
     this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
     this.title = this.title || MSG.PAYROLL;

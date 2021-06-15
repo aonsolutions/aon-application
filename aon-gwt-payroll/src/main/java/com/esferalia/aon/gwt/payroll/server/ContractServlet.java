@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +33,21 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
+import com.esferalia.aon.in.payroll.tgss.report.Employee;
+import com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder;
 import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.gson.Gson;
@@ -47,6 +57,8 @@ import com.google.gson.JsonParser;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 @MultipartConfig
@@ -61,10 +73,10 @@ public class ContractServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 				case "/salary/pdf":
-					responseFile(req, resp, getSalaryPdf(req, api), MimeType.PDF);
+					responseFile(req, resp, getSalaryPdf(api), MimeType.PDF);
 					break;
 				case "/company/costs/excel":
-					responseFile(req, resp, getCompanyCostsExcel(req, api), MimeType.MS_EXCEL);
+					responseFile(req, resp, getCompanyCostsExcel(api), MimeType.MS_EXCEL);
 					break;
 				default:
 					responseJson(req, resp);
@@ -96,10 +108,13 @@ public class ContractServlet extends AonApiHttpServlet {
 					response(req, resp, getEnterpriseSalaries(api));
 					break;
 				case "/company/costs":
-					response(req, resp, getCompanyCosts(req, api));
+					response(req, resp, getCompanyCosts(api));
 					break;
 				case "/ccc/activity":
-					response(req, resp, getCccForActivity( api));
+					response(req, resp, getCccForActivity(api));
+					break;
+				case "/seg-social/ccc-life":
+					response(req, resp, getMovementsSegSocial(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -169,7 +184,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private Object getCompanyCosts(HttpServletRequest req, AonApiData api) throws SQLException, IOException, JSONException{
+	private Object getCompanyCosts(AonApiData api) throws SQLException, IOException, JSONException{
 		LOGGER.info("[GET] COMPANY COSTS");
 
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
@@ -243,7 +258,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		return JooqPayrollSalaries.getSalaries(conn, filter);
 	}
 	
-	private File getSalaryPdf(HttpServletRequest req, AonApiData api) throws JSONException, IOException {
+	private File getSalaryPdf(AonApiData api) throws JSONException, IOException {
 		LOGGER.info("[GET] SALARY PDF");
 
 		Integer salaryId = api.getParams().optInt("salaryId");
@@ -253,7 +268,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		return file;
 	}
 
-	private File getCompanyCostsExcel(HttpServletRequest req, AonApiData api) throws JSONException, IOException {
+	private File getCompanyCostsExcel(AonApiData api) throws JSONException, IOException {
 		LOGGER.info("[GET] COMPANY COSTS EXCEL");
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
 		ExcelType excelType = ExcelType.COMPLETE;
@@ -335,6 +350,39 @@ public class ContractServlet extends AonApiHttpServlet {
 		} catch (JSONException e) {}
 		
 		return new JsonParser().parse(json.toString());
+	}
+	
+
+	private Object getMovementsSegSocial(AonApiData api) throws Exception {
+		ArrayList<Employee> employees = new ArrayList<>();
+		Domain domain = api.getDomain();
+		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+		List<String> errors = new ArrayList<String>();
+	
+		
+		Date startDate = !api.getParams().optString("startDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd") : new Date();
+		Date endDate = !api.getParams().optString("endDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd") : new Date();
+		
+		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
+		  String cti = ccc.getCccAccount();
+		  String regimen = ccc.getCccRegimeCode();
+		  try {
+			byte[] pdf = SistemaRED.getCccLaboralLife(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti, startDate, endDate);
+		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
+		  } catch(InvalidCertificateException e) {
+		      e.printStackTrace();
+		      errors.add(e.getClass().getSimpleName());
+		  } catch(Exception e) {
+		      e.printStackTrace();
+		  }
+		});	
+
+		if(errors.size() > 0) throw new Exception(errors.get(0));
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String jsonInString = gjson.toJson(employees);
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		return new JSONObject();
 	}
 
 }

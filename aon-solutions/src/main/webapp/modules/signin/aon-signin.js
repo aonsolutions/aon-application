@@ -154,7 +154,7 @@ export class AonSignin extends AonElement {
         } else if( SIGNIN_VIEWS.AON_LOCATION_ADD === view){ resolve(true);return; }
       }
 
-      if(!this.getElement(view)){
+      // if(!this.getElement(view)){
         switch(view){
           case SIGNIN_VIEWS.AON_PRESENCE_LIST:
               aonView = new AonPresenceList();
@@ -202,7 +202,7 @@ export class AonSignin extends AonElement {
           if(filter) aonView.filter = filter;
           this.applicationEl.setContent(aonView);
         }
-      }
+      // }
       
       resolve(true);
     });

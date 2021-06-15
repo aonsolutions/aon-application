@@ -37,12 +37,12 @@ export const SigninSidenav = {
     },
     THIS_WEEK: {
       icon: "today",
-      name: "Ésta semana",
+      name: "Esta semana",
       id: "this_week",
     },
     THIS_MONTH: {
       icon: "today",
-      name: "Éste mes",
+      name: "Este mes",
       id: "this_month",
     },
   },

@@ -1,5 +1,3 @@
-// #bdbdbd
-
 import { MSG } from "../../../../environments/environments";
 
 // #9e9e9e
@@ -27,8 +25,9 @@ export const charts = (div, data) => new Promise((resolve) => {
           gridlines:{
             count:0
           },
-          // baseline: -1,
-          baselineColor: "#fff"
+          baselineColor: '#fff',
+          gridlineColor: '#fff',
+          textPosition: 'none'
         },
         hAxis: {
           textStyle: {
@@ -55,14 +54,13 @@ export const charts = (div, data) => new Promise((resolve) => {
         // }
       };
 
-      google.visualization.events.addListener(chart, 'ready', (ev)=> changeBorderRadius(div));
-      google.visualization.events.addListener(chart, 'select', (ev)=> changeBorderRadius(div));
-      google.visualization.events.addListener(chart, 'onmouseover', (ev)=> changeBorderRadius(div));
-      google.visualization.events.addListener(chart, 'onmouseout', (ev)=> changeBorderRadius(div));
-      google.visualization.events.addListener(chart, 'animationfinish', (ev)=> changeBorderRadius(div));
+      google.visualization.events.addListener(chart, 'ready', ()=> changeBorderRadius(div));
+      google.visualization.events.addListener(chart, 'select', ()=> changeBorderRadius(div));
+      google.visualization.events.addListener(chart, 'onmouseover', ()=> changeBorderRadius(div));
+      google.visualization.events.addListener(chart, 'onmouseout', ()=> changeBorderRadius(div));
+      google.visualization.events.addListener(chart, 'animationfinish', ()=> changeBorderRadius(div));
 
       chart.draw(table, options);
-
       resolve(chart);
     };
 
@@ -74,8 +72,10 @@ export const charts = (div, data) => new Promise((resolve) => {
 const changeBorderRadius = (div) =>  {
   const chartColumns = div.getElementsByTagName('rect');
 
-  // const lineAverage = div.querySelector('path');
-  // if(lineAverage) lineAverage.style.opacity = 0.5;
+  const lineAverage = div.querySelector('path');
+  if(lineAverage) {
+    lineAverage.style.transform = "scaleX(.91)";
+  }
   
   Array.prototype.forEach.call(chartColumns, (column)=> {
     column.setAttribute('rx', 9);
