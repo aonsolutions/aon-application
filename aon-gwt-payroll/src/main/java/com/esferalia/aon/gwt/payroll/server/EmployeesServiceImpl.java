@@ -2565,7 +2565,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 
-			String sql = "SELECT * " + " FROM " + SALARY + " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?"
+			String sql = "SELECT * " 
+					+ " FROM " + SALARY 
+					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
 					+ " ORDER BY " + SALARY + "." + SalaryColumns.END_DATE + " ASC";
 
 			stmt = connection.prepareStatement(sql);
@@ -2611,13 +2614,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 
-			String sql = "SELECT * " + " FROM " + SALARY + " LEFT JOIN " + SQLConstants.SALARY_DATA + " ON ( "
-					+ SQLConstants.SALARY + "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA + "."
-					+ SalaryDataColumns.SALARY + " AND " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME
-					+ " =  ? " + ")" + " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?" + " AND ( "
-					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL " + " OR "
-					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) " + " ORDER BY "
-					+ SALARY + "." + SalaryColumns.END_DATE + " ASC";
+			String sql = "SELECT * " 
+					+ " FROM " 
+					+ SALARY 
+					+ " LEFT JOIN " + SQLConstants.SALARY_DATA 
+						+ " ON ( "+ SQLConstants.SALARY + "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.SALARY 
+						+ " AND " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME + " =  ? " + ")" 
+					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?" 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " )"
+					+ " AND ( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL " 
+					+ " OR " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) " 
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.END_DATE + " ASC";
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
 			stmt.setInt(2, contractId);
@@ -2707,11 +2714,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol + " FROM " + ENTERPRISE + ", " + SALARY
-					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "."
-					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?"
-					+ " GROUP BY 1, 2" + " ORDER BY 2 , 1 ASC ";
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
+					+ " FROM " + ENTERPRISE + ", " + SALARY
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
+					+ " GROUP BY 1, 2" 
+					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, enterpriseId);
@@ -2816,11 +2827,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
 
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + CONTRACT
-					+ ", " + SALARY + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "."
-					+ SalaryColumns.CONTRACT + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
+					+ " FROM " + WORKPLACE + ", " + CONTRACT + ", " + SALARY 
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
+					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "." + SalaryColumns.CONTRACT 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
 					+ " GROUP BY 1, 2" + " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
@@ -2899,9 +2913,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					+ " = " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.SALARY + " AND "
 					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME + " =  ? " + ")"
 
-					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "."
-					+ SalaryColumns.CONTRACT + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
+					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = " + SALARY + "." + SalaryColumns.CONTRACT 
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
 					+ " GROUP BY 1, 2"
 
 					+ " HAVING VISIBLES >= 1" + " ORDER BY 2 , 1 ASC ";
@@ -3298,7 +3313,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			collectSalaryBuilder.collect(salaryDraftBuilder);
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		draft.setStartDate(startDate);

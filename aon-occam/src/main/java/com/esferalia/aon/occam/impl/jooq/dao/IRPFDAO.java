@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -95,6 +96,7 @@ public class IRPFDAO extends FiscalModelDAO {
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 				.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().getValue()))
+				.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
 			.fetch()
 			.stream()
 			.forEach( rec -> {

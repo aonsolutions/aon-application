@@ -91,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -1065,6 +1066,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC + " = " + SQLConstants.SALARY+ "." + SalaryColumns.CCC  
 					+ " AND " + SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.DOMAIN + " = " + SQLConstants.SALARY+ "." + SalaryColumns.DOMAIN  
 //					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " IN ( " + Salary.Type.SALARY.ordinal() + ")" 
+					+ " AND " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " < " + Salary.Type.L00.ordinal()
 					+ ")"
 					+ ", " + SQLConstants.GEOZONE
 					
@@ -1374,14 +1376,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ ENTERPRISE
 					+ ", "
 					+ SALARY
-					+ " WHERE "
-					+ ENTERPRISE
-					+ "."
-					+ EnterpriseColumns.DOMAIN
-					+ " = "
-					+ SALARY
-					+ "."
-					+ SalaryColumns.DOMAIN
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
 					+ (enterpriseIds.size() == 0 ? "" : " AND "
 							+ ENTERPRISE
 							+ "."

@@ -112,6 +112,8 @@ public class  Salary implements Serializable {
 				put(L00,"Liquidaci\u00f3n Ordinaria L00");
 			}
 		};
+		
+		public static Type SALARIES [] = {SALARY, EXTRA, DELAY, SETTLE};
 	}
 
 	private int id ;
