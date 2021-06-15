@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, isEmptyObject, setDate } from "../../../services/utils.js";
-import { getMovements, getEmployee } from "../../../services/service.js";
+import { disabledForm, formatDateOrigin, isEmptyObject, setDate } from "../../../services/utils.js";
+import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
 import { CONSTANT, EVENT } from "../../../environments/environments.js";
@@ -12,6 +12,7 @@ import { AonTable } from "../../../components/aon-table.js";
 export class AonMovementsList extends AonElement {
   TABLE_ID;
   searchFilter;
+  _list;
   static get observedAttributes() {
     return [CONSTANT.FILLED];
   }
@@ -52,6 +53,8 @@ export class AonMovementsList extends AonElement {
     this.paintView();
     this.buildToobar();
     this.getTable();
+
+    // this.getCccLife();
   }
 
   paintView() {
@@ -213,5 +216,14 @@ export class AonMovementsList extends AonElement {
     return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
   }
   
+  async getCccLife(){
+    try {
+      let today = formatDateOrigin(new Date());
+      const resp = await getCccLife({startDate:"2009-01-01", endDate: today});
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 window.customElements.define("aon-movements-list", AonMovementsList);

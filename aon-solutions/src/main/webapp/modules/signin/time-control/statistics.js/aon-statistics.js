@@ -68,34 +68,47 @@ export class AonStatistics extends AonElement {
       let sum = 0;
       let count = 0;
       let datos = [];
+      const firstDayOfWeek = new Date().getFirstDayOfWeek().setHours(0,0,0,0);
       for (const key in resp) {
-        const { time, start_date } = resp[key];
+        let { time, start_date, status, in_date } = resp[key];
+        if(status && status.indexOf("in")>=0 && in_date){
+          time =  Number((new Date().getTime() - in_date)  + time);
+        }
         const newTime = this.timeToDecimal(time);
         const day    =  new Date(start_date);
         let color = "#bdbdbd";
-        if(day.setHours(0,0,0,0) === new Date().setHours(0,0,0,0))
-          color = "#86D364";
+        const newDayTime = day.setHours(0,0,0,0);
+        if(newDayTime === new Date().setHours(0,0,0,0)){
+            color = "#86D364";
+        } else if(newDayTime >= firstDayOfWeek){
+          color = "#c8e6c9";
+        } else {
+          sum = sum + newTime;
+          if (newTime > 0) count++;
+        }
+          
         datos.push({
           time:newTime, 
           dayLetter: this.getFirstLettersDay(day),
           color
         });
-        sum = sum + newTime;
-        if (newTime > 0) count++;
       }
 
       const average = sum / count;
       let newData = [];
       for (const dt of datos) 
         newData.push([dt.dayLetter, dt.time, `color:${dt.color};stroke-width:0;` , average]);
-
+ 
+      this.style.display = "flex";
+      this.style.flexWrap = "wrap";
+      this.style.justifyContent = "center";
+      this.style.alignItems = "center";
+      this.style.width = "100%";
       await charts(this, newData);
     } catch (error) {
       console.log(error);
     }
   }
-
-  
 
   async getData() {
     let dt = this.data;
