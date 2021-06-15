@@ -1,18 +1,31 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.LinkedList;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
+import com.esferalia.aon.occam.api.json.RegistryBankJSON;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
+import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
+import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiRegistryServlet", urlPatterns = {"/ms/api/registry/*"})
@@ -27,10 +40,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getResponseObject());
+				response(req, resp, getRegistry(api));
 				break;
 			case "/address":
 				response(req, resp, getRegistryAddress(api));
+				break;
+			case "/banks":
+				response(req, resp, getRegistryBanks(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -49,7 +65,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 			case "/":
-				response(req, resp, getResponseObject());
+				response(req, resp, getRegistry(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -60,12 +76,68 @@ public class RegistryServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONObject getResponseObject() {
-		return new JSONObject();
+	private JSONObject getRegistry(AonApiData api) {
+		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
+				? api.getData().optInt(IJsonNames.REGISTRY)
+				: api.getData().optInt(IJsonNames.ID);
+		Registry registry = AON.getRegistry(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(id));
+		JSONObject json = RegistryJSON.toJSON(registry);
+		
+		return getRegistryAdditionalInfo(json, api, id, null);
+	}
+	
+	public static JSONObject getRegistryAdditionalInfo(JSONObject json, AonApiData api, Integer registryId, LinkedList<RegistryAdditionalInfo> rais) {
+		if(rais == null) {
+			JSONArray addInfo = api.getData().optJSONArray("additional_info");
+			rais = new LinkedList<>();
+			for(Integer i = 0; i < addInfo.length(); i++) {
+				rais.add(RegistryAdditionalInfo.safeValueOf(addInfo.optString(i)));
+			}
+		}
+		if(registryId != null) {
+			rais.stream().forEach(rai -> {
+				if(rai.equals(RegistryAdditionalInfo.ADDRESS)) {
+					RegistryAddress address = AON.getMain(api.getDomain(), api.getUser(), registryId);
+					json.put(rai.name().toLowerCase(), RegistryAddressJSON.toJSON(address));
+				}
+			
+				if(rai.equals(RegistryAdditionalInfo.ADDRESSES)) {
+					RegistryAddressFilter filter = f -> f.getRegistryProperty().eq(registryId);
+					Stream<RegistryAddress> addresses = AON.getStream(api.getDomain(), api.getUser(), filter);
+					json.put(rai.name().toLowerCase(), RegistryAddressJSON.toJSON(addresses));
+				}
+			
+				if(rai.equals(RegistryAdditionalInfo.BANKS)) {
+					LinkedList<RegistryBank> rbanks = AON.getRegistryBanks(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registryId);
+					json.put(rai.name().toLowerCase(), RegistryBankJSON.toJSON(rbanks));
+				}
+			
+				if(rai.equals(RegistryAdditionalInfo.PAYMETHODS)) {
+					Stream<RegistryPayMethod> rpms = AON.getRPayMethodStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+						f.getRegistryProperty().eq(registryId));
+					json.put(rai.name().toLowerCase(), RegistryPaymethodJSON.toJSON(rpms));
+				}
+			
+				if(rai.equals(RegistryAdditionalInfo.MEDIA)) {
+					JSONObject mJson = new JSONObject();
+					RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(registryId);
+					AON.getStream(api.getDomain(), api.getUser(), filter)
+						.forEach(media -> mJson.put(media.getMedia().name().toLowerCase(), RegistryMediaJSON.toJSON(media))); 
+					json.put(rai.name().toLowerCase(), mJson);
+				}
+			});
+		}
+		return json;
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
 		RegistryAddress address = AON.getMain(api.getDomain(), api.getUser(), api.getParams().optInt(IJsonNames.REGISTRY));
 		return RegistryAddressJSON.toJSON(address);
+	}
+	
+	private JSONArray getRegistryBanks(AonApiData api) {
+		Stream<RegistryBank> rbanks = AON.getRBankStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(api.getDomain().getId()));
+		return RegistryBankJSON.toJSON(rbanks);
 	}
 }

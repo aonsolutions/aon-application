@@ -43,6 +43,7 @@ import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -335,15 +336,11 @@ public class CompanyServlet extends AonApiHttpServlet{
 				f.getDomainProperty().eq(api.getDomain().getId()));
 		JSONObject json = RegistryJSON.toJSON(company);
 		
-		RegistryAddress address = AON.getMain(api.getDomain(), api.getUser(), company.getId());
-		json.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(address));
-		
-		JSONObject mJson = new JSONObject();
-		RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(company.getId());
-		AON.getStream(api.getDomain(), api.getUser(), filter)
-			.forEach(media -> mJson.put(media.getMedia().name().toLowerCase(), RegistryMediaJSON.toJSON(media))); 
-		json.put(IJsonNames.MEDIA, mJson);
-		return json; 
+		LinkedList<RegistryAdditionalInfo> list = new LinkedList<>();
+		list.add(RegistryAdditionalInfo.ADDRESS);
+		list.add(RegistryAdditionalInfo.MEDIA);
+
+		return RegistryServlet.getRegistryAdditionalInfo(json, api, company.getId(), list);
 	}
 	
 	private JSONObject getDomainUserRoles(AonApiData api) {
