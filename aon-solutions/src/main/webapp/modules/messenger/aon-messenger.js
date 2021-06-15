@@ -1,4 +1,4 @@
-import '../../components/aon-application.js';
+import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
@@ -36,11 +36,10 @@ export class AonMessenger extends AonElement {
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
 		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-		//this.rootPanel(new AonMessengerAyudat()); //DELETE 
 	}
 
 	paintView(){
-		this.innerHTML = /*html*/`<aon-application id="${this.AON_MESSENGER}" title="Solicitudes"></aon-application>`;
+		this.createApplication(this.AON_MESSENGER, "Solicitudes", new AonApplication());
 	}
 
 	buildToolbar(){
@@ -62,12 +61,12 @@ export class AonMessenger extends AonElement {
           let aonView = undefined;
           if(!this.getElement(view)){
             switch(view){
-              case MESSENGER_VIEWS.AON_MESSENGER_LIST:
-                aonView = new AonMessengerList();
+              	case MESSENGER_VIEWS.AON_MESSENGER_LIST:
+                	aonView = new AonMessengerList();
                 break;
-			case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
-			aonView = new AonMessengerChat();
-			break;
+				case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
+					aonView = new AonMessengerChat();
+				break;
             }
             if(aonView){
               aonView.id = view;

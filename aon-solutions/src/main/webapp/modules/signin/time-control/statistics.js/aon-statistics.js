@@ -1,16 +1,13 @@
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import { charts } from "./charts";
-import { CONSTANT } from "../../../../environments/environments.js";
+import {  CONSTANT } from "../../../../environments/environments.js";
 import { AonElement } from "../../../../components/AonElement.js";
 import { timeHour } from "../utils.js";
 import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
-import {
-  getPeriod,
-  getTaskHolderTimeControl,
+import { getTaskHolderTimeControl,
 } from "../../../../services/timeControlService.js";
-import { getDomainUserRoles } from "../../../../services/companyService.js";
-import { DomainUserRoles } from "../../../../models/DomainUserRoles.js";
-import { waitEl } from "../../../../services/utils.js";
+import { formatDateOrigin } from "../../../../services/utils.js";
+import { DAYS } from "../../../../models/enums.js";
 
 export class AonStatistics extends AonElement {
   TABLE_ID;
@@ -54,10 +51,7 @@ export class AonStatistics extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    // getDomainUserRoles({}).then(r=>{
-    //   this.dur = new DomainUserRoles(r);
     this.build();
-    // });
   }
 
   initialize() {
@@ -71,47 +65,50 @@ export class AonStatistics extends AonElement {
   async paintChart() {
     try {
       const resp = await this.getData();
-      let hours = [];
       let sum = 0;
       let count = 0;
+      let datos = [];
       for (const key in resp) {
-        const { time } = resp[key];
-        hours[key] = this.timeToDecimal(time);
-        sum = sum + hours[key];
-        if (hours[key] > 0) count++;
+        const { time, start_date } = resp[key];
+        const newTime = this.timeToDecimal(time);
+        const day    =  new Date(start_date);
+        let color = "#bdbdbd";
+        if(day.setHours(0,0,0,0) === new Date().setHours(0,0,0,0))
+          color = "#86D364";
+        datos.push({
+          time:newTime, 
+          dayLetter: this.getFirstLettersDay(day),
+          color
+        });
+        sum = sum + newTime;
+        if (newTime > 0) count++;
       }
-      
-      const average = sum / count;
-      const data = [
-        ["L", hours[0] ? hours[0] : 0, average],
-        ["M", hours[1] ? hours[1] : 0, average],
-        ["X", hours[2] ? hours[2] : 0, average],
-        ["J", hours[3] ? hours[3] : 0, average],
-        ["V", hours[4] ? hours[4] : 0, average],
-        ["S", hours[5] ? hours[5] : 0, average],
-        ["D", hours[6] ? hours[6] : 0, average],
-      ];
-      await charts(this, data);
 
-      waitEl(`#${this.id} path`).then((el) => {
-        el.style.opacity = 0.5;
-      });
+      const average = sum / count;
+      let newData = [];
+      for (const dt of datos) 
+        newData.push([dt.dayLetter, dt.time, `color:${dt.color};stroke-width:0;` , average]);
+
+      await charts(this, newData);
     } catch (error) {
       console.log(error);
     }
   }
 
+  
+
   async getData() {
     let dt = this.data;
     try {
       if (!dt.length) {
-        const period = getPeriod("this_week");
+        const startDate = formatDateOrigin( new Date().addDay(-7));
+        const endDate = formatDateOrigin(new Date());
         const [taskHolder] = await getTaskHoldersUser();
         dt = await getTaskHolderTimeControl({
           taskHolderId: taskHolder.id,
           group: "DAY",
-          startDate: period.startDate,
-          endDate: period.endDate,
+          startDate,
+          endDate,
         });
       }
     } catch (error) {
@@ -125,6 +122,15 @@ export class AonStatistics extends AonElement {
     let arr = t.split(":");
     let dec = parseInt((arr[1] / 6) * 10, 10);
     return parseFloat(parseInt(arr[0], 10) + "." + (dec < 10 ? "0" : "") + dec);
+  }
+
+  getFirstLettersDay(date){
+    let dayInt = date.getDay();
+    let day = DAYS[dayInt];
+    let newValue = null;
+    if(dayInt ===3) day = "X";
+    if(day) newValue = day.toString().substr(0,1).toUpperCase();
+    return newValue;
   }
 }
 

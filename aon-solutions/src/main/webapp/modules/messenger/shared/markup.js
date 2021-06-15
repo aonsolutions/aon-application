@@ -34,7 +34,7 @@ export const compileHTML = (parent) =>{
 
     compiled = compiled.replaceAll(list, listFormat)
     compiled = compiled.replaceAll(bold, boldFormat).replaceAll("*","");
-    compiled = compiled.replaceAll(italic, italicFormat).replaceAll("_","");;;
+    compiled = compiled.replaceAll(italic, italicFormat).replaceAll("_","");
     compiled = compiled.replaceAll(link, linkFormat);
     compiled = compiled.replaceAll(image, imageFormat);
     compiled = compiled.replaceAll(tab, tabFormat);

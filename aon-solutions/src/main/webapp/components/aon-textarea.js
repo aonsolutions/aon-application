@@ -287,8 +287,8 @@ export class AonTextArea extends AonElement {
 		area.element.addEventListener('keydown', function(e) {
 			if (e.key == 'Tab') {
 			  e.preventDefault();
-			  var start = this.selectionStart;
-			  var end = this.selectionEnd;
+			  const start = this.selectionStart;
+			  const end = this.selectionEnd;
 		  
 			  // set textarea value to: text before caret + tab + text after caret
 			  this.value = this.value.substring(0, start) +
@@ -300,11 +300,17 @@ export class AonTextArea extends AonElement {
 			}
 		});
 		
-		area.element.addEventListener('focusout', () => {
+		area.element.addEventListener('focusout', ({target}) => {
+			let start = area.element.selectionStart;
+			let end = area.element.selectionEnd;
+			let text = target.value;
+			if(start === end)
+				end = parseInt(start) +(text ? parseInt(text.substr(start).split(" ")[0].length) : -1);
+
 			setDataset(area.element,{
 				lastFocusedText : getSelection(),
-				start :area.element.selectionStart,
-				end : area.element.selectionEnd,
+				start,
+				end
 			});
 		});
 
