@@ -103,6 +103,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.callback.showError(msg);
 		}
 		@Override
+		public Model303ModuleOptions getOptions() {
+			return this.callback.getOptions();
+		}
+		@Override
 		public String getDomainName() {
 			return this.callback.getDomainName();
 		}

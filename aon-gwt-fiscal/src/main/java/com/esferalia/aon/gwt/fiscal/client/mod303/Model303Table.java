@@ -1,16 +1,20 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelProvidesKey;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -18,259 +22,39 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod303>{
 	
-	private static class Model303CellTable extends CellTable<Mod303> {
-		private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
-		
-
-		private NoSelectionModel<Mod303> model;
-		
-		public Model303CellTable(ProvidesKey<Mod303> providesKey) {
-			super(1,TABLE_STYLE, providesKey);
-			this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
-			this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-			
-			addSelectorColumn();
-			addModelColumn();
-			addAdministrationColumn();
-			addYearColumn();
-			addPeriodColumn();
-			addStatusColumn();
-			addStatusLabelColumn();
-			addComplementaryColumn();
-			addDocumentColumn();
-			addNameColumn();
-			addAmountColumn();
-			addDeclarationTypeColumn();
-			addFinanceStatusColumn();
-			
-			model = new NoSelectionModel<Mod303>(providesKey);
-			this.setSelectionModel(model);
-			this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		}
-
-		private void addSelectorColumn() {
-			final Column<Mod303, ImageResource> selectorColumn = new Column<Mod303, ImageResource>(
-					new ImageResourceCell()) {
-				@Override
-				public ImageResource getValue(Mod303 model) {
-					return AON.AON_RESOURCES.aonIconRowSelector();
-				}
-			};
-			this.addColumn(selectorColumn);
-			this.setColumnWidth(selectorColumn, 20, Unit.PX);
-		}
-
-		private void addYearColumn() {
-			final TextColumn<Mod303> yearColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return Integer.toString(model.getYear());
-				}
-			};
-			this.addColumn(yearColumn, AON.MSG.fiscalYear());
-			yearColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-			this.setColumnWidth(yearColumn, 50, Unit.PX);
-		}
-
-		private void addPeriodColumn() {
-			final TextColumn<Mod303> documentColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return model.getPeriod().getDescription();
-				}
-			};
-			this.addColumn(documentColumn, AON.MSG.period());
-			this.setColumnWidth(documentColumn, 50, Unit.PX);
-		}
-
-		private void addAdministrationColumn() {
-			final Column<Mod303, ImageResource> iconColumn = new Column<Mod303, ImageResource>(
-					new ImageResourceCell()) {
-				@Override
-				public ImageResource getValue(Mod303 model) {
-					return FiscalModelUtils.getAdministrationIconResource(model.getAdministration());
-				}
-			};
-			this.addColumn(iconColumn, "A" );
-			this.setColumnWidth(iconColumn, 20, Unit.PX);
-		}
-		
-		private void addModelColumn() {
-			final TextColumn<Mod303> modelColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return FiscalModelUtils.getModelName(model);
-				}
-			};
-			this.addColumn(modelColumn, AON.MSG.model());
-			modelColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-			this.setColumnWidth(modelColumn, 50, Unit.PX);
-		}
-
-		private void addStatusColumn() {
-			final Column<Mod303, ImageResource> iconColumn = new Column<Mod303, ImageResource>(
-					new ImageResourceCell()) {
-				@Override
-				public ImageResource getValue(Mod303 model) {
-					return FiscalModelUtils.getStatusImage(model.getStatus());
-				}
-			};
-			this.addColumn(iconColumn, "E" );
-			this.setColumnWidth(iconColumn, 20, Unit.PX);
-		}
-		
-		private void addStatusLabelColumn() {
-			final TextColumn<Mod303> statusLabelColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 fm) {
-					return fm.getStatus().getName();
-				}
-			};
-			this.addColumn(statusLabelColumn, AON.MSG.status() );
-			this.setColumnWidth(statusLabelColumn, 80, Unit.PX);
-		}
-
-		private void addComplementaryColumn() {
-			Column<Mod303, ImageResource> complementaryColumn = new Column<Mod303, ImageResource>(
-					new ImageResourceCell()) {
-				@Override
-				public ImageResource getValue(Mod303 model) {
-					return (model.isComplementary() || model.isReplacement())  
-						? AON.AON_RESOURCES.aonIconChecked()
-						: AON.AON_RESOURCES.aonIconCheck();
-				}
-			};
-			this.addColumn(complementaryColumn, "C/S" );
-			complementaryColumn.setCellStyleNames(AON.AON_CSS.aonDataTableIconColumn());
-			this.setColumnWidth(complementaryColumn, 20, Unit.PX);
-		}
-		
-		private void addDocumentColumn() {
-			final TextColumn<Mod303> documentColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return model.getDocument();
-				}
-			};
-			this.addColumn(documentColumn, AON.MSG.document());
-			this.setColumnWidth(documentColumn, 100, Unit.PX);
-		}
-
-		private void addNameColumn() {
-			final TextColumn<Mod303> nameColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return model.getFullName();
-				}
-			};
-			this.addColumn(nameColumn, AON.MSG.name());
-			this.setColumnWidth(nameColumn, "auto");
-		}	
-
-		private void addAmountColumn() {
-			final TextColumn<Mod303> amountColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return AON.FMT.format(model.getResult()) ;
-				}
-			};
-			this.addColumn(amountColumn, AON.MSG.result());
-			amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-			this.setColumnWidth(amountColumn, 100, Unit.PX);
-		}	
-
-		private void addDeclarationTypeColumn() {
-			final TextColumn<Mod303> decTypeColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					return (model.getDeclarationType()!=null?model.getDeclarationType().getDescription():"");
-				}
-			};
-			this.addColumn(decTypeColumn, " ");
-			this.setColumnWidth(decTypeColumn, 100, Unit.PX);
-		}	
-
-		private void addFinanceStatusColumn() {
-			final TextColumn<Mod303> financeStatusColumn = new TextColumn<Mod303>() {
-				@Override
-				public String getValue(Mod303 model) {
-					if (model.getFinance() != null && model.getFinance().getFinanceStatus() != null) {
-						return model.getFinance().getFinanceStatus().getDescription();
-					}
-					return AonStringUtils.EMPTY;
-				}
-			};
-			this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
-			financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-			this.setColumnWidth(financeStatusColumn, 150, Unit.PX);
-		}	
-
-		public Mod303 getSelected() {
-			return model.getLastSelectedObject();
-		}
+	private static final Logger LOGGER = Logger.getLogger(Model303Table.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	
-	
-	
-	private Model303CellTable table;
+	private SimpleLayoutPanel centerLayoutPanel;
+	private ScrollPanel centerPanel;
+	private FlowPanel container;
+	private AonDisplayGrid tab;
 	
 	public Model303Table(Model303Callback cbk) {
-		table = new Model303CellTable(new FiscalModelProvidesKey<Mod303>());
-		if (table.getSelectionModel() != null) {
-			table.getSelectionModel().addSelectionChangeHandler(new com.google.gwt.view.client.SelectionChangeEvent.Handler() {
-				
-				@Override
-				public void onSelectionChange(SelectionChangeEvent event) {
-					SelectionEvent.fire(Model303Table.this, table.getSelected());
-				}
-			});
-		}
-		table.addRangeChangeHandler( new com.google.gwt.view.client.RangeChangeEvent.Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				Model303.SERVICE.getMod303s(cbk.getDomainName(), cbk.getUser(), cbk.getDomain(),
-						new AsyncCallback<LinkedList<Mod303>>() {
-							@Override
-							public void onSuccess(LinkedList<Mod303> result) {
-								table.setRowData(result);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
-							}
-						});
-			}
-		});
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
-		tableDockLayout.addNorth(getToolbarPanel(cbk), 25);
-		ScrollPanel tablePanel = new ScrollPanel();
-		tablePanel.addStyleName(AON.AON_CSS.aonScrollArea());
-		tablePanel.add(table);
-		tableDockLayout.add(tablePanel);
+		tableDockLayout.addNorth(getToolbarPanel(cbk), AonToolbar.HEIGTH);
+		centerLayoutPanel = new SimpleLayoutPanel();
+		centerPanel = new ScrollPanel();
+		centerPanel.setStyleName(AON.CSS.aonScrollArea());
+		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
+		container = new FlowPanel();
+		centerPanel.setWidget(container);
+		centerLayoutPanel.setWidget(centerPanel);
+		tableDockLayout.add(centerLayoutPanel);
 		setWidget(tableDockLayout);
 	}
 
@@ -279,38 +63,28 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
-	public void refresh() {
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+	public void refresh(Model303Callback cbk) {
+		container.clear();
+		container.add(getTable());
+		Model303.SERVICE.getMod303s(cbk.getOptions().getDomainName(), cbk.getOptions().getUser(), cbk.getOptions().getDomain(),
+				new AsyncCallback<LinkedList<Mod303>>() {
+					@Override
+					public void onSuccess(LinkedList<Mod303> result) {
+						paint(cbk,result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
+					}
+				});
 	}
 	
 	
 	private Widget getToolbarPanel(Model303Callback cbk) {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label( "IVA. Autoliquidaci\u00F3n."));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbar = new AonToolbar( "IVA. Autoliquidaci\u00F3n." );
 		
-		final Button newButton = new Button();
-		newButton.setText(AON.MSG.newAction());
-		newButton.setTitle(newButton.getText());
-		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		newButton.addStyleName(AON.AON_CSS.aonIconReset());
+		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -318,28 +92,126 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 				cbk.onNew();
 			}
 		});
-		buttonContainer.add(newButton);
+		toolbar.add(newButton);
 		
-		
-//		final Button transferButton = new Button();		
-//		transferButton.setText(AON.MSG.transferModels());
-//		transferButton.setTitle(transferButton.getText());
-//		transferButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-//		transferButton.addStyleName(AON.AON_CSS.aonIconImport());
-//		transferButton.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-//		transferButton.addStyleName(AON.AON_CSS.aonBlink());
-//		transferButton.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				cbk.onTransfer();
-//			}
-//		});
-//		buttonContainer.add(transferButton);
-		
+		return toolbar;
+	}
 
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
+	// **************************************************************************
+	// **************************************************************************
+	// **************************************************************************
+	private static enum COLS {
+		  CHK(AON.MSG.model()		, 50 ,AON.CSS.aonTextCenter())
+	    , STA("A"					, 20 ,AON.CSS.aonTextCenter())
+	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter())
+		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter())
+		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter())
+		, CMP("C"					, 20 ,AON.CSS.aonTextCenter())
+		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
+		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
+		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
+		, RST(AON.MSG.result()		, 100,AON.CSS.aonTextRight())
+	    , ACT(AonStringUtils.EMPTY	, 100,AON.CSS.aonTextCenter())
+	    , VST(AON.MSG.financeStatus(),100,AON.CSS.aonTextCenter())
+		;
+
+		String headerLabel;
+		int colWidth;
+		String cellStyleClass;
+
+		private COLS(String headerLabel,int colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private COLS(String headerLabel,int colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public int getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
+	
+	protected AonDisplayGrid getTable() {
+		tab = new AonDisplayGrid();
+		tab.addStyleName(AON.CSS.aonNoPadding());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		
+		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
+		for ( COLS col : COLS.values()) {
+			Label label = new Label( col.getHeaderLabel());
+			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
+			if (col == COLS.AUTO ) {
+				headerCell.addStyleName(AON.CSS.aonFlexGrow1());;
+			} else {
+				headerCell.setWidth(col.getColWidth()  + "px");
+			}
+			headerCell.add(label);
+		}
+		return tab;
+	}
+
+	private void paint(Model303Callback cbk, LinkedList<Mod303> result) {
+		for ( Mod303 mod303 : result) {
+			
+			InlineLabel admon = new InlineLabel();
+			admon.setTitle( mod303.getAdministration().getDescription() );
+			admon.setStyleName(AON.CSS.aonIconLabel());
+			admon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod303.getAdministration()) );
+			
+			InlineLabel comp = new InlineLabel();
+			comp.setTitle( AON.MSG.complementary());
+			comp.setStyleName(AON.CSS.aonIconLabel());
+			comp.addStyleName( mod303.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			
+			InlineLabel sust = new InlineLabel();
+			sust.setTitle( AON.MSG.replacement());
+			sust.setStyleName(AON.CSS.aonIconLabel());
+			sust.addStyleName( mod303.isReplacement()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
+			
+			AonDisplayGridRow row = tab.addRow();
+			row.addStyleName(AON.CSS.aonClickable());
+			row.addClickHandler( new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					SelectionEvent.fire(Model303Table.this, mod303);					
+				}
+			});
+			
+			row.addCell( new InlineLabel(FiscalModelUtils.getModelName(mod303)), AON.CSS.aonTextCenter())
+				.addCell( admon , AON.CSS.aonTextCenter())
+				.addCell( new InlineLabel(AonNumberUtils.toString( mod303.getYear())), AON.CSS.aonTextCenter())
+				.addCell( new InlineLabel(mod303.getPeriod().getDescription()), AON.CSS.aonTextCenter());
+			
+			AonDisplayGridCell statusCell = new AonDisplayGridCell();
+			statusCell.add(new InlineLabel(mod303.getStatus().getName()));
+			statusCell.addStyleName(AON.CSS.aonTextCenter());
+			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB(mod303.getStatus()) );
+			statusCell.getElement().getStyle().setColor(FiscalModelUtils.gettStatusFrgColorRGB(mod303.getStatus()) );
+			row.add( statusCell );
+			
+			row.addCell( comp , AON.CSS.aonTextCenter())
+				.addCell( sust , AON.CSS.aonTextCenter())
+				.addCell( new InlineLabel(mod303.getDocument()))
+				.addCell( new InlineLabel(mod303.getName()))
+				.addCell( new InlineLabel(AON.FMT.format(mod303.getResult())), AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod303.getDeclarationType() == null ? "" : mod303.getDeclarationType().getDescription()))
+				.addCell( new InlineLabel(
+						(mod303.getFinance() != null && mod303.getFinance().getFinanceStatus() != null)
+							?mod303.getFinance().getFinanceStatus().getDescription()
+							:""
+						), AON.CSS.aonTextCenter())
+				;
+		}
+		
 	}
 	
 }

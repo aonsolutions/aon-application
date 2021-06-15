@@ -2,16 +2,18 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAdministrationVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Administration implements Serializable {
 	
-	  ALAVA("Araba/Alava")
-	, BIZKAIA("Bizkaia")
-	, GIPUZKOA("Gipuzkoa")
-	, NAVARRA("Navarra")
-	, COMMON_TERRITORY("Territorio Com\u00FAn")
-	, UNKNOWN("Otro");
+	ALAVA("Araba/Alava"){ @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitAlava();} },
+	BIZKAIA("Bizkaia") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitBizkaia();} },
+	GIPUZKOA("Gipuzkoa") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitGipuzkoa();} },
+	NAVARRA("Navarra") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitNavarra();} },
+	COMMON_TERRITORY("Territorio Com\u00FAn") { @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitCommonTerritory();} },
+	UNKNOWN("Otro"){ @Override public <T> T visit(IAdministrationVisitor<T> visitor){ return visitor.visitUnknown();} },
+	;
 
 	private String description;
 	
@@ -26,6 +28,9 @@ public enum Administration implements Serializable {
 	public byte getValue() {
 		return (byte) ordinal();
 	}
+	
+	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
+	
 	public static Administration safeValueOf( String i ) {
 		if (i == null || AonStringUtils.isBlank(i)) return null;
 		return Administration.valueOf( i );
