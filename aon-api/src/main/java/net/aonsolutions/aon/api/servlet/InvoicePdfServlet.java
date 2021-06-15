@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -33,6 +35,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediRegistry;
+import net.aonsolutions.aon.api.ewok.IConstants;
 
 
 @SuppressWarnings("serial")
@@ -56,10 +59,17 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
 			
-			//InputStream is = new ByteArrayInputStream(json.toString().getBytes());
+			if(json.opt(IConstants.ID) != null && json.opt("source") != null && "rawdoc".equalsIgnoreCase(json.optString("source"))) {
+				Integer id = json.optInt(IConstants.ID);
+				Rawdoc r = AON.getRawdocStream(domainName, domainId, login, 
+						f -> f.getDomainProperty().eq(domainId)
+						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
+				if(r.getId() != null) json = new JSONObject(r.getJson());
+			} else if(json.opt(IConstants.ID) != null){
+				Integer id = json.optInt(IConstants.ID);
+				json = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
+			}
 			PdfMaker.printInvoice(resp.getOutputStream(), json, config, null);
-//			PdfMaker.printDemoInvoice(resp.getOutputStream(), config, null);
-//			PdfMaker.printInvoice(resp.getOutputStream(), is, config, null );
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);

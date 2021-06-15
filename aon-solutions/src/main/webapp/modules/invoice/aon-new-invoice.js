@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -23,9 +23,8 @@ import { AonBasicTable, AonDate, AonDialog, AonIconButton, AonInput, AonNumber, 
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
-import { Paymethods } from '../../services/paymethod.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIRPFPercentage, TaxIVAPercentage, TaxType, TaxVATPercentage } from './invoiceEnums.js';
+import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
 import { getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 
@@ -44,6 +43,8 @@ export class AonNewInvoice extends AonElement {
 	DATA;
 	FILE;
 	fileOpened;
+
+	rbanks;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -79,9 +80,26 @@ export class AonNewInvoice extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
-  	}
+
+		let registry = this.getInvoice().isEmitida()
+			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
+
+		if(registry){
+			let data = {
+				id: registry,
+				registry: registry,
+				additional_info: ['banks', 'paymethods']
+			};
+
+			getRegistry(data).then(r => {
+				this.rbanks = r.banks;
+				this.rpaymethods = r.paymethods;
+			});
+		} 
+	}
 
 	initialize(){
+		this.rbanks = [];
 		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
@@ -203,7 +221,6 @@ export class AonNewInvoice extends AonElement {
 			}
 		}
 	}
-
 
 	reload(){
 		this.clear();
@@ -1218,7 +1235,11 @@ export class AonNewInvoice extends AonElement {
 		bankAccount.readonly = this.invoice.isReadonly();
 
 		bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
-
+			bankAccount.buildOptions(this.rbanks.filter(f => f.bank_account.includes(bankAccount.value))
+				.map(r => {return {
+						name: r.bank_account,
+						value: r.bank_account,
+						rbank: r};}));
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
@@ -1269,9 +1290,9 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	getInvoiceTitle() {
-		if(this.isEmitida()) {
+		if(this.getInvoice().isEmitida()) {
 			return MSG.INVOICE_ISSUED;
-		} else if(this.isTicket()){
+		} else if(this.getInvoice().isTicket()){
 			return MSG.TICKET;
 		} else return MSG.INVOICE_RECEIVED;
 	}
@@ -1334,10 +1355,13 @@ export class AonNewInvoice extends AonElement {
 
 			this.clearElement(fileDiv);
 
-			let json = this.getInvoice();
-			json.domain_id = LS.getDomainId();
-			json.domain_name = LS.getDomainName();
-			json.login = LS.getDomainLogin();
+			let json = {
+				id: this.getInvoice().id,
+				source: this.getInvoice().isRawdoc() ? 'rawdoc' : 'invoice',
+				domain_id: LS.getDomainId(),
+				domain_name: LS.getDomainName(),
+				login: LS.getDomainLogin()
+			};
 
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
@@ -1553,22 +1577,6 @@ export class AonNewInvoice extends AonElement {
 			d.addAcceptAction(() => this.back());
 			d.open();
 		});
-	}
-
-	isEmitida() {
-		return this.getInvoice().isEmitida();
-	}
-
-	isRecibida() {
-		return this.getInvoice().isRecibida();
-	}
-
-	isTicket() {
-		return this.getInvoice().isTicket();
-	}
-
-	isAccounting() {
-		return this.getInvoice().isAccounting();
 	}
 }
 
