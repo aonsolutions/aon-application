@@ -5,8 +5,6 @@ import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.io.File;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.junit.After;
@@ -16,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -47,7 +44,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	
 	@Test
 	public void CostsExcelTest() throws InterruptedException {
-//		Thread.sleep(700);
+		//ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
@@ -55,6 +52,9 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(costItem));
 		retryingFindClick(driver, costItem);
+		if (driver.findElements(By.cssSelector("button[title='Excel']")).size() < 1) {
+			retryingFindClick(driver, costItem);
+		}
 
 		
 //		String classPath = AbstractTestCase.class.getResource("./").getPath();
@@ -92,7 +92,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	}
 //	@Ignore
 	@Test
-	public void CostsTest() throws InterruptedException {
+	public void CostsTestPdf() throws InterruptedException {
 		
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
@@ -101,7 +101,9 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(costItem));
 		retryingFindClick(driver, costItem);
-		
+		if (driver.findElements(By.cssSelector("button[title=\"PDF\"]")).size() < 1) {
+			retryingFindClick(driver, costItem);
+		}
 		
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[title=\"PDF\"]")));
 		retryingFindClick(driver, By.cssSelector("button[title=\"PDF\"]"));
@@ -120,7 +122,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 		Thread.sleep(1000);
 	}
 	
-	
+	//IGNORADO PORQUE FALLA
 	@Ignore
 	@Test
 	public void searchTest () throws InterruptedException {
@@ -143,6 +145,77 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	}
 	
 	
+	@Test
+	public void payrollTest () throws InterruptedException {
+		//ENTER 'INTEGRAL DE NÓMINAS'
+		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
+		
+		By payrollItem = By.cssSelector(".gwt-StackLayoutPanelContent .gwt-Tree > div:nth-child(2) > div:nth-of-type(1) > div:nth-of-type(2) > .gwt-TreeItem");
+		
+		wait.until(ExpectedConditions.elementToBeClickable(payrollItem));
+		retryingFindClick(driver, payrollItem);
+		
+		By monthSelect = By.cssSelector("#rootPanel tbody .aon-selectOneMenu:nth-of-type(2)");
+		By monthSelectOption = By.cssSelector("#rootPanel tbody .aon-selectOneMenu:nth-of-type(2) > option[value='0']");
+		By yearSelect = By.cssSelector("#rootPanel tbody .aon-selectOneMenu:nth-of-type(3)");
+		By yearSelectOption = By.cssSelector("#rootPanel tbody .aon-selectOneMenu:nth-of-type(3) > option[value='2019']");
+		
+		if (driver.findElements(monthSelect).size() < 1) {
+			retryingFindClick(driver, payrollItem);
+		}
+		
+		wait.until(ExpectedConditions.presenceOfElementLocated(monthSelectOption));
+		retryingFindClick(driver, monthSelect);
+		wait.until(ExpectedConditions.elementToBeClickable(monthSelectOption));
+		retryingFindClick(driver, monthSelectOption);
+		
+		wait.until(ExpectedConditions.presenceOfElementLocated(yearSelectOption));
+		retryingFindClick(driver, yearSelect);
+		wait.until(ExpectedConditions.elementToBeClickable(yearSelectOption));
+		retryingFindClick(driver, yearSelectOption);
+		
+		By resultElements = By.cssSelector("#rootPanel tbody tr:nth-of-type(2) tbody tr");
+		
+		List<WebElement> results = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(resultElements));
+		
+		if (results.size() < 1)
+			fail ("The search threw no results");
+	}
+	
+	//IGNORADO PORQUE FALLA
+	@Ignore
+	@Test
+	public void itPartsTest () throws InterruptedException {
+		//ENTER 'INTEGRAL DE NÓMINAS'
+		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
+		
+		By partsItem = By.cssSelector(".gwt-StackLayoutPanelContent .gwt-Tree > div:nth-child(2) > div:nth-of-type(1) > div:nth-of-type(4) > .gwt-TreeItem");
+		
+		wait.until(ExpectedConditions.elementToBeClickable(partsItem));
+		retryingFindClick(driver, partsItem);
+		
+		By infoItem = By.cssSelector("button[title='Leyenda']");
+		
+		if (driver.findElements(infoItem).size() < 1) {
+			retryingFindClick(driver, infoItem);
+		}
+		
+		Thread.sleep(2000);
+		
+		List<WebElement> resultElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("g rect")));
+		
+		if (resultElements.size() < 1)
+			fail ("Did not load the results");
+		
+		for (int i=1; i<=3; i++) {
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("g:nth-of-type(3) rect:nth-of-type(1)")));
+			retryingFindClick(driver, By.cssSelector("g:nth-of-type(3) rect:nth-of-type(" + i + ")"));
+			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("td > div .aon_cancel_button_small")));
+			retryingFindClick(driver, By.cssSelector("td > div .aon_cancel_button_small"));
+		}
+	}
 	
 	
 
@@ -154,8 +227,9 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		retryingFindClick(driver, By.cssSelector("*[id='headerOptionsForm:index']"));
-		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.xpath("*"))));
+		driver.navigate().to(getUrl());
+//		retryingFindClick(driver, By.cssSelector("*[id='headerOptionsForm:index']"));
+//		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.xpath("*"))));
 	}
 
 	@After
