@@ -2376,7 +2376,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.getContractOtherInfo(connection, domainId, contractId, contractType);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2386,7 +2387,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Map<String, String> setContractOtherInfo(String domainName, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.setContractOtherInfo(connection, domainId, contractId, contractType, contractOtherInfo);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.setContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType, contractOtherInfo);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
