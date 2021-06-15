@@ -80,7 +80,7 @@ public class InvoiceMaker {
 			JSONObject financeObj = (JSONObject) finance;
 			
 			Date dueDate = TediJSONUtils.parseDate(financeObj.optString(IJsonNames.DUE_DATE));
-			String payMethod = (String) financeObj.get("paymethod");
+			String payMethod = JsonUtils.optString(financeObj, IJsonNames.PAYMETHOD);
 			String iban = JsonUtils.getString(financeObj, IJsonNames.IBAN);
 			double amount	  = Double.parseDouble("" + financeObj.get("amount"));
 
