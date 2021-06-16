@@ -117,19 +117,20 @@ class SistemaREDEmployee {
 		String gc = page.getElementById("SDFCGRUPOAFI").getTextContent();
 		String gcDesc = page.getElementById("SDFTGRUPOAFI").getTextContent();
 		Boolean agricultPromo = Toolkit.toBoolean(page.getElementById("SDFPFEA").getTextContent());
-		Boolean workTimeReduct = Toolkit.toBoolean(page.getElementById("SDFLITRJ").getTextContent());
-		String fraStr = page.getElementById("SDFFRAAFI").getTextContent();
-		String feaStr = page.getElementById("SDFFEAAFI").getTextContent();
-		String contract = page.getElementById("SDFTIPOAFI").getTextContent();
-		String coef = page.getElementById("SDFCOEFAFI").getTextContent();
-		String colec = page.getElementById("SDFCOLECTIVO").getTextContent();
-		String epig = page.getElementById("SDFEPIGAFI").getTextContent();
-		String ocup = page.getElementById("SDFOCUPACION").getTextContent();
-		String vinFam = page.getElementById("SDFVINCULO").getTextContent();
-		String profesCat = page.getElementById("SDFCATEGORIA").getTextContent();
-		String reducingCoef = page.getElementById("SDFCOEFRED").getTextContent();
-		String frbStr = page.getElementById("SDFFRBAFI").getTextContent();
-		String febStr = page.getElementById("SDFFEBAFI").getTextContent();
+
+		Boolean workTimeReduct = Toolkit.toBoolean(domElementExists(page.getElementById("SDFLITRJ")));
+		String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
+		String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
+		String contract = domElementExists(page.getElementById("SDFTIPOAFI"));
+		String coef = domElementExists(page.getElementById("SDFCOEFAFI"));
+		String colec = domElementExists(page.getElementById("SDFCOLECTIVO"));
+		String epig = domElementExists(page.getElementById("SDFEPIGAFI"));
+		String ocup = domElementExists(page.getElementById("SDFOCUPACION"));
+		String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
+		String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
+		String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
+		String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
+		String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
 		
 	
 		ipf = removeExtraZeros(ipf);
@@ -445,11 +446,16 @@ class SistemaREDEmployee {
 				byte[] pdf = doc.getWebResponse().getContentAsStream().readAllBytes();
 				return pdf;
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new InvalidDataException();
 			}
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		}
 		return null;
+	}
+	
+	private static String domElementExists(DomElement domEl) {
+		return domEl!=null ? domEl.getTextContent() : "";
 	}
 }
