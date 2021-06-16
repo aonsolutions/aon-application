@@ -34,8 +34,8 @@ public class OperationFormatter {
 	private static void writeToJSONOperation(final PrintWriter out, OperationBreakdown op) {
 		out.print('{');
 		if (AonStringUtils.isNotBlank( op.getAccount())) out.printf("\"account\":\"%s\"", op.getAccount());
-		if (AonStringUtils.isNotBlank( op.getAccountDescription())) out.printf(",\"accountDescription\":\"%s\"", op.getAccountDescription());
-		if (AonStringUtils.isNotBlank( op.getConcept())) out.printf(",\"concept\":\"%s\"", op.getFullConcept());
+		if (AonStringUtils.isNotBlank( op.getAccountDescription())) out.printf(",\"accountDescription\":\"%s\"", AonStringUtils.replace(op.getAccountDescription(),"\"","\\\""));
+		if (AonStringUtils.isNotBlank( op.getConcept())) out.printf(",\"concept\":\"%s\"", AonStringUtils.replace(op.getFullConcept(),"\"","\\\""));
 		out.printf(",\"documentNumber\":\"%s\"", AonStringUtils.trimToEmpty(op.getDocNumber()) );
 		if (AonStringUtils.isNotBlank( op.getRegistryDocument())) out.printf(",\"registryDocument\":\"%s\"", op.getRegistryDocument());
 		if (AonStringUtils.isNotBlank( op.getRegistryName())) out.printf(",\"registryName\":\"%s\"", op.getRegistryName());
