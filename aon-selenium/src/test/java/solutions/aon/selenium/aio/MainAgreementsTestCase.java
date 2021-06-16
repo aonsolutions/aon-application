@@ -43,7 +43,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	}
 	
 	@Test
-	public void CostsExcelTest() throws InterruptedException {
+	public void costsExcelTest() throws InterruptedException {
 		//ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
@@ -52,8 +52,10 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(costItem));
 		retryingFindClick(driver, costItem);
-		if (driver.findElements(By.cssSelector("button[title='Excel']")).size() < 1) {
+		int cont = 0;
+		while (cont < 3 && driver.findElements(By.cssSelector("button[title='Excel']")).size() < 1) {
 			retryingFindClick(driver, costItem);
+			cont++;
 		}
 
 		
@@ -101,8 +103,10 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(costItem));
 		retryingFindClick(driver, costItem);
-		if (driver.findElements(By.cssSelector("button[title=\"PDF\"]")).size() < 1) {
+		int cont = 0;
+		while (cont < 3 && driver.findElements(By.cssSelector("button[title='Excel']")).size() < 1) {
 			retryingFindClick(driver, costItem);
+			cont++;
 		}
 		
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[title=\"PDF\"]")));
