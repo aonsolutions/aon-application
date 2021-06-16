@@ -24,15 +24,7 @@ import { AonTable } from "../../../../components/aon-table.js";
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
-    return [CONSTANT.FILTER, CONSTANT.DATA];
-  }
-
-  get filter() {
-    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+    return [CONSTANT.DATA];
   }
 
   get data() {
@@ -51,12 +43,7 @@ export class AonEventDetailList extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.FILTER === name) {
-      this.initialize();
-      this.getTable();
-    }
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
     super();
@@ -91,6 +78,12 @@ export class AonEventDetailList extends AonElement {
     }
     await this.buildFilter();
     await this.getTable();
+
+
+    this.applicationParentEl.addEventListener("filter",()=> {
+      this.initialize();
+      this.getTable();
+    });
   }
 
   paintView() {

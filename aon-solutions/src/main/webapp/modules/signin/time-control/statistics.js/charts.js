@@ -25,9 +25,7 @@ export const charts = (div, data) => new Promise((resolve) => {
           gridlines:{
             count:0
           },
-          baselineColor: '#fff',
-          gridlineColor: '#fff',
-          textPosition: 'none'
+          baselineColor: '#fff'
         },
         hAxis: {
           textStyle: {
@@ -74,7 +72,7 @@ const changeBorderRadius = (div) =>  {
 
   const lineAverage = div.querySelector('path');
   if(lineAverage) {
-    lineAverage.style.transform = "scaleX(.91)";
+    lineAverage.style.transform = "scaleX(.93)";
   }
   
   Array.prototype.forEach.call(chartColumns, (column)=> {

@@ -551,10 +551,9 @@ public class AON_SOLUTIONS {
 		for(String schema: schemas) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {
-				try {
-					AONContext ctx = AONContext.getAONContext(domain, 0, "");
-					total =  total + getNotification().getTotalNotification(ctx, filter);
-				} catch (Exception e) {}
+				try(AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+					total += getNotification().getTotalNotification(ctx, filter);
+				} 
 			}
 			
 		}

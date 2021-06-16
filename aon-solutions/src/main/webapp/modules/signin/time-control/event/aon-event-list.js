@@ -20,15 +20,7 @@ export class AonEventList extends AonElement {
   searchFilter;
   _list;
   static get observedAttributes() {
-    return [CONSTANT.FILTER, CONSTANT.DATA];
-  }
-
-  get filter() {
-    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+    return [CONSTANT.DATA];
   }
 
   get data() {
@@ -47,30 +39,38 @@ export class AonEventList extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.FILTER === name) this.getTable();
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
     super();
+  }
+
+  connectedCallback() {
+    this.initialize();
+    this.build();
+  }
+
+  initialize(){
     this.id = this.id || SIGNIN_VIEWS.AON_EVENT_LIST;
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this.applicationParentEl.periodSideNavDisplay(true);
     this._list = [];
+    this.applicationEl.addToolbarTitle("Resumen");
+    this.applicationParentEl.periodSideNavDisplay(true);
   }
 
-  connectedCallback() {
-    this.applicationEl.addToolbarTitle("Resumen");
-    this.build();
-  }
 
   async build() {
     this.paintView();
     this.buildToolbar();
     await this.getTable();
+
+    this.applicationParentEl.addEventListener("filter",()=> {
+      this._list = [];
+      this.getTable();
+    });
   }
 
 
@@ -157,10 +157,7 @@ export class AonEventList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      let iconBack = "";
-      if(!this.applicationParentEl.isEmployee()){
-        iconBack = "arrow_back";
-      }
+      const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
       aonTable.addColumn(MSG.DATE, "date", "dateParse", "40%");
       aonTable.addColumn(MSG.DURATION, "", "durationParse", "30%");
@@ -178,7 +175,7 @@ export class AonEventList extends AonElement {
           );
         });
       } catch (e) {
-        console.log(e);
+        console.log("error",e);
       }
     }
   }

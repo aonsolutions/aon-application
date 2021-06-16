@@ -131,8 +131,10 @@ export class AonSignin extends AonElement {
         data = {...data, ...getPeriod(data.period)};
       } 
       this._filter = {...this._filter, ...data};
-      this.applicationEl.getChild().filter = true;
-    } catch (error) {}
+      this.dispatchEvent(new CustomEvent("filter",{filter:this._filter}));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   changeFilter(){
