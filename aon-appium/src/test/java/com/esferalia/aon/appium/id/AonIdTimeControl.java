@@ -3,7 +3,8 @@ package com.esferalia.aon.appium.id;
 public class AonIdTimeControl {
     // #A
 	// ----------------------------------------------------
-	 
+	public static final String ADVANCED_SEARCH = "aonSigninToolbarHeaderToolSectionSearchAdvancedButtonIconButton"; 
+	
 	// #B
 	// ----------------------------------------------------
 	
@@ -64,6 +65,7 @@ public class AonIdTimeControl {
 	
 	// #S
 	// ----------------------------------------------------
+	public static final String SEARCH_BUTTON = "aonSigninToolbarHeaderToolSectionSearchSearchButtonIconButton";
 
 	// #T
 	// ----------------------------------------------------

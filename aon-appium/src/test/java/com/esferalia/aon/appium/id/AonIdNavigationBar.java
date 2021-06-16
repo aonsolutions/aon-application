@@ -22,6 +22,7 @@ public class AonIdNavigationBar {
 	
 	// #F
 	// ----------------------------------------------------
+	public final static String FUNCTIONS_BUTTON = "aonMobileMenuAppsButtonIcon";
 	
 	// #G
 	// ----------------------------------------------------

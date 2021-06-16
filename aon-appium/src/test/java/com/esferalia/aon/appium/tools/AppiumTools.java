@@ -2,9 +2,13 @@ package com.esferalia.aon.appium.tools;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.html5.Location;
@@ -75,6 +79,51 @@ public class AppiumTools {
 	
 		JavascriptExecutor js = (JavascriptExecutor) browser;
 		js.executeScript(script);
+	}
+	
+	//The way to get elements clicked without random 'StaleElementReferenceException' exceptions
+	public static boolean retryingFindClick(WebDriver app, By by) {
+	    boolean result = false;
+	    int attempts = 0;
+	    while(attempts < 4) {
+	        try {
+	            app.findElement(by).click();
+	            result = true;
+	            break;
+	        } catch(StaleElementReferenceException e) {
+	        }
+	        attempts++;
+	    }
+	    return result;
+	}
+	
+	public static boolean clickUntilNotExists(WebDriver app, WebElement elem) {
+	    boolean result = false;
+	    int attempts = 0;
+	    while(attempts < 8) {
+	    	try {
+	            elem.click();
+	    	} catch (Exception e) {
+	    		System.out.println(e.getClass());
+	    		result = true;
+	    		break;
+	    	}
+	        attempts++;
+	    }
+	    return result;
+	}
+	
+	
+	public static WebElement getFunction (String optionName, List<WebElement> elements) {
+		try {
+			Thread.sleep(2000);
+			return elements.stream().filter(elem -> {
+				WebElement nameElem = elem.findElement(By.cssSelector(".aonAppTitle"));
+				return nameElem.getAttribute("innerHTML").equalsIgnoreCase(optionName);
+			}).findFirst().orElse(null);			
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 }
