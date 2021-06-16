@@ -80,6 +80,7 @@ public class SalaryExporterServlet extends HttpServlet {
 				extension = "pdf";
 			}else {
 				condition =  getCondition(salaryRequestStr);
+				condition = condition.and(Salary.SALARY.TYPE.lt((byte)SalaryType.L00.ordinal()));
 			}
 			
 			DSL.orderBy(Workplace.WORKPLACE.ID, Salary.SALARY.EMPLOYEE_NAME);
@@ -200,7 +201,7 @@ public class SalaryExporterServlet extends HttpServlet {
 		}
 	}
 	
-	private Condition getConditionSalaryIds(HttpServletRequest req, String selectedSalaries) {
+	protected Condition getConditionSalaryIds(HttpServletRequest req, String selectedSalaries) {
 		ArrayList<Integer> _selectedSalaries = new ArrayList<>();
 
 		Integer numSalaries = Integer.parseInt(selectedSalaries);
@@ -220,7 +221,7 @@ public class SalaryExporterServlet extends HttpServlet {
 		return condition;
 	}
 
-	private static Condition getCondition(String request) throws ManagerBeanException {
+	protected static Condition getCondition(String request) throws ManagerBeanException {
 		Condition condition ;
 
 		Matcher matcher = 

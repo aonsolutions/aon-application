@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -1535,6 +1536,7 @@ public class DashboardController implements Serializable {
 			data =  ctx.getDslContext().select(SALARY.CHARGE_DATE,DSL.sum(SALARY.TOTAL_LIQUID),DSL.sum(SALARY.TOTAL_DEDUCTION),DSL.sum(SALARY.TOTAL_IRPF),DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS),DSL.sum(SALARY.TOTAL_ENTERPRISE))
 					.from(SALARY)
 					.where(SALARY.DOMAIN.eq(domain.getId()))
+					.and(SALARY.TYPE.lt(SalaryType.L00.value()))
 					.groupBy(SALARY.CHARGE_DATE).fetch();
 			
 			/*data=dslContext.select(SALARY.CHARGE_DATE,SALARY.TOTAL_LIQUID,SALARY.TOTAL_DEDUCTION,SALARY.TOTAL_IRPF,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS,SALARY.TOTAL_ENTERPRISE)
