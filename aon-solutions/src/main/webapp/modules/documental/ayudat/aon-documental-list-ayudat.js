@@ -79,8 +79,8 @@ export class AonDocumentalListAyudat extends AonElement {
             } else {
                 this.applicationEl.addToolbarOption2(ACTION.UPLOAD_FILE, () => input.click());
             }
-            this.applicationEl.addSearchOption();
-            this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+            const btnSearch = this.applicationEl.addSearchOption();
+            btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
         }
     }
 

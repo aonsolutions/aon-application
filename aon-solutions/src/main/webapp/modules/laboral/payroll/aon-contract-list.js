@@ -53,8 +53,8 @@ export class AonContractList extends AonElement {
   buildToobar() {
     this.applicationEl.removeToolbarOptions();
     this.applicationEl.addToolbarTitle("Contratos");
-    this.applicationEl.addSearchOption();
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    const btnSearch = this.applicationEl.addSearchOption();
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
 

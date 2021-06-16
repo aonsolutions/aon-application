@@ -46,12 +46,12 @@ export class AonPresenceList extends AonElement {
     this._list = [];
   }
   
-  async build(){
+  build(){
     this.paintView();
     this.buildToolbar();
-    await this.getTable();
+    this.getTable();
     
-    this.applicationParentEl.addEventListener("filter",()=> {
+    this.applicationParentEl.addEventListener("filterParent",()=> {
       this._list = [];
       this.getTable();
     });
@@ -73,15 +73,17 @@ export class AonPresenceList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => {
+    const searchFn = ({detail}) => {
       this.searchFilter = detail;
       this.search();
-    });
-
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+    }
+    const searchValueFn = ({detail})=>{
       this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);
-    });
+    }
+
+    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
     let arrayNewFilter = PRESENCE_FILTER;
     arrayNewFilter.push({
@@ -249,7 +251,7 @@ export class AonPresenceList extends AonElement {
     if (iconAddLocation === target.textContent) {
       parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
     } else {
-      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data, true);
+      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data);
     }
   }
 }
