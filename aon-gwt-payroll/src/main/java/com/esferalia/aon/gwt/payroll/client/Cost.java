@@ -222,6 +222,21 @@ public class Cost extends ResizeComposite {
 		public void execute() {}
 	}
 	
+	class L00Command implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+
+	class L13Command implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+
+	class L03Command implements ScheduledCommand {
+		@Override
+		public void execute() {}
+	}
+
 	class SeeMenu extends ContextMenu {
 				
 		private MenuItem salary = null;
@@ -229,6 +244,10 @@ public class Cost extends ResizeComposite {
 		private MenuItem settle = null;
 		private MenuItem delay = null;
 		
+		private MenuItem l00 = null;
+		private MenuItem l13 = null;
+		private MenuItem l03 = null;
+
 		public SeeMenu() {
 			
 			salary = addItem(Salary.Type.SALARY.getDescription(), new SalaryCommand(), 
@@ -246,7 +265,21 @@ public class Cost extends ResizeComposite {
 			delay = addItem(Salary.Type.DELAY.getDescription(), new DelayCommand(), 
 					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			delay.ensureDebugId("delay");
-		}
+			
+			addSeparator();
+			
+			l00 = addItem(Salary.Type.L00.getDescription(), new L00Command(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			l00.ensureDebugId("l00");
+			
+			l13 = addItem(Salary.Type.L13.getDescription(), new L13Command(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			l13.ensureDebugId("l13");
+
+			l03 = addItem(Salary.Type.L03.getDescription(), new L03Command(), 
+					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			l03.ensureDebugId("l03");
+}
 
 		public MenuItem getSalary() {
 			return salary;
@@ -264,6 +297,17 @@ public class Cost extends ResizeComposite {
 			return delay;
 		}
 		
+		public MenuItem getL00() {
+			return l00;
+		}
+
+		public MenuItem getL13() {
+			return l13;
+		}
+
+		public MenuItem getL03() {
+			return l03;
+		}
 	}
 	
 	// ----------------------------------------------- ScheduledCommand (Type)
@@ -367,6 +411,10 @@ public class Cost extends ResizeComposite {
 		new TypeCommand(seeMenu.getSettle(), Salary.Type.SETTLE);
 		new TypeCommand(seeMenu.getDelay(), Salary.Type.DELAY);
 		
+		new TypeCommand(seeMenu.getL00(), Salary.Type.L00);
+		new TypeCommand(seeMenu.getL13(), Salary.Type.L13);
+		new TypeCommand(seeMenu.getL03(), Salary.Type.L03);
+
 		listeners = new LinkedList<Listener>(); 
 
 //		publishBtn.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
@@ -449,6 +497,13 @@ public class Cost extends ResizeComposite {
 				costDocuments.containsType(Salary.Type.SETTLE));
 		setCheckedStyle(seeMenu.getDelay(),
 				costDocuments.containsType(Salary.Type.DELAY));
+
+		setCheckedStyle(seeMenu.getL00(),
+				costDocuments.containsType(Salary.Type.L00));
+		setCheckedStyle(seeMenu.getL13(),
+				costDocuments.containsType(Salary.Type.L13));
+		setCheckedStyle(seeMenu.getL03(),
+				costDocuments.containsType(Salary.Type.L03));
 	}
 
 	private void syncFormatsButtons() {
@@ -607,6 +662,16 @@ public class Cost extends ResizeComposite {
 		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.DELAY.ordinal())));
+
+		if (isMenuItemChecked(seeMenu.getL00()))
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L00.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL13()))
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L13.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL03()))
+			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L03.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
