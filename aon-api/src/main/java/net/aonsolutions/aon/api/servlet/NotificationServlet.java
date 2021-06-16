@@ -109,7 +109,6 @@ public class NotificationServlet extends AonApiHttpServlet{
 	    	notification.setDomain(api.getDomain());
 	    	notification.setUser(api.getUser());
 	    	notification.setAuths(auths);
-		
 	    	notification.send();
 		}
 		return new JSONObject();

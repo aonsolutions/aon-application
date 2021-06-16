@@ -555,7 +555,6 @@ public class AON_SOLUTIONS {
 					total += getNotification().getTotalNotification(ctx, filter);
 				} 
 			}
-			
 		}
 		return total;
 	}
