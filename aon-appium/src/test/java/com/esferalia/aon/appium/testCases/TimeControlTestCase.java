@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -59,7 +59,6 @@ public class TimeControlTestCase extends AbstractTestCase {
 	@Test
 	public void filterTest() {
 		try {
-			WebDriverWait wait = new WebDriverWait(app, 10);
 			openFilter(app);
 
 			currentDayFilter(app);
@@ -444,26 +443,45 @@ public class TimeControlTestCase extends AbstractTestCase {
 			fail("Unparseable date/s");
 		}
 	}
-
-	// LOCATION NOT WORKING
-	@Ignore
+	
+	
 	@Test
 	public void signInTest() {
-		WebDriverWait wait = new WebDriverWait(app, 20);
+		WebDriverWait wait = new WebDriverWait(app, 5);
 
 		// AppiumTools.setFakeLocation(app);
-		WebElement timeElem = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(AonIdHome.ENTRANCE_BUTTON)));
+		By entranceElem = By.id(AonIdHome.ENTRANCE_BUTTON);
+		
+		try {
+			wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(AonIdHome.BACK_TO_WORK_BUTTON)));
+		} catch (TimeoutException e) {			
+			entranceElem = By.id(AonIdHome.ENTRANCE_BUTTON);
+		}
+		wait = new WebDriverWait(app, 15);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(entranceElem));
 
-		timeElem.click();
+		retryingFindClick(app, entranceElem);
+		
 		LogEntries logEntries = app.manage().logs().get("driver");
 
 		logEntries.forEach(log -> System.out.println(log));
 
-		WebElement pauseElem = wait.until(ExpectedConditions.presenceOfElementLocated(
+		wait.until(ExpectedConditions.elementToBeClickable(
 				By.cssSelector("#" + AonIdHome.SIGNIN_BUTTONS_CONTAINER + " > .aonButton:nth-child(2)")));
 
-		timeElem.click();
-
+		retryingFindClick(app, By.cssSelector("#" + AonIdHome.SIGNIN_BUTTONS_CONTAINER + " > .aonButton:nth-child(2)"));
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.BACK_TO_WORK_BUTTON)));
+		
+		retryingFindClick(app, By.id(AonIdHome.BACK_TO_WORK_BUTTON));
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.EXIT_BUTTON)));
+		
+		retryingFindClick(app, By.id(AonIdHome.EXIT_BUTTON));
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.ENTRANCE_BUTTON)));
+		
 	}
 
 }

@@ -67,7 +67,7 @@ public class AonIdNavigationBar {
 
 	// #T
 	// ----------------------------------------------------
-	public final static String TIME_CONTROL_BUTTON = "aonMobileMenuControl HorarioButtonIcon";
+	
 
 	// #U
 	// ----------------------------------------------------
