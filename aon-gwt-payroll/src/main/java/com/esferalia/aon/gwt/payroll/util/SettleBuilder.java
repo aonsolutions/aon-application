@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,11 +29,13 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -246,25 +249,45 @@ public class SettleBuilder {
 			Double percent = null;
 			String desc = d.getDescription();
 			
-			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
+			int	 type	= d.getDeductionType().ordinal();
+
+			if (desc == null || desc.isEmpty()) {
+				desc = Utilities.chooseDescription(type);
+			}
+			
+			if (!deductionsMap.containsKey(getDeductionPDFType(type)))
+				deductionsMap.put(getDeductionPDFType(type), new ArrayList<PDFDeduction>());
+
+			Map<String, List<ContextData>> data = settle.getContextData();
+			List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(type));	
+			
+
+			ContextData cd = percList != null ? percList.get(0) : new ContextData();
+		
+			if (cd != null) {
+				percent = DataToolkit.safeParseDouble(cd.getExpression(), -1);
+			}
+			
+			
 			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
-
-			if (!deductionsMap.containsKey(type))
-				deductionsMap.put(type, new ArrayList<PDFDeduction>());
-
+			
 			if (
-				deductionsMap.get(type).stream()
-						.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(),
-								deduction.getDescription().get()))
+				deductionsMap
+					.get(getDeductionPDFType(type))
+					.stream()
+					.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().orElse("-1"), deduction.getDescription().orElse("-2")))
 			)
 			{
 				PDFDeduction ded = deductionsMap
-						.get(type).stream().filter(p -> AonStringUtils
-								.equalsIgnoreCase(deduction.getDescription().get(), p.getDescription().get()))
-						.findFirst().get();
+						.get(getDeductionPDFType(type))
+						.stream()
+						.filter(p -> AonStringUtils.equalsIgnoreCase(deduction.getDescription().orElse(""), p.getDescription().orElse("")))
+						.findFirst()
+						.get();
+				
 				ded.setAmount(ded.getAmount().get() + deduction.getAmount().get());
 			} else
-				deductionsMap.get(type).add(deduction);
+				deductionsMap.get(getDeductionPDFType(type)).add(deduction);
 			inserted.add(Utilities.getDeductionType(d.getDeductionType().ordinal()));
 		});
 

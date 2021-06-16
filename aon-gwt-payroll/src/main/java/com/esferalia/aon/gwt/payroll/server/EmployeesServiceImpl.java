@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder.getOccamSalary;
 import static com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder.buildDefaultPayrollFromSalary;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
@@ -167,6 +168,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.gwt.payroll.util.DataToolkit;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
@@ -181,6 +183,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.Settle;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -1679,11 +1682,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			Settle settle = getSettle(domain, draft);
+			Settle settle = getSettleNew(domain, draft);
 
 			try {
-				SettleBuilder.printDraftSettle(settle, reportOut, new Locale("Es"),
-						Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
+				SettleBuilder.printDraftSettle(settle, reportOut, new Locale("Es"),Utilities.getSignature(domain).orElse(new ByteArrayInputStream(new byte[0])));
 			} catch (CanNotCreatePdfException ignored) {
 			}
 
@@ -4387,6 +4389,88 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		return settle;
 	}
+	
+	/**
+	 * Just transpile Salary (occam) to Settle
+	 * 
+	 * @param domain - The domain to search in
+	 * @param draft  - The salaryDraft
+	 * @return [Settle] The settle.
+	 */
+	private static Settle getSettleNew(String domain, SalaryDraft draft) {
+
+		com.esferalia.aon.occam.api.model.Salary salary = getOccamSalary(draft);
+		Settle settle = new Settle();
+
+		settle.setEmployeeName(salary.getEmployeeName()).setEmployeeCategory(salary.getEmployeeCategory())
+				.setEmployeeDocument(salary.getEmployeeDocument()).setEmployeeQuoteGroup(salary.getEmployeeQuoteGroup())
+				.setEmployeeSeniorityDate(salary.getEmployeeSeniorityDate()).setEnterpriseAddress(salary.getEnterpriseAddress())
+				.setEnterpriseCCC(salary.getEnterpriseCCC()).setEnterpriseDocument(salary.getEnterpriseDocument())
+				.setEnterpriseName(salary.getEnterpriseName()).setEndDate(salary.getEndDate())
+				.setIssueDate(salary.getIssueDate()).setTotalDeduction(salary.getTotalDeduction())
+				.setTotalPayment(salary.getTotalPayment()).setTotalEnterprise(salary.getTotalEnterprise())
+				.setTotalIrpf(salary.getTotalIrpf()).setTotalLiquid(salary.getTotalLiquid())
+				.setStartDate(salary.getStartDate());
+
+		
+		String cause = "";
+		
+		List<Variable> contextData = draft.getContext();
+		for (Variable variable : contextData) {
+			
+			String name = variable.getName();
+			if( name != null && name.equals("CAUSA_INDEMNIZACION")) {
+				try {
+					cause = Employee.Dismissal.valueOf("" + variable.getValue()).getDescription();
+				}catch(Exception ignored) {}
+			}
+			settle.addContextData(variable.getName(), "" + variable.getValue(),variable.getStartDate(), variable.getEndDate());
+		}
+		
+		settle.setCause(cause);
+
+		AONContext ctx = AONContext.getAONContext(domain, "");
+		LinkedList<CompanyAdministrator> dirStaff = CompanyDAO.getDirStaff(ctx, ctx.getDomainId());
+
+		if (dirStaff.size() > 0) {
+			String staffDocument = dirStaff.get(0).getDocument();
+			String staffName = dirStaff.get(0).getName();
+
+			settle.setRepresentativeDocument(staffDocument);
+			settle.setRepresentativeName(staffName);
+		}
+
+		for (com.esferalia.aon.occam.api.model.Salary.Deduction deduction : salary.getDeductions()) {
+
+			byte type = (byte) deduction.getDeductionType().ordinal();
+			String description = deduction.getDescription();
+			
+						
+			List<ContextData> percList = settle.getContextData().get("PORCENTAJE_" + Utilities.getDeductionType(deduction.getDeductionType().ordinal()));						
+			
+			ContextData cd = percList != null ? percList.get(0) : new ContextData();
+			Double percent = null;
+		
+			if (cd != null) {
+				percent = DataToolkit.safeParseDouble(cd.getExpression(), -1);
+			}
+			
+			settle.addDeduction(type, percent + "", deduction.getAmount(), type);
+		}
+
+		for (com.esferalia.aon.occam.api.model.Salary.Payment payment : salary.getPayments()) {
+			settle.addPayment(payment.getName(), payment.getExpression(), payment.getDescription(),
+					payment.getAmount(), 0.00, (byte) payment.getPaymentType().ordinal());
+		}
+
+		for (com.esferalia.aon.occam.api.model.Salary.Cost cost : salary.getCosts()) {
+			settle.addCost((byte) cost.getCostType().ordinal(), "0", cost.getDescription(), cost.getAmount(),
+					(byte) cost.getCostType().ordinal());
+		}
+		
+		return settle;
+	}
+	
 
 	private static com.esferalia.aon.payroll.Salary getSalary(String domain, AgreementDraft draft, int levelId) {
 

@@ -34,9 +34,6 @@ public class PayrollPrintServlet extends HttpServlet {
 		doPost(req, resp);
 	}
 	
-	
-	
-	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Integer[] ids = new Integer[req.getParameterValues("id").length];

@@ -67,12 +67,22 @@ public class SalaryPDFServlet extends HttpServlet {
 			SalaryType salaryType = req.getParameter(PayrollPrintService.Parameter.TYPE.getName()).equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
 			Integer enterpriseID = Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()));
 			String salaryReport = getReportKey(domain, enterpriseID, salaryType);
+			
 			if ( AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_MACLEOD.getValue() )) {
 				String macLeodPath = req.getServletPath().replace("salary_exporter", "salary_connor_macleod");
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(macLeodPath);
 				dispatcher.forward(req, resp);
 				return;
 			}
+			
+			if ( AonStringUtils.equalsIgnoreCase(salaryReport, "settlement")) {
+				String macLeodPath = req.getServletPath().replace("salary_exporter", "vallhala");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(macLeodPath);
+				dispatcher.forward(req, resp);
+				return;
+			}
+			
+			
 			
 			Integer selectedSalaries = req.getParameterValues(PayrollPrintService.Parameter.ID.getName()).length;
 			Condition condition = getConditionSalaryIds(req.getParameterValues(PayrollPrintService.Parameter.ID.getName()), selectedSalaries);

@@ -48,8 +48,9 @@ public class SettlePrintServlet extends HttpServlet {
 		{
 			resp.setContentType(MimeType.MIME_PDF.getName());
 			SettleBuilder.printSettles(domain, enterprise, ids, out, req.getLocale());
-		} catch (CanNotCreatePdfException e)
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			error(resp, out);
 		}
 	}
