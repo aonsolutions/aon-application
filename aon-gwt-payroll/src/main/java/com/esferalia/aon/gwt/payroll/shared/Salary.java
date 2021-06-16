@@ -99,6 +99,8 @@ public class  Salary implements Serializable{
 				put(SETTLE,"FINIQUITO");
 				put(DELAY,"ATRASOS");
 				put(L00,"L00");
+				put(L13,"L13");
+				put(L03,"L03");
 				//put(SLD_RESULTS,null);
 
 			}
@@ -111,11 +113,16 @@ public class  Salary implements Serializable{
 				put(EXTRA,"Extra");
 				put(SETTLE,"Finiquito");
 				put(DELAY,"Atrasos");
-				put(L00,"Liquidaci\u00f3n Ordinaria L00");
+				put(L00,"Liquidaci\u00f3n ordinaria L00");
+				put(L13,"Liquidaci\u00f3n complementaria L13");
+				put(L03,"Liquidaci\u00f3n complementaria L03");
 			}
 		};
 		
 		public static Type SALARIES [] = {SALARY, EXTRA, DELAY, SETTLE};
+		
+		public static Byte [] LIQUIDATIONS = { (byte) L00.ordinal(), (byte) L13.ordinal(), (byte) L03.ordinal() }; 
+		
 	}
 
 	private int id ;
