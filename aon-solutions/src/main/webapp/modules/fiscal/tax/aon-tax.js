@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
+import { PRESENCE_FILTER } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
 import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
@@ -9,7 +9,6 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { EVENT, TAG,  MSG, CONSTANT } from "../../../environments/environments.js";
-import { AonFilter } from "../../../components/aon-filter.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 
@@ -20,15 +19,7 @@ export class AonTax extends AonElement {
   searchFilter;
   _list;
   static get observedAttributes() {
-    return [CONSTANT.FILTER];
-  }
-
-  get filter() {
-    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+    return [];
   }
 
   get id() {
@@ -39,9 +30,7 @@ export class AonTax extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.FILTER === name) this.getTable();
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
     super();
@@ -59,22 +48,17 @@ export class AonTax extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Impuestos");
+    this._list = [];
   }
 
   async build() {
     this.paintView();
     this.buildToolbar();
-    await this.buildFilter();
     await this.getTable();
-    this.getBanks();
+    await this.getBanks();
   }
 
   paintView() {
-    let aonFilter = new AonFilter();
-    aonFilter.id = this.id+"Filter";
-    aonFilter.title = MSG.FILTERS;
-    this.appendChild(aonFilter);
-    
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
@@ -82,39 +66,48 @@ export class AonTax extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => filterEl.openFilter() );
-    this.applicationEl.addSearchOption();
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    this.buildToolbarSearch();
+    this.searchValueDefault();
   }
 
-  async buildFilter() {
-    let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(PRESENCE_FILTER);
-    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({ detail }) => {
-      if (detail) {
-        console.log(detail);
-      }
-    });
+  buildToolbarSearch(){
+    let btnSearch = this.applicationEl.addSearchOption();
+    
+    const searchFn = ({detail}) => {
+      this.searchFilter = detail;
+      this.search();
+    }
+    
+    const searchValueFn = ({detail})=>{
+      this._list = [];
+      if(detail) console.log(detail);
+    }
 
+    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+
+    btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
+
+    let buttonSearchAccept = btnSearch.querySelector("div>button");
+    if(buttonSearchAccept) buttonSearchAccept.disabled = true;
+    console.log(buttonSearchAccept);
+  }
+
+  searchValueDefault(){
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
-
-    periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
-      if (detail) {
-        const { startDate, endDate } = detail;
-        setValueName("startDate", startDate);
-        setValueName("endDate", endDate);
+    periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+      if(detail){
+        const {startDate, endDate} = detail;
+        setValueName('startDate', startDate);
+        setValueName('endDate', endDate);
       }
     });
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE, (ev) => {
-      periodEl.value = "personalized";
-    });
-    this.getElement("endDate").addEventListener(EVENT.CHANGE, (ev) => {
-      periodEl.value = "personalized";
-    });
+    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
+    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
   }
+
 
   async getTable() {
     this.applicationEl = await waitEl("#aonFiscal");
@@ -295,8 +288,8 @@ export class AonTax extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this.searchFilter && !isEmptyObject(this._list)){
-        data = this._list.filter(({newModel, modelText, periodText, year, statusText})=> this.includeSearch(newModel) || this.includeSearch(modelText) || this.includeSearch(statusText) || this.includeSearch(periodText) || this.includeSearch(year));
+      if(this._list.length){
+        data = this._list;
       } else {
         const datos = await getModelsFiscal();
         if (datos) {
@@ -322,6 +315,7 @@ export class AonTax extends AonElement {
           });
         }
         this._list = data;
+        if(this.searchFilter) data = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], data);
       }
     } catch (e) {
       console.log(e);
@@ -428,13 +422,18 @@ export class AonTax extends AonElement {
     this.applicationEl.stopLoading();
   }
 
-  search(detail){
-    this.searchFilter = detail;
+
+  search(){
+    this._list = this.filterSearch(["periodText", "statusText", "modelText", "newModel", "model"], this._list);
     this.getTable();
   }
 
-  includeSearch(str){
-    return this.searchFilter && str && str.toString().toLowerCase().includes(this.searchFilter.toLowerCase());
+  filterSearch(keys, lists){
+    let list = [];
+    if(this.searchFilter && lists.length){
+      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+    }
+    return list;
   }
 
 }

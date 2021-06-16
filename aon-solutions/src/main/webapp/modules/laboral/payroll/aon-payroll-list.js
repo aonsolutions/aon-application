@@ -86,8 +86,8 @@ export class AonPayrollList extends AonElement {
       filterEl.openFilter()
     );
     if(this.isMobile())this.buildToolbarMobile();
-    this.applicationEl.addSearchOption();
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    const btnSearch = this.applicationEl.addSearchOption();
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
 

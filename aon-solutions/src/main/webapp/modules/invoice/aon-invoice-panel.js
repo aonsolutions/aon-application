@@ -130,10 +130,9 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 			}
 		}
-		this.getApplication().addSearchOption();
+		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
-		this.getApplication().removeEventListener(EVENT.SEARCH, searchFn, true);
-		this.getApplication().addEventListener(EVENT.SEARCH, searchFn);
+		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
 	}
 
  	buildSidenavOptions() {

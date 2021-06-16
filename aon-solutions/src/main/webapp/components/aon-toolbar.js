@@ -180,10 +180,16 @@ export class AonToolbar extends AonElement {
 	addSearchButton(advanced) {
 		let search = new AonSearch();
 		search.id = this.TOOL_SECTION + 'Search';
-		search.addEventListener(EVENT.SEARCH, (event) => {
-			this.dispatchEvent(new CustomEvent('search',{detail: event.detail}));
-		});
+
+		const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
+		const searchValueFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
+
+		// search.removeEventListener(EVENT.SEARCH, searchFn, true);
+		// search.removeEventListener(EVENT.SEARCH_VALUE, searchValueFn, true);
 		
+		search.addEventListener(EVENT.SEARCH, searchFn);
+		search.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+
 		let aonMenu = this.getElement('aonMenu');
 		let toolSection = this.getElement(this.TOOL_SECTION);
 		toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';

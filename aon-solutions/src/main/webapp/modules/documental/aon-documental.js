@@ -6,7 +6,7 @@ import {getCategories, getTags, createTag, createCategory, editCategory,
     getDomainUserRoles, getDocument} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {AonSelect} from '../../components/aon-select.js';
-import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import './aon-documental-list.js';
 import './aon-document.js';
@@ -69,7 +69,7 @@ export class AonDocumental extends AonElement {
 
       let input = this.getElement(this.INPUTFILE);
 
-      input.addEventListener('change', () => this.upload(input.files));
+      input.addEventListener(EVENT.CHANGE, () => this.upload(input.files));
 
   		aonDocumental.addEventListener('drop', (event) => {
   			if(event && event.dataTransfer && event.dataTransfer.files){
@@ -83,8 +83,8 @@ export class AonDocumental extends AonElement {
         if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){
           aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
         }
-        aonDocumental.addSearchOption();
-        aonDocumental.addEventListener('search', (event) => this.search(event.detail));
+        const btnSearch = aonDocumental.addSearchOption();
+        btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
       }
 
       if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())

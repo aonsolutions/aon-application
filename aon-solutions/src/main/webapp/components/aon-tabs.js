@@ -1,6 +1,6 @@
 import { AonElement } from "./AonElement.js";
 import { waitEl } from "../services/utils.js";
-import { CONSTANT, TAG } from "../environments/environments.js";
+import { CONSTANT, EVENT, TAG } from "../environments/environments.js";
 
 export class AonTabs extends AonElement {
   ACTIVE_CLASS;
@@ -51,8 +51,10 @@ export class AonTabs extends AonElement {
   }
 
   paintButtons(option, total){
+      const exists = this.getElement(option.id);
+      if(exists) return null;
       const button = this.createElement(TAG.BUTTON);
-      button.addEventListener("click", (ev) => {
+      button.addEventListener(EVENT.CLICK, (ev) => {
         this.handleTabSelection(ev);
         const current = document.querySelector(`.focus`);
         if (current) {
@@ -123,7 +125,7 @@ export class AonTabs extends AonElement {
     this.toggleActiveClass(ev);
     this.moveTabIndicator(ev);
     this.handleA11y(ev);
-    this.dispatchEvent(new CustomEvent('change', {detail:{ position: this.getTabIndex(ev) }}));
+    this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail:{ position: this.getTabIndex(ev) }}));
   }
   
   toggleActiveClass(ev) {
