@@ -249,23 +249,22 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         div.appendChild(divMessage);
 
-        document
-          .getElementById(
-            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-          )
-          .addEventListener("click", () => {
+        let elem = document
+        .getElementById(
+          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+        );
+          elem.onclick = () => {
             drawChart();
             document
               .querySelector(
                 "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
               )
               .click();
-          });
+          };
       }
     };
 
     google.charts.load("current", { packages: ["corechart"] });
-
     google.charts.setOnLoadCallback(
       filter && filter.show == "yearly"
         ? drawPeriodChart(selectedElement)
@@ -603,18 +602,18 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         div.appendChild(divMessage);
 
-        document
-          .getElementById(
-            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-          )
-          .addEventListener("click", () => {
+        let elem = document
+        .getElementById(
+          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
+        );
+          elem.onclick = () => {
             drawChart();
             document
               .querySelector(
                 "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
               )
               .click();
-          });
+          };
       }
     }
 
