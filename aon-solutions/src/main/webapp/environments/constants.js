@@ -18,6 +18,7 @@ export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
 export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
 export const AON_INVOICE_TAX = 'aonInvoiceTax';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
+export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
