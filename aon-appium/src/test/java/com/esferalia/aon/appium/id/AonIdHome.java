@@ -6,6 +6,7 @@ public class AonIdHome {
 	 
 	// #B
 	// ----------------------------------------------------
+	public static final String BACK_TO_WORK_BUTTON = "aonSignVuelta";
 	
 	// #C
 	// ----------------------------------------------------
@@ -16,6 +17,7 @@ public class AonIdHome {
 	// #E
 	// ----------------------------------------------------
 	public static final String ENTRANCE_BUTTON = "aonSignEntrada";
+	public static final String EXIT_BUTTON = "aonSignSalida";
 	
 	// #F
 	// ----------------------------------------------------
