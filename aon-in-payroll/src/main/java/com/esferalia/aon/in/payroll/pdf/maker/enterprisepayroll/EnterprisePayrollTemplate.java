@@ -16,10 +16,12 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawImage;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.imageFromBytes;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.reescale;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -372,6 +374,10 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificaciones));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotal));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotal));
+		
+		Color totalColor = getColor(ssTotal, ssTotalSS);
+		if ( /* totalColor == ORANGE || */ totalColor == RED )
+			table.paintCell(table.getColumn("Trabajador"),  getColor(ssTotal, ssTotalSS) );
 
 		table.newRow();
 
@@ -444,19 +450,29 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotal));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotal));
 
-		table.paintCell(table.getColumn("Tipo"), BLACK);
-		table.paintCell(table.getColumn("Devengado"), BLACK);
-		table.paintCell(table.getColumn("S.S. Trab."), BLACK);
-		table.paintCell(table.getColumn("I.R.P.F"), BLACK);
-		table.paintCell(table.getColumn("Otr. ded."), BLACK);
-		table.paintCell(table.getColumn("Liquido"), BLACK);
-		table.paintCell(table.getColumn("S.S. Empr."), BLACK);
-		table.paintCell(table.getColumn("Bonificaciones"), BLACK);
-		table.paintCell(table.getColumn("Total S.S"), BLACK);
-		table.paintCell(table.getColumn("Coste total"), BLACK);
+		Color color = hasSs(t) ? RED : BLACK;
+		table.paintCell(table.getColumn("Trabajador"), color);
+		table.paintCell(table.getColumn("Tipo"), color);
+		table.paintCell(table.getColumn("Devengado"), color);
+		table.paintCell(table.getColumn("S.S. Trab."), color);
+		table.paintCell(table.getColumn("I.R.P.F"), color);
+		table.paintCell(table.getColumn("Otr. ded."), color);
+		table.paintCell(table.getColumn("Liquido"), color);
+		table.paintCell(table.getColumn("S.S. Empr."), color);
+		table.paintCell(table.getColumn("Bonificaciones"), color);
+		table.paintCell(table.getColumn("Total S.S"), color);
+		table.paintCell(table.getColumn("Coste total"), color);
 
 		table.newRow();
 		t.y(table.y());
+	}
+
+
+	private static boolean hasSs(EnterprisePayrollTemplate t ) {
+		return 
+		t.payroll.getEntries().orElse(Collections.emptyMap())
+		.values().stream().flatMap( m -> m.values().stream())
+		.anyMatch( e -> e.HasSs() ) ;
 	}
 
 	private static void drawEntryOnlySs(EnterprisePayrollTemplate t, EnterprisePayrollEntry e, PdfTable table)
@@ -485,17 +501,18 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Bonificaciones"), toLatinNumber(bonificacionesSS));
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotalSS));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotalSS));
-
-		table.paintCell(table.getColumn("Tipo"), GREEN);
-		table.paintCell(table.getColumn("Devengado"), GREEN);
-		table.paintCell(table.getColumn("S.S. Trab."), GREEN);
-		table.paintCell(table.getColumn("I.R.P.F"), GREEN);
-		table.paintCell(table.getColumn("Otr. ded."), GREEN);
-		table.paintCell(table.getColumn("Liquido"), GREEN);
-		table.paintCell(table.getColumn("S.S. Empr."), GREEN);
-		table.paintCell(table.getColumn("Bonificaciones"), GREEN);
-		table.paintCell(table.getColumn("Total S.S"), GREEN);
-		table.paintCell(table.getColumn("Coste total"), GREEN);
+		
+		table.paintCell(table.getColumn("Trabajador"), RED);
+		table.paintCell(table.getColumn("Tipo"), RED);
+		table.paintCell(table.getColumn("Devengado"), RED);
+		table.paintCell(table.getColumn("S.S. Trab."), RED);
+		table.paintCell(table.getColumn("I.R.P.F"), RED);
+		table.paintCell(table.getColumn("Otr. ded."), RED);
+		table.paintCell(table.getColumn("Liquido"), RED);
+		table.paintCell(table.getColumn("S.S. Empr."), RED);
+		table.paintCell(table.getColumn("Bonificaciones"), RED);
+		table.paintCell(table.getColumn("Total S.S"), RED);
+		table.paintCell(table.getColumn("Coste total"), RED);
 
 		table.newRow();
 		t.y(table.y());
