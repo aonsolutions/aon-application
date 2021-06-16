@@ -54,6 +54,10 @@ export const AON_MODULE = 'aon-module';
 export const AON_COMPANY = 'aon-company';
 export const AON_COMPANY_LIST = 'aon-company-list';
 
+// MODULES - USER
+
+export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
+
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';

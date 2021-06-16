@@ -3,7 +3,7 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import '../../components/aon-icon.js';
@@ -72,12 +72,32 @@ export class AonDesktop extends AonElement {
 				});
 			} else this.build();
 		});
-  }
+  	}
 
 	build(notice) {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
+		
+		let sidenav = this.getElement(this.getApplication().SIDENAV);
+		sidenav.innerHTML = `
+		<div>
+		 	<button id="aonNew" class="aonButton" style="padding: 1rem;width: 140px;background-color: white;margin: 15px;border-radius: 50px;color: #002469;display: flex;">
+		 		<i id="aonNewIcon" class="material-icons-outlined" style="">add</i>
+		 		<span style="
+		 				margin-top: 5px;
+		 				margin-left: 10px;
+		 				position: relative;
+		 				">
+		 			NUEVO
+		 		</span>
+			</button>
+		</div>
+		`;
+
+		let aonNew = this.getElement('aonNew');
+		aonNew.addEventListener(EVENT.CLICK, () => this.development());
+
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			let inboxCount = 0;
 			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
