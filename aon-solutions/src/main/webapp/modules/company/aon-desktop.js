@@ -96,7 +96,7 @@ export class AonDesktop extends AonElement {
 		`;
 
 		let aonNew = this.getElement('aonNew');
-		aonNew.addEventListener(EVENT.CLICK, () => this.development());
+		aonNew.addEventListener(EVENT.CLICK, (e) => this.addNewOptions(e));
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			let inboxCount = 0;
@@ -358,6 +358,43 @@ export class AonDesktop extends AonElement {
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		else return false;
+	}
+
+	addNewOptions(e) {
+		let rect = e.target.getBoundingClientRect();
+    	let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+
+		const top  = rect.top + y;
+	  	const left = rect.left + x + 180;
+
+    	let d = this.getElement(this.getApplication().OPTION_DIALOG);
+
+		const NEW_INVOICE = {
+			id: 'invoice',
+			name: 'Nueva Factura',
+			icon: 'receipt',
+			fn: () => {this.development('Nueva Factura');}
+		};
+
+		const NEW_DOCUMENT = {
+			id: 'document',
+			name: 'Nuevo Documento',
+			icon: 'description',
+			fn: () => {this.development('Nuevo Documento');}
+		};
+
+		const NEW_MESSENGER = {
+			id: 'messenger',
+			name: 'Nueva Solicitud',
+			icon: 'message',
+			fn: () => {this.development('Nueva Solicitud');}
+		};
+
+	  	let actions = [NEW_INVOICE, NEW_DOCUMENT, NEW_MESSENGER];
+	  
+	  	d.setMenuOptions(actions, top, left);
+	  	d.open();
 	}
 }
 

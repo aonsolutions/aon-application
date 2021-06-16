@@ -12,6 +12,7 @@ import { AonConfiguration } from "./configuration/aon-configuration.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
 import { AonMobileProfile } from "./user/aon-mobile-profile.js";
+import { AonNew } from "./aon-new.js";
 
 export class AonNewMobileMenu extends AonElement {
 
@@ -195,7 +196,13 @@ export class AonNewMobileMenu extends AonElement {
   }
 
   add() {
-    alert("En desarrollo");
+    if(LS.getCompany()) {
+      let aonHeader = this.getElement("aonHeader");
+      aonHeader.companyIn();
+      this.rootPanel(new AonNew());
+    } else {
+      alert("selecciona una empresa.")
+    }
   }
 
   notification() {
