@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.api.model.type;
 
-
-
-
 public enum DeductionType {
 
 	COMMON_CONTINGENCY {
@@ -73,23 +70,34 @@ public enum DeductionType {
 		}
 
 	},
-	IT 
+	IT // ¿ EMBARGO ?
 	{
 		@Override
 		public <T> T accept(Visitor<T> visitor) {
-			return visitor.visitIT(this);
+			T t = visitor.visitIT(this);
+			if ( t == null ) {
+				t = visitor.visitEmbargo(this);
+			}
+			return t ;
 		}
 
 	},
-	IMS 
+	IMS  // ¿ BONUS ?
 	{
 		@Override
 		public <T> T accept(Visitor<T> visitor) {
-			return visitor.visitIMS(this);
+			T t = visitor.visitIMS(this);
+			if ( t == null ) {
+				t = visitor.visitBonus(this);
+			}
+			return t ;
 		}
 
 	},
 	;
+	
+	public static DeductionType BONUS = IMS;
+	public static DeductionType EMBARGO = IT;
 
 	public abstract <T> T accept(Visitor<T> visitor);
 	
@@ -144,6 +152,13 @@ public enum DeductionType {
 			return null;
 		}
 		default T visitIMS(DeductionType deductionType) {
+			return null;
+		}
+
+		default T visitEmbargo(DeductionType deductionType) {
+			return null;
+		}
+		default T visitBonus(DeductionType deductionType) {
 			return null;
 		}
 	}
