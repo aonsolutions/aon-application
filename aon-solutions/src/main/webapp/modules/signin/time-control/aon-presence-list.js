@@ -14,15 +14,7 @@ export class AonPresenceList extends AonElement {
   searchFilter;
   _list;
   static get observedAttributes() {
-    return [CONSTANT.FILTER];
-  }
-
-  get filter() {
-    return JSON.parse(this.getAttribute(CONSTANT.FILTER));
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+    return [];
   }
 
   get id() {
@@ -33,9 +25,7 @@ export class AonPresenceList extends AonElement {
     this.setAttribute(CONSTANT.ID, id);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.FILTER === name) this.getTable();
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   constructor() {
     super();
@@ -50,16 +40,21 @@ export class AonPresenceList extends AonElement {
     this.id = this.id || SIGNIN_VIEWS.AON_PRESENCE_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
-    this.applicationParenEl = this.getApplicationParent();
+    this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Presencia");
-    this.applicationParenEl.periodSideNavDisplay(true);
+    this.applicationParentEl.periodSideNavDisplay(true);
     this._list = [];
   }
   
-  async build(){
+  build(){
     this.paintView();
     this.buildToolbar();
-    await this.getTable();
+    this.getTable();
+    
+    this.applicationParentEl.addEventListener("filterParent",()=> {
+      this._list = [];
+      this.getTable();
+    });
   }
 
   paintView() {
@@ -78,15 +73,17 @@ export class AonPresenceList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => {
+    const searchFn = ({detail}) => {
       this.searchFilter = detail;
       this.search();
-    });
-
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+    }
+    const searchValueFn = ({detail})=>{
       this._list = [];
-      if(detail) this.applicationParenEl.setDataFilter(detail);
-    });
+      if(detail) this.applicationParentEl.setDataFilter(detail);
+    }
+
+    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
     let arrayNewFilter = PRESENCE_FILTER;
     arrayNewFilter.push({
@@ -123,7 +120,7 @@ export class AonPresenceList extends AonElement {
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
     this.applicationEl.stopLoader();
-    this.applicationParenEl.changeFilter();
+    this.applicationParentEl.changeFilter();
   }
 
   async getTableDesk() {
@@ -177,7 +174,7 @@ export class AonPresenceList extends AonElement {
         data = this._list;
       } else {
         let filter = null;
-        try {filter = {...this.applicationParenEl._filter};} catch (error) {}
+        try {filter = {...this.applicationParentEl._filter};} catch (error) {}
         const datos = await getTimeControlList(filter);
         if (datos) {
           sortBy(datos, 'last_date', 'desc').map(({
@@ -227,7 +224,7 @@ export class AonPresenceList extends AonElement {
 		this.applicationEl.startLoading();
 		try {
       let startYear = new Date().getFullYear();
-      let {startDate} = this.applicationParenEl._filter;
+      let {startDate} = this.applicationParentEl._filter;
 			if(startDate) {startYear = new Date(startDate).getFullYear();} 
 			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31"}); 
 		} catch (error) {
@@ -250,11 +247,11 @@ export class AonPresenceList extends AonElement {
   }
 
   aonEvent({ target }, data) {
-    const parent = this.applicationParenEl;
+    const parent = this.applicationParentEl;
     if (iconAddLocation === target.textContent) {
       parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
     } else {
-      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data, true);
+      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data);
     }
   }
 }

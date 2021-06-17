@@ -204,7 +204,7 @@ public class CostPDFServlet extends HttpServlet {
 			int workplaceId = Integer.parseInt(matcher.group("workplaceid"));
 
 			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(outputStream, domainName, user, startDate, endDate,
-					enterpriseId, workplaceId);
+					enterpriseId, workplaceId, types );
 		}
 
 	}

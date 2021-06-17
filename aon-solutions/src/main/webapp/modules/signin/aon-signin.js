@@ -12,8 +12,7 @@ import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.j
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
-import { AonStatistics } from "./time-control/statistics.js/aon-statistics.js";
-
+// import { AonStatistics } from "./time-control/statistics.js/aon-statistics.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
@@ -80,15 +79,6 @@ export class AonSignin extends AonElement {
       }
     ];
 
-    if(this.getDur().isAlpha()) {
-      options.push({
-        icon: "bar_chart",
-        name: "Estadisticas",
-        id: "statistics",
-        fn: () => this.showView(SIGNIN_VIEWS.AON_STATISTICS)
-      });
-    }
-
     if( this.isEmployee()) {
       delete options[1];
     } 
@@ -131,8 +121,10 @@ export class AonSignin extends AonElement {
         data = {...data, ...getPeriod(data.period)};
       } 
       this._filter = {...this._filter, ...data};
-      this.applicationEl.getChild().filter = true;
-    } catch (error) {}
+      this.dispatchEvent(new CustomEvent("filterParent",{filter:this._filter}));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   changeFilter(){
@@ -183,9 +175,9 @@ export class AonSignin extends AonElement {
               aonView = new AonLocationList();
               this.periodSideNavDisplay(false);
             break;
-          case SIGNIN_VIEWS.AON_STATISTICS:
-            aonView = new AonStatistics();// : this.applicationEl.development();
-            break;
+          // case SIGNIN_VIEWS.AON_STATISTICS:
+          //   aonView = new AonStatistics();// : this.applicationEl.development();
+          //   break;
           case SIGNIN_VIEWS.AON_LOCATION_ADD:
             aonView = new AonLocationAdd();
             if(data){

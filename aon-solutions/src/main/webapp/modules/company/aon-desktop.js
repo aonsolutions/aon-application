@@ -3,7 +3,7 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import '../../components/aon-icon.js';
@@ -72,12 +72,32 @@ export class AonDesktop extends AonElement {
 				});
 			} else this.build();
 		});
-  }
+  	}
 
 	build(notice) {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
+		
+		let sidenav = this.getElement(this.getApplication().SIDENAV);
+		sidenav.innerHTML = `
+		<div>
+		 	<button id="aonNew" class="aonButton" style="padding: 1rem;width: 140px;background-color: white;margin: 15px;border-radius: 50px;color: #002469;display: flex;">
+		 		<i id="aonNewIcon" class="material-icons-outlined" style="">add</i>
+		 		<span style="
+		 				margin-top: 5px;
+		 				margin-left: 10px;
+		 				position: relative;
+		 				">
+		 			NUEVO
+		 		</span>
+			</button>
+		</div>
+		`;
+
+		let aonNew = this.getElement('aonNew');
+		aonNew.addEventListener(EVENT.CLICK, (e) => this.addNewOptions(e));
+
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			let inboxCount = 0;
 			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
@@ -338,6 +358,43 @@ export class AonDesktop extends AonElement {
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		else return false;
+	}
+
+	addNewOptions(e) {
+		let rect = e.target.getBoundingClientRect();
+    	let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+
+		const top  = rect.top + y;
+	  	const left = rect.left + x + 180;
+
+    	let d = this.getElement(this.getApplication().OPTION_DIALOG);
+
+		const NEW_INVOICE = {
+			id: 'invoice',
+			name: 'Nueva Factura',
+			icon: 'receipt',
+			fn: () => {this.development('Nueva Factura');}
+		};
+
+		const NEW_DOCUMENT = {
+			id: 'document',
+			name: 'Nuevo Documento',
+			icon: 'description',
+			fn: () => {this.development('Nuevo Documento');}
+		};
+
+		const NEW_MESSENGER = {
+			id: 'messenger',
+			name: 'Nueva Solicitud',
+			icon: 'message',
+			fn: () => {this.development('Nueva Solicitud');}
+		};
+
+	  	let actions = [NEW_INVOICE, NEW_DOCUMENT, NEW_MESSENGER];
+	  
+	  	d.setMenuOptions(actions, top, left);
+	  	d.open();
 	}
 }
 

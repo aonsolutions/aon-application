@@ -641,7 +641,21 @@ public class RawdocModule extends MainEntryPoint {
 										public void onChange(IAccountEntryWrapper changed) {
 											entryDialog.hide();
 											result.setAon((AccountingInvoice) changed);
-											refreshCell("CONTABILIZADO",row);
+											StringBuffer buf = new StringBuffer();
+											if (result.getAccountingInvoice() != null) {
+												if (result.getAccountingInvoice().getAccountEntry() != null) {
+													buf.append(AON.MSG.journal());
+													buf.append(": ");
+													buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
+												}
+												if (result.getInvoice()!= null) {
+													buf.append(" Doc: ");
+													buf.append(result.getInvoice().getDocumentNumber());
+												}
+											} else {
+												buf.append("CONTABILIZADO");
+											}
+												refreshCell(buf.toString(),row);
 										}
 									}));
 							entryDialog.center();

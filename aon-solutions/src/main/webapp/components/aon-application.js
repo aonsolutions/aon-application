@@ -472,12 +472,6 @@ export class AonApplication extends AonElement {
   addSearchOption() {
     let toolbar = this.getElement(this.TOOLBAR);
     const btnSearch = toolbar.addSearchButton();
-    toolbar.addEventListener(EVENT.SEARCH_VALUE, (event) => {
-      this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
-    });
-    toolbar.addEventListener(EVENT.SEARCH, (event) => {
-      this.dispatchEvent(new CustomEvent(EVENT.SEARCH, { detail: event.detail }));
-    });
     return btnSearch;
   }
 

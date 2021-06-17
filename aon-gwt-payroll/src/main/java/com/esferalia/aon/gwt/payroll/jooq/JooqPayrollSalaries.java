@@ -298,7 +298,7 @@ public class JooqPayrollSalaries {
 	}
 
 	private static Condition getSalaryTypeCondition(SalaryInfoFilter filter) {
-		Condition condition = DSL.noCondition();
+		Condition condition = SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal()); //DSL.noCondition();
 		
 		if(null != filter.getSalaryType() && -1 != filter.getSalaryType()) 
 			condition = SALARY.TYPE.eq((byte)filter.getSalaryType().intValue());

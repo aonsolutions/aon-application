@@ -22,7 +22,8 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements IDocu
 	// ----------------------------------------------- Constructor
 	
 	public CostDocuments(List<Cost> costs) {
-		this(costs, new ArrayList<Salary.Type>(Arrays.asList(Salary.Type.values())));
+		this(costs, 
+		new ArrayList<Salary.Type>(Arrays.asList(Salary.Type.SALARIES)));
 	}
 
 	CostDocuments(List<Cost> costs, List<Salary.Type> types) {

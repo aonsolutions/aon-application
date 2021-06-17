@@ -90,7 +90,9 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " FROM  " + SQLConstants.SALARY 
 			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
-			+ " BETWEEN   ? AND  ?   ORDER BY " + SalaryColumns.END_DATE 
+			+ " BETWEEN   ? AND  ?  "
+			+ " AND " + SalaryColumns.TYPE + " <  4 " 
+			+ " ORDER BY " + SalaryColumns.END_DATE 
 			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";
 
 	private static final String IRPF_DATA_SQL = "SELECT * " + " FROM  "
@@ -1055,6 +1057,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private Collection<Date> nextSalaryRs(int contractId) throws SQLException {
 		TreeSet<Date> dates = new TreeSet<Date>();
+		extras = 0.00;
 		irpfBase = 0.00;
 		totalIrpf = 0.00;
 		proExtBase = 0.00;

@@ -11,6 +11,8 @@ import { AonNotification } from "./notification/aon-notification.js";
 import { AonConfiguration } from "./configuration/aon-configuration.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
+import { AonMobileProfile } from "./user/aon-mobile-profile.js";
+import { AonNew } from "./aon-new.js";
 
 export class AonNewMobileMenu extends AonElement {
 
@@ -107,6 +109,14 @@ export class AonNewMobileMenu extends AonElement {
     });
 
     this.addMenuButton({
+      name: 'Add',
+      icon: 'add',
+      color: 'white',
+      background: '#002469',
+      fn: () => this.add()
+    });
+
+    this.addMenuButton({
       name: 'Notification',
       icon: 'notifications',
       fn: () => this.notification()
@@ -125,7 +135,7 @@ export class AonNewMobileMenu extends AonElement {
     if(!span){
       span = this.createElement(TAG.SPAN);
       let menu = this.getElement(`${this.id}Sidenav`);
-      let n = (window.innerWidth / 4 - 40) / 2;
+      let n = (window.innerWidth / 5 - 40) / 2;
       span.id = idSpan;
       span.style.top = '10px';
       span.style.position = 'relative';
@@ -145,10 +155,13 @@ export class AonNewMobileMenu extends AonElement {
           button.aonIcon = app.aonIcon;
         }
         button.addEventListener(EVENT.CLICK, app.fn);
+        if(app.background) button.background = app.background;
+        if(app.color) button.color = app.color;
+        button.noHover = true;
         span.appendChild(button);
         if(app.aonIcon) {
-        this.getElement(button.BUTTON).style.bottom = '5px';
-        this.getElement(button.AON_ICON).size = "20";
+          this.getElement(button.BUTTON).style.bottom = '5px';
+          this.getElement(button.AON_ICON).size = "20";
         }
       }
     }
@@ -182,6 +195,16 @@ export class AonNewMobileMenu extends AonElement {
     }
   }
 
+  add() {
+    if(LS.getCompany()) {
+      let aonHeader = this.getElement("aonHeader");
+      aonHeader.companyIn();
+      this.rootPanel(new AonNew());
+    } else {
+      alert("selecciona una empresa.")
+    }
+  }
+
   notification() {
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
@@ -198,7 +221,8 @@ export class AonNewMobileMenu extends AonElement {
       aonHeader.companyIn();
     
     }
-    this.rootPanel(new AonConfiguration());
+    // this.rootPanel(new AonConfiguration());
+    this.rootPanel(new AonMobileProfile());
   }
 }
 

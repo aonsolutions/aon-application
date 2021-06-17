@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "ShareServlet", urlPatterns = { "/aon_gwt_payroll/share" })
@@ -109,6 +110,8 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 			String type = req.getParameter("type");
 			Condition where = getCondition(req);
+			// Skip SLD Salaries ( L00,L13... )
+			where = where.and(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.lt((byte)SalaryType.L00.ordinal()));
 			Collection<Salary> salaries = PayrollServletUtils.getSalary(connection, where/*, sortFields*/);
 
 			PrintStream os = new PrintStream(resp.getOutputStream(), false,"UTF-8");

@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902015Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -944,6 +945,7 @@ public class Mod190DAO {
 				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
+				.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
 				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
 				.stream()
@@ -1045,6 +1047,7 @@ public class Mod190DAO {
 		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
+		.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetch()
 		.stream()

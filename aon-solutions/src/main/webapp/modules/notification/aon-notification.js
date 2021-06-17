@@ -74,11 +74,11 @@ export class AonNotification extends AonElement {
     toast.id = "toastNotification";
     this.appendChild(toast);
     this.eventListener();
-    if (this.isMobile()) { 
+    if (this.isMobile()) 
       this.paintMobile();
-    } else {
+    else 
       this.paintDesk();
-    }
+      
     this.notificationView();
 
     let elementScroll = this.isMobile() ? this.getElement(this.ROOT_PANEL) : undefined;
@@ -97,13 +97,11 @@ export class AonNotification extends AonElement {
     this.appendChild(this.createContentDiv());
   }
 
-  async paintMobile() {
+  paintMobile() {
     const aonTabs = new AonTabs();
     aonTabs.id = this.AON_TABS;
     aonTabs.addEventListener(EVENT.CHANGE, ({ detail }) => {
-      if (detail) {
-        this.changeTabs(detail.position);
-      }
+      if (detail) this.changeTabs(detail.position);
     });
     aonTabs.setButtons(NOTIFICATION_TABS);
 
@@ -123,7 +121,7 @@ export class AonNotification extends AonElement {
       createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
       if(!this.getDur().isEmployee()) {
-        this.buttonFloat();
+        this.addFloatButton();
       }
       
       await this.loadMore();
@@ -157,10 +155,7 @@ export class AonNotification extends AonElement {
         datos.map((data) => {
           const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
-          aonCard.addEventListener(EVENT.CLICK, () => {
-            this.goNotification(data);
-          });
-
+          aonCard.addEventListener(EVENT.CLICK, () =>  this.goNotification(data));
           const divFooter = createDivFooter();
           aonCard.setContent(divFooter.element);
           const dateText = firstLetters(setFullDate(data.date)) + " " + setTime(data.date);
@@ -328,7 +323,7 @@ export class AonNotification extends AonElement {
     }
   }
 
-  buttonFloat(){
+  addFloatButton(){
     let aonNotification = this.getElement(this.AON_NOTIFICATION);
     const dialog = this.getElement(this.DIALOG) || new AonDialog();
     dialog.id = this.DIALOG;

@@ -138,7 +138,7 @@ export class AonElement extends HTMLElement{
 	}
 
   showError(e) {
-    this.showToast(JSON.parse(e))
+    this.showToast(e);
   }
 
   /**
@@ -147,10 +147,12 @@ export class AonElement extends HTMLElement{
    * @returns obj{message, type}
    */
   showToast(obj) {
-    if(typeof obj === "string")  obj = JSON.parse(obj);
-    const toast = this.getElement(this.getApplication().TOAST);
-    if(toast){
-      toast.start(obj);
-    }
+    try {
+      if(typeof obj === "string")  obj = JSON.parse(obj);
+      const toast = this.getElement(this.getApplication().TOAST);
+      if(toast){
+        toast.start(obj);
+      }
+    } catch (error) {}
   }
 }
