@@ -2225,7 +2225,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		addSSRegimeStuff(aonContext);
 		
-		addPayment(aonContext, contract, getFirstDayOfMonth(getToday()) , null, "MANUAL PAYMENT", "-100.00", "_P", "0.00", PaymentType.CRA_0000);
+		addSettlePayment(aonContext, contract, getFirstDayOfMonth(getToday()) , null, "MANUAL PAYMENT", "-100.00", "_P", "0.00", PaymentType.CRA_0000);
 
 		
 		ISQLContractSalaryCalculatorContext settleCtx = 
@@ -3107,7 +3107,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		AbstractSQLTestCase.addData(aonContext, contract, startDate, endDate, datas);
 	}
 	
-	protected void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String description,
+	protected void addSettlePayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String description,
 			String expression, String irpfExpression, String quoteExpression, PaymentType type) {
 		addPayment(aonContext, contract, startDate, endDate, description, expression, irpfExpression, quoteExpression, type, SalaryType.SETTLE);
 	}
