@@ -20,7 +20,8 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 		IN_KIND, 
 		OTHER, 
 		FOGASA, // TODO:
-		EMBARGO // TODO: ???
+		EMBARGO, // TODO: ???
+		BONUS
 		;
 		
 		public String getDescription() {
@@ -41,6 +42,7 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 				put(OTHER, "Otras deducciones");
 				put(FOGASA, "FOGASA");
 				put(EMBARGO, "Embargo");
+				put(BONUS, "Bonificaci\u00f3n INEM");
 			}
 		};
 	}
