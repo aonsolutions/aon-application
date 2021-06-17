@@ -51,7 +51,7 @@ public class SQLSettleDraftTestCase extends
 	}
 	
 	@Override
-	protected void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
+	protected void addSettlePayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			String description, String expression, String irpfExpression, String quoteExpression, PaymentType type) {
 		com.esferalia.aon.gwt.payroll.shared.Payment payment = new com.esferalia.aon.gwt.payroll.shared.Payment();
 		payment.setScope(Scope.SALARY);
