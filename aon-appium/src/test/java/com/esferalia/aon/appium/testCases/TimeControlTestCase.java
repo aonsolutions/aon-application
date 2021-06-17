@@ -56,31 +56,6 @@ public class TimeControlTestCase extends AbstractTestCase {
 		homeBtn.click();
 	}
 
-	@Test
-	public void filterTest() {
-		try {
-			openFilter(app);
-
-			currentDayFilter(app);
-			previousDayFilter(app);
-			currentWeekFilter(app);
-			previousWeekFilter(app);
-			currentMonthFilter(app);
-			previousMonthFilter(app);
-			currentYearFilter(app);
-			previousYearFilter(app);
-
-//			By by = By.id(AonIdTimeControl.FILTER_CLOSE);
-//			ExpectedCondition<WebElement> cnd = ExpectedConditions.visibilityOfElementLocated(by);
-//
-//			WebElement closeElement = wait.until(cnd);
-//			closeElement.click();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			fail("Interrupted");
-		}
-	}
-
 	private static void openFilter(AppiumDriver<MobileElement> app) throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(app, 10);
 		app.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
@@ -481,6 +456,36 @@ public class TimeControlTestCase extends AbstractTestCase {
 		retryingFindClick(app, By.id(AonIdHome.EXIT_BUTTON));
 		
 		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.ENTRANCE_BUTTON)));
+		
+	}
+	
+	@Test
+	public void filterTest() {
+		try {
+			openFilter(app);
+
+			currentDayFilter(app);
+			previousDayFilter(app);
+			currentWeekFilter(app);
+			previousWeekFilter(app);
+			currentMonthFilter(app);
+			previousMonthFilter(app);
+			currentYearFilter(app);
+			previousYearFilter(app);
+
+//			By by = By.id(AonIdTimeControl.FILTER_CLOSE);
+//			ExpectedCondition<WebElement> cnd = ExpectedConditions.visibilityOfElementLocated(by);
+//
+//			WebElement closeElement = wait.until(cnd);
+//			closeElement.click();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail("Interrupted");
+		}
+	}
+	
+	@Test
+	public void notificationsTest() {
 		
 	}
 
