@@ -167,9 +167,9 @@ public class IdcParser {
 			
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
-			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
-			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : null;
-			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : null;
+			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : 0.00;
+			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : 0.00;
+			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : 0.00;
 			listener.onEmployeeQuoteTypes(it, ims, unemployment);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -325,7 +325,7 @@ public class IdcParser {
 	//TIPOS DE COTIZACIÓN* CONTINGENCIAS PROFESIONALES: IT: 1,70 I.M.S.: 1,30 TOTAL: 3,00 DESEMPLEO: 7,05
 	private static final Pattern QUOTATION_TYPES = 
 	Pattern.compile(
-	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+).*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)$"
+	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(EXCLUIDO)?$"
 	, Pattern.CASE_INSENSITIVE);
 			
 }
