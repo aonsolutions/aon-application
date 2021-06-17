@@ -183,8 +183,6 @@ public class JooqEnterpriseSalaryBuilder {
 		.fetchStreamInto(SALARY_BONUS)
 		.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
 		
-		ArrayList<Double> dedBonuses = new ArrayList<Double>();
-		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<Integer, Map<Integer, Double>>();
 		ctx.select()
 		.from(SALARY)
@@ -194,12 +192,6 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(SALARY_DEDUCTION).on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY))
 		.where(condition)
 		.fetchStream().forEach(s -> {
-					
-					if (s.get(SALARY_DEDUCTION.TYPE) == null &&
-							s.get(SALARY_DEDUCTION.AMOUNT) != null &&
-							s.get(SALARY_DEDUCTION.AMOUNT) < 0
-						)
-						dedBonuses.add(s.get(SALARY_DEDUCTION.AMOUNT));
 					
 					if (deductions.get(s.get(SALARY.ID)) != null) {
 						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE) != null ? s.get(SALARY_DEDUCTION.TYPE).intValue() : null,
@@ -265,14 +257,7 @@ public class JooqEnterpriseSalaryBuilder {
 			} catch (NullPointerException e) {}
 			
 			Double employeeSS = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-			if (!dedBonuses.isEmpty()) {
-				Double amount = dedBonuses.stream().mapToDouble(a -> a).sum();
-				
-				if (employeeSS != null && amount != null)
-					employeeSS += amount;
-				else if (amount != null)
-					employeeSS = amount;
-			}
+			
 			if ( enterpriseEntryType == EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM) {
 				entry.setEmpleado(Optional.ofNullable(r.get(SALARY.EMPLOYEE_NAME)));
 				entry.setTipo(Optional.ofNullable(salaryType.getName(new Locale("es"))));

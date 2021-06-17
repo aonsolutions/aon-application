@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
@@ -39,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -49,14 +49,12 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.object.Idc;
 
 
 @MultipartConfig
@@ -269,7 +267,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String date = req.getParameter(Parameter.DATE.name());
 
 			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
-			execute(() -> addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf) );
+			execute(() -> SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf) );
 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
@@ -502,74 +500,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}
 	}
 	
-	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-			String ccc, String naf) {
-
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-		try {
-			Collection<Idc> idcDates = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-			
-			idcDates.stream().map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
-			.ifPresent( date -> addBonus(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
-		
-		} catch (SegSocialException e) {
-			
-		}
-		
-	}
-
-	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
-			String ccc, String  naf) {
-		
-		try {
-
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			
-			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
-			Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSBonuses(data);
-			Bonus bonuses [] =
-			ssBonus.stream()
-			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(b -> b.isEnterprise() )
-			.map( b -> 
-			new Bonus()
-			.setExpression(b.getFormula())
-			.setDescription(b.getDescription())
-			.setType(BonusType.SOCIAL_SECURITY)
-			.setStartDate(b.getStartDate())
-			.setEndDate(b.getEndDate())
-			)
-			.toArray(Bonus[]::new)
-			;
-			
-			Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> Period.min(d1,d2));
-			Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> Period.max(d1,d2));
-			
-
-			PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, startDate, endDate, bonuses);					
-			
-			Deduction deductions [] =
-			ssBonus.stream()
-			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(b -> b.isEmployee() )
-			.map( b -> 
-			new Deduction()
-			.setExpression(b.getFormula())
-			.setDescription(b.getDescription())
-			.setStartDate(b.getStartDate())
-			.setEndDate(b.getEndDate())
-			.setType(DeductionType.OTHER)
-			)
-			.toArray(Deduction[]::new)
-			;
-			
-			PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
-			
-		} catch ( Throwable e ) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void addITs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
 		addITs(userLogin, domainName, domainId, userId, new Date(), regime, ccc, nafs);
