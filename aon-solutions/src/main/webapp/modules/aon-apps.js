@@ -49,7 +49,7 @@ export class AonApps extends AonElement {
 	}
 
 	build() {
-		this.appendChild(this.buildTitle('DISPONIBLES'));
+		this.appendChild(this.buildTitle('APLICACIONES DISPONIBLES'));
 
 		let ul = this.createElement(TAG.UL);
 		ul.className = 'list-group';

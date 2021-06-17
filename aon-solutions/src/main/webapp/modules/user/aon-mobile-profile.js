@@ -77,10 +77,13 @@ export class AonMobileProfile extends AonElement {
         span.style.right = n + 'px';
         span.style.bottom = this.isSab() ? "80px" : "70px";
         let aonIconButton = new AonIconButton();
+
         aonIconButton.icon = 'input';
         aonIconButton.id = this.id + "CloseSessionButton";
         aonIconButton.title = 'Cerrar Sesión';
-        aonIconButton.background = "#f1f1f1";
+        aonIconButton.color = 'white'
+        aonIconButton.background = 'red';
+        aonIconButton.style.opacity = '0.5';
         span.appendChild(aonIconButton);
         this.appendChild(span);
         aonIconButton.addEventListener(EVENT.CLICK, closeSession);
