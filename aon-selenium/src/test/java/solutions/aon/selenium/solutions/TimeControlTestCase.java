@@ -10,13 +10,11 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import solutions.aon.selenium.AbstractTestCase;
 import solutions.aon.selenium.solutions.id.AonIdHome;
-import solutions.aon.selenium.tools.SeleniumTools;
 
 public class TimeControlTestCase extends AbstractTestCase {
 	
@@ -45,6 +43,15 @@ public class TimeControlTestCase extends AbstractTestCase {
 	public void tearDown() throws Exception {
 	}
 
+	
+//	@Test
+//	public void changePasswordTest() {
+//		
+//	}
+	
+	
+	
+	
 	
 	@Test
 	public void test() {
