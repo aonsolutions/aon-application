@@ -31,3 +31,5 @@ export const getAuth = (data) => get(`${API_URL}/auth`, data);
 export const changePassword = (data) => post(`${API_URL}/auth/password`, data);
 
 export const registerUser = (data) => post(`${API_URL}/register`, data);
+
+export const insertAvatar = (data) => post(`${API_URL}/auth/avatar`, data);

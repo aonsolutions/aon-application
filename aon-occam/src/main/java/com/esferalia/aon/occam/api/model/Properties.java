@@ -1333,6 +1333,13 @@ public interface Properties {
 		Property<String> getDeviceTokenProperty();
 	}
 	
+	public interface AuthAttachProperties {
+		Property<Integer> getIdProperty();
+		Property<byte[]> getAuthProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getMimeTypeProperty();
+	}
+	
 	public interface NotificationProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

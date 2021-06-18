@@ -1,4 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -11,9 +13,13 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.AuthAttach;
+import com.esferalia.aon.occam.api.model.security.AuthAttachType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -28,6 +34,7 @@ public class AuthServlet extends AonApiHttpServlet{
 		LOGGER.info("AON AUTH SERVLET - GET METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
+			AonToken aonToken = null;
 			Auth auth = new Auth();
 			if(api.getParams().opt("email") != null) {
 				auth = AON_SOLUTIONS.getAuth(api.getParams().optString("email"));
@@ -36,7 +43,7 @@ public class AuthServlet extends AonApiHttpServlet{
 				User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				auth = AON_SOLUTIONS.getAuth(user.getAuth());	
 			} else {
-				AonToken aonToken = SECURITY.getAonToken(api.getToken());
+				aonToken = SECURITY.getAonToken(api.getToken());
 				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 			}
 			
@@ -48,6 +55,18 @@ public class AuthServlet extends AonApiHttpServlet{
 			json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 			json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
 			
+			byte[] a = auth.getAuth();
+			if(auth.getSchema() == null && aonToken != null) {
+				auth.setSchema(aonToken.getSchema());
+			}
+			AuthAttach aa = AON_SOLUTIONS.getAuthAttach(auth, f-> f.getAuthProperty().eq(a).and(f.getTypeProperty().eq(AuthAttachType.AVATAR.value())));
+			if(aa.getId() != null) {
+				JSONObject data = new JSONObject();
+				data.put("session_id", api.getToken());
+				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+				String url =  "ms/api/auth_avatar/" +  result;
+				json.put("avatar", url);
+			}
 			response(req, resp, json);
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -62,6 +81,9 @@ public class AuthServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/password":
 				response(req, resp, changePassword(api));
+				break;
+			case "/avatar":
+				response(req, resp, saveAvatar(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -85,6 +107,27 @@ public class AuthServlet extends AonApiHttpServlet{
 		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
+		return new JSONObject();
+	}
+	
+	private JSONObject saveAvatar(AonApiData api) throws Exception {
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+		
+		if(auth.getSchema() == null && aonToken != null) {
+			auth.setSchema(aonToken.getSchema());
+		}
+
+		AuthAttach aa = AON_SOLUTIONS.getAuthAttach(auth, f -> f.getAuthProperty().eq(auth.getAuth()).and(f.getTypeProperty().eq(AuthAttachType.AVATAR.value())));
+		
+		String base64 = api.getData().optString("content");
+		String contentType = api.getData().optString("contentType");
+		byte[] fileData = Base64.getDecoder().decode(base64);
+		aa.setData(fileData)
+			.setMimetype(MimeType.get(contentType))
+			.setType(AuthAttachType.AVATAR)
+			.setAuth(auth.getAuth());		
+		AON_SOLUTIONS.saveAuthAttach(auth, aa);
 		return new JSONObject();
 	}
 }

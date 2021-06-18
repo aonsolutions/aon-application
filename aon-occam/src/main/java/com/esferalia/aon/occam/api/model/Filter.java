@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
+import com.esferalia.aon.occam.api.model.Properties.AuthAttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
 import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
@@ -581,6 +582,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface NotificationFilter{
 		Filter filter(NotificationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface AuthAttachFilter{
+		Filter filter(AuthAttachProperties properties);
 	}
 	
 	@FunctionalInterface
