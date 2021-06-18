@@ -144,6 +144,7 @@ class SistemaREDSecondaryUser {
 			final String certificatePassword, final String certificateType)
 			throws FailingHttpStatusCodeException, IOException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
 
