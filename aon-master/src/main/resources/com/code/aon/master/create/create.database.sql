@@ -1380,6 +1380,20 @@ CREATE TABLE `auth` (
 
 
 #
+# Structure for the `auth_attach` table :
+#
+
+CREATE TABLE `auth_attach` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `auth` BINARY(16) NOT NULL COMMENT 'Identificador de Auth',
+  `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Archivo Adjunto',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ficheros de Auth';
+
+
+#
 # Structure for the `user` table : 
 #
 
