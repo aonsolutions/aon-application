@@ -11,6 +11,14 @@ export class AonAvatar extends AonElement {
         this.setAttribute(CONSTANT.ID, id);
     }
 
+    get src() {
+        return this.getAttribute('src');
+    }
+
+    set src(src) {
+        this.setAttribute('src', src);
+    }
+
     constructor () {
 		super();
 	}
@@ -21,7 +29,8 @@ export class AonAvatar extends AonElement {
  
     build() {
         let img = this.createElement(TAG.IMG);
-        img.src = 'assets/img/profile.png';
+        img.src = this.src && this.src != 'undefined' && this.src != 'null' 
+            ? this.src  : 'assets/img/profile.png';
         img.className = CSS.AON_IMG_AVATAR;
         this.appendChild(img);
     }
