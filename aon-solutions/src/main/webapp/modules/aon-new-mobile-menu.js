@@ -3,16 +3,17 @@ import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
-import { getDomainUserRoles } from "../services/service.js";
+import { actionMobile, getDomainUserRoles } from "../services/service.js";
 
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
 import { AonNotification } from "./notification/aon-notification.js";
-import { AonConfiguration } from "./configuration/aon-configuration.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
 import { AonMobileProfile } from "./user/aon-mobile-profile.js";
-import { AonNew } from "./aon-new.js";
+import { uploadInvoices } from "./invoice/InvoiceUtils.js";
+import { uploadDocuments } from "./documental/DocumentalUtils.js";
+
 
 export class AonNewMobileMenu extends AonElement {
 
@@ -60,9 +61,22 @@ export class AonNewMobileMenu extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonMobileMenu';
+    this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
+    this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
+    this.INPUT_CAMERA = this.id + 'InputCamera';
   }
 
   build() {
+    this.innerHTML = `
+      <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+      <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
+      <input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
+    `;
+
+		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
+    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files));
+  	this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => uploadInvoices(target.files));
+
     const id = this.id + 'Sidenav';
     const sidEl = this.getElement(id);
     if(sidEl)sidEl.remove();
@@ -96,6 +110,13 @@ export class AonNewMobileMenu extends AonElement {
   async buildMenu(){
     await waitEl(`#${this.id}Sidenav`);
     let count = 1;
+    
+    getDomainUserRoles({}).then(r => {
+      this.dur = new DomainUserRoles(r);
+      this.newButtons();
+    });
+
+
     this.addMenuButton({
       name: 'Home',
       icon: 'home',
@@ -195,11 +216,90 @@ export class AonNewMobileMenu extends AonElement {
     }
   }
 
+  newButtons() {
+    let div = this.getElement('probaDiv') || this.createElement(TAG.DIV);
+    div.id = 'probaDiv';
+    div.className = 'aonDialog';
+    div.style.backgroundColor = 'transparent';
+    div.style.display = 'none';
+    div.addEventListener(EVENT.CLICK, () => {
+      div.style.display = 'none';
+    });
+    this.appendChild(div);
+
+    let proba = this.getElement('proba') || new  AonIconButton();
+    proba.id = 'proba';
+    proba.icon = 'receipt';
+    proba.color = 'white';
+    proba.noHover = true;
+    proba.background = this.getDur().isInvoice() ? '#002469' : '#bbb';
+    proba.style.position = 'absolute'
+    proba.style.bottom = '65px';
+    proba.style.opacity = '0.75';
+    proba.style.transitionDuration = '2000ms';
+    let n = (window.innerWidth / 2) - 95;
+    proba.style.left = n + 'px';
+    if(this.getDur().isInvoice()) 
+      proba.addEventListener(EVENT.CLICK, () => this.addInvoiceFile());
+    div.appendChild(proba);
+
+    let proba2 = this.getElement('proba2') || new  AonIconButton();
+    proba2.id = 'proba2';
+    proba2.icon = 'description';
+    proba2.color = 'white';
+    proba2.noHover = true;
+    proba2.background = this.getDur().isDocumental() ? '#002469' : '#bbb';
+    proba2.style.position = 'absolute'
+    proba2.style.bottom = '65px';
+    proba2.style.opacity = '0.75';
+    proba2.style.transitionDuration = '2000ms';
+    let n2 = (window.innerWidth / 2) - 45;
+    proba2.style.left = n2 + 'px';
+    if(this.getDur().isDocumental())
+      proba2.addEventListener(EVENT.CLICK, () => this.addDocumentFile());
+    div.appendChild(proba2);
+
+
+    let proba3 = this.getElement('proba3') || new  AonIconButton();
+    proba3.id = 'proba3';
+    proba3.icon = 'message';
+    proba3.color = 'white';
+    proba3.noHover = true;
+    proba3.background = '#002469';
+    proba3.style.position = 'absolute'
+    proba3.style.bottom = '65px';
+    proba3.style.opacity = '0.75';
+    proba3.style.transitionDuration = '2000ms';
+    let n3 = (window.innerWidth / 2) + 5;
+    proba3.style.left = n3 + 'px';
+    proba3.addEventListener(EVENT.CLICK, () => {
+      alert('En Desarrollo');
+    });
+    div.appendChild(proba3);
+
+    let proba4 = this.getElement('proba4') || new  AonIconButton();
+    proba4.id = 'proba4';
+    proba4.icon = 'photo_camera';
+    proba4.color = 'white';
+    proba4.noHover = true;
+    proba4.background = this.getDur().isInvoice() ? '#002469' : '#bbb';;
+    proba4.style.position = 'absolute'
+    proba4.style.bottom = '65px';
+    proba4.style.opacity = '0.75';
+    proba4.style.transitionDuration = '2000ms';
+    let n4 = (window.innerWidth / 2) +55;
+    proba4.style.left = n4 + 'px';
+    if(this.getDur().isInvoice()) 
+      proba4.addEventListener(EVENT.CLICK, () => this.openCamera());
+    div.appendChild(proba4);
+  }
+
   add() {
+    const div = this.getElement('probaDiv');
+    if(div) div.style.display = 'block';
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyIn();
-      this.rootPanel(new AonNew());
     } else {
       alert("selecciona una empresa.")
     }
@@ -219,11 +319,28 @@ export class AonNewMobileMenu extends AonElement {
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyIn();
-    
     }
-    // this.rootPanel(new AonConfiguration());
     this.rootPanel(new AonMobileProfile());
   }
+
+	async openCamera() {
+		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
+		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+	}
+
+  addDocumentFile() {
+    alert('En Desarrollo');
+    // this.getElement(this.INPUT_DOCUMENT_FILE).click();
+	}
+
+  addDocumentFile() {
+    alert('En Desarrollo');
+    // this.getElement(this.INPUT_DOCUMENT_FILE).click();
+	}
+
+	addInvoiceFile() {
+		this.getElement(this.INPUT_INVOICE_FILE).click();
+	}
 }
 
 window.customElements.define("aon-new-mobile-menu", AonNewMobileMenu);

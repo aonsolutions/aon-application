@@ -98,6 +98,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -2518,7 +2519,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				parentDomainId, 
 				currentUser, 
 				p -> p.getIdProperty().eq(contractId))
-		.ifPresent( contract -> SistemaREDServlet.addBonus(
+		.ifPresent( contract -> SistemaRED2AON.addBonus(
 				currentUser, 
 				currentDomainName, 
 				domainId, 

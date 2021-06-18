@@ -66,6 +66,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
 import org.jooq.Record;
 import org.jooq.TransactionalCallable;
+import org.jooq.impl.DSL;
 import org.junit.After;
 import org.junit.Before;
 
@@ -87,6 +88,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
+import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
@@ -149,7 +151,7 @@ public abstract class AbstractSQLTestCase {
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException,
 			AonSQLException {
-		shutUp();
+//		shutUp();
 		connection = connect();
 		AONContext context = new AONContext(connection);
 		cleanSystemData(context);
@@ -1215,6 +1217,35 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static final ContractPaymentRecord addPayment(AONContext aonContext,
+			ContractRecord contract,
+			Date startDate,
+			Date endDate,
+			String description,
+			String expression,
+			String irpfExpression,
+			String quoteExpression,
+			PaymentType type
+			) {
+		return 
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, startDate)
+				.set(CONTRACT_PAYMENT.END_DATE, endDate)
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
+				.returning()
+				.fetchOne()
+//				.execute()
+				;
+
+	}
+
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
 			String expression) {
 		addPayment(aonContext, contract, startDate, contract.getEndDate(), expression, SalaryType.SALARY);
@@ -1382,6 +1413,24 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_BONUS.END_DATE, endDate)
 				.set(CONTRACT_BONUS.EXPRESSION, expression)
 				.set(CONTRACT_BONUS.DESCRIPTION, description)
+				.returning().fetchOne();
+
+	}
+
+	public static final ContractDeductionRecord addDeduction(AONContext aonContext, ContractRecord contract,
+			Date startDate, Date endDate, String expression, String description, DeductionType type) {
+		return aonContext.getDslContext()
+				.insertInto(CONTRACT_DEDUCTION)
+				.set(CONTRACT_DEDUCTION.DOMAIN, contract.getDomain())
+				.set(CONTRACT_DEDUCTION.CONTRACT, contract.getId())
+				.set(CONTRACT_DEDUCTION.START_DATE, startDate)
+				.set(CONTRACT_DEDUCTION.END_DATE, endDate)
+				.set(CONTRACT_DEDUCTION.EXPRESSION, expression)
+				.set(CONTRACT_DEDUCTION.DESCRIPTION, description)
+				
+				.set(CONTRACT_DEDUCTION.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, DSL.castNull(Integer.class))
+				
 				.returning().fetchOne();
 
 	}
