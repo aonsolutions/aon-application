@@ -1,6 +1,8 @@
 package com.esferalia.aon.appium.testCases;
 
+import static com.esferalia.aon.appium.tools.AppiumTools.clickUntilNotExists;
 import static com.esferalia.aon.appium.tools.AppiumTools.retryingFindClick;
+import static com.esferalia.aon.appium.tools.AppiumTools.waitNClick;
 import static org.junit.Assert.fail;
 
 import java.text.DateFormat;
@@ -22,8 +24,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.esferalia.aon.appium.AbstractTestCase;
+import com.esferalia.aon.appium.id.AonIdHeader;
 import com.esferalia.aon.appium.id.AonIdHome;
 import com.esferalia.aon.appium.id.AonIdNavigationBar;
+import com.esferalia.aon.appium.id.AonIdSettings;
 import com.esferalia.aon.appium.id.AonIdTimeControl;
 import com.esferalia.aon.appium.tools.AppiumTools;
 
@@ -419,28 +423,50 @@ public class TimeControlTestCase extends AbstractTestCase {
 		}
 	}
 	
+	private static void insertPasswordToChange(AppiumDriver<MobileElement> app, String currentPassword, String newPassword) {
+		waitNClick(app, By.id(AonIdHeader.USER_BUTTON));
+		clickUntilNotExists(app, By.id(AonIdHeader.SETTINGS_BUTTON));
+		waitNClick(app, By.id(AonIdSettings.PASSWORD_EDIT));
+		waitNClick(app, By.id(AonIdSettings.CURRENT_PASSWORD));
+		AppiumTools.safeType(app, "#" + AonIdSettings.CURRENT_PASSWORD, currentPassword);
+		waitNClick(app, By.id(AonIdSettings.NEW_PASSWORD));
+		AppiumTools.safeType(app, "#" + AonIdSettings.NEW_PASSWORD, newPassword);
+		waitNClick(app, By.id(AonIdSettings.SUBMIT_PASSWORD));
+	}
+	
 	
 	@Test
-	public void signInTest() {
-		WebDriverWait wait = new WebDriverWait(app, 5);
+	public void repeatSignInTest() throws InterruptedException {
+		for (int i = 1; i <=5; i++) {
+			signInTest();
+			System.out.println(i);
+		}
+	}
+	
+	@Test
+	public void signInTest() throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(app, 8);
 
 		// AppiumTools.setFakeLocation(app);
 		By entranceElem = By.id(AonIdHome.ENTRANCE_BUTTON);
 		
 		try {
-			wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(AonIdHome.BACK_TO_WORK_BUTTON)));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdHome.ENTRANCE_BUTTON)));
 		} catch (TimeoutException e) {			
-			entranceElem = By.id(AonIdHome.ENTRANCE_BUTTON);
+			entranceElem = By.id(AonIdHome.BACK_TO_WORK_BUTTON);
+			try {
+				wait.until(ExpectedConditions.visibilityOfElementLocated(entranceElem));
+			} catch (TimeoutException e1) {
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdHome.EXIT_BUTTON)));
+				AppiumTools.clickUntilNotExists(app, By.id(AonIdHome.EXIT_BUTTON));
+				entranceElem = By.id(AonIdHome.ENTRANCE_BUTTON);
+			}
 		}
 		wait = new WebDriverWait(app, 15);
 		
 		wait.until(ExpectedConditions.elementToBeClickable(entranceElem));
 
 		retryingFindClick(app, entranceElem);
-		
-		LogEntries logEntries = app.manage().logs().get("driver");
-
-		logEntries.forEach(log -> System.out.println(log));
 
 		wait.until(ExpectedConditions.elementToBeClickable(
 				By.cssSelector("#" + AonIdHome.SIGNIN_BUTTONS_CONTAINER + " > .aonButton:nth-child(2)")));
@@ -449,11 +475,13 @@ public class TimeControlTestCase extends AbstractTestCase {
 		
 		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.BACK_TO_WORK_BUTTON)));
 		
-		retryingFindClick(app, By.id(AonIdHome.BACK_TO_WORK_BUTTON));
+		AppiumTools.retryingFindClick(app, By.id(AonIdHome.BACK_TO_WORK_BUTTON));
+		
+		Thread.sleep(1000);
 		
 		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.EXIT_BUTTON)));
 		
-		retryingFindClick(app, By.id(AonIdHome.EXIT_BUTTON));
+		AppiumTools.retryingFindClick(app, By.id(AonIdHome.EXIT_BUTTON));
 		
 		wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdHome.ENTRANCE_BUTTON)));
 		
@@ -472,12 +500,7 @@ public class TimeControlTestCase extends AbstractTestCase {
 			previousMonthFilter(app);
 			currentYearFilter(app);
 			previousYearFilter(app);
-
-//			By by = By.id(AonIdTimeControl.FILTER_CLOSE);
-//			ExpectedCondition<WebElement> cnd = ExpectedConditions.visibilityOfElementLocated(by);
-//
-//			WebElement closeElement = wait.until(cnd);
-//			closeElement.click();
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			fail("Interrupted");
@@ -485,8 +508,10 @@ public class TimeControlTestCase extends AbstractTestCase {
 	}
 	
 	@Test
-	public void notificationsTest() {
-		
+	public void noPasswordTest() throws InterruptedException {
+		insertPasswordToChange(app, password, "");
+		new WebDriverWait(app, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdSettings.ERROR_MESSAGE_CONTAINER)));
 	}
+	
 
 }

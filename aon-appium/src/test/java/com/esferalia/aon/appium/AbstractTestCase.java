@@ -54,7 +54,7 @@ public abstract class AbstractTestCase {
 		driver = AbstractTestCase.class.getResource("chromedriver").getPath();
 		apk = AbstractTestCase.class.getResource("aon-test.apk").getPath();
 		username = "usuario@aonsolutions.org";
-		password = "org";
+		password = "123456";
 
 		console = new Console();
 	}

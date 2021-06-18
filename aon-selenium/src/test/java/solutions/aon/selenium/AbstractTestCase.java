@@ -1,10 +1,6 @@
 package solutions.aon.selenium;
 
-import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -13,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -30,7 +25,7 @@ public class AbstractTestCase {
 	}
 
 	protected static String getPassword() {
-		return System.getProperty("password", "org");
+		return System.getProperty("password", "123456");
 	}
 
 	protected static WebDriver newChromeDriver() {

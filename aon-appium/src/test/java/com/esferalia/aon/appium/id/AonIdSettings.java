@@ -9,12 +9,15 @@ public class AonIdSettings {
 	
 	// #C
 	// ----------------------------------------------------
+	public static final String CURRENT_PASSWORD = "aonConfigurationUserCardOldPasswordInput";
 	
 	// #D
 	// ----------------------------------------------------
 	
 	// #E
 	// ----------------------------------------------------
+	public static final String ERROR_MESSAGE = "aonConfigurationToastDiv";
+	public static final String ERROR_MESSAGE_CONTAINER = "aonConfigurationToast";
 	
 	// #F
 	// ----------------------------------------------------
@@ -43,6 +46,7 @@ public class AonIdSettings {
 	// #N
 	// ----------------------------------------------------
 	public static final String NAME_INPUT = "aonConfigurationUserCardNameInput";
+	public static final String NEW_PASSWORD = "aonConfigurationUserCardNewPasswordInput";
 	
 	// #O
 	// ----------------------------------------------------
@@ -50,6 +54,8 @@ public class AonIdSettings {
 	
 	// #P
 	// ----------------------------------------------------
+	public static final String PASSWORD_EDIT = "aonConfigurationUserCardPasswordEditIcon";
+	public static final String PASSWORD_INPUT = "aonConfigurationUserCardPasswordInput";
 	
 	// #Q
 	// ----------------------------------------------------
@@ -59,6 +65,8 @@ public class AonIdSettings {
 	
 	// #S
 	// ----------------------------------------------------
+	
+	public static final String SUBMIT_PASSWORD= "aonConfigurationDialogDialogActionAccept";
 	public static final String SURNAMES_INPUT = "aonConfigurationUserCardSurnameInput";
 	
 	// #T
