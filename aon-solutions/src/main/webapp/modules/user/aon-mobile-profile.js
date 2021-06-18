@@ -1,4 +1,5 @@
 import { AonAvatar } from '../../components/aon-avatar.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
@@ -43,6 +44,16 @@ export class AonMobileProfile extends AonElement {
         name.innerHTML = user.name + ' ' + user.surname;
         div.appendChild(name);
 
+        let configuration = new AonIconButton();
+        configuration.id = this.id + 'Configuration';
+        configuration.icon = 'settings';
+        configuration.style.right = '20px';
+        configuration.style.position = 'absolute';
+        configuration.style.marginTop = '5px';
+        configuration.addEventListener(EVENT.CLICK, () => 
+            this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>'));
+        div.appendChild(configuration);
+
         this.buildOption('mail', user.email);
         this.buildOption('fingerprint', user.document);
         this.buildOption('smartphone', user.phone);
@@ -84,9 +95,23 @@ export class AonMobileProfile extends AonElement {
         aonIconButton.color = 'white'
         aonIconButton.background = 'red';
         aonIconButton.style.opacity = '0.5';
+        aonIconButton.noHover = true;
         span.appendChild(aonIconButton);
         this.appendChild(span);
-        aonIconButton.addEventListener(EVENT.CLICK, closeSession);
+        aonIconButton.addEventListener(EVENT.CLICK, () => this.closeSession());
+    }
+
+    closeSession() {
+        let d = new AonDialog();
+        this.appendChild(d);
+        d.clear();
+    	if(!this.isMobile()) d.width = '400px';
+    	d.setTitle('Cerrar Sesión');
+   	 	d.setContentHTML(`Estás seguro de cerrar sesión`);
+    	d.addAcceptAction(() => {
+            closeSession();
+    	});
+    	d.open();
     }
 }
 

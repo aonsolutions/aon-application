@@ -16,11 +16,16 @@ import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
+import { uploadInvoices } from "../invoice/InvoiceUtils.js";
+import { uploadDocuments } from "../documental/DocumentalUtils.js";
 
 export class AonDesktop extends AonElement {
 
 	dur;
 	AON_DESKTOP;
+	INPUT_INVOICE_FILE;
+	INPUT_DOCUMENT_FILE;
+
 	static get observedAttributes() {
 		return [];
 	}
@@ -54,7 +59,10 @@ export class AonDesktop extends AonElement {
 	}
 
 	initialize(){
+		this.id = this.id || 'aonDesktop';
 		this.AON_DESKTOP = 'aonDesktopMain';
+		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
+		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
 	}
 
 	getDur() {
@@ -76,9 +84,15 @@ export class AonDesktop extends AonElement {
 
 	build(notice) {
 		let company = JSON.parse(localStorage.getItem("company"));
-		this.innerHTML = /*html*/`<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
+		this.innerHTML = /*html*/`
+			<input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
+			<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 		
+		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
+	    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files, this.getDur()));
+
 		let sidenav = this.getElement(this.getApplication().SIDENAV);
 		sidenav.innerHTML = `
 		<div>
@@ -374,14 +388,14 @@ export class AonDesktop extends AonElement {
 			id: 'invoice',
 			name: 'Nueva Factura',
 			icon: 'receipt',
-			fn: () => {this.development('Nueva Factura');}
+			fn: () => this.getElement(this.INPUT_INVOICE_FILE).click()
 		};
 
 		const NEW_DOCUMENT = {
 			id: 'document',
 			name: 'Nuevo Documento',
 			icon: 'description',
-			fn: () => {this.development('Nuevo Documento');}
+			fn: () => this.getElement(this.INPUT_DOCUMENT_FILE).click()
 		};
 
 		const NEW_MESSENGER = {
