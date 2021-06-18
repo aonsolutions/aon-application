@@ -133,19 +133,20 @@ export class AonSearch extends AonElement {
 		divOpts.style.display = "none";
 
 		this.appendChild(divOpts);
+
 	}
 
 	 openOrClose(){
 	  	let divOpts = this.getElement(this.OPTIONS);
-		divOpts.style.width = this.clientWidth;
-		if(divOpts.classList.contains('is-visible')){
-			divOpts.style.display = "none";
-			divOpts.classList.remove('is-visible');
-		} else {
-			divOpts.style.display = "block";
-			divOpts.classList.add('is-visible');
+		if(divOpts.innerHTML.length){
+			divOpts.style.width = this.clientWidth;
+			if(divOpts.classList.contains('is-visible')){
+				this.closeOptions();
+			} else {
+				divOpts.style.display = "block";
+				divOpts.classList.add('is-visible');
+			}
 		}
-			
 	  }
 
 	//   buildOptions(options) {

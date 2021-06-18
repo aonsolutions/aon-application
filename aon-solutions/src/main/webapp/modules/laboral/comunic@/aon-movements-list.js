@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { disabledForm, formatDateOrigin, setDate, setValueName } from "../../../services/utils.js";
-import { getMovements, getEmployee, getCccLife, getPeriodLaboral } from "../../../services/service.js";
+import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
 import { CONSTANT, EVENT, TAG } from "../../../environments/environments.js";
@@ -75,7 +75,7 @@ export class AonMovementsList extends AonElement {
     });
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-      if(detail) this.getNewData(detail);
+      if(detail) this.getEmployeeForCcc(detail);
     });
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
@@ -83,18 +83,29 @@ export class AonMovementsList extends AonElement {
   }
 
   searchValueDefault(){
+    const today =  new Date();
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(getPeriodLaboral());
+    periodEl.options = JSON.stringify(this.getPeriodComunica());
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
-        const {startDate, endDate} = detail;
+        let {startDate, endDate} = detail;
+        if(new Date(startDate) > today) startDate = formatDateOrigin(today);
+        if(new Date(endDate) > today) endDate     = formatDateOrigin(today);
         setValueName('startDate', startDate);
         setValueName('endDate', endDate);
       }
     });
-
-    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
+    
+    let startDateEl = this.getElement("startDate");
+    let endDateEl   = this.getElement("endDate");
+    startDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
+      if(detail && new Date(detail) > today) startDateEl.value = formatDateOrigin(today);
+      periodEl.value = "personalized";
+    });
+    endDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
+      if(detail && new Date(detail) > today) endDateEl.value = formatDateOrigin(today);
+      periodEl.value = "personalized";
+    });
   }
 
 
@@ -109,7 +120,8 @@ export class AonMovementsList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Nombre", "string", "name", "35%");
+      aonTable.addColumn("#", "number", "count", "2%");
+      aonTable.addColumn("Nombre", "string", "name", "33%");
       aonTable.addColumn("DNI/NIE", "string", "dni", "15%");
       aonTable.addColumn("Movimiento", "string", "status", "10%");
       aonTable.addColumn("Cuenta", "string", "ctaCtiCompleta", "10%");
@@ -118,8 +130,9 @@ export class AonMovementsList extends AonElement {
         const resp = await this.getData();
         if(resp){
           aonTable.removeRows();
-          resp.map((res) => {
-            aonTable.addRow(res, (el) => this.aonMovement(el, res));
+          resp.map((res, idx) => {
+            res.count = `<b>${idx+1}</b>`;
+            aonTable.addRow(res, () => this.aonMovement(res));
           });
         }
       } catch (e) {
@@ -143,8 +156,7 @@ export class AonMovementsList extends AonElement {
                 subtitle: `${res.status} ${res.fechaParse}`,
                 option: this.applicationParentEl.getOptions(res),
               },
-              idx,
-              (el) => this.aonMovement(el, res)
+              idx,() => this.aonMovement(res)
             );
           });
         }
@@ -154,13 +166,12 @@ export class AonMovementsList extends AonElement {
     }
   }
 
-  async aonMovement({ }, { regime, ctaCti, nss, prev, situation, status }) {
+  async aonMovement({ regime, ctaCti, nss, prev, situation, status, fra }) {
     this.applicationEl.startLoading();
-  
     try {
       let resp = await getEmployee({ regime, ctaCti, nss });
       if (resp) {
-        const data = { ...resp, prev, situation, status };
+        const data = { ...resp, prev, situation, status, fra };
         const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
         if (aonAltaDirecta) {
           disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
@@ -173,36 +184,41 @@ export class AonMovementsList extends AonElement {
     this.applicationEl.stopLoading();
   }
 
-  async getData() {
-    let data = [];
-    try {
-      const movements = this.applicationParentEl._movements;
-      if(this._list.length){
-        data = this._list;
-      } else {
-        const resp = movements || await getMovements(this.getFilter());
-        data = resp
-        .sort((a, b) => new Date(b.fra) - new Date(a.fra))
-        .map((res) => this.formatData(res));
-        this.applicationParentEl._movements = data;
-        this._list = data;
-        if(this.searchFilter) data = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse"], data);
-      }
-    } catch (error) {
-      if(typeof error === "string") error = JSON.parse(error);
-      if(error &&  EXCEPTION_MESSAGE[error.message]){
-        error.message =  EXCEPTION_MESSAGE[error.message];
-      }
-      if(!this.isMobile()){
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
-      }
-      this.showToast(error);
-    }
-    return data;
+  getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
+
+  setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
+
+  search(){
+    this._list = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], this.applicationParentEl._movements);
+    this.getTable();
   }
-  
+
+  filterSearch(keys, lists){
+    let list = [];
+    if(this.searchFilter && lists.length){
+      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+    }
+
+    const startDateEl = this.getElement("startDate");
+    const endDateEl = this.getElement("endDate");
+    if(startDateEl && endDateEl){
+      let lts = list.length ? list : lists;
+      if(lts && lts.length){
+        let startDate = startDateEl.value;
+        let endDate   = endDateEl.value;
+        if(startDate || endDate){
+          startDate = startDate || endDate;
+          endDate = endDate || startDate;
+          list = lts.filter(({fra})=>  new Date(fra) >= new Date(startDate) && new Date(fra) <= new Date(endDate))
+        }
+      }
+    }
+    return list;
+  }
+
   formatData(res){
-    const { ipf, fra, situation } = res;
+    let { ipf, fra, frb, situation } = res;
+    fra = frb || fra;
     const fechaParse = setDate(fra);
     const date_now = new Date();
     const prev = new Date(fra).getTime() > date_now.getTime();
@@ -222,65 +238,96 @@ export class AonMovementsList extends AonElement {
     span.style.fontWeight = 600;
     span.style.color = color;
     span.innerText = tipo_mov;
-    const status = span.outerHTML;
-    const ctaCtiCompleta = res.regime+"-"+res.ctaCti;
     return {
       ...res,
+      fra,
       dni,
       fechaParse,
-      status,
       prev,
-      ctaCtiCompleta,
+      status: span.outerHTML,
+      ctaCtiCompleta: res.regime+"-"+res.ctaCti,
       tipo_mov: tipo_mov.toLowerCase()
     };
   }
 
-  getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
-
-  setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
-
-  search(){
-    this._list = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse"], this._list);
-    this.getTable();
-  }
-
-  filterSearch(keys, lists){
-    let list = [];
-    if(this.searchFilter && lists.length){
-      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+  async getData() {
+    let data = [];
+    try {
+      if(this._list.length){
+        data = this._list;
+      } else {
+        const movements = this.applicationParentEl._movements;
+        const resp = movements.length ? movements : await getMovements(this.getFilter());
+        data = resp
+        .map((res) => this.formatData(res)).sort((a, b) => new Date(b.fra) - new Date(a.fra))
+        this.applicationParentEl._movements = data;
+        if(this.searchFilter) data = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], data);
+      }
+    } catch (error) {
+      if(typeof error === "string") error = JSON.parse(error);
+      if(error &&  EXCEPTION_MESSAGE[error.message])error.message =  EXCEPTION_MESSAGE[error.message];
+      if(!this.isMobile()){
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
+      }
+      this.showToast(error);
     }
-    return list;
+    return data;
   }
-
-  async getNewData(detail){
+  
+  async getEmployeeForCcc(detail){
+    const parent =  this.applicationParentEl;
     this.applicationEl.startLoader();
     this.setFilter(detail);
     try {
       const resp = await getCccLife(this.getFilter());
-      let data = this._list;
-      resp.sort((a, b) =>  new Date(b.frb || b.fra) - new Date(a.frb || a.fra))
+      resp
       .map((res) => {
         const newData = this.formatData(res);
-        const fra =  newData.frb || newData.fra;
-        const exists = data.some(r=> 
+        const exists = parent._movements.some(r=> 
           r.nss.indexOf(newData.nss)>=0 && 
           r.ctaCti.indexOf(newData.ctaCti)>=0 &&
           r.tipo_mov.indexOf(newData.tipo_mov)>=0 &&
           r.ipf.indexOf(newData.ipf)>=0 &&
-          (r.frb || r.fra).indexOf(fra)>=0
+          (r.fra).indexOf(newData.fra)>=0
         );
-        if(!exists) data.push(newData);
+        if(!exists) parent._movements.push(newData);
       });
-
-      // data = data.filter(r=> {
-      //   const fra = r.frb || r.fra;
-      //   return  (detail.startDate && new Date(detail.startDate).getTime() >= new Date(fra).getTime() ) || (detail.endDate && new Date(detail.endDate).getTime() <= new Date(fra).getTime() ) 
-      // })
-
-      this._list = data;
+      parent._movements = parent._movements.sort((a, b) =>  new Date(b.fra) - new Date(a.fra));
       this.search();
     } catch (error) {console.log(error);}
     this.applicationEl.stopLoader();
+  }
+
+  getPeriodComunica(){
+    const now = new Date();
+    return [{
+      name: "Últimos 3 meses",
+      value: "last_three_month",
+      startDate: formatDateOrigin(new Date().addMonth(-3)),
+      endDate: formatDateOrigin(now),
+    },
+    {
+      name: "Últimos 6 meses",
+      value: "last_six_month",
+      startDate: formatDateOrigin(new Date().addMonth(-6)),
+      endDate: formatDateOrigin(now),
+    },
+    {
+      name: "Año actual",
+      value: "this_year",
+      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
+    },
+    {
+      name: "Año anterior",
+      value: "last_year",
+      startDate: formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
+      endDate: formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
+    },
+    {
+      name: "Personalizado",
+      value: "personalized",
+    }];
   }
 }
 window.customElements.define("aon-movements-list", AonMovementsList);

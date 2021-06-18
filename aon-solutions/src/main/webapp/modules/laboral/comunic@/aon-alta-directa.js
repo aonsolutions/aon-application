@@ -90,7 +90,7 @@ export class AonAltaDirecta extends AonElement {
         const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
   
-        if(this.data && !this.isMobile()){
+        if(!this.isMobile() && this.data && this.data.fra){
             toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => {
                 ev.preventDefault();
                 let rect = ev.target.getBoundingClientRect();
@@ -124,15 +124,11 @@ export class AonAltaDirecta extends AonElement {
         if((this.isAlta() || !this.data) )  // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
-        if(this.data){ //DELETE
-            const fc =  this.data.frb || this.data.fra;
-            if(this.applicationParentEl.anularCondition(this.data.situation, fc)){
-                toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
-            }
+        if(this.data && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)){ 
+            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
         }
 
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
-
     }
 
 
@@ -203,7 +199,7 @@ export class AonAltaDirecta extends AonElement {
             ...data,
             regimen: data.regime,
             nombre: data.name,
-            fecha: data.frb || data.fra,
+            fecha: data.fra,
             grup_ctz: data.gc,
         }
         if (data.ocup) obj['ocupacion'] = data.ocup.toString().toLowerCase();
