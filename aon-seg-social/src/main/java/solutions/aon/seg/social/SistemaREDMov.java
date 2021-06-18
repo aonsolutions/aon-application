@@ -688,7 +688,8 @@ class SistemaREDMov {
 	public static void validateCert(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType
 	) throws SegSocialException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {			
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 			DomNode section = htmlPage.querySelector("#segsocial section");
 			if(section!=null && section.getVisibleText().toLowerCase().indexOf("no autorizado")>=0) {
