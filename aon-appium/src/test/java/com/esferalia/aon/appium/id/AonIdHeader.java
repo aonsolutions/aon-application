@@ -62,6 +62,7 @@ public class AonIdHeader {
 	
 	// #S
 	// ----------------------------------------------------
+	public static final String SETTINGS_BUTTON = "dialogSettings";
 
 	// #T
 	// ----------------------------------------------------

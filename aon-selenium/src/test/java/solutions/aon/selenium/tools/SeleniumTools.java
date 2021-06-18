@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -19,6 +20,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Toolkit for easy java test
@@ -227,6 +230,16 @@ public class SeleniumTools {
 	    return result;
 	}
 	
+	public static void waitNClick(WebDriver app, By by) {
+		waitNClick(app,by, 10);
+	}
+	
+	public static void waitNClick(WebDriver app, By by, int customTimeout) {
+		WebDriverWait wait = new WebDriverWait(app, customTimeout);
+		wait.until(ExpectedConditions.elementToBeClickable(by));
+		retryingFindClick(app, by);
+	}
+	
 	public static String getDownloadPath() {
 		String downloadFolder = System.getProperty("user.home") + File.separator + "Descargas";
 		
@@ -236,5 +249,37 @@ public class SeleniumTools {
 			downloadFolder = System.getProperty("user.home") + File.separator + "Downloads";
 		
 		return downloadFolder;
+	}
+	
+	public static boolean clickUntilNotExists(WebDriver app, WebElement elem) {
+	    boolean result = false;
+	    int attempts = 0;
+	    while(attempts < 8) {
+	    	try {
+	            elem.click();
+	    	} catch (Exception e) {
+	    		result = true;
+	    		break;
+	    	}
+	        attempts++;
+	    }
+	    return result;
+	}
+	
+	
+	public static boolean clickUntilNotExists(WebDriver app, By by) {
+	    boolean result = false;
+	    int attempts = 0;
+	    WebElement elem = new WebDriverWait(app, 10).until(ExpectedConditions.elementToBeClickable(by));
+	    while(attempts < 8) {
+	    	try {
+	            elem.click();
+	    	} catch (Exception e) {
+	    		result = true;
+	    		break;
+	    	}
+	        attempts++;
+	    }
+	    return result;
 	}
 }

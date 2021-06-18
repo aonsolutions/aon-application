@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,6 +15,8 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -96,13 +97,13 @@ public class AppiumTools {
 	    }
 	    return result;
 	}
-	
+	//TODO ARREGLAR ESTO
 	public static boolean clickUntilNotExists(WebDriver app, WebElement elem) {
 	    boolean result = false;
 	    int attempts = 0;
 	    while(attempts < 8) {
 	    	try {
-	            elem.click();
+    			elem.click();
 	    	} catch (Exception e) {
 	    		System.out.println(e.getClass());
 	    		result = true;
@@ -112,6 +113,22 @@ public class AppiumTools {
 	    }
 	    return result;
 	}
+	
+	
+	public static boolean clickUntilNotExists(WebDriver app, By by) {
+	    boolean result = false;
+	    int attempts = 0;
+	    new WebDriverWait(app, 10).until(ExpectedConditions.elementToBeClickable(by));
+	    while(attempts < 8) {
+	    	if (app.findElements(by).size() > 0) {
+	    		retryingFindClick(app, by);
+	    	} else
+	    		break;
+	        attempts++;
+	    }
+	    return result;
+	}
+	
 	
 	
 	public static WebElement getFunction (String optionName, List<WebElement> elements) {
@@ -125,5 +142,29 @@ public class AppiumTools {
 			return null;
 		}
 	}
+	
+	public static void waitNClick(WebDriver app, By by) {
+		waitNClick(app, by, 10);
+	}
+	
+	public static void waitNClick(WebDriver app, By by, int customTimeout) {
+		WebDriverWait wait = new WebDriverWait(app, customTimeout);
+		wait.until(ExpectedConditions.elementToBeClickable(by));
+		retryingFindClick(app, by);
+	}
+	
+	public static void safeType(AppiumDriver<MobileElement> app, String cssSelector,  String text) {
+		By by = By.cssSelector(cssSelector);
+		WebElement input;
+		do {
+		AppiumTools.fillInput(app, cssSelector, "");
+		waitNClick(app, by);
+		app.hideKeyboard();
+		input = app.findElement(by);
+		input.sendKeys(text);
+		} while (!input.getAttribute("value").equals(text));
+	}
+	
+	
 	
 }
