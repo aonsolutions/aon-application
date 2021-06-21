@@ -33,6 +33,7 @@ export const ARROW_BACK = 'arrow_back';
 export const ARROW_CIRCLE_DOWN = 'arrow_circle_down';
 export const ARROW_CIRCLE_UP = 'arrow_circle_up';
 export const ARROW_DROP_DOWN = 'arrow_drop_down';
+export const ARROW_RIGHT = 'arrow_right';
 export const ARROW_RIGHT_ALT = 'arrow_right_alt';
 export const ARTICLE = 'article';
 export const ASPECT_RATIO = 'aspect_ratio';
