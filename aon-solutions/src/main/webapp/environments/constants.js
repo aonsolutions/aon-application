@@ -45,6 +45,7 @@ export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CREDITOR = 'creditor';

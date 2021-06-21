@@ -20,6 +20,7 @@ import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 // import { AonUser } from "../user/aon-user.js";
 
 import * as ACTION from '../actions.js';
+import { CONFIGURATION} from "../../services/app.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -92,6 +93,10 @@ export class AonConfiguration extends AonElement {
 
   build() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+
+    if(this.isMobile()){
+			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
+		}
 
     let userOptions = [
       {

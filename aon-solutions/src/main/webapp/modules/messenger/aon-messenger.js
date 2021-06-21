@@ -1,5 +1,6 @@
 import { AonApplication } from '../../components/aon-application.js';
 import { AonElement } from '../../components/AonElement.js';
+import Apps from '../../services/app.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
@@ -43,6 +44,9 @@ export class AonMessenger extends AonElement {
 	}
 
 	buildToolbar(){
+		if(this.isMobile()){
+			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
+		}
         let messengerOpts = [];
 
 		let list = MessengerOptions.AON_MESSENGER_LIST;
