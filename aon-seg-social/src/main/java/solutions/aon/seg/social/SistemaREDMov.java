@@ -194,7 +194,9 @@ class SistemaREDMov {
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
  			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
-	    	HtmlPage htmlPage = firstPageAltaBaja(
+ 			webclient.getOptions().setUseInsecureSSL(true);
+	    	
+ 			HtmlPage htmlPage = firstPageAltaBaja(
 					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
 					employee.getRegime(),  dni, ident, employee.getFra()
 	    	);
@@ -344,6 +346,7 @@ class SistemaREDMov {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	      webClient.getOptions().setJavaScriptEnabled(true);
+	      webClient.getOptions().setUseInsecureSSL(true);
 	      webClient.getOptions().setThrowExceptionOnScriptError(false);
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
