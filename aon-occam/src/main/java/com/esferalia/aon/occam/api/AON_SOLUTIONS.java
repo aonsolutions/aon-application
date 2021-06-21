@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -39,9 +40,11 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
+import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
@@ -90,15 +93,27 @@ public class AON_SOLUTIONS {
 		return new Product2Impl();
 	}
 	
+	private static IAttachment getAttachment() {
+		return new AttachmentImpl();
+	}
+
+	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
+		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
+		try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+			return getAttachment().getAuthAttach(ctx, filter, true);
+		}
+	}
+	
+	public static AuthAttach saveAuthAttach(Auth auth, AuthAttach attach) { 
+		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
+		try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+			return getAttachment().saveAuthAttach(ctx, attach);
+		}
+	}
+	
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, "");
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuth(ctx, email);
-		} finally {
-			if(ctx != null) {
-				ctx.close();
-			}
 		}
 	}
 	

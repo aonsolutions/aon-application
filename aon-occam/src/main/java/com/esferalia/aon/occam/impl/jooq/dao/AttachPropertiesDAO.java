@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
+import static com.esferalia.aon.jooq.tables.AuthAttach.AUTH_ATTACH;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -21,12 +22,32 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RattachTagFilter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
+import com.esferalia.aon.occam.api.model.Properties.AuthAttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.RattachTagProperties;
 
 public class AttachPropertiesDAO {
+	
+
+	protected static class AuthAttachPropertiesDAO implements AuthAttachProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AuthAttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(AuthAttachFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(AUTH_ATTACH.ID);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(AUTH_ATTACH.TYPE);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(AUTH_ATTACH.MIMETYPE);}
+		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<byte[]>(AUTH_ATTACH.AUTH);}
+	}
 
 	protected static class RattachPropertiesDAO implements AttachProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, AttachFilter filter) {

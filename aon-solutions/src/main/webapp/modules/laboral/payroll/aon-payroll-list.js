@@ -8,7 +8,6 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import * as ACTION from '../../actions.js';
-import { AonFilter } from "../../../components/aon-filter.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 
@@ -56,24 +55,19 @@ export class AonPayrollList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Nóminas");
+    this._list=[];
   }
 
   async build(){
     this.paintView();
     if(!this.applicationParentEl.isEmployee()){
       this.buildToolbar();
-      await this.buildFilter();
       this.applicationParentEl.changeFilter();
     }
     await this.getTable();
   }
 
-  paintView() {
-    let aonFilter = new AonFilter();
-    aonFilter.id = this.id+"Filter";
-    aonFilter.title = MSG.FILTERS;
-    this.appendChild(aonFilter);
-    
+  paintView() {    
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
@@ -81,26 +75,35 @@ export class AonPayrollList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
-      filterEl.openFilter()
-    );
-    if(this.isMobile())this.buildToolbarMobile();
-    const btnSearch = this.applicationEl.addSearchOption();
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    this.buildToolbarSearch();
+    this.searchValueDefault();
   }
 
 
-  async buildFilter() {
-    let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs([
+  buildToolbarSearch(){
+    let btnSearch = this.applicationEl.addSearchOption();
+    
+    const searchFn = ({detail}) => {
+      this.searchFilter = detail;
+      this.search();
+    }
+    const searchValueFn = ({detail})=>{
+      this._list = [];
+      if(detail) this.applicationParentEl.setDataFilter(detail);
+    }
+
+    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+
+    
+    btnSearch.buildOptionsFilter([
       ...PAYROLL_FILTER,
       ...PRESENCE_FILTER
     ]);
-    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({detail}) => {
-      if(detail)this.applicationParentEl.setDataFilter(detail);
-    });
+  }
 
+
+  async searchValueDefault(){
     // ----------WORKPLACES ------------
     let workplaces = await getWorkplaceCCCs();
     let workplaceEl = this.getElement("workplace");
@@ -204,13 +207,12 @@ export class AonPayrollList extends AonElement {
   }
 
   async getData() {
-    let isEmployee = this.applicationParentEl.isEmployee();
     let data = [];
-
     try {
-      if(this.searchFilter && !isEmptyObject(this._list)){
-        data = this._list.filter(({name, workplaceName})=> this.includeSearch(name) || this.includeSearch(workplaceName));
+      if(this._list.length){
+        data = this._list;
       } else {
+        const isEmployee = this.applicationParentEl.isEmployee();
         let filter = this.applicationParentEl._filter;
         let datos = isEmployee ? await getEmployeeSalaries(filter) : await getEnterpriseSalaries(filter);
         if (!isEmptyObject(datos)) {
@@ -245,6 +247,7 @@ export class AonPayrollList extends AonElement {
             }
           );
           this._list = data;
+          if(this.searchFilter) data = this.filterSearch(["name", "workplaceName"], data);
         }
       }
     } catch (e) {
@@ -253,13 +256,17 @@ export class AonPayrollList extends AonElement {
     return data;
   }
 
-  search(detail){
-    this.searchFilter = detail;
+  search(){
+    this._list = this.filterSearch(["name", "workplaceName"], this._list);
     this.getTable();
   }
 
-  includeSearch(str){
-    return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
+  filterSearch(keys, lists){
+    let list = [];
+    if(this.searchFilter && lists.length){
+      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
+    }
+    return list;
   }
 
   aonEvent({ }, data) {

@@ -65,14 +65,14 @@ public class CertificatesServlet extends HttpServlet {
 		
 		// Get FilePart
 		Part filePart = req.getPart("uploader");
-		byte data [];
+		byte[] data = null;
 		
-		try ( InputStream is = filePart.getInputStream() ){
-				data = toByteArray(is);
+		try (InputStream is = filePart.getInputStream()) {
+			data = readAllBytes(is);
 		}
-		
+				
 		JooqDigitalCertificate.setDigitalCertificateData(domainName, currentUser, mimeType, fileName, certificateType, data, password, rattachId, raddinfoId);
-		
+
 	}
 	
 	private byte getMimeType(String extension) {
@@ -83,14 +83,18 @@ public class CertificatesServlet extends HttpServlet {
 			return (byte)36;
 		}
 	}
-
-	private static byte[] toByteArray(InputStream is) throws IOException {
-	    ByteArrayOutputStream os = new ByteArrayOutputStream(); 
-	    byte[] buffer = new byte[0x0FFF];
-	    for (int len = is.read(buffer); len != -1; len = is.read(buffer)) { 
-	        os.write(buffer, 0, len);
-	    }
-	    return os.toByteArray();
+	
+	protected static byte [] readAllBytes ( InputStream is ) throws IOException {
+		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+		    int nRead;
+		    byte[] data = new byte[1024];
+		    while ((nRead = is.read(data, 0, data.length)) != -1) {
+		        buffer.write(data, 0, nRead);
+		    }
+		 
+		    buffer.flush();
+		    return buffer.toByteArray();
+		}
 	}
 
 }

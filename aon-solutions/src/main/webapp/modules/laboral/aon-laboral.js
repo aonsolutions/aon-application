@@ -53,6 +53,8 @@ export class AonLaboral extends AonElement {
   initialize(){
     this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
     this.title = this.title || MSG.PAYROLL;
+    this._movements = [];
+    this._filter = [];
   }
 
   getDur() {
@@ -264,7 +266,7 @@ export class AonLaboral extends AonElement {
         obj.color = "fin";
       break;
       case "DELAY":
-        obj.type="ATRASOS";
+        obj.type = "ATRASOS";
         obj.color = "pause";
       break;
     }
@@ -275,7 +277,7 @@ export class AonLaboral extends AonElement {
   showView(view, data = undefined, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
-      if(!this.getElement(view)){
+      // if(!this.getElement(view)){
         switch(view){
           case PAYROLL_VIEWS.AON_PAYROLL_LIST:
             aonView = new AonPayrollList();
@@ -313,7 +315,7 @@ export class AonLaboral extends AonElement {
           if(data) aonView.data = data;
           this.applicationEl.setContent(aonView);
         }
-      }
+      // }
       resolve(aonView);
     });
   }

@@ -6,15 +6,28 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 
 public class AttachmentImpl implements IAttachment{
 
+	@Override
+	public AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData) {
+		return 	ctx.getDslContext().transactionResult(
+			configuration -> AttachmentDAO.getAuthAttach(ctx, filter, withData));
+	}
+	@Override
+	public AuthAttach saveAuthAttach(AONContext ctx, AuthAttach authAttach) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AttachmentDAO.saveAuthAttach(ctx, authAttach));
+	}
+	
 	@Override
 	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
@@ -382,4 +395,5 @@ public class AttachmentImpl implements IAttachment{
 		return ctx.getDslContext().transactionResult(configuration -> 
 		AttachmentDAO.getRegistryAttachTag(ctx, rattachId));	
 	}
+	
 }

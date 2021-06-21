@@ -116,25 +116,34 @@ export class AonDate extends AonElement {
 
   autoFormat(){
     let date = this.getElement(this.INPUT);
-
-     const checkValue = (str, max)=> {
-      if (str.charAt(0) !== '0' || str == '00') {
-        let num = parseInt(str);
-        if (isNaN(num) || num <= 0 || num > max) num = 1;
-        str = num > parseInt(max.toString().charAt(0)) && num.toString().length == 1 ? '0' + num : num.toString();
-      }
-      return str;
+    date.maxlength = 10;
+    date.onkeypress = ({key})=>{
+      if (key === "Enter")
+       this.closeDatepicker();
     }
-    
+
+    const aonIconButton = date.querySelector(`aon-icon-button[icon="calendar_today"]`);
+    if(aonIconButton){
+      date.onkeyup =  (ev) =>{
+        const dateString = ev.target.value;
+        const regex = /(((0|1)[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$/;
+        if (regex.test(dateString) || dateString.length == 0) {
+          aonIconButton.color = "#5f6365";
+        } else {
+          aonIconButton.color = "#E82829";
+        }
+      }
+    }
+
     date.addEventListener(EVENT.INPUT, ({target})=> {
-      let input = target.value;
-      if (/\D\/$/.test(input)) input = input.substr(0, input.length - 3);
-      const values = input.split('/').map((v)=>  v.replace(/\D/g, ''));
-      if (values[0]) values[0] = checkValue(values[0], 31);
-      if (values[1]) values[1] = checkValue(values[1], 12);
+      let value = target.value;
+      if (/\D\/$/.test(value)) value = value.substr(0, value.length - 3);
+      const values = value.split('/').map((v)=>  v.replace(/\D/g, ''));
+      if (values[0]) values[0] = this.checkValue(values[0], 31);
+      if (values[1]) values[1] = this.checkValue(values[1], 12);
       const output = values.map((v, i)=> v.length == 2 && i < 2 ? v + '/' : v);
       target.value = output.join('').substr(0, 14);
-      if(input.length>=14) target.blur();
+      if(value.length>=14) target.blur();
     });
     
     date.addEventListener(EVENT.BLUR, ({target}) =>{
@@ -166,6 +175,16 @@ export class AonDate extends AonElement {
       target.value = output.replaceAll(" ", "");
     });
   }
+
+  checkValue(str, max){
+    if (str.charAt(0) !== '0' || str == '00') {
+      let num = parseInt(str);
+      if (isNaN(num) || num <= 0 || num > max) num = 1;
+      str = num > parseInt(max.toString().charAt(0)) && num.toString().length == 1 ? '0' + num : num.toString();
+    }
+    return str;
+  }
+  
 
   buildDatepicker() {
     let input = this.getElement(this.INPUT);

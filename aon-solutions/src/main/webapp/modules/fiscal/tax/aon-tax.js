@@ -1,7 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { PRESENCE_FILTER } from "../../signin/signinEnums.js";
-import { getPeriodLaboral } from "../../../services/laboralService.js";
-import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
+import { formatNumber, isEmptyObject, serializeForm, waitEl, sortBy, disabledForm } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
 import { CONST_FISCAL, TAX_ENUMS } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -55,7 +53,7 @@ export class AonTax extends AonElement {
     this.paintView();
     this.buildToolbar();
     await this.getTable();
-    await this.getBanks();
+    this.getBanks();
   }
 
   paintView() {
@@ -67,7 +65,7 @@ export class AonTax extends AonElement {
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     this.buildToolbarSearch();
-    this.searchValueDefault();
+    // this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -86,27 +84,26 @@ export class AonTax extends AonElement {
     btnSearch.addEventListener(EVENT.SEARCH, searchFn);
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
-    btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
+    // btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
 
     let buttonSearchAccept = btnSearch.querySelector("div>button");
     if(buttonSearchAccept) buttonSearchAccept.disabled = true;
-    console.log(buttonSearchAccept);
   }
 
-  searchValueDefault(){
-    let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(getPeriodLaboral());
-    periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-      if(detail){
-        const {startDate, endDate} = detail;
-        setValueName('startDate', startDate);
-        setValueName('endDate', endDate);
-      }
-    });
+  // searchValueDefault(){
+  //   let periodEl = this.getElement("period");
+  //   periodEl.options = JSON.stringify(getPeriodLaboral());
+  //   periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+  //     if(detail){
+  //       const {startDate, endDate} = detail;
+  //       setValueName('startDate', startDate);
+  //       setValueName('endDate', endDate);
+  //     }
+  //   });
 
-    this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-    this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
-  }
+  //   this.getElement("startDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
+  //   this.getElement("endDate").addEventListener(EVENT.CHANGE,()=>periodEl.value = "personalized");
+  // }
 
 
   async getTable() {

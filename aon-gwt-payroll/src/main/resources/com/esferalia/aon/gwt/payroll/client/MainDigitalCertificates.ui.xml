@@ -20,13 +20,6 @@
 			margin: 60px 10px 0 10px;
 		}
 		
-		.styleBorder2{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin: 60px 10px 0 10px;
-		}
-		
 		.tittle{
 			top: -1.2em;
 			font-size: 12px;
@@ -38,17 +31,6 @@
 			text-align: center;
 		}
 		
-		.footerStyle{
-			background-color: #eaeaea;
-			padding-top: 5px;
-		}
-		
-		.footerElement{
-			margin-left: 10px;
-			width: 940px;
-			border: none;
-		}
-		
 		.scrollStyle {
 			margin-left: 10px;
 			width: 800px;
@@ -58,17 +40,6 @@
 		.gridStyle{
 			margin-left: 10px;
 			width: 800px;
-		}
-		
-		.scrollStyle2 {
-			margin-left: 10px;
-			width: 950px;
-			margin-bottom: 10px;
-		}
-		
-		.gridStyle2{
-			margin-left: 10px;
-			width: 950px;
 		}
 		
 		.center{
@@ -170,14 +141,14 @@
 				    	</g:HTMLPanel>
 				    </g:HTMLPanel>
 				    
-				    <g:HTMLPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder2} {style.centerColumn}">
+				    <g:HTMLPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder} {style.centerColumn}">
 			    		<g:Label styleName='{style.tittle}'>Usr. Secundarios</g:Label>
 				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.centerColumn}" debugId="paymetDialogHTMLPanel">
-			    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle2}"></g:Grid>
+			    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
 			    			<g:HTMLPanel>
 			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
 			    			</g:HTMLPanel>
-				    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle2}">
+				    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
 				    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
 				    				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
 				    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>

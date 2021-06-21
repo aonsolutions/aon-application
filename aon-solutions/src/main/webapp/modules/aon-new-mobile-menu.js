@@ -14,7 +14,6 @@ import { AonMobileProfile } from "./user/aon-mobile-profile.js";
 import { uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
 
-
 export class AonNewMobileMenu extends AonElement {
 
   dur;
@@ -74,7 +73,7 @@ export class AonNewMobileMenu extends AonElement {
     `;
 
 		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
-    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files));
+    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files, this.getDur()));
   	this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => uploadInvoices(target.files));
 
     const id = this.id + 'Sidenav';
@@ -329,14 +328,14 @@ export class AonNewMobileMenu extends AonElement {
 	}
 
   addDocumentFile() {
-    alert('En Desarrollo');
-    // this.getElement(this.INPUT_DOCUMENT_FILE).click();
+    if(LS.getDomainName()) 
+      this.getElement(this.INPUT_DOCUMENT_FILE).click();
+    else alert("Selecciona un empresa");
 	}
 
-  addDocumentFile() {
+  addMessenger() {
     alert('En Desarrollo');
-    // this.getElement(this.INPUT_DOCUMENT_FILE).click();
-	}
+  }
 
 	addInvoiceFile() {
 		this.getElement(this.INPUT_INVOICE_FILE).click();
