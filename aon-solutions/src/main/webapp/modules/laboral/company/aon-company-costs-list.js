@@ -20,7 +20,6 @@ import {
 } from "../PayrollEnums.js";
 import { pieChar, addLegend} from "./pieChar.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
-import { AonFilter } from "../../../components/aon-filter.js";
 
 
 export class AonCompanyCostsList extends AonElement {
@@ -67,39 +66,32 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async build() {
-    this.paintView();
     this.buildToolbar();
-    await this.buildFilter();
     await this.getTable();
   }
 
-  paintView() {
-    let aonFilter = new AonFilter();
-    aonFilter.id = this.id+"Filter";
-    aonFilter.title = MSG.FILTERS;
-    this.appendChild(aonFilter);
-  }
-
+ 
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () =>filterEl.openFilter());
-    this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
+    if(!this.isMobile())this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
+    this.buildToolbarSearch();
+    this.searchValueDefault();
   }
 
-  async buildFilter() {
-    let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs([
-      PAYROLL_FILTER[0],
-      ...PRESENCE_FILTER,
-    ]);
-    aonFilter.addEventListener(EVENT.APPLY_FILTER, ({ detail }) => {
-      if (detail) {
-        this.applicationParentEl.setDataFilter(detail);
-      }
-    });
+  buildToolbarSearch(){
+    let btnSearch = this.applicationEl.addSearchOption();
+    btnSearch.disabled = true;
+    const searchValueFn = ({detail})=>{
+      if(detail) this.applicationParentEl.setDataFilter(detail);
+    }
 
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+
+    btnSearch.buildOptionsFilter([PAYROLL_FILTER[0], ...PRESENCE_FILTER]);//INPUTS
+  }
+
+  async searchValueDefault() {
     // ----------WORKPLACES ------------
     let workplaces = await getWorkplaceCCCs();
     let workplaceEl = this.getElement("workplace");
@@ -114,7 +106,6 @@ export class AonCompanyCostsList extends AonElement {
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriodLaboral());
-    // if(filter && filter.period) periodEl.value = filter.period;
     periodEl.addEventListener(EVENT.CHANGE, ({ detail }) => {
       if (detail) {
         const { startDate, endDate } = detail;
@@ -124,12 +115,9 @@ export class AonCompanyCostsList extends AonElement {
     });
     // ----------PERIOD END ------------
     let startDateEl = this.getElement("startDate");
-    startDateEl.addEventListener(
-      EVENT.CHANGE,
-      (ev) => (periodEl.value = "personalized")
-    );
+    startDateEl.addEventListener(EVENT.CHANGE, () => periodEl.value = "personalized");
     let endDateEl =this.getElement("endDate");
-    endDateEl.addEventListener(EVENT.CHANGE,(ev) => (periodEl.value = "personalized") );
+    endDateEl.addEventListener(EVENT.CHANGE,() => periodEl.value = "personalized" );
   }
 
   async getTable() {
@@ -152,6 +140,7 @@ export class AonCompanyCostsList extends AonElement {
     div.style.textAlign = "center";
     div.innerHTML = "";
     let divTitle = this.getElement(idTitle) || this.createElement(TAG.DIV);
+    divTitle.id = idTitle;
     try {
       const resp = await this.getData();
       if(resp && resp.length > 0 ){
@@ -160,9 +149,8 @@ export class AonCompanyCostsList extends AonElement {
         divTitle.style.color  = "grey";
         divTitle.style.fontWeight ="500";
         divTitle.style.margin = "20px";
-        divTitle.style.marginBottom = 0;
-        divTitle.id = idTitle;
         divTitle.style.textAlign = "center";
+        divTitle.style.marginBottom = 0;
         this.appendChild(divTitle);
         this.appendChild(div);
         let sumEnterpriseSs = resp.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
@@ -202,7 +190,7 @@ export class AonCompanyCostsList extends AonElement {
         button.innerHTML = MSG.VIEW_PAYROLL;
         button.style.marginTop = "10px";
         div.appendChild(button);
-        button.addEventListener('click',()=> this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST));
+        button.addEventListener(EVENT.CLICK,()=> this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST));
 
         let workplaceEl = this.getElement('workplace').querySelector('LI');
         if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
