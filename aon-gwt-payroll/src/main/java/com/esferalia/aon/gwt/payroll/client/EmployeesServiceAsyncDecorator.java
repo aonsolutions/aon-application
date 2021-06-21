@@ -782,7 +782,7 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void sendEmployeeAlta(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeAlta(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendEmployeeAlta(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
 	}

@@ -242,7 +242,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
 
-	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
 	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
 
