@@ -1,6 +1,8 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertTrue;
+import static solutions.aon.selenium.tools.SeleniumTools.checkAmount;
+import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.util.Arrays;
@@ -11,9 +13,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import solutions.aon.selenium.tools.SeleniumTools;
 
 public class SeniorityTest extends AioBaseTestCase {
 	private static WebDriver driver;
@@ -71,7 +74,7 @@ public class SeniorityTest extends AioBaseTestCase {
 		
 		Double salary = getAmount(driver, By.id("gwt-debug-db-amount-label-1"));
 		
-		assertTrue("Wrong base salary", checkAmount(salary, yearlyPay/14));
+		assertTrue("Wrong base salary", SeleniumTools.checkAmount(salary, yearlyPay/14));
 		
 		Double[] complements = new Double[3];
 		
@@ -268,41 +271,41 @@ public class SeniorityTest extends AioBaseTestCase {
 		
 	}
 	
-	private static boolean checkAmount(WebDriver driver, By selector, Double expectedAmount) {
-		expectedAmount = Math.round(expectedAmount * 100.0) / 100.0;
-		return getAmount(driver, selector).equals(expectedAmount);
-	}
+//	private static boolean checkAmount(WebDriver driver, By selector, Double expectedAmount) {
+//		expectedAmount = Math.round(expectedAmount * 100.0) / 100.0;
+//		return getAmount(driver, selector).equals(expectedAmount);
+//	}
 	
-	private static boolean checkAmount(Double actualAmount, Double expectedAmount) {
-		expectedAmount = Math.round(expectedAmount*100.0) / 100.0;
-		return actualAmount.equals(expectedAmount);
-	}
-	
-	
-	private static Double getAmount(WebDriver driver, By selector) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		
-		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-		
-		String baseSalaryStr = baseSalaryAmount.getAttribute("value");
-		Double baseSalary = null;
-		try {
-			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
-			baseSalary = Double.parseDouble(baseSalaryStr);
-			
-			return baseSalary;
-			
-		} catch (NullPointerException | NumberFormatException e) {
-			try {
-				baseSalaryStr = baseSalaryAmount.getAttribute("innerText");
-				baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
-				baseSalary = Double.parseDouble(baseSalaryStr);
-				return baseSalary;
-			} catch (NullPointerException | NumberFormatException e1) {
-				return null;
-			}
-		}
-		
-	}
+//	private static boolean checkAmount(Double actualAmount, Double expectedAmount) {
+//		expectedAmount = Math.round(expectedAmount*100.0) / 100.0;
+//		return actualAmount.equals(expectedAmount);
+//	}
+//	
+//	
+//	private static Double getAmount(WebDriver driver, By selector) {
+//		WebDriverWait wait = new WebDriverWait(driver, 10);
+//		
+//		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+//		
+//		String baseSalaryStr = baseSalaryAmount.getAttribute("value");
+//		Double baseSalary = null;
+//		try {
+//			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
+//			baseSalary = Double.parseDouble(baseSalaryStr);
+//			
+//			return baseSalary;
+//			
+//		} catch (NullPointerException | NumberFormatException e) {
+//			try {
+//				baseSalaryStr = baseSalaryAmount.getAttribute("innerText");
+//				baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
+//				baseSalary = Double.parseDouble(baseSalaryStr);
+//				return baseSalary;
+//			} catch (NullPointerException | NumberFormatException e1) {
+//				return null;
+//			}
+//		}
+//		
+//	}
 
 }
