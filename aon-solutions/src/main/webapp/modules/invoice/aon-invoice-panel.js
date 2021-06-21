@@ -397,6 +397,15 @@ export class AonInvoicePanel extends AonElement {
 			case OPTION.RAWDOC_INBOX.id:
 				this.aonInvoiceList({status: CONSTANT.INBOX});
 				break;
+			case OPTION.RAWDOC_INBOX_ISSUED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'emitida'});
+				break;
+			case OPTION.RAWDOC_INBOX_RECEIVED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'recibida'});
+				break;
+			case OPTION.RAWDOC_INBOX_TICKET.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
+				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REFUSED});
 				break;

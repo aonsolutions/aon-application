@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, EVENT, TAG } from "../environments/environments.js";3
+import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";3
 import { AonIconButton } from "./aon-icon-button.js";
 import "./aon-toolbar.js";
 import "./aon-loader.js";
@@ -327,19 +327,49 @@ export class AonApplication extends AonElement {
     ul.className = "aonClip";
     div.appendChild(ul);
     options.forEach((option, i) => {
-      this.addSidenavOptionsListValue(data, option);
+      this.addSidenavOptionsListValue(data, option, ul);
     });
     return ul;
   }
 
-  addSidenavOptionsListValue(data, option) {
-    let ul = this.getElement(this.SIDENAV + data.id + "List");
+  buildSidenavSubOptions(data, options) {
+    let ul = this.createElement(TAG.UL);
+    ul.className = "aonClip";
+    ul.style.marginLeft = '12px';
+    options.forEach((option, i) => {
+      this.addSidenavOptionsListValue(data, option, ul);
+    });
+    return ul;
+  }
+
+  addSidenavOptionsListValue(data, option, ul) {
+    ul = ul || this.getElement(this.SIDENAV + data.id + "List");
     if (!option.hidden) {
       let id = this.SIDENAV + option.name;
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.className = "aonAppMenuSidenavList aonOpacity";
       ul.appendChild(li);
+      if(option.options) {
+        li.style.paddingLeft = '6px';
+        let arrow = this.createElement(TAG.I);
+        arrow.className = "material-icons aonVerticalMiddle";
+        arrow.innerHTML = MATERIAL_ICONS.ARROW_RIGHT;
+        li.appendChild(arrow);
+        let newLi =  this.createElement(TAG.LI);
+        newLi.id = id + 'Options';
+        newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
+        newLi.style.display = 'none';
+        ul.appendChild(newLi);
+        arrow.addEventListener(EVENT.CLICK, (e => {
+          e.preventDefault();
+          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
+            ? MATERIAL_ICONS.ARROW_DROP_DOWN
+            : MATERIAL_ICONS.ARROW_RIGHT;
+          newLi.style.display = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
+            ? 'none' : 'block';
+        }));
+      }
 
       let span = this.createElement(TAG.SPAN);
       span.className = "aonMenuItemSpan";

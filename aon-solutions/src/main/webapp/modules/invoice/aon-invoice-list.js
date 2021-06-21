@@ -123,6 +123,11 @@ export class AonInvoiceList extends AonElement {
 				if(!this.getDur().isInvoiceManager() && !this.getDur().isInvoicePortal()) {
 					invoices = invoices.filter(f => f.creation_user === LS.getDomainLogin());
 				} 
+
+				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
+					invoices = invoices.filter(f => f.type === this.getFilter().type);
+				}
+
 				setInvoices(invoices);
 				
 				aonInvoiceTable.removeRows();
@@ -143,6 +148,7 @@ export class AonInvoiceList extends AonElement {
 					invoice.dateTable = day + '/' + month + '/' + year;
 					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
 					invoice.icon = this.getInvoiceStatusIcon(invoice);
+					invoice.icon_title = this.getInvoiceStatusIconText(invoice);
 					invoice.icon_color = this.getInvoiceStatusIconColor(invoice);
 					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
@@ -160,6 +166,19 @@ export class AonInvoiceList extends AonElement {
 		} else {
 			if(inv.isAccounting()) return MATERIAL_ICONS.CHECK_CIRCLE;
 			if(inv.isPending()) return MATERIAL_ICONS.ERROR;
+ 		}
+	}
+
+	getInvoiceStatusIconText(invoice) {
+		let inv = new Invoice();
+		inv.createInvoice(invoice);
+		if(inv.isRawdoc()) {
+			if(inv.isEmitida()) return 'Emitida';
+			if(inv.isRecibida()) return 'Recibida';
+			if(inv.isTicket()) return 'Ticket';
+		} else {
+			if(inv.isAccounting()) return 'Contabilizada';
+			if(inv.isPending()) return 'Pendiente';
  		}
 	}
 
