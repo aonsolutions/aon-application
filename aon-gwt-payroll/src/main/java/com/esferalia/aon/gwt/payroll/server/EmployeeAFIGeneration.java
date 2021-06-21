@@ -764,7 +764,7 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("year").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
-					fabJson.get("partialityCoef").toString(),
+					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject otdJson = (JSONObject) sdcJson.get("OTD");
@@ -809,11 +809,11 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("year").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
-					fabJson.get("partialityCoef").toString(),
+					fabJson.get("partialityCoef") == null ? "000" : fabJson.get("partialityCoef").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
-			DAM dam = new DAM(damJson.get("ocupation").toString());
+			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString());
 			
 			mc = new MC(fab, dam);
 		}

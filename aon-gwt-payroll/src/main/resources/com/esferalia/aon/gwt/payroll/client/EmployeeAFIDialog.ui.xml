@@ -309,7 +309,7 @@
     	</g:HTMLPanel>
     	<g:HTMLPanel ui:field="notifyPanel" styleName="{style.flexEndPanel}">
     		<g:Button ui:field="notifyMovTB"></g:Button>
-    		<g:Label styleName="{style.bold} {style.ml10}">Notificar movimiento</g:Label>
+    		<g:Label styleName="{style.bold} {style.ml10}">Notificar movimiento (TGSS)</g:Label>
     	</g:HTMLPanel>
 		
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
