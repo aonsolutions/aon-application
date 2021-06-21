@@ -1518,14 +1518,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}
 			
 					@Override
-					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {
+					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
 						contrataEmployeeObject.cambioOcupacion(ocupation, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Ocupacion", "El cambio de ocupacion ha sido notificado a la Seguridad Social.");
-						}, f -> {});
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 
 					@Override
@@ -1533,7 +1537,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Grupo cotizacion", "El cambio de grupo de cotizacion ha sido notificado a la Seguridad Social.");
-						}, f -> {});
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 
 					@Override
@@ -1541,7 +1548,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.cambioCatProf(contract, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social.");
-						}, f -> {});
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 
 					@Override
@@ -1549,7 +1559,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.sendEmployeeBaja(s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
-						}, f -> {});
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 
 					@Override
@@ -1557,7 +1570,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.sendEmployeeAlta(s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
-						}, f -> {});
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 					
 				};
