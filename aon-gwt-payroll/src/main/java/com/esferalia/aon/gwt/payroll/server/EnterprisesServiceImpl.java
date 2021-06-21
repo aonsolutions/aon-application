@@ -2530,7 +2530,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) {
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -2567,7 +2567,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return secondaryUsersCertificate;
 			
 		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	

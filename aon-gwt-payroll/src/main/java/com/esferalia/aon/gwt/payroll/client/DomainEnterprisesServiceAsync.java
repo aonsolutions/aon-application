@@ -412,7 +412,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) {
+	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	

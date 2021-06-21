@@ -230,7 +230,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
-	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser);
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf);
 
