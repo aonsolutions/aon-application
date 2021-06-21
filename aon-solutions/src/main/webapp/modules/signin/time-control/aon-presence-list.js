@@ -77,6 +77,7 @@ export class AonPresenceList extends AonElement {
       this.searchFilter = detail;
       this.search();
     }
+
     const searchValueFn = ({detail})=>{
       this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);

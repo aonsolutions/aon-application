@@ -11,7 +11,7 @@ import {
   getPeriod,
   getTimeControlDetail,
 } from "../../../../services/service.js";
-import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation, EVENT_LIST_FILTER } from "../../signinEnums.js";
+import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
@@ -25,8 +25,6 @@ import { AonIconButton } from "../../../../components/aon-icon-button.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
-  searchFilter;
-  _list;
   static get observedAttributes() {
     return [];
   }
@@ -62,7 +60,6 @@ export class AonEventDetailList extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Detalle");
     this.applicationParentEl.periodSideNavDisplay(true);
-    this._list = [];
   }
 
 
@@ -75,7 +72,6 @@ export class AonEventDetailList extends AonElement {
     this.getTable();
     
     this.applicationParentEl.addEventListener("filterParent",()=> {
-      this._list = [];
       this.getTable();
     });
   }
@@ -125,20 +121,11 @@ export class AonEventDetailList extends AonElement {
 
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
-    
-    const searchFn = ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    }
-
+    btnSearch.disabled = true;
     const searchValueFn = ({detail})=>{
-      this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
-
-    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
-
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
   }
 
@@ -222,34 +209,28 @@ export class AonEventDetailList extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this._list.length){
-        data = this._list;
-      } else {
-        let filter = null;
-        try {filter = { ...this.applicationParentEl._filter, ...this.applicationParentEl.DATE_TMP };} catch (error) {}
+      let filter = null;
+      try {filter = { ...this.applicationParentEl._filter, ...this.applicationParentEl.DATE_TMP };} catch (error) {}
 
-        const datos = await getTimeControlDetail(filter);
-        if (datos) {
-          sortBy(datos, "date", "asc").map((resp) => {
-            removeEmpty(resp);
-            const newStatus = resp.status.toLowerCase();
-            const status = getStatus(newStatus);
-            const textStatus = status.name;
-            const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
-            const nameLocation = resp.location && resp.location.name ? resp.location.name : `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
-  
-            data.push({
-              ...resp,
-              lettersHtml,
-              textStatus,
-              status: newStatus,
-              nameLocation,
-              dateParse: setDateTimestamp(resp.date),
-            });
+      const datos = await getTimeControlDetail(filter);
+      if (datos) {
+        sortBy(datos, "date", "asc").map((resp) => {
+          removeEmpty(resp);
+          const newStatus = resp.status.toLowerCase();
+          const status = getStatus(newStatus);
+          const textStatus = status.name;
+          const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
+          const nameLocation = resp.location && resp.location.name ? resp.location.name : `<aon-icon-button id="iconLocation" icon="${iconAddLocation}" noHover="true"></aon-icon-button>`;
+
+          data.push({
+            ...resp,
+            lettersHtml,
+            textStatus,
+            status: newStatus,
+            nameLocation,
+            dateParse: setDateTimestamp(resp.date),
           });
-          this._list = data;
-          if(this.searchFilter) data = this.filterSearch(["dateParse", "textStatus", "nameLocation"], data);
-        }
+        });
       }
     } catch (error) {
       console.log(error);
@@ -310,17 +291,5 @@ export class AonEventDetailList extends AonElement {
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_LIST);
   }
 
-  search(){
-    this._list = this.filterSearch(["dateParse", "textStatus","nameLocation"], this._list);
-    this.getTable();
-  }
-
-  filterSearch(keys, lists){
-    let list = [];
-    if(this.searchFilter && lists.length){
-      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
-    }
-    return list;
-  }
 }
 window.customElements.define("aon-event-detail-list", AonEventDetailList);
