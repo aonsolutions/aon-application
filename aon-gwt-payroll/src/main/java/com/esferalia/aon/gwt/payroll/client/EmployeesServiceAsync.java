@@ -262,7 +262,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<String> callback);
 
 	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			AsyncCallback<Void> callback);
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			AsyncCallback<Void> callback);

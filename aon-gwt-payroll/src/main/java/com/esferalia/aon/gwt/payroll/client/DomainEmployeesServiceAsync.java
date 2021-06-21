@@ -523,7 +523,7 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
 	
-	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendEmployeeAlta(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 	

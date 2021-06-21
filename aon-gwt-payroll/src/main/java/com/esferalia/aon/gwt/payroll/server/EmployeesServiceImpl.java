@@ -269,6 +269,7 @@ import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.itextpdf.text.log.SysoLogger;
 
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
@@ -5828,7 +5829,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -5848,10 +5849,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
 					eemployeeAux.getIpf());
 
-			SistemaRED.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			solutions.aon.seg.social.object.Employee returnEmployee = SistemaRED.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 
+			System.out.println(returnEmployee.getIpf());
+			
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
@@ -6044,9 +6047,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 		builder.setGc(employeeContractInfo.getContractInfo().getQuoteGroup());
 		builder.setContract(employeeContractInfo.getContractInfo().getContractType());
-		builder.setColec(employeeContractInfo.getContractInfo().getAgreementColective());
+		
+		String agreementColective = employeeContractInfo.getContractInfo().getAgreementColective();
+		agreementColective = null == agreementColective ? "60888888888888" : agreementColective;
+		
+		builder.setColec(agreementColective);
 		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
-		builder.setCoef(employeeContractInfo.getContractInfo().getPartialityCoef().toString());
+		
+		Double coef = employeeContractInfo.getContractInfo().getPartialityCoef();
+		if(coef != null)
+			builder.setCoef(coef.toString());
+		
 		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
 
 		return builder.build();
