@@ -161,7 +161,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
-		Label loadingL = new Label("Accediendo al sistema RED para consultar los usuarios secundarios...");
+		Label loadingL = new Label("Verificando certificado sistema RED...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
 		loadingPanel.add(loadingBtn);
@@ -445,13 +445,26 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
 		secondaryUsersButton.addClickHandler(e -> {
 			secondayUsersPanel.setVisible(true);
-			mainDigitalCertificatesObject.getSecondaryUsers(s -> {
-				insertSecondaryUsersRows();
-			}, f -> {
+			
+			mainDigitalCertificatesObject.verifyCertificate(CertificateType.TGSS, success -> {
+				
+				Label loadingL = (Label) loadingPanel.getWidget(loadingPanel.getWidgetCount()-1);
+				loadingL.setText("Accediendo al sistema RED para consultar los usuarios secundarios...");
+				
+				mainDigitalCertificatesObject.getSecondaryUsers(s -> {
+					insertSecondaryUsersRows();
+				}, f -> {
+					secondayUsersPanel.setVisible(false);
+					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+					dialog.warning();
+				});
+				
+			}, failure -> {
 				secondayUsersPanel.setVisible(false);
-				AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+				AonDialog dialog = new AonDialog("Error", new HTML(failure.getMessage()));
 				dialog.warning();
 			});
+			
 		});
 		secondaryUsersButton.setVisible(false);
 		
