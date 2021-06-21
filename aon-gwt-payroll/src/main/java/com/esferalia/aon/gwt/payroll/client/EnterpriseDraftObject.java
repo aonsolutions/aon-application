@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
-import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -176,18 +174,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterpriseInfo.getStreetType();
 	}
 	
-	public Integer getAddressStreetTypeIndex(){
-		return getStreetTypeIndex(getSteetType());
-	}
-	
-	private Integer getStreetTypeIndex(String streetType) {
-		for(int i=0; i<StreetType.values().length; i++){
-			if(streetType == StreetType.values()[i].getShortCode())
-				return i;
-		}
-		return 0;
-	}
-	
 	public String getAddress() {
 		return this.enterpriseInfo.getAddress();
 	}
@@ -208,9 +194,9 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterpriseInfo.getAddressProvince();
 	}
 	
-	public Integer getAddressProvinceIndex() {
-		return ProvinceContract.getProvinceIndex(getAddressProvince());
-	}
+//	public Integer getAddressProvinceIndex() {
+//		return ProvinceContract.getProvinceIndex(getAddressProvince());
+//	}
 	
 	public String getPhone() {
 		return this.enterpriseInfo.getPhone();
@@ -230,16 +216,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	public Integer getScope() {
 		return this.enterpriseInfo.getScopeId();
-	}
-	
-	public Integer getScopeIndex(){
-		Integer index = 0;
-		for(Integer value : getEnterprisecopes().keySet()){
-			if(value.equals(getScope())) 
-				break;
-			index ++;
-		}
-		return index;
 	}
 	
 	public String getPaySheetModel() {

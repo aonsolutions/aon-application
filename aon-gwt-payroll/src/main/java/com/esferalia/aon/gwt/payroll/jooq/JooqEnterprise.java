@@ -44,6 +44,7 @@ import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEnterprise {
 
@@ -150,6 +151,8 @@ public class JooqEnterprise {
 			addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
 //			addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
 			addressCity = raddressRecords.get(0).get(RADDRESS.MUNICIPALITY_CODE);
+			if (null != addressCity)
+				addressCity = AonStringUtils.leftPad(addressCity, 5, '0');
 			geozoneId = raddressRecords.get(0).get(RADDRESS.GEOZONE);
 			
 			if(null != geozoneId) {
@@ -305,16 +308,16 @@ public class JooqEnterprise {
 		Integer geozoneId = null;
 		
 		if(geozone == null){
-			Result<Record1<String>> codes = dslContext.select(GEOZONE.NAME)
+			Result<Record1<String>> names = dslContext.select(GEOZONE.NAME)
 				.from(GEOZONE)
-				.where(GEOZONE.NAME.eq(enterpriseInfo.getAddressProvince()))
+				.where(GEOZONE.CODE.eq(enterpriseInfo.getAddressProvince()))
 				.fetch();
 			
-			if(!codes.isEmpty()){
+			if(!names.isEmpty()){
 				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, enterpriseInfo.getDomainId())
-						.set(GEOZONE.NAME, enterpriseInfo.getAddressProvince())
-						.set(GEOZONE.CODE, codes.get(0).value1())
+						.set(GEOZONE.NAME, names.get(0).value1())
+						.set(GEOZONE.CODE, enterpriseInfo.getAddressProvince())
 						.returning(GEOZONE.ID)
 						.fetchOne();
 					
