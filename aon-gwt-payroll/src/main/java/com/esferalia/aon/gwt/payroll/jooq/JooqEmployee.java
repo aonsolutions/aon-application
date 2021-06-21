@@ -730,6 +730,7 @@ public class JooqEmployee {
 				
 				contractData.setCccId(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
 				contractData.setCccType(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE));
+				contractData.setCompleteCCC(getCCCRegimeCode(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
 			}
 		}
 		
@@ -935,7 +936,7 @@ public class JooqEmployee {
 		
 		return employeeContractInfo;
 	}
-	
+
 	private static ArrayList<ContractSalaryInfo> createSalariesInfo(ContractInfo contractData, Result<Record> salaryRecords) {
 		ArrayList<ContractSalaryInfo> contractSalariesInfo = new ArrayList<com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo>();
 		
@@ -1773,6 +1774,31 @@ public class JooqEmployee {
 	}
 
 	// --------------------------------------- AUX METHODS -----------------------------
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
+	}
 	
 	private static byte getType(String typePayMethod) {
 		switch (typePayMethod) {
