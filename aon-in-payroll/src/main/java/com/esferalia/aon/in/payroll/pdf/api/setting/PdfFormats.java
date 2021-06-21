@@ -65,8 +65,11 @@ public class PdfFormats {
 	 */
 	public static Optional<String> formatDate(Date date, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		if(date == null)
+			return Optional.empty();
+			
 		Optional<String> formattedDate;
-		formattedDate = Optional.of(dateFormatter.format(date));
+		formattedDate = Optional.ofNullable(dateFormatter.format(date));
 		return formattedDate;
 	}
 
