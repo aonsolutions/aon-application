@@ -5,6 +5,7 @@ import { MSG } from "../../environments/environments.js";
 import { FiscalOptions, FISCAL_VIEWS } from "./FiscalEnums.js";
 import { AonTax } from "./tax/aon-tax.js";
 import { AonApplication } from "../../components/aon-application.js";
+import Apps from "../../services/app.js";
 
 export class AonFiscal extends AonElement {
   AON_FISCAL;
@@ -41,6 +42,11 @@ export class AonFiscal extends AonElement {
   }
 
   buildToolbar() {
+    
+    if(this.isMobile()){
+			this.applicationEl.addMobileSidenavHeader(Apps.FISCAL);
+		}
+
     let fiscalOpts = [];
 
     let tax = FiscalOptions.AON_TAX;
