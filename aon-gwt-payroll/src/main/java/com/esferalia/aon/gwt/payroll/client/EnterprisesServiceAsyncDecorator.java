@@ -658,7 +658,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> callback) {
+	public void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, new AsyncCallbackWrapper<List<SecondaryUserCertificate>>(callback));
 	}

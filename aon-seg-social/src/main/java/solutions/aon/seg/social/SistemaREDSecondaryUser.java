@@ -301,6 +301,7 @@ class SistemaREDSecondaryUser {
 			DomNode msgTwo = htmlPage.querySelector("#Sub1100401071");
 			String msgError = msgOne.getVisibleText().trim();
 			if(msgTwo!=null && !msgTwo.getVisibleText().isEmpty()) {
+				msgError += " ";
 				msgError = msgError.concat(msgTwo.getVisibleText().trim());
 			}
 			throw new NoQueryData(msgError);

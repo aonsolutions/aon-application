@@ -147,7 +147,7 @@ public interface EnterprisesServiceAsync {
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> asyncCallback);
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback);
-	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback);
+	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
 	void getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback);
