@@ -8,13 +8,17 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
@@ -31,7 +35,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,6 +54,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -323,6 +330,149 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
 
 	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
+
+	// ------------------------------------------------- ScheduledCommand (TGSS)
+	
+	class AFICommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onAFIChanges();
+		}
+	}
+	
+	class IDCCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showIdc();
+		}
+	}
+	
+	class IDCPlNssCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showIdcPlNss();
+		}
+	}
+	
+	class TACommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showTa();
+		}
+	}
+	
+	class PeculiaritiesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(contrataEmployeeObject.getContractId(), contrataEmployeeObject.getContractStartDate());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class NewContextMenu extends ContextMenu {
+		
+		private MenuItem ta;
+		private MenuItem afi;
+		private MenuItem idc;
+		private MenuItem idcPlNss;		
+		private MenuItem peculiarities = null;
+		
+		public NewContextMenu() {
+			
+			afi = addItem("Cambios AFI", new AFICommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			afi.ensureDebugId("afi");
+			
+			peculiarities = addItem("Peculiaridades de cotizaci" + String.valueOf("\u00F3") + "n", new PeculiaritiesCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			peculiarities.ensureDebugId("peculiarities");
+			
+			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			ta.ensureDebugId("ta");
+			
+			idc = addItem("Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", new IDCCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			idc.ensureDebugId("idc");
+			
+			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			idcPlNss.ensureDebugId("idcPlNss");
+			
+		}
+
+		public MenuItem getTa() {
+			return ta;
+		}
+
+		public MenuItem getAfi() {
+			return afi;
+		}
+
+		public MenuItem getIdc() {
+			return idc;
+		}
+
+		public MenuItem getIdcPlNss() {
+			return idcPlNss;
+		}
+
+		public MenuItem getPeculiarities() {
+			return peculiarities;
+		}
+		
+	}
+	
+	// ------------------------------------------------- ScheduledCommand (SEPE)
+	
+	class CTOCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCTO();
+		}
+	}
+	
+	class CBCCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCBC();
+		}
+	}
+	
+	class NewSEPEContextMenu extends ContextMenu {
+		
+		private MenuItem cto;
+		private MenuItem cbc;
+		
+		public NewSEPEContextMenu() {
+			
+			cto = addItem("Copia Contrato", new CTOCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			cto.ensureDebugId("cto");
+			
+			cbc = addItem("Copia B\u00E1sica", new CTOCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			cbc.ensureDebugId("cbc");
+			
+		}
+
+		public MenuItem getCto() {
+			return cto;
+		}
+
+		public MenuItem getCbc() {
+			return cbc;
+		}
+		
+	}
 	
 	// ------------------------------------------------- UiFields
 	
@@ -331,6 +481,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String flex();
+		String cmd_btn();
 	}
 	
 	
@@ -418,15 +569,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton saveContract;
 	private AonToolbarButton deleteContract;
 	private AonToolbarButton exportContract;
-	private AonToolbarButton ta;
-	private AonToolbarButton idc;
-	private AonToolbarButton cbc;
-	private AonToolbarButton cto;
-	private AonToolbarButton afi;
+	private AonExpandButton tgss;
+	private AonExpandButton sepe;
 	private AonToolbarButton closePDF;
 	private AonToolbarButton downloadPDF;
+	private DateListBox idcDateListBox;
+	private MonthListBox idcMonthListBox;
 	private ListBox zoomListBox;
 	private int zoom;
+	
+	private NewContextMenu contextMenu;
+	private NewSEPEContextMenu sepeContextMenu;
 	
 	// EmployeeSalary
 	private HTMLPanel employeeSalaryButtons;
@@ -546,6 +699,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
+		contextMenu = new NewContextMenu();
+		sepeContextMenu =  new NewSEPEContextMenu();
+		
 		showContractButtons();
 		setDefaultEmployeeView();
 		showEmployee();		
@@ -570,15 +726,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(true);
 		deleteContract.setVisible(true);
 		listEmployees.setVisible(true);
-		ta.setVisible(true);
-		idc.setVisible(true);
-		afi.setVisible(true);
-		cbc.setVisible(true);
-		cto.setVisible(true);
+		tgss.setVisible(true);
+		sepe.setVisible(true);
 		
 		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
 		downloadPDF.setVisible(false);
+		idcDateListBox.setVisible(false);
+		idcMonthListBox.setVisible(false);
 		
 		pdfViewer.getElement().getStyle().setDisplay(Display.NONE);
 		tabLayOutPanel.getElement().getStyle().clearDisplay();
@@ -652,20 +807,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
-					exportContract.getElement().getStyle().clearDisplay();
-					showContractButtons();
-					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-//					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
-//						contrataEmployeeObject.getContractSpecificData(su -> {
-//							exportContract.getElement().getStyle().clearDisplay();
-//							showContractButtons();
-//							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-//						}, f -> {});
-//					else {
-//						exportContract.getElement().getStyle().clearDisplay();
-//						showContractButtons();
-//						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-//					}
+					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+						contrataEmployeeObject.getContractSpecificData(su -> {
+							exportContract.getElement().getStyle().clearDisplay();
+							showContractButtons();
+							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+						}, f -> {});
+					else {
+						exportContract.getElement().getStyle().clearDisplay();
+						showContractButtons();
+						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					}
 				}, f -> {});
 				break;
 			case 3:
@@ -774,6 +926,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				r -> {
 					employee.initializeView();
 					initLogicWindow();
+					initializeIdcMonthListBox();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
 				}, 
 				t -> {}
@@ -821,6 +974,34 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	        	employee.document.setFocus(true);
 	        }
 		});
+	}
+	
+	private void initializeIdcMonthListBox() {
+		Date firstMonth = DateUtils.getFirstDayOfMonth(contrataEmployeeObject.getContractStartDate());
+		Date lastMonth = DateUtils.getFirstDayOfMonth();
+		idcMonthListBox.setFirstMonth(firstMonth);
+		idcMonthListBox.setLastMonth(lastMonth);
+		int months = DateUtils.getMonths(lastMonth, firstMonth);
+		idcMonthListBox.setVisibleRange(0, months+1);
+		idcMonthListBox.ensureDebugId("idcMonthListBox");
+	}
+	
+	private void initializeIdcDateListBox() {
+		contextMenu.getIdc().setEnabled(false);
+		contextMenu.getIdc().setVisible(false);
+		contrataEmployeeObject.getIdcDates(
+		(dates) -> {
+			int count = dates.size();
+			idcDateListBox.setRowCount(count, true);
+			idcDateListBox.setRowData(0, dates);
+			idcDateListBox.setVisibleRange(0, count+1);
+			idcDateListBox.setSelected(count-1, true);
+			idcDateListBox.onResizeDropDownPopup();
+			contextMenu.getIdc().setEnabled(true);
+			contextMenu.getIdc().setVisible(true);
+		}, 
+		(error) -> {
+		} );
 	}
 
 	// ------------------------------------------------- Initialize existing employee
@@ -1083,53 +1264,49 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		employeeContractButtons.add(exportContract);
 		
-		afi = new AonToolbarButton( "Cambios AFI", AON.CSS.aonIconTgssAfi() );
-		afi.setAccessKey('A');
-		afi.addClickHandler(new ClickHandler() {
+		tgss = new AonExpandButton("TGSS",  AON.CSS.aonIconTgss()) {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				onAFI(event);
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				contextMenu.show();
 			}
-		});
-		employeeContractButtons.add(afi);
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onAFIChanges();
+			}
+		};
+		employeeContractButtons.add(tgss);
 		
-		ta = new AonToolbarButton( "Duplicados de Documentos TA", AON.CSS.aonIconTgssTa() );
-		ta.setAccessKey('T');
-		ta.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onTA(event);
-			}
+		idcMonthListBox = new MonthListBox();
+		idcMonthListBox.addChangeHandler(e -> {
+			showIdcPlNss(idcMonthListBox.getSelectedMonth());
 		});
-		employeeContractButtons.add(ta);
+		employeeContractButtons.add(idcMonthListBox);
 		
-		idc = new AonToolbarButton( "Informe de Cotizaci" + String.valueOf("\u00F3") + "n IDC", AON.CSS.aonIconTgssIdc() );
-		idc.setAccessKey('I');
-		idc.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onIDC(event);
-			}
+		idcDateListBox = new DateListBox();
+		idcDateListBox.addChangeHandler(e -> {
+			showIdc(idcDateListBox.getSelectedDate());
 		});
-		employeeContractButtons.add(idc);
+		employeeContractButtons.add(idcDateListBox);
 		
-		cbc = new AonToolbarButton( "Copia B" + String.valueOf("\u00E1") + "sica", AON.CSS.aonIconSepeCbc() );
-		cbc.addClickHandler(new ClickHandler() {
+		sepe = new AonExpandButton("SEPE", AON.CSS.aonIconSepe()) {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				onCBC(event);
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				sepeContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				sepeContextMenu.show();
 			}
-		});
-		employeeContractButtons.add(cbc);
-		
-		cto = new AonToolbarButton( "Copia Contrato", AON.CSS.aonIconSepeCto() );
-		cto.addClickHandler(new ClickHandler() {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				onCTO(event);
+			public void onDefaultClick(ClickEvent evet) {
+				onCTO();
 			}
-		});
-		employeeContractButtons.add(cto);
+		};
+		employeeContractButtons.add(sepe);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
 		closePDF.setAccessKey('I');
@@ -1496,7 +1673,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> {});
 	}
 
-	private void onAFI(ClickEvent event) {
+	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				this.employee.start_date.getValue(),
 				this.employee.end_date.getValue(),
@@ -1581,20 +1758,33 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		dialog.show();
 		dialog.center();
 	}
+	
+	private void showTa() {
+		
+		contrataEmployeeObject.downloadTa(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	private void showIdc() {
+		showIdc(idcDateListBox.getSelected());
+	}
 
-	private void onTA(ClickEvent event) {
-		showTa();
+	private void showIdcPlNss() {
+		showIdcPlNss(DateUtils.getFirstDayOfMonth());
 	}
-	
-	private void onIDC(ClickEvent event) {
-		showIdc();
-	}
-	
-	private void onCBC(ClickEvent event) {
+
+	private void onCBC() {
 		showCbc();
 	}
 	
-	private void onCTO(ClickEvent event) {
+	private void onCTO() {
 		showCto();
 	}
 
@@ -1607,31 +1797,31 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		pdfViewer.download(fileName);
 	}
 	
-	// ------------------------------------------------- Toolbar panel auxiliar methods
-	
-	private void showTa() {
-
-		contrataEmployeeObject.downloadTa(
+	// ------------------------------------------------- Toolbar panel auxiliar methods	
+		
+	private void showIdc( Date date) {
+		contrataEmployeeObject.downloadIdc( 
+		date,
 		(dataURI) -> {
 				showPdf();
+				idcDateListBox.setVisible(true);
+				idcDateListBox.setSelected(date, true);
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, 
-		(trowable)-> {
-			
-		}
+		(trowable) -> {}
 		);
 	}
 
-	private void showIdc() {
-
-		contrataEmployeeObject.downloadIdc(
+	private void showIdcPlNss( Date month) {
+		contrataEmployeeObject.downloadIdcPlNss( 
+		month,
 		(dataURI) -> {
 				showPdf();
+				idcMonthListBox.setVisible(true);
+				idcMonthListBox.setSelected(month, true);
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, 
-		(trowable)-> {
-			
-		}
+		(trowable) -> {}
 		);
 	}
 	
@@ -1662,11 +1852,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showPdf() {
-		ta.setVisible(false);
-		idc.setVisible(false);
-		cbc.setVisible(false);
-		cto.setVisible(false);
-		afi.setVisible(false);
+		tgss.setVisible(false);
+		sepe.setVisible(false);
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
@@ -1674,6 +1861,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		zoomListBox.setVisible(true);
 		closePDF.setVisible(true);
 		downloadPDF.setVisible(true);
+		idcDateListBox.setVisible(true);
+		idcMonthListBox.setVisible(true);
 
 		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
 		pdfViewer.getElement().getStyle().clearDisplay();
@@ -1702,10 +1891,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						selectResultsPanel();
 						showFootPanel();
 						ifSistemaREDEnabled(employeeStatus, () -> {
-							ContrataEmployee.this.setTGSSVisible(true);
+							ContrataEmployee.this.setTaVisible(true);
+							ContrataEmployee.this.setIdcVisible(true);
 							//ContrataEmployee.this.setOnSaved(e -> run());
 						}, () -> {
-							ContrataEmployee.this.setTGSSVisible(false);
+							ContrataEmployee.this.setTaVisible(false);
+							ContrataEmployee.this.setIdcVisible(false);
 
 						});
 						ifSistemaREDError(employeeStatus, 
@@ -1714,7 +1905,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					}, throwable -> {
 						closeFootPanel();
-						ContrataEmployee.this.setTGSSVisible(false);
+						ContrataEmployee.this.setTaVisible(false);
+						ContrataEmployee.this.setIdcVisible(false);
 
 					});
 				}
@@ -1725,16 +1917,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			selectResultsPanel();
 
 			ifSistemaREDEnabled(employeeStatus, () -> {
-				ContrataEmployee.this.setTGSSVisible(true);
+				ContrataEmployee.this.setTaVisible(true);
+				ContrataEmployee.this.setIdcVisible(true);
 			}, () -> {
-				ContrataEmployee.this.setTGSSVisible(false);
+				ContrataEmployee.this.setTaVisible(false);
+				ContrataEmployee.this.setIdcVisible(false);
 			});
 			
 			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
 
 		}, throwable -> {
 			closeFootPanel();
-			ContrataEmployee.this.setTGSSVisible(false);
+			ContrataEmployee.this.setTaVisible(false);
+			ContrataEmployee.this.setIdcVisible(false);
 		});
 	}
 	
@@ -1760,10 +1955,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		splitLayoutPanel.setWidgetSize(footPanel, 200);
 	}
 	
-	
-	private void setTGSSVisible( boolean visible ) {
-		idc.setVisible(visible);
-		ta.setVisible(visible);
+	public void setTaVisible(boolean visible ) {
+		contextMenu.getTa().setVisible(visible);
+	}
+
+	public void setIdcVisible(boolean visible ) {
+		initializeIdcDateListBox();
+		contextMenu.getIdcPlNss().setVisible(visible);
 	}
 	
 	// ------------------------------------------------- SEPE status
@@ -1773,8 +1971,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void checkCertificateSEPE() {
-		setVisible(cbc.getElement(), hasCertificateSEPE);
-		setVisible(cto.getElement(), hasCertificateSEPE);
+		setVisible(sepe.getElement(), hasCertificateSEPE);
+//		setVisible(sepeContextMenu.getCbc().getElement(), hasCertificateSEPE);
+//		setVisible(sepeContextMenu.getCto().getElement(), hasCertificateSEPE);
 	}
 	
 	// ------------------------------------------------- Messages panel
