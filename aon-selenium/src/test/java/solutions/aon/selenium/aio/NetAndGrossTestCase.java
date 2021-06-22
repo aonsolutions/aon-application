@@ -8,7 +8,9 @@ import static solutions.aon.selenium.aio.id.LaboralId.FOR_DUMMIES;
 import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_LIQUID;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_PAYMENTS;
+import static solutions.aon.selenium.tools.DataTreatment.safeDouble;
 import static solutions.aon.selenium.tools.Logger.Status.GET;
+import static solutions.aon.selenium.tools.Logger.Status.SUCCESS;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
@@ -33,7 +35,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import solutions.aon.selenium.tools.DataTreatment;
 import solutions.aon.selenium.tools.Logger;
+import solutions.aon.selenium.tools.Logger.Status;
 import solutions.aon.selenium.tools.SeleniumTools;
 
 public class NetAndGrossTestCase extends AioBaseTestCase {
@@ -88,7 +92,6 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         // Open draft
         retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
         
-        
         String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
       
         Double payments = getAmount(driver, By.id(TOTAL_PAYMENTS));
@@ -99,14 +102,12 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         Logger.log(GET, "Payments", payments + "");
         Logger.log(GET, "Deductions", deductions + "");
         Logger.log(GET, "Liquid", total + "");
-        
  
         
-        Double diff =  payments  - deductions;
-        
+        Double diff =  safeDouble(payments,0.00) - safeDouble(deductions,0.00);
         assertEquals(diff, total);
+        Logger.log(SUCCESS, "DONE.");
         
-				
 	}
 	
 	@Test
