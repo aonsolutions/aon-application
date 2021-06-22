@@ -161,7 +161,7 @@ export class AonConfiguration extends AonElement {
       
       aonConfiguration.removeToolbarOptions();
       aonConfiguration.setContentHTML(
-        '<aon-user id="aonUserPersonal" showPassword="true" onlyAuth="true" autosave="true"><aon-user>'
+        '<aon-user id="aonUserPersonal" showPassword="true" showToolbar="true" onlyAuth="true"><aon-user>'
       );
       let aonUser = this.getElement("aonUserPersonal");
       aonUser.style.width = "100%";

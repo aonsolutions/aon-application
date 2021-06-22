@@ -276,13 +276,14 @@ export class AonUser extends AonElement {
 		if(!this.hasAttribute('showToolbar'))
 			userToolbar.style.display = 'none';
 		userToolbar.removeButtons();
-		if(this._user && this._user.uuid)
+		if(!this.isOnlyAuth() && this._user && this._user.uuid)
 			userToolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
 			userToolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(this._user.id)
+		if(!this.isOnlyAuth() && this._user.id)
 			userToolbar.addButton2(ACTION.DELETE, () => this.delete());
-		userToolbar.addButton2(ACTION.BACK, () => this.back());
+		if(!this.isOnlyAuth()) 
+			userToolbar.addButton2(ACTION.BACK, () => this.back());
 		
 	}
 
