@@ -82,7 +82,7 @@ export class AonElement extends HTMLElement{
   }
 
   isSab() {
-      return getComputedStyle(document.documentElement).getPropertyValue("--sab") == '34px';
+      return getComputedStyle(document.documentElement).getPropertyValue("--sab") != '0px';
   }
   
   getRootPanel() {
