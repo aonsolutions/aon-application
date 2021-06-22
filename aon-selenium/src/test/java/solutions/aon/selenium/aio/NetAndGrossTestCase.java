@@ -9,6 +9,8 @@ import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_LIQUID;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_PAYMENTS;
 import static solutions.aon.selenium.tools.DataTreatment.safeDouble;
+import static solutions.aon.selenium.tools.Logger.log;
+import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.GET;
 import static solutions.aon.selenium.tools.Logger.Status.SUCCESS;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
@@ -84,12 +86,15 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	public void grossTest() {
 		
 		// Open 4dummies 
+		log(CLICK, "Selecting 4 dummies enterprise.");
         retryingFindClick(driver, By.cssSelector("#" + FOR_DUMMIES + " img"));
  
         // Open 'constante, bruto'
+        log(CLICK, "Selecting Constante, bruto employee.");
         retryingFindClick(driver, By.cssSelector("*[id='" + CONSTANTE_BRUTO + "'] img"));
 
         // Open draft
+        log(CLICK, "Entering draft editor.");
         retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
         
         String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
@@ -97,16 +102,17 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         Double payments = getAmount(driver, By.id(TOTAL_PAYMENTS));
         Double deductions = getAmount(driver, By.cssSelector(chimboSelector));
         Double total = getAmount(driver, By.id(TOTAL_LIQUID));
-        
-        
-        Logger.log(GET, "Payments", payments + "");
-        Logger.log(GET, "Deductions", deductions + "");
-        Logger.log(GET, "Liquid", total + "");
+                
+        Logger.jump();
+        Logger.start("Getting data");
+        log(GET, "Payments", payments + "");
+        log(GET, "Deductions", deductions + "");
+        log(GET, "Liquid", total + "");
  
         
         Double diff =  safeDouble(payments,0.00) - safeDouble(deductions,0.00);
         assertEquals(diff, total);
-        Logger.log(SUCCESS, "DONE.");
+        log(SUCCESS, "DONE.");
         
 	}
 	
@@ -134,7 +140,6 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, -1);
-		
 		
 		selectMonth(driver, c.getTime());
 		

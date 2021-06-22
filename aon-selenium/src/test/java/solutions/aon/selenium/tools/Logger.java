@@ -23,6 +23,7 @@ public class Logger {
 		COMPARE(101,"Compare"),
 		GENERATE(102,"Generate"),
 		GET(103,"Get"),
+		CONNECT(104,"Connect"),
 		
 		
 		/** Log severety */
@@ -31,6 +32,10 @@ public class Logger {
 		ERROR(202,"Error"),
 		FAIL(203,"Fail"),
 		SUCCESS(204,"Success"),
+		
+		/** User actions */
+		CLICK(300,"Click"),
+		INPUT(301,"Click"),
 		;
 		
 		private String name;
