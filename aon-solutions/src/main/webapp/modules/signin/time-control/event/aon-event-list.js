@@ -18,8 +18,6 @@ import { AonIconButton } from "../../../../components/aon-icon-button.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
-  searchFilter;
-  _list;
   static get observedAttributes() {
     return [];
   }
@@ -50,8 +48,6 @@ export class AonEventList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Resumen");
-    this.applicationParentEl.periodSideNavDisplay(true);
-    this._list = [];
   }
 
    build() {
@@ -60,10 +56,8 @@ export class AonEventList extends AonElement {
     this.getTable();
 
     const filterFn = ()=> {
-      this._list = [];
       this.getTable();
     }
-
     this.applicationParentEl.addEventListener("filterParent", filterFn);
   }
 
@@ -111,21 +105,11 @@ export class AonEventList extends AonElement {
 
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
-    
-    const searchFn = ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    }
-
+    btnSearch.disabled = true;
     const searchValueFn = ({detail})=>{
-      this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);
     }
-
-    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
-
     btnSearch.buildOptionsFilter(EVENT_LIST_FILTER);//INPUTS
   }
 
@@ -218,9 +202,6 @@ export class AonEventList extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this._list.length){
-        data = this._list;
-      } else {
         const group = await this.getGroupValue();
         const isMobile = this.isMobile();
         let filter = null;
@@ -250,9 +231,6 @@ export class AonEventList extends AonElement {
               });
             }
           );
-          this._list = data;
-          if(this.searchFilter) data = this.filterSearch(["dateParse"], data);
-        }
       }
     } catch (e) {
       console.log(e);
@@ -323,21 +301,7 @@ export class AonEventList extends AonElement {
         div.appendChild(aEl);   
       }
     }
-
     this.getElement(this.TOOLBAR).title = div.outerHTML;
-  }
-
-  search(){
-    this._list = this.filterSearch(["dateParse"], this._list);
-    this.getTable();
-  }
-
-  filterSearch(keys, lists){
-    let list = [];
-    if(this.searchFilter && lists.length){
-      list = lists.filter((lt)=> keys.some(key=>lt[key] && lt[key].toString().toLowerCase().includes(this.searchFilter.toLowerCase())));
-    }
-    return list;
   }
 
   aonEvent({}, data) {

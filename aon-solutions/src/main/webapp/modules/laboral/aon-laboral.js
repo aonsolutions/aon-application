@@ -14,6 +14,7 @@ import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
+import Apps from "../../services/app.js";
 
 
 export class AonLaboral extends AonElement {
@@ -79,6 +80,10 @@ export class AonLaboral extends AonElement {
   }
 
   buildToolbar(){
+    if(this.isMobile()){
+			this.applicationEl.addMobileSidenavHeader(Apps.PAYROLL);
+		}
+
     let laboralOptions = [];
     let conf = [];
     if(!this.isComunicaNotPayroll()){

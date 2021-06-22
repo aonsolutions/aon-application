@@ -32,6 +32,7 @@ export class AonAvatar extends AonElement {
         img.src = this.src && this.src != 'undefined' && this.src != 'null' 
             ? this.src  : 'assets/img/profile.png';
         img.className = CSS.AON_IMG_AVATAR;
+        img.style.objectFit = "cover";
         this.appendChild(img);
     }
 }

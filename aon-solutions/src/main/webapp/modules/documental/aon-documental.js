@@ -15,6 +15,7 @@ import './aon-mobile-document.js';
 import '../../components/aon-application.js';
 import '../../components/aon-input.js';
 import { getReader } from '../../services/utils.js';
+import Apps from '../../services/app.js';
 
 
 
@@ -85,6 +86,10 @@ export class AonDocumental extends AonElement {
         }
         const btnSearch = aonDocumental.addSearchOption();
         btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+      }
+
+      if(this.isMobile()){
+        this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
       }
 
       if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())

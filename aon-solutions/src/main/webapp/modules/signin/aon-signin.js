@@ -12,6 +12,7 @@ import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.j
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
+import Apps from "../../services/app.js";
 // import { AonStatistics } from "./time-control/statistics.js/aon-statistics.js";
 
 export class AonSignin extends AonElement {
@@ -68,6 +69,9 @@ export class AonSignin extends AonElement {
   }
   
   buildToolbar() {
+    if(this.isMobile()){
+      this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
+    }
     const options = [
       {
         ...SigninSidenav.PRESENCE,

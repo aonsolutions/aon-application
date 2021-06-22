@@ -16,7 +16,7 @@ import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, EVENT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
@@ -26,6 +26,7 @@ import * as OPTION from './InvoiceOptions.js';
 import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
+import Apps from '../../services/app.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -136,6 +137,10 @@ export class AonInvoicePanel extends AonElement {
 	}
 
  	buildSidenavOptions() {
+		if(this.isMobile()){
+			this.getApplication().addMobileSidenavHeader(Apps.INVOICE);
+		}
+
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		})
@@ -396,6 +401,15 @@ export class AonInvoicePanel extends AonElement {
 			switch(option.id){
 			case OPTION.RAWDOC_INBOX.id:
 				this.aonInvoiceList({status: CONSTANT.INBOX});
+				break;
+			case OPTION.RAWDOC_INBOX_ISSUED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'emitida'});
+				break;
+			case OPTION.RAWDOC_INBOX_RECEIVED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'recibida'});
+				break;
+			case OPTION.RAWDOC_INBOX_TICKET.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
 				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REFUSED});

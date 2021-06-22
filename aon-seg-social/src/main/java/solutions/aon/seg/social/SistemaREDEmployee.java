@@ -85,6 +85,7 @@ class SistemaREDEmployee {
 
 		HtmlPage page = webClient
 				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
+		
 		HtmlForm formParts = wait4(page, p -> p.getFormByName("jacadaform")).orElseThrow();
 		manageStatusCode(page);
 
@@ -199,7 +200,7 @@ class SistemaREDEmployee {
 			throws ElementNotFoundException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
+			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			ArrayList<Employee> employees = new ArrayList<>();
 
@@ -346,7 +347,8 @@ class SistemaREDEmployee {
 	private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String ccc, String nss) throws IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			//webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setUseInsecureSSL(true);
 			return employeeFullInfo(ccc, nss, webClient);
 		}
 	}

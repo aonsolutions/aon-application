@@ -1,6 +1,7 @@
 import { AonApplication } from '../../../components/aon-application.js';
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT, MSG } from '../../../environments/environments.js';
+import Apps from '../../../services/app.js';
 import { getAccessBidoq, getTypeUserBidoq, postBidoq, setClienteId, setSessionId } from  '../../../services/bidoqService.js';
 import {  DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { AonDocumentAyudat } from './aon-document-ayudat.js';
@@ -41,6 +42,9 @@ export class AonDocumentalAyudat extends AonElement {
     }
     
     async buildData(){
+        if(this.isMobile()){
+            this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
+        }
         this.applicationEl.startLoader();
         await getAccessBidoq().then(async ({datos, message})=>{
             if(CONSTANT.SUCCESS === message && datos){

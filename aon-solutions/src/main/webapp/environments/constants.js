@@ -45,6 +45,7 @@ export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CREDITOR = 'creditor';
@@ -150,6 +151,9 @@ export const QUOTA = 'quota';
 // ----- R
 export const RAWDOC_DRAFT = 'rawdocDraft';
 export const RAWDOC_INBOX = 'rawdocInbox';
+export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
+export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
+export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const REQUIRED = 'required';

@@ -13,15 +13,19 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
@@ -73,6 +77,27 @@ public class PDFToolkit {
 		final float	POINTS_PER_MM	= 1 / (10 * 2.54f) * POINTS_PER_INCH;
 		return new PDPage(new PDRectangle(210 * POINTS_PER_MM, 297 * POINTS_PER_MM));
 	}
+	
+
+	/**
+	 * <p>
+	 * <b>Description:</b> <i>Draws a text. </i>
+	 * </p>
+	 * <p>
+	 * <b>Warning:</b> Use PdfText instead
+	 * </p>
+	 * 
+	 * @return void
+	 * @see PdfText
+	 */
+	public static void drawText(
+			PDPageContentStream contents, String content, Float x, Float y, Color color, PDFont font, float fontSize, String aName
+	) throws IOException {
+		contents.beginMarkedContent(COSName.getPDFName(aName));
+		drawText(contents, content, x, y, color, font, fontSize);
+		contents.endMarkedContent();
+	}
+	
 
 	/**
 	 * <p>
@@ -203,6 +228,13 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
+	public static void drawTextRight(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginX, float marginY, String name) throws IOException {
+		contents.beginMarkedContent(COSName.getPDFName(name));
+		drawTextRight(contents, box, content, color, font, fontSize, marginX, marginY);
+		contents.endMarkedContent();
+	}
+	
 	/**
 	 * <p>
 	 * <b>Description:</b> <i>Draws a left aligned text. </i>
@@ -258,6 +290,15 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
+	public static void drawTextCenter(
+			PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize,
+			float marginY, String name
+	) throws IOException {
+		contents.beginMarkedContent(COSName.getPDFName(name));
+		drawTextCenter(contents, box, content, color, font, fontSize, marginY);
+		contents.endMarkedContent();
+	}
+	
 	/**
 	 * <p>
 	 * <b>Description:</b> <i>Draws an image in natural size.</i>
@@ -549,6 +590,40 @@ public class PDFToolkit {
 			return "";
 		else
 			return toLatinNumber(safeDouble(percentage)) + " %";
+	}
+	
+	/** 
+	 * Get content by tag in pdf page 
+	 * @param page - The page.
+	 * @param name - The name of the tag
+	 **/
+	public static Optional<PDMarkedContent> getContent(PDPage page, String name) {
+		
+		try {
+			PDFMarkedContentExtractor contentExtractor = new PDFMarkedContentExtractor();
+			contentExtractor.processPage(page);
+			List<PDMarkedContent> markedContents = contentExtractor.getMarkedContents();			
+			
+			for (PDMarkedContent pdMarkedContent : markedContents) {
+				if(pdMarkedContent.getTag() != null && pdMarkedContent.getTag().equals(name))
+					return Optional.ofNullable(pdMarkedContent);
+			}
+		} catch (IOException e) {}
+		return Optional.empty();
+	}
+
+	public static Optional<PDMarkedContent> getContent(PDDocument document, String name) {
+
+		PDPageTree pages = document.getPages();
+		for (PDPage page : pages) {
+			
+			Optional<PDMarkedContent> content = getContent(page, name);
+			if(content.isPresent())	
+				return content;				
+			
+		}
+		
+		return Optional.empty();
 	}
 
 }

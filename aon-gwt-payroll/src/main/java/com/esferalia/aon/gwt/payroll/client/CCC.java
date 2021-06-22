@@ -514,8 +514,11 @@ public abstract class CCC extends ResizeComposite {
 		ListBox activities = new ListBox();
 		
 		activities.addItem("-", "-1");
-		for(Entry<Integer, String> entry : getActivities())
-			activities.addItem(entry.getValue(), entry.getKey().toString());
+		
+		Set<Entry<Integer, String>> activitiesList = getActivities();
+		if(null != activitiesList)
+			for(Entry<Integer, String> entry : activitiesList)
+				activities.addItem(entry.getValue(), entry.getKey().toString());
 		
 		activities.addStyleName("aon-selectOneMenu");
 		activities.getElement().getStyle().setWidth(98, Unit.PCT);

@@ -503,6 +503,19 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), date, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
@@ -590,7 +603,9 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
@@ -604,7 +619,9 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 	}
 	
@@ -627,7 +644,9 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 							
 						});
 					}
@@ -657,7 +676,9 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 							
 						});
 					}
@@ -687,7 +708,9 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 							
 						});
 					}

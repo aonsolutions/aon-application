@@ -114,22 +114,18 @@ public class MainDigitalCertificatesObject {
 	
 	public void getSecondaryUsers(Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
 		
-		verifyCertificate(CertificateType.TGSS, s -> {
-			impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
-				
-				@Override
-				public void onSuccess(List<SecondaryUserCertificate> result) {
-					secondaryUsers = result;
-					success.accept(result);	
-				}
+		impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
+			
+			@Override
+			public void onSuccess(List<SecondaryUserCertificate> result) {
+				secondaryUsers = result;
+				success.accept(result);	
+			}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					failure.accept(caught);
-				}
-			});
-		}, f -> {
-			failure.accept(f);
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
