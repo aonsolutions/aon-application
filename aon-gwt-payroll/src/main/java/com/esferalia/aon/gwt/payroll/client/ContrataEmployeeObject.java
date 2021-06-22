@@ -477,45 +477,6 @@ public class ContrataEmployeeObject {
 		}	
 	}
 	
-	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-
-	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), date, new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
@@ -721,6 +682,73 @@ public class ContrataEmployeeObject {
 				});	
 	}
 	
+	// ------------------------------------------------- Database Methods (TGSS)
+
+	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
+	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadIdc(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdc(contractData.getContractId(), date, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
+	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), date, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void getIdcDates(Consumer<List<Date>> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcDates(contractData.getContractId(), null, new AsyncCallback<List<Date>>() {
+			@Override
+			public void onSuccess(List<Date> result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// ------------------------------------------------- Auxiliar Methods
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfo) {
@@ -735,6 +763,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractOtherData(Map<String, String> contractOtherData) {
 		this.employeeContractData.setContractOtherData(contractOtherData);
+	}
+	
+	public Integer getContractId() {
+		return this.contractData.getContractId();
 	}
 	
 	public Date getContractStartDate() {
