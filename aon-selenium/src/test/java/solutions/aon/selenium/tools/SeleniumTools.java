@@ -229,23 +229,7 @@ public class SeleniumTools {
 	    }
 	    return result;
 	}
-	
-	public static boolean retryingClick(WebElement element) {
-	    boolean result = false;
-	    int attempts = 0;
-	    while(attempts < 4) {
-	        try {
-	            element.click();
-	            result = true;
-	            break;
-	        } catch(StaleElementReferenceException e) {
-	        }
-	        attempts++;
-	    }
-	    return result;
-	}
-	
-	
+		
 	public static void waitNClick(WebDriver app, By by) {
 		waitNClick(app,by, 10);
 	}
@@ -304,11 +288,6 @@ public class SeleniumTools {
 		return actualAmount.equals(expectedAmount);
 	}
 	
-	public static Double unmessDouble(Double number) {
-		if (number != null)
-			return Math.round(number * 100.0) / 100.0;
-		return null;
-	}
 	
 	public static Double getAmount(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -336,4 +315,11 @@ public class SeleniumTools {
 		
 	}
 
+	public static Double unmessDouble(Double number) {
+		if (number != null)
+			return Math.round(number * 100.0) / 100.0;
+		return null;
+	}
+
+	
 }

@@ -1,6 +1,9 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.fail;
+import static solutions.aon.selenium.tools.Logger.log;
+import static solutions.aon.selenium.tools.Logger.Status.CLICK;
+import static solutions.aon.selenium.tools.Logger.Status.INPUT;
 
 import java.util.List;
 
@@ -11,23 +14,33 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import solutions.aon.selenium.AbstractTestCase;
+import solutions.aon.selenium.tools.Logger;
+import solutions.aon.selenium.tools.Logger.Status;
 import solutions.aon.selenium.tools.SeleniumTools;
 
 public class AioBaseTestCase extends AbstractTestCase{
 
 
 	protected static void login(WebDriver driver) {
+		
+		Logger.start("AON AIO - LOGIN");
+		log(Status.CONNECT, "URL", getUrl());
 		driver.get(getUrl());
 		
 		WebElement jUserName = driver.findElement(By.name("j_username"));
 		jUserName.sendKeys(getUser());
+		log(INPUT, "Seting user", getUser());
+		
 		WebElement jPassword = driver.findElement(By.name("j_password"));
 		jPassword.sendKeys(getPassword());
+		log(INPUT, "Seting user", getPassword().replaceAll(".", "*"));
 		
 		WebElement loginBtn = driver.findElement(By.name("login_btn"));
 		loginBtn.click();
+		log(CLICK, "Login button.");
 		
 		WebElement generalRegime = searchEnterprise(driver, "régimen general");
+	
 		
 		SeleniumTools.clickUntilNotExists(driver, generalRegime);
 		
@@ -46,14 +59,11 @@ public class AioBaseTestCase extends AbstractTestCase{
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".aon-dataTable .rich-table-row")));
 		
-		System.out.println(elements.size());
-		
+		Logger.log(Status.GET, "Getting enterprises.");
 		return elements.stream().filter(elem -> {
 			WebElement nameElem = elem.findElement(By.cssSelector("td span.aon-outputText"));
 			return nameElem.getAttribute("innerText").equalsIgnoreCase(string);
 		}).findFirst().orElse(null);
-		
-		
 	}
 
 	protected static void logout(WebDriver driver) {
