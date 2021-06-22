@@ -270,42 +270,5 @@ public class SeniorityTest extends AioBaseTestCase {
 //		assertTrue("", checkAmount(ssAmount, expectedSS));
 		
 	}
-	
-//	private static boolean checkAmount(WebDriver driver, By selector, Double expectedAmount) {
-//		expectedAmount = Math.round(expectedAmount * 100.0) / 100.0;
-//		return getAmount(driver, selector).equals(expectedAmount);
-//	}
-	
-//	private static boolean checkAmount(Double actualAmount, Double expectedAmount) {
-//		expectedAmount = Math.round(expectedAmount*100.0) / 100.0;
-//		return actualAmount.equals(expectedAmount);
-//	}
-//	
-//	
-//	private static Double getAmount(WebDriver driver, By selector) {
-//		WebDriverWait wait = new WebDriverWait(driver, 10);
-//		
-//		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-//		
-//		String baseSalaryStr = baseSalaryAmount.getAttribute("value");
-//		Double baseSalary = null;
-//		try {
-//			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
-//			baseSalary = Double.parseDouble(baseSalaryStr);
-//			
-//			return baseSalary;
-//			
-//		} catch (NullPointerException | NumberFormatException e) {
-//			try {
-//				baseSalaryStr = baseSalaryAmount.getAttribute("innerText");
-//				baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
-//				baseSalary = Double.parseDouble(baseSalaryStr);
-//				return baseSalary;
-//			} catch (NullPointerException | NumberFormatException e1) {
-//				return null;
-//			}
-//		}
-//		
-//	}
 
 }
