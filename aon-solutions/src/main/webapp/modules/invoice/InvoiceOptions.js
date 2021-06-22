@@ -78,7 +78,14 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   //   name: MSG.TARGETS,
   //   icon: MATERIAL_ICONS.CONTACT_PAGE
   // }
-  
+
+  export const REGISTRY = {
+    id: CONSTANT.HOLDERS.initCap(),
+    name: MSG.HOLDERS,
+    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
+  }
+
   export const OFFER = {
     id: CONSTANT.OFFER.initCap(),
     name: MSG.PENDINGS,

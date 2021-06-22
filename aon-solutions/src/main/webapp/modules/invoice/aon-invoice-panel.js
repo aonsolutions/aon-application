@@ -148,7 +148,6 @@ export class AonInvoicePanel extends AonElement {
 		this.buildOfferOptions();
 		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
 			this.buildInvoiceOptions();
-			this.buildRegistryOptions();
 			this.buildSettingOptions();
 		}
 	}
@@ -179,22 +178,13 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-	buildRegistryOptions() {
-		if(!this.isMobile()) {
-			let contactOptions = [
-				OPTION.REGISTRY_CUSTOMER,
-				OPTION.REGISTRY_SUPPLIER,
-				OPTION.REGISTRY_CREDITOR
-			];
-			this.getApplication().addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
-		}
-	}
-
 	buildSettingOptions() {
-		let settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+		let settingOptions = [];
+		if(!this.isMobile()) {
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+		} else settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
-			// settingOptions.push(OPTION.PRODUCT);
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 		}
 		this.getApplication().addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
@@ -444,6 +434,8 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoicePrint();
 				break;
 			case OPTION.CONFIGURATION_SII_TBAI.id:
+				break;
+			case OPTION.REGISTRY.id:
 				break;
 			default:
 				this.aonInvoiceList({status: CONSTANT.INBOX});

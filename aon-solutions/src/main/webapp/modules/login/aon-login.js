@@ -226,7 +226,7 @@ export class AonLogin extends AonElement {
         this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){
-            this.companySelection(companies[0]);
+            this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
             this.rootPanelHtml(this.isMobile()
@@ -254,22 +254,23 @@ export class AonLogin extends AonElement {
       });
   }
 
-  companySelection(company) {
+  companySelection(company, onlyOne) {
     localStorage.setItem('company', JSON.stringify(company));
     localStorage.setItem("aon_domain_id", company.id);
     localStorage.setItem("aon_domain_name", company.domain);
+    localStorage.setItem("onlyOne", onlyOne);
 
     let home = this.getElement('aonHome');
     home.showMenu(true);
 
     let aonHeader = this.getElement(home.AON_HEADER);
-    aonHeader.showCompanyOption(company);
+    aonHeader.showCompanyOption(company, onlyOne);
 
     if(!this.isMobile()){
       let aonMenu = this.getElement('aonMenu');
       aonMenu.clear();
       aonMenu.init();
-    } else aonHeader.companyIn();
+    } else aonHeader.companyIn(onlyOne);
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);

@@ -2,6 +2,7 @@ import * as LS from './services/localStorageService.js';
 import { AonModule } from './modules/aon-module.js';
 import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
+import { webkitRequestMobile } from './services/request.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
 import './css/aon-css-utils.css';
@@ -25,6 +26,13 @@ window.setTokenFCM =  (token) => {
 
 window.setNotificationAction = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
+}
+
+const isMobile = () => {
+    const reg = new RegExp(/mobile/i);
+    const navigatorPlatform = navigator.platform.toLowerCase();
+    const navigatorUserAgent = navigator.userAgent.toLowerCase();
+    return navigatorPlatform.match(reg) || navigatorUserAgent.match(reg) ||  webkitRequestMobile(); 
 }
 
 const load = () => {
@@ -78,21 +86,26 @@ const setWindowApp = () => {
 } 
 
 const loadScripts = () => {
-    Promise.all([
-        loadScript("https://www.google.com/jsapi"),
-        loadScript("https://www.gstatic.com/charts/loader.js"),
-        loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"),        
-        loadScript("https://mozilla.github.io/pdf.js/build/pdf.js")
-    ]).then(() => {});            
+    if(isMobile()){
+        Promise.all([
+            loadScript("https://www.google.com/jsapi"),
+            loadScript("https://www.gstatic.com/charts/loader.js"),  
+            loadScript("https://mozilla.github.io/pdf.js/build/pdf.js")
+        ]).then(() => {});
+    } else {
+        Promise.all([
+            loadScript("https://www.google.com/jsapi"),
+            loadScript("https://www.gstatic.com/charts/loader.js"),
+            loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"),        
+            loadScript("https://mozilla.github.io/pdf.js/build/pdf.js")
+        ]).then(() => {});
+    }
 }
 
 const loadScriptFirebase = () => Promise.all([
     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"),
     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js")
-]).then(() => setWindowApp());  
-
-
+]).then(() => setWindowApp());
 
 load();
-
 

@@ -175,7 +175,8 @@ export class AonNewMobileHeader extends AonElement {
 
 	}
 
-	companyIn() {
+	companyIn(onlyOne) {
+		onlyOne = onlyOne || LS.isOnlyOne();
 		actionMobile({ action: "statusBar", statusBar: true});
 
 		this.parent = false;
@@ -191,7 +192,7 @@ export class AonNewMobileHeader extends AonElement {
 		let spanCompany = this.createElement(TAG.SPAN);
 		spanCompany.id = this.COMPANY;
 		spanCompany.className = CSS.AON_MOBILE_HEADER_COMPANY;
-
+	
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = 'white';
 
@@ -200,6 +201,9 @@ export class AonNewMobileHeader extends AonElement {
 		
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = 'white';
+		if(onlyOne) {
+			this.getElement(this.COMPANY_LIST).style.display = 'none';
+		}
 	}
 
 	companyOut() {

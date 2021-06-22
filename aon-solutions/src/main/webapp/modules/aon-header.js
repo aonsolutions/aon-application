@@ -322,9 +322,9 @@ export class AonHeader extends AonElement {
 		}
 	}
 
-	showCompanyOption(company) {
+	showCompanyOption(company, onlyOne) {
 		let aonHeaderCompanyList = this.getElement(this.AON_HEADER_COMPANY_LIST);
-		aonHeaderCompanyList.style.display = company ? 'block' : 'none';
+		aonHeaderCompanyList.style.display = company && !onlyOne ? 'block' : 'none';
 
 		let aonHeaderHelp = this.getElement(this.AON_HEADER_HELP);
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
@@ -340,6 +340,13 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
 		aonHeaderCompanyName.innerHTML = company ? company.name : '';
+
+		if(onlyOne) {
+			aonHeaderHome.style.right = '140px';
+			aonHeaderCompany.style.right = '180px';
+			aonHeaderCompanyList.style.display = 'none';
+		}
+
 	}
 }
 
