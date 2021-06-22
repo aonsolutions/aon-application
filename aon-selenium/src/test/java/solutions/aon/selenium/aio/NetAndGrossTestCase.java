@@ -1,6 +1,14 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertEquals;
+import static solutions.aon.selenium.aio.id.AonHeaderId.LABORAL_BUTTON;
+import static solutions.aon.selenium.aio.id.LaboralId.CONSTANTE_BRUTO;
+import static solutions.aon.selenium.aio.id.LaboralId.CONSTANTE_BRUTO_DRAFT;
+import static solutions.aon.selenium.aio.id.LaboralId.FOR_DUMMIES;
+import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
+import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_LIQUID;
+import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_PAYMENTS;
+import static solutions.aon.selenium.tools.Logger.Status.GET;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
@@ -14,7 +22,9 @@ import java.util.Locale;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -23,12 +33,22 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import solutions.aon.selenium.tools.Logger;
 import solutions.aon.selenium.tools.SeleniumTools;
 
 public class NetAndGrossTestCase extends AioBaseTestCase {
 	
 	private static WebDriver driver;
 	private static WebDriverWait wait;
+	
+	@Rule
+	public TestName testName = new TestName();
+	
+	@Before
+	public void prepare() {
+		Logger.start(testName.getMethodName().toUpperCase());
+	}
+	
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -37,14 +57,14 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         wait = new WebDriverWait(driver, 10);
         login(driver);
         
-        // Click on Top Menu 'Laboral'
-//        WebElement el = wait.until(ExpectedConditions.elementToBeClickable(By.id("aonContent:mainMenuForm:menu_payroll")));
-//        el.click();
+        // Click on Top Menu 'Laboral'        
+        retryingFindClick(driver, By.id(LABORAL_BUTTON));
         
-		// Click on Menu 'Convenios'
-		//driver.findElement(By.name("aonContent:payrollMenu:gwt_agreement2")).click();
-		
+        // Click on 'integral de nominas'
+        retryingFindClick(driver, By.id(INTEGRAL_DE_NOMINAS));
+        
 	}
+	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		logout(driver);
@@ -53,14 +73,40 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		driver.navigate().to(getUrl());
-//		retryingFindClick(driver, By.cssSelector("*[id='headerOptionsForm:index']"));
-//		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.xpath("*"))));
+		
 	}
 	
 	@Test
 	public void grossTest() {
 		
+		// Open 4dummies 
+        retryingFindClick(driver, By.cssSelector("#" + FOR_DUMMIES + " img"));
+ 
+        // Open 'constante, bruto'
+        retryingFindClick(driver, By.cssSelector("*[id='" + CONSTANTE_BRUTO + "'] img"));
+
+        // Open draft
+        retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
+        
+        
+        String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
+      
+        Double payments = getAmount(driver, By.id(TOTAL_PAYMENTS));
+        Double deductions = getAmount(driver, By.cssSelector(chimboSelector));
+        Double total = getAmount(driver, By.id(TOTAL_LIQUID));
+        
+        
+        Logger.log(GET, "Payments", payments + "");
+        Logger.log(GET, "Deductions", deductions + "");
+        Logger.log(GET, "Liquid", total + "");
+        
+ 
+        
+        Double diff =  payments  - deductions;
+        
+        assertEquals(diff, total);
+        
+				
 	}
 	
 	@Test
@@ -90,7 +136,6 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		
 		
 		selectMonth(driver, c.getTime());
-
 		
 		checkFields(driver);
 		

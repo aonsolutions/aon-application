@@ -61,6 +61,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+<<<<<<< Updated upstream
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.Logger.Separator;
@@ -72,6 +73,14 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+=======
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.JsonParseException;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceFinance;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceTax;
+>>>>>>> Stashed changes
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
