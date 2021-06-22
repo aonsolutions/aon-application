@@ -30,6 +30,7 @@ public class AbstractTestCase {
 
 	protected static WebDriver newChromeDriver() {
 		URL chromedriverURL =  TimeControlTestCase.class.getResource("/solutions/aon/selenium/webdriver/linux64/chromedriver");
+		System.out.println(chromedriverURL.getPath());
 		System.setProperty("webdriver.chrome.driver", chromedriverURL.getPath());
 		
 		
