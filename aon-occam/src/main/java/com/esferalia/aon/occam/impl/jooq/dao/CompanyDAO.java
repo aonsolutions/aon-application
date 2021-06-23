@@ -294,7 +294,7 @@ public class CompanyDAO {
 */
 	public static LinkedList<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
 		return ctx.getDslContext()
-				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
+				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE,RDIR_STAFF.REPRESENTATIVE)
 				.from(COMPANY)
 				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
 				.where(COMPANY.DOMAIN.equal(domain))
@@ -306,7 +306,8 @@ public class CompanyDAO {
 						.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 )
 						.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 )
 						.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) )
-						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE) )
+						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE)) 
+						.setRepresentative( rec.getValue(RDIR_STAFF.REPRESENTATIVE) == 1 )
 					)
 				.collect(Collectors.toCollection(LinkedList::new ));
 	}
