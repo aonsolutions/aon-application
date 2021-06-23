@@ -4,7 +4,6 @@ import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.getContent;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.StringToolkit.joinCharacterList;
@@ -15,9 +14,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Separator.ARROW;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.COMPARE;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.GENERATE;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.GET;
-import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.INFO;
 import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.SUCCESS;
-import static com.esferalia.aon.in.payroll.pdf.maker.Logger.Status.TEST;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.ADDRESS;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.ADDRESS_LINE_TWO;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.DETAIL_AMOUNT;
@@ -47,10 +44,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -61,11 +56,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-<<<<<<< Updated upstream
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
-import com.esferalia.aon.in.payroll.pdf.maker.Logger.Separator;
-import com.esferalia.aon.in.payroll.pdf.maker.Logger.Status;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -73,19 +64,9 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-=======
-import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.exception.JsonParseException;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceEntry;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceFinance;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.InvoiceTax;
->>>>>>> Stashed changes
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-
-import bsh.Console;
 
 
 public class InvoiceTest {
