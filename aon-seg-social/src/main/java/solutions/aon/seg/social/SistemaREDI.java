@@ -292,7 +292,7 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
-
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			htmlPage = htmlPage.getAnchorByHref(href).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);

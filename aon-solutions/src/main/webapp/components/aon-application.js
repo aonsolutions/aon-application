@@ -307,18 +307,19 @@ export class AonApplication extends AonElement {
 
   addMobileSidenavHeader(app) {
     let div = this.createElement(TAG.DIV);
-    div.style.height = '60px';
-    div.style.margin = '20px';
+    div.style.height = '59px';
+    div.style.padding = '10px';
+    div.style.paddingLeft = '20px';
+    div.style.borderBottom = '1px solid #ebebeb';
 
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
       : this.getElement(this.SIDENAV);
     let span = this.createElement(TAG.SPAN);
-		span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="60px"></aon-icon>`;
+		span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="40px"></aon-icon>`;
 		let span2 = this.createElement(TAG.SPAN);
 		span2.className = 'aonAppTitle';
-    span2.style.fontSize = '20px';
-    span2.style.marginTop = '10px';
+    span2.style.fontSize = '18px';
     span2.innerHTML = app.title;
 		span.appendChild(span2);
     div.appendChild(span);

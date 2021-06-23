@@ -91,6 +91,7 @@ export const FISCAL = 'fiscal';
 
 // ----- H
 export const HIDDEN = 'hidden';
+export const HOLDERS = 'holders';
 
 // ----- I
 

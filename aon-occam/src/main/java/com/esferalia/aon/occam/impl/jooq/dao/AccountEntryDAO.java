@@ -499,9 +499,9 @@ public class AccountEntryDAO {
 				String account = record.getValue(accountField);
 				double debit = record.getValue(sumDebit).doubleValue();
 				double credit = record.getValue(sumCredit).doubleValue();
-				putAccountBalance(map,type,account.substring(0,1), debit,credit);
-				putAccountBalance(map,type,account.substring(0,2), debit,credit);
-				putAccountBalance(map,type,account.substring(0,3), debit,credit);
+				if(account.length() > 0) putAccountBalance(map,type,account.substring(0,1), debit,credit);
+				if(account.length() > 1) putAccountBalance(map,type,account.substring(0,2), debit,credit);
+				if(account.length() > 2) putAccountBalance(map,type,account.substring(0,3), debit,credit);
 				putAccountBalance(map,type,account, debit,credit);
 			});
 		return map;

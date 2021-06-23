@@ -118,7 +118,7 @@ export class AonParent extends AonElement {
 			.then( companies => {
 					aonParent.stopLoader();
 					if(companies.length ===1){
-						this.companySelection(companies[0]);
+						this.companySelection(companies[0], true);
 					} else {
 				  this.build(companies.filter(f => this.companyFilter(f, filter)));
 					}
@@ -201,7 +201,7 @@ export class AonParent extends AonElement {
 		li.className = 'aonLi';
 		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		li.addEventListener(EVENT.CLICK, () => {
-			this.companySelection(company);
+			this.companySelection(company, false);
 		});
 
 		li.addEventListener(EVENT.MOUSEOVER, () => {
@@ -243,12 +243,9 @@ export class AonParent extends AonElement {
 		return li;
 	}
 
-	companySelection(company) {
+	companySelection(company, onlyOne) {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
-
-		let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
-		aonHeaderCompanyList.style.display = 'block';
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			let aonShowMenu = this.getElement('aonShowMenu');
@@ -263,12 +260,20 @@ export class AonParent extends AonElement {
 		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
 		aonHeaderHome.style.display = 'block';
 
-		let aonHeaderCompany = this.getElement(BASE_ID + 'Company');
-		aonHeaderCompany.style.display = 'block';
-
 		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
 
+		let aonHeaderCompany = this.getElement(BASE_ID + 'Company');
+		aonHeaderCompany.style.display = 'block';
+
+		if(!onlyOne){ 
+			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
+			aonHeaderCompanyList.style.display = 'block';
+		} else {
+			aonHeaderHome.style.right = '140px';
+			aonHeaderCompany.style.right = '180px';
+		}
+		
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
 
