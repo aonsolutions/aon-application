@@ -8,10 +8,13 @@ import static solutions.aon.selenium.aio.id.LaboralId.FOR_DUMMIES;
 import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_LIQUID;
 import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_PAYMENTS;
+import static solutions.aon.selenium.aio.id.LaboralId.TOTAL_PAYMENTS_INPUT;
 import static solutions.aon.selenium.tools.DataTreatment.safeDouble;
 import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.GET;
+import static solutions.aon.selenium.tools.Logger.Status.INPUT;
+import static solutions.aon.selenium.tools.Logger.Status.START;
 import static solutions.aon.selenium.tools.Logger.Status.SUCCESS;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
@@ -37,6 +40,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import solutions.aon.selenium.aio.id.LaboralId;
 import solutions.aon.selenium.tools.Logger;
 import solutions.aon.selenium.tools.SeleniumTools;
 
@@ -71,8 +75,8 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		logout(driver);
-		driver.quit();
+		//logout(driver);
+		//driver.quit();
 	}
 
 	@Before
@@ -115,7 +119,36 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         Double diff =  safeDouble(payments,0.00) - safeDouble(deductions,0.00);
         assertEquals(diff, total);
         log(SUCCESS, "DONE.");
-               
+        
+        
+        Logger.jump();
+        log(START, "Changing value");     
+        
+        WebElement totalPaymentInput = wait.until(ExpectedConditions.elementToBeClickable(By.id(TOTAL_PAYMENTS_INPUT)));
+        
+        log(INPUT, "Changing payment total values");   
+        totalPaymentInput.sendKeys("2500");
+        
+        log(INPUT, "TAB");   
+        totalPaymentInput.sendKeys(Keys.TAB);
+        
+        try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {}        
+        
+        payments = getAmount(driver, By.id(TOTAL_PAYMENTS));
+        deductions = getAmount(driver, By.cssSelector(chimboSelector));
+        total = getAmount(driver, By.id(TOTAL_LIQUID));
+        
+        Logger.jump();
+        Logger.start("Getting data");
+        log(GET, "Payments", payments + "");
+        log(GET, "Deductions", deductions + "");
+        log(GET, "Liquid", total + "");
+                
+        diff =  safeDouble(payments,0.00) - safeDouble(deductions,0.00);
+        assertEquals(diff, total);
+        log(SUCCESS, "DONE.");
 	}
 	
 	@Test

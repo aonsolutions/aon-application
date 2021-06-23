@@ -24,7 +24,7 @@ public class LaboralId {
 	public final static String TOTAL_DEDUCTIONS = "gwt-debug-totalPaymentsLabel";
 	public final static String TOTAL_LIQUID = "gwt-debug-totalLiquidLabel";
 	
-	
+	public final static String TOTAL_PAYMENTS_INPUT = "gwt-debug-totalPaymentsLabel";
 	
 	
 }
