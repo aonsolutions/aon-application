@@ -19,12 +19,10 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.esferalia.aon.appium.AbstractTestCase;
-import com.esferalia.aon.appium.id.AonIdHeader;
 import com.esferalia.aon.appium.id.AonIdHome;
 import com.esferalia.aon.appium.id.AonIdNavigationBar;
 import com.esferalia.aon.appium.id.AonIdSettings;
@@ -424,8 +422,8 @@ public class TimeControlTestCase extends AbstractTestCase {
 	}
 	
 	private static void insertPasswordToChange(AppiumDriver<MobileElement> app, String currentPassword, String newPassword) {
-		waitNClick(app, By.id(AonIdHeader.USER_BUTTON));
-		clickUntilNotExists(app, By.id(AonIdHeader.SETTINGS_BUTTON));
+		waitNClick(app, By.id(AonIdNavigationBar.USER_BUTTON));
+		clickUntilNotExists(app, By.id(AonIdSettings.SETTINGS_BUTTON));
 		waitNClick(app, By.id(AonIdSettings.PASSWORD_EDIT));
 		waitNClick(app, By.id(AonIdSettings.CURRENT_PASSWORD));
 		AppiumTools.safeType(app, "#" + AonIdSettings.CURRENT_PASSWORD, currentPassword);
@@ -434,15 +432,7 @@ public class TimeControlTestCase extends AbstractTestCase {
 		waitNClick(app, By.id(AonIdSettings.SUBMIT_PASSWORD));
 	}
 	
-	
-	@Test
-	public void repeatSignInTest() throws InterruptedException {
-		for (int i = 1; i <=5; i++) {
-			signInTest();
-			System.out.println(i);
-		}
-	}
-	
+	//TODO FAILS SOMETIMES
 	@Test
 	public void signInTest() throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(app, 8);

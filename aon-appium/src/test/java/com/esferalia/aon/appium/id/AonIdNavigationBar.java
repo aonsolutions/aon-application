@@ -71,6 +71,7 @@ public class AonIdNavigationBar {
 
 	// #U
 	// ----------------------------------------------------
+	public final static String USER_BUTTON = "aonMobileMenuUserButtonIcon";
 
 	// #V
 	// ----------------------------------------------------

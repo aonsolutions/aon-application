@@ -65,8 +65,9 @@ public class AonIdSettings {
 	
 	// #S
 	// ----------------------------------------------------
-	
-	public static final String SUBMIT_PASSWORD= "aonConfigurationDialogDialogActionAccept";
+	public static final String SAVE_SETTINGS = "aonUserPersonalToolbarHeaderToolSectionSaveButtonIcon";
+	public static final String SETTINGS_BUTTON = "aonMobileProfileConfigurationIcon";
+	public static final String SUBMIT_PASSWORD = "aonConfigurationDialogDialogActionAccept";
 	public static final String SURNAMES_INPUT = "aonConfigurationUserCardSurnameInput";
 	
 	// #T

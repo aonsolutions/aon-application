@@ -53,19 +53,21 @@ public class SeniorityTest extends AioBaseTestCase {
 	public void test1989() throws InterruptedException {
 //		ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
 		String seniorityId = "gwt-debug-antiguedad";
 		By seniority = By.cssSelector("#" + seniorityId + " > table > tbody > tr > td:nth-of-type(1)");
 		wait.until(ExpectedConditions.elementToBeClickable(seniority));
+		Thread.sleep(500);
 		retryingFindClick(driver, seniority);
 		
 		String id1989 = "gwt-debug-1989_tiempo_completo_ordinario,_indefinido";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("div [id='" + id1989 + "'] > table tr td:nth-of-type(1)"));
 		
 		String draftId = "gwt-debug-1989_tiempo_completo_ordinario,_indefinido-draft-content";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id(draftId));
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-totalPaymentsLabel")));
@@ -77,7 +79,7 @@ public class SeniorityTest extends AioBaseTestCase {
 		assertTrue("Wrong base salary", SeleniumTools.checkAmount(salary, yearlyPay/14));
 		
 		Double[] complements = new Double[3];
-		
+		Thread.sleep(500);
 		complements[0] = getAmount(driver, By.id("gwt-debug-db-amount-label-2"));
 		complements[1] = getAmount(driver, By.id("gwt-debug-db-amount-label-3"));
 		complements[2] = getAmount(driver, By.id("gwt-debug-db-amount-label-4"));
@@ -112,19 +114,21 @@ public class SeniorityTest extends AioBaseTestCase {
 	public void test1991() throws InterruptedException {
 //		ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
 		String seniorityId = "gwt-debug-antiguedad";
 		By seniority = By.cssSelector("#" + seniorityId + " > table > tbody > tr > td:nth-of-type(1)");
 		wait.until(ExpectedConditions.elementToBeClickable(seniority));
+		Thread.sleep(500);
 		retryingFindClick(driver, seniority);
 		
 		String id1991 = "gwt-debug-1991_tiempo_completo_ordinario,_indefinido";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("div [id='" + id1991 + "'] > table tr td:nth-of-type(1)"));
 		
 		String draftId = "gwt-debug-1991_tiempo_completo_ordinario,_indefinido-draft-content";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id(draftId));
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-totalPaymentsLabel")));
@@ -136,7 +140,7 @@ public class SeniorityTest extends AioBaseTestCase {
 		assertTrue("Wrong base salary", checkAmount(salary, yearlyPay/14));
 		
 		Double[] complements = new Double[2];
-		
+		Thread.sleep(500);
 		complements[0] = getAmount(driver, By.id("gwt-debug-db-amount-label-2"));
 		complements[1] = getAmount(driver, By.id("gwt-debug-db-amount-label-4"));
 		
@@ -168,19 +172,21 @@ public class SeniorityTest extends AioBaseTestCase {
 	public void test1993() throws InterruptedException {
 //		ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
 		String seniorityId = "gwt-debug-antiguedad";
 		By seniority = By.cssSelector("#" + seniorityId + " > table > tbody > tr > td:nth-of-type(1)");
 		wait.until(ExpectedConditions.elementToBeClickable(seniority));
+		Thread.sleep(500);
 		retryingFindClick(driver, seniority);
 		
 		String id1993 = "gwt-debug-1993_tiempo_completo_ordinario,_indefinido";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("div [id='" + id1993 + "'] > table tr td:nth-of-type(1)"));
 		
 		String draftId = "gwt-debug-1993_tiempo_completo_ordinario,_indefinido-draft-content";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id(draftId));
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-totalPaymentsLabel")));
@@ -192,7 +198,7 @@ public class SeniorityTest extends AioBaseTestCase {
 		assertTrue("Wrong base salary", checkAmount(salary, yearlyPay/14));
 		
 		Double[] complements = new Double[2];
-		
+		Thread.sleep(500);
 		complements[0] = getAmount(driver, By.id("gwt-debug-db-amount-label-2"));
 		complements[1] = getAmount(driver, By.id("gwt-debug-db-amount-label-4"));
 		
@@ -224,24 +230,28 @@ public class SeniorityTest extends AioBaseTestCase {
 	public void test2012() throws InterruptedException {
 //		ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
 		String seniorityId = "gwt-debug-antiguedad";
 		By seniority = By.cssSelector("#" + seniorityId + " > table > tbody > tr > td:nth-of-type(1)");
 		wait.until(ExpectedConditions.elementToBeClickable(seniority));
+		Thread.sleep(500);
 		retryingFindClick(driver, seniority);
 		
 		String id1989 = "gwt-debug-2012_tiempo_completo_ordinario,_indefinido";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("div [id='" + id1989 + "'] > table tr td:nth-of-type(1)"));
 		
 		String draftId = "gwt-debug-2012_tiempo_completo_ordinario,_indefinido-draft-content";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id(draftId));
 		
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-totalPaymentsLabel")));
 		
 		Double yearlyPay = 15454.46;
+		
+		Thread.sleep(500);
 		
 		Double salary = getAmount(driver, By.id("gwt-debug-db-amount-label-1"));
 		
