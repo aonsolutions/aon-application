@@ -13,9 +13,6 @@ public enum Mod2002015LQ1033_2Key implements Serializable, IMod200KeysProvider  
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 
-	// FALTA  por ver como serán los calculos de este desglose, para ver si puedo poner	
-	// los dos apartados en el mismo enumerado o es necesario poner dos enumerados
-	
 	// Dotación de la reserva                
 	 C01(new Mod2002015Key[]{Mod2002015Key.LQ1150,Mod2002015Key.LQ1151,Mod2002015Key.LQ1152,Mod2002015Key.LQ1153},"2015(*)")
 	,C02(new Mod2002015Key[]{Mod2002015Key.LQ1154,Mod2002015Key.LQ1155,Mod2002015Key.LQ1156,Mod2002015Key.LQ1157},"2015")
