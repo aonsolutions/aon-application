@@ -523,32 +523,34 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
 	
+	// ------------------------------------------------- TGSS Comunications
+	
 	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendEmployeeAlta(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 	
-	public void sendEmployeeBaja(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeBaja(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendEmployeeBaja(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 
-	public void movPrevDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+	public void movPrevDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.movPrevDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
-	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, callback);
 	}
 	
-	public void cambioGrupCtz(String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, grup_ctz, fecha, callback);
+	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, grup_ctz, fecha, callback);
 	}
 	
-	public void cambioOcupacion(String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, ocup, fecha, callback);
+	public void cambioOcupacion(EmployeeContractInfo employeeContractInfo, String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, ocup, fecha, callback);
 	}
 	
-	public void cambioCatProf(String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, cat, fecha, callback);
+	public void cambioCatProf(EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cat, fecha, callback);
 	}
 	
 	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {

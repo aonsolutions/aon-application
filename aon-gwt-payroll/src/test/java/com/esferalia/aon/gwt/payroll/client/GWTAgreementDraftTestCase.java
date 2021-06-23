@@ -300,22 +300,22 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen,
-				String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+		public void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+				String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen,
-				String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
+		public void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+				String ocup, Date fecha, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen,
-				String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+		public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+				String cat, Date fecha, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -628,23 +628,22 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen,
-							String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+					public void cambioGrupCtz(String currentDomainName, String currentUser,EmployeeContractInfo employeeContractInfo, 
+							String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
-					public void cambioOcupacion(String currentDomainName, String currentUser, String ipf,
-							String regimen, String ctaCti, String nss, String ocup, Date fecha,
-							AsyncCallback<Void> callback) {
+					public void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+							String ocup, Date fecha, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
-					public void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen,
-							String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+					public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+							String cat, Date fecha, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
