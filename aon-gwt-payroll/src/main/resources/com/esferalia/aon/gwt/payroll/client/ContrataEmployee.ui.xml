@@ -94,17 +94,13 @@
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 					<g:center>
 						<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
-							<!-- g:HTMLPanel styleName="{style.titlePanel}">
-								<g:Label styleName="{style.bold}">Contrato : </g:Label>
-								<g:Label styleName="{style.title}" ui:field="title"></g:Label>
-							</g:HTMLPanel -->
 							
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
 							    	<g:header size='7'>Datos Afiliación</g:header>
 							    	<g:HTMLPanel styleName="{style.mt10}">
 							    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.p5} {style.center}">
-											<a:Employee ui:field="employee"/>
+							    			<a:ContractEmployeeUI ui:field="contractEmployeeUI" />
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
 							  	</g:tab>

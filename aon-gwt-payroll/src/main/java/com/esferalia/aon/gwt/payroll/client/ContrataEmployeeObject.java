@@ -147,6 +147,8 @@ public class ContrataEmployeeObject {
 		});	
 	}
 	
+	// ------------------------------------------------- Database Methods (Employee)
+	
 	public void initializeEmployee(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeInfoDataBase(contractId, new AsyncCallback<EmployeeContractInfo>() {
 			
@@ -219,6 +221,45 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	// ------------------------------------------------- Database Methods (Employee Delete)
+	
+	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		Employee employeeAux = new Employee();
+		employeeAux.setId(getContractData().getContractId());
+		
+		if(getContractData().hasPayroll()) {
+			
+			employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					success.accept(result);
+				}
+			});
+			
+		} else {
+			
+			enterprisesService.delete4EverContract(getContractData().getContractId(), new AsyncCallback<Void>() {
+				
+				@Override
+				public void onSuccess(Void result) {
+					success.accept(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+			
+		}	
+	}
+	
+	// ------------------------------------------------- Database Methods (Specific Data)
+	
 	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		enterprisesService.getContractSpecificData(contractId, new AsyncCallback<ContractSpecificData>() {
@@ -250,6 +291,8 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
+	
+	// ------------------------------------------------- Database Methods (Other Data)
 	
 	public void getContractOtherInfo(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
@@ -291,84 +334,7 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		
-		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
-			
-			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
-				employeeContractData.setContractAttachments(contractAttachments);
-				success.accept(contractAttachments);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success, Consumer<Throwable> failure) {
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
-		success.accept(employeeSalaryObject);
-	}
-	
-	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success, Consumer<Throwable> failure) {
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
-		success.accept(employeeCalendarDraftObject);
-	}
-	
-	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success, Consumer<Throwable> failure) {
-		EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(contractData.getContractId());
-		success.accept(employeeEventsDraftObject);
-	}
-	
-	public void getSalaryDraftObject(Consumer<SalaryDraftObject> success, Consumer<Throwable> failure) {
-		employeesService.getEmployee(contractData.getContractId(), new AsyncCallback<Employee>() {
-			@Override
-			public void onSuccess(Employee employee) {
-				Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()), employee.getEndDate());
-				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
-				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
-				Date issueDate = endDate;
-
-				SalaryDraft salaryDraft = new SalaryDraft();
-				salaryDraft.setEmployee(employee);
-				salaryDraft.setStartDate(startDate);
-				salaryDraft.setEndDate(endDate);
-				salaryDraft.setIssueDate(issueDate);
-				salaryDraft.setType(Type.SALARY);
-
-				SalaryDraftObject salaryDraftObject = new SalaryDraftObject(salaryDraft, employeesService);
-				success.accept(salaryDraftObject);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
-	}
-	
-	public void setContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		List<ContractAttach> contractAttachments = employeeContractData.getContractAttachments();
-		
-		enterprisesService.setContractAttachments(contractId, contractAttachments, new AsyncCallback<List<ContractAttach>>() {
-			
-			@Override
-			public void onSuccess(List<ContractAttach> contractAttachments) {
-				success.accept(contractAttachments);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
+	// ------------------------------------------------- Database Methods (Clauses)
 	
 	public void getContractClauses(Consumer<List<ContractClause>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
@@ -408,22 +374,47 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
+	// ------------------------------------------------- Database Methods (Attachments)
+	
+	public void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		enterprisesService.getContractBonus(contractId, new AsyncCallback<List<SSBonusData>>() {
+		
+		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
 			
 			@Override
-			public void onSuccess(List<SSBonusData> result) {
-				employeeContractData.setContractBonus(result);
-				success.accept(result);
+			public void onSuccess(List<ContractAttach> contractAttachments) {
+				employeeContractData.setContractAttachments(contractAttachments);
+				success.accept(contractAttachments);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+			
 		});
 	}
+	
+	public void setContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		List<ContractAttach> contractAttachments = employeeContractData.getContractAttachments();
+		
+		enterprisesService.setContractAttachments(contractId, contractAttachments, new AsyncCallback<List<ContractAttach>>() {
+			
+			@Override
+			public void onSuccess(List<ContractAttach> contractAttachments) {
+				success.accept(contractAttachments);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (Bonuses)
 	
 	public void getSSBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
@@ -441,42 +432,90 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
-
-	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
-		Employee employeeAux = new Employee();
-		employeeAux.setId(getContractData().getContractId());
-		
-		if(getContractData().hasPayroll()) {
-			
-			employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					failure.accept(caught);
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					success.accept(result);
-				}
-			});
-			
-		} else {
-			
-			enterprisesService.delete4EverContract(getContractData().getContractId(), new AsyncCallback<Void>() {
-				
-				@Override
-				public void onSuccess(Void result) {
-					success.accept(result);
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {}
-			});
-			
-		}	
+	
+	// ------------------------------------------------- Database Methods (Salaries)
+	
+	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success, Consumer<Throwable> failure) {
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
+		success.accept(employeeSalaryObject);
 	}
 	
+	// ------------------------------------------------- Database Methods (Calendar)
+	
+	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success, Consumer<Throwable> failure) {
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
+		success.accept(employeeCalendarDraftObject);
+	}
+	
+	// ------------------------------------------------- Database Methods (Events)
+	
+	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success, Consumer<Throwable> failure) {
+		EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(contractData.getContractId());
+		success.accept(employeeEventsDraftObject);
+	}
+	
+	// ------------------------------------------------- Database Methods (Salary Draft)
+	
+	public void getSalaryDraftObject(Consumer<SalaryDraftObject> success, Consumer<Throwable> failure) {
+		employeesService.getEmployee(contractData.getContractId(), new AsyncCallback<Employee>() {
+			@Override
+			public void onSuccess(Employee employee) {
+				Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()), employee.getEndDate());
+				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+				Date issueDate = endDate;
+
+				SalaryDraft salaryDraft = new SalaryDraft();
+				salaryDraft.setEmployee(employee);
+				salaryDraft.setStartDate(startDate);
+				salaryDraft.setEndDate(endDate);
+				salaryDraft.setIssueDate(issueDate);
+				salaryDraft.setType(Type.SALARY);
+
+				SalaryDraftObject salaryDraftObject = new SalaryDraftObject(salaryDraft, employeesService);
+				success.accept(salaryDraftObject);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (CheckStatus)
+	
+	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
+		
+		employeesService.getEmployeeStatus(contractData.getContractId(), new AsyncCallback<EmployeeStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EmployeeStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (Export Contract)
+	
+	public void saveContractExport(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<List<ContractAttach>>() {
+			@Override
+			public void onSuccess(List<ContractAttach> result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	// ------------------------------------------------- Database Methods (SEPE Get files)
+
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
@@ -494,19 +533,6 @@ public class ContrataEmployeeObject {
 		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void saveContractExport(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
-		employeesService.fillContract(contractData.getContractId(), Integer.parseInt(contractData.getContractType()), getFormativeLevel(), new AsyncCallback<List<ContractAttach>>() {
-			@Override
-			public void onSuccess(List<ContractAttach> result) {
 				success.accept(result);
 			}
 			@Override
@@ -536,24 +562,7 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	// ------------------------------------------------- Database Methods (CheckStatus)
-	
-	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
-		
-		employeesService.getEmployeeStatus(contractData.getContractId(), new AsyncCallback<EmployeeStatus>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept( caught );
-			}
-			
-			 @Override
-			public void onSuccess(EmployeeStatus result) {
-				 success.accept(result);
-			}
-		});
-	}
-	
-	// ------------------------------------------------- Database Methods (SEPE & TGSS comunication)
+	// ------------------------------------------------- Database Methods (TGSS Comunications)
 	
 	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.sendEmployeeAlta(employeeContractData, new AsyncCallback<Void>() {
@@ -682,7 +691,7 @@ public class ContrataEmployeeObject {
 				});	
 	}
 	
-	// ------------------------------------------------- Database Methods (TGSS)
+	// ------------------------------------------------- Database Methods (TGSS Get files)
 
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
