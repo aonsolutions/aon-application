@@ -20,6 +20,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
@@ -198,6 +200,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 						
 						acceptBtnDialog.setEnabled(true);
 						generationAFITB.setEnabled(true);
+						
+						showDialog();
 						
 						if(!userRoles.isComunica())
 							notifyPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -807,26 +811,32 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isStartContract() {
+//		Window.alert("onStartContract : " + isActiveToggleButton(startContractTB));
 		return isActiveToggleButton(startContractTB);
 	}
 	
 	public boolean isEndContract() {
+//		Window.alert("onEndContract : " + isActiveToggleButton(endContractTB));
 		return isActiveToggleButton(endContractTB);
 	}
 	
 	public boolean isChangeContract() {
+//		Window.alert("onChangeContract : " + afiChangesMap.hasChange("TC2", tc2Original));
 		return afiChangesMap.hasChange("TC2", tc2Original);
 	}
 	
 	public boolean isQuoteContract() {
+//		Window.alert("onQuoteContract : " + afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal));
 		return afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal);
 	}
 	
 	public boolean isOcupationContract() {
+//		Window.alert("onOcupationContract : " + afiChangesMap.hasChange("OCUPACION", ocupationOriginal));
 		return afiChangesMap.hasChange("OCUPACION", ocupationOriginal);
 	}
 	
 	public boolean isPartialityCoefContract() {
+//		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
 		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
 	}
 	
@@ -995,4 +1005,15 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	protected abstract void onChangeContract(String contract, Date date);
 	protected abstract void onEndContract();
 	protected abstract void onStartContract();
+
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				center();
+				show();
+			}
+		});
+	}
 }
