@@ -43,7 +43,11 @@ public class AioBaseTestCase extends AbstractTestCase{
 	
 		
 		SeleniumTools.clickUntilNotExists(driver, generalRegime);
-		
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			fail();
+		}
 		if (!checkIfEntered(driver, "RÉGIMEN GENERAL"))
 			fail("Didn't enter 'RÉGIMEN GENERAL'");
 		
