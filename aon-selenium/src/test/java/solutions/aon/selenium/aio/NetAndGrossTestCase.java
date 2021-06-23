@@ -96,7 +96,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
       
         try {
-			Thread.sleep(500);
+			Thread.sleep(1500);
 		} catch (InterruptedException e) {}
         
         String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
