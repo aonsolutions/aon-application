@@ -242,24 +242,26 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
 
+	// ------------------------------------------------- TGSS Comunications
+	
 	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
-	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
 	void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti,
-			String nss, Date fecha);
+			String nss, Date fecha) throws IllegalArgumentException;
 
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss);
+			String ctaCti, String nss) throws IllegalArgumentException;
 
-	void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String grup_ctz, Date fecha);
+	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String grup_ctz, Date fecha) throws IllegalArgumentException;
 
-	void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String ocup, Date fecha);
+	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String ocup, Date fecha) throws IllegalArgumentException;
 
-	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String cat, Date fecha);
+	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String cat, Date fecha) throws IllegalArgumentException;
 
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
 

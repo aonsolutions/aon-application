@@ -781,6 +781,8 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
+	// ------------------------------------------------- TGSS Comunications
+	
 	@Override
 	public void sendEmployeeAlta(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
@@ -788,39 +790,39 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void sendEmployeeBaja(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeBaja(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendEmployeeBaja(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void movPrevDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+	public void movPrevDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.movPrevDelete(currentDomainName, user, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.altaConsolidadaDelete(currentDomainName, user, situation, regimen, ctaCti, nss, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioGrupCtz(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioGrupCtz(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioGrupCtz(currentDomainName, user, ipf, regimen, ctaCti, nss, grup_ctz, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioGrupCtz(currentDomainName, user, employeeContractInfo, grup_ctz, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioOcupacion(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioOcupacion(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioOcupacion(currentDomainName, user, ipf, regimen, ctaCti, nss, ocup, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioOcupacion(currentDomainName, user, employeeContractInfo, ocup, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioCatProf(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioCatProf(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioCatProf(currentDomainName, user, ipf, regimen, ctaCti, nss, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioCatProf(currentDomainName, user, employeeContractInfo, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
