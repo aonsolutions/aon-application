@@ -35,7 +35,7 @@ public class Logger {
 		
 		/** User actions */
 		CLICK(300,"Click"),
-		INPUT(301,"Click"),
+		INPUT(301,"Input"),
 		;
 		
 		private String name;
