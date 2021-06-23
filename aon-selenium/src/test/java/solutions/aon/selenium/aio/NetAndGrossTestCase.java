@@ -94,6 +94,10 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         // Open draft
         log(CLICK, "Entering draft editor.");
         retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
+      
+        try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {}
         
         String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
       
@@ -111,7 +115,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         Double diff =  safeDouble(payments,0.00) - safeDouble(deductions,0.00);
         assertEquals(diff, total);
         log(SUCCESS, "DONE.");
-        
+               
 	}
 	
 	@Test
@@ -164,9 +168,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		
 		
 		Thread.sleep(2000);
-		
 		checkFields(driver);
-		
 		
 	}
 	
