@@ -297,7 +297,7 @@ public class SeleniumTools {
 		String baseSalaryStr = baseSalaryAmount.getAttribute("value");
 		Double baseSalary = null;
 		try {
-			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
+			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".").replaceAll("%", "").trim();
 			baseSalary = Double.parseDouble(baseSalaryStr);
 			
 			return baseSalary;
@@ -305,7 +305,7 @@ public class SeleniumTools {
 		} catch (NullPointerException | NumberFormatException e) {
 			try {
 				baseSalaryStr = baseSalaryAmount.getAttribute("innerText");
-				baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".");
+				baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".").replaceAll("%", "").trim();
 				baseSalary = Double.parseDouble(baseSalaryStr);
 				return baseSalary;
 			} catch (NullPointerException | NumberFormatException e1) {

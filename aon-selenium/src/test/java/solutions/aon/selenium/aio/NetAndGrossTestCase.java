@@ -37,9 +37,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import solutions.aon.selenium.tools.DataTreatment;
 import solutions.aon.selenium.tools.Logger;
-import solutions.aon.selenium.tools.Logger.Status;
 import solutions.aon.selenium.tools.SeleniumTools;
 
 public class NetAndGrossTestCase extends AioBaseTestCase {
@@ -121,26 +119,28 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		
 //		ENTER 'INTEGRAL DE NÓMINAS'
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		Thread.sleep(1000);
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 		
 		String dummiesId = "gwt-debug-4dummies";
 		By dummies = By.cssSelector("#" + dummiesId + " > table > tbody > tr > td:nth-of-type(1)");
 		wait.until(ExpectedConditions.elementToBeClickable(dummies));
+		Thread.sleep(500);
 		retryingFindClick(driver, dummies);
 		
 		String netConstantId = "gwt-debug-constante,_neto";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.cssSelector("div [id='" + netConstantId + "'] > table tr td:nth-of-type(1)"));
 		
 		String draftId = "gwt-debug-constante,_neto-draft-content";
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id(draftId));
-		
+		Thread.sleep(500);
 		retryingFindClick(driver, By.id("gwt-debug-monthListBox"));
 		
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, -1);
-		
+		Thread.sleep(1000);
 		selectMonth(driver, c.getTime());
 		
 		checkFields(driver);
@@ -150,13 +150,16 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		WebElement netInput = wait.until(ExpectedConditions.elementToBeClickable(By.id("gwt-debug-totalLiquidLabel")));
 		
 		netInput.click();
-		
+		Thread.sleep(500);
 		for (int i=0; i<10; i++) {
 			Thread.sleep(250);
 			netInput.sendKeys(Keys.BACK_SPACE);
+			netInput.sendKeys(Keys.ARROW_RIGHT);
 		}
 		
 		netInput.sendKeys("2500");
+		
+		
 		netInput.sendKeys(Keys.TAB);
 		
 		
@@ -216,6 +219,16 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		Double totalPayment = getAmount(driver, By.id("gwt-debug-totalPaymentLabel"));
 		
 		assertEquals(totalPayment, salary);
+		
+		Double ccPercent = getAmount(driver, By.cssSelector("#gwt-debug-paymentsTable > tbody > tr:nth-of-type(5) >td:nth-of-type(2) > span"));
+		
+		assertEquals(SeleniumTools.unmessDouble(gross * ccPercent / 100), deductions[0]);
+		
+		Double unemployPercent = getAmount(driver, By.id("gwt-debug-textBox_PORCENTAJE_DESMPL"));
+		
+		assertEquals(SeleniumTools.unmessDouble(gross * unemployPercent / 100), deductions[1]);
+		
+		
 		
 		Double actualTotalDeductions = getAmount(driver, By.cssSelector("#rootPanel  table  td:nth-child(3)  td:nth-child(2) div.aon-text-center > span:nth-child(1)"));
 		
