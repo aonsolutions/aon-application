@@ -1,6 +1,5 @@
 package com.esferalia.aon.appium.testCases;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -12,7 +11,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.esferalia.aon.appium.AbstractTestCase;
-import com.esferalia.aon.appium.id.AonIdLogin;
 import com.esferalia.aon.appium.id.AonIdNavigationBar;
 import com.esferalia.aon.appium.id.AonIdSettings;
 import com.esferalia.aon.appium.tools.AppiumTools;
@@ -40,21 +38,22 @@ public class SettingsTestCase extends AbstractTestCase {
 	
 	@Test
 	public void changeNameTest() {
-		openNavigationElement(AonIdNavigationBar.SETTINGS_BUTTON, AonIdSettings.OPCIONES_TAG, app);
+		openNavigationElement(AonIdNavigationBar.USER_BUTTON, AonIdSettings.SETTINGS_BUTTON, app);
+		openNavigationElement(AonIdSettings.SETTINGS_BUTTON, AonIdSettings.NAME_INPUT, app);
 		WebDriverWait wait = new WebDriverWait(app, 10);
-		WebElement nameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdSettings.NAME_INPUT)));
-		nameInput.click();
+		WebElement nameInput = wait.until(ExpectedConditions.elementToBeClickable(By.id(AonIdSettings.NAME_INPUT)));
+		AppiumTools.retryingFindClick(app, By.id(AonIdSettings.NAME_INPUT));
 		AppiumTools.fillInput(app, "#"+AonIdSettings.NAME_INPUT, "");
 		app.hideKeyboard();
-		nameInput.sendKeys("John");
+		nameInput.sendKeys("Monkey");
 
 		WebElement passwordInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(AonIdSettings.SURNAMES_INPUT)));
 		passwordInput.click();
 		AppiumTools.fillInput(app, "#"+AonIdSettings.SURNAMES_INPUT, "");
 		app.hideKeyboard();
-		passwordInput.sendKeys("Smith");
+		passwordInput.sendKeys("D. Luffy");
 		
-		
+		AppiumTools.retryingFindClick(app, By.id(AonIdSettings.SAVE_SETTINGS));
 		
 	}
 	
@@ -64,17 +63,16 @@ public class SettingsTestCase extends AbstractTestCase {
 		int failcount = 0;
 		do {
 			failed = false;
-			WebElement settingsButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(elementId)));
-			settingsButton.click();
+			wait.until(ExpectedConditions.elementToBeClickable(By.id(elementId)));
 			try {
 				Thread.sleep(100);
-				settingsButton.click();
+				AppiumTools.retryingFindClick(app, By.id(elementId));
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			try {
-				settingsButton = wait.until(ExpectedConditions
+				wait.until(ExpectedConditions
 					.visibilityOfElementLocated(By.id(elementIdToWaitFor)));
 			
 			} catch (Exception e) {

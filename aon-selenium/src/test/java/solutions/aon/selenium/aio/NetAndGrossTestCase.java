@@ -40,7 +40,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import solutions.aon.selenium.aio.id.LaboralId;
 import solutions.aon.selenium.tools.Logger;
 import solutions.aon.selenium.tools.SeleniumTools;
 
@@ -76,7 +75,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		//logout(driver);
-		//driver.quit();
+		driver.quit();
 	}
 
 	@Before
