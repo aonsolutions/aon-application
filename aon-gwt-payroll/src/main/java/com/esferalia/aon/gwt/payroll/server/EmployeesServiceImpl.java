@@ -91,7 +91,6 @@ import com.esferalia.aon.gwt.payroll.client.CalendarService;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
-import com.esferalia.aon.gwt.payroll.client.Wnd;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
@@ -269,7 +268,6 @@ import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.itextpdf.text.log.SysoLogger;
 
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
@@ -5832,28 +5830,43 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-
+			
+			// Create nssList for ipdxnaf
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED
-					.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
-					.toArray()[0];
+			
+			// Get employees ipdxnaf
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					nssList);
+			
+			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 
-			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
-					eemployeeAux.getIpf());
-
-			solutions.aon.seg.social.object.Employee returnEmployee = SistemaRED.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			// Create employee object
+			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
+			System.out.println(employee.toString());
+			
+			// sendAlta
+			solutions.aon.seg.social.object.Employee returnEmployee = SistemaRED.sendAlta(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(),
+					employee);
 
 			System.out.println(returnEmployee.getIpf());
 			
 		} catch (SQLException | SegSocialException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}

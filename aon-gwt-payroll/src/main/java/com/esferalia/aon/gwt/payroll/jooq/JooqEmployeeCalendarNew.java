@@ -297,13 +297,16 @@ public class JooqEmployeeCalendarNew {
 		
 		// ----------------------------------- FESTIVE DAYS AND HOURS BY CALENDAR
 		
-		Integer calendarId = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
+		Record calendarRecord = dslContext.select(DSL.ifnull(CONTRACT.CALENDAR, PAYROLL_WORKPLACE.CALENDAR).as(CONTRACT.CALENDAR))
 				  .from(CONTRACT)
 				  .innerJoin(PAYROLL_WORKPLACE)
 				  .on(CONTRACT.WORKPLACE.eq(PAYROLL_WORKPLACE.WORKPLACE))
 				  .where(CONTRACT.ID.eq(contract))
-				  .fetchOne()
-				  .get(CONTRACT.CALENDAR);
+				  .fetchOne();
+		
+		Integer calendarId = null;
+		if(null != calendarRecord)
+			calendarId = calendarRecord.get(CONTRACT.CALENDAR);
 
 		if (calendarId != null){
 			
