@@ -205,6 +205,15 @@ public class AccountingUtilities extends MainEntryPoint{
 				}
 			});
 			
+			AccountChanger  accountChanger = new AccountChanger(getDomainName(),getUser(),domain);
+			utilitiesGrid.addRow().addCell(accountChanger.getSidebarWidget());
+			accountChanger.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+			  @Override
+			  public void onSelection(SelectionEvent<IOption> event) {
+			    content.setWidget( accountChanger );
+			  }
+			});
+
 			EntriesRemover entriesRemover = new EntriesRemover(getDomainName(),getUser(),domain);
 			utilitiesGrid.addRow().addCell(entriesRemover.getSidebarWidget());
 			entriesRemover.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {

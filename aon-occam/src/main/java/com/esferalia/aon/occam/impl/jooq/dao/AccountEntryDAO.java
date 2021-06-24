@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AutoConcept;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
@@ -54,6 +55,7 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
+import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -226,6 +228,17 @@ public class AccountEntryDAO {
 							, new IDAOCallback() { @Override public void onFinish() {} } )
 								)
 				;
+	}
+	
+	public static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx, AccountEntryParams params, int offset, int limit) {
+		Condition[] conditions = AccountEntryDAO.ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(
+				p -> AccountEntryUtils.getFilterByLines(ctx,p, params)
+		);
+		return fetchFlat(ctx
+				,conditions
+				,AccountEntryOrder.safeEnum(params.getOrder())
+				,offset, limit, null
+				);
 	}
 
 	private static Stream<FlatAccountEntryDetail> fetchFlat(AONContext ctx

@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -140,5 +142,15 @@ public class AccountingUtilitiesServiceImpl extends AonStatelessRemoteServiceSer
 	public AccUtilitiesResult invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId) throws AonCoreException {
 		return ACCOUNTING.invoiceIntegrityFix(domainName,user,domain,invoiceId);
 	}
-	
+
+	// Cambio de cuentas 
+	@Override
+	public AccUtilitiesResult searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params) throws AonCoreException {
+		return ACCOUNTING.searchAccountChange(domainName,user,domain,params);
+	}
+
+	@Override
+	public AccUtilitiesResult fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange) throws AonCoreException {
+		return ACCOUNTING.fixAccountChange(domainName,user,domain,params,accountChange);
+	}
 }
