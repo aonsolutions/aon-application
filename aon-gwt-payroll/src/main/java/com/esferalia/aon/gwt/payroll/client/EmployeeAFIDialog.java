@@ -956,7 +956,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			if(isOcupationContract()) onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"),  afiChangesMap.getChangeDate());
 			if(isPartialityCoefContract()) onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
 		}
-		onAcceptCB();
+		
+		// Solo recargar la informacion del empleado si la fecha de modificacion es anterior o igual al dia actual
+		if(DateUtils.isBeforeOrEquals(afiChangesMap.getChangeDate(), new Date()))
+			onAcceptCB();
 	}
 	
 	private void onAccept() {
