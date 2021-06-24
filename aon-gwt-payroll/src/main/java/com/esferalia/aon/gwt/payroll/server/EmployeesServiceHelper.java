@@ -1338,10 +1338,12 @@ public class EmployeesServiceHelper {
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx) {
+			
 			@Override
-			protected Collection<IContractPayment> getDraftPayments() {
-				return Collections.emptyList();
+			public Collection<IContractPayment> getContractPayments() throws AonException {
+				 return hasDraftPayments() ? getDraftPayments() : getSuperContractPayments();
 			}
+			
 			
 		};
 		

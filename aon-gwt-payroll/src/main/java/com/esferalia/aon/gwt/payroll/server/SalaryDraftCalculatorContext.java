@@ -587,14 +587,14 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return draftPayments;
 	}
 	
-	// ---------------------------------------------------------------- Private
-
-	private Collection<IContractPayment> getSuperContractPayments()
+	protected Collection<IContractPayment> getSuperContractPayments()
 			throws AonException {
 		return new FilterCollection<IContractPayment>(
-				p -> inTime(p, ctx.getStartDate(), ctx.getEndDate())  && (!hasDraftPayments()  || !isDefault(p)), 
+				p -> inTime(p, ctx.getStartDate(), ctx.getEndDate())/*&& (!hasDraftPayments()  || !isDefault(p))*/ , 
 				super.getContractPayments());
 	}
+
+	// ---------------------------------------------------------------- Private
 
 	private Collection<IContractDeduction> getDraftDeductions() {
 		Collection<IContractDeduction> deductions = new LinkedList<IContractDeduction>();
@@ -758,7 +758,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 	
 	
-	private boolean hasDraftPayments() {
+	protected boolean hasDraftPayments() {
 		return draft.getDraftPayments().size() > 0;
 	}
 
