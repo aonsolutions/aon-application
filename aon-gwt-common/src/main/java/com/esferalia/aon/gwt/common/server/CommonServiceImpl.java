@@ -86,7 +86,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					.and(p.getCodeProperty().like(q)
 					 .or(p.getDescriptionProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
-				).collect(Collectors.toCollection(LinkedList::new));
+				,0,50).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override

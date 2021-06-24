@@ -366,6 +366,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar todos de la selecci\u00F3n")
 	String deleteAllFromSelection();
 
+	@DefaultMessage("Cambiar seleccionados")
+	String changeSelected();
+	
 	@DefaultMessage("Volver")
 	String backAction();
 

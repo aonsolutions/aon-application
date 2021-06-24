@@ -80,6 +80,14 @@ public class AccountDAO {
 		return getAccountStream(ctx, filter)
 			.map(new FullAccountFiller());			
 	}
+	public static Stream<Account> getAccounts(AONContext ctx, AccountFilter filter, int offset, int limit) {
+		ctx.checkRead();
+		return getAccountSelect(ctx, filter)
+			.limit(limit)
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller());			
+	}
 	public static Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
 		ctx.checkRead();
 		Condition condition = getFilter( params );

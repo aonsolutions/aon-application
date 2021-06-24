@@ -30,6 +30,8 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -45,6 +47,7 @@ public interface IAccounting {
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
+	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit);
 	public Account save(AONContext ctx, Account account);
 	public Account delete(AONContext ctx, Account account);
 	public String getAccountNextCode(AONContext ctx, String prefix);
@@ -132,6 +135,8 @@ public interface IAccounting {
 	public AccUtilitiesResult removeEntries(AONContext ctx, AccountEntryParams params);
 	public AccUtilitiesResult invoiceIntegrity(AONContext ctx);
 	public AccUtilitiesResult invoiceIntegrityFix(AONContext ctx,Integer invoiceId);
+	public AccUtilitiesResult searchAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params);
+	public AccUtilitiesResult fixAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChanges);
 	
 	// ANALYTIC ACCOUNTING	
 	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
