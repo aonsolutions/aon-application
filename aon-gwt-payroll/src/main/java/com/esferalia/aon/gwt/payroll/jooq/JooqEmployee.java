@@ -663,7 +663,7 @@ public class JooqEmployee {
 		
 		
 		// ------------------------------------------------ CONTRACT INFO ---------------------------------------------------------
-		System.out.println("******************************* CONTRACT = "+contract+" *******************************");
+		System.out.println("CONTRACT = " + contract);
 		
 		// HAS PAYROLL
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
@@ -928,8 +928,8 @@ public class JooqEmployee {
 		
 		contractData.setContractJourneyDuration(journies);
 			
-		System.out.println(employeeData.toString());
-		System.out.println(contractData.toString());
+//		System.out.println(employeeData.toString());
+//		System.out.println(contractData.toString());
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
@@ -972,11 +972,6 @@ public class JooqEmployee {
 		ContractInfo contractData = employeeContractInfo.getContractInfo();
 		EmployeeInfo employeeData = employeeContractInfo.getEmployeeInfo();
 		Municipalities municipalities = new Municipalities();
-		
-		System.out.println(contractData.toString());
-		System.out.println(employeeData.toString());
-		
-		System.out.println("salaries Count : " + contractData.getSalariesCount());
 		
 		// ------------------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------ EMPLOYEE INFO ---------------------------------------------------------

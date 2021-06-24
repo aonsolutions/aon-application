@@ -5981,6 +5981,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					grup_ctz + "\n" +
+					fecha);
+			
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
 					new ByteArrayInputStream(certificate.getCertificate()), 
@@ -5990,6 +5998,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getEmployeeInfo().getSurName(), 
 					employeeContractInfo.getEmployeeInfo().getSecondSurName());
 
+
+			System.out.println(employeeAux.getNss());
+			
 			// cambioGrupCtz
 			SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
@@ -6018,6 +6029,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					ocup + "\n" +
+					fecha);
+			
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
 					new ByteArrayInputStream(certificate.getCertificate()), 
@@ -6027,6 +6046,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getEmployeeInfo().getSurName(), 
 					employeeContractInfo.getEmployeeInfo().getSecondSurName());
 
+			System.out.println(employeeAux.getNss());
+			
 			// cambioOcupacion
 			SistemaRED.cambioOcupacion(new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
@@ -6054,6 +6075,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					cat + "\n" +
+					fecha);
 
 			// Get employee nafxipf
 			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
@@ -6063,6 +6092,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getEmployeeInfo().getDocument(), 
 					employeeContractInfo.getEmployeeInfo().getSurName(), 
 					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+			
+			System.out.println(employeeAux.getNss());
 
 			// cambioCatProf
 			SistemaRED.cambioCatProf(new ByteArrayInputStream(certificate.getCertificate()), 
@@ -6076,10 +6107,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					fecha);
 
 		} catch (SQLException | SegSocialException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
 
+	// ------------------------------------------------- SEPE Comunications
+	
 	@Override
 	public void sendContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
