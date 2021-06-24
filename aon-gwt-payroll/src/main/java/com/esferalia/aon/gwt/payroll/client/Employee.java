@@ -1108,6 +1108,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	public void hideMdCtzContract() {
 		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		this.mdCTZLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
+		
 	}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
