@@ -168,6 +168,10 @@
 		    cursor: auto !important;
 		}
 		
+		.heightTB{
+			height: 1.1rem;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -198,7 +202,7 @@
 							<td>
 								<g:HorizontalPanel>
 									<g:HTMLPanel ui:field="documentPanel" styleName="{style.flex}">
-										<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+										<g:SuggestBox ui:field="document" debugId="document" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 									</g:HTMLPanel>
 								</g:HorizontalPanel>
 							</td>
@@ -206,7 +210,7 @@
 								<g:Label ui:field="nationalityLabel" debugId="nationalityLabel" styleName='{style.alignTextCenter}'>Nacionalidad</g:Label>
 							</td>
 							<td ui:field="nationalityCell" debugId="nationalityCell">
-								<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="nationality" debugId="nationality" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>Nº S.S.</g:Label>
@@ -214,7 +218,7 @@
 							<td >
 								<g:HorizontalPanel>
 									<g:HTMLPanel ui:field="ssNumberPanel" styleName="{style.flex}">
-										<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+										<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 									</g:HTMLPanel>
 								</g:HorizontalPanel>
 							</td>
@@ -225,7 +229,7 @@
 							</td>
 							<td colspan="2">
 								<g:HTMLPanel ui:field="namePanel" styleName="{style.flex}">
-									<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:SuggestBox ui:field="name" debugId="name" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 								</g:HTMLPanel>
 							</td>
 							<td>
@@ -233,13 +237,13 @@
 									styleName='{style.alignTextCenter}'>1er Apellido</g:Label>
 							</td>
 							<td >
-								<g:SuggestBox ui:field="first_surname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="first_surname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
 							</td>
 							<td >
-								<g:TextBox ui:field="second_surname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4}'></g:TextBox>
+								<g:TextBox ui:field="second_surname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -311,22 +315,21 @@
 							</td>
 							<td>
 								<g:HTMLPanel ui:field="startDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+									<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="end_date" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="end_date" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 							</td>
 							<td style="width: 12%;">
-								<g:Label ui:field="seniority_date_label" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha
-									antigüedad</g:Label>
+								<g:Label ui:field="seniority_date_label" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha antigüedad</g:Label>
 							</td>
 							<td>
 								<g:HTMLPanel ui:field="seniorityDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="seniority_date" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2}'></a:DateBoxEx>
+									<a:DateBoxEx ui:field="seniority_date" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2} {style.heightTB}'></a:DateBoxEx>
 								</g:HTMLPanel>
 							</td>
 						</tr>
@@ -352,7 +355,7 @@
 								<g:Label styleName='{style.alignTextCenter}'>Mostrar como</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -388,7 +391,7 @@
 									<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flex}" />
 									<g:HTMLPanel styleName="{style.flex}">
 										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
-										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration"></a:DoubleBox>
+										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration" styleName="{style.heightTB}"></a:DoubleBox>
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 							</td>
@@ -419,7 +422,7 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
 							</td>
 							<td colspan="2">
-								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 							</td>
 							<td style="width: 100px;">
 								<g:HorizontalPanel styleName="{style.paddingLeft} {style.labelsWidth}">
@@ -445,17 +448,17 @@
 							    <g:ListBox ui:field="street_type" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 							<td colspan="3">
-								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 							</td>
 							<td>
 								<g:HorizontalPanel>
 									<g:Label styleName='{style.alignTextCenter} {style.addressPadding}'>Nº</g:Label>
-									<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidth}'></g:TextBox>
+									<g:TextBox ui:field="addressNum" debugId="addressNum" styleName='aon-inputText {style.maxWidth} {style.heightTB}'></g:TextBox>
 									<g:Label styleName='{style.alignTextCenter} {style.addressPadding} {style.mr-10} {style.maxWidth}'>Rest. Dir.</g:Label>
 								</g:HorizontalPanel>
 							</td>
 							<td colspan="3">
-								<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+								<g:TextBox ui:field="addressInfo" debugId="addressInfo" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -464,7 +467,7 @@
 							</td>
 							<td>
 								<g:HTMLPanel ui:field="addressZipPanel" styleName="{style.flex}">
-									<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+									<g:TextBox ui:field="addressZip" debugId="addressZip" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 								</g:HTMLPanel>
 							</td>
 							<td style="width: 8%;">
@@ -489,19 +492,19 @@
 								<g:Label styleName='{style.alignTextCenter}'>Móvil</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="mobile" debugId="mobile" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Teléfono</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="phone" debugId="phone" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>eMail</g:Label>
 							</td>
 							<td colspan="2">
-								<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="email" debugId="email" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -516,14 +519,14 @@
 							</td>
 							<td colspan="3">
 								<g:HTMLPanel ui:field="accountPanel" styleName="{style.flex}">
-									<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+									<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>BIC</g:Label>
 							</td>
 							<td>
-								<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
+								<g:TextBox ui:field="bic" debugId="bic" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 							
 						</tr>
