@@ -2010,8 +2010,8 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 	}
-	
-	class NewSettlePaymentHandler extends NewPaymentHandler {
+
+		class NewCRA000PaymentHandler extends NewPaymentHandler {
 		
 		@Override
 		protected void addDrafItem(Payment payment, String expression) {
@@ -2535,6 +2535,8 @@ public class SalaryDraft extends ResizeComposite
 	Button salaryButton;
 	@UiField
 	Button settleButton;
+	@UiField
+	Button extraButton;
 
 	@UiField
 	Button fxButton;
@@ -2657,10 +2659,12 @@ public class SalaryDraft extends ResizeComposite
 
 	@Override
 	public void onChange(SalarySelect salarySelect) {
-		acceptButton.setVisible(!isSettle());
-		salaryButton.setVisible(!isSettle());
+		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
 		settleButton.setVisible(isAutomatic());
+		
+		acceptButton.setVisible(!isSettle() && !isExtra());
+		salaryButton.setVisible(!isSettle() && !isExtra());
 		
 		calculateAndSync();
 		
@@ -2701,8 +2705,9 @@ public class SalaryDraft extends ResizeComposite
 		setAutomatic(  isAutomatic());
 		setReadOnly(  isReadOnly());
 		
-		salaryButton.setVisible(!isSettle());
+		extraButton.setVisible(isExtra());
 		settleButton.setVisible(isSettle());
+		salaryButton.setVisible(!isSettle() && !isExtra());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -2944,8 +2949,6 @@ public class SalaryDraft extends ResizeComposite
 		undoAllButton.setVisible(true);
 		costsCheck.setVisible(true);
 		salarySelect.setVisible(true);
-		salaryButton.setVisible(!isSettle());
-		settleButton.setVisible(isSettle());
 		acceptButton.setVisible(!isAutomatic());
 		irpfPreviewButton.setVisible(true);
 		printPreviewButton.setVisible(true);
@@ -2953,6 +2956,9 @@ public class SalaryDraft extends ResizeComposite
 		dbSalaryCheck.setVisible(hasDbSalary());
 		eventsCheck.setVisible(hasEvents());
 		
+		extraButton.setVisible(isExtra());
+		settleButton.setVisible(isSettle());
+		salaryButton.setVisible(!isSettle() && !isExtra());
 	}
 
 
@@ -3018,7 +3024,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private boolean isReadOnly() {
-		return salaryDraftObject == null ? false : Arrays.asList(Type.EXTRA, Type.DELAY).contains(salaryDraftObject.getType());
+		return salaryDraftObject == null ? false : Arrays.asList(/*Type.EXTRA,*/ Type.DELAY).contains(salaryDraftObject.getType());
 	}
 
 	private boolean isAutomatic() {
@@ -3314,6 +3320,11 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		salaryDraftObject.save(this);
+	}
+
+	@UiHandler("extraButton")
+	void onExtraButtonClick(ClickEvent event) {
+		salaryDraftObject.emitSalary(SalaryDraft.this);
 	}
 
 	@UiHandler("settleButton")
@@ -3749,12 +3760,12 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public NewPaymentHandler visitExtra(Type type) {
-				return new NewPaymentHandler();
+				return new NewCRA000PaymentHandler();
 			}
 
 			@Override
 			public NewPaymentHandler visitSettle(Type type) {
-				return new NewSettlePaymentHandler();
+				return new NewCRA000PaymentHandler();
 			}
 
 			@Override
@@ -4109,6 +4120,8 @@ public class SalaryDraft extends ResizeComposite
 		handler.setDescriptionWidget(descriptionBox);
 		descriptionBox.ensureDebugId("description-box-" + row );
 		if(
+		!isExtra() &&
+		!isSettle() &&
 		!isReadOnly() && 
 		handler != null && (
 		item.getType() == Payment.Type.CRA_0004 
@@ -4163,10 +4176,25 @@ public class SalaryDraft extends ResizeComposite
 		buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 		Scope itemScope = item.getScope();
-		if (itemScope.compareTo(Scope.AGREEMENT) > 0 
+		
+		
+		if ( isExtra() 
+			/*|| isSettle() */ ) {
+			// 
+		}
+		else if ( isExtra() 
+				&& itemScope.compareTo(Scope.SALARY) < 0 ) {
+			info("SETREMOVEEXTRABUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
+			Button deleteButton = getEnableButton();
+			deleteButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(deleteButton);
+			handler.setDeleteButton(deleteButton);
+			deleteButton.ensureDebugId("agreement-button-" + row );
+		}
+		else if (itemScope.compareTo(Scope.AGREEMENT) > 0 
 			&& item.isDefinedAt(Scope.AGREEMENT)
 			&& isRemove(item) ) {
-			info("SETDISABLEBUTTON:" + item.getDescription());
+			info("SETDISABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4176,7 +4204,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if (itemScope.compareTo(Scope.AGREEMENT) == 0 
 				&& isDisabled(item) ) {
-			info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription());
+			info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4186,7 +4214,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if (item.isDefinedAt(Scope.AGREEMENT) &&
 			itemScope.compareTo(Scope.AGREEMENT) > 0) {
-			info("SETENABLEBUTTON:" + item.getDescription());
+			info("SETENABLEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope() );
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4196,14 +4224,15 @@ public class SalaryDraft extends ResizeComposite
 
 		} else if (item.isDefinedAt(Scope.AGREEMENT) ||
 			itemScope.compareTo(Scope.AGREEMENT) == 0) {
-			info("SETENABLEBUTTON:" + item.getDescription());
+			info("SETENABLEAGREEMENTBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
 			handler.setEnableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
-		} else if (isHideable(item)) {
-			info("SETHIDEBUTTON:" + item.getDescription());
+		} 
+		else if (isHideable(item) ) {
+			info("SETHIDEBUTTON:" + item.getDescription() + "," + item.getExpression() +", " + item.getScope());
 			Button hideButton = getEnableButton();
 			hideButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(hideButton);
@@ -6571,6 +6600,10 @@ public class SalaryDraft extends ResizeComposite
 		this.salaryButton = salaryButton;
 	}
 
+	public void setExtraButton(AonToolbarButton extraButton) {
+		this.extraButton = extraButton;
+	}
+
 	public void setSettleButton(AonToolbarButton settleButton) {
 		this.settleButton = settleButton;
 	}
@@ -6662,6 +6695,10 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 	
+	public void onExtra(ClickEvent e) {
+		salaryDraftObject.emitSalary(this);
+	}
+
 	public void onSettle(ClickEvent e) {
 		salaryDraftObject.emitSalary(this);
 	}
