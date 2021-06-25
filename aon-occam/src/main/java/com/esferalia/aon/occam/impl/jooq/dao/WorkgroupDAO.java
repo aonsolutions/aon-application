@@ -55,6 +55,7 @@ public class WorkgroupDAO {
 	}
 	
 	public static Workgroup save(AONContext ctx, Workgroup workgroup) {
+		workgroup.setStatus(workgroup.getStatus()!=null ? workgroup.getStatus() : 0 );
 		return workgroup.getId() != 0
 				? update(ctx, workgroup)
 				: insert(ctx, workgroup);
