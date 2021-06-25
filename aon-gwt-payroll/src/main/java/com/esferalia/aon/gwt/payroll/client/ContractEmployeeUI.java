@@ -503,7 +503,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.journeyType, contractData.getJourneyType()+"");
+		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {
