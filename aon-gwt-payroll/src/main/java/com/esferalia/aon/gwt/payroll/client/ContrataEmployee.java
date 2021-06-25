@@ -785,7 +785,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		// SalaryDrat
 		
-		salaryDraftButtos = initSalaryDraftButtos();
+		salaryDraftButtos = initSalaryDraftButtons();
 		toolbar.add(salaryDraftButtos);
 		
 		return toolbar;
@@ -1224,7 +1224,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- EmployeeSalaryButtons
 	
-	private HTMLPanel initSalaryDraftButtos() {
+	private HTMLPanel initSalaryDraftButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
 		
@@ -1285,7 +1285,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		extraButton.ensureDebugId("extraButton");
 		extraButton.setVisible(false);
 		salaryDraft.setExtraButton(extraButton);
-		salaryDraftButtos.add(extraButton);
+		hPanel.add(extraButton);
 
 		fxButton = new AonToolbarButton( "FX", AON.CSS.aonIconFx() );
 		fxButton.addClickHandler(e -> {
