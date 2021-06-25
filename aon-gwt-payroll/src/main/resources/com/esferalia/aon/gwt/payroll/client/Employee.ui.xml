@@ -172,6 +172,10 @@
 			height: 1.1rem;
 		}
 		
+		.partialityTB{
+			width: 50px;
+			text-align: center;
+		}
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -391,7 +395,7 @@
 									<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flex}" />
 									<g:HTMLPanel styleName="{style.flex}">
 										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
-										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration" styleName="{style.heightTB}"></a:DoubleBox>
+										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration" styleName="{style.partialityTB} {style.heightTB}"></a:DoubleBox>
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 							</td>

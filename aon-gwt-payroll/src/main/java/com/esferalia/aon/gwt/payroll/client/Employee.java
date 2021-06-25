@@ -978,7 +978,7 @@ public abstract class Employee extends ResizeComposite {
 		// TIPO DE CONTRATO
 		contractTypeLB.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());		
+			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));		
 	}
 
 	public void initAgreements(List<Agreement> activeAgreements) {
