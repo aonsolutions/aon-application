@@ -18,7 +18,6 @@ public class WorkgroupJSON {
 	
 	public static Workgroup fromJSON(JSONObject json) {
 		Integer status = JsonUtils.getInteger(json, IJsonNames.STATUS);
-		System.out.println(status);
 		return new Workgroup()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
@@ -42,6 +41,6 @@ public class WorkgroupJSON {
 				.put(IJsonNames.ID, workgroup.getId())
 				.put(IJsonNames.DOMAIN, workgroup.getDomain())
 				.put(IJsonNames.DESCRIPTION, workgroup.getDescription())
-				.put(IJsonNames.STATUS, workgroup.getStatus());
+				.put(IJsonNames.STATUS, workgroup.getStatus()!=null ? workgroup.getStatus(): 0);
 	}
 }
