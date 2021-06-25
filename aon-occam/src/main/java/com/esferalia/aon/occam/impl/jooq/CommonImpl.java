@@ -29,9 +29,11 @@ import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
+import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -50,6 +52,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 public class CommonImpl implements ICommon {
@@ -379,5 +382,35 @@ public class CommonImpl implements ICommon {
 	public Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx, Integer domainId, Date atDate) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			CompanyDAO.getEnterpriseActivities(ctx, domainId, atDate));
+	}
+
+	@Override
+	public Workgroup getWorkgroup(AONContext ctx, WorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WorkgroupDAO.get(ctx, filter));
+	}
+
+	@Override
+	public Stream<Workgroup> getWorkgroupStream(AONContext ctx, WorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WorkgroupDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public LinkedList<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WorkgroupDAO.getList(ctx, filter));
+	}
+
+	@Override
+	public Workgroup saveWorkgroup(AONContext ctx, Workgroup workgroup) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WorkgroupDAO.save(ctx, workgroup));
+	}
+
+	@Override
+	public void deleteWorkgroup(AONContext ctx, Integer id) {
+		 ctx.getDslContext().transaction(configuration -> 
+		 WorkgroupDAO.delete(ctx, id));
 	}
 }

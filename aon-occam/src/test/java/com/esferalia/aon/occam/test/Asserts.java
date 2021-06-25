@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -378,6 +379,13 @@ public class Asserts {
 		assertEquals("salesAccount", expected.getSalesAccount().getId(), actual.getSalesAccount().getId());
 		assertEquals("purchaseAccount", expected.getPurchaseAccount().getId(), actual.getPurchaseAccount().getId());		
 		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+	
+	public static void assertEqualsWorkgroup(Workgroup expected, Workgroup actual) {
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Description",expected.getDescription(), actual.getDescription());
+		assertEquals("status",expected.getStatus(), actual.getStatus());
 	}
 	
 	public static void assertEqualsProductCategory(ProductCategory expected, ProductCategory actual) {

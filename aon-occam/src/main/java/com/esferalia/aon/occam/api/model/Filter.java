@@ -96,6 +96,7 @@ import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
+import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 
 public interface Filter {
 	
@@ -617,5 +618,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface FiscalModelFilter{
 		Filter filter(FiscalModelProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface WorkgroupFilter{
+		Filter filter(WorkgroupProperties properties);
 	}
 }

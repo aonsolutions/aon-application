@@ -1409,4 +1409,12 @@ public interface Properties {
 		Property<String> getNameProperty();
 		Property<String> getSurnameProperty();
 	}
+	
+	public interface WorkgroupProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
 }
