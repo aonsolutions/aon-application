@@ -1,9 +1,10 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
+import { EVENT } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles } from "../../services/companyService.js";
-import { getMessenger } from "../../services/messengerService.js";
+import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin//signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
@@ -11,7 +12,7 @@ import { MESSENGER_VIEWS } from "./MessengerEnums.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
-
+  _list;
   static get observedAttributes() {
     return [""];
   }
@@ -43,48 +44,46 @@ export class AonMessengerList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this._list = [];
   }
 
   async build() {
     this.paintView();
-    if(this.isMobile()) this.buildToolbarMobile();
-    else this.buildToolbar();
+    this.buildToolbar();
     await this.getTable();
   }
 
   paintView() {
-    let innerHTML = ``;
-    let aonTableHtml = "";
-    if (this.isMobile()) {
-      const aonTable = new AonMobileList();
-      aonTable.id = this.TABLE_ID;
-      aonTableHtml = aonTable.outerHTML;
-    } else {
-      const aonTable = new AonTable();
-      aonTable.id = this.TABLE_ID;
-      aonTableHtml = aonTable.outerHTML;
-    }
-    this.innerHTML =  `${innerHTML} ${aonTableHtml}`;
+    let aonTable = this.isMobile() ?  new AonMobileList() : new AonTable();
+    aonTable.id = this.TABLE_ID;
+    this.appendChild(aonTable);
   }
-
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    if(this.isBeta())
-      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => {
-      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    } );
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
+    if(this.isBeta()){
+      if(this.isMobile()){
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+      } else {
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+      }
+    }
+    this.buildToolbarSearch();
   }
 
-  buildToolbarMobile(){
-    this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
-      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  buildToolbarSearch(){
+    let btnSearch = this.applicationEl.addSearchOption();
+    
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
+      console.log(detail);
     });
-    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, () => this.applicationEl.development());
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+      this._list = [];
+      console.log(detail);
+    });
+    
+    // btnSearch.buildOptionsFilter(INPUTS);//INPUTS
   }
-
-
 
   async getTable(idDivAppend = undefined) {
     this.TABLE_ID = this.id + "Table";
@@ -111,7 +110,7 @@ export class AonMessengerList extends AonElement {
         resp.map((res) => {
           const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
           aonTable.addRow({...res, dateParse}, (el) => {
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{id: res.id});
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,res);
           });
         });
       } catch (e) {
@@ -134,7 +133,7 @@ export class AonMessengerList extends AonElement {
             subtitle: dateParse,
           };
           aonTable.addLi(options, idx, (el) => {
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{id: res.id});
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,res);
           });
         });
       } catch (e) {
@@ -146,10 +145,19 @@ export class AonMessengerList extends AonElement {
   async getData() {
     let data = [];
     try {
-      const datos = await getMessenger();
-      if (datos) data = datos;
+      const datos = await getTasks();
+      if (datos){
+        datos.map(task=>{
+          data.push({
+            ...task,
+            date: task.startDate,
+            title:task.description,
+          });
+        })
+        
+      } 
     } catch (error) {
-      console.log(error);
+      this.showError(error);
     }
     return data;
   }

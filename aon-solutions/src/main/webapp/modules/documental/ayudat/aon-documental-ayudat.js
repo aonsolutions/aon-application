@@ -132,7 +132,6 @@ export class AonDocumentalAyudat extends AonElement {
         } catch (error) {
             console.log(error);
         }
-
     }
 
     showView(view, data = undefined){

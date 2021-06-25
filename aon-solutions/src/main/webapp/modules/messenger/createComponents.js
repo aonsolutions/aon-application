@@ -112,27 +112,18 @@ export const createReceiverDiv = () => newComponent({
   },
 });
 
-export const createReceiverTitle = () => newComponent({
-  type: "span",
-  text: "Para: ",
-  styles: {
-    fontSize: "1.5em",
-    paddingRight: "5px",
-    color: fontColor,
-  },
-});
 
-export const createReceiverselect = () => {
+// export const createReceiverselect = () => {
   
-  let comp = new AonSelect();
-  comp.id = "";
-  comp.title = "";
-  comp.style.transition = "background-color .25s";
-  setClasses(comp,[CSS.TRANSITION_CASCADE]);
+//   let comp = new AonSelect();
+//   comp.id = "";
+//   comp.title = "";
+//   comp.style.transition = "background-color .25s";
+//   setClasses(comp,[CSS.TRANSITION_CASCADE]);
 
-  return comp;
+//   return comp;
 
-}
+// }
 
 
 
