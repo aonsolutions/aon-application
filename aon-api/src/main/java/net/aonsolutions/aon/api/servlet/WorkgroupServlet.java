@@ -84,6 +84,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		Workgroup workgroup = new Workgroup()
 		.setDomain(domain.getId())
 		.setDescription(api.getData().optString("description"))
+		.setStatus((byte)(api.getData().optBoolean("status") ? 1 : 0))
 		.setId(api.getData().optInt("id"));
 		workgroup = AON.saveWorkgroup(domain.getName(), domain.getId(), api.getUser().getLogin(), workgroup);
 		return WorkgroupJSON.toJSON(workgroup);
