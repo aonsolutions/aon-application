@@ -463,7 +463,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postAltaDirecta(this.getContrato());
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -483,7 +483,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postUpdateCto(cto_new);
             this.showToast({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -587,7 +587,7 @@ export class AonAltaDirecta extends AonElement {
             await postBaja({...this.data, fechaBaja: fechaBajaEl.value});
             this.applicationEl.getOptionDialog().close();
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);

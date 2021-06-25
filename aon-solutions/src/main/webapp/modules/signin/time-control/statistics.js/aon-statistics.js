@@ -6,7 +6,7 @@ import { timeHour } from "../utils.js";
 import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl,
 } from "../../../../services/timeControlService.js";
-import { formatDateOrigin } from "../../../../services/utils.js";
+import { formatDateOrigin, setStyles } from "../../../../services/utils.js";
 import { DAYS } from "../../../../models/enums.js";
 
 export class AonStatistics extends AonElement {
@@ -71,20 +71,25 @@ export class AonStatistics extends AonElement {
       const firstDayOfWeek = new Date().getFirstDayOfWeek().setHours(0,0,0,0);
       for (const key in resp) {
         let { time, start_date, status, in_date } = resp[key];
-        if(status && status.indexOf("in")>=0 && in_date){
+        if(in_date && status && status.indexOf("in")>=0){
           time =  Number((new Date().getTime() - in_date)  + time);
         }
         const newTime = this.timeToDecimal(time);
-        const day    =  new Date(start_date);
+        const day =  new Date(start_date);
         let color = "#bdbdbd";
         const newDayTime = day.setHours(0,0,0,0);
         if(newDayTime === new Date().setHours(0,0,0,0)){
             color = "#86D364";
         } else if(newDayTime >= firstDayOfWeek){
           color = "#c8e6c9";
-        } else {
+        } 
+        
+        if(
+          newTime>0 && start_date && 
+          new Date(start_date).setHours(0,0,0,0) < new Date().setHours(0,0,0,0) 
+        ){
           sum = sum + newTime;
-          if (newTime > 0) count++;
+          count ++;
         }
           
         datos.push({
@@ -93,17 +98,20 @@ export class AonStatistics extends AonElement {
           color
         });
       }
-
+      
       const average = sum / count;
       let newData = [];
       for (const dt of datos) 
         newData.push([dt.dayLetter, dt.time, `color:${dt.color};stroke-width:0;` , average]);
  
-      this.style.display = "flex";
-      this.style.flexWrap = "wrap";
-      this.style.justifyContent = "center";
-      this.style.alignItems = "center";
-      this.style.width = "100%";
+      setStyles(this,{
+        display:"flex",
+        flexWrap:"wrap",
+        justifyContent:"center",
+        alignItems:"center",
+        width:"100%"
+      });
+
       await charts(this, newData);
     } catch (error) {
       console.log(error);

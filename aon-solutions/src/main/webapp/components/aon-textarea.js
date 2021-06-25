@@ -275,13 +275,13 @@ export class AonTextArea extends AonElement {
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
-				contentEditable: true,
-				draggable: true
+				contentEditable: true
 			},
 			styles : {
 				userSelect : 'text',
 				height: '100%',
-				padding: "10px"
+				padding: '10px',
+				background: '#fff'
 			}
 		});
 		// let area = newComponent({

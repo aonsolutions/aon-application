@@ -1,7 +1,7 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, TAG } from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
@@ -9,7 +9,7 @@ import { createButtonWrapper, createEditableTitle, createReceiverDiv, createSend
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { createStartJustifiedRow } from "./creationUtils.js";
 import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
-import { appendChatMessage, fillReceiverInput, LEFT, RIGHT } from "./messenger-chat.js";
+import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.js";
 
 /**
  * @TODO THINGS TO ENCHANCE
@@ -40,16 +40,16 @@ export const buildDesktopWritter = (parent, data, application) => {
          */
     } });
 
-    //----------------WORKGROUP
+    //----------------WORKGROUP    //----------------WORKGROUP
     const receiverDiv = createReceiverDiv();
     const workgroupSelect = setAttributes( new AonSelect(),{
         id: MESSENGER_IDS.WORKGROUP_SELECT,
         name: MESSENGER_IDS.WORKGROUP_SELECT,
-        title: "Grupo de trabajo"
+        title: MSG.WORKGROUP
     });
 
     receiverDiv.element.appendChild(workgroupSelect);
-    fillReceiverInput(workgroupSelect,data, application);
+    fillWorkGroup(workgroupSelect,data, application);
 
     //-----------------TASK HOLDER
     const taskHolderSelect = setAttributes( new AonSelect(),{
@@ -428,10 +428,8 @@ const sendMessage = (aonTextArea) => {
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
 
 const createLink =() =>{
-    const sText = document.getSelection();
-    console.log("1",sText);
-    if(sText && sText.trim().length){
-        console.log("2",sText);
+    const selection = document.getSelection();
+    if(selection && selection.toString().trim()){
         const linkURL = prompt('URL:', 'https://');
         const aEl = setStyles(document.createElement("a"),{
             textDecoration:"underline",
@@ -440,7 +438,7 @@ const createLink =() =>{
         });
 
         aEl.onclick = () => window.open(linkURL);
-        aEl.textContent = sText;
+        aEl.textContent = selection;
         document.execCommand('insertHTML', false, aEl.outerHTML);
     }
 }

@@ -241,7 +241,7 @@ export class AonLaboral extends AonElement {
             nombre: data.nombre || data.name
           });
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
-          if(this._movements){
+          if(this._movements.length){
             this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
               const dtFecha = data.frb || data.fra;
               const fecha = frb || fra;

@@ -5,6 +5,7 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
+import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { newComponent, setAttributes, setClasses, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
@@ -138,49 +139,32 @@ export const buildMobileChat = (parent, data, application) => {
         });
 
 
-        /**
-         * Creating receiver select
-         */
-        const receiverIn = new AonSelect();
-        receiverIn.id = MESSENGER_IDS.NEW_REQUEST_PANEL_RECEIVER;
-        receiverIn.name = "Para"
-        receiverIn.title = "Para";
-
-        setStyles(receiverIn, {
+        //----------------WORKGROUP
+        const workgroupSelect = setAttributes(new AonSelect(),{
+            id:MESSENGER_IDS.NEW_REQUEST_PANEL_RECEIVER,
+            name:"Para",
+            title:"Para",
+        });
+        
+        setStyles(workgroupSelect, {
             display : "block",
             width: "100%",
         });
+        fillWorkGroup(workgroupSelect,data, application);
+        changeStyleSelect(workgroupSelect);
 
-        fillReceiverInput(receiverIn,data, application);
-        /**
-         * smooth border colors
-         */
-        waitChildEl(receiverIn,"input").then(el => {
-            setStyles(el,{
-                borderBottom : "1px solid #e0e0e0",
-                marginBottom : 0,
-                paddingLeft : "1.5em",
-                paddingRight : "1.5em",
-                transition : "background-color .25s"
-            });
+          //-----------------TASK HOLDER
+        const taskHolderSelect = setAttributes( new AonSelect(),{
+            id: MESSENGER_IDS.TASKHOLDER_SELECT,
+            name: MESSENGER_IDS.TASKHOLDER_SELECT,
+            title: "Asignar a"
         });
+        setStyles(taskHolderSelect, {
+            display : "block",
+            width: "100%",
+        });
+        changeStyleSelect(taskHolderSelect);
 
-        /**
-         * Adjust the space issues
-         * related to AonInput defaults
-         */
-        waitChildEl(receiverIn,"span").then(el => {
-            setStyles(el,{
-                paddingLeft : "1.5em",
-                paddingRight : "1.5em",
-                transition: ".25s",
-                top : "5%"
-            });
-        });
-
-        waitChildEl(receiverIn,".aonInputGroup").then(el => {
-            el.style.marginBottom = "0px"
-        });
 
         /**
          * Creating text area
@@ -210,10 +194,11 @@ export const buildMobileChat = (parent, data, application) => {
             });
         });
 
-        newRequestPanel.element.appendChild(toolbar);
-        newRequestPanel.element.appendChild(titleIn); 
-        newRequestPanel.element.appendChild(receiverIn);
-        newRequestPanel.element.appendChild(textArea);
+        newRequestPanel.appendChild(toolbar);
+        newRequestPanel.appendChild(titleIn); 
+        newRequestPanel.appendChild(workgroupSelect);
+        newRequestPanel.appendChild(taskHolderSelect);
+        newRequestPanel.appendChild(textArea);
         newRequestPanel.appendTo(wrapper.element);
     }
 
@@ -611,13 +596,60 @@ const checkProperties = (properties) => {
  * Fill aonSelect with possible receivers
  * @param {*} aonSelect 
  */
-export const fillReceiverInput = (aonSelect, data, application) => {
+export const fillWorkGroup = (aonSelect, data, application) => {
     try {
+        aonSelect.onchange = ({detail})=>{
+            if(detail && detail.value)
+                fillTaskHolder(detail.value);
+        }
         const workgroups = application.getParent()._workgroups;
         if(workgroups && workgroups.length>0){
             aonSelect.options = JSON.stringify(workgroups);
         }
         if(data &&  data.workgroup) aonSelect.value = data.workgroup;
-
     } catch (error) { console.log(error);}
+}
+
+const fillTaskHolder = async (workgroupId, data=undefined) => {
+    try {
+        const aonSelect = document.getElementById(MESSENGER_IDS.TASKHOLDER_SELECT);
+        if(aonSelect){
+            const taskHolders = await getTastHoldersWorkGroup({workgroupId});
+            console.log(taskHolders);
+            if(taskHolders && taskHolders.length>0){
+                aonSelect.options = JSON.stringify(taskHolders);
+            }
+            if(data &&  data.taskHolder) aonSelect.value = data.taskHolder;
+        }
+    } catch (error) {console.log(error);}
+}
+
+
+export const changeStyleSelect = (aonSelect) => {
+    waitChildEl(aonSelect,"input").then(el => {
+        setStyles(el,{
+            borderBottom : "1px solid #e0e0e0",
+            marginBottom : 0,
+            paddingLeft : "1.5em",
+            paddingRight : "1.5em",
+            transition : "background-color .25s"
+        });
+    });
+
+    /**
+     * Adjust the space issues
+     * related to AonInput defaults
+     */
+    waitChildEl(aonSelect,"span").then(el => {
+        setStyles(el,{
+            paddingLeft : "1.5em",
+            paddingRight : "1.5em",
+            transition: ".25s",
+            top : "5%"
+        });
+    });
+
+    waitChildEl(aonSelect,".aonInputGroup").then(el => {
+        el.style.marginBottom = "0px"
+    });
 }

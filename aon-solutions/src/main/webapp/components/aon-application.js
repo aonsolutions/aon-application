@@ -565,7 +565,9 @@ export class AonApplication extends AonElement {
     }
   }
 
+
   addSidenavOptions2(data, options, newButton) {
+    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
   }
