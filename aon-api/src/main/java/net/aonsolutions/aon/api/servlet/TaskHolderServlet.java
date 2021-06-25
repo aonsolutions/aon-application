@@ -35,6 +35,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 				case "/enterprise":
 					response(req, resp, getTaskHoldersEnterprise(api));
 					break;
+				case "/workgroup":
+					response(req, resp, getTaskHoldersWorkGroup(api));
+					break;
 				case "/user":
 					response(req, resp, getTaskHoldersUser(api));
 					break;
@@ -83,6 +86,24 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		Domain domain = api.getDomain();
 		JSONArray array = new JSONArray();
 		AON.getTaskHolderStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
+		.forEach(th->{
+			JSONObject json = new JSONObject();
+			json.put("id", th.getId());
+			json.put("name", th.getName());
+			json.put("company", th.getDomain().getDescription());
+			json.put("domain_id", th.getDomain().getId());
+			json.put("domain_name", th.getDomain().getName());
+			array.put(json);
+		});
+		return array;
+	}
+	
+	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
+		Domain domain = api.getDomain();
+		JSONArray array = new JSONArray();
+		Integer workgroupId = api.getParams().optInt("workgroupId");
+		
+		AON.getTaskMemberWStream(domain.getName(), domain.getId(), api.getUser().getLogin(), "", workgroupId)
 		.forEach(th->{
 			JSONObject json = new JSONObject();
 			json.put("id", th.getId());
