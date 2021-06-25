@@ -77,7 +77,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(req, resp, e);
 		}
 		
