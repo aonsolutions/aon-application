@@ -3,13 +3,13 @@ import { AonElement } from "../../components/AonElement.js";
 import { COLORS, CONSTANT, CSS } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { newComponent, setClasses, setStyles, waitEl } from "../../services/utils.js";
-import { SigninSidenav } from "../signin/signinEnums.js";
 import { createMainView, createMobileMainView } from "./createComponents.js";
 import { buildChat, buildMobileChat } from "./shared/messenger-chat.js";
 import { buildDesktopWritter } from "./shared/messenger-writter.js";
 import { MESSENGER_COMPONENTS, MESSENGER_VIEWS } from "./MessengerEnums.js";
-import * as ACTIONS from "../actions.js";
 import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
+import * as ACTIONS from "../actions.js";
+
 
 export class AonMessengerChat extends AonElement {
   
@@ -22,8 +22,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   get data() {
-    const content = this.getAttribute(CONSTANT.DATA) || "{}"; 
-    return JSON.parse(content);
+    return JSON.parse(this.getAttribute(CONSTANT.DATA) || "{}");
   }
 
   set data(data){
@@ -36,16 +35,14 @@ export class AonMessengerChat extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.getApplication()){
-      this.getApplication().removeFloatOption();
-      this.getApplication().removeToolbarOptions();
-    } 
+    this.deleteToolbar();
   }
 
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_CHAT;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this.deleteToolbar();
   }
 
   async build() {
@@ -72,7 +69,13 @@ export class AonMessengerChat extends AonElement {
     const lined = document.querySelector(".continueLined");
     if (lined)
       lined.style.setProperty("--height", lined.scrollHeight + "px");
+  }
 
+  deleteToolbar(){
+    try {
+      this.getApplication().removeFloatOption();
+      this.getApplication().removeToolbarOptions();
+    } catch (error) {}
   }
 
   async getData() {
@@ -133,10 +136,10 @@ export class AonMessengerChat extends AonElement {
       }
     } else {
       data = {
-        type: 0,
-        id: "00000",
-        author: "",
+        id: undefined,
         title: undefined,
+        type: 0,
+        author: "",
         for: "Laboral",
         content: []
       }
@@ -147,15 +150,6 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintDesktop(data) {
-    //---------------TEST
-    // let divTest = this.createElement("div");
-    // divTest.setAttribute("contentEditable", true);
-    // divTest.id = "divTest";
-    // divTest.style.height = "30px";
-    // divTest.style.width = "100/";
-    // divTest.innerHTML = "<b>ESCRIBE.....</b>";
-    // this.appendChild(divTest);
-    //---------------END TEST
 
     const mainView = createMainView();
     const toolbar = new AonToolbar();
@@ -230,31 +224,35 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintMobile(data) {
-    this.applicationEl.addFloatOption(SigninSidenav.ADD, () => {
-      /**
-       * Hidding float button
-       */
-      let button = setStyles(document.querySelector("#aonMessengeraddButtonIconButton") , {
-        transition : "0.25s",
-        opacity : 0
-      });
-
-       setTimeout(() => {
-        button.style.display = "none";
-       }, 100);
-
-      /**
-       * show writter
-       */
-      let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex"});
-      setTimeout(() => {
-        setStyles(componentWrite,{
-          zIndex:  9,
-          opacity: 1,
-          left: 0,
+    console.log(data);
+    if(data && data.id){
+      let span = this.applicationEl.addFloatOption({
+        name: "Addcomment",
+        icon: "add_comment",
+        id: "Addcomment",
+      }, () => {
+        /**
+         * Hidding float button
+         */
+       setStyles(span.querySelector("button") , {
+          transition : "0.25s",
+          opacity : 0
         });
-      }, 100);
-    });
+        /**
+         * show writter
+         */
+        let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex"});
+        setTimeout(() => {
+          setStyles(componentWrite,{
+            zIndex:  9,
+            opacity: 1,
+            left: 0,
+          });
+        }, 100);
+      });
+    }
+
+
     const mainView = createMobileMainView();
     const chat = newComponent({
       classes: [CSS.FLEX_ROW],

@@ -3,6 +3,8 @@ import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, To
 import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import {AonDocumental} from './documental/aon-documental.js';
+import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
 import '../components/aon-icon.js';
 import '../components/aon-icon-button.js';
 import './signin/aon-signin.js';
@@ -10,7 +12,7 @@ import './faqs/aon-faqs.js';
 import './laboral/aon-laboral.js';
 import './example/aon-example.js';
 import './imports/aon-imports.js';
-import './documental/aon-documental.js';
+
 import './invoice/aon-invoice-panel.js';
 
 import * as GWT from "../gwt/gwt.js";
@@ -106,11 +108,11 @@ export class AonMenu extends AonElement {
 
 	appSelection(app) {
 		switch(app){
-    	case Apps.DOCUMENTAL.app:
-				this.rootPanelHtml('<aon-documental></aon-documental>')
+			case Apps.DOCUMENTAL.app:
+				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
-    	case Apps.ACCOUNTING.app:
-				if(this.getDur().isAccountingManager()) {
+			case Apps.ACCOUNTING.app:
+					if(this.getDur().isAccountingManager()) {
 					this.buildAppMenu(Apps.ACCOUNTING);
 				} else this.rootPanelHtml('<aon-accounting></aon-accounting>');
 				break;

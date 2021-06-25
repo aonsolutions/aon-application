@@ -2,11 +2,13 @@ import { AonApplication } from '../../components/aon-application.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonElement } from '../../components/AonElement.js';
 import { MSG } from '../../environments/environments.js';
+import { AonSwitch } from '../../components/aon-switch';
 import Apps from '../../services/app.js';
 import {getWorkgroups, saveWorkgroup, deleteWorkgroup} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
+import { setAttributes } from '../../services/utils.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -76,8 +78,8 @@ export class AonMessenger extends AonElement {
 		let application = this.getApplication();
 		application.addSidenavOptions2({
 			id: 'Workgroup',
-			name: MSG.WORKGROUP.toUpperCase()
-		}, [], () => this.dialogWorkgroup({status:1}));
+			name: MSG.WORKGROUP
+		}, [], () => this.dialogWorkgroup({status:true}));
 		this.loadWorkgroup();
 	 }
 
@@ -85,11 +87,12 @@ export class AonMessenger extends AonElement {
 		let application = this.getApplication();
 		getWorkgroups().then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
+		  console.log("hola");
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  workgroup.forEach((item, i) => {
 			let option = {
 				name: item.description,
-				icon: 'label',
+				icon: 'people_alt',
 				fn: () => {
 					this._filter.workgroup = item.id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
@@ -114,19 +117,33 @@ export class AonMessenger extends AonElement {
 	}
 
 	dialogWorkgroup(workgroup={}) {
-		let d = document.getElementById(this.getApplication().DIALOG);
+		let d = this.getElement(this.getApplication().DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.EDIT_WORKGROUP);
+		d.setTitle(workgroup && workgroup.id ? MSG.EDIT_WORKGROUP : MSG.ADD_WORKGROUP);
+		
 		let aonInput = new AonInput();
 		aonInput.id = "addWorkgroup";
 		aonInput.description = MSG.WORKGROUP;
 		if(workgroup.description) aonInput.value = workgroup.description;
 		d.setContent(aonInput);
+		
+		let aonSwitch = new AonSwitch();
+		if(workgroup && workgroup.id){
+			setAttributes(aonSwitch, {
+				id    : "aonSwitchActive",
+				name  : "status",
+				title : "Activo",
+				checked : workgroup.status ? true : false
+			});
+			d.getContent().appendChild(aonSwitch);
+		}
+
 		d.addAcceptAction(() => {
+			workgroup.status = workgroup && workgroup.id ? aonSwitch.isChecked() : workgroup.status;
 			if(aonInput.value){
-				const description = aonInput.value;
-				saveWorkgroup({...workgroup, description}).then(() => {
+				workgroup.description = aonInput.value;
+				saveWorkgroup(workgroup).then(() => {
 					this.loadWorkgroup();
 				});
 			}
@@ -140,7 +157,7 @@ export class AonMessenger extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE_WORKGROUP);
-		d.setContentHTML(`Estás seguro de eliminar el grupo de trabajo ${workgroup.description}`);
+		d.setContentHTML(`Estás seguro de eliminar el ${MSG.WORKGROUP} ${workgroup.description}`);
 		d.addAcceptAction(() => {
 			deleteWorkgroup(workgroup).then(() => {
 				this.loadWorkgroup();

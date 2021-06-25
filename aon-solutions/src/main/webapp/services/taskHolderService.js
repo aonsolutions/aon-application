@@ -4,6 +4,8 @@ import { API_URL } from "../environments/environments.js";
 
 export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, data);
 
+export const getTastHoldersWorkGroup = (data) => get(`${API_URL}/taskholder/workgroup`, data);
+
 let taskHoldersUser;
 export const getTaskHoldersUser = (data) => {
   const newData = data || {};

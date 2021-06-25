@@ -40,7 +40,7 @@ export const MESSENGER_IDS = {
     NO_MESSAGES : "noMessages",
     START : "start",
     END : "end",
-    ADD_ICON_BUTTON : "aonMessengeraddButtonIconButton"
+    ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton"
 }
 
 export const MESSENGER_MODES = {
