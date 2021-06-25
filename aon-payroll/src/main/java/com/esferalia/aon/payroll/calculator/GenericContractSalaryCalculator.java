@@ -1349,7 +1349,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			PaymentType contractPaymentType = getPaymentType(contractPayment);
 			
-			if ( contractPayment.getScope() == APPLICATION ) {
+			if ( isExtra(expressionContext) ) {
+				; // Skip EXTRA Concepts
+			} else if ( contractPayment.getScope() == APPLICATION ) {
 				; // Skip APPLICATION Concepts
 			} else if (contractPaymentType != PaymentType.CRA_0008
 					&& contractPaymentType != PaymentType.CRA_0055 
