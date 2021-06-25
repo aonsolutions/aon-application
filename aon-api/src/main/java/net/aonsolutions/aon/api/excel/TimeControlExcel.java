@@ -47,9 +47,11 @@ import org.apache.poi.hssf.util.CellReference;
 
 public class TimeControlExcel {
 	
-	public static void excelTimeControl(Domain domain, OutputStream outputstream, Date startDate, Date endDate) throws Exception  {
+	public static void excelTimeControl(Domain domain, OutputStream outputstream, Date startDate, Date endDate, Boolean active) throws Exception  {
 		
-		Collection<TimeControl> tcList = AON_SOLUTIONS.getTimeControlStream(domain, "", startDate, endDate).collect(Collectors.toCollection(LinkedList::new));
+		Collection<TimeControl> tcList = AON_SOLUTIONS.getTimeControlStream(domain, "", startDate, endDate)
+		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
+		.collect(Collectors.toCollection(LinkedList::new));
 
 		Workbook workbook = new XSSFWorkbook();
 
