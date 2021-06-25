@@ -7,7 +7,7 @@ import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
-import { DIV } from "../environments/aonTag.js";
+// import { DIV } from "../environments/aonTag.js";
 
 export class AonApplication extends AonElement {
   SIDENAV;

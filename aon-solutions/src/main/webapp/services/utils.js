@@ -30,7 +30,13 @@ export const removeEmpty = (obj) => {
 };
 
 //order by obj, campo, order asc or desc
-export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value]));
+export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => {
+  let num = 0;
+  if (!a[value]) num = 1;
+  else if (!b[value]) num = -1;
+  else num = 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value])
+  return num;
+});
 
 /**
  * 

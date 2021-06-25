@@ -30,6 +30,8 @@ export const MESSENGER_COMPONENTS = {
 }
 
 export const MESSENGER_IDS = {
+    WORKGROUP_SELECT: "workgroup",
+    TASKHOLDER_SELECT: "taskHolder",
     MESSENGER_CHAT: "messengerChat",
     NEW_REQUEST_PANEL : "newRequestPanel", 
     NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 

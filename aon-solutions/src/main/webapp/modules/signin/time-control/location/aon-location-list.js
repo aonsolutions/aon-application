@@ -133,9 +133,9 @@ export class AonLocationList extends AonElement {
           id,
           description,
           coordinates,
+          radio,
           latitude: coordinates.latitude,
           longitude: coordinates.longitude,
-          radio,
         });
       });
     } catch (e) {

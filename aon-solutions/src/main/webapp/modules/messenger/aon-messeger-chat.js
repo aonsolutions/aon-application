@@ -1,6 +1,6 @@
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { newComponent, setClasses, setStyles, waitEl } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
@@ -76,13 +76,13 @@ export class AonMessengerChat extends AonElement {
   }
 
   async getData() {
-
+    let data = undefined;
     if(this.data && this.data.id){
-      const data = {
-        type: 0,
-        id: "1001237",
-        author: "akrck02@gmail.com",
-        title: "Creación y borrado de IT en condiciones extracurriculares de acuerdo al convenio vigente y el estatuto de los trabajadores y tal",
+      console.log(this.data);
+      data = {
+        id:this.data.id,
+        author: "test@gmail.com",
+        title: this.data.description,
         for: "Laboral",
         content: [
           {
@@ -131,25 +131,32 @@ export class AonMessengerChat extends AonElement {
           },
         ]
       }
-      this.data = data;
-      return data;
-
+    } else {
+      data = {
+        type: 0,
+        id: "00000",
+        author: "",
+        title: undefined,
+        for: "Laboral",
+        content: []
+      }
     }
 
-    const clean = {
-      type: 0,
-      id: "00000",
-      author: "",
-      title: undefined,
-      for: "Laboral",
-      content: []
-    }
-    this.data = clean;
-
-    return clean;
+    this.data = data;
+    return data;
   }
 
   paintDesktop(data) {
+    //---------------TEST
+    // let divTest = this.createElement("div");
+    // divTest.setAttribute("contentEditable", true);
+    // divTest.id = "divTest";
+    // divTest.style.height = "30px";
+    // divTest.style.width = "100/";
+    // divTest.innerHTML = "<b>ESCRIBE.....</b>";
+    // this.appendChild(divTest);
+    //---------------END TEST
+
     const mainView = createMainView();
     const toolbar = new AonToolbar();
 
@@ -207,8 +214,8 @@ export class AonMessengerChat extends AonElement {
       }
     });
 
-    buildDesktopWritter(writter, data);
-    buildChat(chat, data);
+    buildDesktopWritter(writter, data, this.getApplication());
+    buildChat(chat, data, this.getApplication());
 
     writter.appendTo(mainView.element);
     chat.appendTo(mainView.element);
@@ -227,9 +234,7 @@ export class AonMessengerChat extends AonElement {
       /**
        * Hidding float button
        */
-      let button = document.querySelector("#aonMessengeraddButtonIconButton")
-
-      setStyles(button , {
+      let button = setStyles(document.querySelector("#aonMessengeraddButtonIconButton") , {
         transition : "0.25s",
         opacity : 0
       });
@@ -241,9 +246,9 @@ export class AonMessengerChat extends AonElement {
       /**
        * show writter
        */
-      setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex"});
+      let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{display : "flex"});
       setTimeout(() => {
-        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
+        setStyles(componentWrite,{
           zIndex:  9,
           opacity: 1,
           left: 0,
@@ -262,7 +267,7 @@ export class AonMessengerChat extends AonElement {
       }
     });
 
-    buildMobileChat(chat, data);
+    buildMobileChat(chat, data, this.getApplication());
     chat.appendTo(mainView.element);
     mainView.appendTo(this);
 

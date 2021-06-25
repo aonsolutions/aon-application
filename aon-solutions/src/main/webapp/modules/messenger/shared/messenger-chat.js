@@ -3,14 +3,14 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS } from "../../../environments/environments.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setClasses, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, MESSENGER_ACTION_TYPES, MESSENGER_CHAT_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { createOutlinedMaterialIcon, createSpaceBetweenRow, createText } from "./creationUtils.js";
-import { buildMobileWritter, buildTextareaToolbar, hideWritter } from "./messenger-writter.js";
+import { buildMobileWritter, buildTextareaToolbar } from "./messenger-writter.js";
 
 export const RIGHT = "RIGHT";
 export const LEFT = "LEFT";
@@ -20,7 +20,7 @@ export const LEFT = "LEFT";
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildMobileChat = (parent, data) => {
+export const buildMobileChat = (parent, data, application) => {
 
     parent.element.style.padding = 0;
     /**
@@ -38,12 +38,11 @@ export const buildMobileChat = (parent, data) => {
     });
 
     if(!data.title){
-        console.log("Here!");
 
         const newRequestPanel = newComponent({
             type: 'div',
             id : MESSENGER_IDS.NEW_REQUEST_PANEL,
-            classes : [CSS.FLEX_COLUMN,CSS.FLEX_ALIGN_CENTER],
+            classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
             styles : {
                 height: '100%',
                 width: '100%',
@@ -58,12 +57,13 @@ export const buildMobileChat = (parent, data) => {
 
 
         /**
-         * Building toolbar
+         * Building toolbars
          */
-        const toolbar = new AonToolbar();
-        toolbar.id = MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR;
-        toolbar.type = ToolbarType.SECONDARY;
-        toolbar.title = "Nueva solicitud";
+        const toolbar = setAttributes(new AonToolbar(),{
+            id: MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR,
+            type: ToolbarType.SECONDARY,
+            title: "Nueva solicitud"
+        });
 
         setStyles(toolbar,{width : "100%"})
 
@@ -151,7 +151,7 @@ export const buildMobileChat = (parent, data) => {
             width: "100%",
         });
 
-        fillReceiverInput(receiverIn,data);
+        fillReceiverInput(receiverIn,data, application);
         /**
          * smooth border colors
          */
@@ -210,8 +210,6 @@ export const buildMobileChat = (parent, data) => {
             });
         });
 
-     
-
         newRequestPanel.element.appendChild(toolbar);
         newRequestPanel.element.appendChild(titleIn); 
         newRequestPanel.element.appendChild(receiverIn);
@@ -248,13 +246,15 @@ export const buildMobileChat = (parent, data) => {
     /**
      * Back button and toolbar
      */
-     const toolbar = new AonToolbar();
+     const toolbar = setAttributes(new AonToolbar(),{
+        id: "id",
+        type: ToolbarType.SECONDARY,
+        title: "#" + data.id
+     });
 
-     toolbar.id = "id";
-     toolbar.type = ToolbarType.SECONDARY;
-     toolbar.title = "#" + data.id;
- 
-     waitEl("#id").then(bar => {
+     wrapper.appendChild(toolbar);
+
+     waitEl(`#${toolbar.id}`).then(bar => {
         bar.addButton2(ACTIONS.BACK,() => {
             chat.element.style.opacity = "0";
             chat.element.style.transition = ".25s";
@@ -304,8 +304,26 @@ export const buildMobileChat = (parent, data) => {
     /**
      * If no message, put one ;)
      */
-    if(data.content.length == 0)
-    {
+    if(data && data.content && data.content.length){
+        data.content.forEach(element => {
+            if (element.type === MESSENGER_CHAT_TYPES.ACTION) {
+                const action = createAction(chooseActionIcon(element.action), element.message);
+                action.appendTo(chat.element);
+            }
+    
+            if (element.type === MESSENGER_CHAT_TYPES.MESSAGE) {
+                const message = createChatMessage({
+                    name: element.sender,
+                    message: element.message,
+                    id: "noId",
+                    date: element.date,
+                    attach: element.attach
+                });
+                message.appendTo(chat.element);
+            }
+    
+        });
+    } else {
         let noMessage = newComponent({
             type : MESSENGER_COMPONENTS.ADVICE,
             id : MESSENGER_IDS.NO_MESSAGES,
@@ -315,28 +333,9 @@ export const buildMobileChat = (parent, data) => {
                 color : CSS.variable(COLORS.GRAYSON),
             }
         });
-
         noMessage.appendTo(chat.element);
     }
-    
-    data.content.forEach(element => {
-        if (element.type === MESSENGER_CHAT_TYPES.ACTION) {
-            const action = createAction(chooseActionIcon(element.action), element.message);
-            action.appendTo(chat.element);
-        }
 
-        if (element.type === MESSENGER_CHAT_TYPES.MESSAGE) {
-            const message = createChatMessage({
-                name: element.sender,
-                message: element.message,
-                id: "noId",
-                date: element.date,
-                attach: element.attach
-            });
-            message.appendTo(chat.element);
-        }
-
-    });
 
     const end = newComponent({ id: MESSENGER_IDS.END, styles : {
         padding : '10px'
@@ -353,7 +352,7 @@ export const buildMobileChat = (parent, data) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildChat = (parent, data) => {
+export const buildChat = (parent, data, application) => {
 
     /**
      * Wrapper 
@@ -387,9 +386,8 @@ export const buildChat = (parent, data) => {
         }
     });
 
-    const title = createTitle("Comentarios");
-    setStyles(title.element,
-        {
+    const title = createTitle(MSG.COMMENTS);
+    setStyles(title.element, {
             maxWidth: '550px',
             alignSelf: 'center',
             paddingBottom: '10px',
@@ -409,8 +407,7 @@ export const buildChat = (parent, data) => {
     /**
      * If no message, put one ;)
      */
-         if(data.content.length == 0)
-         {
+         if(data.content.length == 0){
              let noMessage = newComponent({
                  type : MESSENGER_COMPONENTS.ADVICE,
                  id : MESSENGER_IDS.NO_MESSAGES,
@@ -614,11 +611,13 @@ const checkProperties = (properties) => {
  * Fill aonSelect with possible receivers
  * @param {*} aonSelect 
  */
-export const fillReceiverInput = (aonSelect,data) => {
-    let options = [];
-    options.push({name : "Laboral", value : "0"});
-    options.push({name : "Fiscal", value : "1"});
-    options.push({name : "Soporte", value : "2"});
-    aonSelect.setOptions(options);
-    aonSelect.value = "0";
+export const fillReceiverInput = (aonSelect, data, application) => {
+    try {
+        const workgroups = application.getParent()._workgroups;
+        if(workgroups && workgroups.length>0){
+            aonSelect.options = JSON.stringify(workgroups);
+        }
+        if(data &&  data.workgroup) aonSelect.value = data.workgroup;
+
+    } catch (error) { console.log(error);}
 }

@@ -16,7 +16,6 @@ aon-textarea{
 
 aon-textarea .bar{
     --border-color: #e0e0e0;
-
     position : relative;
     height: 50px;
     border-bottom: 1px solid var(--border-color);
@@ -35,7 +34,7 @@ aon-textarea .bar .right{
 
 aon-textarea .bar .icon{
     transition: .25s;
-    width: 30px;
+    /* width: 30px; */
     display: block; 
     padding: 5px;
     border-radius: 8px;
