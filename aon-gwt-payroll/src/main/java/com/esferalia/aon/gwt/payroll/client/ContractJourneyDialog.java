@@ -492,7 +492,7 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 
 	private void showNewJourney() {
 		mainDeckPanel.showWidget(0);
-		this.setWidth("425px");
+		this.setWidth("440px");
 		listIT.setVisible(true);
 		backListIT.setVisible(false);
 	}
