@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.json.JSONObject;
+
 @SuppressWarnings("serial")
 public class Task  implements Serializable{
 	
@@ -289,4 +291,38 @@ public class Task  implements Serializable{
 	public Timestamp toTimestamp(Date date) {
 		return date != null ? new Timestamp(date.getTime()) : null;
 	}
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("id", getId());
+		json.put("domain", getDomain());
+		json.put("description", getDescription());
+		json.put("priority", getPriority());
+		json.put("status", getStatus());
+		json.put("percent", getPercent());
+		json.put("taskHolder", getTaskHolder());
+		json.put("workgroup", getWorkgroup());
+		json.put("source", getSource());
+		json.put("sourceId", getSourceId());
+		json.put("project", getProject());
+		json.put("registry", getRegistry());
+		json.put("activityType", getActivityType());
+		json.put("sender", getSender());
+		json.put("comments", getComments());
+		json.put("repeatPeriod", getRepeatPeriod());
+		json.put("gtaskId", getGtaskId());
+		json.put("gtasklistId", getGtasklistId());
+		json.put("number", getNumber());
+		json.put("creationUser", getCreationUser());
+		json.put("number", getNumber());
+		json.put("modificationUser", getModificationUser());
+		json.put("parent", getParent());
+		json.put("creationDate", getCreationDate()!=null ? getCreationDate().getTime() : null);
+		json.put("modificationDate", getModificationDate()!=null ? getModificationDate().getTime() : null);
+		json.put("startDate", getStartDate()!=null ? getStartDate().getTime() : null);
+		json.put("endDate",  getEndDate()!=null ? getEndDate().getTime() : null);
+		json.put("dueDate", getDueDate()!=null ? getDueDate().getTime(): null);
+		return json;
+	}
+
 }

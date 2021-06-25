@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.test.registry.customer.CustomerTestSuite;
 import com.esferalia.aon.occam.test.registry.media.RegistryMediaTestSuite;
 import com.esferalia.aon.occam.test.registry.supplier.SupplierTestSuite;
 import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
+import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
 	FinanceTestSuite.class,
 	AccountingTestSuite.class,
 	FiscalTestSuite.class,
+	WorkgroupTestSuite.class
 //	JsonTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })

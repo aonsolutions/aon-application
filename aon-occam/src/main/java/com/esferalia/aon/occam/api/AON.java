@@ -114,6 +114,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
+import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
@@ -5634,6 +5635,38 @@ public class AON {
 	}
 	
 	// ------------------- WORKGROUP
+	
+	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroup(ctx, filter);
+		} 
+	}
+	
+	public static Stream<Workgroup> getWorkgroupStream(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupStream(ctx, filter);
+		} 
+	}
+	
+	public static LinkedList<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupList(ctx, filter);
+		} 
+	}
+	
+	public static Workgroup saveWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().saveWorkgroup(ctx, workgroup);
+		} 
+	}
+	
+	public static void deleteWorkgroup(String domainName, Integer domainId, String login, Integer id){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			 getCommon().deleteWorkgroup(ctx, id);
+ 		} 
+	}
+	
+	@Deprecated
 	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
 		AONContext ctx = null;
 		try{
@@ -5643,7 +5676,7 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
+	@Deprecated
 	public static Workgroup insertWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
 		AONContext ctx = null;
 		try {
@@ -5653,7 +5686,7 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
+	@Deprecated
 	public static Workgroup updateWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
 		AONContext ctx = null;
 		try {
@@ -5663,17 +5696,7 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
-	public static Workgroup deleteWorkgroup(String domainName, Integer domainId, String login, Integer workgroup){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().deleteWorkgroup(ctx, workgroup);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
-	}
-	
+
 	public static Stream<Question> getRegistryQuestionStream(String domainName, Integer domainId, String login, Integer registry){
 		AONContext ctx = null;
 		try {

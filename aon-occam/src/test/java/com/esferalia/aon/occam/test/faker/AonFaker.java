@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -350,6 +352,13 @@ public class AonFaker {
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setName(faker.commerce().productName())
 			.setCode(AonRandom.string(0, 1, 14));
+	}
+	
+	public static Workgroup getWorkgroup( AONContext ctx ) {
+		return new Workgroup()
+			.setDomain(ctx.getDomainId())
+			.setDescription(faker.beer().name())
+			.setStatus(WorkgroupStatus.ACTIVE.value());
 	}
 	
 	public static ProductCategory getProductCategory( AONContext ctx ) {
