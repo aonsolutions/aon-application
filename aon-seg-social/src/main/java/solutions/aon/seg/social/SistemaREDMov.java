@@ -188,7 +188,7 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception  {
-	    	String situation = "01";
+			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
 	    	Integer mov = 0;
 			String ident = identity(employee.getIpf());
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
@@ -243,7 +243,7 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception {
-    	String situation = "63";
+    	String situation = employee.getSituacion()!=null ? employee.getSituacion() : "93";
     	Integer mov = 1;
 		String ident = identity(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
