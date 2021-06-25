@@ -1584,34 +1584,6 @@ public class JooqEmployee {
 				
 			}
 			
-			if(null == contractData.getQuotegroupId()){
-				if(null != contractData.getQuoteGroup()){
-					ContractDataRecord contizacionRecord = null;
-					
-					contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getQuotegroupId(), domain, "GRUPO_COTIZACION", contractData.getContractId(), "\""+ contractData.getQuoteGroup()+"\"", 
-								startDate, endDate)
-						.returning(CONTRACT_DATA.ID)
-						.fetchOne();
-					
-					contractData.setQuotegroupId(contizacionRecord.getId());
-				}
-			}else{
-				if(null == contractData.getQuoteGroup()){
-					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).execute();
-					contractData.setQuotegroupId(null);
-					contractData.setQuoteGroup(null);
-				}else{
-					dslContext.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getQuoteGroup()+"\"")
-					.set(CONTRACT_DATA.START_DATE, startDate)
-					.set(CONTRACT_DATA.END_DATE, endDate)
-					.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
-					.execute();
-				}
-			}
-			
 			if(null != contractData.getContracttypeId()){
 				dslContext.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId()))
