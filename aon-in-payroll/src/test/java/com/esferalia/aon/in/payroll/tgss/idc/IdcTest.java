@@ -3,6 +3,8 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static java.util.Calendar.MONTH;
@@ -59,10 +61,13 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1718,6 +1723,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 		cleanDeductionConcepts(aonContext);
 		cleanSystemDeductions(aonContext);
+		cleanSystemPayments(aonContext);
 		
 		
 		addSystemData(aonContext, startDate, null, new HashMap<String,String>(){
@@ -1743,6 +1749,27 @@ public class IdcTest extends AbstractSQLTestCase {
 				put("PORCENTAJE_FOGASA", "0.20");
 			}
 			});
+		PaymentConceptRecord prestIT = addConcept(aonContext, ContextVariable.PREST_IT);
+		
+		
+		addSSRegimePayment(aonContext 
+				,SSRegimeType.GENERAL 
+				,getFirstDayOfYear(getToday())
+				,prestIT
+				,PaymentType.CRA_0001
+				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				,"_P"
+				,SalaryType.SALARY);
+		addSSRegimePayment(aonContext 
+				,SSRegimeType.GENERAL 
+				,getFirstDayOfYear(getToday())
+				,prestIT
+				,PaymentType.CRA_0001
+				,String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				,"_P"
+				,SalaryType.SALARY);
 		
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(startDate), "CGC_E",
@@ -1816,7 +1843,9 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		datas.forEach( d-> addData(aonContext, contract, toSQL(d.startDate), toSQL(d.endDate), d.name, d.expression));
 		
-		ssBonuses.forEach( b -> addBonus(aonContext, contract, toSQL(b.getStartDate()), toSQL(b.getEndDate()), b.getFormula(), b.getDescription()) );
+		ssBonuses.stream().filter( b -> b.isEmployee() ).forEach( b -> addDeduction(aonContext, contract, toSQL(b.getStartDate()), toSQL(b.getEndDate()), b.getFormula(), b.getDescription(), DeductionType.BONUS ));
+		
+		ssBonuses.stream().filter( b -> b.isEnterprise() ).forEach( b -> addBonus(aonContext, contract, toSQL(b.getStartDate()), toSQL(b.getEndDate()), b.getFormula(), b.getDescription()) );
 		
 		return contract;
 	}
