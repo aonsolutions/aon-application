@@ -23,7 +23,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements IDocu
 	
 	public CostDocuments(List<Cost> costs) {
 		this(costs, 
-		new ArrayList<Salary.Type>(Arrays.asList(Salary.Type.SALARIES)));
+		new ArrayList<Salary.Type>(Arrays.asList(Salary.Type.values())));
 	}
 
 	CostDocuments(List<Cost> costs, List<Salary.Type> types) {
@@ -87,6 +87,8 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements IDocu
 	}
 
 	public void addType(Salary.Type type) {
+		if ( types.contains(type))
+			return;
 		types.add(type);
 	}
 

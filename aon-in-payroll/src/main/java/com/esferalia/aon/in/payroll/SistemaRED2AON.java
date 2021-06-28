@@ -1,27 +1,75 @@
 package com.esferalia.aon.in.payroll;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.AonDataSource;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaRED.LiquidationType;
+import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Calc;
+import solutions.aon.seg.social.object.Period;
 
 public class SistemaRED2AON {
 
-	/*
+	
 	public static void main(String[] args) throws java.text.ParseException, SQLException, AonConnectionException {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
@@ -200,14 +248,13 @@ public class SistemaRED2AON {
 			
 
 	}
-	*/
 
 
 	
 	
 	// ------------------------------------------------------------------------
-	/*
-	private static void addCalcs( 
+
+	public static void addCalcs( 
 			AONContext aonContext,
 			String login,
 			String domainName, 
@@ -236,7 +283,9 @@ public class SistemaRED2AON {
 				endDate, 
 				LiquidationType.TODAS, 
 				LiquidationOrigin.TODAS, 
-				nafs);
+				nafs
+				);
+		
 		
 		
 		allCalcs.forEach((liq, liqCalcs) -> liqCalcs.forEach(( naf, nafCalcs ) -> {
@@ -247,15 +296,30 @@ public class SistemaRED2AON {
 		
 						Salary salary = SLDSalaries.getSalary(liq, ccc, naf, nafCalcs, period);
 						salary.setEmployeeDocument(employee.getDni());
-	
-						if ( salary.getSalaryType() == SalaryType.L13 )
+						
+						Date l13startDate = null;
+						if ( salary.getSalaryType() == SalaryType.L13 ) {
+							l13startDate = salary.getStartDate();
 							salary.setStartDate(employee.getStartDate());
+						}
+						
 						employee.getName().ifPresent(name -> salary.setEmployeeName(name) );
 						
-						AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
+						try {
+							AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));
+						} catch ( Exception e ) {
+							java.sql.Date settleEndDate = addDays(l13startDate, -1);
+							Map<String,List<Employee>> oldEmployees = 
+									getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
+							oldEmployees.get(naf).forEach(oldEmployee -> {
+								salary.setStartDate(oldEmployee.getStartDate());
+								AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
+							} );
+						}
+
 					} catch ( Exception e ) {
 						e.printStackTrace();
-						// TODO : Trace error
+						System.err.println(e.getMessage());
 					}
 				});
 		
@@ -263,13 +327,11 @@ public class SistemaRED2AON {
 		
 		
 	}
-	*/
 	
+	private static java.sql.Date addDays( java.util.Date date, int days ) {
+		return new java.sql.Date(AonDateUtils.addDays(date, -1).getTime());		
+	}
 
-	
-	
-	
-	/*
 	private static void addBonus(
 			String login,
 			Integer userId,
@@ -301,9 +363,7 @@ public class SistemaRED2AON {
 			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf));
 			
 	}
-	*/
-
-	/*
+	
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
 			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth) {
 		return 
@@ -334,7 +394,6 @@ public class SistemaRED2AON {
 		.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
 		;
 	}
-	*/
 
 
 

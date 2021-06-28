@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
 import com.esferalia.aon.gwt.payroll.shared.CostExcelService;
@@ -22,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
 import com.esferalia.aon.gwt.payroll.shared.RemunerationRecordService;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -48,6 +50,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
@@ -415,6 +418,7 @@ public class Cost extends ResizeComposite {
 	private AonToolbarButton zoomInBtn;
 	private AonToolbarButton zoomOutBtn;
 	private AonToolbarButton seeBtn;
+	private AonToolbarButton tgssBtn;
 	
 	private ExcelMenu excelMenu;
 	private SeeMenu seeMenu;
@@ -774,6 +778,49 @@ public class Cost extends ResizeComposite {
 		formPanel.submit();
 	}
 	
+	public void syncCalcs () {
+		
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
+		
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "seg-social/" + SistemaREDServlet.CALCS);
+		
+		FormPanel formPanel = new FormPanel();
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(SistemaREDService.Parameter.DATE.name(),"01" + "/" + AonStringUtils.leftPad(Integer.toString(cost.getMonth()+1), 2 , "0") + "/" +cost.getYear()));
+		
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(event -> {
+			onFinishSLD();
+			
+			mainPanel.remove(formPanel);
+			
+			costDocuments.addType(Salary.Type.L00);
+			setCheckedStyle(seeMenu.getL00(), true);
+			costDocuments.addType(Salary.Type.L13);
+			setCheckedStyle(seeMenu.getL13(), true);
+			costDocuments.addType(Salary.Type.L03);
+			setCheckedStyle(seeMenu.getL03(), true);
+
+			getAsHTML();
+		});
+		
+		
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
+		
+		onStartSLD();
+		
+	}
+
 	// ----------------------------------------------- Toolbar
 	
 	private AonToolbar getToolbarPanel() {
@@ -825,6 +872,12 @@ public class Cost extends ResizeComposite {
 		});
 		toolbar.add(zoomInBtn);
 		
+		tgssBtn = new AonToolbarButton( "TGSS", AON.CSS.aonIconTgss() );
+		tgssBtn.addClickHandler(e -> {
+			onTGSS(e);
+		});
+		toolbar.add(tgssBtn);
+
 		return toolbar;
 
 	}
@@ -865,4 +918,8 @@ public class Cost extends ResizeComposite {
 		seeMenu.show();
 	}
 
+	private void onTGSS(ClickEvent e) {
+		syncCalcs();
+	}
+	
 }
