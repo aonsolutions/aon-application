@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -20,202 +20,202 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
 
 public class TaskImpl implements ITask {
 	
 	@Override
 	public Boolean isTaskParent(AONContext ctx, Integer parentId) {
-		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.isTaskParent(ctx, parentId));
+		return ctx.getDslContext().transactionResult(configuration -> TaskOldDAO.isTaskParent(ctx, parentId));
 	}
 	
 	@Override
-	public Task getTask(AONContext ctx, TaskFilter filter) {
-		return TaskDAO.getTask(ctx, filter);
+	public OldTask getTask(AONContext ctx, TaskFilter filter) {
+		return TaskOldDAO.getTask(ctx, filter);
 	}
 
 	@Override
-	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter) {
+	public Stream<OldTask> getTaskStream(AONContext ctx, TaskFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskStream(ctx, filter));
 	}
 	
 	@Override
-	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
+	public Stream<OldTask> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskStream(ctx, filter, issueFilter));
+				configuration -> TaskOldDAO.getTaskStream(ctx, filter, issueFilter));
 	}
 	
 	@Override
-	public Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent) {
+	public Stream<OldTask> getDuplicateTaskStream(AONContext ctx, Integer parent) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getDuplicateTaskStream(ctx, parent));
+				configuration -> TaskOldDAO.getDuplicateTaskStream(ctx, parent));
 	}
 	
 	@Override
 	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskCount(ctx, filter, issueFilter));
+				configuration -> TaskOldDAO.getTaskCount(ctx, filter, issueFilter));
 	}
 	
 	@Override
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskLabelStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskLabelStream(ctx, filter));
 	}
 
 	@Override
 	public Integer getCommentsCount(AONContext ctx, Integer taskId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getCommentsCount(ctx, taskId));
+				configuration -> TaskOldDAO.getCommentsCount(ctx, taskId));
 	}
 	
 	@Override
 	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, TaskCommentFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskCommentStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskCommentStream(ctx, filter));
 	}
 	
 	@Override
 	public Stream<TaskEvent> getTaskEventStream(AONContext ctx, Integer taskId) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskEventStream(ctx, taskId));
+				configuration -> TaskOldDAO.getTaskEventStream(ctx, taskId));
 
 	}
 	
 	@Override
 	public Integer getLastTaskNumber(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getLastTaskNumber(ctx));
+				configuration -> TaskOldDAO.getLastTaskNumber(ctx));
 	}
 	
 	@Override
-	public Integer createTask(AONContext ctx, Task task) {
+	public Integer createTask(AONContext ctx, OldTask task) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.createTask(ctx, task));
+				configuration -> TaskOldDAO.createTask(ctx, task));
 	}
 
 	@Override
-	public Task updateTask(AONContext ctx, Task task) {
-		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.updateTask(ctx, task));
+	public OldTask updateTask(AONContext ctx, OldTask task) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskOldDAO.updateTask(ctx, task));
 	}
 
 	@Override
 	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getLastTaskComment(ctx, taskId));	
+				configuration -> TaskOldDAO.getLastTaskComment(ctx, taskId));	
 	}
 	
 	@Override
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.createTaskComment(ctx, taskComment, taskId));	
+				configuration -> TaskOldDAO.createTaskComment(ctx, taskComment, taskId));	
 	}
 
 	@Override
 	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.updateTaskComment(ctx, taskComment));	
+				configuration -> TaskOldDAO.updateTaskComment(ctx, taskComment));	
 	}
 
 	@Override
 	public TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskEvent(ctx, taskEventId));	
+				configuration -> TaskOldDAO.getTaskEvent(ctx, taskEventId));	
 	}
 	
 	@Override
 	public TaskEvent getLastTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getLastTaskEvent(ctx, filter));	
+				configuration -> TaskOldDAO.getLastTaskEvent(ctx, filter));	
 	}
 	
 	@Override
 	public TaskEvent getTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskEvent(ctx, filter));	
+				configuration -> TaskOldDAO.getTaskEvent(ctx, filter));	
 	}
 
 	@Override
 	public TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.createTaskEvent(ctx, taskEvent, taskId));	
+				configuration -> TaskOldDAO.createTaskEvent(ctx, taskEvent, taskId));	
 	}
 
 	@Override
 	public TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.updateTaskEvent(ctx, taskEvent, taskEventId));	
+				configuration -> TaskOldDAO.updateTaskEvent(ctx, taskEvent, taskEventId));	
 	}
 	
 	@Override
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskMemberWStream(ctx, filter,workgroupId));	
+				configuration -> TaskOldDAO.getTaskMemberWStream(ctx, filter,workgroupId));	
 	}
 	
 	@Override
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskWorkgroupStream(ctx, filter));	
+				configuration -> TaskOldDAO.getTaskWorkgroupStream(ctx, filter));	
 	}
 
 	@Override
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType) {
-		 ctx.getDslContext().transaction(configuration -> TaskDAO.deleteTaskTag(ctx, taskId, tagType));		
+		 ctx.getDslContext().transaction(configuration -> TaskOldDAO.deleteTaskTag(ctx, taskId, tagType));		
 	}
 
 	@Override
 	public void createTaskTag(AONContext ctx, TaskTag taskTag) {
-		ctx.getDslContext().transaction(configuration -> TaskDAO.createTaskTag(ctx, taskTag));
+		ctx.getDslContext().transaction(configuration -> TaskOldDAO.createTaskTag(ctx, taskTag));
 	}
 	
 	@Override
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getWorkgroup(ctx, wId));	
+				configuration -> TaskOldDAO.getWorkgroup(ctx, wId));	
 	}
 
 	@Override
 	public void deleteTaskTag(AONContext ctx, TaskTagFilter filter) {
-		ctx.getDslContext().transaction(configuration -> TaskDAO.deleteTaskTag(ctx, filter));		
+		ctx.getDslContext().transaction(configuration -> TaskOldDAO.deleteTaskTag(ctx, filter));		
 	}
 
 	@Override
 	public Stream<Customer> getFilterCustomerStream(AONContext ctx, String filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getFilterCustomerStream(ctx, filter));	
+				configuration -> TaskOldDAO.getFilterCustomerStream(ctx, filter));	
 	}
 
 	@Override
 	public void deleteTaskComment(AONContext ctx, TaskCommentFilter filter) {
 		ctx.getDslContext().transaction(configuration -> 
-				TaskDAO.deleteTaskComment(ctx, filter));
+				TaskOldDAO.deleteTaskComment(ctx, filter));
 	}
 
 	@Override
 	public Workgroup insertWorkgroup(AONContext ctx, Workgroup workgroup) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.insertWorkgroup(ctx, workgroup));
+				configuration -> TaskOldDAO.insertWorkgroup(ctx, workgroup));
 	}
 
 	@Override
 	public Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.updateWorkgroup(ctx, workgroup));
+				configuration -> TaskOldDAO.updateWorkgroup(ctx, workgroup));
 	}
 
 	@Override
 	public Workgroup deleteWorkgroup(AONContext ctx, Integer wId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.deleteWorkgroup(ctx, wId));
+				configuration -> TaskOldDAO.deleteWorkgroup(ctx, wId));
 	}
 
 	@Override
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskHolder(ctx, filter));
+				configuration -> TaskOldDAO.getTaskHolder(ctx, filter));
 	}
 
 	@Override
@@ -227,66 +227,66 @@ public class TaskImpl implements ITask {
 	@Override
 	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.updateTaskHolder(ctx, taskHolder));
+				configuration -> TaskOldDAO.updateTaskHolder(ctx, taskHolder));
 	}
 	
 	@Override
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.insertTaskHolder(ctx, taskHolder));
+				configuration -> TaskOldDAO.insertTaskHolder(ctx, taskHolder));
 	}
 
 	@Override
 	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.deleteTaskHolder(ctx, taskHolder));
+				configuration -> TaskOldDAO.deleteTaskHolder(ctx, taskHolder));
 	}
 
 	@Override
 	public Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskHolderWorkgroupStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskHolderWorkgroupStream(ctx, filter));
 	}
 	
 	@Override
 	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.isTaskHolderWorkgroup(ctx, filter));
+				configuration -> TaskOldDAO.isTaskHolderWorkgroup(ctx, filter));
 	}
 
 	@Override
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup) {
 		ctx.getDslContext().transaction(
-				configuration -> TaskDAO.insertTaskHolderWorkgroup(ctx, taskHolder, workgroup));
+				configuration -> TaskOldDAO.insertTaskHolderWorkgroup(ctx, taskHolder, workgroup));
 	}
 
 	@Override
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter) {
 		ctx.getDslContext().transaction(
-				configuration -> TaskDAO.deleteTaskHolderWorkgroup(ctx, filter));
+				configuration -> TaskOldDAO.deleteTaskHolderWorkgroup(ctx, filter));
 	}
 
 	@Override
 	public void deleteTask(AONContext ctx, TaskFilter filter) {
 		ctx.getDslContext().transaction(
-				configuration -> TaskDAO.deleteTask(ctx, filter));		
+				configuration -> TaskOldDAO.deleteTask(ctx, filter));		
 	}
 
 	@Override
 	public void deleteTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		ctx.getDslContext().transaction(
-				configuration -> TaskDAO.deleteTaskEvent(ctx, filter));				
+				configuration -> TaskOldDAO.deleteTaskEvent(ctx, filter));				
 	}
 
 	@Override
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskHolderStream(ctx, filter));
+				configuration -> TaskOldDAO.getTaskHolderStream(ctx, filter));
 	}
 	
 	@Override
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskHolderStream(ctx, auth));
+				configuration -> TaskOldDAO.getTaskHolderStream(ctx, auth));
 	}
 }

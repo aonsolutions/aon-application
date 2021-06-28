@@ -16,7 +16,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.issues.DBConsults;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
@@ -87,7 +87,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void assigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
@@ -100,7 +100,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void unassigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())))
@@ -115,7 +115,7 @@ public class GithubServlet extends HttpServlet{
 		Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),login) != null ?
 				AON.getLastTaskNumber(domain.getName(), domain.getId(),login) : 0;
 		
-		Task task = new Task()
+		OldTask task = new OldTask()
 			.setDescription(issue.getString(MSG.TITLE))
 			.setComments(issue.getString(MSG.BODY))
 			.setDomain(domain.getId())
@@ -138,7 +138,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void reopened(Domain domain, String login, JSONObject issue) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
@@ -155,7 +155,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void closed(Domain domain, String login, JSONObject issue) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
@@ -167,7 +167,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void created(Domain domain, String login, JSONObject issue, JSONObject comment) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
@@ -200,7 +200,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void labeled(Domain domain, String login, JSONObject issue, JSONObject label) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));
@@ -220,7 +220,7 @@ public class GithubServlet extends HttpServlet{
 	}
 	
 	private void unlabeled(Domain domain, String login, JSONObject issue, JSONObject label) {
-		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
+		OldTask task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
 				.and(f.getSourceIdProperty().eq(issue.getInt(MSG.NUMBER)))
 				.and(f.getDomainProperty().eq(domain.getId())));

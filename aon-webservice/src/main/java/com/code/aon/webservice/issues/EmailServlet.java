@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 
@@ -41,7 +41,7 @@ public class EmailServlet extends HttpServlet{
 	}
 	
 	private void closeTask(Domain domain, String login, Integer taskId) {
-		Task task = DB.getTask(domain, login, taskId);
+		OldTask task = DB.getTask(domain, login, taskId);
 		if(!task.getStatus().equals(TaskStatus.FINISHED.value())){
 			task.setStatus(TaskStatus.FINISHED.value())
 				.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime())

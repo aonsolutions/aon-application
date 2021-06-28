@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.task.TagColor;
 
 public enum Priority implements Serializable {
@@ -39,7 +40,8 @@ public enum Priority implements Serializable {
 	
 	public static Priority valueNameOf(String name) {
 		for(Priority p :Priority.values())
-			if(name.equals(p.getName())) return p;
+			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
+				return p;
 		return NONE;
 	}
 	
@@ -47,9 +49,14 @@ public enum Priority implements Serializable {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static Priority safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= Priority.values().length) return null;
 		return Priority.values()[i];
+	}
+	
+	public static Priority safeValueOf(String name) {
+		return valueNameOf(name);
 	}
 }

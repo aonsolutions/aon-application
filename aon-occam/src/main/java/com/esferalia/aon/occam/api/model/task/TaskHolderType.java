@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.api.model.task;
 
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
-
 public enum TaskHolderType  {
 
 	INTERNAL,
@@ -40,7 +38,7 @@ public enum TaskHolderType  {
     
 	public static TaskHolderType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i >= DataAttachType.values().length) return null;
+		if (i < 0 || i >= TaskHolderType.values().length) return null;
 		return TaskHolderType.values()[i];
 	}
 	

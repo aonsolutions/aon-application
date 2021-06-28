@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
@@ -68,7 +68,7 @@ public class Issue {
 	
 	}
 	
-	public Issue(Task task, Registry assignee, LinkedList<Label> labels, Label type, Integer comments,
+	public Issue(OldTask task, Registry assignee, LinkedList<Label> labels, Label type, Integer comments,
 			Domain domain, String userName, Workgroup workgroup, Registry enterprise, Boolean principal, String url) {
 		this.id = task.getId();
 		this.parent = task.getParent();

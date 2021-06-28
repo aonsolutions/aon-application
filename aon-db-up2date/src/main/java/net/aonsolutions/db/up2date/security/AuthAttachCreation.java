@@ -30,7 +30,7 @@ public class AuthAttachCreation implements Update {
 
 
 
-	public static AuthAttachCreation AUTH_ATTACH_CREATION = new AuthAttachCreation();
+	public static final AuthAttachCreation AUTH_ATTACH_CREATION = new AuthAttachCreation();
 
 	private AuthAttachCreation() {
 		super();

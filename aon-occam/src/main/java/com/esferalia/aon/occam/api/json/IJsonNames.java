@@ -20,6 +20,7 @@ public interface IJsonNames {
 	String ACCRUAL_REGIME = "accrualRegime";
 	String ACTIVE = "active";
 	String ACTIVITY = "activity";
+	String ACTIVITY_TYPE = "activity_type";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
 	String ADJUST = "adjust";
@@ -69,6 +70,8 @@ public interface IJsonNames {
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String COUNTRY = "country";
+	String CREATION_DATE = "creation_date";
+	String CREATION_USER = "creation_user";
 	String CREDIT = "credit";
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
@@ -98,6 +101,7 @@ public interface IJsonNames {
 	String EMAIL = "email";
 	String EMPTY = "";
 	String ENABLE_HEREDITY = "enableHeredity";
+	String END_DATE = "end_date";
 	String ENTRY_ENABLED = "entryEnabled";
 	String EPIGRAPH = "epigraph";
 	String ERROR = "error";
@@ -171,6 +175,8 @@ public interface IJsonNames {
 	String MADE_MODELS_VISIBLE = "madeModelsVisible";
 	String MODEL = "model";
 	String MODELS = "models";
+	String MODIFICATION_DATE = "modification_date";
+	String MODIFICATION_USER = "modification_user";
 	String MONTH = "month";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	String NAME = "name";
@@ -203,6 +209,7 @@ public interface IJsonNames {
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
 	String PAID = "paid";
 	String PARAMS = "params";
+	String PARENT = "parent";
 	String PARENT_ID = "parentId";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
@@ -219,7 +226,9 @@ public interface IJsonNames {
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String PRICE = "price";
 	String PRINCIPAL = "principal";
+	String PRIORITY = "priority";
 	String PRODUCT_ID = "productId";
+	String PROJECT = "project";
 	String PROMO = "promo";
 	String PROVINCE = "province";
 	String PURCHASES_RATIO = "purchasesRatio";
@@ -261,6 +270,8 @@ public interface IJsonNames {
 	String SETTLED = "settled";
 	String SHOW_COVER = "showCover";
 	String SOURCE = "source";
+	String SOURCE_ID = "source_id";
+	String START_DATE = "start_date";
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";
 	String STATUS = "status";
@@ -269,6 +280,8 @@ public interface IJsonNames {
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	String TASK = "task";
+	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
 	String TECHNICAL = "technical";
@@ -297,6 +310,9 @@ public interface IJsonNames {
 	String WITHHOLDING_PERCENTAGE = "withholding_percentage";
 	String WITHHOLDING_QUOTA = "withholding_quota";
 	String WITHHOLDING_TYPE = "withholding_type";
+	String WORKFLOW = "workflow";
+	String WORKGROUP = "workgroup";
+	String WORKPLACE = "workplace";
 	String WORKPLACE_IDS = "workplaceIds";
 	// ---------------------------------------------------------------------------------------------	[Y]
 	String YEAR = "year";

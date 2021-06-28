@@ -130,7 +130,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -3324,7 +3324,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
+	public static Stream<OldTask> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,login);
@@ -5156,7 +5156,7 @@ public class AON {
 		}
 	}
 	
-	public static Task getTask(String domainName, Integer domainId, String login, TaskFilter filter){
+	public static OldTask getTask(String domainName, Integer domainId, String login, TaskFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5166,7 +5166,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<Task> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter){
+	public static Stream<OldTask> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5176,7 +5176,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
+	public static Stream<OldTask> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5186,7 +5186,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getDuplicateTaskStream(String domainName, Integer domainId, String login, Integer parent){
+	public static Stream<OldTask> getDuplicateTaskStream(String domainName, Integer domainId, String login, Integer parent){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5206,7 +5206,7 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Task> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
+	public static LinkedList<OldTask> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
 		return getTaskStream(domainName, domainId, login, filter, issueFilter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -5236,7 +5236,7 @@ public class AON {
 		}
 	}
 	
-	public static Task createTask(String domainName, Integer domainId, String login, Task task){
+	public static OldTask createTask(String domainName, Integer domainId, String login, OldTask task){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5256,7 +5256,7 @@ public class AON {
 		}
 	}
 	
-	public static Task updateTask(String domainName, Integer domainId, String login, Task task){
+	public static OldTask updateTask(String domainName, Integer domainId, String login, OldTask task){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
