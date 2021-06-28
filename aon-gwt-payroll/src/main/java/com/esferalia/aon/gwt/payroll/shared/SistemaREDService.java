@@ -42,6 +42,7 @@ public interface SistemaREDService {
 	public static final String SISTEMA_RED_URL = URL
 			.encode(GWT.getModuleBaseURL() + "seg-social");
 	
+	public static final String CALCS = "calcs";
 	public static final String EMPLOYEE = "employee";
 	public static final String REGISTER = "register";
 	public static final String EMPLOYEES = "employees";

@@ -19,6 +19,7 @@
 		}
 		
 		.cmd_btn{
+			white-space: nowrap;
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
