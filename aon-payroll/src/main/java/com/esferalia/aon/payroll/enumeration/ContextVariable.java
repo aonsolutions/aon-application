@@ -68,6 +68,7 @@ public enum ContextVariable implements IResourceable {
 	PARTY_DAYS("DIAS_FESTIVOS", VariableType.DOUBLE, false), 
 	OFF_DAYS("DIAS_INACTIVIDAD", VariableType.DOUBLE, false),
 	DROP_DAYS("DIAS_AUSENCIA", VariableType.DOUBLE, false),	
+	QUOTE_FACTOR("COEFICIENTE_COTIZADO", VariableType.DOUBLE, false),
 	
 	OFF_CAUSE("CAUSA_INACTIVIDAD", VariableType.DOUBLE, false),
 	NOT_PAID_PERMISSION("PERMISO_NO_RETRIBUIDO", VariableType.DOUBLE, false),
@@ -280,7 +281,19 @@ public enum ContextVariable implements IResourceable {
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
 	
-	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false)
+	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
+
+	// Percentages
+	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE), 
+	CGC_ENTERPRISE_PERCENT("PORCENTAJE_CGC_E", VariableType.DOUBLE),
+	IT_ENTERPRISE_PERCENT("TARIFA_IT", VariableType.DOUBLE), 
+	IMS_ENTERPRISE_PERCENT("TARIFA_IMS", VariableType.DOUBLE),
+	FP_EMPLOYEE_PERCENT("PORCENTAJE_FP", VariableType.DOUBLE), 
+	FP_ENTERPRISE_PERCENT("PORCENTAJE_FP_E", VariableType.DOUBLE),
+	UNEMPLOY_EMPLOYEE_PERCENT("PORCENTAJE_DESMPL", VariableType.DOUBLE), 
+	UNEMPLOY_ENTERPRISE_PERCENT("PORCENTAJE_DESMPL_E", VariableType.DOUBLE),
+	FOGASA_ENTERPRISE_PERCENT("PORCENTAJE_FOGASA", VariableType.DOUBLE), 
+	
 	;
 
 	public static final String ALL = "_P";
@@ -322,8 +335,12 @@ public enum ContextVariable implements IResourceable {
 	public static final String MONTHLY_PAYMENTS = "MENSUALIDAD";
 	public static final String TEMP_PAYMENT = "DEVENGO_TEMPORAL";
 	
+	public static final String  SUBTRACT_IT_DAY = "RESTAR_DIA_IT";
+	
 
 	public static final String PAYMENT_VARIABLE = "CONCEPTO";
+	
+	
 	
 	private static final List<String> NAMES =
 	Arrays.asList(new String []{
