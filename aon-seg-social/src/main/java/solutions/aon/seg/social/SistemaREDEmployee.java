@@ -12,7 +12,6 @@ import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -31,12 +29,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
@@ -82,7 +79,6 @@ class SistemaREDEmployee {
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
 	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
-
 		HtmlPage page = webClient
 				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
 		
@@ -93,12 +89,19 @@ class SistemaREDEmployee {
 		formParts.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 		formParts.getInputByName("btn_Sub2207601004").focus();
 		page = formParts.getInputByName("btn_Sub2207601004").click();
-		
-		HtmlLabel cccLabel =  page.getFirstByXPath("//label[contains(text(),'"+ccc.substring(2)+"')]");
-		if ( cccLabel != null ) {
-			cccLabel.focus();
-			page = cccLabel.dblClick();
+
+		HtmlTable table = (HtmlTable) page.querySelector("#Sub1000110078");
+		if(table!=null) {
+			for (final HtmlTableRow row : table.getRows()) {
+				HtmlTableCell cell = row.getCell(1);
+				if(cell.getVisibleText().replaceAll("\\s","").indexOf(ccc)>= 0) {
+					HtmlLabel label = cell.querySelector("label");
+					page = label.dblClick();
+					break;
+				}
+			}
 		}
+
 		manageStatusCode(page);
 
 		String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
@@ -347,7 +350,7 @@ class SistemaREDEmployee {
 	private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String ccc, String nss) throws IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setUseInsecureSSL(true);
 			return employeeFullInfo(ccc, nss, webClient);
 		}
