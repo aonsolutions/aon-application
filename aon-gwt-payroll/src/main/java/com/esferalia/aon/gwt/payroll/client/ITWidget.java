@@ -922,6 +922,9 @@ public abstract class ITWidget extends ResizeComposite {
 		public void addRow(String pName, String pStatus, Date pRowStartDate,
 				Date pRowEndDate, int pContractId, int contractLeaveId) {
 
+			if(DateUtils.isAfterOrEquals(pRowStartDate, pRowEndDate))
+				return;
+			
 			data.addRow();
 
 			data.setValue(row, 0, pName);
