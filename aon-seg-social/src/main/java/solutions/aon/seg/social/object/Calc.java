@@ -1,44 +1,61 @@
 package solutions.aon.seg.social.object;
 
 public class Calc {
+
 	private Double base;
-	private Double enterprise;
-	private Double employee;
 	private Double total;
+	private Double employee;
+	private Double enterprise;
+	private Double employeePercent;
+	private Double enterprisePercent;
 	
-	
-	
-	public Calc(Double base, Double enterprise, Double employee, Double total) {
-		super();
-		this.base = base;
-		this.enterprise = enterprise;
-		this.employee = employee;
-		this.total = total;
-	}
 	public Double getBase() {
 		return base;
 	}
-	public void setBase(Double base) {
+	public Calc setBase(Double base) {
 		this.base = base;
+		return this;
 	}
 	public Double getEnterprise() {
 		return enterprise;
 	}
-	public void setEnterprise(Double enterprise) {
+	public Calc setEnterprise(Double enterprise) {
 		this.enterprise = enterprise;
+		return this;
 	}
 	public Double getEmployee() {
 		return employee;
 	}
-	public void setEmployee(Double employee) {
+	public Calc setEmployee(Double employee) {
 		this.employee = employee;
+		return this;
 	}
 	public Double getTotal() {
 		return total;
 	}
-	public void setTotal(Double total) {
+	public Calc setTotal(Double total) {
 		this.total = total;
+		return this;
 	}
+	
+	public Double getEnterprisePercent() {
+		return enterprisePercent;
+	}
+	
+	public Calc setEnterprisePercent(Double enterprisePercent) {
+		this.enterprisePercent = enterprisePercent;
+		return this;
+	}
+	
+	public Double getEmployeePercent() {
+		return employeePercent;
+	}
+	
+	public Calc setEmployeePercent(Double employeePercent) {
+		this.employeePercent = employeePercent;
+		return this;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
