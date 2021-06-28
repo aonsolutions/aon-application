@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.code.aon.jaas.auth.util.Util;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -152,19 +152,18 @@ public class Utils {
 	}
 	
 	public static String getStatusColor(Task task){
-		TaskStatus taskStatus = TaskStatus.values()[task.getStatus()];
-		if(taskStatus.equals(TaskStatus.DELETED))
+		if(task.getStatus().equals(TaskStatus.DELETED))
 			return "gray";
-		else if(taskStatus.equals(TaskStatus.IN_PROGRESS)
-				|| taskStatus.equals(TaskStatus.PENDING)){
+		else if(task.getStatus().equals(TaskStatus.IN_PROGRESS)
+				|| task.getStatus().equals(TaskStatus.PENDING)){
 			if(task.getParent() != null){
 				return "red";
 			}
 			else return "green";
 		}
-		else if(taskStatus.equals(TaskStatus.FINISHED))
+		else if(task.getStatus().equals(TaskStatus.FINISHED))
 			return "black";
-		else if(taskStatus.equals(TaskStatus.FAQ))
+		else if(task.getStatus().equals(TaskStatus.FAQ))
 			return "blue";
 		return "black";
 	}

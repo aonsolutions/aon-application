@@ -25,7 +25,7 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TagColor;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
@@ -46,7 +47,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "ReposServlet", urlPatterns = { "/repos/*" ,
+@WebServlet(name = "ReposServlet", urlPatterns = { 	"/repos/*" ,
+												 	"/ms/api/repos/*",
 													"/aon_gwt_aio/ms/repos/*"})
 public class ReposServlet extends HttpServlet{
 	private static final Logger LOGGER  = Logger.getLogger(ReposServlet.class.getName());
@@ -182,7 +184,7 @@ public class ReposServlet extends HttpServlet{
 								AON.updateTaskComment(domain.getName(), domain.getId(), userName, tc);
 								object = new Comment(tc).toJSON();
 							} else {
-								Task task = AON.getTask(domain.getName(), domain.getId(), userName,
+								OldTask task = AON.getTask(domain.getName(), domain.getId(), userName,
 									f -> f.getNumberProperty().eq(Integer.parseInt(pathInfo[4])).and(f.getDomainProperty().eq(domain.getId())));
 								TaskComment tc = new TaskComment().setComment(json.getString("body"))
 										.setModificationDate(Calendar.getInstance().getTime())
@@ -221,14 +223,14 @@ public class ReposServlet extends HttpServlet{
 							} 						
 						} else if(pathInfo[5].equalsIgnoreCase("priority")){
 							if(pathInfo.length > 6){
-								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+								OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime())
 										.setPriority(Priority.valueNameOf(pathInfo[6]).value());	
 								AON.updateTask(domain.getName(), domain.getId(), userName,task);
 							}
 						} else if(pathInfo[5].equalsIgnoreCase("user")){
 							if(pathInfo.length > 6){
-								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+								OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime())
 										.setTaskHolder(Integer.parseInt(pathInfo[6]));
 								AON.updateTask(domain.getName(), domain.getId(), userName, task);
@@ -236,14 +238,14 @@ public class ReposServlet extends HttpServlet{
 							} 
 						} else if(pathInfo[5].equalsIgnoreCase("workgroup")){
 							if(pathInfo.length > 6){
-								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+								OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime())
 										.setWorkgroup(Integer.parseInt(pathInfo[6]));
 								AON.updateTask(domain.getName(), domain.getId(), userName, task);
 							}
 						}
 					} else{ // UPDATE TASK / ISSUE
-						Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+						OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 								.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
 						
 						if(json.opt("state") != null) {
@@ -296,7 +298,7 @@ public class ReposServlet extends HttpServlet{
 							String d = json.getString("duplicate");
 							if(!d.equals("liberate")){
 								Integer parentId = Integer.parseInt(d); 
-								Task parentTask = AON.getTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(parentId));
+								OldTask parentTask = AON.getTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(parentId));
 								updateTaskDuplicate(domain, userName, parentTask, parentId);
 								task = updateTaskDuplicate(domain, userName, task, parentId);
 								object = getDuplicateIssueJSON(domain, userName, task, url);
@@ -325,13 +327,12 @@ public class ReposServlet extends HttpServlet{
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
 						
 					Customer customer = new Customer();
-					
 					if(!faq) {
 						customer = AON.getCustomer(domain.getName(), domain.getId(), userName, f-> f.getDomainProperty().eq(domain.getId())
 								.and(f.getNameProperty().eq(json.getString(MSG.ENTERPRISE))));
 					}
 					
-					Task task = new Task()
+					OldTask task = new OldTask()
 						.setDescription(json.getString("title"))
 						.setComments(json.getString("body"))
 						.setDomain(domain.getId())
@@ -349,7 +350,7 @@ public class ReposServlet extends HttpServlet{
 						.setModificationUser(userName)
 						.setModificationDate(Calendar.getInstance().getTime());
 					
-					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
+					OldTask t = AON.createTask(domain.getName(), domain.getId(), userName, task);
 					Boolean principal = DB.isPrincipal(domain, userName, task);
 					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(),
 							customer, principal, url).toJSON();
@@ -385,7 +386,7 @@ public class ReposServlet extends HttpServlet{
 		}
 	}
 
-	private Task updateTaskDuplicate(Domain domain, String userName, Task task, Integer parentId){
+	private OldTask updateTaskDuplicate(Domain domain, String userName, OldTask task, Integer parentId){
 		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
 			.setParent(parentId);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
@@ -395,7 +396,7 @@ public class ReposServlet extends HttpServlet{
 		return task;
 	}
 	
-	private Task updateTaskFaq(Domain domain, String userName, Task task, Integer parentId){
+	private OldTask updateTaskFaq(Domain domain, String userName, OldTask task, Integer parentId){
 		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
 			.setParent(parentId).setStatus(TaskStatus.FAQ.value());
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
@@ -405,11 +406,11 @@ public class ReposServlet extends HttpServlet{
 		return task;
 	}
 	
-	private Task updateTaskLiberate(Domain domain, String userName, Task task){
+	private OldTask updateTaskLiberate(Domain domain, String userName, OldTask task){
 		Long count = AON.getTaskStream(domain.getName(), domain.getId(), userName, f -> f.getParentProperty().eq(task.getParent())
 				.and(f.getIdProperty().ne(task.getParent()))).count();
 		if(count <= 1){
-			Task p = AON.getTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(task.getParent()));
+			OldTask p = AON.getTask(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(task.getParent()));
 			if(p.getParent().equals(p.getId())){
 				p.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName).setParent(null);
 				AON.updateTask(domain.getName(), domain.getId(), userName, p);
@@ -447,7 +448,7 @@ public class ReposServlet extends HttpServlet{
 	}
 	
 	private JSONObject getPriorityJSON(Domain domain, String userName, String taskNumber) {
-		Task task = DB.getTask(domain, userName, Integer.parseInt(taskNumber));
+		OldTask task = DB.getTask(domain, userName, Integer.parseInt(taskNumber));
 		Priority p = Priority.values()[task.getPriority()];
 		return new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor()).toJSON();
 	}
@@ -527,7 +528,7 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONObject getIssueJSON(Domain domain, String userName, Task task, String url) {
+	private JSONObject getIssueJSON(Domain domain, String userName, OldTask task, String url) {
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
@@ -542,8 +543,8 @@ public class ReposServlet extends HttpServlet{
 		return issue.toJSON();
 	}
 	
-	private JSONObject getDuplicateIssueJSON(Domain domain, String userName, Task task, String url) {
-		Task padre = DB.getTask(domain, userName, task.getParent());
+	private JSONObject getDuplicateIssueJSON(Domain domain, String userName, OldTask task, String url) {
+		OldTask padre = DB.getTask(domain, userName, task.getParent());
 		task.setPriority(padre.getPriority());
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, padre.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
@@ -664,7 +665,7 @@ public class ReposServlet extends HttpServlet{
 	}
 	
 	private JSONArray getDuplicateIssuesJSON(Domain domain, String userName, String parent, String url) {
-		Task padre = DB.getTask(domain, userName, Integer.parseInt(parent));
+		OldTask padre = DB.getTask(domain, userName, Integer.parseInt(parent));
 		JSONArray array = new JSONArray();
 		DB.getDuplicateTaskStream(domain, userName, Integer.parseInt(parent)).forEach(task -> {
 			task.setPriority(padre.getPriority());
@@ -750,7 +751,7 @@ public class ReposServlet extends HttpServlet{
 				.setDateDiff(req.getParameter("date_diff"));
 	}
 	
-	private void sendAssigneeNotification(Domain domain, String login, Task task, Integer taskHolderId) {
+	private void sendAssigneeNotification(Domain domain, String login, OldTask task, Integer taskHolderId) {
 		// get taskHolder email!!!
 		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, taskHolderId);
 		String thName =  r.getAlias() != null && !r.getAlias().equals(MSG.EMPTY) ? r.getAlias() : r.getName();

@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -7,12 +11,30 @@ import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 
 public class TaskHolderJSON {
 	
+	public static LinkedList<TaskHolder> fromJSON(JSONArray json) {
+		LinkedList<TaskHolder> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
 	public static TaskHolder fromJSON(JSONObject json) {
 		return new TaskHolder()
 				.copy(RegistryJSON.fromJSON(json))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
 				.setType(TaskHolderType.INTERNAL)
 				.setUserId(JsonUtils.getInteger(json, IJsonNames.USER));
+	}
+	
+	public static JSONArray toJSON(LinkedList<TaskHolder> taskHolders) {
+		return toJSON(taskHolders.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<TaskHolder> taskHolders) {
+		JSONArray array = new JSONArray();
+		taskHolders.forEach(taskHolder -> array.put(toJSON(taskHolder)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(TaskHolder taskHolder) {

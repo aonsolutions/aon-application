@@ -611,6 +611,23 @@ public interface Properties {
 		Property<Integer> getSourceIdProperty();
 	}
 	
+	public interface TaskWorkflowProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getCommentProperty();
+	}
+	
+	public interface TaskAttachProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getTaskWorkflowProperty();
+		Property<Byte> getMimetypeProperty();
+	}
+	
 	public interface TaskEventProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

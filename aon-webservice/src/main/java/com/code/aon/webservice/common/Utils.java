@@ -22,8 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -133,8 +134,8 @@ public class Utils {
 		return new JSONObject(s);
 	}
 	
-	public static String getStatusColor(Task task){
-		TaskStatus taskStatus = TaskStatus.values()[task.getStatus()];
+	public static String getStatusColor(OldTask task){
+		TaskStatus taskStatus = TaskStatus.safeValueOf(task.getStatus());
 		if(taskStatus.equals(TaskStatus.DELETED))
 			return "gray";
 		else if(taskStatus.equals(TaskStatus.IN_PROGRESS)
