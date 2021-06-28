@@ -25,6 +25,8 @@ public interface IPayroll {
 	
 	public Employee addEmployee(AONContext ctx, String domainName, Employee employee);
 	
+	public Stream<Employee> getEmployees(AONContext ctx, EmployeeFilter filter);
+
 	public Optional<Employee> getEmployee(AONContext ctx, EmployeeFilter filter);
 
 	// -------------------- CONTRACT
