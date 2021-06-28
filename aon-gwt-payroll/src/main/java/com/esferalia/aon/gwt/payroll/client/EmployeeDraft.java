@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -681,7 +682,27 @@ public class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
+		
+		Double partialityCoef = contractData.getPartialityCoef();
+		if(null == partialityCoef || partialityCoef == 0.00) {
+			partialityCoef = calculatePartialityCoef();
+			contractData.setPartialityCoef(partialityCoef);
+		}
 		employee.partiality_coef.setValue(contractData.getPartialityCoef());	
+	}
+	
+	private Double calculatePartialityCoef() {
+		Double hours = 0.00;
+		for(JourneyDuration journeyDuration : employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
+				String expression = journeyDuration.getExpression();
+				expression = expression.replace(",", ".");
+				hours += Double.parseDouble(expression);
+			}
+		}
+		hours = hours / 40;
+				
+		return Math.round(hours * 100.0) / 100.0;
 	}
 	
 	// ------------------------------------------------- Auxiliar Methods
