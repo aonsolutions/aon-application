@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -73,6 +74,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EmployeeDAO {
 	
+	public  static Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
 	
 
 	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {
@@ -110,6 +112,51 @@ public class EmployeeDAO {
 		
 		.setWorkplaceId(r.get(WORKPLACE.ID))
 		);
+		
+	}
+
+	public  static Stream<Employee> getEmployees(AONContext aonContext, EmployeeFilter filter ) {
+		DSLContext dslContext = aonContext.getDslContext();
+		
+		//com.esferalia.aon.jooq.tables.ContractData CONTRACT_GROUP = CONTRACT_DATA.as("grupo");
+		
+		return 
+		dslContext
+		.select()
+		.from(CONTRACT)
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+		.innerJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+		.innerJoin(ENTERPRISE_REGISTRY).on(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
+		
+		.where(new EmployeePropertiesDAO().getConditions(filter))
+		.fetchStream().map( r ->  {
+			Employee employee = 
+			new Employee()
+			.setCcc(r.get(ENTERPRISE_CCC.CCC))
+			.setCif(r.get(ENTERPRISE_REGISTRY.DOCUMENT))
+	
+			.setDni(r.get(REGISTRY.DOCUMENT))
+			.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
+			.setName(r.get(REGISTRY.NAME))
+			.setSex(getSex(r.get(PERSON.GENDER)))
+			.setBirthDate(r.get(PERSON.BIRTH_DATE))
+			
+			.setEmployeeId(r.get(CONTRACT.ID))
+			.setStartDate(r.get(CONTRACT.START_DATE))
+			.setEndDate(r.get(CONTRACT.END_DATE))
+			.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
+			
+			.setWorkplaceId(r.get(WORKPLACE.ID));
+
+			return employee;
+			
+		}
+		
+		)
+		.collect(Collectors.toUnmodifiableList()).stream();
 		
 	}
 

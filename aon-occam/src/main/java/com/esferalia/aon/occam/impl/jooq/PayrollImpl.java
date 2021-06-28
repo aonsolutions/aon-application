@@ -50,6 +50,11 @@ public class PayrollImpl implements IPayroll {
 	public Optional<Employee> getEmployee(AONContext ctx, EmployeeFilter filter) {
 		return EmployeeDAO.getEmployee(ctx, filter);
 	}
+	
+	@Override
+	public Stream<Employee> getEmployees(AONContext ctx, EmployeeFilter filter) {
+		return EmployeeDAO.getEmployees(ctx, filter);
+	}
 
 	@Override
 	public Employee addEmployee(AONContext ctx, String domainName, Employee employee) {
