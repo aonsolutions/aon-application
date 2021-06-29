@@ -561,10 +561,13 @@ public class EmployeeDraft extends Composite {
 	public void initExistingEmployee( boolean hasPayroll){
 		fillExistingEmployee();
 		fillExistingContract();
-		if(hasPayroll)
+		if(hasPayroll) {
 		   employee.blockVariablesExistingContract();
-		else
+		   employee.blockFieldsExistingPayroll();
+		} else {
 		   employee.unblockVariablesExistingContract();
+		   employee.unblockFieldsExistingPayroll();
+		}
 	}
 	
 	private void fillExistingEmployee() {
@@ -914,7 +917,7 @@ public class EmployeeDraft extends Composite {
 					protected void onChangeContract(String contract, Date date) {}
 
 					@Override
-					protected void onEndContract() {}
+					protected void onEndContract(String settleReason) {}
 
 					@Override
 					protected void onStartContract() {}

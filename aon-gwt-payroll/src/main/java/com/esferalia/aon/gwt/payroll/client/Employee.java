@@ -1245,6 +1245,20 @@ public abstract class Employee extends ResizeComposite {
 		security_social_num.setEnabled(true);
 	}
 	
+	public void blockFieldsExistingPayroll(){
+		this.contractTypeLB.setEnabled(false);
+		this.quote_group.setEnabled(false);
+		this.occupation.setEnabled(false);
+		this.partiality_coef.setEnabled(false);
+	}
+	
+	public void unblockFieldsExistingPayroll(){
+		this.contractTypeLB.setEnabled(true);
+		this.quote_group.setEnabled(true);
+		this.occupation.setEnabled(true);
+		this.partiality_coef.setEnabled(true);
+	}
+	
 	// ------------------------------------------------- Auxiliar methods
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
