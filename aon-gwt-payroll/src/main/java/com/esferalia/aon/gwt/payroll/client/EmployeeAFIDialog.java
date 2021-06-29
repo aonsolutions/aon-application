@@ -11,11 +11,13 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
+import com.esferalia.aon.gwt.payroll.shared.SettleReason;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -37,6 +39,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -82,6 +85,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	Button endContractTB;
 	
 	@UiField
+	ListBox settleReasonLB;
+	
+	@UiField
 	TableElement dataTable;
 	
 	@UiField
@@ -121,6 +127,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private ContractType contractType;
+	private SettleReason settleReason;
 	
 	private Date contractStartDate;
 	private Integer contractId;
@@ -169,6 +176,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		initToggleButtons();
 		
 		this.contractType = new ContractType();
+		this.settleReason = new SettleReason();
 		this.payrollDate = payrollDate;
 		
 		tc2Original = tc2;
@@ -272,16 +280,28 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		if(null == endDate) {
 			setWidgetVisible(endContractTB, false);
 			setWidgetVisible(endContractLabel, false);
+			hideSettleReason();
 		} else if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
 			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
 			
 			setWidgetVisible(endContractTB, true);
 			setWidgetVisible(endContractLabel, true);
-			
+			hideSettleReason();
 		}else {
 			setWidgetVisible(endContractTB, false);
 			setWidgetVisible(endContractLabel, false);
+			hideSettleReason();
 		}
+	}
+	
+	private void hideSettleReason() {
+		datesTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
+		datesTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void showSettleReason() {
+		datesTable.getRows().getItem(2).getStyle().clearDisplay();
+		datesTable.getRows().getItem(3).getStyle().clearDisplay();
 	}
 
 	private void initView() {
@@ -292,11 +312,17 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Initialize View
 	
 	private void initListBox() {
+		// Settle Reason
+		this.settleReasonLB.clear();
+		for(Entry<Integer, String> settleReasonEntry : this.settleReason.getSettleReasonEntries()) {
+			this.settleReasonLB.addItem(settleReasonEntry.getKey() + " - " + settleReasonEntry.getValue(), settleReasonEntry.getKey().toString());
+		}
+		
 		// TC2
 		this.tc2.clear();
-		this.tc2.addItem("-");
+		this.tc2.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());
+			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
 		
 		// Quote Group
 		this.quoteGroup.clear();
@@ -485,7 +511,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			for(AFIChange afiChange : afiChangeList) {
 				switch (afiChange.getName()) {
 				case "TC2":
-					setSelectedValueLB(tc2, afiChange.getValue());
+					setSelectedValueLB(tc2, AonStringUtils.leftPad(afiChange.getValue(), 3, '0'));
 					contractType = Integer.parseInt(afiChange.getValue());
 					continue;
 				case "GRUPO_COTIZACION":
@@ -502,7 +528,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 			
-			if((contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600)) {
+			if(contractType == 0 || (contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600)) {
 				dataTable.getRows().getItem(9).getStyle().clearDisplay();
 				dataTable.getRows().getItem(10).getStyle().clearDisplay();
 			} else {
@@ -572,8 +598,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					newDate.setValue(null);
 				}
 			}else {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Error fecha", "La fecha seleccionada es anterior a la fecha de inicio de contrato o anterior a la ultima nomina");
+				AonDialog dialog = new AonDialog("AVISO: Error fecha", new HTML("La fecha seleccionada es anterior a la fecha de inicio de contrato (" + formatFullDate.format(contractStartDate) + ") o anterior a la ultima nomina (" + formatFullDate.format(payroll) + ")"));
+				dialog.warning();
 			}
 		}
 	}
@@ -586,7 +612,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		
 		if(hasChange()) {
 			generationAFITB.setEnabled(true);
-			getEnableDisableButton(generationAFITB, true);
+//			getEnableDisableButton(generationAFITB, true);
 			this.newDate.setValue(contractStartDate, true);
 		}else {
 			generationAFITB.setEnabled(false);
@@ -601,9 +627,14 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		Boolean value = !oldValue;
 		getEnableDisableButton(endContractTB, value);
 		
+		if(value)
+			showSettleReason();
+		else
+			hideSettleReason();
+		
 		if(hasChange()) {
 			generationAFITB.setEnabled(true);
-			getEnableDisableButton(generationAFITB, true);
+//			getEnableDisableButton(generationAFITB, true);
 		}else {
 			generationAFITB.setEnabled(false);
 			getEnableDisableButton(generationAFITB, false);
@@ -950,7 +981,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		hide();
 		if(isActiveToggleButton(notifyMovTB)) {
 			if(isStartContract()) onStartContract();
-			if(isEndContract()) onEndContract();
+			if(isEndContract()) onEndContract(settleReasonLB.getSelectedValue());
 			if(isChangeContract()) onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
 			if(isQuoteContract()) onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"),  afiChangesMap.getChangeDate());
 			if(isOcupationContract()) onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"),  afiChangesMap.getChangeDate());
@@ -1010,7 +1041,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	protected abstract void onOcupationContract(String ocupation, Date date);
 	protected abstract void onQuoteContract(String quoteGroup, Date date);
 	protected abstract void onChangeContract(String contract, Date date);
-	protected abstract void onEndContract();
+	protected abstract void onEndContract(String settleReason);
 	protected abstract void onStartContract();
 
 }
