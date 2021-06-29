@@ -188,5 +188,6 @@ public interface IRegistry {
 	// **************************** [REGISTRY SUGGESTION]
 	// **************************************************
 	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list, RegistryFilter filter);
+	public Stream<Registry> getGlobalSuggestionRegistries(RegistryFilter filter);
 	
 }

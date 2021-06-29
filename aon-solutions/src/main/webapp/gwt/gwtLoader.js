@@ -34,16 +34,19 @@
 	export const preStartModule = (module) => {
 		// google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		let search = `/${module}.nocache.js`;
+		let search2 = 'cache.js';
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {
 			let script = scripts[i];
-			if (script.src != null && script.src.indexOf(search) != -1) {
+			console.log(script.src);
+			if (script.src != null && (script.src.indexOf(search) != -1 || script.src.indexOf(search2) != -1)) {
 				let parent = script.parentNode;
 				parent.removeChild(script);
 			}
 		}
 
 		let iframes = window.document.getElementsByTagName("iframe");
+		console.log(iframes.length);
 		for (let i = 0; i < iframes.length; ++i) {
 			let iframe = iframes[i];
 			if (iframe.src != null && iframe.id == module) {
@@ -85,7 +88,7 @@
 				triggerModuleStart(module);
 			}
 		}
-		if(rootPanel.childNodes && rootPanel.childNodes.length > 0)
+		if(rootPanel && rootPanel.childNodes && rootPanel.childNodes.length > 0)
 			rootPanel.childNodes[0].style.inset = '0px';
 	}
 
