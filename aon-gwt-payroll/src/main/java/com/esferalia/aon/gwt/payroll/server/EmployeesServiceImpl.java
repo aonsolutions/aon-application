@@ -6187,6 +6187,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			builder.setCoef(coef.toString());
 		
 		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
+		
+		String settleReason = employeeContractInfo.getContractInfo().getSettleReason();
+		if(AonStringUtils.isNotBlank(settleReason))
+			builder.setSituation(settleReason);
 
 		return builder.build();
 	}
