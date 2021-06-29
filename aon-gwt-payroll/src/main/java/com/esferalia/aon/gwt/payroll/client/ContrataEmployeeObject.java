@@ -578,7 +578,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void sendEmployeeBaja(Consumer<Void> success, Consumer<Throwable> failure) {
+	public void sendEmployeeBaja(String settleReason, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeeContractData.getContractInfo().setSettleReason(settleReason);
 		employeesService.sendEmployeeBaja(employeeContractData, new AsyncCallback<Void>() {
 			
 			@Override

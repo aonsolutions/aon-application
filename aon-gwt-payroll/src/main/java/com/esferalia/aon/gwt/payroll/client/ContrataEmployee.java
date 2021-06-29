@@ -972,8 +972,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}
 			
 					@Override
-					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-					}
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
@@ -1009,8 +1008,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}
 
 					@Override
-					protected void onEndContract() {
-						contrataEmployeeObject.sendEmployeeBaja(s -> {
+					protected void onEndContract(String settleReason) {
+						contrataEmployeeObject.sendEmployeeBaja(settleReason, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
 						}, f -> {
