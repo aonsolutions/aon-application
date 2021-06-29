@@ -431,10 +431,13 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	public void initExistingEmployee( boolean hasPayroll){
 		fillExistingEmployee();
 		fillExistingContract();
-		if(hasPayroll)
+		if(hasPayroll) {
 		   employee.blockVariablesExistingContract();
-		else
+		   employee.blockFieldsExistingPayroll();
+		} else {
 		   employee.unblockVariablesExistingContract();
+		   employee.unblockFieldsExistingPayroll();
+		}
 	}
 	
 	private void fillExistingEmployee() {
