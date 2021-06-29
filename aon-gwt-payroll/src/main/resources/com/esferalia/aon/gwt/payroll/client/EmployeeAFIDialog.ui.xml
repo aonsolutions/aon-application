@@ -219,7 +219,7 @@
 
 	<g:HTMLPanel styleName="{style.form}">
 
-	    <table ui:field="datesTable">
+	    <table ui:field="datesTable" style="width: 24.1rem;">
 	        <tbody>
 	            <tr>
 	            	<td style="width: 30px;">
@@ -235,6 +235,16 @@
 	                </td>
 	                <td>
 	                    <g:Label styleName="{style.bold}" ui:field="endContractLabel">Notificar Baja Contrato</g:Label>
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td colspan="2">
+	                    <g:Label styleName="{style.bold} {style.marginLft5}">Código de baja</g:Label>
+	                </td>
+	            </tr>
+	             <tr>
+	                <td colspan="2">
+	                    <g:ListBox ui:field="settleReasonLB" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
 	                </td>
 	            </tr>
 	        </tbody>
