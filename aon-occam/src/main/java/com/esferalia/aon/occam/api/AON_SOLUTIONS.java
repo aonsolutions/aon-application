@@ -516,6 +516,10 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<Registry> getGlobalSuggestionRegistries(Domain domain, String login, RegistryFilter filter) {
+		return getRegistry().getGlobalSuggestionRegistries(filter);	
+	}
+	
 	public static Notification getNotification(Domain domain, String login, NotificationFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getNotification().getNotification(ctx, filter);
@@ -584,21 +588,25 @@ public class AON_SOLUTIONS {
 	
 	// ----- INVOICE - ACCEPT INVOICE
 	
-	public static JSONObject getInvoice(Domain domain, User user, Integer id) {
-		return getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
+	public static JSONObject getInvoiceJSON(Domain domain, User user, Integer id) {
+		return getInvoiceJSON(domain.getName(), domain.getId(), user.getLogin(), id);
 	}
 	
-	public static JSONObject getInvoice(Domain domain, String login, Integer id) {
-		return getInvoice(domain.getName(), domain.getId(), login, id);		
+	public static JSONObject getInvoiceJSON(Domain domain, String login, Integer id) {
+		return getInvoiceJSON(domain.getName(), domain.getId(), login, id);		
 	}
 
-	public static JSONObject getInvoice(String domainName, Integer domainId, String login, Integer id) {
+	public static JSONObject getInvoiceJSON(String domainName, Integer domainId, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
 			return InvoiceJSON.toJSON(invoice);
 		}
 	}
-	
+	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFullInvoice(ctx, id);
+		}
+	}
 	
 	public static JSONObject acceptInvoice(Domain domain, User user, JSONObject json) {
 		return acceptInvoice(domain.getName(), domain.getId(), user.getLogin(), json);

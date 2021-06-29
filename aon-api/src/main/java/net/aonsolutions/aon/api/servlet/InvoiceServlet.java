@@ -38,7 +38,6 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -266,9 +265,11 @@ public class InvoiceServlet extends AonApiHttpServlet{
     	}
 
     	if(invoiceFilter.getTypes() != null && invoiceFilter.getTypes().length > 0) {
-    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value());
+    		Filter filter2 = f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0]).value())
+    				.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[0].toUpperCase()).value()));
     		for(Integer i = 1; i < invoiceFilter.getTypes().length; i++) {
-    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()));
+    			filter2 = filter2.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i]).value()))
+    					.or(f.getTypeProperty().eq(InvoiceType.safeValueOf(invoiceFilter.getTypes()[i].toUpperCase()).value()));
     		}
     		filter = filter.and(filter2); 
     	}
@@ -307,7 +308,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 //		TediInvoice invoice = parser.aon2Tedi(domain, login, id);
 //		return TediInvoiceJSON.toJSON(invoice);
 		Attach a = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getAttachModuleProperty().eq(id), AttachType.INVOICE);
-		JSONObject json = AON_SOLUTIONS.getInvoice(domain, login, id);
+		JSONObject json = AON_SOLUTIONS.getInvoiceJSON(domain, login, id);
 
 		if(a != null && a.getId() != null) {
 			JSONObject data = new JSONObject();

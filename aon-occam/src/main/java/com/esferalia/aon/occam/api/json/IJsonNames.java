@@ -121,6 +121,7 @@ public interface IJsonNames {
 	String FROM_DUE_DATE = "fromDueDate";
 	String FROM = "from";
 	// ---------------------------------------------------------------------------------------------	[G] 
+	String GLOBAL = "global";
 	String GROUP_BY_NIF = "groupByNif";
 	// ---------------------------------------------------------------------------------------------	[H]
 	String HAS_BEFORE_PERIOD_AMOUNTS = "hasBeforePeriodAmounts";

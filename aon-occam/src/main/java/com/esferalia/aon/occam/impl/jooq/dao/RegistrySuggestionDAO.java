@@ -71,7 +71,7 @@ public class RegistrySuggestionDAO {
 	
 	public static Stream<Registry> getSuggestionRegistries(AONContext ctx, RegistryFilter filter) {
 		ctx.checkRead();	
-		return 	ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
 			.from(REGISTRY)
 			.where(REGISTRY_PROPERTIES.getConditions(filter))
 			.orderBy(REGISTRY.NAME)
@@ -80,5 +80,19 @@ public class RegistrySuggestionDAO {
 			.stream()
 			.map(r -> new Registry().setId(r.getValue(REGISTRY.ID)).setDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setName(r.getValue(REGISTRY.NAME)));	
+	}
+	
+	public static Stream<Registry> getGlobalSuggestionRegistries(RegistryFilter filter) {
+		try(AONContext ctx = GlobalDAO.getGlobalAONContext("")){
+			return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.DOCUMENT, REGISTRY.NAME)
+					.from(REGISTRY)
+					.where(REGISTRY_PROPERTIES.getConditions(filter))
+					.orderBy(REGISTRY.NAME)
+					.limit(30)
+					.fetch()
+					.stream()
+					.map(r -> new Registry().setId(r.getValue(REGISTRY.ID)).setDocument(r.getValue(REGISTRY.DOCUMENT))
+							.setName(r.getValue(REGISTRY.NAME)));	
+		}		
 	}
 }

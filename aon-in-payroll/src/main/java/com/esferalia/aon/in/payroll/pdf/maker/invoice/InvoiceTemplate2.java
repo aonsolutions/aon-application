@@ -39,8 +39,10 @@ import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
@@ -54,7 +56,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -85,6 +86,7 @@ public class InvoiceTemplate2 {
 	public static void create(OutputStream os, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument())
 		{
+			
 			InvoiceTemplate2 template = new InvoiceTemplate2();
 
 			if (os != null)
@@ -111,6 +113,7 @@ public class InvoiceTemplate2 {
 			template.drawBottomInfo(doc, invoice);
 			template.contents.close();
 			doc.save(template.filename);
+			new OutputStreamWriter(os,"ISO-8859-1");
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
@@ -414,7 +417,7 @@ public class InvoiceTemplate2 {
 			drawText(contents, finance.getPayMethodType() == null ?  "" :  finance.getPayMethodType().getDescription(), x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
 			x += 80;
 			
-			if(finance.getBankAccount() != null)
+			if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
 				drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
 			else
 				drawText(contents, "", x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);

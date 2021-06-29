@@ -61,9 +61,9 @@ public class RegistryMediaDAO {
 				.setComment(rec.getValue(RMEDIA.COMMENT))
 				.setMedia(MediaType.safeValueOf(rec.getValue(RMEDIA.MEDIA)))
 				.setRegistry(rec.getValue(RMEDIA.REGISTRY))
-				.setAdministrative(rec.getValue(RMEDIA.ADMINISTRATIVE) == 1)
-				.setCommercial(rec.getValue(RMEDIA.COMMERCIAL) == 1)
-				.setTechnical(rec.getValue(RMEDIA.TECHNICAL) == 1)
+				.setAdministrative(rec.getValue(RMEDIA.ADMINISTRATIVE) != null && rec.getValue(RMEDIA.ADMINISTRATIVE) == 1)
+				.setCommercial(rec.getValue(RMEDIA.COMMERCIAL) != null && rec.getValue(RMEDIA.COMMERCIAL) == 1)
+				.setTechnical(rec.getValue(RMEDIA.TECHNICAL) != null && rec.getValue(RMEDIA.TECHNICAL) == 1)
 				.setRaddress(rec.getValue(RMEDIA.RADDRESS))
 				.setValue(rec.getValue(RMEDIA.VALUE))
 				.setDirty(false);

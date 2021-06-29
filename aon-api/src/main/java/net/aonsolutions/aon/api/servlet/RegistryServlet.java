@@ -131,7 +131,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
-		RegistryAddress address = AON.getMain(api.getDomain(), api.getUser(), api.getParams().optInt(IJsonNames.REGISTRY));
+		RegistryAddress address = api.getParams().optBoolean("global")
+			? AON.getMain("global.aonsolutions.net", 0, api.getUser().getLogin(), api.getParams().optInt(IJsonNames.REGISTRY))
+			: AON.getMain(api.getDomain(), api.getUser(), api.getParams().optInt(IJsonNames.REGISTRY));
 		return RegistryAddressJSON.toJSON(address);
 	}
 	

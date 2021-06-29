@@ -35,9 +35,13 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -244,6 +248,20 @@ public class InvoiceAutoComplete {
 				}
 			} else inv.setRegistry(inv.getRegistryData().getId());
 		}
+		
+		if(inv.getRegistryData().isGlobal()) {
+			Registry registry = GlobalDAO.copyRegistry(ctx.getContext(), inv.getRegistryData().getId());
+			inv.setRegistry(registry.getId());
+			inv.setRegistryData(registry);
+			if(InvoiceType.SALES.equals(inv.getType())) {
+				CustomerDAO.save(ctx.getContext(), new Customer().copy(registry));
+			} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
+				SupplierDAO.save(ctx.getContext(), (Supplier) registry);
+			} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
+					|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
+				CreditorDAO.save(ctx.getContext(), (Creditor) registry);
+			}	
+		}
 	};
 	
 	/**
@@ -439,8 +457,7 @@ public class InvoiceAutoComplete {
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 	
-	public static void completeInvoice2(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
-
+	public static void completeInvoice2(AONContext ctx, AonConfiguration config, Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)

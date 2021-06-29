@@ -27,7 +27,9 @@ public class FinanceJSON {
 	
 	public static Finance fromJSON(JSONObject json) {
 		Date date = TediJSONUtils.parseDate(json.optString(IJsonNames.DUE_DATE));
-		Integer paymethod = AonNumberUtils.toInteger(json.optString(IJsonNames.PAYMETHOD));
+		Integer paymethod = null;
+		if(AonNumberUtils.isNumber(json.optString(IJsonNames.PAYMETHOD)))
+			paymethod = AonNumberUtils.toInteger(json.optString(IJsonNames.PAYMETHOD));
 		return new Finance()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
