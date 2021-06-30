@@ -254,12 +254,15 @@ public class InvoiceAutoComplete {
 			inv.setRegistry(registry.getId());
 			inv.setRegistryData(registry);
 			if(InvoiceType.SALES.equals(inv.getType())) {
-				CustomerDAO.save(ctx.getContext(), new Customer().copy(registry));
+				CustomerDAO.save(ctx.getContext(), new Customer()
+						.copy(registry).setScope(inv.getScope().getId()));
 			} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
-				SupplierDAO.save(ctx.getContext(), (Supplier) registry);
+				SupplierDAO.save(ctx.getContext(), new Supplier()
+						.copy(registry).setScope(inv.getScope().getId()));
 			} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
 					|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
-				CreditorDAO.save(ctx.getContext(), (Creditor) registry);
+				CreditorDAO.save(ctx.getContext(), new Creditor()
+						.copy(registry).setScope(inv.getScope().getId()));
 			}	
 		}
 	};
@@ -465,12 +468,12 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
+		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.andThen(COMPLETE_DETAILS)
-		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_FINANCES)
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
