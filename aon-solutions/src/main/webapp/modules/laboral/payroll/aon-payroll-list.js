@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear, setValueName } from "../../../services/utils.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
-import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
+import {  PRESENCE_FILTER } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { ToolbarType } from "../../../models/enums.js";
@@ -54,7 +54,7 @@ export class AonPayrollList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this.applicationEl.addToolbarTitle("Nóminas");
+    this.applicationEl.addToolbarTitle(MSG.PAYSHEETS);
     this._list=[];
   }
 
@@ -154,8 +154,7 @@ export class AonPayrollList extends AonElement {
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      aonTable.removeColumns();
+    if (aonTable) {SigninSidenav
       aonTable.addColumn("Nombre", "string", "name", "30%");
       aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
       aonTable.addColumn("F. Inicio", "date", "startDateP", "10%");

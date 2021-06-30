@@ -9,13 +9,14 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
 import { setAttributes } from '../../services/utils.js';
+import { getTaskHolder } from '../../services/taskHolderService.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
 	FILTER;
 	_workgroups;
 	_filter;
-
+	SENDER;
 	constructor () {
 		super();
 		this.FILTER = REQUEST_FILTER.ABIERTAS;
@@ -40,7 +41,6 @@ export class AonMessenger extends AonElement {
 		this._filter = {
 			workgroup: undefined
 		};
-
 	}
 
  	build() {
@@ -49,6 +49,7 @@ export class AonMessenger extends AonElement {
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
 		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		getTaskHolder().then(task=>this.SENDER = task);
 	}
 
 	paintView(){
@@ -87,7 +88,6 @@ export class AonMessenger extends AonElement {
 		let application = this.getApplication();
 		getWorkgroups().then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
-		  console.log("hola");
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  workgroup.forEach((item, i) => {
 			let option = {

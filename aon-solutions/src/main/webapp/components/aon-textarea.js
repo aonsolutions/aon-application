@@ -275,7 +275,8 @@ export class AonTextArea extends AonElement {
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
-				contentEditable: true
+				contentEditable: true,
+				name: this.name
 			},
 			styles : {
 				userSelect : 'text',

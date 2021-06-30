@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
+import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete } from "../../services/service.js";
 import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
@@ -22,7 +22,6 @@ export class AonLaboral extends AonElement {
   AON_LABORAL;
   dur;
   _filter;
-	_roles;
 	MOVEMENTS;
 	_movements;
 
@@ -236,7 +235,7 @@ export class AonLaboral extends AonElement {
     this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
         this.applicationEl.startLoading();
         try {
-          await postDeleteMov({
+          await movDelete({
             ...data,
             nombre: data.nombre || data.name
           });

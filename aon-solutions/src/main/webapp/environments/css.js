@@ -271,6 +271,7 @@ export const NO_FOCUS = "noFocus";
 export const CONTENT_EDITABLE = "contentEditable";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
+export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 
 // aon-textarea 
 

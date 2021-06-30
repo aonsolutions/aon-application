@@ -38,11 +38,11 @@ export class AonMovementsList extends AonElement {
   }
 
   initialize(){
+    this._list = [];
     this.id = this.id || PAYROLL_VIEWS.AON_MOVEMENTS_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this._list = [];
   }
 
   disconnectedCallback() {

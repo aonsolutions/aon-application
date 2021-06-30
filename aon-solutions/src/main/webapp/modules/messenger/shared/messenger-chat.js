@@ -1,5 +1,4 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
@@ -8,7 +7,7 @@ import { ToolbarType } from "../../../models/enums.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { newComponent, setAttributes, setClasses, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import { createAction, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
+import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, MESSENGER_ACTION_TYPES, MESSENGER_CHAT_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { createOutlinedMaterialIcon, createSpaceBetweenRow, createText } from "./creationUtils.js";
 import { buildMobileWritter, buildTextareaToolbar } from "./messenger-writter.js";
@@ -21,9 +20,9 @@ export const LEFT = "LEFT";
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildMobileChat = (parent, data, application) => {
-
-    parent.element.style.padding = 0;
+export const buildMobileChat = (chatEl, data, parent) => {
+    const application = parent.getApplication();
+    chatEl.element.style.padding = 0;
     /**
      * Wrapper 
      * if some new menus / toolbars needed, here.
@@ -70,7 +69,7 @@ export const buildMobileChat = (parent, data, application) => {
 
         waitEl("#" + MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR).then(tb => {
             tb.addButton2(ACTIONS.SAVE,() => {
-                
+                parent.save();
             })
     
             tb.addButton2(ACTIONS.BACK,() => {
@@ -97,13 +96,15 @@ export const buildMobileChat = (parent, data, application) => {
         /**
          * Creating title input
          */
-        const titleIn = new AonInput();
-        titleIn.id = MESSENGER_IDS.NEW_REQUEST_PANEL_TITLE;
-        titleIn.type = "text";
-        titleIn.name = "Titulo"
-        titleIn.description = "Título";
+        const titleIn = setStyles( createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, "Escriba su titulo aquí"), {
+            display : "block",
+            width: "100%",
+        });
 
-        setStyles(titleIn, {
+         /**
+         * Creating description input
+         */
+        const descriptionIn = setStyles( createDivEditable(data.description, MESSENGER_IDS.DESCRIPTION_TASK, MSG.DESCRIPTION), {
             display : "block",
             width: "100%",
         });
@@ -155,8 +156,8 @@ export const buildMobileChat = (parent, data, application) => {
 
           //-----------------TASK HOLDER
         const taskHolderSelect = setAttributes( new AonSelect(),{
-            id: MESSENGER_IDS.TASKHOLDER_SELECT,
-            name: MESSENGER_IDS.TASKHOLDER_SELECT,
+            id: MESSENGER_IDS.TASKHOLDER,
+            name: MESSENGER_IDS.TASKHOLDER,
             title: "Asignar a"
         });
         setStyles(taskHolderSelect, {
@@ -169,36 +170,33 @@ export const buildMobileChat = (parent, data, application) => {
         /**
          * Creating text area
          */
-        const textArea = new AonTextArea();
-        textArea.id = MESSENGER_IDS.NEW_REQUEST_PANEL + "Textarea";
-
-        setStyles(textArea,{
+        const aonTextArea = new AonTextArea();
+        aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+        aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
+        setStyles(aonTextArea,{
             height: "100%",
             width: "100%",
             marginTop : 0,
             boxShadow : "none",
         })
 
-        waitEl("#" + MESSENGER_IDS.NEW_REQUEST_PANEL + "Textarea").then(el =>{
-            buildTextareaToolbar(el);
-        });
-
         /**
         * smooth border colors
         */
-        waitChildEl(textArea,"toolbar").then(el => {
+        waitChildEl(aonTextArea,"toolbar").then(el => {
             setStyles(el,{
-                paddingLeft : "calc(1.5em - 5px)",
-                paddingRight :"calc(1.5em - 5px)",
+                paddingLeft  : "calc(1.5em - 5px)",
+                paddingRight : "calc(1.5em - 5px)",
                 borderBottom : "1px solid #e0e0e0"
             });
         });
 
         newRequestPanel.appendChild(toolbar);
         newRequestPanel.appendChild(titleIn); 
+        newRequestPanel.appendChild(descriptionIn); 
         newRequestPanel.appendChild(workgroupSelect);
         newRequestPanel.appendChild(taskHolderSelect);
-        newRequestPanel.appendChild(textArea);
+        newRequestPanel.appendChild(aonTextArea);
         newRequestPanel.appendTo(wrapper.element);
     }
 
@@ -249,8 +247,8 @@ export const buildMobileChat = (parent, data, application) => {
                 button.click();
             }, 250);
         })
-
-       const titleSpan = bar.querySelector(".aonSecondaryToolbarTitle")
+        
+       const titleSpan = bar.querySelector(`.${CSS.AON_SECONDARY_TOOLBAR_TITLE}`)
        titleSpan.style.fontWeight = 400;
 
        setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
@@ -281,9 +279,11 @@ export const buildMobileChat = (parent, data, application) => {
     title.appendTo(chat.element);
 
 
-    const start = newComponent({ id: MESSENGER_IDS.START, styles : {
-        padding : '10px'
-    } });
+    const start = newComponent({ id: MESSENGER_IDS.START, 
+        styles : {
+            padding : '10px' 
+        }
+    });
     start.appendTo(chat.element);
 
     /**
@@ -306,12 +306,11 @@ export const buildMobileChat = (parent, data, application) => {
                 });
                 message.appendTo(chat.element);
             }
-    
         });
     } else {
         let noMessage = newComponent({
             type : MESSENGER_COMPONENTS.ADVICE,
-            id : MESSENGER_IDS.NO_MESSAGES,
+            id   : MESSENGER_IDS.NO_MESSAGES,
             text : 'No hay mensajes en esta solicitud',
             styles : {
                 fontSize : '1em',
@@ -322,14 +321,17 @@ export const buildMobileChat = (parent, data, application) => {
     }
 
 
-    const end = newComponent({ id: MESSENGER_IDS.END, styles : {
-        padding : '10px'
-    }});
+    const end = newComponent({ 
+        id: MESSENGER_IDS.END, 
+        styles : {
+            padding : '10px'
+        }
+    });
     end.appendTo(chat.element);
 
     buildMobileWritter(wrapper,data)
     chat.appendTo(wrapper.element);
-    wrapper.appendTo(parent.element);
+    wrapper.appendTo(chatEl.element);
 }
 
 /**
@@ -337,7 +339,7 @@ export const buildMobileChat = (parent, data, application) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildChat = (parent, data, application) => {
+export const buildChat = (parent, data) => {
 
     /**
      * Wrapper 
@@ -398,8 +400,8 @@ export const buildChat = (parent, data, application) => {
                  id : MESSENGER_IDS.NO_MESSAGES,
                  text : 'No hay mensajes en esta solicitud',
                  styles : {
-                     fontSize : '1em',
-                     color : CSS.variable(COLORS.GRAYSON),
+                    fontSize : '1em',
+                    color : CSS.variable(COLORS.GRAYSON),
                  }
              });
      
@@ -612,10 +614,9 @@ export const fillWorkGroup = (aonSelect, data, application) => {
 
 const fillTaskHolder = async (workgroupId, data=undefined) => {
     try {
-        const aonSelect = document.getElementById(MESSENGER_IDS.TASKHOLDER_SELECT);
+        const aonSelect = document.getElementById(MESSENGER_IDS.TASKHOLDER);
         if(aonSelect){
             const taskHolders = await getTastHoldersWorkGroup({workgroupId});
-            console.log(taskHolders);
             if(taskHolders && taskHolders.length>0){
                 aonSelect.options = JSON.stringify(taskHolders);
             }
