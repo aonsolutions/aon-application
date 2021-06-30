@@ -5,9 +5,9 @@ import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../../environments/env
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import { createButtonWrapper, createEditableTitle, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
+import { createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
-import { createStartJustifiedRow } from "./creationUtils.js";
+import { createStartJustifiedColumn } from "./creationUtils.js";
 import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
 import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.js";
 
@@ -26,25 +26,24 @@ let me = true;
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildDesktopWritter = (parent, data, application) => {
+export const buildDesktopWritter = (writter, data, parent) => {
+    const application = parent.getApplication();
     /**
      * Building title
      */
-    const titleDiv = createStartJustifiedRow();
+    const titleDiv = createStartJustifiedColumn();
     setStyles(titleDiv.element ,{ width : "100%" });
-    
-    const title = createEditableTitle(data.title);
-    setEvents(title.element, { input : () => {
-        /**
-         * Changing data > title here 
-         */
-    } });
-
+    //TITLE
+    const title = createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, "Escriba su titulo aquí");
+    titleDiv.element.appendChild(title);
+    //DESCRIPTION
+    const description = createDivEditable(data.description, MESSENGER_IDS.DESCRIPTION_TASK, MSG.DESCRIPTION);
+    titleDiv.element.appendChild(description);
     //----------------WORKGROUP    //----------------WORKGROUP
     const receiverDiv = createReceiverDiv();
     const workgroupSelect = setAttributes( new AonSelect(),{
-        id: MESSENGER_IDS.WORKGROUP_SELECT,
-        name: MESSENGER_IDS.WORKGROUP_SELECT,
+        id: MESSENGER_IDS.WORKGROUP,
+        name: MESSENGER_IDS.WORKGROUP,
         title: MSG.WORKGROUP
     });
 
@@ -53,8 +52,8 @@ export const buildDesktopWritter = (parent, data, application) => {
 
     //-----------------TASK HOLDER
     const taskHolderSelect = setAttributes( new AonSelect(),{
-        id: MESSENGER_IDS.TASKHOLDER_SELECT,
-        name: MESSENGER_IDS.TASKHOLDER_SELECT,
+        id: MESSENGER_IDS.TASKHOLDER,
+        name: MESSENGER_IDS.TASKHOLDER,
         title: "Asignar a"
     });
     taskHolderSelect.style.marginLeft = "5px";
@@ -73,7 +72,8 @@ export const buildDesktopWritter = (parent, data, application) => {
      * 
      */
     const aonTextArea = new AonTextArea();
-    aonTextArea.id = "aonWritter"
+    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+    aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
     waitEl(`#${aonTextArea.id}`).then(el =>  buildTextareaToolbar(el));
 
 
@@ -88,20 +88,16 @@ export const buildDesktopWritter = (parent, data, application) => {
     const sendButtonWrapper = createButtonWrapper();
     const sendButton = createSendButton();
 
-    /**
-     * Set send button click envent
-     */
-    setEvents(sendButton.element,{
-        click : () => sendMessage(aonTextArea)
-    });
+    // /**
+    //  * Set send button click envent
+    //  */
+    // setEvents(sendButton.element,{
+    //     click : () => sendMessage(aonTextArea)
+    // });
 
     const sendIcon = createSendIcon();
 
-    /**
-     * Setting up UI 
-     */
-    title.appendTo(titleDiv.element);
-
+ 
 
     uploadIcon.appendTo(upload.element);
     uploadText.appendTo(upload.element);
@@ -112,12 +108,12 @@ export const buildDesktopWritter = (parent, data, application) => {
     sendButtonWrapper.appendTo(sendBar.element);
 
     /* main elements append */
-    titleDiv.appendTo(parent.element);
+    titleDiv.appendTo(writter.element);
 
-    receiverDiv.appendTo(parent.element);
-    parent.appendChild(aonTextArea);
+    receiverDiv.appendTo(writter.element);
+    writter.appendChild(aonTextArea);
 
-    sendBar.appendTo(parent.element);
+    sendBar.appendTo(writter.element);
 }
 
 /**
@@ -197,8 +193,8 @@ export const buildMobileWritter = (parent) => {
         boxShadow: "none",
         margin: 0,
     });
-    textarea.id = "aonWritter"
-
+    textarea.id = MESSENGER_IDS.COMMENT_TASK
+    textarea.name = MESSENGER_IDS.COMMENT_TASK;
     waitEl(`#${textarea.id}`).then(el => buildTextareaToolbar(el));
 
     waitChildEl(textarea, "#" + textarea.TEXTAREA).then(writtable => {
@@ -252,7 +248,7 @@ export const hideWritter = () => {
  * @param {*} aonTextArea - The mensaje source
  * @returns void.
  */
-const sendMessage = (aonTextArea) => {
+export const sendMessage = (aonTextArea) => {
 
     /**
      * If preview mode is enabled, 
@@ -265,7 +261,7 @@ const sendMessage = (aonTextArea) => {
 
     const value =  aonTextArea.value;//aonTextArea.compiledValue.trim();
     const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const data = parent.data;
+    const data = parent._data;
     aonTextArea.clear();
     
     if(!value || value === "") return;

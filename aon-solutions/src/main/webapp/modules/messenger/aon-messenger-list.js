@@ -1,11 +1,11 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { EVENT } from "../../environments/environments.js";
+import { COLORS, CSS, EVENT, MATERIAL_ICONS } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles } from "../../services/companyService.js";
 import { getTasks } from "../../services/taskService.js";
-import { setFullDate, setTime } from "../../services/utils.js";
+import { formatDate, setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin//signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS } from "./MessengerEnums.js";
@@ -102,13 +102,18 @@ export class AonMessengerList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Titulo", "string", "title", "30%");
+      aonTable.addColumn("", "icon", "icon", "2%");
+      aonTable.addColumn("Titulo", "string", "titleDescription", "30%");
       aonTable.addColumn("Fecha", "string", "dateParse", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
           const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+					res.icon = MATERIAL_ICONS.INFO;
+					res.icon_title = "status";
+					res.icon_color = CSS.variable(COLORS.MATERIAL_BLUE);
+          res.icon_class = "material-icons-outlined";
           aonTable.addRow({...res, dateParse}, (el) => {
             this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,res);
           });
@@ -128,13 +133,15 @@ export class AonMessengerList extends AonElement {
         resp.map((res, idx) => {
           const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
           const options = {
-            icon: idx%2==0 ? "unarchive" : "archive",
+            icon: MATERIAL_ICONS.INFO,
+            icon_color: CSS.variable(COLORS.MATERIAL_BLUE),
+            icon_class: "material-icons-outlined",
             title: res.title,
             subtitle: dateParse,
           };
-          aonTable.addLi(options, idx, (el) => {
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,res);
-          });
+          aonTable.addLi(options, idx, () => 
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, res)
+          );
         });
       } catch (e) {
         console.log(e);
@@ -148,10 +155,11 @@ export class AonMessengerList extends AonElement {
       const datos = await getTasks();
       if (datos){
         datos.map(task=>{
+          const titleDescription = `<span style="font-size:14px;font-weight: 500;">[${task.title}] ${task.description}</span>`;
           data.push({
             ...task,
-            date: task.startDate,
-            title:task.description,
+            date:task.start_date,
+            titleDescription
           });
         })
         

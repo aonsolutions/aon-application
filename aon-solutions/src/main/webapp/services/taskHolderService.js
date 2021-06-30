@@ -21,3 +21,19 @@ export const getTaskHoldersUser = (data) => {
     }
   });
 }
+
+let taskHolder;
+export const getTaskHolder = (data) => {
+  const newData = data || {};
+  return new Promise((resolve, reject) => {
+    if (taskHolder && !newData.reload) {
+      resolve(taskHolder);
+    } else {
+      get(`${API_URL}/taskholder`, newData)
+        .then(r => {
+          taskHolder = r;
+          resolve(taskHolder);
+        }).catch(e => reject(e));
+    }
+  });
+}

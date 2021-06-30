@@ -124,6 +124,7 @@ export const DOWNLOAD_INVOICES = MSG.DOWNLOAD_INVOICES;
 export const DUPLICATE = MSG.DUPLICATE;
 export const DUPLICATE_INVOICE = MSG.DUPLICATE_INVOICE;
 export const DURATION = "Duración";
+export const DESCRIPTION = "Descripción";// TODO
 
 // ----- E
 

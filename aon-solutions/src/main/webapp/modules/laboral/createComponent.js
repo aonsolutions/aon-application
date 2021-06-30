@@ -13,10 +13,28 @@ export const createBajaDialogContent = () =>{
         attributes:{
             name:"fechaBaja",
             id:"fechaBaja",
-            title:"Fecha de baja",
-            value: new Date()
-        },
+            title:"Fecha de baja"
+        }
     }, div);
+
+    const select = createSelect({
+        attributes:{
+            name:"codBaja",
+            id:"codBaja",
+            title:"Causa de baja"
+        }
+    }, div);
+    select.style.textAlign = "left";
+
+    const btnSubmit = document.createElement(TAG.BUTTON);
+    btnSubmit.id = "btnSubmitBaja";
+    btnSubmit.className = "aonButton";
+    btnSubmit.textContent = "Aceptar";
+    btnSubmit.style.padding ="0.5rem 1rem";
+    btnSubmit.style.marginBottom ="5px";
+    // btnSubmit.disabled = true;
+    div.appendChild(btnSubmit);
+
     return div;
 }
 
@@ -209,7 +227,7 @@ export const createCardEmployee = (parent, id) => {
     divT.appendTo(parent);
     let aonSwitch = setAttributes(new AonSwitch(),{
         id:"switchDni", 
-        title:"Buscar por DNI"
+        title:"Por DNI"
     })
     divT.appendChild(aonSwitch);
 
@@ -308,7 +326,7 @@ const addIconSurname = () => {
 }
 
 const addSpanDecimal = () =>  {
-    let coefInput = document.getElementById('coefparcialInput')
+    let coefInput = document.getElementById('coefparcialInput');
     if(coefInput){
         let span = document.createElement(TAG.SPAN);
         span.innerHTML = '0,';
