@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
+import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract;
 import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.exceptions.SepeException;
@@ -29,6 +31,11 @@ public class Sepe {
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String nif, Date fecha) throws SepeException {
 			return Certificado.certEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+	}
+
+	public static String certEnterprise(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, Certificates certificates) throws SepeException {
+			return Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
 	}
 	
 	public static String sendContracto(final InputStream certificateInputStream, final String certificatePassword,
