@@ -14,6 +14,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -120,7 +121,7 @@ public class TaskDAO {
 	public static Task update(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.DESCRIPTION, task.getTitle())
-			.set(TASK.START_DATE, AonDateUtils.toTimestamp(task.getStartDate()))
+//			.set(TASK.START_DATE, AonDateUtils.toTimestamp(task.getStartDate()))
 			.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
 			.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
 			.set(TASK.PRIORITY, task.getPriority().value())
@@ -146,13 +147,14 @@ public class TaskDAO {
 	}
 	
 	public static Task insert(AONContext ctx, Task task) {
+		task.setNumber(getLastTaskNumber(ctx,task));
 		Integer id = ctx.getDslContext().insertInto(TASK)
 			.set(TASK.ACTIVITY_TYPE, task.getActivityType())
 			.set(TASK.COMMENTS, task.getDescription())
 			.set(TASK.DESCRIPTION, task.getTitle())
 			.set(TASK.DOMAIN, task.getDomain())
-			.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
-			.set(TASK.END_DATE,  AonDateUtils.toTimestamp(task.getEndDate()))
+			.set(TASK.DUE_DATE,  AonDateUtils.toTimestamp(new Date()))
+			.set(TASK.END_DATE,  AonDateUtils.toTimestamp(new Date()))
 			.set(TASK.GTASK_ID, task.getGtaskId())
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.NUMBER, task.getNumber())
@@ -163,7 +165,7 @@ public class TaskDAO {
 			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
 			.set(TASK.SENDER, task.getSender().getId())
 			.set(TASK.SOURCE, task.getSource().value())
-			.set(TASK.START_DATE,  AonDateUtils.toTimestamp(task.getStartDate()))
+			.set(TASK.START_DATE,  AonDateUtils.toTimestamp(new Date()))
 			.set(TASK.STATUS, task.getStatus().value())
 			.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
 			.set(TASK.WORKGROUP, task.getWorkgroup().getId())
@@ -183,6 +185,15 @@ public class TaskDAO {
 		ctx.getDslContext().delete(TASK)
 		.where(TASK_PROPERTIES.getConditions(filter))
 		.execute();
+	}
+	
+	private static Integer getLastTaskNumber(AONContext ctx, Task task) {
+		Integer number = ctx.getDslContext()
+				.select(DSL.max(TASK.NUMBER))
+				.from(TASK)
+				.where(TASK.DOMAIN.eq(ctx.getDomainId()))
+				.fetchOne().value1();
+		return (number!=null ? number : 0) + 1;
 	}
 	
 	public static class TaskFiller implements Function<Record, Task> {

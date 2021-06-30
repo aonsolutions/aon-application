@@ -185,6 +185,8 @@ public class Task  implements Serializable{
 	}
 
 	public Project getProject() {
+		if(project == null)
+			project = new Project();
 		return project;
 	}
 
