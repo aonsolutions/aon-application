@@ -124,9 +124,21 @@ public class DocumentalServlet extends AonApiHttpServlet{
 			if(api.getUser().getDomain().equals(api.getDomain().getParentId())) {
 				Integer[] scopes2 = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 						r -> r.getDomainProperty().eq(api.getDomain().getId())).map(r -> r.getId()).toArray(Integer[]::new);
-				for (Integer sc : scopes2) {
-					scopes[scopes.length] = sc;
+				
+				Integer[] scopes3 = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin(), api.getUser().getId());
+				
+				if(scopes == null && scopes3 == null) {
+					scopes = scopes2;
+				} else if(scopes == null) {
+					scopes = new Integer[scopes2.length + scopes3.length];
+					for (Integer i = 0; i< scopes2.length; i++) {
+						scopes[i] = scopes2[i];
+					}
+					for (Integer i = 0; i< scopes3.length; i++) {
+						scopes[i + scopes2.length] = scopes3[i];
+					}
 				}
+
 			}
 		} catch (Exception e) {
 			scopes = null;
