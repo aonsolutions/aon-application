@@ -553,12 +553,22 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cat, fecha, callback);
 	}
 	
+	// ------------------------------------------------- SEPE Comunications
+	
 	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 
 	public void sendContractoCBSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		employeesServiceAsync.sendContractoCBSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
+	public void sendCertifica2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	}
+	
+	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
 	}
 
 	// ------------------------------------------------------------------------

@@ -269,6 +269,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import aon.sepe.objects.Certificates;
+import aon.sepe.objects.Certificates.CertificatesBuilder;
+import aon.sepe.objects.Certificates.TypeDuration;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
@@ -6155,6 +6158,65 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					endDate, FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void sendCertifica2(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get certificate SEPE
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			// Get suspensionReason Code
+			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
+			
+			// Create certificates
+			Certificates certificates = JooqCertifica2.createCertificates(connection, domainId, contractId, suspensionReasonCode);
+			
+			// Send certificates
+			Sepe.certEnterprise(
+					new ByteArrayInputStream(certificateSEPE.getCertificate()), 
+					certificateSEPE.getPassword(), 
+					certificateSEPE.getType(), 
+					certificates);
+
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public String getCertifica2PDF(String domainName, String userLogin, String nif, Date endDate) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get certificate SEPE
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			// Get Certifica2 PDF
+			byte[] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificateSEPE.getCertificate()), 
+					certificateSEPE.getPassword(), 
+					certificateSEPE.getType(), 
+					nif, 
+					endDate);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (SQLException | SepeException | IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

@@ -854,4 +854,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
