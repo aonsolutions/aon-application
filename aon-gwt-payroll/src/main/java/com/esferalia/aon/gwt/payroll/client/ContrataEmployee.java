@@ -1023,13 +1023,34 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.sendEmployeeAlta(s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
+							
+							downloadTA_IDC();
 						}, f -> {
 							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
 							dialog.warning();
 						});
 					}
-					
+
 				};
+	}
+	
+	private void downloadTA_IDC() {
+		contrataEmployeeObject.downloadTa((dataURI) -> {
+			pdfViewer.setDocument(dataURI, zoom / 100.00);
+			String fileName = contrataEmployeeObject.getEmployeeFullName() + " TA.pdf";
+			pdfViewer.download(fileName);
+			
+			downloadIDC();
+		}, (trowable)-> {});
+	}
+	
+	private void downloadIDC() {
+		contrataEmployeeObject.downloadIdc(idcDateListBox.getSelected(),
+				(dataURI) -> {
+						pdfViewer.setDocument(dataURI, zoom / 100.00);
+						String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
+						pdfViewer.download(fileName);
+				}, (trowable) -> {});
 	}
 
 	private void showTa() {
