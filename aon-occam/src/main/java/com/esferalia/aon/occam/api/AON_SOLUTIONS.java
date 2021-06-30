@@ -691,7 +691,6 @@ public class AON_SOLUTIONS {
 	}
 
 	// TASK
-	
 	public static Task getTask(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTask(ctx, filter);
@@ -717,6 +716,37 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Task saveTask(Domain domain, User user, Task task) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().saveTask(ctx, task);
+		}
+	}
+	
+	// TASKWORKFLOW
+	public static Task getTaskWorkflow(Domain domain, User user, TaskFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTask(ctx, filter);
+		}
+	}
+	
+	public static Stream<Task> getTaskWorkflowStream(Domain domain, User user, TaskFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskStream(ctx, filter);
+		}
+	}
+
+	public static LinkedList<Task> getTaskWorkflowList(Domain domain, User user, TaskFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskList(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Task> getTaskWorkflowList(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskList(ctx, filter, page, perPage);
+		}
+	}
+	
+	public static Task saveTaskWorkflow(Domain domain, User user, Task task) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTask(ctx, task);
 		}

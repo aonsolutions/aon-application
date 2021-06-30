@@ -6,8 +6,11 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask2;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskWorkflowDAO;
 
 public class Task2Impl implements ITask2 {
 
@@ -47,4 +50,40 @@ public class Task2Impl implements ITask2 {
 			TaskDAO.save(ctx, task));
 	}	
 	
+	//TASKWORKFLOW
+	@Override
+	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.get(ctx, filter));
+	}
+
+	@Override
+	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.getStream(ctx, filter));	
+	}
+	
+	@Override
+	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.getStream(ctx, filter, page, perPage));	
+	}
+
+	@Override
+	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.getList(ctx, filter, page, perPage));
+	}
+
+	@Override
+	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		TaskWorkflowDAO.save(ctx, task));
+	}	
 }
