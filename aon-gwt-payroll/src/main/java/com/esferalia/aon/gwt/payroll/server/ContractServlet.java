@@ -4,39 +4,35 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
-
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.in.payroll.tgss.report.Employee;
 import com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder;
-import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -125,12 +121,32 @@ public class ContractServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private Object getAllEmployeesInfo(AonApiData api) throws SQLException {
+	private Object getAllEmployeesInfo(AonApiData api) throws SQLException, JSONException {
 		LOGGER.info("[GET] EMPLOYEE INFO");
 		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
 		boolean allEmployees = api.getParams().optBoolean("allEmployees");  
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees));
+		List<Object> list = new ArrayList<>();
+		List<EmployeeContractInfo> employees = JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees);
+		
+		for(EmployeeContractInfo info: employees) {
+			JSONObject json = new JSONObject();
+			json.put("document", info.getEmployeeInfo().getDocument());
+			json.put("domain", info.getEmployeeInfo().getDomain());
+			json.put("employeeId", info.getEmployeeInfo().getEmployeeId());
+			json.put("name", info.getEmployeeInfo().getName());
+			json.put("secondSurName", info.getEmployeeInfo().getSecondSurName());
+			json.put("ssNumber", info.getEmployeeInfo().getSsNumber());
+			json.put("surName", info.getEmployeeInfo().getSurName());
+			json.put("startDate", info.getContractInfo().getStartDate());
+			json.put("contractType", info.getContractInfo().getContractType());
+			json.put("completeCCC", info.getContractInfo().getCompleteCCC());
+			json.put("agreementCategory", info.getContractInfo().getAgreementCategory());
+			json.put("workplaceName", info.getContractInfo().getWorkplaceName());
+			list.add( new JsonParser().parse(json.toString()));
+		}
+	
+		String jsonInString = gjson.toJson(list);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
