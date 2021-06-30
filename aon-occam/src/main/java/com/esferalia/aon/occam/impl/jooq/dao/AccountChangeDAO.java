@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccoun
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountDependencyVisitor;
 import com.esferalia.aon.occam.api.model.type.AccountDependency;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountChangeDAO {
@@ -67,10 +68,14 @@ public class AccountChangeDAO {
 				.map( flat -> getAccountChange(ctx.getDomainName(),params.getDomain()
 						,AccountDependency.ACCOUNT_ENTRY_DETAIL
 						,flat.getDetailId()
-						,MessageFormat.format(AccountDependency.ACCOUNT_ENTRY_DETAIL.getDescription(),
-								flat.getAccountCode() + " " + flat.getAccountDescription())
-						)
-					)
+						,MessageFormat.format(
+								AccountDependency.ACCOUNT_ENTRY_DETAIL.getDescription(),
+								flat.getAccountCode()  
+								+ "; Concepto: " + flat.getConcept() + "; " 
+								+(AonMathUtils.isGreatherThanZero(flat.getDebit())
+									?("Debe: " + flat.getDebit())
+									:("Haber: " + flat.getCredit())
+								))))
 				.collect(Collectors.toCollection(LinkedList::new))
 			;
 		}
@@ -93,9 +98,12 @@ public class AccountChangeDAO {
 						,AccountDependency.ACCOUNT_ENTRY_DETAIL_BALANCING
 						,flat.getDetailId()
 						,MessageFormat.format(AccountDependency.ACCOUNT_ENTRY_DETAIL_BALANCING.getDescription(),
-								flat.getBalancingAccountCode() + " " + flat.getBalancingAccountDescription())
-						)
-					)
+								flat.getBalancingAccountCode()
+								+ "; Concepto: " + flat.getConcept() + "; " 
+								+(AonMathUtils.isGreatherThanZero(flat.getDebit())
+									?("Debe: " + flat.getDebit())
+									:("Haber: " + flat.getCredit())
+								))))
 				.collect(Collectors.toCollection(LinkedList::new))
 			;
 //			return ctx.getDslContext()
