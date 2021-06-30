@@ -32,6 +32,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
+				case "/":
+					response(req, resp, getTaskHolder(api));
+					break;
 				case "/enterprise":
 					response(req, resp, getTaskHoldersEnterprise(api));
 					break;
@@ -81,6 +84,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		});
 		return array;
 	}
+	
+	
 
 	private JSONArray getTaskHoldersEnterprise(AonApiData api) {
 		Domain domain = api.getDomain();
@@ -96,6 +101,14 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 			array.put(json);
 		});
 		return array;
+	}
+	
+	private JSONObject getTaskHolder(AonApiData api) {
+		Domain domain = api.getDomain();
+		return TaskHolderJSON.toJSON(
+				AON.getTaskHolder(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+						f->f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(api.getUser().getId())))
+		);
 	}
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
