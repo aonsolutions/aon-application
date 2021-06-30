@@ -208,6 +208,7 @@ public class InvoiceAutoComplete {
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
+				inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()));
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
@@ -215,7 +216,8 @@ public class InvoiceAutoComplete {
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
 					} else {
-						c = CustomerDAO.save(ctx.getContext(), (Customer) inv.getRegistryData());
+						c = CustomerDAO.save(ctx.getContext(), new Customer()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 						}
@@ -227,7 +229,8 @@ public class InvoiceAutoComplete {
 					if(s.getId() != null) {
 						inv.setRegistry(s.getId());
 					} else {
-						s = SupplierDAO.save(ctx.getContext(), (Supplier) inv.getRegistryData());
+						s = SupplierDAO.save(ctx.getContext(), new Supplier()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
 						}
@@ -240,7 +243,8 @@ public class InvoiceAutoComplete {
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
 					} else {
-						c = CreditorDAO.save(ctx.getContext(), (Creditor) inv.getRegistryData());
+						c = CreditorDAO.save(ctx.getContext(), new Creditor()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
 						}

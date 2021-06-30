@@ -37,7 +37,6 @@
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {
 			let script = scripts[i];
-			console.log(script.src);
 			if (script.src != null && script.src.indexOf(search) != -1) {
 				let parent = script.parentNode;
 				parent.removeChild(script);
@@ -45,7 +44,6 @@
 		}
 
 		let iframes = window.document.getElementsByTagName("iframe");
-		console.log(iframes.length);
 		for (let i = 0; i < iframes.length; ++i) {
 			let iframe = iframes[i];
 			if (iframe.src != null && iframe.id == module) {
