@@ -333,6 +333,20 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
+				AsyncCallback<String> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
@@ -658,6 +672,20 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void sendContractoCBSEPE(String currentDomainName, String currentUser,
 							EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
+							AsyncCallback<String> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

@@ -824,6 +824,8 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.cambioCatProf(currentDomainName, user, employeeContractInfo, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	// ------------------------------------------------- SEPE Comunications
 
 	@Override
 	public void sendContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
@@ -835,6 +837,18 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void sendContractoCBSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		AON.start();
 		employeesServiceAsync.sendContractoCBSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void sendCertifica2(String currentDomainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getCertifica2PDF(String currentDomainName, String user, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getCertifica2PDF(currentDomainName, user, nif, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 }
