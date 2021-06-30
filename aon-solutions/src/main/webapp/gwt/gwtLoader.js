@@ -34,12 +34,11 @@
 	export const preStartModule = (module) => {
 		// google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		let search = `/${module}.nocache.js`;
-		let search2 = 'cache.js';
 		let scripts = window.document.getElementsByTagName("script");
 		for (let i = 0; i < scripts.length; ++i) {
 			let script = scripts[i];
 			console.log(script.src);
-			if (script.src != null && (script.src.indexOf(search) != -1 || script.src.indexOf(search2) != -1)) {
+			if (script.src != null && script.src.indexOf(search) != -1) {
 				let parent = script.parentNode;
 				parent.removeChild(script);
 			}
@@ -81,7 +80,7 @@
 			let script = window.document.createElement("script");
 			script.type = "text/javascript";
 			script.defer = "true";
-			script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}`;
+			script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
 			let heads = window.document.getElementsByTagName("head");
 			if (heads && heads[0]) {
 				heads[0].appendChild(script);
@@ -106,3 +105,7 @@
 			// window.setTimeout("triggerModuleStart()", 100 );
 		}
 	}
+
+	export const getRamdomId = () => {
+		return Math.floor(Math.random() * 10000000) + 1;
+	};
