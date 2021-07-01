@@ -16,7 +16,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
@@ -65,17 +65,17 @@ public class DeleteReposServlet extends HttpServlet{
 							AON.deletePriorityTaskTag(domain.getName(), domain.getId(), userName, taskId);
 							object = new Label().toJSON();
 						} else if(MSG.USER.equalsIgnoreCase(pathInfo[5])){
-							Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
+							OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
 							AON.updateTask(domain.getName(), domain.getId(), userName, task.setTaskHolder(null));
 							object = new User().toJSON();
 						} else if(MSG.WORKGROUP.equalsIgnoreCase(pathInfo[5])){
-							Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
+							OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
 							AON.updateTask(domain.getName(), domain.getId(), userName, task.setWorkgroup(null));
 							object = new User().toJSON();
 						}
 					} else {
 						// DELETE TASK FOR EVER!!!!
-						Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
+						OldTask task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]));
 						AON.deleteTaskComment(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));
 						AON.deleteTaskTag(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));
 						AON.deleteTaskEvent(domain.getName(), domain.getId(), userName, f -> f.getTaskProperty().eq(task.getId()));

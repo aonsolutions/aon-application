@@ -3,7 +3,7 @@ import { disabledForm, formatDateOrigin, setDate, setValueName } from "../../../
 import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
-import { CONSTANT, EVENT, TAG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
@@ -38,11 +38,11 @@ export class AonMovementsList extends AonElement {
   }
 
   initialize(){
+    this._list = [];
     this.id = this.id || PAYROLL_VIEWS.AON_MOVEMENTS_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this._list = [];
   }
 
   disconnectedCallback() {
@@ -202,7 +202,7 @@ export class AonMovementsList extends AonElement {
     const startDateEl = this.getElement("startDate");
     const endDateEl = this.getElement("endDate");
     if(startDateEl && endDateEl){
-      let lts = list.length ? list : lists;
+      const lts = list.length ? list : lists;
       if(lts && lts.length){
         let startDate = startDateEl.value;
         let endDate   = endDateEl.value;
@@ -279,6 +279,7 @@ export class AonMovementsList extends AonElement {
     this.applicationEl.startLoader();
     this.setFilter(detail);
     try {
+      let count = 0;
       const resp = await getCccLife(this.getFilter());
       resp
       .map((res) => {
@@ -290,9 +291,16 @@ export class AonMovementsList extends AonElement {
           r.ipf.indexOf(newData.ipf)>=0 &&
           (r.fra).indexOf(newData.fra)>=0
         );
-        if(!exists) parent._movements.push(newData);
+        if(!exists) {
+          count ++;
+          parent._movements.push(newData);
+        }
       });
-      parent._movements = parent._movements.sort((a, b) =>  new Date(b.fra) - new Date(a.fra));
+      if(!count) 
+        this.showToast({message:MSG.REQUEST_EMPTY_DATA});
+      else {
+        parent._movements = parent._movements.sort((a, b) =>  new Date(b.fra) - new Date(a.fra));
+      }
       this.search();
     } catch (error) {console.log(error);}
     this.applicationEl.stopLoader();

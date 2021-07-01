@@ -76,6 +76,18 @@ public class PAYROLL {
 		}
 	}
 	
+	public static Stream<Employee> getEmployees(String domainName, Integer domainId, String login, EmployeeFilter filter ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getEmployees(ctx, filter);
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+
 	// -------------------- CONTRACT
 	
 	public static Stream<Contract> getContractStream(String domainName, Integer domainId, String login, ContractFilter filter) {

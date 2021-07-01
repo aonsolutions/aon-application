@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -21,7 +21,7 @@ public interface IStats {
 	String getInvoicesReport(AONContext ctx, StatParams params);
 	
 	
-	Stream<Task> getStatTaskStream(AONContext ctx, StatParams params);
+	Stream<OldTask> getStatTaskStream(AONContext ctx, StatParams params);
 
 	StatData<Integer, String, Double> getProductStat(AONContext ctx, ProductFilter productFilter, ItemFilter itemFilter,
 			InvoiceFilter invoiceFilter, DeliveryFilter deliveryFilter, SalesFilter salesFilter,

@@ -77,4 +77,27 @@ public class EnumVisitors {
 		T visitCommonTerritory();
 		T visitUnknown();
 	}
+	
+	public static interface IAccountDependencyVisitor<T> {
+		T visitAccountEntryDetail();
+		T visitAccountEntryDetaiBalancing();
+		T visitInvoiceDetailAccount();
+		T visitInvoiceTaxAccount();
+		T visitProductPurchase();
+		T visitProductSales();
+		T visitAmortizationAccumulated();
+		T visitAmortizationAllocation();
+		T visitAmortizationFixedAsset();
+		T visitCreditor();
+		T visitCustomer();
+		T visitSupplier();
+		T visitBankConcept();
+		T visitLoan();
+		T visitPmTypeDetail();
+		T visitRbank();
+		T visitTaxPurchase();
+		T visitTaxSales();
+	}
+
+		
 }

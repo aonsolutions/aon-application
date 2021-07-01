@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.accounting.utilities;
 
 import com.esferalia.aon.occam.api.model.Account;
 
-public class AccountLinkerItem implements IAccUtilitiesItem {
+public class AccUtilitiesAccountLinkerItem implements IAccUtilitiesItem {
 
 	private static final long serialVersionUID = 5154772873334002479L;
 	private Integer domain;
@@ -20,7 +20,7 @@ public class AccountLinkerItem implements IAccUtilitiesItem {
 	public Integer getDomain() {
 		return domain;
 	}
-	public AccountLinkerItem setDomain(Integer domain) {
+	public AccUtilitiesAccountLinkerItem setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -28,7 +28,7 @@ public class AccountLinkerItem implements IAccUtilitiesItem {
 	public String getDomainName() {
 		return domainName;
 	}
-	public AccountLinkerItem setDomainName(String domainName) {
+	public AccUtilitiesAccountLinkerItem setDomainName(String domainName) {
 		this.domainName = domainName;
 		return this;
 	}
@@ -36,21 +36,21 @@ public class AccountLinkerItem implements IAccUtilitiesItem {
 	public String getMessage() {
 		return message;
 	}
-	public AccountLinkerItem setMessage(String message) {
+	public AccUtilitiesAccountLinkerItem setMessage(String message) {
 		this.message = message;
 		return this;
 	}
 	public Account getParentAccount() {
 		return parentAccount;
 	}
-	public AccountLinkerItem setParentAccount(Account parentAccount) {
+	public AccUtilitiesAccountLinkerItem setParentAccount(Account parentAccount) {
 		this.parentAccount = parentAccount;
 		return this;
 	}
 	public Account getChildAccount() {
 		return childAccount;
 	}
-	public AccountLinkerItem setChildAccount(Account childAccount) {
+	public AccUtilitiesAccountLinkerItem setChildAccount(Account childAccount) {
 		this.childAccount = childAccount;
 		return this;
 	}

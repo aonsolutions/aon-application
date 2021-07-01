@@ -35,6 +35,8 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -82,6 +84,9 @@ public class AccountingImpl implements IAccounting {
 	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
+	}
+	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter, int offset, int limit) {
+		return AccountDAO.getAccounts(ctx, filter, offset, limit);
 	}
 	@Override
 	public Account save(AONContext ctx, Account account) {
@@ -535,6 +540,19 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.regenerateInputVat(ctx,year)
 			 );		
+	}
+	@Override
+	public AccUtilitiesResult searchAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.searchAccountChange(ctx,params)
+			 );		
+	}
+
+	@Override
+	public AccUtilitiesResult fixAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingUtilitiesDAO.fixAccountChange(ctx,params,accountChange)
+		 );		
 	}
 	
 	// ANALYTIC ACCOUNTING	

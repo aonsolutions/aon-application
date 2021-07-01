@@ -14,9 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate2;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -65,11 +68,17 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 						f -> f.getDomainProperty().eq(domainId)
 						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
 				if(r.getId() != null) json = new JSONObject(r.getJson());
+//				Invoice invoice = InvoiceJSON.fromJSON(json);
+//				InvoiceTemplate2.create(resp.getOutputStream(), invoice, config, null);
 			} else if(json.opt(IConstants.ID) != null){
 				Integer id = json.optInt(IConstants.ID);
-				json = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
+				json = AON_SOLUTIONS.getInvoiceJSON(domainName, domainId, login, id);
+				//Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
+				//InvoiceTemplate2.create(resp.getOutputStream(), invoice, config, null);
 			}
+			
 			PdfMaker.printInvoice(resp.getOutputStream(), json, config, null);
+			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);

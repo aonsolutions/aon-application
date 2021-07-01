@@ -19,7 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.security.AuthAttachCreation;
+import net.aonsolutions.db.up2date.task.TaskAttachCreation;
+import net.aonsolutions.db.up2date.task.TaskWorkflowCreation;
 
 public class Up2Date {
 
@@ -160,8 +161,11 @@ public class Up2Date {
     		//Bases2021Rollback.BASES2021ROLLBACK,
     		//IndemnizacionFinIRPFFix.INDEMNIZACIONFINIRPFFIX,
     		//IrpfNavarra2021Update.IRPFNAVARRA2021UPDATE,
-    		// IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
-    		AuthAttachCreation.AUTH_ATTACH_CREATION
+    		//IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
+    		//AuthAttachCreation.AUTH_ATTACH_CREATION,
+    		//AlterFsMod2002020.ALTER_FS_MODEL_200_2020,
+    		TaskWorkflowCreation.TASK_WORKFLOW_CREATION,
+    		TaskAttachCreation.TASK_ATTACH_CREATION
     };
 
 

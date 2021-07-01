@@ -820,22 +820,22 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String grup_ctz, Date fecha) {
+	public void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String grup_ctz, Date fecha) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String ocup, Date fecha) {
+	public void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String ocup, Date fecha) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String cat, Date fecha) {
+	public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String cat, Date fecha) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -852,6 +852,20 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			EmployeeContractInfo employeeContractInfo) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

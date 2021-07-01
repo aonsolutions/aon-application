@@ -478,7 +478,7 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 		onSave(partialityCoef);
 	}
 	
-	private Double getPartialityCoef() {
+	public Double getPartialityCoef() {
 		Double hours = 0.00;
 		for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
 			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
@@ -487,12 +487,14 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 				hours += Double.parseDouble(expression);
 			}
 		}
-		return hours / 40;
+		hours = hours / 40;
+				
+		return Math.round(hours * 100.0) / 100.0;
 	}
 
 	private void showNewJourney() {
 		mainDeckPanel.showWidget(0);
-		this.setWidth("425px");
+		this.setWidth("440px");
 		listIT.setVisible(true);
 		backListIT.setVisible(false);
 	}

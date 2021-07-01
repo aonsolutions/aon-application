@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
@@ -35,7 +35,7 @@ public class StatsImpl implements IStats {
 	}
 
 	@Override
-	public Stream<Task> getStatTaskStream(AONContext ctx, StatParams params) {
+	public Stream<OldTask> getStatTaskStream(AONContext ctx, StatParams params) {
 		return StatDAO.getStatTaskStream(ctx, params);
 	}
 

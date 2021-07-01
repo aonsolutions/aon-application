@@ -397,6 +397,117 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	
+	private JSONObject setUserAppRole2(AonApiData api){
+		JSONArray roles = api.getData().optJSONArray("roles");
+		Boolean portal = false;
+		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
+		for (Integer i = 0; i < roles.length(); i++) {
+			JSONObject object = roles.getJSONObject(i);
+			String app = object.optString("app");
+			Integer user = object.optInt("user");
+			Boolean active = object.optBoolean("active"); 
+			String role = object.optString("role");
+
+			AonApp aonApp = AonApp.safeValueOf(app);
+			
+			AonRole aonRole = AonRole.safeValueOf(role);
+			if(aonRole != null) {
+				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getUserIdProperty().eq(user))
+					.and(f.getRoleProperty().eq(aonRole.value())))
+					.findFirst().orElse(new UserAppRole());
+				
+				if(active) {
+					if(uar.getId() == null) {
+						uar = new UserAppRole();
+						uar.setApp(aonApp)
+							.setDomain(api.getDomain().getId())
+							.setRole(aonRole)
+							.setUser(user);
+						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
+					}
+					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
+						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+						if(th == null || th.getId() == null) {
+							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
+							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
+
+							Registry r = null;
+							if(!AonStringUtils.isBlank(a.getDocument())) {
+								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+								f.getDomainProperty().eq(api.getDomain().getId())
+								.and(f.getDocumentProperty().eq(a.getDocument())));
+							}
+							if(r == null || r.getId() == null) {
+								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
+										.setDocument(a.getDocument())
+										.setName(a.getName()+ " "+ a.getSurname())
+										.setAlias(a.getName())
+										.setDomain(api.getDomain()));
+							}
+							Integer registryId = r.getId();
+							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+							if(th != null && th.getId() != null) {
+								th.setActive(true);
+							} else {
+								th = new TaskHolder().copy(r)
+									.setActive(true)
+									.setUserId(user);
+							}
+						} else if(!th.isActive()) {
+							th.setActive(true);
+						}
+						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+					} 
+				
+					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
+						portal = true;
+						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
+								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
+							
+						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
+						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+							f.getDomainProperty().eq(api.getDomain().getId())
+							.and(f.getUserIdProperty().eq(user))
+							.and(f.getRoleProperty().notIn(arr)));
+					}
+				} else {
+					if(uar.getId() != null) {
+						Integer id = uar.getId();
+						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
+					}
+					
+					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+						if(th != null && th.getId() != null) {
+							th.setActive(false);
+							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
+						}
+					}
+				}
+			}
+		}
+		
+		if(portal) {
+			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			if(usr.getEnterprise() == null) {
+				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+				usr.setEnterprise(cp.getId());
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+			}
+		} else {
+			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			if(usr.getEnterprise() != null) {
+				usr.setEnterprise(null);
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+			}
+		}
+		
+		return new JSONObject();
+	}
+	
 	private JSONObject setUser(AonApiData api) throws Exception {
 		JSONObject js = new JSONObject();
 		String email = api.getData().optString("email");
@@ -440,7 +551,9 @@ public class UserServlet extends AonApiHttpServlet {
 					user = createUser(api, api.getDomain(), api.getData(), login, auth);
 					
 				} else AON_SOLUTIONS.assignAuthToUser(api.getDomain().getName(), api.getDomain().getId(), user, auth.getAuth());
-
+				
+				setUserAppRole(api);
+				
 				js.put("id", user.getId());
 				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
 				js.put("uuid", auth.getUuid());

@@ -3,7 +3,7 @@ import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from ".
 import { isEmptyObject, setAttributes, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
-import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
@@ -73,28 +73,23 @@ export class AonPresenceList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     
-    const searchFn = ({detail}) => {
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.searchFilter = detail;
       this.search();
-    }
-
-    const searchValueFn = ({detail})=>{
+    });
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       this._list = [];
       if(detail) this.applicationParentEl.setDataFilter(detail);
-    }
-
-    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+    });
 
     let arrayNewFilter = PRESENCE_FILTER;
     arrayNewFilter.push({
       type: CONSTANT.HTML_ELEMENT,
       element: new AonSwitch(),
       id: "aonSwitchFilter",
-      name:"linked",
+      name:"active",
       title:"Usuarios activos",
-      checked:true,
-      disabled:true
+      checked:true
     })
     
     btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
@@ -137,7 +132,8 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          res.lastStatus = `${res.textStatus} ${setDateTimestampDay(res.last_date)}`
+          let lastStatus = res.last_date ? `${res.textStatus} ${setDateTimestampDay(res.last_date)}` : null;
+          res.lastStatus = lastStatus;
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -153,12 +149,15 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
-          let dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
-
+          let subtitle = null;
+          if(res.last_date){
+            const dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
+            subtitle = `${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
+          }
           let options = {
             iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
             title: `${res.name}`,
-            subtitle: `${dateParse} <span style="float: right;">${res.nameLocation}</span> `,
+            subtitle
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -186,31 +185,34 @@ export class AonPresenceList extends AonElement {
               last_location,
               task_holder: { id: taskHolderId, name },
             }) => {
-              if (last_date) {
-                const newStatus = status.toLowerCase();
-                const lettersName = StringTwoLetters(name);
-                const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-                const {name:textStatus} = getStatus(newStatus);
-                let nameLocation = "";
-                if (last_location && last_location.name) {
-                  nameLocation = last_location.name;
-                } else if(!isEmptyObject(coordinates)) {
-                  let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
-                  nameLocation = aib.outerHTML;
-                }
-                data.push({
-                  name,
-                  lettersHtml,
-                  last_date,
-                  coordinates,
-                  last_location,
-                  nameLocation,
-                  taskHolderId,
-                  textStatus,
-                  status: newStatus,
-                  duration: timeHour(Number(time)),
-                });
+              const newStatus = status.toLowerCase();
+              const lettersName = StringTwoLetters(name);
+              
+              const div = this.createElement(TAG.DIV);
+              div.classList.add("profile-letters", newStatus);
+              div.innerText = lettersName;
+
+              const lettersHtml = div.outerHTML;
+              const {name:textStatus} = getStatus(newStatus);
+              let nameLocation = "";
+              if (last_location && last_location.name) {
+                nameLocation = last_location.name;
+              } else if(!isEmptyObject(coordinates)) {
+                let aib = setAttributes(new AonIconButton(),{id: "iconLocation", noHover: "true", icon: iconAddLocation});
+                nameLocation = aib.outerHTML;
               }
+              data.push({
+                name,
+                lettersHtml,
+                last_date,
+                coordinates,
+                last_location,
+                nameLocation,
+                taskHolderId,
+                textStatus,
+                status: newStatus,
+                duration: timeHour(Number(time)),
+              });
             }
           );
           this._list = data;
@@ -225,9 +227,9 @@ export class AonPresenceList extends AonElement {
 		this.applicationEl.startLoading();
 		try {
       let startYear = new Date().getFullYear();
-      let {startDate} = this.applicationParentEl._filter;
+      let {startDate, active} = this.applicationParentEl._filter;
 			if(startDate) {startYear = new Date(startDate).getFullYear();} 
-			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31"}); 
+			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31", active}); 
 		} catch (error) {
       this.showToast(error);
 		}

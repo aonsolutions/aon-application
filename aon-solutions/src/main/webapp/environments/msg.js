@@ -44,6 +44,7 @@ export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
+export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDRESS = MSG.ADDRESS;
 export const ALL_FILES = MSG.ALL_FILES;
@@ -108,6 +109,7 @@ export const DELETE_FINANCE = MSG.DELETE; // TODO
 export const DELETE_FOREVER = MSG.DELETE_FOREVER;
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = MSG.DELETE_FOREVER_INVOICE_CONFIRMATION;
 export const DELETE_TAG = MSG.DELETE_TAG;
+export const DELETE_WORKGROUP = "Borrar Grupo de trabajo"; // TODO
 export const DELETE_TAX = MSG.DELETE_TAX;
 export const DELETED_DATA = MSG.DELETED_DATA;
 export const DETAILED = MSG.DETAILED;
@@ -122,6 +124,7 @@ export const DOWNLOAD_INVOICES = MSG.DOWNLOAD_INVOICES;
 export const DUPLICATE = MSG.DUPLICATE;
 export const DUPLICATE_INVOICE = MSG.DUPLICATE_INVOICE;
 export const DURATION = "Duración";
+export const DESCRIPTION = "Descripción";// TODO
 
 // ----- E
 
@@ -130,6 +133,7 @@ export const EDIT_CATEGORY = MSG.EDIT_CATEGORY;
 export const EDIT_FILE = MSG.EDIT_FILE;
 export const EDIT_FILES = MSG.EDIT_FILES;
 export const EDIT_TAG = MSG.EDIT_TAG;
+export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const EMAIL = MSG.EMAIL;
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const ENTERPRISE = MSG.ENTERPRISE;
@@ -258,6 +262,7 @@ export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
+export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 
 // ----- S
 
@@ -330,7 +335,7 @@ export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
 export const WEB = MSG.WEB;
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
-
+export const WORKGROUP = 'Grupo de trabajo'; // TODO
 // ----- X
 
 // ----- Y

@@ -7,7 +7,7 @@ import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
-import { DIV } from "../environments/aonTag.js";
+// import { DIV } from "../environments/aonTag.js";
 
 export class AonApplication extends AonElement {
   SIDENAV;
@@ -266,9 +266,9 @@ export class AonApplication extends AonElement {
 
 
   toogleMobileSidenav() {
-    let tmm = this.getElement(this.MOBILE_SIDENAV);
-    console.log(tmm.style.display);
-    if(tmm.style.display == 'block') {
+    let sidenav = this.getElement(this.MOBILE_SIDENAV);
+    sidenav.firstChild.classList.add(CSS.AON_TRANSITION_LEFT);
+    if(sidenav.style.display == 'block') {
       this.closeMobileSidenav();
     } else {
       this.openMobileSidenav();
@@ -276,13 +276,17 @@ export class AonApplication extends AonElement {
   }
 
   openMobileSidenav() {
-    this.getElement(this.MOBILE_SIDENAV).style.display = 'block';
+    let sidenav =this.getElement(this.MOBILE_SIDENAV);
+    sidenav.style.display = "block";
+    sidenav.firstChild.classList.add(CSS.ACTIVE);
     let aonMobileMenu = this.getElement('aonMobileMenu');
     aonMobileMenu.style.display = 'none'; 
   }
 
   closeMobileSidenav() {
-      this.getElement(this.MOBILE_SIDENAV).style.display = 'none';
+      let sidenav = this.getElement(this.MOBILE_SIDENAV);
+      sidenav.style.display = "none";
+      sidenav.firstChild.classList.remove(CSS.ACTIVE);
       let aonMobileMenu = this.getElement('aonMobileMenu');
       aonMobileMenu.style.display = 'block'; 
   }
@@ -375,7 +379,7 @@ export class AonApplication extends AonElement {
     div.style.borderBottom = "1px solid #ebebeb";
     sidenav.appendChild(div);
 
-    if (newButton) {
+    if (newButton && !this.isMobile()) {
       let addButton = this.createElement(TAG.DIV);
       addButton.style.marginTop = "-15px";
       addButton.style.right = "0px";
@@ -565,7 +569,9 @@ export class AonApplication extends AonElement {
     }
   }
 
+
   addSidenavOptions2(data, options, newButton) {
+    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
   }

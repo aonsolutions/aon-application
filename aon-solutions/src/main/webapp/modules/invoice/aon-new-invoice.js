@@ -866,7 +866,9 @@ export class AonNewInvoice extends AonElement {
 		// 	if(this.autosave) this.save();
 		// });
 		taxesTable.addCell(quota);
-		quota.value = tax.quota + tax.surcharge_quota;
+		let quotaVal = tax.quota;
+		if(tax.surcharge_quota) quotaVal = tax.quota + tax.surcharge_quota;
+		quota.value = quotaVal;
 		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
 
 		// ----- TAX DELETE

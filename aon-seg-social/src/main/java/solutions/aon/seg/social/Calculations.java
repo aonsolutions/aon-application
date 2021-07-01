@@ -136,19 +136,34 @@ class Calculations {
 								baseStr = baseStr.replaceAll(regExp, "$1");
 								Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
 								
+								String enterprisePercentStr = Toolkit.removeWeirdCharacters(cells.get(2).getVisibleText());
+								enterprisePercentStr = enterprisePercentStr.replaceAll(regExp, "$1");
+								Double enterprisePercent = enterprisePercentStr != null && !enterprisePercentStr.isEmpty() ? Double.parseDouble(enterprisePercentStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+
 								String enterpriseStr = Toolkit.removeWeirdCharacters(cells.get(3).getVisibleText());
 								enterpriseStr = enterpriseStr.replaceAll(regExp, "$1");
 								Double enterprise = enterpriseStr != null && !enterpriseStr.isEmpty() ? Double.parseDouble(enterpriseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
 								
+								String employeePercentStr = Toolkit.removeWeirdCharacters(cells.get(4).getVisibleText());
+								employeePercentStr = employeePercentStr.replaceAll(regExp, "$1");
+								Double employeePercent = employeePercentStr != null && !employeePercentStr.isEmpty() ? Double.parseDouble(employeePercentStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+
 								String employeeStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
 								employeeStr = employeeStr.replaceAll(regExp, "$1");
 								Double employee = employeeStr != null && !employeeStr.isEmpty() ? Double.parseDouble(employeeStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
 								
-								String totalStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
+								String totalStr = Toolkit.removeWeirdCharacters(cells.get(6).getVisibleText());
 								totalStr = totalStr.replaceAll(regExp, "$1");
 								Double total = totalStr != null && !totalStr.isEmpty() ? Double.parseDouble(totalStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
 								
-								Calc calc = new Calc(base, enterprise, employee, total);
+								Calc calc = new Calc()
+										.setBase(base)
+										.setTotal(total)
+										.setEmployee(employee)
+										.setEnterprise(enterprise)
+										.setEmployeePercent(employeePercent)
+										.setEnterprisePercent(enterprisePercent)
+										;
 								calcs.put(description, calc);
 								
 							});
@@ -197,6 +212,7 @@ class Calculations {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new CertificateNotFoundException();
 		} catch (ElementNotFoundException e) {
 			if(e.getAttributeValue() != null && e.getAttributeValue().length() == 4) {
@@ -261,12 +277,44 @@ class Calculations {
 						htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
 						
 						if (htmlPage.querySelector("li[title='Error']") == null) {
+
+							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<Period, Map<String,Calc>>();
+
+							HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
+							
+							DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
+							
+							LinkedHashMap<String, Calc> employeeCalcs = new LinkedHashMap<String, Calc>();
+							
+							trList.forEach(trNode -> {
+								HtmlTableRow tr = (HtmlTableRow) trNode;
+								List<HtmlTableCell> cells = tr.getCells();
+								
+								String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
+								
+								Double base = getDoubleValue(cells.get(1));
+								Double enterprise = getDoubleValue(cells.get(2));
+								Double employee = getDoubleValue(cells.get(3));
+								Double total = getDoubleValue(cells.get(4));
+								
+								Calc calc = new Calc()
+										.setBase(base)
+										.setTotal(total)
+										.setEmployee(employee)
+										.setEnterprise(enterprise)
+										;
+								
+								employeeCalcs.put(description, calc);
+								
+							});
+							
+							periods.put(null, employeeCalcs);
+
 							htmlPage = htmlPage.getElementById("SPM.ACC.RELACION_TRAMOS").click();
 
 							
 							List<DomElement> radios = htmlPage.getElementsByName("TRAMO");
 							
-							Map<Period, Map<String, Calc>> periods = new LinkedHashMap<Period, Map<String,Calc>>();
 							for (int i=0; i<radios.size(); i++) {
 								DomElement rad = radios.get(i);
 								htmlPage = rad.click();
@@ -297,9 +345,9 @@ class Calculations {
 								
 								Period period = new Period(fromDate, toDate);
 								
-								HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
+								firstTable = htmlPage.querySelector("table>tbody");
 								
-								DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
+								trList = firstTable.querySelectorAll("tr:not(.cabecera)");
 								
 								LinkedHashMap<String, Calc> calcs = new LinkedHashMap<String, Calc>();
 								
@@ -307,27 +355,23 @@ class Calculations {
 									HtmlTableRow tr = (HtmlTableRow) trNode;
 									List<HtmlTableCell> cells = tr.getCells();
 									
-									String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
-									
 									String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
 									
-									String baseStr = Toolkit.removeWeirdCharacters(cells.get(1).getVisibleText());
-									baseStr = baseStr.replaceAll(regExp, "$1");
-									Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+									Double base = getDoubleValue(cells.get(1));
+									Double enterprisePercent = getDoubleValue(cells.get(2));
+									Double enterprise = getDoubleValue(cells.get(3));
+									Double employeePercent = getDoubleValue(cells.get(4));
+									Double employee = getDoubleValue(cells.get(5));
+									Double total = getDoubleValue(cells.get(6));
 									
-									String enterpriseStr = Toolkit.removeWeirdCharacters(cells.get(3).getVisibleText());
-									enterpriseStr = enterpriseStr.replaceAll(regExp, "$1");
-									Double enterprise = enterpriseStr != null && !enterpriseStr.isEmpty() ? Double.parseDouble(enterpriseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
-									
-									String employeeStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
-									employeeStr = employeeStr.replaceAll(regExp, "$1");
-									Double employee = employeeStr != null && !employeeStr.isEmpty() ? Double.parseDouble(employeeStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
-									
-									String totalStr = Toolkit.removeWeirdCharacters(cells.get(5).getVisibleText());
-									totalStr = totalStr.replaceAll(regExp, "$1");
-									Double total = totalStr != null && !totalStr.isEmpty() ? Double.parseDouble(totalStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
-									
-									Calc calc = new Calc(base, enterprise, employee, total);
+									Calc calc = new Calc()
+											.setBase(base)
+											.setTotal(total)
+											.setEmployee(employee)
+											.setEnterprise(enterprise)
+											.setEmployeePercent(employeePercent)
+											.setEnterprisePercent(enterprisePercent)
+											;
 									calcs.put(description, calc);
 									
 								});
@@ -345,7 +389,8 @@ class Calculations {
 							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 						}
 						
-						
+						System.out.println(naf +"...SUCCESS" );
+
 					}
 					
 					ret.put(liquidationType, nafMap);
@@ -379,6 +424,7 @@ class Calculations {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new CertificateNotFoundException();
 		} catch (ElementNotFoundException e) {
 			if(e.getAttributeValue() != null && e.getAttributeValue().length() == 4) {
@@ -391,6 +437,15 @@ class Calculations {
 			throw new solutions.aon.seg.social.exception.ElementNotFoundException(e.getMessage());
 		}
 		return null;
+	}
+
+
+	private static Double getDoubleValue(HtmlTableCell cell) {
+		String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
+		String baseStr = Toolkit.removeWeirdCharacters(cell.getVisibleText());
+		baseStr = baseStr.replaceAll(regExp, "$1");
+		Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
+		return base;
 	}
 	
 	

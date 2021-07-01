@@ -18,9 +18,7 @@ export const getReader = (file) =>  new Promise((resolve) => {
   };
 });
 
-
 export const formatBytes = (a,b=2)=>{if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-
 
 export const isEmptyObject = (obj) => !obj || (obj.constructor === Object &&  Object.keys(obj).length === 0);
 
@@ -30,7 +28,13 @@ export const removeEmpty = (obj) => {
 };
 
 //order by obj, campo, order asc or desc
-export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value]));
+export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => {
+  let num = 0;
+  if (!a[value]) num = 1;
+  else if (!b[value]) num = -1;
+  else num = 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value])
+  return num;
+});
 
 /**
  * 

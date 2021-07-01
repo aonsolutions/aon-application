@@ -130,7 +130,7 @@ public class ContractJourneyDuration implements Serializable {
 //			if(hours > 0.0) result += " ( " + hours + " horas semanales )";
 //		}
 		
-		String resultText = "Desde " + formatDate(fromDate) + " " + result + ((hours > 0.0) ? " ("+hours+" horas semanales)" : "");
+		String resultText = "Desde " + formatDate(fromDate) + " " + result + ((hours > 0.0) ? " ("+ (Math.round(hours * 100.0) / 100.0) +" horas semanales)" : "");
 		
 		return resultText;
 	}

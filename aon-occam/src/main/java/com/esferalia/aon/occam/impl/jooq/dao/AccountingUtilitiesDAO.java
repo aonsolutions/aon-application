@@ -5,22 +5,13 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
-import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Loan.LOAN;
-import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -46,8 +37,11 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkerItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesDomainIntegrityItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorItem;
@@ -61,7 +55,6 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRemove
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -130,7 +123,7 @@ public class AccountingUtilitiesDAO {
 					.orElse(null)
 					;
 				if (childAccount != null) {
-					result.add(new AccountLinkerItem()
+					result.add(new AccUtilitiesAccountLinkerItem()
 						.setParentAccount(account)
 						.setChildAccount(childAccount)
 						.setDomain(domain.getId())
@@ -179,7 +172,14 @@ public class AccountingUtilitiesDAO {
 					result.add(new AccUtilitiesInfoItem()
 							.setMessage("Tratando dominio ... " + AonStringUtils.upperCase(domain.getDescription())));
 					try {
-						changeAccount(ctx, domain.getId(), childAccount, newAccount, result  );
+						AccUtilitiesAccountChangeParams params = new AccUtilitiesAccountChangeParams()
+								.setDomain(ctx.getDomainId())
+								.setOldAccount(childAccount)
+								.setNewAccount(newAccount); 
+						LinkedList<String> msgs = AccountChangeDAO.changeAccount(ctx, params);
+						for (String msg :  msgs) {
+							result.add(new AccUtilitiesInfoItem().setMessage(msg));	
+						}
 						AccountDAO.delete(ctx, childAccount);
 						result.add(new AccUtilitiesInfoItem().setMessage("Cuenta contable borrada " + childAccount.getFullName()));
 					} catch (Throwable t) {
@@ -198,183 +198,6 @@ public class AccountingUtilitiesDAO {
 		return result;
 	}
 	
-	private static void changeAccount(AONContext ctx, Integer domain, Account oldAccount, Account newAccount, AccUtilitiesResult result) {
-		// FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT
-		// Cuenta contable en lineas de apuntes	
-		int count = ctx.getDslContext()
-				.update(ACCOUNT_ENTRY_DETAIL)
-				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,newAccount.getId())
-				.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(domain)
-					.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(oldAccount.getId())))
-				.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas contables modificadas en l\u00EDneas de apuntes."));
-
-		// FK_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT
-		// Contrapartida en lineas de apuntes
-		count = ctx.getDslContext()
-				.update(ACCOUNT_ENTRY_DETAIL)
-				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,newAccount.getId())
-				.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(domain)
-					.and(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT.eq(oldAccount.getId())))
-				.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " contrapartidas modificadas en l\u00EDneas de apuntes."));
-		
-		// FK_INVOICE_DETAIL_ACCOUNT_ACCOUNT
-		// Enlace con lineas de facturas.
-		count = ctx.getDslContext()
-			.update(INVOICE_DETAIL_ACCOUNT)
-			.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT,newAccount.getId())
-			.where(INVOICE_DETAIL_ACCOUNT.DOMAIN.eq(domain)
-				.and(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas contables modificadas en enlaces con l\u00EDneas facturas."));
-		
-		// FK_INVOICE_TAX_ACCOUNT_ACCOUNT
-		// Enlace con lineas de de impuestos facturas.
-		count = ctx.getDslContext()
-			.update(INVOICE_TAX_ACCOUNT)
-			.set(INVOICE_TAX_ACCOUNT.ACCOUNT,newAccount.getId())
-			.where(INVOICE_TAX_ACCOUNT.DOMAIN.eq(domain)
-				.and(INVOICE_TAX_ACCOUNT.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas contables modificadas en enlaces con impuestos de facturas."));
-
-		// FK_PRODUCT_ACCOUNT_PURCHASE
-		// Enlace con productos (compras)
-		count = ctx.getDslContext()
-			.update(PRODUCT)
-			.set(PRODUCT.PURCHASE_ACCOUNT,newAccount.getId())
-			.where(PRODUCT.DOMAIN.eq(domain)
-				.and(PRODUCT.PURCHASE_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " enlaces con productos modificados (compras)."));
-								
-		// FK_PRODUCT_ACCOUNT_SALES
-		// Enlace con productos (compras)
-		count = ctx.getDslContext()
-			.update(PRODUCT)
-			.set(PRODUCT.SALES_ACCOUNT,newAccount.getId())
-			.where(PRODUCT.DOMAIN.eq(domain)
-				.and(PRODUCT.SALES_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " enlaces con productos modificados (ventas)."));
-
-		
-		// FK_AMORTIZATION_ACCUMULATED_ACCOUNT
-		// Fichas de amotizacion. Cuenta de Dotación.
-		count = ctx.getDslContext()
-			.update(AMORTIZATION)
-			.set(AMORTIZATION.ACCUMULATED_ACCOUNT,newAccount.getId())
-			.where(AMORTIZATION.DOMAIN.eq(domain)
-				.and(AMORTIZATION.ACCUMULATED_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas de acumulado en fichas de amortizaci\u00F3n."));
-		
-		// FK_AMORTIZATION_ALLOCATION__ACCOUNT
-		// Fichas de amotización. Cuenta de acumulado.
-		count = ctx.getDslContext()
-			.update(AMORTIZATION)
-			.set(AMORTIZATION.ALLOCATION_ACCOUNT,newAccount.getId())
-			.where(AMORTIZATION.DOMAIN.eq(domain)
-				.and(AMORTIZATION.ALLOCATION_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas de dotaci\u00F3n en fichas de amortización."));
-		
-		// FK_AMORTIZATION_FIXED_ASSET__ACCOUNT
-		// Fichas de amotización. Cuenta de inmoviliazado.
-		count = ctx.getDslContext()
-			.update(AMORTIZATION)
-			.set(AMORTIZATION.FIXED_ASSET_ACCOUNT,newAccount.getId())
-			.where(AMORTIZATION.DOMAIN.eq(domain)
-				.and(AMORTIZATION.FIXED_ASSET_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas de inmoviliazado en fichas de amortizaci\u00F3n."));
-		
-		// FK_CREDITOR_ACCOUNT
-		// Fichas de acreedores.
-		count = ctx.getDslContext()
-			.update(CREDITOR)
-			.set(CREDITOR.ACCOUNT,newAccount.getId())
-			.where(CREDITOR.DOMAIN.eq(domain)
-				.and(CREDITOR.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con acreedores."));
-
-		// FK_CUSTOMER_ACCOUNT
-		// Fichas de acreedores.
-		count = ctx.getDslContext()
-			.update(CUSTOMER)
-			.set(CUSTOMER.ACCOUNT,newAccount.getId())
-			.where(CUSTOMER.DOMAIN.eq(domain)
-				.and(CUSTOMER.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con clientes."));
-
-		// FK_CUSTOMER_ACCOUNT
-		// Fichas de acreedores.
-		count = ctx.getDslContext()
-			.update(SUPPLIER)
-			.set(SUPPLIER.ACCOUNT,newAccount.getId())
-			.where(SUPPLIER.DOMAIN.eq(domain)
-				.and(SUPPLIER.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con proveedores."));
-		
-		// FK_BANK_CONCEPT_ACCOUNT
-		count = ctx.getDslContext()
-			.update(BANK_CONCEPT)
-			.set(BANK_CONCEPT.ACCOUNT,newAccount.getId())
-			.where(BANK_CONCEPT.DOMAIN.eq(domain)
-				.and(BANK_CONCEPT.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con concepto bancarios."));
-		
-		// FK_LOAN_ACCOUNT
-		count = ctx.getDslContext()
-			.update(LOAN)
-			.set(LOAN.ACCOUNT,newAccount.getId())
-			.where(LOAN.DOMAIN.eq(domain)
-				.and(LOAN.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con pr\u00E9stamos."));
-
-		// FK_PM_TYPE_DETAIL_ACCOUNT
-		count = ctx.getDslContext()
-			.update(PM_TYPE_DETAIL)
-			.set(PM_TYPE_DETAIL.ACCOUNT,newAccount.getId())
-			.where(PM_TYPE_DETAIL.DOMAIN.eq(domain)
-				.and(PM_TYPE_DETAIL.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con tipos de pagos."));
-
-		// FK_RBANK_ACCOUNT
-		count = ctx.getDslContext()
-			.update(RBANK)
-			.set(RBANK.ACCOUNT,newAccount.getId())
-			.where(RBANK.DOMAIN.eq(domain)
-				.and(RBANK.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con bancos."));
-
-		// FK_TAX_ACCOUNT_PURCHASE
-		count = ctx.getDslContext()
-			.update(TAX)
-			.set(TAX.PURCHASE_ACCOUNT,newAccount.getId())
-			.where(TAX.DOMAIN.eq(domain)
-				.and(TAX.PURCHASE_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con impuestos (compras)."));
-		
-		// FK_TAX_ACCOUNT_SALES
-		count = ctx.getDslContext()
-			.update(TAX)
-			.set(TAX.SALES_ACCOUNT,newAccount.getId())
-			.where(TAX.DOMAIN.eq(domain)
-				.and(TAX.SALES_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas enlazadas con impuestos (ventas)."));
-		
-	}
 	public static AccUtilitiesResult noLowLevelAccounts(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
@@ -596,7 +419,16 @@ public class AccountingUtilitiesDAO {
 			}
 			if ( rightAccount != null) {
 				ctx.getDslContext().transaction(config -> {
-					changeAccount(ctx, ctx.getDomainId(), wrongAccount, rightAccount, result  );
+					AccUtilitiesAccountChangeParams params = new AccUtilitiesAccountChangeParams()
+						.setDomain(ctx.getDomainId())
+						.setOldAccount(wrongAccount)
+						.setNewAccount(rightAccount); 
+//					changeAccount(ctx, ctx.getDomainId(), wrongAccount, rightAccount, result  );
+					LinkedList<String> msgs = AccountChangeDAO.changeAccount(ctx, params);
+					for (String msg :  msgs) {
+						result.add(new AccUtilitiesInfoItem().setMessage(msg));	
+					}
+					
 				});
 			}
 		}
@@ -1416,6 +1248,32 @@ public class AccountingUtilitiesDAO {
 					visitExpenses(invoice);
 				}
 			});
+		}
+		return result;
+	}
+	
+	public static AccUtilitiesResult searchAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params) {
+		LinkedList<AccUtilitiesAccountChangeItem> list = AccountChangeDAO.searchAccount(ctx, params);
+		AccUtilitiesResult result = new AccUtilitiesResult();	
+		for (AccUtilitiesAccountChangeItem accountChange : list) {
+			result.add(accountChange);
+		}
+		return result;
+	}
+	
+	public static AccUtilitiesResult fixAccountChange(AONContext ctx, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange) {
+		String msg = AccountChangeDAO.changeAccount(ctx, params, accountChange);
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		if (msg != null) {
+			result.add(new AccUtilitiesAccountChangeItem()
+				.setDomain(accountChange.getDomain())
+				.setDomainName(accountChange.getDomainName())
+				.setMessage(msg)
+				.setDependency(accountChange.getDependency())
+				.setOldAccount(accountChange.getOldAccount())
+				.setNewAccount(accountChange.getNewAccount())
+				.setId(accountChange.getId())
+			);
 		}
 		return result;
 	}

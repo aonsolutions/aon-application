@@ -14,7 +14,7 @@ public enum Mod2002015CorrectionDetailKey implements Serializable, IMod200KeysPr
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF
 	
-	// FALTA - En el 2014 este enumerado estaba en Page08 de aon.gwt.fiscal.client.tree.content.mod200_2014, con algún campo más
+	// En el 2014 este enumerado estaba en Page08 de aon.gwt.fiscal.client.tree.content.mod200_2014, con algún campo más
 	// para el 2015 se pone aqui para seguir el mismo criterio que el resto de desgloses
 	// Habra que tenerlo en cuenta cuando se haga el formulario de pantalla para el 2015
 	

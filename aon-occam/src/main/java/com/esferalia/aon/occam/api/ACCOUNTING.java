@@ -33,6 +33,8 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -97,6 +99,17 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().getAccounts(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Stream<Account> getAccounts(String domainName, int domainId, String login, AccountFilter filter, int offset, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccounting().getAccounts(ctx, filter, offset, limit);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -801,6 +814,29 @@ public class ACCOUNTING {
 		}
 	}
 
+	// Cambio de cuentas 
+	public static AccUtilitiesResult searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().searchAccountChange(ctx,params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().fixAccountChange(ctx,params,accountChange);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccUtilitiesResult removeWrongCheckedInvoice(String domainName, int domain, String user,
 			Integer invoice) {
 		AONContext ctx = null;
@@ -964,7 +1000,4 @@ public class ACCOUNTING {
 		}
 	}
 
-
-
-		
 }

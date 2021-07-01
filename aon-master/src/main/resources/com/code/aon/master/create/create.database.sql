@@ -5193,7 +5193,8 @@ CREATE TABLE `fs_model200` (
   `ultimate_document` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - NIF o equivalente',
   `ultimate_document_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Codigo pais',
   `ultimate_name` varchar(40) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Nombre o razon social',
-  `ultimate_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Pais o jurisdiccion',  
+  `ultimate_country` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo - Datos de la sociedad matriz ultima - Pais o jurisdiccion',
+  `nrs_anexoV_ric` varchar(22) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NRS anexo V RIC',    
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -8344,6 +8345,51 @@ CREATE TABLE `tariff_catalogue` (
   CONSTRAINT `FK_TARIFF_CATALOGUE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARIFF_CATALOGUE_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Catalogo';
+
+#
+# Structure for the `task_workflow` table : 
+#
+
+CREATE TABLE `task_workflow` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+  `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Operario',
+  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo del flujo de Tareas',
+  `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TASK_WORKFLOW_DOMAIN` (`domain`),
+  KEY `IDX_TASK_WORKFLOW_TASK` (`task`),
+  KEY `IDX_TASK_WORKFLOW_TASK_HOLDER` (`task_holder`),
+  CONSTRAINT `FK_TASK_WORKFLOW_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_WORKFLOW_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+  CONSTRAINT `FK_TASK_WORKFLOW_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Flujo de Tareas';
+
+#
+# Structure for the `task_attach` table : 
+#
+
+CREATE TABLE `task_attach` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+  `task_workflow` int(4) DEFAULT NULL COMMENT 'Identificador del Flujo de Tareas',
+  `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TASK_ATTACH_DOMAIN` (`domain`),
+  KEY `IDX_TASK_ATTACH_TASK` (`task`),
+  KEY `IDX_TASK_ATTACH_TASK_WORKFLOW` (`task_workflow`),
+  CONSTRAINT `FK_TASK_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_ATTACH_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+  CONSTRAINT `FK_TASK_ATTACH_TASK_WORKFLOW` FOREIGN KEY (`task_workflow`) REFERENCES `task_workflow` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas, Flujo de Tareas y Archivos adjuntos';
+
 
 #
 # Structure for the `task_comment` table : 

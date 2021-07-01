@@ -793,8 +793,8 @@ button:disabled, button[disabled]{
 .aonProgress {
   background-color: #b3d4fc;
   display: none;
-  /* position: absolute;
-  top: 36px; */
+  position: absolute;
+  top: 36px;
 }
 
 .aonProgress:before {
@@ -1208,13 +1208,12 @@ button:disabled, button[disabled]{
     z-index: -10;
 }
 
-.materialScroll::-webkit-scrollbar-track
-{
+.materialScroll::-webkit-scrollbar-track{
     border-radius: 10px;
     background-color: transparent;
 }
-.materialScroll::-webkit-scrollbar
-{
+
+.materialScroll::-webkit-scrollbar{
     width: 6px;
     background-color: transparent;
 }
@@ -1224,17 +1223,29 @@ button:disabled, button[disabled]{
     background-color: var(--aonLightGray);
 }
 
-.materialScroll{
-    /*
-      Firefox have no support
-      for this, so we hide it.
-    */
-    scrollbar-width: none;
-}
+.materialScroll{ scrollbar-width: none; }
 
 .iconArrow::after {
   content: "\25BE";
   position: absolute;
   left: 28px;
   top: 4px;
+}
+
+.aonTransitionLeft{ display: none;}
+
+.aonTransitionLeft.active{
+  display: block;
+  -webkit-animation: slide .3s ease-out;
+  -moz-animation: slide .3s ease-out;
+}
+
+@-webkit-keyframes slide {
+  0% { opacity: 0; -webkit-transform: translateX(-100%); }   
+  100% { opacity: 1; -webkit-transform: translateX(0); }
+}
+
+@-moz-keyframes slide {
+  0% { opacity: 0; -moz-transform: translateX(-100%); }   
+  100% { opacity: 1; -moz-transform: translateX(0); }
 }

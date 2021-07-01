@@ -4,6 +4,8 @@ import { API_URL } from "../environments/environments.js";
 
 export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, data);
 
+export const getTastHoldersWorkGroup = (data) => get(`${API_URL}/taskholder/workgroup`, data);
+
 let taskHoldersUser;
 export const getTaskHoldersUser = (data) => {
   const newData = data || {};
@@ -15,6 +17,22 @@ export const getTaskHoldersUser = (data) => {
         .then(r => {
           taskHoldersUser = r;
           resolve(taskHoldersUser);
+        }).catch(e => reject(e));
+    }
+  });
+}
+
+let taskHolder;
+export const getTaskHolder = (data) => {
+  const newData = data || {};
+  return new Promise((resolve, reject) => {
+    if (taskHolder && !newData.reload) {
+      resolve(taskHolder);
+    } else {
+      get(`${API_URL}/taskholder`, newData)
+        .then(r => {
+          taskHolder = r;
+          resolve(taskHolder);
         }).catch(e => reject(e));
     }
   });

@@ -33,12 +33,19 @@ export const MESSENGER_IDS = {
     MESSENGER_CHAT: "messengerChat",
     NEW_REQUEST_PANEL : "newRequestPanel", 
     NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
-    NEW_REQUEST_PANEL_TITLE : "newRequestPanelTitle", 
     NEW_REQUEST_PANEL_RECEIVER : "newRequestPanelReceiver", 
     NO_MESSAGES : "noMessages",
     START : "start",
     END : "end",
-    ADD_ICON_BUTTON : "aonMessengeraddButtonIconButton"
+    ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
+    BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
+    // DIV_DATA:"divData",
+    WORKGROUP: "workgroupTask",
+    TASKHOLDER: "taskHolderTask",
+    COMMENT_TASK: "commentTask",
+    TITLE_TASK: "titleTask",
+    DESCRIPTION_TASK: "descriptionTask",
+    TASK_ID: "taskId"
 }
 
 export const MESSENGER_MODES = {

@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -70,14 +71,17 @@ import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
 	
+	private static final String MONTH_LEAVE_DAYS = "DIAS_IT_MES";
 	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
 	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
+
 		
 		private long prevDays = 0;
 		private SQLContractSalaryCalculatorContext monthCtx;
@@ -102,7 +106,17 @@ public class SQLContractDelayCalculatorContext extends
 		@Override
 		protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(Connection conn, Date startDate,
 				Date endDate, Date issueDate, Criteria criteria, int start, int end) {
-			ISQLContractSalaryCalculatorContext ctx =  super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
+			SQLNoItContractSalaryCalculatorContext ctx =  (SQLNoItContractSalaryCalculatorContext) super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
+			
+			//ctx.lastLeaveEnd = 
+					
+			monthCtx.getLeavesPeriods().stream()
+			.sorted((p1,p2) -> Period.compare(p2.getEnd(), p1.getEnd()))
+			.findFirst().ifPresent(p -> {
+				ctx.lastLeaveEnd = p.getEnd();
+			});
+			;
+			
 			if ( AonDateUtils.getDay(startDate) == 1 )
 				return ctx;
 			ctx.getExpressionContext().setVariable(ContextVariable.ACTIVE_DAYS.getName(), prevDays, startDate, endDate);
@@ -128,7 +142,23 @@ public class SQLContractDelayCalculatorContext extends
 			
 			override(ctx, ContextVariable.ERE_DAYSS);
 			override(ctx, ContextVariable.QUOTE_DAYS, ContextVariable.WORKED_DAYS, ContextVariable.TOTAL_WORKED_DAYS);
+			
+			loadMothItDays(ctx);
 		}
+
+		private void loadMothItDays(ContractExpressionContext ctx) {
+			try {
+			
+				double monthItDays = 
+				monthCtx.getExpressionContext().getVariables(ContextVariable.LEAVE_DAYS).stream()
+				.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()));
+				ctx.setVariable(MONTH_LEAVE_DAYS, monthItDays, monthCtx.getStart(), monthCtx.getEnd());
+
+			} catch (Exception e) {
+			}
+		}
+		
+
 		
 		private void override (ContractExpressionContext ctx, ContextVariable ...ctxVars  ) {
 			for ( ContextVariable ctxVar : ctxVars ) {
@@ -140,7 +170,6 @@ public class SQLContractDelayCalculatorContext extends
 						}
 						@Override
 						public Double getValue(Period period) {
-//							System.out.println("*" + ctxVar + ": "+ period.getStart() +" , "+ var.getValue(period) + " <> " + monthCtx.getVariable(ctxVar, period, Double.class) );
 							return monthCtx.getVariable(ctxVar, period, Double.class);
 						}
 					});
@@ -190,21 +219,19 @@ public class SQLContractDelayCalculatorContext extends
 				ITimedResult<Double> result, Date start, Date end, ExpressionContext expressionContext)
 				throws UnsupportedOperationException, UndefinedVariablesException {
 			
+			if ( isGuarenteedPayment(contractPayment))
+				return Collections.singletonList(result);
+
 			if ( isITPayment(contractPayment))
 				return Collections.singletonList( isInIT(result.getPeriod()) ? fixItResult(result) : new TimedResult<Double>(0.00, result.getPeriod(), result.getContext()));
 
-//			if ( !isWholeMonth(result.getPeriod()) ) {
-//				try {
-//					double workedDays = getWorkedDays(expressionContext, result);
-//					double totalWorkedDays = getTotalWorkedDays(expressionContext, result.getPeriod());
-//					if ( workedDays < totalWorkedDays ) {
-//						double value = result.getValue() / totalWorkedDays * workedDays;
-//						return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
-//					}
-//				} catch ( Exception e ) {
-//				}
-//			}
-			
+			if (contractPayment.getType() == PaymentType.CRA_0002 
+				|| contractPayment.getType() == PaymentType.CRA_0003 ) {
+				try {
+					return shareResult(result, expressionContext);
+				} catch (ExpressionException e) {
+				}
+			}
 			
 			int month = AonDateUtils.getMonth(result.getPeriod().getStart());
 			
@@ -212,7 +239,7 @@ public class SQLContractDelayCalculatorContext extends
 			
 			double activeDays ;
 			try {
-				activeDays = getMonthDays(expressionContext, start, end); 
+				activeDays = SQLContractDelayCalculatorContext.getMonthDays(expressionContext, start, end); 
 			} catch ( ExpressionException e ) {
 				activeDays = monthDays.get(month);
 			}
@@ -237,6 +264,14 @@ public class SQLContractDelayCalculatorContext extends
 			
 			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
 		}
+
+		private List<ITimedResult<Double>> shareResult(ITimedResult<Double> result, ExpressionContext expressionContext)
+				throws ExpressionException {
+			double workedDays = getWorkedDays(expressionContext, result.getPeriod());
+			double totalWorkedDays = getTotalWorkedDays(expressionContext, result.getPeriod());
+			double value = result.getValue() / totalWorkedDays *  workedDays;
+			return Collections.singletonList(new TimedResult<Double>(value, result.getPeriod(), result.getContext()));
+		}
 		
 	
 		@Override
@@ -259,6 +294,55 @@ public class SQLContractDelayCalculatorContext extends
 			return fixedResults; // super.fixItResults(contractPayment, results, its, start, end, expressionContext);
 		}
 		
+		@Override
+		protected List<ITimedResult<Double>> fixStrikeResults(IContractPayment contractPayment,
+				List<ITimedResult<Double>> results, List<Period> strikes, Date start, Date end,
+				ExpressionContext expressionContext) throws UnsupportedOperationException {
+			if (results.size() == 1
+				&& isConstant(results.get(0))
+				&& isPermanentPayment(contractPayment, results.get(0).getPeriod()) ) {
+				try {
+					return subtractOFFPart(results, strikes, expressionContext);
+				} catch (UndefinedVariablesException e) {
+				} catch (ExpressionException e) {
+				}
+			} 
+
+			return super.fixStrikeResults(contractPayment, results, strikes, start, end, expressionContext);
+		}
+		
+//		private Map<String, Double> guarenteed = new HashMap<String, Double>();
+		
+		@Override
+		protected List<ITimedResult<Double>> checkCra0055Results(IContractPayment contractPayment,
+				List<ITimedResult<Double>> results, Date start, Date end, ExpressionContext expressionContext) {
+			if ( results.size() == 1 &&
+				 results.get(0).getContext().size() <= 1) {
+//				String key = String.format("%d-%2$tY-%2$tm", contractPayment.getId() , start);
+//				if ( AonUtils.equals(guarenteed.get(key), results.get(0).getValue()) ) 
+//					return Collections.emptyList();
+//				guarenteed.put(key, results.get(0).getValue());
+				return Collections.singletonList(fixItResult(results.get(0), expressionContext));
+			}
+			return super.checkCra0055Results(contractPayment, results, start, end, expressionContext);
+		}
+		
+		
+		protected static boolean isConstant(ITimedResult<Double> result) {
+			if ( result.getContext().size() == 0 ) 
+				return true;
+			
+			if ( result.getContext().size() > 1 ) 
+				return false;
+			return 
+			result.getContext().values().stream().findFirst()
+			.map( v -> AonUtils.equals(v.getValue(v.getPeriod()), result.getValue(result.getPeriod())) )
+			.orElse(false);
+		}
+		
+		
+		// --------------------------------------------------------------------
+		
 		private ITimedResult<Double> fixItResult(ITimedResult<Double> result) {
 			int resultDays = AonDateUtils.getDay(result.getPeriod().getEnd()) 
 					- AonDateUtils.getDay(result.getPeriod().getStart()) + 1;
@@ -268,25 +352,49 @@ public class SQLContractDelayCalculatorContext extends
 			
 		}
 		
+		private ITimedResult<Double> fixItResult(ITimedResult<Double> result,  ExpressionContext ctx) {
+			double monthItDays = getMonthItDays(ctx);
+			double resultItDays = getItDays(ctx, result.getPeriod());
+			double value = result.getValue() / monthItDays * resultItDays;
+			return new TimedResult<Double>(value, result.getPeriod(), result.getContext());
+			
+		}
+
 		private boolean isInIT(Period p) {
 			return Period.intersects(its.iterator(), Collections.singletonList(p).iterator());
 		}
 
 		private static boolean isITPayment(IContractPayment contractPayment) {
 			PaymentType type = contractPayment.getType();
+			String name = contractPayment.getName();
+			if ( ContextVariable.PREST_IT.equals(name))
+				return true;
+			return false;
+		}
+
+		private static boolean isGuarenteedPayment(IContractPayment contractPayment) {
+			PaymentType type = contractPayment.getType();
 			if ( PaymentType.CRA_0055 == type )
 				return true;
 			if ( PaymentType.CRA_0054 == type )
 				return true;
 			String name = contractPayment.getName();
-			if ( ContextVariable.PREST_IT.equals(name))
-				return true;
 			if ( ContextVariable.GUARENTEED.equals(name))
 				return true;
 			return false;
 		}
+		
+		private static double getMonthItDays(ExpressionContext ctx) {
+			return ctx.getVariables(MONTH_LEAVE_DAYS).stream()
+			.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()))
+			;
+		}
 
-
+		private static double getItDays(ExpressionContext ctx, Period p) {
+			return ctx.getVariables(LEAVE_DAYS).stream()
+			.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()))
+			;
+		}
 	}
 	
 
@@ -393,6 +501,7 @@ public class SQLContractDelayCalculatorContext extends
 		Collection<Period> itPeriods = getItPeriods(connection, getId(), startDate, endDate);
 		Map<Integer, Integer> itDays = getItDays(connection, itPeriods, startDate, endDate);
 		Map<Integer, Integer> monthDays = getMonthDays(startDate, endDate);
+		
 
 		//	ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractDelayCalculator<ISalary>(monthDays, itDays, itPeriods);
@@ -406,7 +515,7 @@ public class SQLContractDelayCalculatorContext extends
 				prevDays = 0;
 			
 			
-			ISQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
+			DelaySQLContractSalaryCalculatorContext ctx = new DelaySQLContractSalaryCalculatorContext(
 					connection, 
 					period.getStart(), 
 					period.getEnd(),
@@ -648,7 +757,10 @@ public class SQLContractDelayCalculatorContext extends
 				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
 				+ " FROM " + SALARY_PAYMENT 
 				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO')"
+				+ " AND (" + SalaryPaymentColumns.TYPE  + " = 55"
+				+ " OR " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO' "
+				+ " OR " + SalaryPaymentColumns.DESCRIPTION  + " LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')"
+				+ ")"
 				+", 0.00)";
 				;
 
@@ -657,7 +769,10 @@ public class SQLContractDelayCalculatorContext extends
 				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
 				+ " FROM " + SALARY_PAYMENT 
 				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO') )"
+				+ " AND " + SalaryPaymentColumns.TYPE + " NOT IN( 55 )"
+				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO')"
+				+ " AND " + SalaryPaymentColumns.DESCRIPTION  + " NOT LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')"
+				+ ")"
 				+", 0.00)";
 				;
 
@@ -675,7 +790,10 @@ public class SQLContractDelayCalculatorContext extends
 				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
 				+ " FROM " + SALARY_PAYMENT 
 				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO')"
+				+ " AND (" + SalaryPaymentColumns.TYPE  + " = 55"
+				+ " OR " + SalaryPaymentColumns.PAYMENT_CONCEPT + " = 'GARANTIZADO'"
+				+ " OR " + SalaryPaymentColumns.DESCRIPTION  + " LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')"
+				+ ")"
 				+", 0.00)";
 				;
 
@@ -684,7 +802,9 @@ public class SQLContractDelayCalculatorContext extends
 				+ " SUM(" + SalaryPaymentColumns.AMOUNT+")"
 				+ " FROM " + SALARY_PAYMENT 
 				+ " WHERE " + SalaryPaymentColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
-				+ " AND " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO') )"
+				+ " AND (" + SalaryPaymentColumns.TYPE + " IS NULL OR " + SalaryPaymentColumns.TYPE + " NOT IN( 55 )" + ")"
+				+ " AND (" + SalaryPaymentColumns.PAYMENT_CONCEPT + " IS NULL OR " + SalaryPaymentColumns.PAYMENT_CONCEPT + " NOT IN( 'PREST_IT', 'GARANTIZADO')" + ")"
+				+ " AND (" + SalaryPaymentColumns.DESCRIPTION + " IS NULL OR " + SalaryPaymentColumns.DESCRIPTION  + " NOT LIKE '%MEJORA%PREST.SS.INCAPACIDAD%TEMPORAL%')" + ")"
 				+", 0.00)";
 				;
 
@@ -755,29 +875,40 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AS GTZDO" 
 				
 				+ ", @ALL_IT_DAYS:=(" + ALL_IT_DAYS +")" 
+				+ " AS ALLITDAYS" 
 
-				+ ", @GTZDOIT:=IFNULL((@GTZDO / @ALL_IT_DAYS " + " * " + IT_DAYS+"),0.00)"
+				+ ", @IT_DAYS:=(" + IT_DAYS +")" 
+				+ " AS ITDAYS" 
+
+				+ ", @ALL_WORKED_DAYS:=(" + ALL_WORKED_DAYS +")" 
+				+ " AS ALLWORKEDDAYS" 
+
+				+ ", @WORKED_DAYS:=(" + WORKED_DAYS +")" 
+				+ " AS WORKEDDAYS" 
+
+				+ ", @GTZDOIT:=IFNULL((@GTZDO / @ALL_IT_DAYS  * @IT_DAYS ),0.00)"
 				+ " AS GTZDOIT" 
 
 				+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
 				+ ") AS " + SalaryColumns.CGC_BASE
 				
 				+ ", @IRPF:=(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.IRPF +","+ PREST_IT + ")" + " + @GTZDOIT"
-				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS + ")"
+				+ ", (" + SalaryColumns.IRPF_BASE + "- (" + PREST_IT_IRPF_SQL + " + @GTZDO )) / @ALL_WORKED_DAYS * @WORKED_DAYS )"
 				+ ")"
 				+ " AS _" + SalaryColumns.IRPF_BASE
 
 				+ ", @PAYMENT:=(IFNULL( " + "IFNULL(" + SALARY_PAYMENT +"." + SalaryPaymentColumns.AMOUNT + "," + PREST_IT +")" + " + @GTZDOIT"
-				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + " + @GTZDO )) / " + ALL_WORKED_DAYS + " * " + WORKED_DAYS +")"
+				+ ", (" + SalaryColumns.TOTAL_PAYMENT + "- (" + PREST_IT_AMOUNT_SQL + " + @GTZDO )) / @ALL_WORKED_DAYS * @WORKED_DAYS )"
 				+ ")"
 				+ " AS _" + SalaryColumns.TOTAL_PAYMENT
 				
-				+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / " + ALL_WORKED_DAYS + " * (DATEDIFF(?, ?) + 1 )"   
+				//+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * (DATEDIFF(?, ?) + 1 )"   
+				+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * ( IF(@WORKED_DAYS > 0.00, @WORKED_DAYS , (DATEDIFF(?, ?) + 1 )) )"   
 				+ ")"
 				+ " AS _" + SalaryPaymentColumns.AMOUNT  
 				
-				+ ", IF ( @IRPF = 0.00 AND @ALL_IT_DAYS IS NULL , @AMOUNT , @IRPF ) AS " + SalaryColumns.IRPF_BASE
-				+ ", IF ( @PAYMENT = 0.00 AND @ALL_IT_DAYS IS NULL , @AMOUNT , @PAYMENT ) AS " + SalaryColumns.TOTAL_PAYMENT
+				+ ", IF ( @IT_DAYS IS NULL , @AMOUNT , @IRPF ) AS " + SalaryColumns.IRPF_BASE
+				+ ", IF ( @IT_DAYS IS NULL , @AMOUNT , @PAYMENT ) AS " + SalaryColumns.TOTAL_PAYMENT
 
 				+ " FROM "
 				+ SALARY 
@@ -794,6 +925,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + ")" 
 				+ " GROUP BY 1"
+//				+ " ORDER BY 1"
 				;
 
 		protected static final class DelayContractPayment extends ContractPayment {
@@ -881,6 +1013,8 @@ public class SQLContractDelayCalculatorContext extends
 			
 			if ( DIRECT_PAY.getName().equals(payment.getName() ))
 				directBase += quote;
+			
+			//System.out.printf("*[%1$td-%2$td] %3$s : %4$f,  %5$f \r\n", startDate, endDate, description, amount, quote);
 		}
 
 		public Collection<IContractPayment> getContractPayments()
@@ -889,6 +1023,7 @@ public class SQLContractDelayCalculatorContext extends
 			Set<String> fields = values.keySet();
 
 			Map<String, Double> paidValues = getPaidSalary(fields);
+			
 
 			Map<String, Double> diffValues = new HashMap<String, Double>();
 			
@@ -903,7 +1038,12 @@ public class SQLContractDelayCalculatorContext extends
 				 
 			}
 			
-			
+			//values.forEach((k,v) -> System.out.printf("[NEW] %s=%s", k,v ));
+			//System.out.println();
+			//paidValues.forEach((k,v) -> System.out.printf("[OLD] %s=%s", k,v ));
+			//System.out.println();
+			//diffValues.forEach((k,v) -> System.out.printf("[DIFF] %s=%s", k,v ));
+			//System.out.println();
 
 			List<IContractPayment> payments = new LinkedList<IContractPayment>();
 
@@ -943,14 +1083,16 @@ public class SQLContractDelayCalculatorContext extends
 				}
 
 				while (rs.next()) {
+					Integer itDays = rs.getInt("ITDAYS");
 					Integer id = rs.getInt(SALARY_PAYMENT + "." + SalaryPaymentColumns.ID);
-					if ( id != 0 && !prestIts.add(id) )
+					if ( id != 0 && itDays != 0 && !prestIts.add(id) )
 						continue;
 					for (String field : fields) {
 						Double value = values.get(field);
 						value += rs.getDouble(field) ;
 						values.put(field, value);
 					}
+					break;
 				}
 				return values;
 			} finally {
@@ -1019,9 +1161,8 @@ public class SQLContractDelayCalculatorContext extends
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
-			stmt.setDate(i++, sqlStartDate); 
-			stmt.setDate(i++, sqlEndDate); 
-
+			
+			// DATEDIFF(?, ?) 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			
@@ -1039,6 +1180,7 @@ public class SQLContractDelayCalculatorContext extends
 		private static final String EXTRA_PAYMENTS_SQL = 
 				"SELECT " 
 				+ SALARY_PAYMENT +"." + SalaryPaymentColumns.ID
+				+ ", 1.00 AS ITDAYS " 
 				+ ", 0.00 AS " + SalaryColumns.CGC_BASE
 				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.IRPF_BASE
 				+ ", SUM(" + SQLConstants.SALARY_PAYMENT + "." + SalaryPaymentColumns.QUOTE + ") AS " + SalaryColumns.TOTAL_PAYMENT 
@@ -1090,6 +1232,11 @@ public class SQLContractDelayCalculatorContext extends
 			super.addValue(SalaryColumns.TOTAL_PAYMENT, quote);
 		}
 		
+		@Override
+		public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+				Date endDate, IPayment payment, Map context) {
+		}
+		
 		// ---------------------------------------------------------- protected
 		
 		@Override
@@ -1133,72 +1280,6 @@ public class SQLContractDelayCalculatorContext extends
 			return stmt.executeQuery();
 		}
 
-	}
-
-	private static class ExtraDelayPaymentBuilder extends DelayPaymentBuilder {
-
-		private static final String EXTRA_SQL = "SELECT *" + " FROM "
-				+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT
-				+ " = ? " + " AND " + SalaryColumns.TYPE + "  = ? " + " AND "
-				+ SalaryColumns.START_DATE + "  = ? " + " AND "
-				+ SalaryColumns.END_DATE + " = ? " + " AND "
-				+ SalaryColumns.CHARGE_DATE + " = ? ";
-
-		private Date chargeDate;
-
-		public ExtraDelayPaymentBuilder(Connection connection,
-				IDelayPaymentDecorator paymentDecorator) throws SQLException {
-			super(connection, paymentDecorator);
-		}
-
-		@Override
-		public void setChargeDate(Date chargeDate) {
-			this.chargeDate = chargeDate;
-		}
-
-		protected PreparedStatement initStatement(Connection connection)
-				throws SQLException {
-			return connection.prepareStatement(EXTRA_SQL);
-		}
-
-		protected ResultSet initResultSet(PreparedStatement stmt,
-				Integer contract, SalaryType type, Date startDate, Date endDate)
-				throws SQLException {
-			ResultSet rs = null;
-			stmt.setInt(1, contract); // SalaryColumns.CONTRACT + " = ? "
-			stmt.setInt(2, type.ordinal()); // SalaryColumns.TYPE + " = ? "
-			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-			stmt.setDate(3, sqlStartDate); // SalaryColumns.START_DATE +
-											// "  = ? "
-			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			stmt.setDate(4, sqlEndDate); // SalaryColumns.END_DATE + "  = ? "
-
-			java.sql.Date sqlChargeDate = new java.sql.Date(
-					chargeDate.getTime());
-			stmt.setDate(5, sqlChargeDate); // SalaryColumns.CHARGE_DATE +
-											// "  = ? "
-
-			return stmt.executeQuery();
-		}
-
-		@Override
-		protected ContractPayment createContractPayment(double amount,
-				double irpf, double quote) {
-			ContractPayment payment = new DelayContractPayment();
-			payment.setStartDate(chargeDate);
-			payment.setEndDate(chargeDate);
-			payment.setSalaryType(SalaryType.DELAY);
-			// TODO: Generic Delays ? 
-			payment.setType(PaymentType.CRA_0008);
-
-			payment.setExpression(String.format(Locale.US, "%.3f", amount));
-			payment.setIrpfExpression(String.format(Locale.US, "%.3f", irpf));
-			payment.setQuoteExpression(String.format(Locale.US, "%.3f", quote));
-
-			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
-
-			return payment;
-		}
 	}
 
 	private static class Extra {
@@ -1313,6 +1394,7 @@ public class SQLContractDelayCalculatorContext extends
 		return resultDays;
 		
 	}
+	
 	
 
 }

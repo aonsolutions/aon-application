@@ -48,7 +48,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -152,14 +152,14 @@ public class StatDAO {
 	}
 	
 	
-	public static Stream<Task> getStatTaskStream(AONContext ctx, StatParams params){
+	public static Stream<OldTask> getStatTaskStream(AONContext ctx, StatParams params){
 		return ctx.getDslContext().select()
 			.from(TASK)
 			.where(TaskChartTypeVisitor.getTaskCondition(ctx, params))
 			.orderBy(TASK.START_DATE.desc())
 			.fetchInto(TASK)
 			.stream()
-			.map(new TaskDAO.FullTaskFiller());
+			.map(new TaskOldDAO.FullTaskFiller());
 	}
 	
 	public static StatData<String, String, Double> getStatData(final AONContext ctx, final StatParams params){

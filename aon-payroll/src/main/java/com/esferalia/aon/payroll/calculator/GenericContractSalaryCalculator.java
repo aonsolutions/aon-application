@@ -101,6 +101,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalaryCalculatorContext> implements ISalaryCalculator<T, C> {
 
@@ -1349,7 +1350,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			PaymentType contractPaymentType = getPaymentType(contractPayment);
 			
-			if ( contractPayment.getScope() == APPLICATION ) {
+			if ( isExtra(expressionContext)
+				&& contractPaymentType != PaymentType.CRA_0000
+				&& contractPayment.getScope() == ExpressionScope.SALARY ) {
+				; // Skip EXTRA Concepts
+			} else if ( contractPayment.getScope() == APPLICATION ) {
 				; // Skip APPLICATION Concepts
 			} else if (contractPaymentType != PaymentType.CRA_0008
 					&& contractPaymentType != PaymentType.CRA_0055 
@@ -1432,7 +1437,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					contractPayment.getSalaryType() == SalaryType.SALARY ) {
 				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
 					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
-			} else if (contractPaymentType == PaymentType.CRA_0055) {
+			} else if ( AonUtils.equals(name, ContextVariable.GUARENTEED) ||
+							contractPaymentType == PaymentType.CRA_0055) {
 				results = checkCra0055Results(contractPayment, results, start, end, expressionContext);
 				
 			}

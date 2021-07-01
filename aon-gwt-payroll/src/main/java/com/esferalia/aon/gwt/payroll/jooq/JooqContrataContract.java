@@ -1698,7 +1698,7 @@ public class JooqContrataContract {
 				contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
-				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
+				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
 			}else if(r.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PARCIALIDAD")) {
 				String expression = r.get(CONTRACT_DATA.EXPRESSION);
 				if(null != expression && expression.contains("\""))
@@ -1855,6 +1855,8 @@ public class JooqContrataContract {
 		}
 		
 		employeeContractInfo.setScopeMap(scopeMap);
+		
+		System.out.println("GET CONTRACT : " + contractId + " -> TC2 : " + contractData.getContractType());
 		
 		return employeeContractInfo;
 	}

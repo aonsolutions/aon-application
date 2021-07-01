@@ -27,9 +27,11 @@ import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
+import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -146,4 +148,12 @@ public interface ICommon {
 	// GEOZONE
 	
 	public GeoZone get(AONContext ctx, GeoZoneFilter filter);
+	
+	
+	//WORKGROUP
+	public Workgroup getWorkgroup(AONContext ctx, WorkgroupFilter filter);
+	public Stream<Workgroup> getWorkgroupStream(AONContext ctx, WorkgroupFilter filter);
+	public LinkedList<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter);
+	public Workgroup saveWorkgroup(AONContext ctx, Workgroup workgroup);
+	public void deleteWorkgroup(AONContext ctx, Integer id);
 }

@@ -1,9 +1,9 @@
-import { AonSelect } from "../../components/aon-select.js";
 import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
-import { newComponent, setClasses } from "../../services/utils.js";
+import { newComponent, setAttributes, setClasses, setStyles } from "../../services/utils.js";
 import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./shared/creationUtils.js";
 import { RIGHT } from "./shared/messenger-chat.js";
-import { ICON_TYPES, MESSENGER_COMPONENTS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "./MessengerEnums.js";
+import { AonInput } from "../../components/aon-input.js";
 
 const fontColor = CSS.variable(COLORS.GRAYSON);
 
@@ -55,9 +55,10 @@ export const createTitleDiv = () => newComponent({
   },
 });
 
-export const createEditableTitle = (title) => newComponent({
+export const createDivEditable = (title, id, placeholder) => newComponent({
   type: "text",
-  text: title ? title : "Escriba su titulo aqui",
+  id,
+  text: title ? title : null,
   classes : [CSS.TRANSITION_QUICK,CSS.CONTENT_EDITABLE, CSS.NO_FOCUS],
   styles: {
     fontSize: "1.5em",
@@ -69,13 +70,23 @@ export const createEditableTitle = (title) => newComponent({
     color: CSS.variable(COLORS.AON_BLUE),
   },
   attributes: {
-    contentEditable : ""
+    contentEditable : "",
+    placeholder: placeholder || "...",
   }
+}).element;
+
+
+export const inputId = () =>  setAttributes(new AonInput(),{
+  visible: false,
+  name: MESSENGER_IDS.TASK_ID,
+  id:  MESSENGER_IDS.TASK_ID,
+  value: "",
+  type: "text",
 });
 
 export const createTitle = (title) => newComponent({
   type: "text",
-  text: title == "" ? "Escriba titulo aqui" : title,
+  text: title == "" ? "Escriba titulo aquí" : title,
   styles: {
     fontSize: "1.8em",
     fontWeight: "400",
@@ -112,27 +123,18 @@ export const createReceiverDiv = () => newComponent({
   },
 });
 
-export const createReceiverTitle = () => newComponent({
-  type: "span",
-  text: "Para: ",
-  styles: {
-    fontSize: "1.5em",
-    paddingRight: "5px",
-    color: fontColor,
-  },
-});
 
-export const createReceiverselect = () => {
+// export const createReceiverselect = () => {
   
-  let comp = new AonSelect();
-  comp.id = "";
-  comp.title = "";
-  comp.style.transition = "background-color .25s";
-  setClasses(comp,[CSS.TRANSITION_CASCADE]);
+//   let comp = new AonSelect();
+//   comp.id = "";
+//   comp.title = "";
+//   comp.style.transition = "background-color .25s";
+//   setClasses(comp,[CSS.TRANSITION_CASCADE]);
 
-  return comp;
+//   return comp;
 
-}
+// }
 
 
 
@@ -204,6 +206,7 @@ export const createButtonWrapper = () => newComponent({
 export const createSendButton = () => newComponent({
   type: "button",
   text: "Enviar",
+  id: MESSENGER_IDS.BUTTON_SUBMIT_COMMENT,
   classes: [
     "materialButton",
     CSS.FLEX_ROW,

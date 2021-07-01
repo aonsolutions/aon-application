@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -179,4 +181,16 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.invoiceIntegrityFix(domainName, user, domain, invoiceId, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
 
+	// Cambio de cuentas 
+	@Override
+	public void searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.searchAccountChange(domainName, user, domain, params, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+
+	@Override
+	public void fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.fixAccountChange(domainName, user, domain, params, accountChange, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
 }

@@ -121,6 +121,7 @@ public class TimeControlDetail implements Serializable {
 			JSONObject taskHolderJson = new JSONObject();
 			taskHolderJson.put("id", getTaskHolder().getId());
 			taskHolderJson.put("name", getTaskHolder().getName());
+			taskHolderJson.put("active", getTaskHolder().getActiveValue());
 			json.put("task_holder", taskHolderJson);
 		}
 		return json;

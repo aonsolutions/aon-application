@@ -79,6 +79,11 @@ public class JsonUtils {
 		Number n = AonNumberUtils.toInteger(  json.optNumber(key, null)); 
 		return n==null?0:n.intValue();
 	}
+	
+	public static Byte getByte(JSONObject json, String key ) {
+		Number n = AonNumberUtils.toInteger(json.optNumber(key, null)); 
+		return n == null ? 0 : n.byteValue();
+	}
 
 	public static Date getDate(JSONObject json, String key ) {
 		try {

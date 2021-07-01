@@ -55,8 +55,12 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		}
 		
 		AON_SOLUTIONS.getSuggestionRegistries(api.getDomain(), api.getUser().getLogin(), list,
-				f -> rfilter(api, f)).forEach(r -> array.put(registryToJSON(r)));
-		return array;
+				f -> rfilter(api, f)).forEach(r -> array.put(registryToJSON(r, false)));
+		if(array.length() <= 0) {
+			AON_SOLUTIONS.getGlobalSuggestionRegistries(api.getDomain(), api.getUser().getLogin(), 
+					f -> globalRfilter(api, f)).forEach(r -> array.put(registryToJSON(r, true)));
+		}
+ 		return array;
 	}
 	
 	private Filter rfilter(AonApiData api, RegistryProperties f) {
@@ -73,12 +77,27 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
+	private Filter globalRfilter(AonApiData api, RegistryProperties f) {
+    	Filter filter =  f.getDomainProperty().eq(0);
+ 
+    	String name = api.getParams().optString("name");
+		String document = api.getParams().optString("document");
+		
+		if(!AonStringUtils.isBlank(document)) {
+			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
+		} else if(!AonStringUtils.isBlank(name)) {
+			filter = filter.and(f.getNameProperty().like("%" + name + "%"));
+		}
+		return filter;
+	}
 	
-	private JSONObject registryToJSON(Registry reg) {
+	
+	private JSONObject registryToJSON(Registry reg, Boolean global) {
 		return new JSONObject()
 				.put("id", reg.getId())
 				.put("document", reg.getDocument())
-				.put("name", reg.getName());
+				.put("name", reg.getName())
+				.put("global", global);
 	}
 	
 	private JSONObject getResponseObject() {

@@ -41,6 +41,7 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -89,6 +90,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String uri = req.getRequestURI();
 			String fileName = AonServletUtils.getFileName(uri);
 			switch (fileName) {
+			case CALCS:
+				doCalcs(req, resp);
+				break;
 			case EMPLOYEE:
 				doEmployeePost(req, resp);
 				break;
@@ -117,7 +121,49 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}
 	}
 	
-	
+	private void doCalcs(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException, SegSocialException {
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+
+		Date month = getDateParameter(req);
+		java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(month).getTime());
+		java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(month).getTime() );
+		
+		try ( Connection connection = getConnection(req);
+			AONContext aonContext = new AONContext(connection);
+			OutputStream os = resp.getOutputStream();
+			Writer writer = new OutputStreamWriter(os)){
+								
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+				
+				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
+
+					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+					
+					SistemaRED2AON.addCalcs(aonContext, 
+							userLogin, 
+							domainName, 
+							domainId, 
+							certificate.getCertificate(), 
+							certificate.getPassword(), 
+							certificate.getType(), 
+							ccc.getRegime(), 
+							ccc.getCode(), 
+							startDate, 
+							endDate);
+					writer.write(ccc.getCode());
+					writer.flush();
+//					resp.setStatus(HttpServletResponse.SC_OK);
+//					String base64 = Base64.getEncoder().encodeToString(data);
+//					encodeURIComponent("application/pdf", base64, writer);
+					
+				}
+				resp.setStatus(HttpServletResponse.SC_OK);
+				
+			}
+	}
 	
 	private void doUp2DateReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
 		String userLogin = req.getParameter(Parameter.USER.name());

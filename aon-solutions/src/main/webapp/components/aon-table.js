@@ -199,7 +199,7 @@ export class AonTable extends AonElement {
       } else if("icon" === id && value[id]) {
         let icon = this.createElement(TAG.I);
         icon.id = this.getId() + "Icon";
-        icon.className = "material-icons";
+        icon.className = value.icon_class || "material-icons";
         icon.innerHTML = value[id];
         icon.style.color = value.icon_color || "#5f6368";
         icon.title = value.icon_title;

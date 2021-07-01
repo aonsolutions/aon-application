@@ -366,6 +366,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar todos de la selecci\u00F3n")
 	String deleteAllFromSelection();
 
+	@DefaultMessage("Cambiar seleccionados")
+	String changeSelected();
+	
 	@DefaultMessage("Volver")
 	String backAction();
 
@@ -1188,10 +1191,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos del representante")
 	String representativeData();
 
-	@DefaultMessage("Datos de los representantes legales")
+	@DefaultMessage("Representantes legales de la entidad")
 	String legalRepresentativeData();
 	
-	@DefaultMessage("Datos del Secretario del Consejo o persona que cumple las funciones en el \u00F3rgano que sustituye a dicho Consejo. Declarante o representante.")
+	@DefaultMessage("Secretario del Consejo de Administraci\u00F3n, declarante o representante")
 	String secretaryData();
 
 	@DefaultMessage("PERSONAS F\u00CDSICAS Y ENTIDADES SIN PERSONALIDAD JUR\u00CDDICA")
@@ -1879,7 +1882,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultado de la cuenta de p\u00E9rdidas y ganancias")
 	String liquidation1Label1();
 
-	@DefaultMessage("Detalle de las correcciones a la cuenta de p\u00E9rdidas y ganancias.")
+	@DefaultMessage("Detalle de las correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluida la correcci\u00F3n por IS)")
 	String liquidation1Label2();
 	
 	@DefaultMessage("Liquidaci\u00F3n (I)")
@@ -1962,7 +1965,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aplicaci\u00F3n de resultados")
 	String incomeDistribution();
 	
-	@DefaultMessage("Presentaci\u00F3n de documentaci\u00F3n previa en la sede electr\u00F3nica (consigne el N\u00FAmero de Referencia de Sociedades (NRS))")
+	@DefaultMessage("Presentaci\u00F3n de documentaci\u00F3n previa en la sede electr\u00F3nica (consigne el N\u00FAmero de Referencia de Sociedades (NRS)")
 	String documentsElectronicSede();
 	
 	@DefaultMessage("Documentaci\u00F3n presentada por el Anexo III (Ajustes y deducciones)")
@@ -2128,7 +2131,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Detalle de la compensaci\u00F3n de bases imponibles negativas")
 	String compensationDetail();
 	
-	@DefaultMessage("Pendiente de aplicaci\u00F3n a principio de ejercicio")
+	@DefaultMessage("Pendiente de aplicaci\u00F3n a principio de periodo")
 	String previousPending();
 	
 	@DefaultMessage("Aplicado en esta liquidaci\u00F3n")
@@ -2234,7 +2237,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Exp.Dat.Ctb.")
 	String aeatAccountingFileAbr();
 
-	@DefaultMessage("Datos de Grupo Fiscal")
+	@DefaultMessage("Grupo fiscal")
 	String fiscalGroupLabel();
 
 	@DefaultMessage("N\u00FAmero de Grupo Fiscal")
@@ -3822,7 +3825,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("10.- Dividendos y participaciones en benefi cios distribuidos con cargo a reservas:")
 	String ute5();
 
-	@DefaultMessage("11.- Relaci\u00F3n de socios existentes a la fecha de cierre del per\u00EDodo impositivo, en orden decreciente de grado de participaci\u00F3n, con sus datos identifi cativos y grado de participaci\u00F3n en dicha fecha:")
+	@DefaultMessage("11.- Relaci\u00F3n de socios existentes a la fecha de cierre del per\u00EDodo impositivo, que deban soportar las imputaciones, en orden decreciente de grado de participaci\u00F3n, con sus datos identificativos y grado de participaci\u00F3n en dicha fecha:")
 	String ute6();
 
 	@DefaultMessage("Informaci\u00F3n de detalle de EP o UTE que operen en el extranjero y por participaci\u00F3n en f\u00F3rmula de colaboraci\u00F3n an\u00E1loga a UTE")

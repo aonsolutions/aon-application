@@ -101,7 +101,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserAppRoleProperties
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.WorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO.WorkgroupFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -406,11 +406,11 @@ public class SecurityDAO {
 	}
 	
 	private static void deleteUserTaskHolder(AONContext ctx, User user) {
-		TaskHolder taskHolder = TaskDAO.getTaskHolder(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+		TaskHolder taskHolder = TaskOldDAO.getTaskHolder(ctx, f -> f.getUserIdProperty().eq(user.getId()));
 		if(taskHolder.getId() != null) {
 			taskHolder.setActive(false);
 			taskHolder.setUserId(null);
-			TaskDAO.save(ctx, taskHolder);
+			TaskOldDAO.save(ctx, taskHolder);
 		}
 	}
 	private static void deleteUserAppRoles(AONContext ctx, User user) {

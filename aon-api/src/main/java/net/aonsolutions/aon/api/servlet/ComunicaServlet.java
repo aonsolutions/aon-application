@@ -77,7 +77,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(req, resp, e);
 		}
 		
@@ -213,6 +212,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		String ipf = api.getData().optString("ipf");
 		String name = api.getData().optString("nombre");
+		String situation = api.getData().optString("situation");
 		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), "yyyy-MM-dd");
 
 		EmployeeBuilder builder = new EmployeeBuilder();
@@ -223,6 +223,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setIpf(ipf)
 		.setFra(fecha)
 		.setName(name)
+		.setSituation(situation)
 		.build();
 		employee =  SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 		if(employee.getName().isPresent()) {

@@ -29,4 +29,15 @@ public enum TaskStatus {
     public byte value() {
     	return (byte) this.ordinal();
 	}
+    
+    public static TaskStatus safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static TaskStatus safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= TaskStatus.values().length) return null;
+		return TaskStatus.values()[i];
+	}
 }

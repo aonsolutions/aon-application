@@ -310,6 +310,7 @@ class WrongRecordedInvoices extends OptionBase {
 		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
-		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}		
+		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
+		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
 	}
 }

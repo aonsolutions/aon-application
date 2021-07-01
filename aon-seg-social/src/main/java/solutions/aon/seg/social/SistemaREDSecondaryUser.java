@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -154,6 +155,12 @@ class SistemaREDSecondaryUser {
 			emptyUserSecundary(htmlPage);
 			
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_1");
+
+			// La autorización XXXXX de la que es usted principal 
+			// no tiene asociado ningún secundario
+			if ( ch == null ) 
+				return Collections.emptyList();  
+				
 			htmlPage = ch.click();
 			manageStatusCode(htmlPage);
 
