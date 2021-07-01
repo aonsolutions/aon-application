@@ -107,6 +107,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.TYPE, taskHolder.getType().value())
 			.set(TASK_HOLDER.USER_ID, taskHolder.getUserId())
 			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
+			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.execute();
 		ctx.log().info("INSERT TASK HOLDER id: " + taskHolder.getId());		
 		return taskHolder;
@@ -119,6 +120,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.TYPE, taskHolder.getType().value())
 			.set(TASK_HOLDER.USER_ID, taskHolder.getUserId())
 			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
+			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.execute();
 		ctx.log().info("UPDATE TASK HOLDER id: " + taskHolder.getId() + ". (" + count + " rows)");		

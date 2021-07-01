@@ -32,7 +32,7 @@ public class TaskHolder extends Registry implements Serializable{
 	}
 	
 	public Boolean isActive() {
-		return active;
+		return active != null && active;
 	}
 
 	public TaskHolder setActive(Boolean active) {
