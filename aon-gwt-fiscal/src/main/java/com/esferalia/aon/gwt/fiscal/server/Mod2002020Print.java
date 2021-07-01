@@ -32,7 +32,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod2002020Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2020 Print", urlPatterns = { "/aon_gwt_fiscal/Model2002020Print" })
+@WebServlet(name = "Mod200 - 2020 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model2002020Print" })
 public class Mod2002020Print extends HttpServlet {
 
 	@Override

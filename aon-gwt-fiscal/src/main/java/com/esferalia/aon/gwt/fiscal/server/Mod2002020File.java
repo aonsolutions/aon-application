@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod2002020Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2020 File download", urlPatterns = { "/aon_gwt_fiscal/Model2002020File" })
+@WebServlet(name = "Mod200 - 2020 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model2002020File" })
 public class Mod2002020File extends HttpServlet {
 
 	@Override

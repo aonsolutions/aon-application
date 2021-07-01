@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.Mod2002020toMOD200
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2020 Accounting File", urlPatterns = { "/aon_gwt_fiscal/Model2002020AccountingFile" })
+@WebServlet(name = "Mod200 - 2020 Accounting File", urlPatterns = { "/aon_gwt_fiscal/ms/Model2002020AccountingFile" })
 public class Mod2002020AccountingFile extends HttpServlet {
 
 	@Override
