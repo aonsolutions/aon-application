@@ -771,10 +771,14 @@ export class AonNewInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
-				this.invoice.addTax();
-				this.reload();
-				if(this.autosave) this.save();
+				if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+					// TODO
+				} else { 
+					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
+					this.invoice.addTax();
+					this.reload();
+					if(this.autosave) this.save();
+				}
 			});
 			div.appendChild(addButton);
 			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
@@ -1021,9 +1025,9 @@ export class AonNewInvoice extends AonElement {
 		amount.description = MSG.AMOUNT;
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
-		amount.readonly = CONSTANT.TRUE;
 		amount.value = detail.amount;
 		table.addCell(amount);
+		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 
