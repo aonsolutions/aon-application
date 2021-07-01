@@ -494,7 +494,7 @@ public class Model2002020 extends ResizeComposite  {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model2002020AccountingFile");
+					submitForm("/aon_gwt_fiscal/ms/Model2002020AccountingFile");
 				}
 			}
 		);
@@ -515,7 +515,7 @@ public class Model2002020 extends ResizeComposite  {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model2002020File");
+					submitForm("/aon_gwt_fiscal/ms/Model2002020File");
 				}
 			}
 		);
@@ -535,7 +535,7 @@ public class Model2002020 extends ResizeComposite  {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model2002020Print");
+					submitForm("/aon_gwt_fiscal/ms/Model2002020Print");
 				}
 			}
 		);
@@ -543,7 +543,7 @@ public class Model2002020 extends ResizeComposite  {
 
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"Mod2002020AccountingUpload") {
+		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"ms/Mod2002020AccountingUpload") {
 			
 			@Override
 			protected void onCancel() {

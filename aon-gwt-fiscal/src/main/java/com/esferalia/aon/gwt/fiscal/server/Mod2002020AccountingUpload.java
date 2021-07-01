@@ -17,7 +17,7 @@ import gwtupload.server.exceptions.UploadActionException;
 import gwtupload.server.exceptions.UploadException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod200 - 2020 Accounting Upload ", urlPatterns = { "/aon_gwt_fiscal/Mod2002020AccountingUpload" })
+@WebServlet(name = "Mod200 - 2020 Accounting Upload ", urlPatterns = { "/aon_gwt_fiscal/ms/Mod2002020AccountingUpload" })
 public class Mod2002020AccountingUpload extends UploadAction {
 
 	@Override
