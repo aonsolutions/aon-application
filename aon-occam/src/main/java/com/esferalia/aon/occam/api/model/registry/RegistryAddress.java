@@ -270,7 +270,7 @@ public class RegistryAddress implements Serializable {
 
 	public Boolean isEmpty() {
 		return id == null && domain == null && registry == null
-			&& recipient == null && streetType == null && address == null
-			&& zip == null && city == null && geozone == null;
+			&&  AonStringUtils.isBlank(recipient) && streetType == null && AonStringUtils.isBlank(address)
+			&&  AonStringUtils.isBlank(zip) &&  AonStringUtils.isBlank(city) && geozone == null;
 	}
 }

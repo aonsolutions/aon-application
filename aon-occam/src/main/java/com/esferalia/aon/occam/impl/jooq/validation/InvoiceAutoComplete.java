@@ -40,8 +40,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -220,6 +218,11 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(c.getDomain().getId())
+									.setRegistry(c.getId()));
 						}
 					}
 				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
@@ -233,6 +236,11 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(s.getDomain().getId())
+									.setRegistry(s.getId()));
 						}
 					}
 				} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
@@ -247,6 +255,11 @@ public class InvoiceAutoComplete {
 							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(c.getDomain().getId())
+									.setRegistry(c.getId()));
 						}
 					}
 				}
