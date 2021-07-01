@@ -312,7 +312,7 @@ public class SupplierModule extends MainEntryPoint {
 				final AonSimpleDialog dialog = new AonSimpleDialog();
 				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-				dialog.setCaption(AON.MSG.creditor());
+				dialog.setCaption(AON.MSG.supplier());
 				AonSupplierFullPanel creditorPanel = new AonSupplierFullPanel(opt, SupplierFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<SupplierFull>() {
 					
 					@Override
