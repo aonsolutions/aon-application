@@ -108,7 +108,7 @@ export class AonAddress extends AonElement {
     aonInput.value = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
 
     aonInput.addIconButton(MATERIAL_ICONS.ROOM, () => {
-      if (!this.hasAttribute(CONSTANT.READONLY)) {
+      if (!this.isReadonly()) {
         let divEdit = this.getElement(this.EDIT);
         if (divEdit.style.display === "block") {
           divEdit.style.display = "none";
