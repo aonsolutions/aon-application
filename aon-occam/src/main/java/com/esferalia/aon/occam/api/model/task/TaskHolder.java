@@ -60,7 +60,6 @@ public class TaskHolder extends Registry implements Serializable{
 	
 	public boolean isEmpty() {
 		return super.isEmpty() && getType() == null
-			&& isActive() == null && getUserId() == null 
-			&& getCostProfile() == null;
+			&& getUserId() == null && getCostProfile() == null;
 	}
 }
