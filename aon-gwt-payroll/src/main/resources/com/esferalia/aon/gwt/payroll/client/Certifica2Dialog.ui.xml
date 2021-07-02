@@ -1,0 +1,173 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+ 
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Certifica2Dialog.MyStyle">
+	
+		.bold {
+			font-weight: bold;
+		}
+		
+		.title {
+			font-size: 13px;
+		}
+		
+		.subTitle {
+			font-style: italic;
+			color: gray;
+		}
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			max-width: 550px;
+			width: 100%;
+			gap: 5px;
+		}
+		
+		.container {
+			padding: 0 1.5em 1.5em 1.5em;
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.footerPanel{
+			display: flex;
+			justify-content: space-between;
+			margin-top: 15px;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel ui:field="toolbarPanel"/>
+		
+		<g:HTMLPanel styleName="{style.container}">
+	
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.bold} {style.title}">Datos Empresa/Actividad</g:Label>
+			</g:HTMLPanel>
+		
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">CIF:</g:Label>
+					<g:Label ui:field="enterpriceDocumentL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">CCC:</g:Label>
+					<g:Label ui:field="completeCCCL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.bold} {style.title}">Datos Contrato/Trabajador</g:Label>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Documento:</g:Label>
+					<g:Label ui:field="documentL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Trabajador:</g:Label>
+					<g:Label ui:field="fullNameL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">TC2:</g:Label>
+					<g:Label ui:field="contractTypeL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">F. Incio:</g:Label>
+					<g:Label ui:field="startDateL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">F. Fin:</g:Label>
+					<g:Label ui:field="endDateL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Grupo Cotización:</g:Label>
+					<g:Label ui:field="quoteGroupL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Duración Contrato:</g:Label>
+					<g:Label ui:field="contractDurationL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Código Suspensión:</g:Label>
+					<g:Label ui:field="suspensionCodeL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Días Cotización:</g:Label>
+					<g:Label ui:field="settleQuoteDaysL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Base CGC:</g:Label>
+					<g:Label ui:field="baseCgcL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Base Desempleo:</g:Label>
+					<g:Label ui:field="baseUnemploymentL" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}"  ui:field="quoteDataListTitlePanel">
+				<g:Label styleName="{style.bold} {style.title}">Tramos Certifica2</g:Label>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel ui:field="quoteDataListPanel" styleName="{style.flexColumn}"/>
+	
+			<g:HTMLPanel ui:field="footerPanel" styleName="{style.footerPanel}">
+				<g:HTMLPanel ui:field="messagesPanel" styleName="{style.flex}">
+					<g:HTMLPanel ui:field="loadingPanel" />
+				    <g:Label ui:field="messageL" />
+				</g:HTMLPanel>
+				<g:HTMLPanel></g:HTMLPanel>
+				<g:HTMLPanel ui:field="buttonsPanel"></g:HTMLPanel>
+			</g:HTMLPanel>
+			
+		
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>
