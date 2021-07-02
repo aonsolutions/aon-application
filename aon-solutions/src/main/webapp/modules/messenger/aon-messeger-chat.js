@@ -4,12 +4,12 @@ import { COLORS, CONSTANT, CSS, EVENT } from "../../environments/environments.js
 import { ToolbarType } from "../../models/enums.js";
 import { newComponent, setClasses, setStyles, setValueName, waitEl } from "../../services/utils.js";
 import { createMainView, createMobileMainView, inputId } from "./createComponents.js";
-import { buildChat, buildMobileChat } from "./shared/messenger-chat.js";
+import { buildChat, buildMobileChat, fillChat } from "./shared/messenger-chat.js";
 import { buildDesktopWritter, sendMessage } from "./shared/messenger-writter.js";
-import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "./MessengerEnums.js";
+import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "./MessengerEnums.js";
 import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
 import * as ACTIONS from "../actions.js";
-import { saveTask } from "../../services/taskService.js";
+import { saveTask, getTaskWorkflow } from "../../services/taskService.js";
 
 export class AonMessengerChat extends AonElement {
   _data;
@@ -50,7 +50,7 @@ export class AonMessengerChat extends AonElement {
       type: 0,
       author: "",
       for: "Laboral",
-      content: []
+      workflows: []
     }
   }
 
@@ -77,48 +77,17 @@ export class AonMessengerChat extends AonElement {
     } else { 
       this.paintDesktop();
     }
-    /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = this.selector(".continueLined");
-    if (lined)
-      lined.style.setProperty("--height", lined.scrollHeight + "px");
   
     this.appendChild(inputId());
-    if(this._data.id) this.setValues();
+    if(this._data.id)  this.setValues();
   }
 
   paintDesktop() {
     const data = this._data;
+    this.buildToolbarDesktop();
+
     const mainView = createMainView();
-    const toolbar = new AonToolbar();
-    toolbar.id = "id";
-		toolbar.type = ToolbarType.SECONDARY;
-    toolbar.title = "#" + (data.id  || "00000");
-    waitEl(`#${toolbar.id}`).then(bar => {
-      bar.addButton2(ACTIONS.BACK,() => {
-        mainView.element.style.opacity    = "0";
-        mainView.element.style.transition = ".25s";null
-        setTimeout(() => {
-            const button = this.getElement("aonMessengerSidenavAbiertas");
-            button.click();
-        }, 250);
-      });
-
-      const titleSpan = bar.querySelector(`.${CSS.AON_SECONDARY_TOOLBAR_TITLE}`);
-
-      setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
-
-      const status = createOutlinedMaterialIcon({
-        color: CSS.variable(COLORS.ONLINE_GREEN),
-        name: "info",
-        size: "20px"
-      });
-      status.element.style.marginLeft = "10px"
-      status.appendTo(titleSpan);
-    })
-
+    mainView.appendTo(this);
     const writter = newComponent({
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
       styles: {
@@ -132,37 +101,72 @@ export class AonMessengerChat extends AonElement {
         top: 0
       }
     });
-
-    const chat = newComponent({
-      classes: [CSS.FLEX_ROW],
-      styles: {
-        width: "50%",
-        height: '90%',
-        minWidth: "400px",
-        maxWidth: "600px",
-        paddingTop: '5vh',
-        paddingRight: '40px',
-        paddingLeft: '40px',
-      }
-    });
+    writter.appendTo(mainView.element);
 
     buildDesktopWritter(writter, data, this);
-    buildChat(chat, data);
 
-    writter.appendTo(mainView.element);
-    chat.appendTo(mainView.element);
-
-    this.appendChild(toolbar);
-    mainView.appendTo(this);
-
+    this.buildChatDesktop();
+   
     setTimeout(() => {
       mainView.element.style.opacity = 1;
       mainView.element.style.marginTop = 0;
     }, 100);
+  }
 
-    this.getElement(MESSENGER_IDS.BUTTON_SUBMIT_COMMENT).addEventListener(EVENT.CLICK,()=>{
-      this.save();
+  buildChatDesktop(){
+      const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
+      const chat = newComponent({
+        classes: [CSS.FLEX_ROW],
+        styles: {
+          width: "50%",
+          height: '90%',
+          minWidth: "400px",
+          maxWidth: "600px",
+          paddingTop: '5vh',
+          paddingRight: '40px',
+          paddingLeft: '40px',
+        }
+      });
+      chat.appendTo(mainView);
+      buildChat(chat);
+      /**
+     * Setting the chat line once all is rendered
+     * DO NOT change this, is compulsory.
+     */
+      const lined = this.selector(".continueLined");
+      if (lined)
+        lined.style.setProperty("--height", lined.scrollHeight + "px");
+  }
+
+  buildToolbarDesktop(){
+    const data = this._data;
+    const toolbar = new AonToolbar();
+    toolbar.id = "id";
+		toolbar.type = ToolbarType.SECONDARY;
+    toolbar.title = "#" + (data.id  || "00000");
+    this.appendChild(toolbar);
+
+    toolbar.addButton2(ACTIONS.BACK,() => {
+      const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
+      mainView.style.opacity    = "0";
+      mainView.style.transition = ".25s";
+      setTimeout(() => {
+          const button = this.getElement("aonMessengerSidenavAbiertas");
+          button.click();
+      }, 250);
     });
+
+    const titleSpan = toolbar.querySelector(`.${CSS.AON_SECONDARY_TOOLBAR_TITLE}`);
+
+    setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
+
+    const status = createOutlinedMaterialIcon({
+      color: CSS.variable(COLORS.ONLINE_GREEN),
+      name: "info",
+      size: "20px"
+    });
+    status.element.style.marginLeft = "10px"
+    status.appendTo(titleSpan);
   }
 
   paintMobile() {
@@ -195,6 +199,7 @@ export class AonMessengerChat extends AonElement {
     }
 
     const mainView = createMobileMainView();
+    mainView.appendTo(this);
     const chat = newComponent({
       classes: [CSS.FLEX_ROW],
       styles: {
@@ -205,10 +210,9 @@ export class AonMessengerChat extends AonElement {
         paddingLeft: "20px",
       }
     });
+    chat.appendTo(mainView.element);
 
     buildMobileChat(chat, data, this);
-    chat.appendTo(mainView.element);
-    mainView.appendTo(this);
 
     setTimeout(() => {
       mainView.element.style.opacity = 1;
@@ -217,16 +221,18 @@ export class AonMessengerChat extends AonElement {
   }
 
   setValues(){
-    console.log(this._data);
     const {id, workgroup, task_holder} = this._data;
     if(id) setValueName(MESSENGER_IDS.TASK_ID, id);
     if(workgroup && workgroup.id) setValueName(MESSENGER_IDS.WORKGROUP, workgroup.id);
     if(task_holder && task_holder.id) setValueName(MESSENGER_IDS.TASKHOLDER, task_holder.id);
+
+    //FILL CHATS WORKFLOW
+    this.getTaskWorkflow(id);
   }
 
   getData() {
     let data = undefined;
-    if(this.data && this.data.id){
+    if(this._data && this._data.id){
       data = {
         content: [
           {
@@ -281,35 +287,47 @@ export class AonMessengerChat extends AonElement {
   
   formSerialize(){
     let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    const comment = aonTextArea.value
+    const comment = aonTextArea.value;
     if(comment) sendMessage(aonTextArea); //remove comment and processed
     const sender = this.applicationParentEl.SENDER;
+    const domain = sender.domain.id;
+    const taskId = this.selector("#"+MESSENGER_IDS.TASK_ID).value;
     return {
-      id: this.selector("#"+MESSENGER_IDS.TASK_ID).value,
+      domain,
+      sender,
+      id: taskId,
       title:this.selector(`#${MESSENGER_IDS.TITLE_TASK}`).innerText,
       description: this.selector(`#${MESSENGER_IDS.DESCRIPTION_TASK}`).innerText,
-      domain: sender.domain.id,
       workgroup: {
         id:this.selector("#"+MESSENGER_IDS.WORKGROUP).value
       },
       task_holder:{
         id:this.selector("#"+MESSENGER_IDS.TASKHOLDER).value
       },
-      sender,
-      comment,
+      workflow:{
+        domain,
+        comment,
+        task_holder:sender,
+        type:TASK_WORKFLOW_TYPE.COMMENT
+      }
     }
+  }
+
+  getTaskWorkflow(taskId){
+    getTaskWorkflow({taskId}).then(workflows=>{
+      fillChat(workflows);
+    });
   }
 
   async save(){
     this.applicationEl.startLoading();
-    try {
+    // try {
       const form = this.formSerialize();
       const resp = await saveTask(form);
       setValueName(MESSENGER_IDS.TASK_ID, resp.id);
-      console.log(resp);
-    } catch (error) {
-      this.showError(error);
-    }
+    // } catch (error) {
+    //   this.showError(error);
+    // }
     this.applicationEl.stopLoading();
   }
 
