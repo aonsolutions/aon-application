@@ -1491,6 +1491,8 @@ public class TestSistemaREDI extends SegSocialTest{
 			assertTrue(true);
 		} catch (IOException e1) {
 			fail("IO exception");
+		} catch (DataDoesNotExist e) {
+			
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
