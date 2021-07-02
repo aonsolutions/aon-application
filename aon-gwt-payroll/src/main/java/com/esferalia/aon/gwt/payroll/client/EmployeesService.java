@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -215,7 +216,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
-	String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft);
+	String generateCertifaca2(String currentDomainName, Integer contractId);
 	
 	
 	// Sistema RED w2.seg-social.es
@@ -272,5 +273,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
+
+	// ------------------------------------------------- SEPE Methods
+	
+	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 }

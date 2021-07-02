@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -722,7 +723,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft) {
+	public String generateCertifaca2(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -863,6 +864,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;

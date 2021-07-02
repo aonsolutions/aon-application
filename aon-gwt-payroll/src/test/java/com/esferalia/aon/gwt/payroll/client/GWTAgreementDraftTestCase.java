@@ -15,6 +15,7 @@ import java.util.Set;
 import org.junit.Before;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
@@ -28,7 +29,6 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -244,7 +244,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft,
+		public void generateCertifaca2(String currentDomainName, Integer contractId,
 				AsyncCallback<String> callback) {
 			// TODO Auto-generated method stub
 			
@@ -344,6 +344,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
 				AsyncCallback<String> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getCertifica2Info(String currentDomainName, Integer contractId,
+				AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
@@ -567,7 +574,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft,
+					public void generateCertifaca2(String currentDomainName, Integer contractId,
 							AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
@@ -686,6 +693,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
 							AsyncCallback<String> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void getCertifica2Info(String currentDomainName, Integer contractId,
+							AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

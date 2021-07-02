@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -238,7 +239,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees,
 			AsyncCallback<ArrayList<EventEmployee>> callback);
 
-	void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft, AsyncCallback<String> callback);
+	void generateCertifaca2(String currentDomainName, Integer contractId, AsyncCallback<String> callback);
 	
 	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
 
@@ -295,5 +296,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	// ------------------------------------------------- SEPE Methods
+	
+	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
 
 }
