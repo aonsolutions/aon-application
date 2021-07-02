@@ -140,7 +140,7 @@ public class TaskDAO {
 			.set(TASK.GTASK_ID, task.getGtaskId())
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_USER, ctx.getUser())
 			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 			.where(TASK.ID.eq(task.getId())).execute();
 		return task;
@@ -169,9 +169,9 @@ public class TaskDAO {
 			.set(TASK.STATUS, task.getStatus().value())
 			.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
 			.set(TASK.WORKGROUP, task.getWorkgroup().getId())
-			.set(TASK.CREATION_USER, task.getCreationUser())
+			.set(TASK.CREATION_USER, ctx.getUser())
 			.set(TASK.CREATION_DATE,  AonDateUtils.toTimestamp(new Date()))
-			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_USER, ctx.getUser())
 			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 			.returning(TASK.ID).fetchOne().getId();
 		return task.setId(id);

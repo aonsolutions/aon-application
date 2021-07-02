@@ -14,7 +14,7 @@ public enum TaskWorkflowType  {
 	String event;
 	
 	private TaskWorkflowType(String event) {
-
+		this.event = event;
 	}
 
 	public String getEvent() {
@@ -42,7 +42,7 @@ public enum TaskWorkflowType  {
 	
 	public static TaskWorkflowType safeValueOf(String value) {
 		for (TaskWorkflowType tht : TaskWorkflowType.values()) {
-			if(tht.name().equalsIgnoreCase(value) && tht.getEvent().equalsIgnoreCase(value)) {
+			if(tht.name().equalsIgnoreCase(value) || tht.getEvent().equalsIgnoreCase(value)) {
 				return tht;
 			}
 		}
