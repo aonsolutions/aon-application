@@ -1,14 +1,18 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.json.IJsonNames;
-import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TaskJSON;
+import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -26,6 +30,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp,  getTasks(api));
+					break;
+				case "/workflow":
+					response(req, resp,  getTaskWorkflow(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -66,12 +73,32 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Object saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
-		addWorkflow(api, task); //ADD WORKFLOW
-		return TaskJSON.toJSON(AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task));
+		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
+		saveTaskWorkflow(api, task); //ADD WORKFLOW
+		return TaskJSON.toJSON(task);
 	}
 	
-	private void addWorkflow(AonApiData api, Task task) {
-		String comment = api.getData().getString("comment");
-		System.out.println(comment);
+	private Object getTaskWorkflow(AonApiData api) {
+		Integer taskId = api.getParams().optInt("taskId");
+		return TaskWorkflowJSON.toJSON(
+				AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
+				f->f.getTaskProperty().eq(taskId)) 
+		);
+	}
+	
+	private void saveTaskWorkflow(AonApiData api, Task task) {
+//		Thread newThread = new Thread(() -> {
+			try {
+				TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(api.getData().optJSONObject("workflow"));
+				workflow.setTask(task.getId());
+				if(api.getData().getString("id").isEmpty()) { //open task
+					workflow.setType(TaskWorkflowType.OPEN);
+				} 
+				AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+//		});
+//		newThread.start();
 	}
 }
