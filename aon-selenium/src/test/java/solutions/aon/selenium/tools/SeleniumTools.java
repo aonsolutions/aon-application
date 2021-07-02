@@ -314,6 +314,27 @@ public class SeleniumTools {
 		}
 		
 	}
+	
+	public static boolean waitUntilElementContains(WebDriver driver, By selector, String text) throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+		
+		String content = element.getAttribute("innerText");
+		
+		content = content != null ? content.trim() : "";
+		
+		for (int i=0; i<10; i++) {
+			Thread.sleep(1000);
+			element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+			content = element.getAttribute("innerText");
+			if (content.equalsIgnoreCase(text))
+				return true;
+		}
+		
+		return false;
+		
+	}
 
 	public static Double unmessDouble(Double number) {
 		if (number != null)
