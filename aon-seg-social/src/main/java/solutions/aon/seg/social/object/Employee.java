@@ -25,7 +25,7 @@ public class Employee {
 	private Date frb;
 	private Date feb;
 	private String contract;
-	private String coef;
+	private String coef; // Entero entre 000 - 1000
 	private String colec;
 	private String epig;
 	private String ocup;
