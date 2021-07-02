@@ -635,6 +635,7 @@ export class AonApplication extends AonElement {
     span.appendChild(aonIconButton);
     this.appendChild(span);
     this.getElement(this.id + action.id + "Button").addEventListener(EVENT.CLICK, fn);
+    return aonIconButton;
   }
   
   removeFloatOption() {
