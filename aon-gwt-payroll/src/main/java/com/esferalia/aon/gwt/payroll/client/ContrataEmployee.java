@@ -274,10 +274,28 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class Certifica2Command implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new Certifica2Dialog(contrataEmployeeObject.getContractId());
+		}
+	}
+	
+	class Certifica2PDFCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showCertifica2PDF();
+		}
+	}
+	
 	class NewSEPEContextMenu extends ContextMenu {
 		
 		private MenuItem cto;
 		private MenuItem cbc;
+		private MenuItem cetifica2;
+		private MenuItem cetifica2PDF;
 		
 		public NewSEPEContextMenu() {
 			
@@ -288,6 +306,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cbc = addItem("Copia B\u00E1sica", new CTOCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			cbc.ensureDebugId("cbc");
+			
+			cetifica2 = addItem("Cetifica2", new Certifica2Command(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			cetifica2.ensureDebugId("cetifica2");
+			
+			cetifica2PDF = addItem("Cetifica2 PDF", new Certifica2PDFCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			cetifica2PDF.ensureDebugId("cetifica2PDF");
 			
 		}
 
@@ -1024,7 +1050,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
 							
-							downloadTA_IDC();
+							downloadTA();
 						}, f -> {
 							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
 							dialog.warning();
@@ -1034,23 +1060,30 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				};
 	}
 	
-	private void downloadTA_IDC() {
-		contrataEmployeeObject.downloadTa((dataURI) -> {
-			pdfViewer.setDocument(dataURI, zoom / 100.00);
-			String fileName = contrataEmployeeObject.getEmployeeFullName() + " TA.pdf";
-			pdfViewer.download(fileName);
-			
-			downloadIDC();
-		}, (trowable)-> {});
+	private void downloadTA() {
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "comunica_file/";
+		String query = "?currentUser=" + Wnd.getCurrentUser()
+				+ "&currentDomain=" + Wnd.getCurrentDomainNameURL()
+				+ "&token=" + Wnd.getToken()
+	            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
+	            + "&document=" + contrataEmployeeObject.getEmployeeData().getDocument()
+	            + "&fileType=TA";
+		
+		Window.open(fileDownloadURL+query, "ComunicaFileExporter", "resizable=yes,scrollbars=yes,status=yes");
+		
+		downloadIDC();
 	}
 	
 	private void downloadIDC() {
-		contrataEmployeeObject.downloadIdc(idcDateListBox.getSelected(),
-				(dataURI) -> {
-						pdfViewer.setDocument(dataURI, zoom / 100.00);
-						String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
-						pdfViewer.download(fileName);
-				}, (trowable) -> {});
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "comunica_file/";
+		String query = "?currentUser=" + Wnd.getCurrentUser()
+				+ "&currentDomain=" + Wnd.getCurrentDomainNameURL()
+				+ "&token=" + Wnd.getToken()
+	            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
+	            + "&document=" + contrataEmployeeObject.getEmployeeData().getDocument()
+	            + "&fileType=IDC";
+		
+		Window.open(fileDownloadURL+query, "ComunicaFileExporter", "resizable=yes,scrollbars=yes,status=yes");
 	}
 
 	private void showTa() {
@@ -1108,6 +1141,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, (trowable)-> {});
+	}
+	
+	private void showCertifica2PDF() {
+		contrataEmployeeObject.getCertifica2PDF((dataURI) -> {
+			showPdf();
+			pdfViewer.setDocument(dataURI, zoom / 100.00);
+	}, (trowable)-> {});
 	}
 	
 	private void onClosePDF() {
@@ -1526,7 +1566,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void checkCertificateSEPE() {
-		setVisible(sepe.getElement(), hasCertificateSEPE);
+//		setVisible(sepe.getElement(), hasCertificateSEPE);
+		setVisible(sepeContextMenu.getCto().getElement(), hasCertificateSEPE);
+		setVisible(sepeContextMenu.getCbc().getElement(), hasCertificateSEPE);
 	}
 	
 	// ------------------------------------------------- Messages panel
