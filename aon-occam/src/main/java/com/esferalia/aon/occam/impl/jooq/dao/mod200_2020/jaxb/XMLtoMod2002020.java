@@ -209,7 +209,8 @@ public class XMLtoMod2002020 {
 		addVariable(mod200,Mod2002020Key.PG276, pag.getT00276());
 		addVariable(mod200,Mod2002020Key.PG277, pag.getT00277());
 		addVariable(mod200,Mod2002020Key.PG278, pag.getT00278());
-		addVariable(mod200,Mod2002020Key.PG279, pag.getT00279());
+		// La 279 pasa a ser total en todos los formatos
+		//addVariable(mod200,Mod2002020Key.PG279, pag.getT00279());
 		addVariable(mod200,Mod2002020Key.PG253, pag.getT00253());
 		addVariable(mod200,Mod2002020Key.PG254, pag.getT00254());
 		addVariable(mod200,Mod2002020Key.PG281, pag.getT00281());
