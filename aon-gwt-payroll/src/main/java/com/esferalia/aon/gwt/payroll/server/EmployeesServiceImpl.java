@@ -117,6 +117,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -179,6 +180,7 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.payroll.Contract;
@@ -270,8 +272,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Certificates;
-import aon.sepe.objects.Certificates.CertificatesBuilder;
-import aon.sepe.objects.Certificates.TypeDuration;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
@@ -5492,10 +5492,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String generateCertifaca2(String domainName, SalaryDraft salaryDraft) {
+	public String generateCertifaca2(String domainName, Integer contractId) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, salaryDraft);
+			return JooqCertifica2.generateCertifica2(connection, domainId, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5859,6 +5859,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Create employee object
 			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
+			System.out.println(employee);
+			
 			// sendAlta
 			SistemaRED.sendAlta(
 					new ByteArrayInputStream(certificate.getCertificate()), 
@@ -5899,6 +5901,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Create employee object
 			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 
+			System.out.println("sendEmployeeBaja \n" + employee.toString());
+			
 			// sendBaja
 			SistemaRED.sendBaja(
 					new ByteArrayInputStream(certificate.getCertificate()), 
@@ -6216,7 +6220,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 
-		} catch (SQLException | SepeException | IOException e) {
+		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------- SEPE Methods
+	
+	@Override
+	public Certifica2Info getCertifica2Info(String domainName, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get suspensionReason Code
+			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
+
+			// Get Certifica2Info
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, domainId, contractId, suspensionReasonCode);
+			
+			System.out.println(certifica2Info);
+			
+			return certifica2Info;
+			
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -6244,9 +6271,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setColec(agreementColective);
 		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
 		
-		Double coef = employeeContractInfo.getContractInfo().getPartialityCoef();
-		if(coef != null)
-			builder.setCoef(coef.toString());
+		Double coef = employeeContractInfo.getContractInfo().getPartialityCoef();	
+		if(coef != null) {
+			coef = coef * 1000;
+			String coefStr = coef.toString();
+			builder.setCoef(AonStringUtils.leftPad(coefStr, 3, '0'));
+		}
 		
 		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
 		
