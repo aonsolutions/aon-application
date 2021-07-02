@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -24,6 +25,7 @@ import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
@@ -937,6 +939,32 @@ public class JooqEmployee {
 		}
 		
 		contractData.setContractJourneyDuration(journies);
+		
+		// ---------------------------------------------- CheckSettle and Certifica2
+		
+		Result<Record> settlementRecords = dslContext.select().from(SALARY)
+				.where(SALARY.CONTRACT.eq(contract))
+				.and(SALARY.TYPE.eq((byte)2))
+				.orderBy(SALARY.ID.desc())
+				.fetch();
+		
+		contractData.setHasSettle(settlementRecords.isNotEmpty());
+		
+		List<Integer> certifca2BatachIds = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
+				.from(CERTIFICA2_BATCH_DETAIL)
+				.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contract))
+				.fetch(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
+		
+		if(certifca2BatachIds.isEmpty()) {
+			contractData.setHasCertifica2(false);
+		} else {
+			Record1<Integer> sepeBatchAttachRecord = dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
+				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(certifca2BatachIds.get(0)))
+				.and(SEPE_BATCH_ATTACH.MIMETYPE.eq((byte)5))
+				.fetchOne();
+			
+			contractData.setHasCertifica2(sepeBatchAttachRecord != null);
+		}
 			
 //		System.out.println(employeeData.toString());
 //		System.out.println(contractData.toString());
