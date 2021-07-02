@@ -16,7 +16,7 @@ public class ValidationSaveEmptyActive extends AbstractOccamTest {
 		TaskHolder taskHolder = AonFaker.getTaskHolder( ctx );
 		taskHolder.setActive(null);
 		taskHolder = TaskHolderDAO.save(ctx, taskHolder);
-		assertEquals(taskHolder.isActive(), true);
+		assertEquals(taskHolder.isActive(), false);
 	}
 
 }
