@@ -1,6 +1,7 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static solutions.aon.selenium.aio.id.AonHeaderId.LABORAL_BUTTON;
 import static solutions.aon.selenium.aio.id.LaboralId.CONSTANTE_BRUTO;
 import static solutions.aon.selenium.aio.id.LaboralId.CONSTANTE_BRUTO_DRAFT;
@@ -84,7 +85,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	}
 	
 	@Test
-	public void grossTest() {
+	public void grossTest() throws InterruptedException {
 		
 		// Open 4dummies 
 		log(CLICK, "Selecting 4 dummies enterprise.");
@@ -97,10 +98,13 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
         // Open draft
         log(CLICK, "Entering draft editor.");
         retryingFindClick(driver, By.id(CONSTANTE_BRUTO_DRAFT));
+        
+        
+        DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", new Locale("es", "ES"));
       
-        try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {}
+        if (!SeleniumTools.waitUntilElementContains(driver, By.id("gwt-debug-monthListBox-item0"), df.format(new Date())))
+        	fail("Didn't find month");
+        
         
         String chimboSelector = "#rootPanel table td:nth-child(3) td:nth-child(2) div span";
       
