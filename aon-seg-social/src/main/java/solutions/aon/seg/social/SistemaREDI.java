@@ -66,13 +66,8 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR");
 
-			htmlPage = HtmlUnitToolkit
-					.wait4(htmlPage,
-							p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR"))
-					.orElseThrow().click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementsById("SDFREGCTA_ayuda"));
 			HtmlForm jacadaform = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
@@ -293,8 +288,7 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage = htmlPage.getAnchorByHref(href).click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/" + href);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -485,8 +479,7 @@ class SistemaREDI {
 
 		try{
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage = htmlPage.getAnchorByHref(href).click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/" + href);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -611,9 +604,7 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage = htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR")
-					.click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -687,9 +678,7 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage = htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR")
-					.click();
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
 			HtmlUnitToolkit.getSSCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
@@ -758,8 +747,7 @@ class SistemaREDI {
 		Toolkit.verifyData(arrFields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR").click();
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR");
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//NSS
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
