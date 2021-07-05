@@ -321,14 +321,17 @@ public class SeleniumTools {
 		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
 		
 		String content = element.getAttribute("innerText");
+		String value = element.getAttribute("value");
 		
 		content = content != null ? content.trim() : "";
+		value = value != null ? value.trim() : "";
 		
 		for (int i=0; i<10; i++) {
 			Thread.sleep(1000);
 			element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
 			content = element.getAttribute("innerText");
-			if (content.equalsIgnoreCase(text))
+			value = element.getAttribute("value");			
+			if (content.equalsIgnoreCase(text) || content.equalsIgnoreCase(value))
 				return true;
 		}
 		
