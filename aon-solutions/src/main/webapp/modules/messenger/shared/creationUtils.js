@@ -41,6 +41,7 @@ export const createStartJustifiedColumn = (styles) => newComponent({
  * @returns 
  */
 export const createText = (properties) => newComponent({
+    ...properties,
     text: properties.text,
     styles: {
         color: properties.color,

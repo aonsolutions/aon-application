@@ -40,4 +40,13 @@ public enum TaskStatus {
 		if (i < 0 || i >= TaskStatus.values().length) return null;
 		return TaskStatus.values()[i];
 	}
+	
+	public static TaskStatus safeValueOf( String i ) {
+		for (TaskStatus rs : TaskStatus.values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return TaskStatus.PENDING;
+	}
+	
 }

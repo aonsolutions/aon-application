@@ -35,8 +35,6 @@ export const MESSENGER_IDS = {
     NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
     NEW_REQUEST_PANEL_RECEIVER : "newRequestPanelReceiver", 
     NO_MESSAGES : "noMessages",
-    START : "start",
-    END : "end",
     ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
     BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
     //NEW
@@ -64,6 +62,14 @@ export const TASK_WORKFLOW_TYPE = {
 	DELETE: "deleted",
 	RESTORE: "restore",
 	COMMENT: "comment"
+} 
+
+export const TASK_STATUS = {
+	DELETED:"deleted",
+	PENDING:"pending",
+	IN_PROGRESS: "in_progress",
+	FINISHED:"finished",
+	FAQ:"faq"
 } 
 
 export const ICON_TYPES = {

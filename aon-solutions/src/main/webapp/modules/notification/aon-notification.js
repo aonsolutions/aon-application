@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime } from "../../services/utils.js";
+import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime, timePaser } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
@@ -79,7 +79,7 @@ export class AonNotification extends AonElement {
     else 
       this.paintDesk();
       
-    this.notificationView();
+    this.changeTabs(0);
 
     let elementScroll = this.isMobile() ? this.getElement(this.ROOT_PANEL) : undefined;
     scrollInfinite(elementScroll , async()=>{
@@ -117,6 +117,8 @@ export class AonNotification extends AonElement {
       this.setFilter(filter);
       const aonNotification = this.getElement(this.AON_NOTIFICATION);
       aonNotification.style.width = "80%";
+      if(!this.isMobile())
+        aonNotification.style.margin = "auto";
 
       createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
@@ -239,7 +241,7 @@ export class AonNotification extends AonElement {
         aonNotification.style.width = "100%";
         if(this.isBeta()){
           const aonMessengerList = new AonMessengerList();
-          aonMessengerList.getTable(aonNotification.id);
+          aonMessengerList.paintTable(aonNotification);
         }
       }
     } catch (error) {
@@ -442,8 +444,6 @@ export class AonNotification extends AonElement {
           await sendNotification(formData);
           this.showToast({ message: MSG.MSG_SENT, type: CONSTANT.SUCCESS, delay: 3000 });
       } catch (error) {
-        console.log(error);
-        if(typeof error === "string")  error = JSON.parse(error);
         this.showToast(error);
       }
       buttonAccept.disabled = false;

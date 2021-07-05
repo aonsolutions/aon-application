@@ -252,13 +252,13 @@ export const sendMessage = (aonTextArea) => {
     // }
 
     const value =  aonTextArea.value;
-    if(!value || (value && value.trim().length)) return ;
+    if(!value || (value && !value.trim().length)) return ;
     
     const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const data = parent._data;
     aonTextArea.clear();
 
-    
+
     const message = {
         type: TASK_WORKFLOW_TYPE.COMMENT,
         sender: "Yo",

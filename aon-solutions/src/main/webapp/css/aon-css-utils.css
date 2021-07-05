@@ -97,3 +97,7 @@
 .contentEditable:empty:focus::before {
     content: "";
 }
+
+.firstLetterUpper:first-letter {
+    text-transform: uppercase;
+}
