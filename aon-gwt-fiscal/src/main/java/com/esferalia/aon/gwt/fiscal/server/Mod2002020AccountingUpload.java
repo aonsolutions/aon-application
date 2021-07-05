@@ -10,7 +10,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.fileupload.FileItem;
 
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
@@ -29,6 +31,13 @@ public class Mod2002020AccountingUpload extends UploadAction {
 	@Override
 	public String executeAction(HttpServletRequest request,
 			List<FileItem> sessionFiles) throws UploadActionException {
+		String domainName = request.getParameter("domain_name");
+		String domain_id = request.getParameter("domain_id");
+		Integer domainId = AonNumberUtils.toInteger(domain_id); 
+		String login = request.getParameter("login");
+		String hashId = Base64.encode(domainName + login);
+	
+	
 		String response = "";
 		for (FileItem item : sessionFiles) {
 			if (false == item.isFormField()) {
@@ -36,8 +45,10 @@ public class Mod2002020AccountingUpload extends UploadAction {
 					ByteArrayInputStream input = new ByteArrayInputStream(item.get());
 					JAXBContext context = JAXBContext.newInstance(MOD2002020.class);
 					Unmarshaller um = context.createUnmarshaller();
+					
 					MOD2002020 xml = (MOD2002020) um.unmarshal(input);
-					request.getSession().setAttribute("Mod2002020Accounting", xml);
+//					request.getSession().setAttribute("Mod2002020Accounting", xml);
+					Mod2002020ServiceImpl.addModImport(hashId, xml);
 				} catch (Exception ex) {
 					throw new UploadException(ex);
 				}

@@ -106,10 +106,10 @@ public class Mod2002020ServiceAsyncDecorator implements Mod2002020ServiceAsync {
 	}
 
 	@Override
-	public void fillMod2002020AccountingData(Mod2002020 mod200,
+	public void fillMod2002020AccountingData(String domainName, int domain, String user, Mod2002020 mod200,
 			AsyncCallback<Mod2002020> callback) {
 		AON.start();
-		fsa.fillMod2002020AccountingData(mod200,
+		fsa.fillMod2002020AccountingData(domainName, domain, user, mod200,
 				new AsyncCallbackWrapper<Mod2002020>(callback));
 	}
 
