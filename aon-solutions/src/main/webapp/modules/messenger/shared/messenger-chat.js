@@ -5,7 +5,7 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
-import { newComponent, setAttributes, setClasses, setEvents, setFullDate, setStyles, setTime, waitChildEl, waitEl } from "../../../services/utils.js";
+import { newComponent, setAttributes, setClasses, setDateTimestampDay, setEvents, setFullDate, setStyles, setTime, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, TASK_WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
@@ -241,16 +241,7 @@ export const buildMobileChat = (chatEl, data, parent) => {
             borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
         }
     );
-
     title.appendTo(chat.element);
-
-
-    const start = newComponent({ id: MESSENGER_IDS.START, 
-        styles : {
-            padding : '10px' 
-        }
-    });
-    start.appendTo(chat.element);
 
     /**
      * If no message, put one ;)
@@ -287,15 +278,6 @@ export const buildMobileChat = (chatEl, data, parent) => {
     //     noMessage.appendTo(chat.element);
     // }
 
-
-    const end = newComponent({ 
-        id: MESSENGER_IDS.END, 
-        styles : {
-            padding : '10px'
-        }
-    });
-    end.appendTo(chat.element);
-
     buildMobileWritter(wrapper,data)
 }
 
@@ -317,6 +299,18 @@ export const buildChat = (parent) => {
             height: '100%',
         }
     });
+    wrapper.appendTo(parent.element);
+
+    const title = createTitle(MSG.COMMENTS);
+    setStyles(title.element, {
+            maxWidth: '550px',
+            alignSelf: 'center',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #f0f0f0',
+        }
+    );
+    title.appendTo(wrapper.element);
+    
 
     /**
      * The chat itself
@@ -337,32 +331,7 @@ export const buildChat = (parent) => {
             borderBottom: '1px solid #f0f0f0',
         }
     });
-
-    const title = createTitle(MSG.COMMENTS);
-    setStyles(title.element, {
-            maxWidth: '550px',
-            alignSelf: 'center',
-            paddingBottom: '10px',
-            borderBottom: '1px solid #f0f0f0',
-        }
-    );
-    title.appendTo(wrapper.element);
-
-    /**
-     * Component for easy scroll to the start
-     */
-    const start = newComponent({ id: MESSENGER_IDS.START, styles : {
-        padding : '10px'
-    } });
-    start.appendTo(chat.element);
-
-    const end = newComponent({ id: MESSENGER_IDS.END, styles : {
-        padding : '10px'
-    } });
-    end.appendTo(chat.element);
-
     chat.appendTo(wrapper.element);
-    wrapper.appendTo(parent.element);
 
     /**
      * A side buttonbar 
@@ -382,7 +351,7 @@ export const buildChat = (parent) => {
         id: "upIcon",
         background: "transparent",
     });
-    upIcon.onclick = () => start.element.scrollIntoView();
+    upIcon.onclick = () => chat.element.scrollTo(0,0);
     leftButtonBar.appendChild(upIcon);
 
     const downIcon = setAttributes(new AonIconButton(), {
@@ -390,8 +359,9 @@ export const buildChat = (parent) => {
         id: "downIcon",
         background: "transparent",
     });
-    downIcon.onclick = () =>  end.element.scrollTop();
+    downIcon.onclick = () =>  chat.element.scrollTo(0, chat.element.scrollHeight);
     leftButtonBar.appendChild(downIcon);
+
 }
 
 /**
@@ -401,7 +371,6 @@ export const buildChat = (parent) => {
 export const appendChatMessage = (properties) => {
     const noMessage = document.getElementById(MESSENGER_IDS.NO_MESSAGES);
     const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
-    const end = chat.querySelector("#" + MESSENGER_IDS.END);
     
     if(noMessage)
         chat.removeChild(noMessage);
@@ -412,12 +381,9 @@ export const appendChatMessage = (properties) => {
         marginTop : '20px',
         transition : ".25s"
     });
-
-    chat.removeChild(end);
     message.appendTo(chat);
-    chat.appendChild(end);
 
-    end.scrollIntoView();
+    chat.scrollTo(0, chat.scrollHeight)
 
     /**
      * Appearing animation
@@ -439,23 +405,23 @@ export const createChatMessage = (properties) => {
     properties = checkProperties(properties);
 
     const message = createMessageBox(properties);
+   
     const name = createMessageAuthor(properties);
-    const description = createMessageContent(properties);
-    const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
+    name.appendTo(message.element);
 
-    const dateObject = properties.date;
-    let dateString =  dateObject.getDate() + "/" + dateObject.getMonth() + "/" + dateObject.getFullYear();
+    const description = createMessageContent(properties);
+    description.appendTo(message.element);
+
+    const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
+    footer.appendTo(message.element);
 
     const date = createText({
-        text: dateString,
+        text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : '.7em'
+        fontSize : '.7em',
+        classes: [CSS.FIRST_LETTER_UPPER]
     });
-
     date.appendTo(name.element);
-    name.appendTo(message.element);
-    description.appendTo(message.element);
-    footer.appendTo(message.element);
 
     return message;
 }
@@ -612,4 +578,3 @@ export const fillChat = (workflows=[])=>{
     } 
     return actionIcon;
 }
-

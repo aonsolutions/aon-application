@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 
@@ -63,11 +64,22 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private Object getTasks(AonApiData api) {
+		Integer page = api.getParams().optInt("page");
+		Integer peerPage = api.getParams().optInt("peerPage");
+		Integer workgroup = api.getParams().optInt("workgroup");
+		String status = api.getParams().optString("status");
+
 		return TaskJSON.toJSON(
-				AON_SOLUTIONS.getTaskStream(
-						api.getDomain(), api.getUser(), 
-						f-> f.getDomainProperty().eq(api.getDomain().getId())
-				)
+				AON_SOLUTIONS.getTaskList(api.getDomain(), api.getUser(),  
+						f-> 
+						f.getDomainProperty().eq(api.getDomain().getId())
+						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
+						.and( 
+							workgroup > 0 ?  
+							f.getWorkgroupProperty().eq(workgroup) :
+							f.getWorkgroupProperty().isNotNull()
+						),
+						page, peerPage)
 		);
 	}
 	

@@ -7,7 +7,7 @@ import Apps from '../../services/app.js';
 import {getWorkgroups, saveWorkgroup, deleteWorkgroup} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER, TASK_STATUS } from './MessengerEnums.js';
 import { setAttributes } from '../../services/utils.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
 
@@ -39,7 +39,10 @@ export class AonMessenger extends AonElement {
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
 		this._filter = {
-			workgroup: undefined
+			workgroup: undefined,
+			status: TASK_STATUS.PENDING,
+			page:0, 
+			peerPage:30
 		};
 	}
 
@@ -48,12 +51,17 @@ export class AonMessenger extends AonElement {
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
-		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
 		getTaskHolder().then(task=>this.SENDER = task);
+
+		if(this.data){
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
+		} else {
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		}
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, "Solicitudes", new AonApplication());
+		this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 	}
 
 	buildToolbar(){
@@ -63,14 +71,22 @@ export class AonMessenger extends AonElement {
         let messengerOpts = [];
 
 		let list = MessengerOptions.AON_MESSENGER_LIST;
-		list.fn = () => this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+		list.fn = () =>{
+			this._filter.status = TASK_STATUS.PENDING;
+			console.log(this._filter);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+		} 
 		messengerOpts.push(list);
 
 		let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
-		listClose.fn = () => this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST_CLOSE);
+		listClose.fn = () => {
+			this._filter.status = TASK_STATUS.FINISHED;
+			console.log(this._filter);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+		}
 		messengerOpts.push(listClose);
 		
-		this.applicationEl.addSidenavOptions('Solicitudes', messengerOpts);
+		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
 		this.addWorkGroupOptions();
 	}
 
@@ -95,7 +111,7 @@ export class AonMessenger extends AonElement {
 				icon: 'people_alt',
 				fn: () => {
 					this._filter.workgroup = item.id;
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 				};
 				option.actions = [{
@@ -153,7 +169,7 @@ export class AonMessenger extends AonElement {
 
 	deleteWorkgroup(workgroup) {
 		console.log(workgroup);
-		let d = document.getElementById(this.getApplication().DIALOG);
+		let d = this.getElement(this.getApplication().DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE_WORKGROUP);
@@ -179,7 +195,7 @@ export class AonMessenger extends AonElement {
             }
             if(aonView){
               aonView.id = view;
-              if(filter) aonView.filter = filter;
+              if(filter) aonView.setFilter(filter);
               if(data) aonView.data = data;
               this.applicationEl.setContent(aonView);
             }
