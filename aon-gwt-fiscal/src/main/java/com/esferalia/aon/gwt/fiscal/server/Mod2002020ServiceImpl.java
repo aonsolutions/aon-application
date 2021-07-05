@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Mod2002020Service;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -22,6 +24,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @WebServlet(name = "Mod200 2020 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod2002020" })
 public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod2002020Service {
 
+	public static HashMap<String, MOD2002020> modImport;
+	
+	public static HashMap<String, MOD2002020> getModImport() {
+		return modImport;
+	}
+	
+	public static void addModImport(String hashId, MOD2002020 data) {
+		if(modImport == null) {
+			modImport = new HashMap<String, MOD2002020>();
+		}
+		modImport.put(hashId, data);
+	}
+	
 	@Override
 	public Mod2002020 createMod2002020(String domainName, int domain, String user, int year)
 			throws AonCoreException {
@@ -99,23 +114,13 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 	
 	@Override
-	public Mod2002020 fillMod2002020AccountingData(Mod2002020 mod200)
-			throws AonCoreException {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			MOD2002020 mod = (MOD2002020) request.getSession().getAttribute("Mod2002020Accounting");
-			if (mod == null) {
-				throw new AonCoreException("El fichero no se ha recibido correctamente");	
-			}
-			if (mod200 != null) {
-				XMLtoMod2002020.fillMod2002020(mod, mod200);
-			}
-			return mod200; 
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002020Accounting");
+	public Mod2002020 fillMod2002020AccountingData(String domainName, int domain, String user, Mod2002020 mod200) {
+		String hashId = Base64.encode(domainName + user);		
+		MOD2002020 mod = getModImport().get(hashId);
+		if (mod200 != null) {
+			XMLtoMod2002020.fillMod2002020(mod, mod200);
 		}
+		return mod200;
 	}
 	
 	@Override

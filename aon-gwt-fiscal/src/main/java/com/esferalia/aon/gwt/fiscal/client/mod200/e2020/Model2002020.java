@@ -543,7 +543,12 @@ public class Model2002020 extends ResizeComposite  {
 
 	@UiHandler("importAccountingButton")
 	void onImportAccountingButtonClick(ClickEvent event) {
-		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(),GWT.getModuleBaseURL() +"ms/Mod2002020AccountingUpload") {
+		String url =  GWT.getModuleBaseURL() + "ms/Mod2002020AccountingUpload"
+				+ "?domain_name="+ options.getDomainName() 
+				+ "&domain_id="+ options.getDomain()
+				+ "&login="+ options.getUser();
+
+		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(), url) {
 			
 			@Override
 			protected void onCancel() {
@@ -552,7 +557,8 @@ public class Model2002020 extends ResizeComposite  {
 			
 			@Override
 			protected void onAccept() {
-				mod200Object.fillMod2002020AccountingData(new AsyncCallback<Mod2002020>() {
+				hide();
+				mod200Object.fillMod2002020AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Mod2002020>() {
 					@Override
 					public void onSuccess(Mod2002020 result) {
 						hide();
