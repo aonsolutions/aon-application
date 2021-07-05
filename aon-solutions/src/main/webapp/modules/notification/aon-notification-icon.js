@@ -53,7 +53,7 @@ export class AonNotificationIcon extends AonElement {
                 id:  "aonHeaderNotificationButton",
                 icon: "notifications",
                 noHover: true,
-                color: this.color
+                color: this.color || '#5f6368'
             }
         }, notificationSpan);
         return notificationSpan;
@@ -73,10 +73,10 @@ export class AonNotificationIcon extends AonElement {
 
 	async initializeFB()  {
 		try{
-			let token = undefined;
+            await waitEl("script[src*='firebase-messaging']");
 			if(!this.isMobile()) { // initialize observer message firebase desk
 				const firebaseSrv = new FirebaseService();
-				token = await firebaseSrv.getTokenFB();
+				let token = await firebaseSrv.getTokenFB();
 				if (token) {
 					window.tokenFCM = token;
 					const messaging = firebaseSrv.getMessagingObject();
@@ -89,7 +89,7 @@ export class AonNotificationIcon extends AonElement {
 			} 
 		} catch(e){}
   	}
-
+      
     async goAonNotification(){
         try {
             const aonNotification = new AonNotification();

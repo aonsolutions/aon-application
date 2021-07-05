@@ -84,8 +84,9 @@ export class AonMobileList extends AonElement {
       spanHtml = aonIcon.outerHTML;
     } else if (data.icon) {
       let ic = this.createElement("i");
-      ic.classList.add("material-icons","aonAvatar");
+      ic.classList.add(data.icon_class||"material-icons","aonAvatar");
       ic.textContent = data.icon;
+      if(data.icon_color) ic.style.color = data.icon_color;
       spanHtml = ic.outerHTML;
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;

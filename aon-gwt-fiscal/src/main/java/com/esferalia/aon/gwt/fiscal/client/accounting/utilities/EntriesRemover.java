@@ -452,14 +452,6 @@ class EntriesRemover extends OptionBase {
 
 		tab.setWidget(0, 5, journal);
 		
-		if (activitiesListBoxEnabled) {
-			tab.setWidget(0, 6, new Label(AON.MSG.activity()));
-			tab.setWidget(0, 7, activity);
-		} else {
-			tab.setWidget(0, 6, new Label());
-			tab.setWidget(0, 7, new Label());
-		}
-		tab.getCellFormatter().setStyleName(0,6, AON.CSS.aonSearchPanelLabel());
 		
 		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -534,7 +526,6 @@ class EntriesRemover extends OptionBase {
 		
 		tab.setWidget(2, 2, new Label("Id Interno"));
 		tab.getCellFormatter().setStyleName(2,2, AON.CSS.aonSearchPanelLabel());
-		tab.getCellFormatter().addStyleName(2,2, AON.CSS.aonTextRight());
 		
 		tab.setWidget(2, 3, id);
 
@@ -562,6 +553,16 @@ class EntriesRemover extends OptionBase {
 		tab.getCellFormatter().setStyleName(3,2, AON.CSS.aonSearchPanelLabel());
 		
 		tab.setWidget(3, 3, creationUser);
+		
+		if (activitiesListBoxEnabled) {
+			tab.setWidget(3, 4, new Label(AON.MSG.activity()));
+			tab.setWidget(3, 5, activity);
+		} else {
+			tab.setWidget(3, 4, new Label());
+			tab.setWidget(3, 5, new Label());
+		}
+		tab.getCellFormatter().setStyleName(3,4, AON.CSS.aonSearchPanelLabel());
+
 
 		tab.setWidget(4, 0, new Label("Modificado entre"));
 		tab.getCellFormatter().setStyleName(4,0, AON.CSS.aonSearchPanelLabel());
@@ -833,6 +834,7 @@ class EntriesRemover extends OptionBase {
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
+		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
 		
 		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();

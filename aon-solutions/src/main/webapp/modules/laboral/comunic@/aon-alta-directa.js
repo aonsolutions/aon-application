@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { setValueName, serializeForm, disabledForm } from '../../../services/utils.js';
-import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, postBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto, getCccForActivity } from '../../../services/service.js'
+import { setValueName, serializeForm, disabledForm, formatDateOrigin } from '../../../services/utils.js';
+import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
@@ -34,15 +34,20 @@ export class AonAltaDirecta extends AonElement {
 
     constructor() {
         super();
+        this.initialize();
+    }
+
+    connectedCallback() {
+        this.initialize();
+        this.build();
+    }
+
+    initialize(){
         this.ACTION = 'CREATE';
         this.id = this.id || PAYROLL_VIEWS.AON_ALTA_DIRECTA;
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
-    }
-
-    connectedCallback() {
-        this.build();
     }
 
     build() {
@@ -72,9 +77,8 @@ export class AonAltaDirecta extends AonElement {
         let aonEmployeeCard = this.getElement(`${this.id}TrabajadorCard`);
         createCardEmployee(aonEmployeeCard.getContent(),  this.id);
  
-        const isButton = this.isMobile() && (this.isAlta() || !this.data);
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createCardContract(aonContratoCard.getContent(), this.id, isButton);
+        createCardContract(aonContratoCard.getContent());
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -90,7 +94,7 @@ export class AonAltaDirecta extends AonElement {
         const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
   
-        if(this.data){
+        if(!this.isMobile() && this.data && this.data.fra){
             toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => {
                 ev.preventDefault();
                 let rect = ev.target.getBoundingClientRect();
@@ -118,21 +122,17 @@ export class AonAltaDirecta extends AonElement {
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
         }
 
-        if(this.isAlta()) 
+        if(this.isAlta() && this.applicationParentEl.getDur().isComunicaManager()) 
             toolbar.addButton2(ACTION_COMUNICA.BAJA, (e) => this.openDialogBaja(e));
 
-        if(!this.isMobile() && (this.isAlta() || !this.data) )  // ALTA
+        if((this.isAlta() || !this.data) )  // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
-        if(this.data){ //DELETE
-            const fc =  this.data.frb || this.data.fra;
-            if(this.applicationParentEl.anularCondition(this.data.situation, fc)){
-                toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
-            }
+        if(this.data && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)){ 
+            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
         }
 
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
-
     }
 
 
@@ -148,8 +148,6 @@ export class AonAltaDirecta extends AonElement {
     }
 
     eventListener() {
-        let aonAltaDirectaSubmit = this.getElement(`${this.id}Submit`);
-        if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener(EVENT.CLICK, () => this.formSubmit());
 
         this.getElement('centro_trabajo').addEventListener(EVENT.CHANGE, (ev) => this.listCuentaCotizacion(ev));
 
@@ -163,7 +161,7 @@ export class AonAltaDirecta extends AonElement {
 
         let typeCtoSelect = this.getElement('type_cto');
         if(typeCtoSelect){
-            typeCtoSelect.addEventListener(EVENT.CHANGE, (ev) =>this.selectTipoContrato(ev));
+            typeCtoSelect.addEventListener(EVENT.CHANGE, (ev) =>this.selectTypeContract(ev));
             let inputSelect = typeCtoSelect.querySelector(`input`);
             if(inputSelect)
                 inputSelect.addEventListener(EVENT.FOCUS, () => inputSelect.select());    
@@ -205,7 +203,7 @@ export class AonAltaDirecta extends AonElement {
             ...data,
             regimen: data.regime,
             nombre: data.name,
-            fecha: data.frb || data.fra,
+            fecha: data.fra,
             grup_ctz: data.gc,
         }
         if (data.ocup) obj['ocupacion'] = data.ocup.toString().toLowerCase();
@@ -235,7 +233,7 @@ export class AonAltaDirecta extends AonElement {
         if (obj.type_cto && type_cto && !type_cto.value) {
             type_cto.value = obj.type_cto;
         } else { //seleccionamos por tipo de cuenta si no tiene tipo de contrato
-            this.selecCto(centro_trabajo, obj);
+            this.selectWorkPlace(centro_trabajo, obj);
         }
 
         //calculo horas
@@ -266,7 +264,7 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    selecCto(centro_trabajo, {regimen, ctaCti}){
+    selectWorkPlace(centro_trabajo, {regimen, ctaCti}){
         if (centro_trabajo && centro_trabajo.options) {
             const options = JSON.parse(centro_trabajo.options);
             for (const property in options) 
@@ -288,12 +286,13 @@ export class AonAltaDirecta extends AonElement {
         });
     }
 
-    selectTipoContrato({ detail }) {
+    selectTypeContract({ detail }) {
         if (detail) {
-            const tipo_jornada= parseInt(detail.tipo_jornada);
+            let tipo_jornada = parseInt(detail.tipo_jornada);
             let divParcial = this.getElement('div_parcial');
             let hourEl = this.getElement('horas_convenio');
             this.getElement('coefparcial').value = "";
+            // this.btnBajaShow(tipo_jornada);//baja display none
             if (tipo_jornada){ //si es parcial
                 divParcial.hidden = false;
                 hourEl.value = 40;
@@ -467,9 +466,9 @@ export class AonAltaDirecta extends AonElement {
     async save() {
         this.applicationEl.startLoading();
         try {
-            await postAltaDirecta(this.getContrato());
+            await sendAlta(this.getContrato());
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -487,9 +486,9 @@ export class AonAltaDirecta extends AonElement {
             }
         }
         try {
-            await postUpdateCto(cto_new);
+            await updateContrato(cto_new);
             this.showToast({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -544,29 +543,38 @@ export class AonAltaDirecta extends AonElement {
 		const x = ev.clientX - rect.left + 180;
 		const y = ev.clientY - rect.top;
 		const top  = rect.top + y;
-		const left = rect.left + x;
-
+		let left = rect.left + x;
         const dialog = this.applicationEl.getOptionDialog();
         const content = dialog.getContent();
         dialog.clear();
         content.style.textAlign = "center";
-        content.style.width = "200px";
+        content.style.width = "250px";
         dialog.setContentTitle("Dar Baja");
         const div = createBajaDialogContent();
-        const button = this.createElement(TAG.BUTTON);
-        button.className = "aonButton";
-        button.textContent = "Aceptar";
-        button.style.padding ="0.5rem 1rem";
-        button.style.marginBottom ="5px";
-        button.disabled = true;
-        div.appendChild(button);
         dialog.setContent(div);
         dialog.openPosition({top, left});
+        
+        if(this.isMobile()) {
+            content.style.left = 0;
+            content.style.right = 0;
+        }
+
+        const button = this.getElement("btnSubmitBaja");
 
         const fechaEl = this.getElement("fechaBaja");
+        fechaEl.value = formatDateOrigin(new Date());
         fechaEl.addEventListener(EVENT.CHANGE, ()=>{
             if(new Date(fechaEl.value).isValid()) button.disabled = false;
             else button.disabled = true;
+        })
+
+        //list cod de baja
+        const codBajaEl = this.getElement("codBaja");
+        getCodBaja().then(cods => {
+            codBajaEl.options = JSON.stringify(
+                cods.map(r=>({value:r.value, name:r.value+" - "+r.name }))
+            );
+            codBajaEl.value = "93";
         })
                 
         button.addEventListener(EVENT.CLICK, ()=>{
@@ -590,10 +598,11 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             const fechaBajaEl = this.getElement("fechaBaja");
-            await postBaja({...this.data, fechaBaja: fechaBajaEl.value});
+            const codBajaEl = this.getElement("codBaja");
+            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value});
             this.applicationEl.getOptionDialog().close();
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
-            this.applicationParentEl._movements = undefined;
+            this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -602,8 +611,23 @@ export class AonAltaDirecta extends AonElement {
     }
 
     isAlta(){
-        return this.data && "AL" === this.data.situation;
+        return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0;
     }
+
+    /**
+     * 
+     * @param {0,1}  tipo_jornada 0 completo, 1 parcial
+     */
+    // btnBajaShow(tipo_jornada){
+    //     if(this.data && tipo_jornada){
+    //         const toolbar = this.getElement(this.TOOLBAR);
+    //         if(toolbar){
+    //             const btnBaja = this.getElement(toolbar.TOOL_SECTION+ACTION_COMUNICA.BAJA.id+"Button");
+    //             if(btnBaja)
+    //                 btnBaja.style.display = "none";
+    //         }
+    //     }
+    // }
 }
 
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

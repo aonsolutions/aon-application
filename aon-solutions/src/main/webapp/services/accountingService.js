@@ -25,20 +25,17 @@ export const PERIOD_FILTER = [
   }
 ];
 
-export const getPeriodAccounting = (data) => {
-  let jsonValues = [
-    {
-      name: "Mensual",
-      value: "monthly",
-    },
-    {
-      name: "Trimestral",
-      value: "quarterly",
-    },
-    {
-      name: "Anual",
-      value: "yearly",
-    }
-  ];
-  return jsonValues;
-};
+export const getPeriodAccounting = (data) =>  [
+  {
+    name: "Mensual",
+    value: "monthly",
+  },
+  {
+    name: "Trimestral",
+    value: "quarterly",
+  },
+  {
+    name: "Anual",
+    value: "yearly",
+  }
+];

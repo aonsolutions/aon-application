@@ -114,11 +114,13 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
+import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -129,7 +131,6 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -170,7 +171,6 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -575,7 +575,7 @@ public class AON {
 		}
 	}
 	
-	public static Certificate getCertificateSEPE(String domainName, Integer domainId, String login) {
+	public static Certificate getCertificateSEPE(String domainName, Integer domainId, String login) throws CertificateNotFoundException {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -3323,7 +3323,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
+	public static Stream<OldTask> getStatTaskStream(String domainName, Integer domainId, String login, StatParams params){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,login);
@@ -5155,7 +5155,7 @@ public class AON {
 		}
 	}
 	
-	public static Task getTask(String domainName, Integer domainId, String login, TaskFilter filter){
+	public static OldTask getTask(String domainName, Integer domainId, String login, TaskFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5165,7 +5165,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<Task> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter){
+	public static Stream<OldTask> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5175,7 +5175,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
+	public static Stream<OldTask> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5185,7 +5185,7 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Task> getDuplicateTaskStream(String domainName, Integer domainId, String login, Integer parent){
+	public static Stream<OldTask> getDuplicateTaskStream(String domainName, Integer domainId, String login, Integer parent){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5205,7 +5205,7 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Task> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
+	public static LinkedList<OldTask> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
 		return getTaskStream(domainName, domainId, login, filter, issueFilter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -5235,7 +5235,7 @@ public class AON {
 		}
 	}
 	
-	public static Task createTask(String domainName, Integer domainId, String login, Task task){
+	public static OldTask createTask(String domainName, Integer domainId, String login, OldTask task){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5255,7 +5255,7 @@ public class AON {
 		}
 	}
 	
-	public static Task updateTask(String domainName, Integer domainId, String login, Task task){
+	public static OldTask updateTask(String domainName, Integer domainId, String login, OldTask task){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -5634,6 +5634,38 @@ public class AON {
 	}
 	
 	// ------------------- WORKGROUP
+	
+	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroup(ctx, filter);
+		} 
+	}
+	
+	public static Stream<Workgroup> getWorkgroupStream(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupStream(ctx, filter);
+		} 
+	}
+	
+	public static LinkedList<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupList(ctx, filter);
+		} 
+	}
+	
+	public static Workgroup saveWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().saveWorkgroup(ctx, workgroup);
+		} 
+	}
+	
+	public static void deleteWorkgroup(String domainName, Integer domainId, String login, Integer id){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			 getCommon().deleteWorkgroup(ctx, id);
+ 		} 
+	}
+	
+	@Deprecated
 	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
 		AONContext ctx = null;
 		try{
@@ -5643,7 +5675,7 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
+	@Deprecated
 	public static Workgroup insertWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
 		AONContext ctx = null;
 		try {
@@ -5653,7 +5685,7 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
+	@Deprecated
 	public static Workgroup updateWorkgroup(String domainName, Integer domainId, String login, Workgroup workgroup){
 		AONContext ctx = null;
 		try {
@@ -5663,17 +5695,7 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
-	public static Workgroup deleteWorkgroup(String domainName, Integer domainId, String login, Integer workgroup){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().deleteWorkgroup(ctx, workgroup);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
-	}
-	
+
 	public static Stream<Question> getRegistryQuestionStream(String domainName, Integer domainId, String login, Integer registry){
 		AONContext ctx = null;
 		try {

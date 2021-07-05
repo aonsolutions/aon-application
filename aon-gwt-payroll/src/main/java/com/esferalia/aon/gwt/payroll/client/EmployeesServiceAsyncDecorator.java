@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -715,9 +716,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void generateCertifaca2(String domainName, SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+	public void generateCertifaca2(String domainName, Integer contractId, AsyncCallback<String> callback) {
 		AON.start();
-		employeesServiceAsync.generateCertifaca2(domainName, salaryDraft, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.generateCertifaca2(domainName, contractId, new AsyncCallbackWrapper<String>(callback));
 	} 
 	
 	@Override
@@ -781,47 +782,51 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
+	// ------------------------------------------------- TGSS Comunications
+	
 	@Override
-	public void sendEmployeeAlta(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeAlta(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendEmployeeAlta(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void sendEmployeeBaja(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeBaja(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendEmployeeBaja(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void movPrevDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+	public void movPrevDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.movPrevDelete(currentDomainName, user, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.altaConsolidadaDelete(currentDomainName, user, situation, regimen, ctaCti, nss, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioGrupCtz(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioGrupCtz(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioGrupCtz(currentDomainName, user, ipf, regimen, ctaCti, nss, grup_ctz, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioGrupCtz(currentDomainName, user, employeeContractInfo, grup_ctz, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioOcupacion(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioOcupacion(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioOcupacion(currentDomainName, user, ipf, regimen, ctaCti, nss, ocup, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioOcupacion(currentDomainName, user, employeeContractInfo, ocup, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void cambioCatProf(String currentDomainName, String user, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+	public void cambioCatProf(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.cambioCatProf(currentDomainName, user, ipf, regimen, ctaCti, nss, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.cambioCatProf(currentDomainName, user, employeeContractInfo, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	// ------------------------------------------------- SEPE Comunications
 
 	@Override
 	public void sendContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
@@ -833,6 +838,26 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void sendContractoCBSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		AON.start();
 		employeesServiceAsync.sendContractoCBSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void sendCertifica2(String currentDomainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getCertifica2PDF(String currentDomainName, String user, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getCertifica2PDF(currentDomainName, user, nif, endDate, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	// ------------------------------------------------- SEPE Methods
+
+	@Override
+	public void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getCertifica2Info(currentDomainName, contractId, new AsyncCallbackWrapper<Certifica2Info>(callback));
 	}
 	
 }

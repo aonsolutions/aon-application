@@ -23,6 +23,7 @@ export const createUl = (id) => newComponent({
   styles:{
     listStyle: "none",
     padding: 0,
+    paddingTop: "5px",
     margin: 0
   }
 });
@@ -71,8 +72,7 @@ export const createDivFooter1 = (text) => createDiv({
 export const createAonNotification = (id) =>createDiv({
   id,
   styles:{
-    margin: "auto",
-    marginTop: "21px",
+    margin: "64px auto auto",
     width: "80%",
   }
 });
@@ -93,7 +93,7 @@ export const createSpanFloat = () => createSpan({
   id: "aonNotificationFloatSpan",
   styles:{
     position: "fixed",
-    right: "20px",
+    right: "6%",
     bottom: "70px"
   }
 });
@@ -113,11 +113,10 @@ export const createBadge = (id) => createSpan({
   id,
   styles:{
     position: "absolute", 
-    top: "22px",
     right: "3px",
     padding: "1px 4px",
     borderRadius: "50%",
-    background: "red",
+    background: "rgb(220, 77, 48)",
     color: "white",
     fontSize: "10px",
     fontWeight: 800,

@@ -37,6 +37,7 @@ export const AON_MENU_SIDENAV_SUBAPP_LIST_ITEM = 'aonMenuSidenavSubAppListItem';
 export const AON_MENU_LINK = 'aonMenuLink';
 export const AON_HEADER = 'aonHeader';
 export const AON_HEADER_BUTTON = 'aonHeaderButton';
+export const AON_IMG_AVATAR = 'aonImgAvatar';
 export const AON_AVATAR = 'aonAvatar';
 export const AON_LI = 'aonLi';
 export const AON_LI_SPAN = 'aonLiSpan';
@@ -263,6 +264,7 @@ export const FLEX_JUSTIFY_END = "flexJustifyEnd";
 export const FLEX_JUSTIFY_BETWEEN = "flexJustifyBetween";
 export const FLEX_JUSTIFY_AROUND = "flexJustifyAround";
 export const FLEX_ALIGN_CENTER = "flexAlignCenter";
+export const FIRST_LETTER_UPPER = "firstLetterUpper";
 export const COPY = "copy";
 export const NO_COPY = "noCopy";
 export const NO_SCROLLBAR = "noScrollbar";
@@ -270,6 +272,7 @@ export const NO_FOCUS = "noFocus";
 export const CONTENT_EDITABLE = "contentEditable";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
+export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 
 // aon-textarea 
 

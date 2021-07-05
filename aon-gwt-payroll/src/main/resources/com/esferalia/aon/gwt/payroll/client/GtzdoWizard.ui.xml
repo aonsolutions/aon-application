@@ -83,12 +83,12 @@
 		
 		<g:HTMLPanel ui:field="gtzdoTablePanel" styleName="{style.flexPanel} {style.flexWrap}">
 			<g:VerticalPanel styleName="{style.maxWidth}">
-    			<g:Grid ui:field="gtzdoDataTableHeader"></g:Grid>
+    			<g:Grid ui:field="gtzdoDataTableHeader" styleName="{style.maxWidth}"></g:Grid>
     			<g:HTMLPanel>
     				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;"/>
     			</g:HTMLPanel>
 	    		<g:ScrollPanel ui:field="gtzdoScrollPanel" styleName="{style.scrollStyle}">
-	    			<g:Grid ui:field="gtzdoDataTable"></g:Grid>
+	    			<g:Grid ui:field="gtzdoDataTable" styleName="{style.maxWidth}"></g:Grid>
 	    		</g:ScrollPanel>
 	    		<g:HTMLPanel ui:field="footerOptionsToolbarPanel" styleName="{style.footerToolbar}">
 	    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>

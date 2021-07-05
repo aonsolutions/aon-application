@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import solutions.aon.seg.social.exception.NotRespondingException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -59,6 +60,8 @@ class SistemaREDSecondaryUser {
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
 
+			emptyUserSecundary(htmlPage);
+			
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch.click();
 			manageStatusCode(htmlPage);
@@ -145,9 +148,12 @@ class SistemaREDSecondaryUser {
 			final String certificatePassword, final String certificateType)
 			throws FailingHttpStatusCodeException, IOException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
 
+			emptyUserSecundary(htmlPage);
+			
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_1");
 
 			// La autorización XXXXX de la que es usted principal 
@@ -294,5 +300,18 @@ class SistemaREDSecondaryUser {
 	public void modifySecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ipf) {
 
+	}
+	
+	private static void emptyUserSecundary(HtmlPage htmlPage) throws NoQueryData{
+		DomNode msgOne = htmlPage.querySelector("#Sub1000401071");
+		if(msgOne!=null && !msgOne.getVisibleText().isEmpty()) {
+			DomNode msgTwo = htmlPage.querySelector("#Sub1100401071");
+			String msgError = msgOne.getVisibleText().trim();
+			if(msgTwo!=null && !msgTwo.getVisibleText().isEmpty()) {
+				msgError += " ";
+				msgError = msgError.concat(msgTwo.getVisibleText().trim());
+			}
+			throw new NoQueryData(msgError);
+		}
 	}
 }

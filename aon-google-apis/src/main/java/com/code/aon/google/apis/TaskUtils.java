@@ -54,7 +54,7 @@ public class TaskUtils {
 			return -1;
 		}
 		
-		public static Integer searchTask(com.esferalia.aon.occam.api.model.Task taskBD, Tasks tasks, int n){
+		public static Integer searchTask(com.esferalia.aon.occam.api.model.OldTask taskBD, Tasks tasks, int n){
 			// COMPARA LA DESCRIPCIÓN DE LA TAREA DE LA BD CON EL TITULO DE LA TAREA DE GOOGLE
 			int centro;
 			int inf = 0;
@@ -231,7 +231,7 @@ public class TaskUtils {
 	 * @param task
 	 * @return
 	 */
-	public static Task newTask(com.esferalia.aon.occam.api.model.Task task){
+	public static Task newTask(com.esferalia.aon.occam.api.model.OldTask task){
 		Task task2= new Task();
 		
 		DateTime date = new DateTime(task.getDueDate(), TimeZone.getTimeZone("UTC"));// es posible que sea necesario el convertDate de CalendarUtils
@@ -299,11 +299,11 @@ public class TaskUtils {
 		Domain domain = AON.getDomain(domainName, domainId, username);		
 		User user = new User().setLogin(username);
 
-		LinkedList<com.esferalia.aon.occam.api.model.Task> taskBDList = DBTask.getTask(domain, user);
+		LinkedList<com.esferalia.aon.occam.api.model.OldTask> taskBDList = DBTask.getTask(domain, user);
 		TaskList taskList = null;
 		for(int i= 0; i<taskBDList.size();i++){
 			Project project = DBTask.getProjectTask(domain, user, taskBDList.get(i));
-			com.esferalia.aon.occam.api.model.Task taskBD=taskBDList.get(i);
+			com.esferalia.aon.occam.api.model.OldTask taskBD=taskBDList.get(i);
 			if (taskBD.getGtasklistId() == null){
 				taskList = addTaskList(newTaskList(project),client);
 				

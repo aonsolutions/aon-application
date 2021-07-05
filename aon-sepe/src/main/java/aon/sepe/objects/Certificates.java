@@ -25,11 +25,11 @@ public class Certificates {
 	private Date fAEd; // fecha de alta de empresa
 	private Date fSTd; // fecha de extension 
 	//data vacation
-	private Integer daysCtzVc;
-	private String bcccVc;
-	private String bcdVc;
+	private Integer daysCtzVc; // Dias cotizados vacaciones
+	private String bcccVc; // Base cotizacion vacaciones
+	private String bcdVc; 
 	List<Map<String, String>> dataCtz;
-	private Integer durationContract;
+	private Integer durationContract; // Duracion contrato (horas)
 	
 	public Integer getDurationContract() {
 		return durationContract;

@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -23,9 +23,8 @@ import { AonBasicTable, AonDate, AonDialog, AonIconButton, AonInput, AonNumber, 
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
-import { Paymethods } from '../../services/paymethod.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIRPFPercentage, TaxIVAPercentage, TaxType, TaxVATPercentage } from './invoiceEnums.js';
+import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
 import { getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 
@@ -44,6 +43,8 @@ export class AonNewInvoice extends AonElement {
 	DATA;
 	FILE;
 	fileOpened;
+
+	rbanks;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -79,9 +80,26 @@ export class AonNewInvoice extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
-  	}
+
+		let registry = this.getInvoice().isEmitida()
+			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
+
+		if(registry){
+			let data = {
+				id: registry,
+				registry: registry,
+				additional_info: ['banks', 'paymethods']
+			};
+
+			getRegistry(data).then(r => {
+				this.rbanks = r.banks;
+				this.rpaymethods = r.paymethods;
+			});
+		} 
+	}
 
 	initialize(){
+		this.rbanks = [];
 		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
@@ -204,7 +222,6 @@ export class AonNewInvoice extends AonElement {
 		}
 	}
 
-
 	reload(){
 		this.clear();
 		this.build();
@@ -277,7 +294,8 @@ export class AonNewInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.getInvoice().isEmitida())
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
@@ -547,7 +565,7 @@ export class AonNewInvoice extends AonElement {
 		paymethod.id = this.PAYMETHOD;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
-		paymethod.options = JSON.stringify(Paymethods);
+		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setPaymethod(paymethod.value);
@@ -556,9 +574,14 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod, this.invoice.isEmitida() ? '2' : '3')
-		if(this.invoice.finances.length === 1) {
-			paymethod.value = this.invoice.finances[0].paymethod;
-		}
+		
+		getPaymethods({}).then(paymethods => {
+			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+			paymethod.options = JSON.stringify(pms);
+			if(this.invoice.finances.length === 1) {
+				paymethod.value = this.invoice.finances[0].paymethod;
+			}
+		});
 	}
 
 	buildTaxCard(parent) {
@@ -748,10 +771,14 @@ export class AonNewInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
-				this.invoice.addTax();
-				this.reload();
-				if(this.autosave) this.save();
+				if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+					// TODO
+				} else { 
+					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
+					this.invoice.addTax();
+					this.reload();
+					if(this.autosave) this.save();
+				}
 			});
 			div.appendChild(addButton);
 			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
@@ -796,7 +823,7 @@ export class AonNewInvoice extends AonElement {
 		// taxType.value = getTaxTypeName(tax.type);
 
 		// ----- TAX PERCENT
-
+		tax.type = tax.type || tax.tax;
 		let percentage = new AonSelect();
 		percentage.id = this.TAX_PERCENTAGE + i;
 		percentage.title = '% ' + getTaxTypeName(tax.type, this.isMobile());
@@ -843,7 +870,9 @@ export class AonNewInvoice extends AonElement {
 		// 	if(this.autosave) this.save();
 		// });
 		taxesTable.addCell(quota);
-		quota.value = tax.quota + tax.surcharge_quota;
+		let quotaVal = tax.quota;
+		if(tax.surcharge_quota) quotaVal = tax.quota + tax.surcharge_quota;
+		quota.value = quotaVal;
 		quota.readonly = CONSTANT.TRUE; //this.invoice.isReadonly() || this.invoice.details.length > 0;
 
 		// ----- TAX DELETE
@@ -996,9 +1025,9 @@ export class AonNewInvoice extends AonElement {
 		amount.description = MSG.AMOUNT;
 		amount.format = CONSTANT.TRUE;
 		amount.decimals = "2";
-		amount.readonly = CONSTANT.TRUE;
 		amount.value = detail.amount;
 		table.addCell(amount);
+		amount.readonly = CONSTANT.TRUE;
 
 		// ----- DETAIL VAT
 
@@ -1188,7 +1217,7 @@ export class AonNewInvoice extends AonElement {
 		paymethod.id = this.FINANCE_PAYMETHOD + i;
 		paymethod.title = MSG.PAYMETHOD;
 		paymethod.autocomplete = true;
-		paymethod.options = JSON.stringify(Paymethods);
+		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
 		paymethod.addEventListener(EVENT.SELECT, () => {
 			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
@@ -1197,7 +1226,12 @@ export class AonNewInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		table.addCell(paymethod);
-		paymethod.value = finance.paymethod;
+
+		getPaymethods({}).then(paymethods => {
+			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
+			paymethod.options = JSON.stringify(pms);
+			paymethod.value = finance.paymethod;
+		});
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 
@@ -1207,7 +1241,11 @@ export class AonNewInvoice extends AonElement {
 		bankAccount.readonly = this.invoice.isReadonly();
 
 		bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
-
+			bankAccount.buildOptions(this.rbanks.filter(f => f.bank_account.includes(bankAccount.value))
+				.map(r => {return {
+						name: r.bank_account,
+						value: r.bank_account,
+						rbank: r};}));
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
@@ -1258,9 +1296,9 @@ export class AonNewInvoice extends AonElement {
 	}
 
 	getInvoiceTitle() {
-		if(this.isEmitida()) {
+		if(this.getInvoice().isEmitida()) {
 			return MSG.INVOICE_ISSUED;
-		} else if(this.isTicket()){
+		} else if(this.getInvoice().isTicket()){
 			return MSG.TICKET;
 		} else return MSG.INVOICE_RECEIVED;
 	}
@@ -1323,10 +1361,13 @@ export class AonNewInvoice extends AonElement {
 
 			this.clearElement(fileDiv);
 
-			let json = this.getInvoice();
-			json.domain_id = LS.getDomainId();
-			json.domain_name = LS.getDomainName();
-			json.login = LS.getDomainLogin();
+			let json = {
+				id: this.getInvoice().id,
+				source: this.getInvoice().isRawdoc() ? 'rawdoc' : 'invoice',
+				domain_id: LS.getDomainId(),
+				domain_name: LS.getDomainName(),
+				login: LS.getDomainLogin()
+			};
 
 			let viewer = new AonViewer();
 			viewer.type = !this.getInvoice().file && this.getInvoice().isEmitida()
@@ -1542,22 +1583,6 @@ export class AonNewInvoice extends AonElement {
 			d.addAcceptAction(() => this.back());
 			d.open();
 		});
-	}
-
-	isEmitida() {
-		return this.getInvoice().isEmitida();
-	}
-
-	isRecibida() {
-		return this.getInvoice().isRecibida();
-	}
-
-	isTicket() {
-		return this.getInvoice().isTicket();
-	}
-
-	isAccounting() {
-		return this.getInvoice().isAccounting();
 	}
 }
 

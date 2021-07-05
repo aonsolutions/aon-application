@@ -10,6 +10,10 @@ import {AonSelect} from './aon-select.js';
 
 export class AonSearch extends AonElement {
 
+	static get observedAttributes() {
+		return [CONSTANT.DISABLED];
+	}
+
 	constructor () {
 		super();
 	}
@@ -38,6 +42,20 @@ export class AonSearch extends AonElement {
 		this.setAttribute(CONSTANT.VALUE, value);
 	}
 
+	get disabled() {
+        return this.getAttribute(CONSTANT.DISABLED) == CONSTANT.TRUE;
+    }
+
+    set disabled(disabled) {
+        this.setAttribute(CONSTANT.DISABLED, disabled);
+    }
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if(CONSTANT.DISABLED === name){
+			this.disabledInputSearch();
+		}
+	}
+
 	connectedCallback () {
 		this.initialize();
 		this.build();
@@ -63,15 +81,10 @@ export class AonSearch extends AonElement {
 		let searchButton = new AonIconButton();
 		searchButton.id = this.SEARCH_BUTTON;
 		searchButton.icon = MATERIAL_ICONS.SEARCH;
-		searchButton.title = MSG.SEARCH;
 		span.appendChild(searchButton);
-
-
-
 		let input = this.createElement(TAG.INPUT);
 		input.id = this.SEARCH_INPUT;
-		input.title = MSG.SEARCH;
-		input.placeholder = MSG.SEARCH;
+
 		input.style.display = 'none';
 		input.style.outline = 'none';
 		input.style.border = 'none';
@@ -106,7 +119,10 @@ export class AonSearch extends AonElement {
 				input.style.display = 'block';
 				advancedButton.style.display = 'block';
 				span.style.borderBottom = '2px solid #002469';
-				input.focus();
+				if(this.disabled) 
+					this.openOrClose();
+				else 
+					input.focus();
 			} else {
 				if(this.isMobile()) {
 					this.style.position = null;
@@ -133,20 +149,41 @@ export class AonSearch extends AonElement {
 		divOpts.style.display = "none";
 
 		this.appendChild(divOpts);
+
+		this.disabledInputSearch();
+
 	}
 
 	 openOrClose(){
 	  	let divOpts = this.getElement(this.OPTIONS);
-		divOpts.style.width = this.clientWidth;
-		if(divOpts.classList.contains('is-visible')){
-			divOpts.style.display = "none";
-			divOpts.classList.remove('is-visible');
-		} else {
-			divOpts.style.display = "block";
-			divOpts.classList.add('is-visible');
+		if(divOpts.innerHTML.length){
+			divOpts.style.width = this.clientWidth;
+			if(divOpts.classList.contains('is-visible')){
+				this.closeOptions();
+			} else {
+				divOpts.style.display = "block";
+				divOpts.classList.add('is-visible');
+			}
 		}
-			
 	  }
+
+
+	disabledInputSearch(){
+		let searchButton = this.getElement(this.SEARCH_BUTTON);
+		let input =  this.getElement(this.SEARCH_INPUT);
+		if(input && searchButton){
+			let searchText = "";
+			if(this.disabled){
+				input.disabled = this.disabled;
+			} else {
+				searchText = MSG.SEARCH;
+				input.removeAttribute(CONSTANT.DISABLED);
+			}
+			input.title = searchText;
+			input.placeholder = searchText;
+			searchButton.title = searchText;
+		}
+	}
 
 	//   buildOptions(options) {
 		// this.clearElementById(this.OPTIONS);

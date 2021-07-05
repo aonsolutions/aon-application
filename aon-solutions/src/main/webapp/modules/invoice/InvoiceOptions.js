@@ -1,9 +1,28 @@
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js"
 
-export const RAWDOC_INBOX = {
+  export const RAWDOC_INBOX_ISSUED = {
+    id: CONSTANT.RAWDOC_INBOX_ISSUED.initCap(),
+    name: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE
+  }
+
+  export const RAWDOC_INBOX_RECEIVED = {
+    id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
+    name: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE
+  }
+
+  export const RAWDOC_INBOX_TICKET = {
+    id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
+    name: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT
+  }
+
+  export const RAWDOC_INBOX = {
     id: CONSTANT.RAWDOC_INBOX.initCap(),
-    name: MSG.INBOX,
-    icon: MATERIAL_ICONS.INBOX
+    name: MSG.INVOICES,
+    icon: MATERIAL_ICONS.INBOX,
+    options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
   
   export const RAWDOC_REJECT = {
@@ -17,19 +36,19 @@ export const RAWDOC_INBOX = {
     name: MSG.TRASH,
     icon: MATERIAL_ICONS.DELETE
   }
-  
+
   export const INVOICE_ISSUED = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUEDS,
     icon: MATERIAL_ICONS.UNARCHIVE
   }
-  
+
   export const INVOICE_RECEIVED = {
     id: CONSTANT.INVOICE_RECEIVED.initCap(),
     name: MSG.RECEIVEDS,
     icon: MATERIAL_ICONS.ARCHIVE
   }
-  
+
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
     name: MSG.TICKET,
@@ -59,7 +78,14 @@ export const RAWDOC_INBOX = {
   //   name: MSG.TARGETS,
   //   icon: MATERIAL_ICONS.CONTACT_PAGE
   // }
-  
+
+  export const REGISTRY = {
+    id: CONSTANT.HOLDERS.initCap(),
+    name: MSG.HOLDERS,
+    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
+  }
+
   export const OFFER = {
     id: CONSTANT.OFFER.initCap(),
     name: MSG.PENDINGS,

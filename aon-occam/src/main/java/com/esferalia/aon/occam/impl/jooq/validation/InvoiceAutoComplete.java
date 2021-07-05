@@ -35,9 +35,11 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -204,6 +206,7 @@ public class InvoiceAutoComplete {
 	public static BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_DATA = (inv,ctx) -> {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
+				inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()));
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
@@ -211,9 +214,15 @@ public class InvoiceAutoComplete {
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
 					} else {
-						c = CustomerDAO.save(ctx.getContext(), (Customer) inv.getRegistryData());
+						c = CustomerDAO.save(ctx.getContext(), new Customer()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(c.getDomain().getId())
+									.setRegistry(c.getId()));
 						}
 					}
 				} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
@@ -223,9 +232,15 @@ public class InvoiceAutoComplete {
 					if(s.getId() != null) {
 						inv.setRegistry(s.getId());
 					} else {
-						s = SupplierDAO.save(ctx.getContext(), (Supplier) inv.getRegistryData());
+						s = SupplierDAO.save(ctx.getContext(), new Supplier()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(s.getDomain().getId())
+									.setRegistry(s.getId()));
 						}
 					}
 				} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
@@ -236,13 +251,36 @@ public class InvoiceAutoComplete {
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
 					} else {
-						c = CreditorDAO.save(ctx.getContext(), (Creditor) inv.getRegistryData());
+						c = CreditorDAO.save(ctx.getContext(), new Creditor()
+							.copy(inv.getRegistryData()).setScope(inv.getScope().getId()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							if(!inv.getRegistryAddressData().isEmpty())
+								RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData()
+									.setId(null)
+									.setDomain(c.getDomain().getId())
+									.setRegistry(c.getId()));
 						}
 					}
 				}
 			} else inv.setRegistry(inv.getRegistryData().getId());
+		}
+		
+		if(inv.getRegistryData().isGlobal()) {
+			Registry registry = GlobalDAO.copyRegistry(ctx.getContext(), inv.getRegistryData().getId());
+			inv.setRegistry(registry.getId());
+			inv.setRegistryData(registry);
+			if(InvoiceType.SALES.equals(inv.getType())) {
+				CustomerDAO.save(ctx.getContext(), new Customer()
+						.copy(registry).setScope(inv.getScope().getId()));
+			} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
+				SupplierDAO.save(ctx.getContext(), new Supplier()
+						.copy(registry).setScope(inv.getScope().getId()));
+			} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
+					|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
+				CreditorDAO.save(ctx.getContext(), new Creditor()
+						.copy(registry).setScope(inv.getScope().getId()));
+			}	
 		}
 	};
 	
@@ -439,8 +477,7 @@ public class InvoiceAutoComplete {
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 	
-	public static void completeInvoice2(AONContext ctx, AonConfiguration config,Invoice inv) throws AonCoreException {
-
+	public static void completeInvoice2(AONContext ctx, AonConfiguration config, Invoice inv) throws AonCoreException {
 		COMPLETE_DOMAIN
 		.andThen(COMPLETE_SALES_SERIES)
 		.andThen(COMPLETE_PURCHASE_EXPENSES_SERIES)
@@ -448,12 +485,12 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_UNDEDUCTIBLE_REFERENCE_CODE)
 		.andThen(COMPLETE_TAX_DATE)
 		.andThen(COMPLETE_RECTIFICATION_TYPE)
+		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.andThen(COMPLETE_DETAILS)
-		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_FINANCES)
 		.andThen(COMPLETE_TAXABLE_BASE)
 		.accept(inv, new AonConfigurationContext(ctx,config));

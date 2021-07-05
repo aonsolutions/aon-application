@@ -24,16 +24,17 @@ export const getCertCorriente = (data) =>
   openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
 
 
-export const postAltaDirecta = (data) =>
-  post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
+export const sendAlta = (data) =>
+  post(`${API_URL}/comunica/alta-directa`, data);
 
-export const postBaja = (data) =>
-post(`${API_URL}/comunica/baja`, data); //BAJA
+export const sendBaja = (data) =>
+post(`${API_URL}/comunica/baja`, data);
   
-export const postUpdateCto = (data) =>
-  post(`${API_URL}/comunica/update-contrato`, data); //ALTA DIRECTA
-export const postDeleteMov = (data) =>
-  post(`${API_URL}/comunica/delete-mov`, data); //DELETE MOV
+export const updateContrato = (data) =>
+  post(`${API_URL}/comunica/update-contrato`, data);
+
+export const movDelete = (data) =>
+  post(`${API_URL}/comunica/delete-mov`, data); 
 
 export const getEmployee = (data) =>
   get(`${API_URL}/comunica/get-employee`, data);
@@ -56,3 +57,6 @@ export const getTipoCtz = (data) =>
     const json = await getAllTipoCtz();
     resolve(json.find((r) => r.value == data));
   });
+
+
+export const getCodBaja = () => requestJsonAsset("cod_baja.json"); 

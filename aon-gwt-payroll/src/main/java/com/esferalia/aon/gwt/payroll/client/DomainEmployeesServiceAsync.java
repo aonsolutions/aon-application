@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -478,8 +479,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
-	public void generateCertifaca2(SalaryDraft salaryDraft, AsyncCallback<String> callback) {
-		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
+	public void generateCertifaca2(Integer contractId, AsyncCallback<String> callback) {
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, callback);
 	}
 	
 	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) {
@@ -523,33 +524,37 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
 	
-	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	// ------------------------------------------------- TGSS Comunications
+	
+	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendEmployeeAlta(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 	
-	public void sendEmployeeBaja(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendEmployeeBaja(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendEmployeeBaja(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 
-	public void movPrevDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+	public void movPrevDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.movPrevDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
-	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, callback);
 	}
 	
-	public void cambioGrupCtz(String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, grup_ctz, fecha, callback);
+	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, grup_ctz, fecha, callback);
 	}
 	
-	public void cambioOcupacion(String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, ocup, fecha, callback);
+	public void cambioOcupacion(EmployeeContractInfo employeeContractInfo, String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, ocup, fecha, callback);
 	}
 	
-	public void cambioCatProf(String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
-		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, cat, fecha, callback);
+	public void cambioCatProf(EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cat, fecha, callback);
 	}
+	
+	// ------------------------------------------------- SEPE Comunications
 	
 	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
@@ -557,6 +562,20 @@ public class DomainEmployeesServiceAsync {
 
 	public void sendContractoCBSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
 		employeesServiceAsync.sendContractoCBSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
+	public void sendCertifica2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	}
+	
+	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
+	}
+	
+	// ------------------------------------------------- SEPE Methods
+	
+	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), contractId, callback);
 	}
 
 	// ------------------------------------------------------------------------

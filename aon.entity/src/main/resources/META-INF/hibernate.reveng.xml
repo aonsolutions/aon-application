@@ -52,6 +52,9 @@
 	<table-filter match-name="location" exclude="true" />
 	<table-filter match-name="notification" exclude="true" />
 	<table-filter match-name="notification_receiver" exclude="true" />
+	<table-filter match-name="auth_attach" exclude="true" />
+	<table-filter match-name="task_workflow" exclude="true" />
+	<table-filter match-name="task_attach" exclude="true" />
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->

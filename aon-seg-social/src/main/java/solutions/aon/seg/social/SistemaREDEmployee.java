@@ -12,7 +12,6 @@ import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -31,12 +29,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
-import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
@@ -82,9 +79,9 @@ class SistemaREDEmployee {
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
 	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
-
 		HtmlPage page = webClient
 				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
+		
 		HtmlForm formParts = wait4(page, p -> p.getFormByName("jacadaform")).orElseThrow();
 		manageStatusCode(page);
 
@@ -92,12 +89,19 @@ class SistemaREDEmployee {
 		formParts.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 		formParts.getInputByName("btn_Sub2207601004").focus();
 		page = formParts.getInputByName("btn_Sub2207601004").click();
-		
-		HtmlLabel cccLabel =  page.getFirstByXPath("//label[contains(text(),'"+ccc.substring(2)+"')]");
-		if ( cccLabel != null ) {
-			cccLabel.focus();
-			page = cccLabel.dblClick();
+
+		HtmlTable table = (HtmlTable) page.querySelector("#Sub1000110078");
+		if(table!=null) {
+			for (final HtmlTableRow row : table.getRows()) {
+				HtmlTableCell cell = row.getCell(1);
+				if(cell.getVisibleText().replaceAll("\\s","").indexOf(ccc)>= 0) {
+					HtmlLabel label = cell.querySelector("label");
+					page = label.dblClick();
+					break;
+				}
+			}
 		}
+
 		manageStatusCode(page);
 
 		String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
@@ -117,19 +121,20 @@ class SistemaREDEmployee {
 		String gc = page.getElementById("SDFCGRUPOAFI").getTextContent();
 		String gcDesc = page.getElementById("SDFTGRUPOAFI").getTextContent();
 		Boolean agricultPromo = Toolkit.toBoolean(page.getElementById("SDFPFEA").getTextContent());
-		Boolean workTimeReduct = Toolkit.toBoolean(page.getElementById("SDFLITRJ").getTextContent());
-		String fraStr = page.getElementById("SDFFRAAFI").getTextContent();
-		String feaStr = page.getElementById("SDFFEAAFI").getTextContent();
-		String contract = page.getElementById("SDFTIPOAFI").getTextContent();
-		String coef = page.getElementById("SDFCOEFAFI").getTextContent();
-		String colec = page.getElementById("SDFCOLECTIVO").getTextContent();
-		String epig = page.getElementById("SDFEPIGAFI").getTextContent();
-		String ocup = page.getElementById("SDFOCUPACION").getTextContent();
-		String vinFam = page.getElementById("SDFVINCULO").getTextContent();
-		String profesCat = page.getElementById("SDFCATEGORIA").getTextContent();
-		String reducingCoef = page.getElementById("SDFCOEFRED").getTextContent();
-		String frbStr = page.getElementById("SDFFRBAFI").getTextContent();
-		String febStr = page.getElementById("SDFFEBAFI").getTextContent();
+
+		Boolean workTimeReduct = Toolkit.toBoolean(domElementExists(page.getElementById("SDFLITRJ")));
+		String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
+		String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
+		String contract = domElementExists(page.getElementById("SDFTIPOAFI"));
+		String coef = domElementExists(page.getElementById("SDFCOEFAFI"));
+		String colec = domElementExists(page.getElementById("SDFCOLECTIVO"));
+		String epig = domElementExists(page.getElementById("SDFEPIGAFI"));
+		String ocup = domElementExists(page.getElementById("SDFOCUPACION"));
+		String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
+		String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
+		String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
+		String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
+		String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
 		
 	
 		ipf = removeExtraZeros(ipf);
@@ -198,7 +203,7 @@ class SistemaREDEmployee {
 			throws ElementNotFoundException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
+			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			ArrayList<Employee> employees = new ArrayList<>();
 
@@ -345,7 +350,8 @@ class SistemaREDEmployee {
 	private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String ccc, String nss) throws IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			//webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setUseInsecureSSL(true);
 			return employeeFullInfo(ccc, nss, webClient);
 		}
 	}
@@ -445,11 +451,16 @@ class SistemaREDEmployee {
 				byte[] pdf = doc.getWebResponse().getContentAsStream().readAllBytes();
 				return pdf;
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new InvalidDataException();
 			}
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		}
 		return null;
+	}
+	
+	private static String domElementExists(DomElement domEl) {
+		return domEl!=null ? domEl.getTextContent() : "";
 	}
 }

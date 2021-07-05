@@ -21,7 +21,8 @@ export class AonInput extends AonElement {
       CONSTANT.VISIBLE,
       CONSTANT.OPTIONS,
       CONSTANT.DESCRIPTION,
-      CONSTANT.AUTOCOMPLETE
+      CONSTANT.AUTOCOMPLETE,
+      "maxlength"
     ];
   }
 
@@ -121,10 +122,20 @@ export class AonInput extends AonElement {
     this.setAttribute(CONSTANT.PATTERN, pattern);
   }
 
+
+  get maxlength() {
+    return this.getAttribute("maxlength");
+  }
+
+  set maxlength(maxlength) {
+    this.setAttribute("maxlength", maxlength);
+  }
+
+
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
+    let input = this.getElement(this.INPUT);
     if (CONSTANT.VALUE === name) {
-      let input = this.getElement(this.INPUT);
       if (this.isTypeList()) {
         let options = this.hasAttribute(CONSTANT.OPTIONS)
           ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS))
@@ -149,7 +160,7 @@ export class AonInput extends AonElement {
     }
 
     if (CONSTANT.DISABLED === name) {
-      let el = this.getElement(this.INPUT);
+      let el = input;
       if (el) {
         if (CONSTANT.FALSE == newValue) {
           el.removeAttribute(CONSTANT.DISABLED);
@@ -157,10 +168,10 @@ export class AonInput extends AonElement {
       }
     }
 
-    if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
+    if (CONSTANT.READONLY === name && input) {
       if (this.isReadonly())
-        this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
-      else this.getElement(this.INPUT).removeAttribute(CONSTANT.READONLY);
+        input.setAttribute(CONSTANT.READONLY, this.isReadonly());
+      else input.removeAttribute(CONSTANT.READONLY);
     }
 
     if (CONSTANT.VISIBLE === name) {
@@ -181,6 +192,10 @@ export class AonInput extends AonElement {
 
     if (CONSTANT.DESCRIPTION === name && this.getElement(this.DESCRIPTION)) {
       this.getElement(this.DESCRIPTION).innerHTML = newValue;
+    }
+
+    if("maxlength" == name && input){
+      input.setAttribute("maxlength", newValue);
     }
   }
 

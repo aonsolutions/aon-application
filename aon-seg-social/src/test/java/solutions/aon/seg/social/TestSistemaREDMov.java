@@ -80,10 +80,10 @@ public class TestSistemaREDMov {
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testValidateCert() {
-		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("SEPE.p12")){
-		    SistemaREDMov.validateCert(certificateInputStream, "aon@FNMT", "pkcs12");
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("test_error.p12")){
+		    SistemaREDMov.validateCert(certificateInputStream, "ZH2021Aon", "pkcs12");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

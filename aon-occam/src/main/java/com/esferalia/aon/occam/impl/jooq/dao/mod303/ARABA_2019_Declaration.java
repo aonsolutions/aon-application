@@ -198,43 +198,43 @@ public class ARABA_2019_Declaration extends Mod303Declaration {
 		// IVA deducible en operaciones interiores de bienes y servicios corrientes
 		,AR_C030	(Mod303Key.AR_C030
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C030,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C030,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en operaciones interiores de bienes de inversión
 		,AR_C031	(Mod303Key.AR_C031
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat )
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C031,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C031,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en importaciones de bienes corrientes
 		,AR_C032	(Mod303Key.AR_C032
 			,(mod,vat) -> importacionesCorrientesFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C032,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C032,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en importaciones de bienes de inversión
 		,AR_C033	(Mod303Key.AR_C033
 			,(mod,vat) -> importacionesInversionFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C033,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C033,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes
 		,AR_C034	(Mod303Key.AR_C034
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C034,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C034,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes de inversión
 		,AR_C035	(Mod303Key.AR_C035
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C035,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C035,mod,vat)
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
 		,AR_C036	(Mod303Key.AR_C036
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C036,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C036,mod,vat)
 			,null,null,null)
 		
 		// Regularización Inversiones

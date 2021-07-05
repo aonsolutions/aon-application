@@ -46,6 +46,8 @@ public class Certificado {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	
 			if(fecha==null) fecha = new Date();
 			String[] fra = Toolkit.formatDate(fecha);
 
@@ -108,6 +110,8 @@ public class Certificado {
 			final String certificatePassword, final String certificateType, Certificates certificates ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	
+	    	webClient.getOptions().setUseInsecureSSL(true);
 	    	
 	    	String ctaCti = certificates.getCtaCti();
 	    	String ipfManager= certificates.getIpfManager();

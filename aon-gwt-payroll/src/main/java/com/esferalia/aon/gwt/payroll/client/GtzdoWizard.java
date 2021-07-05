@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -15,17 +16,17 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class GtzdoWizard extends ResizeComposite {
+public abstract class GtzdoWizard extends Composite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -120,6 +121,8 @@ public abstract class GtzdoWizard extends ResizeComposite {
 				onDescriptionChange("MEJORA PREST. SS. ACCIDENTE DE TRABAJO");
 			else
 				onDescriptionChange("MEJORA PREST. SS.");
+			
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gtzdoPeriodicityType);
 		});
 	}
 	
@@ -130,10 +133,25 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		gtzdoPeriodicityType.addItem("IT COMPLETA", "IT COMPLETA");
 		
 		gtzdoPeriodicityType.addChangeHandler(e -> {
-			createPeriodicityTypeView(gtzdoPeriodicityType.getSelectedValue());
+			if(!isAllGtzdo()) {
+				gtzdoTablePanel.setVisible(true);
+				createPeriodicityTypeView(gtzdoPeriodicityType.getSelectedValue());
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gtzdoAboutType);
+			} else {
+				gtzdoTablePanel.setVisible(false);
+				onShowPaymentAviables(gtzdoAboutType.getSelectedValue());
+				setExpression("TODO");
+			}	
 		});
 	}
 	
+	private boolean isAllGtzdo() {
+		String gtzdoPeriodicityTypeValue = gtzdoPeriodicityType.getSelectedValue();
+		String gtzdoAboutTypeValue = gtzdoAboutType.getSelectedValue();
+		
+		return AonStringUtils.equalsIgnoreCase(gtzdoPeriodicityTypeValue, "IT COMPLETA") && AonStringUtils.equalsIgnoreCase(gtzdoAboutTypeValue, "TODO");
+	}
+
 	private void createPeriodicityTypeView(String gtzdoPeriodicityTypeValue) {
 		switch (gtzdoPeriodicityTypeValue) {
 			case "TRAMOS":
@@ -159,20 +177,26 @@ public abstract class GtzdoWizard extends ResizeComposite {
 
 	private void initGtzdoAboutType() {
 		gtzdoAboutType.clear();
-		gtzdoAboutType.addItem("CALCULADO", "CALCULADO");
 		gtzdoAboutType.addItem("BASE REGULADORA", "BASE REGULADORA");
+		gtzdoAboutType.addItem("CALCULADO", "CALCULADO");
 		gtzdoAboutType.addItem("TODO", "TODO");
 		
 		gtzdoAboutType.addChangeHandler(e -> {
-			onShowPaymentAviables(gtzdoAboutType.getSelectedValue());
-			if(AonStringUtils.equalsIgnoreCase(gtzdoAboutType.getSelectedValue(), "BASE REGULADORA")) 
-				setExpression("BASE_REGULADORA");
-			else if(AonStringUtils.equalsIgnoreCase(gtzdoAboutType.getSelectedValue(), "TODO")) 
+			if(!isAllGtzdo()) {
+				gtzdoTablePanel.setVisible(true);
+				onShowPaymentAviables(gtzdoAboutType.getSelectedValue());
+				if(AonStringUtils.equalsIgnoreCase(gtzdoAboutType.getSelectedValue(), "BASE REGULADORA")) 
+					setExpression("BASE_REGULADORA");
+				else if(AonStringUtils.equalsIgnoreCase(gtzdoAboutType.getSelectedValue(), "TODO")) 
+					setExpression("BASE_REGULADORA");
+				else
+					setExpression("");
+				checkTableFormula();
+			} else {
+				gtzdoTablePanel.setVisible(false);
+				onShowPaymentAviables(gtzdoAboutType.getSelectedValue());
 				setExpression("TODO");
-			else
-				setExpression("");
-			
-			checkTableFormula();
+			}
 		});
 	}
 
@@ -197,17 +221,20 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		int row = gtzdoDataTable.insertRow(gtzdoDataTable.getRowCount());
 		
 		// StartDay TextBox
-		TextBox startDayTB = new TextBox();
+		IntegerBox startDayTB = new IntegerBox();
+		startDayTB.getElement().setAttribute("type", "number");
 		startDayTB.setWidth("50px");
 		startDayTB.setAlignment(TextAlignment.CENTER);
 		
 		// EndDay TextBox
-		TextBox endDayTB = new TextBox();
+		IntegerBox endDayTB = new IntegerBox();
+		endDayTB.getElement().setAttribute("type", "number");
 		endDayTB.setWidth("50px");
 		endDayTB.setAlignment(TextAlignment.CENTER);
 		
 		// GtzdoPercent TextBox
-		TextBox gtzdoPercentTB = new TextBox();
+		IntegerBox gtzdoPercentTB = new IntegerBox();
+		gtzdoPercentTB.getElement().setAttribute("type", "number");
 		gtzdoPercentTB.setWidth("50px");
 		gtzdoPercentTB.setAlignment(TextAlignment.CENTER);
 		
@@ -217,10 +244,10 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		// Delete Row
 		AonTableButton deleteBtn = new AonTableButton("Eliminar tramo", AON.CSS.aonIconDelete());
 		deleteBtn.addClickHandler(e -> {
-			String startDay = startDayTB.getValue();
+			Integer startDay = startDayTB.getValue();
 			for(int rowIt = 0; rowIt < gtzdoDataTable.getRowCount(); rowIt++) {
-				TextBox startTB = (TextBox) gtzdoDataTable.getWidget(rowIt, 0);
-				if(AonStringUtils.equalsIgnoreCase(startTB.getValue(), startDay)) {
+				IntegerBox startTB = (IntegerBox) gtzdoDataTable.getWidget(rowIt, 0);
+				if(AonNumberUtils.equals(startTB.getValue(), startDay)) {
 					gtzdoDataTable.removeRow(rowIt);
 					break;
 				}
@@ -248,35 +275,41 @@ public abstract class GtzdoWizard extends ResizeComposite {
 	}
 	
 	private void createFrozenGtzdoTable(String periodicityTypeValue) {
-		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "TRAMOS")) {
-			insertFrozenGtzdoTableRow("01", "03", "60");
-			insertFrozenGtzdoTableRow("04", "15", "75");
-			insertFrozenGtzdoTableRow("16", "20", "90");
-			insertFrozenGtzdoTableRow("21", "365", "100");
+		String gtzdoTypeValue = gtzdoType.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "TRAMOS") && AonStringUtils.equalsIgnoreCase(gtzdoTypeValue, "EC")) {
+			insertFrozenGtzdoTableRow(1, 3, 0);
+			insertFrozenGtzdoTableRow(4, 15, 60);
+			insertFrozenGtzdoTableRow(16, 20, 60);
+			insertFrozenGtzdoTableRow(21, 365, 75);
+		} else if(AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "TRAMOS")) {
+			insertFrozenGtzdoTableRow(1, 365, null);
 		} else if (AonStringUtils.equalsIgnoreCase(periodicityTypeValue, "IT COMPLETA"))
-			insertFrozenGtzdoTableRow("01", "365", null);
+			insertFrozenGtzdoTableRow(1, 365, null);
 	}
 
-	private void insertFrozenGtzdoTableRow(String startDay, String endDay, String gtzdoPercent) {
+	private void insertFrozenGtzdoTableRow(Integer startDay, Integer endDay, Integer gtzdoPercent) {
 		// Insert new row
 		int row = gtzdoDataTable.insertRow(gtzdoDataTable.getRowCount());
 		
 		// StartDay TextBox
-		TextBox startDayTB = new TextBox();
+		IntegerBox startDayTB = new IntegerBox();
+		startDayTB.getElement().setAttribute("type", "number");
 		startDayTB.setWidth("50px");
 		startDayTB.setAlignment(TextAlignment.CENTER);
 		startDayTB.setValue(startDay);
 		startDayTB.setEnabled(false);
 		
 		// EndDay TextBox
-		TextBox endDayTB = new TextBox();
+		IntegerBox endDayTB = new IntegerBox();
+		endDayTB.getElement().setAttribute("type", "number");
 		endDayTB.setWidth("50px");
 		endDayTB.setAlignment(TextAlignment.CENTER);
 		endDayTB.setValue(endDay);
 		endDayTB.setEnabled(false);
 		
 		// GtzdoPercent TextBox
-		TextBox gtzdoPercentTB = new TextBox();
+		IntegerBox gtzdoPercentTB = new IntegerBox();
+		gtzdoPercentTB.getElement().setAttribute("type", "number");
 		gtzdoPercentTB.setWidth("50px");
 		gtzdoPercentTB.setAlignment(TextAlignment.CENTER);
 		gtzdoPercentTB.setValue(gtzdoPercent);
@@ -297,39 +330,31 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		gtzdoDataTable.setWidget(row, 4, null);
 	}
 
-	private String createGtzdoExpression(String startDay, String endDay, String gtzdoPercent) {
+	private String createGtzdoExpression(Integer start, Integer end, Integer gtzdoPercent) {
 		String gtzdoAboutTypeValue = gtzdoAboutType.getSelectedValue();
 		String expression = "";
 		
 		if(AonStringUtils.equalsIgnoreCase(gtzdoAboutTypeValue, "BASE REGULADORA")) {
-			try {
-				Integer start = Integer.parseInt(startDay);
-				Integer end = Integer.parseInt(endDay);
-				gtzdoPercent = gtzdoPercent.replace("%", "");
-				Double percent = Double.parseDouble(gtzdoPercent);
-				percent = percent / 100;
+			if(null == gtzdoPercent || null == start || null == end)
+				expression = "";
+			else {
+				Double percent = ((double)gtzdoPercent) / 100;
 				
 				if(percent < 1)
 					expression = "GTZDO(BASE_REGULADORA*" + percent + "," + start + ", " + end + ")";
 				else
 					expression = "GTZDO(BASE_REGULADORA," + start + ", " + end + ")";
-			} catch (Exception e) {
-				expression = "";
 			}
 		} else {
-			try {
-				Integer start = Integer.parseInt(startDay);
-				Integer end = Integer.parseInt(endDay);
-				gtzdoPercent = gtzdoPercent.replace("%", "");
-				Double percent = Double.parseDouble(gtzdoPercent);
-				percent = percent / 100;
+			if(null == gtzdoPercent || null == start || null == end)
+				expression = "";
+			else {
+				Double percent = ((double)gtzdoPercent) / 100;
 				
 				if(percent < 1)
 					expression = "GTZDO((" + getExpression() + ")*" + percent + "," + start + ", " + end + ")";
 				else
 					expression = "GTZDO((" + getExpression() + ")," + start + ", " + end + ")";
-			} catch (Exception e) {
-				expression = "";
 			}
 			
 		}
@@ -359,7 +384,7 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		Label startDay = new Label("D" + String.valueOf("\u00CD") + "A INICIAL");
 		Label endDay = new Label("D" + String.valueOf("\u00CD") + "A FINAL");
 		Label gtzdoPercent = new Label("% Gtzdo.");
-		Label formula = new Label("F" + String.valueOf("\u00D3") + "RMULA");
+		Label formula = new Label("EXPRESI" + String.valueOf("\u00D3") + "N");
 		Label action = new Label("");
 		
 		startDay.addStyleName(style.title());
@@ -377,17 +402,17 @@ public abstract class GtzdoWizard extends ResizeComposite {
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
 	
 	private void setColumnsWidth() {
-		gtzdoDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(300, Unit.PX);
-		gtzdoDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(10, Unit.PX);
+		gtzdoDataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PCT);
+		gtzdoDataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(5, Unit.PCT);
 		
-		gtzdoDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(70, Unit.PX);
-		gtzdoDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(300, Unit.PX);
-		gtzdoDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(10, Unit.PX);
+		gtzdoDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(15, Unit.PCT);
+		gtzdoDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PCT);
+		gtzdoDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(5, Unit.PCT);
 	}
 	
 	// ------------------------------------------------------ Create Payments ----------------------------------------------------
@@ -395,12 +420,12 @@ public abstract class GtzdoWizard extends ResizeComposite {
 	public List<Payment> createPayments() {
 		List<Payment> payments = new ArrayList<Payment>();
 		
-		for(int row=0; row < gtzdoDataTable.getRowCount(); row++) {
+		if(isAllGtzdo()) {
 			Payment payment = new Payment();
 			
-			payment.setId((row+1)*(-1));
-			payment.setDescription(createDescription(row));
-			payment.setExpression(createExpression(row));
+			payment.setId(-1);
+			payment.setDescription(createDescription(null));
+			payment.setExpression("GTZDO(TODO)");
 			payment.setIrpfExpression("_P");
 			payment.setQuoteExpression("_P");
 			payment.setType(Payment.Type.CRA_0055);
@@ -408,16 +433,33 @@ public abstract class GtzdoWizard extends ResizeComposite {
 			payment.setName("GARANTIZADO");
 			
 			payments.add(payment);
-		}
+		} else 
+			for(int row=0; row < gtzdoDataTable.getRowCount(); row++) {
+				Payment payment = new Payment();
+				
+				payment.setId((row+1)*(-1));
+				payment.setDescription(createDescription(row));
+				payment.setExpression(createExpression(row));
+				payment.setIrpfExpression("_P");
+				payment.setQuoteExpression("_P");
+				payment.setType(Payment.Type.CRA_0055);
+				payment.setSalaryType(Salary.Type.SALARY);
+				payment.setName("GARANTIZADO");
+				
+				payments.add(payment);
+			}
 		
 		return payments;
 	}
 	
-	private String createDescription(int row) {
-		TextBox startTB = (TextBox) gtzdoDataTable.getWidget(row, 0);
-		TextBox endTB = (TextBox) gtzdoDataTable.getWidget(row, 1);
+	private String createDescription(Integer row) {
+		if(null == row)
+			return getDescription(row);
 		
-		String description = getDescription() + " (" + startTB.getValue() + " - " + endTB.getValue() + ")";
+		IntegerBox startTB = (IntegerBox) gtzdoDataTable.getWidget(row, 0);
+		IntegerBox endTB = (IntegerBox) gtzdoDataTable.getWidget(row, 1);
+		
+		String description = getDescription(row) + " (" + startTB.getValue() + " - " + endTB.getValue() + ")";
 		
 		return description;
 	}
@@ -441,9 +483,9 @@ public abstract class GtzdoWizard extends ResizeComposite {
 		if(AonStringUtils.equalsIgnoreCase(gtzdoAboutType.getSelectedValue(), "TODO") && AonStringUtils.equalsIgnoreCase(gtzdoPeriodicityType.getSelectedValue(), "IT COMPLETA")) {
 			expression += "GTZDO(TODO)/**/ : HIDE()";
 		} else {
-			TextBox startTB = (TextBox) gtzdoDataTable.getWidget(row, 0);
-			TextBox endTB = (TextBox) gtzdoDataTable.getWidget(row, 1);
-			TextBox percentTB = (TextBox) gtzdoDataTable.getWidget(row, 2);
+			IntegerBox startTB = (IntegerBox) gtzdoDataTable.getWidget(row, 0);
+			IntegerBox endTB = (IntegerBox) gtzdoDataTable.getWidget(row, 1);
+			IntegerBox percentTB = (IntegerBox) gtzdoDataTable.getWidget(row, 2);
 			String generatedExpression = createGtzdoExpression(startTB.getValue(), endTB.getValue(), percentTB.getValue());
 			
 			if(AonStringUtils.isBlank(generatedExpression))
@@ -459,10 +501,9 @@ public abstract class GtzdoWizard extends ResizeComposite {
 	
 	protected abstract void onPaymentTypeChange(String paymentTypeValue);
 	protected abstract void onShowPaymentAviables(String gtzdoAboutTypeValue);
-	protected abstract void getGtzdoPayments(List<Payment> payments);
 	protected abstract String getExpression();
-	protected abstract void setExpression(String string);
-	protected abstract String getDescription();
+	protected abstract void setExpression(String expression);
+	protected abstract String getDescription(Integer row);
 	protected abstract void onDescriptionChange(String description);
 
 	// -------------------------------------------- Auxiliar Methods
@@ -493,9 +534,9 @@ public abstract class GtzdoWizard extends ResizeComposite {
 
 	public void checkTableFormula() {
 		for(int row = 0; row < gtzdoDataTable.getRowCount(); row++) {
-			TextBox startTB = (TextBox) gtzdoDataTable.getWidget(row, 0);
-			TextBox endTB = (TextBox) gtzdoDataTable.getWidget(row, 1);
-			TextBox percentTB = (TextBox) gtzdoDataTable.getWidget(row, 2);
+			IntegerBox startTB = (IntegerBox) gtzdoDataTable.getWidget(row, 0);
+			IntegerBox endTB = (IntegerBox) gtzdoDataTable.getWidget(row, 1);
+			IntegerBox percentTB = (IntegerBox) gtzdoDataTable.getWidget(row, 2);
 			Label formulaLabel = (Label) gtzdoDataTable.getWidget(row, 3);
 			formulaLabel.setText(createGtzdoExpression(startTB.getValue(), endTB.getValue(), percentTB.getValue()));
 		}

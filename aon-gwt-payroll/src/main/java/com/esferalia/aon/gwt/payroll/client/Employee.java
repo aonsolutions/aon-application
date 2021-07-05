@@ -978,7 +978,7 @@ public abstract class Employee extends ResizeComposite {
 		// TIPO DE CONTRATO
 		contractTypeLB.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());		
+			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));		
 	}
 
 	public void initAgreements(List<Agreement> activeAgreements) {
@@ -1108,6 +1108,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	public void hideMdCtzContract() {
 		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		this.mdCTZLB.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
+		
 	}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
@@ -1240,6 +1243,20 @@ public abstract class Employee extends ResizeComposite {
 		document.setEnabled(true);
 		nationality.setEnabled(true);
 		security_social_num.setEnabled(true);
+	}
+	
+	public void blockFieldsExistingPayroll(){
+		this.contractTypeLB.setEnabled(false);
+		this.quote_group.setEnabled(false);
+		this.occupation.setEnabled(false);
+		this.partiality_coef.setEnabled(false);
+	}
+	
+	public void unblockFieldsExistingPayroll(){
+		this.contractTypeLB.setEnabled(true);
+		this.quote_group.setEnabled(true);
+		this.occupation.setEnabled(true);
+		this.partiality_coef.setEnabled(true);
 	}
 	
 	// ------------------------------------------------- Auxiliar methods

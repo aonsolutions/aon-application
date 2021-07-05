@@ -14,7 +14,7 @@
 			display: flex;
 			flex-direction: column;
 			height: 585px;
-			min-width: 555px;
+			min-width: 600px;
 		}
 		
 		.title{
@@ -241,13 +241,17 @@
 						<g:Label styleName="{style.title}">Tipo CRA</g:Label>
 						<g:HTMLPanel ui:field="paymentCRAPanel" />
 					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flexColumn2}">
-						<g:Label styleName="{style.title}">Descripción</g:Label>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />
-							<g:TextBox ui:field="paymentDescription" styleName="{style.widthAll}" />
+					<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flex}">
+						<g:HTMLPanel styleName="{style.flexColumn2}">
+							<g:Label styleName="{style.title}">Pos</g:Label>
+							<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />	
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
+							<g:Label styleName="{style.title}">Descripción</g:Label>
+							<g:TextBox ui:field="paymentDescription"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
+					
 					<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.flexColumn2}">
 						<g:Label ui:field="paymentExpressionTitle" styleName="{style.title}">Expresión</g:Label>
 						<g:TextBox ui:field="paymentExpression" enabled="false"/>

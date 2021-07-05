@@ -38,8 +38,7 @@ export const getTimeControlList = (data) =>
 export const getTaskHolderTimeControl = (data) =>
   get(`${API_URL}/timecontrol/list-holder`, data);
 
-export const getGroups = (data) =>
-  new Promise((resolve) => {
+export const getGroups = (data) => {
     let jsonValues = [
       {
         name: "DIA",
@@ -60,9 +59,8 @@ export const getGroups = (data) =>
     ];
 
     if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-    
-    resolve(jsonValues);
-  });
+    return jsonValues;
+};
 
 const getWeekDayObj = () =>  ({
     now: new Date(),

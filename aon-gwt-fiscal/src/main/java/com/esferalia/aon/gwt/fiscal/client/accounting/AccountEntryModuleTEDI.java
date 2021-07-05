@@ -341,7 +341,11 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (getOptions().getAccountEntryId() != null) {
 			selectEntry(getOptions().getAccountEntryId());
 		} else if (getOptions().getAccountingInvoice() != null) {
-			selectWizardContent(null, getOptions().getAccountingInvoice());
+			AccountingInvoice ai = getOptions().getAccountingInvoice();
+			if (ai.isTediParsed() && ai.getAccountEntry() != null && ai.getAccountEntry().getEntryType() == null) {
+				ai.getAccountEntry().setEntryType( AccountEntryType.EXPENSE_INVOICE );
+			}
+			selectWizardContent(null, ai);
 		} else {
 			reset();
 		}

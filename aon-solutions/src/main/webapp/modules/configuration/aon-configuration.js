@@ -17,9 +17,10 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
-import { AonUser } from "../user/aon-user.js";
+// import { AonUser } from "../user/aon-user.js";
 
 import * as ACTION from '../actions.js';
+import { CONFIGURATION} from "../../services/app.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -93,6 +94,10 @@ export class AonConfiguration extends AonElement {
   build() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 
+    if(this.isMobile()){
+			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
+		}
+
     let userOptions = [
       {
         name: MSG.MY_DATA,
@@ -156,7 +161,7 @@ export class AonConfiguration extends AonElement {
       
       aonConfiguration.removeToolbarOptions();
       aonConfiguration.setContentHTML(
-        '<aon-user id="aonUserPersonal" showPassword="true" onlyAuth="true" autosave="true"><aon-user>'
+        '<aon-user id="aonUserPersonal" showPassword="true" showToolbar="true" onlyAuth="true"><aon-user>'
       );
       let aonUser = this.getElement("aonUserPersonal");
       aonUser.style.width = "100%";
@@ -229,14 +234,14 @@ export class AonConfiguration extends AonElement {
         this.buildCreateUser(false)
       );
     }
-    aonConfiguration.addSearchOption();
-
+    
     let userList = this.isMobile() 
         ? new AonMobileUserList() 
         : new AonUserList();
     aonConfiguration.setContent(userList);
-
-    aonConfiguration.addEventListener(EVENT.SEARCH, (event) => {
+    
+    const btnSearch = aonConfiguration.addSearchOption();
+    btnSearch.addEventListener(EVENT.SEARCH, (event) => {
       userList.setValue(event.detail);
     });
 

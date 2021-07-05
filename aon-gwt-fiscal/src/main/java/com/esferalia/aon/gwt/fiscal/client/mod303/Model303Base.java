@@ -103,6 +103,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.callback.showError(msg);
 		}
 		@Override
+		public Model303ModuleOptions getOptions() {
+			return this.callback.getOptions();
+		}
+		@Override
 		public String getDomainName() {
 			return this.callback.getDomainName();
 		}
@@ -463,7 +467,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getColumnFormatter().setWidth(0, "auto");
 		
 		table.getColumnFormatter().setWidth(1, "150px");
-		table.getColumnFormatter().setWidth(2, "100px");
+		table.getColumnFormatter().setWidth(2, "160px");
 		table.getColumnFormatter().setWidth(3, "150px");
 		table.getColumnFormatter().setWidth(4, "150px");
 		table.getColumnFormatter().setWidth(5, "110px");
@@ -506,8 +510,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		table.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextCenter());
 		
 		if (AonMathUtils.isNotZero(mod303.getProratePercent()) &&  !AonMathUtils.equals(mod303.getProratePercent(), 100.0)) {
-			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod303.getProratePercent() + "%");
+			prorataLabel.setText(AON.MSG.prorrata() + (mod303.isSpecialProrate()?" especial: ":" general: ") + mod303.getProratePercent() + "%");
 			prorataLabel.setStyleName(AON.AON_CSS.aonBold());
+			prorataLabel.addStyleName(AON.AON_CSS.aonNowrap());
 		}
 		table.setWidget(0, 2, prorataLabel);
 		table.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());

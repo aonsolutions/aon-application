@@ -84,10 +84,6 @@
 			text-align: center;
 		}
 		
-		.mw-50{
-			min-width: 50px;
-		}
-		
 		.mt20{
 			margin-top: 20px;
 		}
@@ -100,6 +96,15 @@
 			border: 1px solid red;
 		}
 		
+		.heightTB{
+			height: 1.1rem;
+		}
+		
+		.w-50{
+			width: 50px;
+			text-align: center;
+		}
+		
 	</ui:style>
 
 	<g:VerticalPanel styleName="{style.container}">
@@ -109,28 +114,28 @@
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="namePanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
-		    			<g:TextBox ui:field="enterpriseName" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="enterpriseName" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Nombre Comercial / Alias</g:Label>
-		    			<g:TextBox ui:field="enterpriseAlias" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="enterpriseAlias" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
 		    			<g:Label ui:field="documentType"></g:Label>
-		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 						<g:Label ui:field="documentStatus"></g:Label>	
 		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw-75}">País Emisión</g:Label>
-		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:SuggestBox>
+		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:SuggestBox>
 		    		</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
 		    			<g:ListBox ui:field="streetType" styleName='aon-selectOneMenu'></g:ListBox>
-		    			<g:TextBox ui:field="address" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="address" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 		    			<g:Label>Número</g:Label>
-		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.w-50} {style.heightTB} {style.widthAll}'></g:TextBox>
 		    			<g:Label>C.P.</g:Label>
-		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.w-50} {style.heightTB} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.firstColumn} {style.emptyLabel}'></g:Label>
@@ -142,15 +147,15 @@
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Contacto</g:Label>
 		    			<g:Label>Móvil</g:Label>
-		    			<g:TextBox ui:field="mobile" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="mobile" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 		    			<g:Label>Teléfono</g:Label>
-		    			<g:TextBox ui:field="phone" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="phone" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 		    			<g:Label>eMail</g:Label>
-		    			<g:TextBox ui:field="email" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="email" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Web</g:Label>
-		    			<g:TextBox ui:field="enterpriseWeb" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="enterpriseWeb" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Ámbito</g:Label>
@@ -164,13 +169,7 @@
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Otros datos</g:Label>
 		    	<g:HTMLPanel ui:field="otherDataDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<!-- g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Actividad</g:Label>
-		    			<g:Label ui:field="enterpriseActivity"></g:Label>
-		    			<g:Label styleName='{style.firstColumn}'>Centro Trabajo</g:Label>
-		    			<g:Label ui:field="enterpriseWorkplace"></g:Label>
-					</g:HTMLPanel -->
-					<g:HTMLPanel styleName="{style.flex}">
+		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
 		    			<g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu'></g:ListBox>
 		    			<g:Label styleName='{style.firstColumn}'>Modelo Recibo Costes Empresa</g:Label>
@@ -181,7 +180,7 @@
 		    			<g:ListBox ui:field="enterprisePaysheetSendType" styleName='aon-selectOneMenu'></g:ListBox>
 		    			<g:HTMLPanel ui:field="enterprisePaysheetSendPanel" styleName='{style.flex} {style.widthAll}'>
 		    				<g:Label styleName='{style.firstColumn}'>A la dirección : </g:Label>
-							<g:TextBox ui:field="enterprisePaysheetSendEmail" styleName='aon-inputText {style.mw-50} {style.widthAll}'></g:TextBox>
+							<g:TextBox ui:field="enterprisePaysheetSendEmail" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
 		    			</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">

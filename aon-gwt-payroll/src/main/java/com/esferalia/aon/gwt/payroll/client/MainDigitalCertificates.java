@@ -161,7 +161,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
-		Label loadingL = new Label("Accediendo al sistema RED para consultar los usuarios secundarios...");
+		Label loadingL = new Label("Verificando certificado sistema RED...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
 		loadingPanel.add(loadingBtn);
@@ -270,16 +270,16 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	}
 	
 	private void setSecondaryUserColumnWidth() {
-		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(350, Unit.PX);
-		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(200, Unit.PX);
-		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(200, Unit.PX);
-		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(150, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(300, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(125, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(125, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(125, Unit.PX);
 		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(50, Unit.PX);
 		
-		secondaryUserDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(350, Unit.PX);
-		secondaryUserDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
-		secondaryUserDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
-		secondaryUserDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(300, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(125, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(125, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(125, Unit.PX);
 		secondaryUserDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
 	}
 	
@@ -445,13 +445,26 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
 		secondaryUsersButton.addClickHandler(e -> {
 			secondayUsersPanel.setVisible(true);
-			mainDigitalCertificatesObject.getSecondaryUsers(s -> {
-				insertSecondaryUsersRows();
-			}, f -> {
+			
+			mainDigitalCertificatesObject.verifyCertificate(CertificateType.TGSS, success -> {
+				
+				Label loadingL = (Label) loadingPanel.getWidget(loadingPanel.getWidgetCount()-1);
+				loadingL.setText("Accediendo al sistema RED para consultar los usuarios secundarios...");
+				
+				mainDigitalCertificatesObject.getSecondaryUsers(s -> {
+					insertSecondaryUsersRows();
+				}, f -> {
+					secondayUsersPanel.setVisible(false);
+					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+					dialog.warning();
+				});
+				
+			}, failure -> {
 				secondayUsersPanel.setVisible(false);
-				AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+				AonDialog dialog = new AonDialog("Error", new HTML(failure.getMessage()));
 				dialog.warning();
 			});
+			
 		});
 		secondaryUsersButton.setVisible(false);
 		
@@ -558,109 +571,6 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		return showPassBtn;
 	}
-
-//	private Widget createFormPanel(DigitalCertificate digitalCertificate) {
-//		
-//		CertificateType certificateType = digitalCertificate.getType();
-//		String certificateTypeStr = certificateType == CertificateType.SEPE ? "0" : "1";
-//		
-//		HorizontalPanel mainFlowPanel = new HorizontalPanel();
-//		mainFlowPanel.getElement().getStyle().setPaddingLeft(10, Unit.PX);
-//		mainFlowPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-//		mainFlowPanel.setWidth("350px");
-//		
-//		TextBox fileNameTB = new TextBox();
-//		fileNameTB.getElement().getStyle().setWidth(305, Unit.PX);
-//		String description = "No existe certficado";
-//		if(digitalCertificate.getHasCertificate())
-//			description = AonStringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
-//		fileNameTB.setValue(description);
-//		
-//		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates() && certificateType == CertificateType.SEPE)
-//			fileNameTB.setEnabled(false);
-//		
-//		fileNameTB.addValueChangeHandler(e -> {
-//			digitalCertificate.setDescription(e.getValue());
-//		});
-//		
-//		//Create formPanel to UploadFiles
-//		FlowPanel flowPanel = new FlowPanel();
-//		
-//		FormPanel formPanel = new FormPanel();
-//		formPanel.setAction(GWT.getModuleBaseURL()+ "certificate/");
-//		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-//		formPanel.setMethod(FormPanel.METHOD_POST);
-//		
-//		Hidden rattachId = new Hidden("rattachId", digitalCertificate.getRattachId()+"");
-//		Hidden raddinfoId = new Hidden("raddinfoId", digitalCertificate.getRaddinfoId().toString()+"");
-//		Hidden extension = new Hidden("extension", "");
-//		Hidden fileName = new Hidden("filename", "");
-//		Hidden certificateTypeH = new Hidden("certificatetype", certificateTypeStr);
-//		Hidden userLogin = new Hidden("currentUser", Wnd.getCurrentUser());
-//		Hidden currentDomain = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-//		Hidden token = new Hidden("token", Wnd.getToken());
-//		
-//		FileUpload fileU = new FileUpload();
-//		fileU.setName("uploader");
-//		fileU.getElement().setPropertyString("multiple", "multiple");
-//		fileU.getElement().setPropertyString("accept", ".p12");
-//		fileU.getElement().getStyle().setDisplay(Display.NONE);
-//		
-//		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates() && certificateType == CertificateType.SEPE)
-//			fileU.setEnabled(false);
-//		
-//		fileU.addChangeHandler((e) -> {
-//			String filename = getFileName(fileU.getFilename().toString());
-//			String fileExt = getFileExtension(fileU.getFilename());
-//
-//            if(filename.length() == 0) {
-//            	 Window.alert("Cant upload file - Try again : ");
-//            } else {
-//            	extension.setValue(fileExt);
-//            	fileName.setValue(filename);
-//            	fileNameTB.setValue(filename);
-//            	mainDigitalCertificatesObject.setDigitalCertificates(s -> {
-//            		formPanel.submit();
-//        		}, f -> {});
-//            }
-//		});
-//		
-//		formPanel.addSubmitCompleteHandler((e) -> {
-//	        if(e.getResults().length() == 0) {
-//                Window.alert("Something went wrong - Try again");
-//            } else {
-//            	mainDigitalCertificatesObject.getDigitalCertificates(
-//        				s -> {
-//        					reloadView();
-//        				}, f -> {});
-//            }
-//	    });
-//		
-//		AonTableButton fileButton = new AonTableButton("Subir Cert", AON.CSS.aonIconAttach());
-//		fileButton.addClickHandler(e -> {
-//			fileU.click();
-//		});
-//		
-//		flowPanel.add(rattachId);
-//		flowPanel.add(raddinfoId);
-//		flowPanel.add(extension);
-//		flowPanel.add(fileName);
-//		flowPanel.add(certificateTypeH);
-//		flowPanel.add(userLogin);
-//		flowPanel.add(currentDomain);
-//		flowPanel.add(token);
-//		flowPanel.add(fileButton);
-//		flowPanel.add(fileU);
-//		
-//		formPanel.add(flowPanel);
-//			
-//		mainFlowPanel.add(fileNameTB);
-//		
-//		if(!digitalCertificate.getHasCertificate())
-//			mainFlowPanel.add(formPanel);
-//		
-//		return mainFlowPanel;
-//	}
 	
 	// ------------------------------------------------------ Insert Secondary Users
 	

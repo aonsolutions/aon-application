@@ -288,6 +288,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconList();
 
+	@Source("icons/aon-icon-compare.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCompare();
+
+	@Source("icons/aon-icon-data.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconData();
+
 	@Source("icons/aon-icon-history.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconHistory();
@@ -496,6 +504,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAeat();
 	
+	@Source("icons/aon-icon-aeat-bw.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAeatBw();
+
 	@Source("icons/aon-icon-araba.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAraba();
@@ -511,5 +523,46 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-navarra.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconNavarra();
+	
+	@Source("icons/aon-icon-model-finish.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconModelFinish();
+
+	@Source("icons/aon-icon-model-sent.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconModelSent();
+	
+	@Source("icons/aon-icon-model-reopen.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconModelReopen();
+	
+	@Source("icons/aon-icon-id.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconId();
+
+	@Source("icons/aon-icon-ad.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAd();
+
+	@Source("icons/aon-icon-letter-d.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLetterD();
+
+	@Source("icons/aon-icon-letter-e.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLetterE();
+
+	@Source("icons/aon-icon-letter-g.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLetterG();
+
+	@Source("icons/aon-icon-letter-r.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLetterR();
+
+	@Source("icons/aon-icon-letter-s.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLetterS();
+
 }
 

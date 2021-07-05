@@ -7,6 +7,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -48,18 +50,21 @@ public interface AccountingUtilitiesServiceAsync {
 	void createAndLinkAccount(String domainName, String user, Integer domain, AccountingRegistryType registryType, Integer registryId, AsyncCallback<Account> callback) throws AonCoreException;
 
 	// Regeneracion del numero de diario
-	void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
-	void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback);
+	void getJournalRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	void regenerateJournal(String domainName, String user, Integer domain, Integer accuountPeriod, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 
 	// Regeneracion del numero de diario
-	void getInputVatRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
-	void regenerateInputVat(String domainName, String user, Integer domain, Integer year, AsyncCallback<AccUtilitiesResult> callback);
+	void getInputVatRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	void regenerateInputVat(String domainName, String user, Integer domain, Integer year, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 
 	// Borrado de apuntes
-	void removeEntries(String domainName, String user, Domain domain, AccountEntryParams params, AsyncCallback<AccUtilitiesResult> asyncCallback);
+	void removeEntries(String domainName, String user, Domain domain, AccountEntryParams params, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	
 	// Integridad de facturas 
-	void invoiceIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback);
+	void invoiceIntegrity(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void invoiceIntegrityFix(String domainName, String user, Integer domain, Integer invoiceId, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 	
+	// Cambio de cuentas 
+	void searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	void fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 }

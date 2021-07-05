@@ -1,0 +1,249 @@
+package com.esferalia.aon.gwt.fiscal.client.mod200.e2020;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
+import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class Mod2002020Object implements Serializable {
+	
+	public static interface IMod200ChangeListener {
+		void mod200Changed( Mod2002020 mod200 );
+	}
+
+	private static final long serialVersionUID = 1L;
+	
+	private List<IMod200ChangeListener> changeListeners;
+	
+	private String domainName;
+	private boolean initialized;
+	private Mod2002020 mod200;
+	private String user;
+	
+	private boolean authomaticCalculation = true;
+	
+	public Mod2002020Object(String currentDomainName, String user, Mod2002020 mod200) {
+		this.domainName = currentDomainName;
+		this.user = user;
+		this.mod200 = mod200;
+		initialized = mod200.getId() !=null;
+	}
+
+	public Integer getId() {
+		return mod200.getId();
+	}
+	public boolean isInitialized() {
+		return initialized;
+	}
+	public boolean isComplementary() {
+		return mod200.isComplementary();
+	}
+	public void register(IMod200ChangeListener listener) {
+		if (changeListeners == null) {
+			changeListeners = new LinkedList<IMod200ChangeListener>();
+		}
+		changeListeners.add(listener);
+	}
+	
+	private void fireMod200Changed(Mod2002020 mod2002) {
+		if (changeListeners != null) {
+			for (IMod200ChangeListener listener : changeListeners) {
+				listener.mod200Changed(mod2002);
+			}
+		}
+		
+	}
+
+	// ************************************
+	public void initializeMod200(final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().initializeMod2002020(domainName, mod200.getDomain(), user, mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				mod200 = result;
+				initialized = true;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				initialized = false;
+				callback.onFailure(caught);
+			}
+		});
+	}
+
+	public void save(final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().saveMod2002020(domainName, mod200.getDomain(), user, mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				mod200 = result;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
+	public void delete(final AsyncCallback<Void> callback) {
+		Model200.getMod2002020Service().deleteMod2002020(domainName,mod200.getDomain(), user, mod200.getId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
+	public void fillMod2002020AccountingData(String domainName, int domain, String user, final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().fillMod2002020AccountingData(domainName, domain, user, mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				mod200 = result;
+				calculate();
+				fireMod200Changed(mod200);
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				initialized = false;
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
+	// ************************************
+	
+	public Administration getAdministration() {
+		return mod200.getAdministration();
+	} 
+	public boolean isAuthomaticCalculation() {
+		return authomaticCalculation;
+	}
+
+	public void setAuthomaticCalculation(boolean authomaticCalculation) {
+		this.authomaticCalculation = authomaticCalculation;
+	}
+
+	public Mod2002020 getMod200() {
+		return mod200;
+	}
+
+	private void setMod200(Mod2002020 mod200) {
+		this.mod200 = mod200;
+		fireMod200Changed(mod200);
+	}
+
+	public Double getDoubleValue(IMod200Key k) {
+		if (mod200 == null ) throw new IllegalStateException("Mod. 200 no inicializado." );
+		return mod200.getDoubleValue(k);
+	}
+	public boolean isVisible(Mod2002020Key key) {
+		return  mod200.getVisibleMap().containsKey(key);
+	}
+	
+	public void doubleValueChanged(IMod200Key k, double value) {
+		DoubleVariable2020 oldVar = getMod200().getKey(k);
+		if (oldVar == null) {
+			oldVar = new DoubleVariable2020(k);
+		}
+		DoubleVariable2020 newVar = oldVar.clone();
+		newVar.setValue( value );
+		newVar.setChangedByUser(true);
+		mod200.addDraftVariable(newVar);
+		if (isAuthomaticCalculation()) {
+			calculate();
+		}
+	}
+	public void mathExpression(String expression,AsyncCallback<Double> callback) {
+		try {
+			double ret = Model200.resolve(expression);
+			callback.onSuccess(ret);
+		} catch (Throwable t) {
+			callback.onFailure(t);
+		}
+	}
+
+	public void calculate() {
+		Model200.getMod2002020Service().calculateMod2002020(mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				setMod200(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error durante el c\u00E1lculo del impuesto.");
+			}
+		});
+	}
+
+	public void validate(final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().validateMod2002020(mod200, new AsyncCallback<Mod2002020>() {
+			
+			@Override
+			public void onSuccess(Mod2002020 result) {
+				mod200 = result;
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
+	public void dumpAEAT(final AsyncCallback<String> callback) {
+		Model200.getMod2002020Service().dumpAEATMod2002020(mod200, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+
+	public void getCompanyBanks(final AsyncCallback<LinkedList<CompanyBank>> callback) {
+		Model200.getMod2002020Service().getCompanyBanks(domainName,mod200.getDomain(),user,new AsyncCallback<LinkedList<CompanyBank>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<CompanyBank> result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+	
+
+}

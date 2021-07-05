@@ -16,7 +16,7 @@ import './aon-invoice-print.js';
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, EVENT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 import * as ACTION from '../actions.js';
@@ -26,6 +26,7 @@ import * as OPTION from './InvoiceOptions.js';
 import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
+import Apps from '../../services/app.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -130,13 +131,16 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 			}
 		}
-		this.getApplication().addSearchOption();
+		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
-		this.getApplication().removeEventListener(EVENT.SEARCH, searchFn, true);
-		this.getApplication().addEventListener(EVENT.SEARCH, searchFn);
+		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
 	}
 
  	buildSidenavOptions() {
+		if(this.isMobile()){
+			this.getApplication().addMobileSidenavHeader(Apps.INVOICE);
+		}
+
 		this.getApplication().addEventListener(EVENT.SELECT_OPTION, (e) => {
 			this.selectOption(e.detail);
 		})
@@ -144,7 +148,6 @@ export class AonInvoicePanel extends AonElement {
 		this.buildOfferOptions();
 		if(this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager()){
 			this.buildInvoiceOptions();
-			this.buildRegistryOptions();
 			this.buildSettingOptions();
 		}
 	}
@@ -175,22 +178,13 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-	buildRegistryOptions() {
-		if(!this.isMobile()) {
-			let contactOptions = [
-				OPTION.REGISTRY_CUSTOMER,
-				OPTION.REGISTRY_SUPPLIER,
-				OPTION.REGISTRY_CREDITOR
-			];
-			this.getApplication().addSidenavOptions(MSG.HOLDERS.toUpperCase(), contactOptions);
-		}
-	}
-
 	buildSettingOptions() {
-		let settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+		let settingOptions = [];
+		if(!this.isMobile()) {
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+		} else settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
-			// settingOptions.push(OPTION.PRODUCT);
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 		}
 		this.getApplication().addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
@@ -261,7 +255,7 @@ export class AonInvoicePanel extends AonElement {
 		const left = button.getBoundingClientRect().left;
 
 		if((height - top) < (height / 2)) {
-				top = top - (ayudat ? 170 : 135);
+				top = top - (ayudat ? 205 : 170);
 		}
 
 		let d = document.getElementById('aonDialogAddOption');
@@ -398,6 +392,15 @@ export class AonInvoicePanel extends AonElement {
 			case OPTION.RAWDOC_INBOX.id:
 				this.aonInvoiceList({status: CONSTANT.INBOX});
 				break;
+			case OPTION.RAWDOC_INBOX_ISSUED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'emitida'});
+				break;
+			case OPTION.RAWDOC_INBOX_RECEIVED.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'recibida'});
+				break;
+			case OPTION.RAWDOC_INBOX_TICKET.id:
+				this.aonInvoiceList({status: CONSTANT.INBOX, type: 'ticket'});
+				break;
 			case OPTION.RAWDOC_REJECT.id:
 				this.aonInvoiceList({status: CONSTANT.REFUSED});
 				break;
@@ -431,6 +434,8 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoicePrint();
 				break;
 			case OPTION.CONFIGURATION_SII_TBAI.id:
+				break;
+			case OPTION.REGISTRY.id:
 				break;
 			default:
 				this.aonInvoiceList({status: CONSTANT.INBOX});

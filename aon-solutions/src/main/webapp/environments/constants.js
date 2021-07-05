@@ -18,6 +18,7 @@ export const AON_INVOICE_DETAIL = 'aonInvoiceDetail';
 export const AON_INVOICE_FINANCE = 'aonInvoiceFinance';
 export const AON_INVOICE_TAX = 'aonInvoiceTax';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
+export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
@@ -44,6 +45,7 @@ export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
 export const CREDITOR = 'creditor';
@@ -89,6 +91,7 @@ export const FISCAL = 'fiscal';
 
 // ----- H
 export const HIDDEN = 'hidden';
+export const HOLDERS = 'holders';
 
 // ----- I
 
@@ -149,6 +152,9 @@ export const QUOTA = 'quota';
 // ----- R
 export const RAWDOC_DRAFT = 'rawdocDraft';
 export const RAWDOC_INBOX = 'rawdocInbox';
+export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
+export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
+export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
 export const REQUIRED = 'required';

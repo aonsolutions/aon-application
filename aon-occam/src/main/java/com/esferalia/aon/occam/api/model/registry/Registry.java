@@ -26,7 +26,7 @@ public class Registry implements Serializable{
 	
 	private boolean dirty;
 	private boolean selected;
-	
+	private boolean global;
 	/**
 	 * @deprecated Use RegistryFull to access registry data.
 	 */
@@ -143,6 +143,15 @@ public class Registry implements Serializable{
 	}
 	public Registry setSelected(boolean selected) {
 		this.selected = selected;
+		return this;
+	}
+	
+	public boolean isGlobal() {
+		return global;
+	}
+	
+	public Registry setGlobal(boolean global) {
+		this.global = global;
 		return this;
 	}
 

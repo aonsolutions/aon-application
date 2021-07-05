@@ -63,6 +63,10 @@ public class PrintInvoiceConfiguration {
 		return this;	
 	}
 
+	public Boolean isDetailed() {
+		return detailed;
+	}
+	
 	public Boolean getDetailed() {
 		return detailed;
 	}

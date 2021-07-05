@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -20,16 +20,16 @@ import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public interface ITask {
-	
+		
 	public void deleteTask(AONContext ctx, TaskFilter filter);
 	public void deleteTaskEvent(AONContext ctx, TaskEventFilter filter);
 	
 	public Boolean isTaskParent(AONContext ctx, Integer parentId);
-	
-	public Task getTask(AONContext ctx, TaskFilter filter);
-	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter);
-	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
-	public Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent);
+		
+	public OldTask getTask(AONContext ctx, TaskFilter filter);
+	public Stream<OldTask> getTaskStream(AONContext ctx, TaskFilter filter);
+	public Stream<OldTask> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
+	public Stream<OldTask> getDuplicateTaskStream(AONContext ctx, Integer parent);
 	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter);
 	public Integer getCommentsCount(AONContext ctx, Integer taskId);
@@ -37,8 +37,8 @@ public interface ITask {
 	public Stream<TaskEvent> getTaskEventStream(AONContext ctx, Integer taskId);
 	public Integer getLastTaskNumber(AONContext ctx);
 	
-	public Integer createTask(AONContext ctx, Task task);
-	public Task updateTask(AONContext ctx, Task task);
+	public Integer createTask(AONContext ctx, OldTask task);
+	public OldTask updateTask(AONContext ctx, OldTask task);
 	
 	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId);
 

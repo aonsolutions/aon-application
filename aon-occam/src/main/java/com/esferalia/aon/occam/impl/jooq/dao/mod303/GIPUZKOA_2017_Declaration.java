@@ -170,7 +170,7 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,GP_C018(Mod303Key.GP_C018
 			,(mod,vat) -> operacionesInterioresFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C018,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C018,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en importaciones
@@ -180,7 +180,7 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,GP_C020(Mod303Key.GP_C020
 			,(mod,vat) -> importacionesFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C020,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C020,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes
@@ -190,7 +190,7 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,GP_C022(Mod303Key.GP_C022
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C022,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C022,mod,vat)
 			,null,null,null)
 		// Rectificación de deducciones
 		,GP_C045(Mod303Key.GP_C045
@@ -199,13 +199,13 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 			,null,null,null)
 		,GP_C046(Mod303Key.GP_C046
 			,(mod,vat) -> rectificaciónDeduccionesFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C046,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C046,mod,vat)
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
 		,GP_C023(Mod303Key.GP_C023
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C023,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C023,mod,vat)
 			,null,null,null)
 		
 		// Regularización Inversiones

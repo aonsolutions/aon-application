@@ -20,6 +20,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_003("303-CM003",false,null,"Porcentaje de prorrata.")
 	,CM_004("303-CM004",false,null,"Tipo de declaraci\u00F3n")
 	,CM_005("303-CM005",false,null,"R\u00E9gimen por defecto")
+	,CM_006("303-CM006",false,null,"Tipo de prorrata (E/G).")
+	,CM_007("303-CM007",false,null,"Porcentaje de prorrata antes de la regularizaci\u00F3n.")
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------
 	// 	----------------------------------------------------------------------------------

@@ -2,11 +2,9 @@ import {webkitRequestMobile} from '../services/service.js';
 import { TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
-  ROOT_PANEL;
-  TIME_ACTION;
+  ROOT_PANEL = 'rootPanel';
   constructor () {
     super();
-    this.ROOT_PANEL = 'rootPanel';
   }
 
   isMobile() {
@@ -84,7 +82,7 @@ export class AonElement extends HTMLElement{
   }
 
   isSab() {
-      return getComputedStyle(document.documentElement).getPropertyValue("--sab") == '34px';
+      return getComputedStyle(document.documentElement).getPropertyValue("--sab") != '0px';
   }
   
   getRootPanel() {
@@ -139,16 +137,8 @@ export class AonElement extends HTMLElement{
 		return href.includes('aonsolutions.org') || href.includes('localhost');
 	}
 
-  clearIntervalAction() {
-    clearInterval(this.TIME_ACTION);
-  }
-
-  setIntervalAction(tm){
-    this.TIME_ACTION = tm;
-  }
-
   showError(e) {
-    this.showToast(JSON.parse(e))
+    this.showToast(e);
   }
 
   /**
@@ -157,10 +147,12 @@ export class AonElement extends HTMLElement{
    * @returns obj{message, type}
    */
   showToast(obj) {
-    if(typeof obj === "string")  obj = JSON.parse(obj);
-    const toast = this.getElement(this.getApplication().TOAST);
-    if(toast){
-      toast.start(obj);
-    }
+    try {
+      if(typeof obj === "string")  obj = JSON.parse(obj);
+      const toast = this.getElement(this.getApplication().TOAST);
+      if(toast){
+        toast.start(obj);
+      }
+    } catch (error) {}
   }
 }

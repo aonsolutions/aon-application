@@ -30,12 +30,18 @@ export const createSpaceBetweenRow = (styles) => newComponent({
     styles: styles
 });
 
+export const createStartJustifiedColumn = (styles) => newComponent({
+    classes: ['flexColumn', 'flexJustifyStart', 'flexAlignCenter'],
+    styles: styles
+});
+
 /**
  * Create a text 
  * @param {object} properties 
  * @returns 
  */
 export const createText = (properties) => newComponent({
+    ...properties,
     text: properties.text,
     styles: {
         color: properties.color,

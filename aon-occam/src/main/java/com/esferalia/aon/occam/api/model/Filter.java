@@ -1,100 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
-import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
-import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
-import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
-import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
-import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
-import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
-import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
-import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
-import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
-import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
-import com.esferalia.aon.occam.api.model.Properties.CommissionCategoryProperties;
-import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
-import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
-import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
-import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
-import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
-import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
-import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
-import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
-import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
-import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
-import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
-import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
-import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
-import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
-import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
-import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
-import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
-import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
-import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
-import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
-import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
-import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
-import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
-import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
-import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
-import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
-import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
-import com.esferalia.aon.occam.api.model.Properties.PayMethodProperties;
-import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
-import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
-import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
-import com.esferalia.aon.occam.api.model.Properties.RattachTagProperties;
-import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
-import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
-import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
-import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
-import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
-import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
-import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
-import com.esferalia.aon.occam.api.model.Properties.StockProperties;
-import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
-import com.esferalia.aon.occam.api.model.Properties.TagProperties;
-import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
-import com.esferalia.aon.occam.api.model.Properties.TariffProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
-import com.esferalia.aon.occam.api.model.Properties.TimeControlProperties;
-import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
-import com.esferalia.aon.occam.api.model.Properties.UserProperties;
-import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
-import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
-import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
-import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
-import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
+import com.esferalia.aon.occam.api.model.Properties.*;
 
 public interface Filter {
 	
@@ -335,6 +241,16 @@ public interface Filter {
 	@FunctionalInterface
 	public interface TaskCommentFilter{
 		Filter filter(TaskCommentProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskWorkflowFilter{
+		Filter filter(TaskWorkflowProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskAttachFilter{
+		Filter filter(TaskAttachProperties properties);
 	}
 	
 	@FunctionalInterface
@@ -584,6 +500,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface AuthAttachFilter{
+		Filter filter(AuthAttachProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface AuthDeviceFilter{
 		Filter filter(AuthDeviceProperties properties);
 	}
@@ -611,5 +532,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface FiscalModelFilter{
 		Filter filter(FiscalModelProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface WorkgroupFilter{
+		Filter filter(WorkgroupProperties properties);
 	}
 }

@@ -2373,7 +2373,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.getContractOtherInfo(connection, domainId, contractId, contractType);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2383,7 +2384,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Map<String, String> setContractOtherInfo(String domainName, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.setContractOtherInfo(connection, domainId, contractId, contractType, contractOtherInfo);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			return JooqContrataContract.setContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType, contractOtherInfo);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2528,7 +2530,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) {
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -2565,7 +2567,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return secondaryUsersCertificate;
 			
 		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	

@@ -12,7 +12,7 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import { MSG, MATERIAL_ICONS } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
@@ -276,13 +276,14 @@ export class AonUser extends AonElement {
 		if(!this.hasAttribute('showToolbar'))
 			userToolbar.style.display = 'none';
 		userToolbar.removeButtons();
-		if(this._user && this._user.uuid)
+		if(!this.isOnlyAuth() && this._user && this._user.uuid)
 			userToolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
 			userToolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(this._user.id)
+		if(!this.isOnlyAuth() && this._user.id)
 			userToolbar.addButton2(ACTION.DELETE, () => this.delete());
-		userToolbar.addButton2(ACTION.BACK, () => this.back());
+		if(!this.isOnlyAuth()) 
+			userToolbar.addButton2(ACTION.BACK, () => this.back());
 		
 	}
 
@@ -415,9 +416,7 @@ export class AonUser extends AonElement {
 
 	editPassword() {
 		let application = document.querySelector('aon-application');
-		console.log(application.DIALOG);
 		let d = document.getElementById(application.DIALOG);
-		console.log(d);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("Cambiar Contraseña");
@@ -428,7 +427,14 @@ export class AonUser extends AonElement {
 		d.addAcceptAction(() => {
 			let oldPassword = this.getElement('aonConfigurationUserCardOldPassword').value;
 			let newPassword = this.getElement('aonConfigurationUserCardNewPassword').value;
-			changePassword({oldPassword, newPassword});
+			if(newPassword && newPassword.length>5){
+				changePassword({oldPassword, newPassword}).then(()=>{
+					this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
+				}).catch(e=>this.showError(e))
+			} else {
+				this.showToast({message:"La contraseña debe tener al menos 6 carácter", type:CONSTANT.ERROR});
+			}
+
 		});
 		d.open();
 	}

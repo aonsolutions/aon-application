@@ -7,15 +7,34 @@ import { createCard, createDate, createDiv, createForm, createIconButton, create
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
+    div.style.margin = "0 9px";
     //---FORM------
     createDate({
         attributes:{
             name:"fechaBaja",
             id:"fechaBaja",
-            title:"Fecha de baja",
-            value: new Date()
-        },
+            title:"Fecha de baja"
+        }
     }, div);
+
+    const select = createSelect({
+        attributes:{
+            name:"codBaja",
+            id:"codBaja",
+            title:"Causa de baja"
+        }
+    }, div);
+    select.style.textAlign = "left";
+
+    const btnSubmit = document.createElement(TAG.BUTTON);
+    btnSubmit.id = "btnSubmitBaja";
+    btnSubmit.className = "aonButton";
+    btnSubmit.textContent = "Aceptar";
+    btnSubmit.style.padding ="0.5rem 1rem";
+    btnSubmit.style.marginBottom ="5px";
+    // btnSubmit.disabled = true;
+    div.appendChild(btnSubmit);
+
     return div;
 }
 
@@ -86,7 +105,7 @@ export const createCardEnterprise = (parent) => {
     }, parent);
 }
 
-export const createCardContract = (parent, id, isButton) => {
+export const createCardContract = (parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
@@ -192,18 +211,6 @@ export const createCardContract = (parent, id, isButton) => {
         }
     }, parent);
 
-    if(isButton){
-        let divB = createDiv({ styles:{textAlign: 'center'} });
-        divB.appendTo(parent);
-        let button = document.createElement(TAG.BUTTON);
-        button.className="aonButton";
-        button.style.marginTop = "10px";
-        button.type = "button";
-        button.id = `${id}Submit`;
-        button.textContent = "Aceptar";
-        divB.element.appendChild(button);
-    }
-
     dateContract.value = formatDateOrigin(new Date());
     addSpanDecimal();
 }
@@ -220,7 +227,7 @@ export const createCardEmployee = (parent, id) => {
     divT.appendTo(parent);
     let aonSwitch = setAttributes(new AonSwitch(),{
         id:"switchDni", 
-        title:"Buscar por DNI"
+        title:"Por DNI"
     })
     divT.appendChild(aonSwitch);
 
@@ -319,7 +326,7 @@ const addIconSurname = () => {
 }
 
 const addSpanDecimal = () =>  {
-    let coefInput = document.getElementById('coefparcialInput')
+    let coefInput = document.getElementById('coefparcialInput');
     if(coefInput){
         let span = document.createElement(TAG.SPAN);
         span.innerHTML = '0,';

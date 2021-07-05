@@ -129,6 +129,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_list")
 	String aonIconList();
 	
+	@ClassName("aon_icon_compare")
+	String aonIconCompare();
+
+	@ClassName("aon_icon_data")
+	String aonIconData();
+
 	@ClassName("aon_icon_history")
 	String aonIconHistory();
 	
@@ -375,6 +381,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_aeat")
 	String aonIconAeat();
 
+	@ClassName("aon_icon_aeat_bw")
+	String aonIconAeatBw();
+
 	@ClassName("aon_icon_araba")
 	String aonIconAraba();
 
@@ -386,6 +395,36 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_navarra")
 	String aonIconNavarra();
+
+	@ClassName("aon_icon_model_finish")
+	String aonIconModelFinish();
+
+	@ClassName("aon_icon_model_sent")
+	String aonIconModelSent();
+
+	@ClassName("aon_icon_model_reopen")
+	String aonIconModelReopen();
+	
+	@ClassName("aon_icon_ad")
+	String aonIconAd();
+	
+	@ClassName("aon_icon_id")
+	String aonIconId();
+
+	@ClassName("aon_icon_letter-d")
+	String aonIconLetterD();
+
+	@ClassName("aon_icon_letter-e")
+	String aonIconLetterE();
+
+	@ClassName("aon_icon_letter-g")
+	String aonIconLetterG();
+
+	@ClassName("aon_icon_letter-r")
+	String aonIconLetterR();
+
+	@ClassName("aon_icon_letter-s")
+	String aonIconLetterS();
 
 	/* BASICS */
 	@ClassName("aon_selector")
@@ -480,6 +519,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_font_larger")
 	String aonFontLarger();
+	
+	@ClassName("aon_font_x_larger")
+	String aonFontXLarger();
 
 	@ClassName("aon_font_small")
 	String aonFontSmall();
@@ -800,6 +842,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_cancel_button_small")
 	String aonCancelButtonSmall();
 	
+	@ClassName("aon_check_button")
+	String aonCheckButton();
+
 	@ClassName("aon_send_button_small")
 	String aonSendButtonSmall();
 	
@@ -886,5 +931,29 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_card_footer")
 	String aonCardFooter();
+
+	@ClassName("aon_group")
+	String aonGroup();
+	
+	@ClassName("aon_group_title")
+	String aonGroupTitle();
+
+	@ClassName("aon_group_body")
+	String aonGroupBody();
+
+	@ClassName("aon_fiscal_box")
+	String aonFiscalBox();
+	
+	@ClassName("aon_fiscal_box_error")
+	String aonFiscalBoxError();
+
+	@ClassName("aon_toast")
+	String aonToast();
+
+	@ClassName("aon_toast_header")
+	String aonToastHeader();
+
+	@ClassName("aon_toast_content")
+	String aonToastContent();
 }
 

@@ -10,6 +10,7 @@ export const AON_SESSION_ID = 'aon_session_id';
 export const AON_APPLICATION_TOP = 'aon_application_top'; // ¿?
 export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
+export const ONLY_ONE = 'onlyOne';
 
 export const get = (item) => localStorage.getItem(item);
 
@@ -115,6 +116,15 @@ export const setCompany = (value) => {
 
 export const removeCompany = () => {
     remove(COMPANY);
+}
+
+export const isOnlyOne = () => {
+    const aon = get(ONLY_ONE);
+    return  aon && CONSTANT.FALSE !== aon;
+}
+
+export const setOnlyOne = (onlyOne) => {
+    set(ONLY_ONE, onlyOne);
 }
 
 export const removeDomain = () => {

@@ -611,6 +611,23 @@ public interface Properties {
 		Property<Integer> getSourceIdProperty();
 	}
 	
+	public interface TaskWorkflowProperties extends AuditProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getCommentProperty();
+	}
+	
+	public interface TaskAttachProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getTaskWorkflowProperty();
+		Property<Byte> getMimetypeProperty();
+	}
+	
 	public interface TaskEventProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1333,6 +1350,13 @@ public interface Properties {
 		Property<String> getDeviceTokenProperty();
 	}
 	
+	public interface AuthAttachProperties {
+		Property<Integer> getIdProperty();
+		Property<byte[]> getAuthProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getMimeTypeProperty();
+	}
+	
 	public interface NotificationProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1402,4 +1426,12 @@ public interface Properties {
 		Property<String> getNameProperty();
 		Property<String> getSurnameProperty();
 	}
+	
+	public interface WorkgroupProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getStatusProperty();
+	}
+	
 }

@@ -77,7 +77,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(req, resp, e);
 		}
 		
@@ -196,7 +195,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.build();
 		employee = SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 		if(employee.getName().isPresent()) {
-			String body = "Te informamos que se ha realizado un Alta en la Seguridad Social de <b>"+ employee.getName().get()+"</b> en la Cuenta de Cotización <b>"
+			String body = "Te informamos que se ha realizado un <b>Alta</b> en la Seguridad Social de <b>"+ employee.getName().get()+"</b> en la Cuenta de Cotización <b>"
 		+ employee.getRegime()+"-"+employee.getCtaCti().get()+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
 			sendEmailAlta(api, employee, body); // send mov mail
 			sendNotification(api, body);
@@ -213,6 +212,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		String ipf = api.getData().optString("ipf");
 		String name = api.getData().optString("nombre");
+		String situation = api.getData().optString("situation");
 		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), "yyyy-MM-dd");
 
 		EmployeeBuilder builder = new EmployeeBuilder();
@@ -223,10 +223,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setIpf(ipf)
 		.setFra(fecha)
 		.setName(name)
+		.setSituation(situation)
 		.build();
 		employee =  SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 		if(employee.getName().isPresent()) {
-			String body = "Te informamos que se ha realizado una Baja en la Seguridad Social de <b>"+ employee.getName().get()+"</b> en la Cuenta de Cotización <b>"+ 
+			String body = "Te informamos que se ha realizado una <b>Baja</b> en la Seguridad Social de <b>"+ employee.getName().get()+"</b> en la Cuenta de Cotización <b>"+ 
 		employee.getRegime()+"-"+employee.getCtaCti().get()+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
 			sendEmail(api, body); // send mov mail
 			sendNotification(api, body);
@@ -258,7 +259,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		if(!api.getData().isNull("nombre")) {
 			String situationStr = situation.equalsIgnoreCase("AL") ? "Alta"  : "Baja";
-			String body = "Te informamos que se ha realizado una Eliminación de <b>"+situationStr+"</b> en la Seguridad Social de <b>"
+			String body = "Te informamos que se ha realizado una <b>Eliminación de "+situationStr+"</b> en la Seguridad Social de <b>"
 			+name+"</b> en la Cuenta de Cotización <b>"+regimen+"-"+ctaCti+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
 			sendEmail(api, body); // send mov mail
 			sendNotification(api, body);
@@ -388,7 +389,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			});
 		
 			if(auths.size()>0) {
-				String title = "Comunic@";
+				String title = "COMUNIC@ | AON SOLUTIONS";
 		    	NotificationRequest notification = new NotificationRequest();
 		    	notification.setTitle(title);
 		    	notification.setBody(body);

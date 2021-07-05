@@ -148,6 +148,7 @@ class InvoiceIntegrityCheck extends OptionBase {
 		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
+		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
 

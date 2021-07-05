@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -87,7 +87,7 @@ public class NotificationServlet extends HttpServlet{
 		} else {
 			Integer number = json.getInt("number");
 			NotificationType notificationType = NotificationType.values()[json.getInt("notification_type")];
-			Task task = DB.getTaskWithNumber(domain, userName, number);
+			OldTask task = DB.getTaskWithNumber(domain, userName, number);
 			NotificationInfo ni = buildNotificationInfo(domain, userName, task, notificationType);
 			LinkedList<NotificationInfo> list = buildNotificationInfoList(domain, userName, task, notificationType);
 			sendNotification(domain, userName, ni, list, notificationType,"", null);
@@ -307,7 +307,7 @@ public class NotificationServlet extends HttpServlet{
 		return msg;
 	}
 	
-	public NotificationInfo buildNotificationInfo(Domain domain, String login, Task task, NotificationType notificationType){
+	public NotificationInfo buildNotificationInfo(Domain domain, String login, OldTask task, NotificationType notificationType){
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), login, task.getRegistry());
 		NotificationInfo notificationInfo = new NotificationInfo().setTitle(task.getDescription())
 				.setNoticeId(task.getNumber())
@@ -329,7 +329,7 @@ public class NotificationServlet extends HttpServlet{
 		return notificationInfo;
 	}
 	
-	public LinkedList<NotificationInfo> buildNotificationInfoList(Domain domain, String login, Task task, NotificationType notificationType){
+	public LinkedList<NotificationInfo> buildNotificationInfoList(Domain domain, String login, OldTask task, NotificationType notificationType){
 		LinkedList<NotificationInfo> list1 = DB.getTaskEventStream(domain, login, task.getId()).map(new TaskEvent2NotificationInfoFiller()).collect(Collectors.toCollection(LinkedList::new));
 		LinkedList<NotificationInfo> list2 = DB.getTaskCommentStream(domain, login, task.getId()).map(new TaskComment2NotificationInfoFiller()).collect(Collectors.toCollection(LinkedList::new));
 	

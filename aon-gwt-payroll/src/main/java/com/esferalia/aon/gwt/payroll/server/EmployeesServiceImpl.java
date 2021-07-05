@@ -91,7 +91,6 @@ import com.esferalia.aon.gwt.payroll.client.CalendarService;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
-import com.esferalia.aon.gwt.payroll.client.Wnd;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
@@ -118,6 +117,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -180,6 +180,7 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.payroll.Contract;
@@ -270,6 +271,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract.ContractBuilder;
 import aon.sepe.objects.Contract.JndType;
 import aon.sepe.objects.Contract.OfferType;
@@ -5490,10 +5492,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String generateCertifaca2(String domainName, SalaryDraft salaryDraft) {
+	public String generateCertifaca2(String domainName, Integer contractId) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqCertifica2.generateCertifica2(connection, domainId, salaryDraft);
+			return JooqCertifica2.generateCertifica2(connection, domainId, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5826,57 +5828,87 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------- TGSS Comunications
 
 	@Override
-	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-
+			
+			// Create nssList for ipfxnaf
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED
-					.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
-					.toArray()[0];
+			
+			// Get employees ipdxnaf
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					nssList);
+			
+			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 
-			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
-					eemployeeAux.getIpf());
-
-			SistemaRED.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
-
+			// Create employee object
+			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
+			
+			System.out.println(employee);
+			
+			// sendAlta
+			SistemaRED.sendAlta(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(),
+					employee);
+			
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void sendEmployeeBaja(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+	public void sendEmployeeBaja(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
+			// Create nssList for ipfxnaf
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED
-					.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
-					.toArray()[0];
+			
+			// Get employees ipdxnaf
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					nssList);
+			
+			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 
-			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo,
-					eemployeeAux.getIpf());
+			// Create employee object
+			solutions.aon.seg.social.object.Employee employee = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 
-			SistemaRED.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			System.out.println("sendEmployeeBaja \n" + employee.toString());
+			
+			// sendBaja
+			SistemaRED.sendBaja(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employee);
 
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -5885,18 +5917,29 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public void movPrevDelete(String domainName, String userLogin, String situation, String regimen, String ctaCti,
-			String nss, Date fecha) {
+			String nss, Date fecha) throws IllegalArgumentException {
+		
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
-			SistemaRED.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(),
-					situation, regimen, ctaCti, nss, fecha);
+			// movPrevDelete
+			SistemaRED.movPrevDelete(
+					certificateInputStream, 
+					certificate.getPassword(), 
+					certificate.getType(),
+					situation, 
+					regimen, 
+					ctaCti, 
+					nss, 
+					fecha);
 
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -5905,18 +5948,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public void altaConsolidadaDelete(String domainName, String userLogin, String situation, String regimen,
-			String ctaCti, String nss) {
+			String ctaCti, String nss) throws IllegalArgumentException {
+		
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
-			SistemaRED.altaConsolidadaDelete(certificateInputStream, certificate.getPassword(), certificate.getType(),
-					situation, regimen, ctaCti, nss);
+			// altaConsolidadaDelete
+			SistemaRED.altaConsolidadaDelete(
+					certificateInputStream, 
+					certificate.getPassword(), 
+					certificate.getType(),
+					situation, 
+					regimen, 
+					ctaCti, 
+					nss);
 
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -5924,19 +5977,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void cambioGrupCtz(String domainName, String userLogin, String ipf, String regimen, String ctaCti,
-			String nss, String grup_ctz, Date fecha) {
+	public void cambioGrupCtz(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					grup_ctz + "\n" +
+					fecha);
+			
+			// Get employee nafxipf
+			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(), 
+					employeeContractInfo.getEmployeeInfo().getSurName(), 
+					employeeContractInfo.getEmployeeInfo().getSecondSurName());
 
-			SistemaRED.cambioGrupCtz(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf,
-					regimen, ctaCti, nss, grup_ctz, fecha);
+
+			System.out.println(employeeAux.getNss());
+			
+			// cambioGrupCtz
+			SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4), 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
+					employeeAux.getNss(), 
+					grup_ctz, 
+					fecha);
 
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -5944,19 +6025,46 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void cambioOcupacion(String domainName, String userLogin, String ipf, String regimen, String ctaCti,
-			String nss, String ocup, Date fecha) {
+	public void cambioOcupacion(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String ocup, Date fecha) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					ocup + "\n" +
+					fecha);
+			
+			// Get employee nafxipf
+			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(), 
+					employeeContractInfo.getEmployeeInfo().getSurName(), 
+					employeeContractInfo.getEmployeeInfo().getSecondSurName());
 
-			SistemaRED.cambioOcupacion(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf,
-					regimen, ctaCti, nss, ocup, fecha);
+			System.out.println(employeeAux.getNss());
+			
+			// cambioOcupacion
+			SistemaRED.cambioOcupacion(new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4), 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
+					employeeAux.getNss(), 
+					ocup, 
+					fecha);
 
 		} catch (SQLException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -5964,25 +6072,55 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void cambioCatProf(String domainName, String userLogin, String ipf, String regimen, String ctaCti,
-			String nss, String cat, Date fecha) {
+	public void cambioCatProf(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String cat, Date fecha) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
+			// Domain, parentDomain and User id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
+			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
+					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
+					employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n" + 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()) + "\n" + 
+					cat + "\n" +
+					fecha);
 
-			SistemaRED.cambioCatProf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf,
-					regimen, ctaCti, nss, cat, fecha);
+			// Get employee nafxipf
+			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(), 
+					employeeContractInfo.getEmployeeInfo().getSurName(), 
+					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+			
+			System.out.println(employeeAux.getNss());
+
+			// cambioCatProf
+			SistemaRED.cambioCatProf(new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4), 
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
+					employeeAux.getNss(), 
+					cat, 
+					fecha);
 
 		} catch (SQLException | SegSocialException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		}
 	}
 
+	// ------------------------------------------------- SEPE Comunications
+	
 	@Override
 	public void sendContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -6027,6 +6165,88 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public void sendCertifica2(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get certificate SEPE
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			// Get suspensionReason Code
+			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
+			
+			// Create certificates
+			Certificates certificates = JooqCertifica2.createCertificates(connection, domainId, contractId, suspensionReasonCode);
+			
+			// Send certificates
+			Sepe.certEnterprise(
+					new ByteArrayInputStream(certificateSEPE.getCertificate()), 
+					certificateSEPE.getPassword(), 
+					certificateSEPE.getType(), 
+					certificates);
+
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public String getCertifica2PDF(String domainName, String userLogin, String nif, Date endDate) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get certificate SEPE
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			// Get Certifica2 PDF
+			byte[] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificateSEPE.getCertificate()), 
+					certificateSEPE.getPassword(), 
+					certificateSEPE.getType(), 
+					nif, 
+					endDate);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------- SEPE Methods
+	
+	@Override
+	public Certifica2Info getCertifica2Info(String domainName, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get suspensionReason Code
+			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
+
+			// Get Certifica2Info
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, domainId, contractId, suspensionReasonCode);
+			
+			System.out.println(certifica2Info);
+			
+			return certifica2Info;
+			
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	private solutions.aon.seg.social.object.Employee createEmployee(EmployeeContractInfo employeeContractInfo,
 			String ipf) {
@@ -6044,10 +6264,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 		builder.setGc(employeeContractInfo.getContractInfo().getQuoteGroup());
 		builder.setContract(employeeContractInfo.getContractInfo().getContractType());
-		builder.setColec(employeeContractInfo.getContractInfo().getAgreementColective());
+		
+		String agreementColective = employeeContractInfo.getContractInfo().getAgreementColective();
+		agreementColective = null == agreementColective ? "60888888888888" : agreementColective;
+		
+		builder.setColec(agreementColective);
 		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
-		builder.setCoef(employeeContractInfo.getContractInfo().getPartialityCoef().toString());
+		
+		Double coef = employeeContractInfo.getContractInfo().getPartialityCoef();	
+		if(coef != null) {
+			coef = coef * 1000;
+			String coefStr = coef.toString();
+			builder.setCoef(AonStringUtils.leftPad(coefStr, 3, '0'));
+		}
+		
 		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
+		
+		String settleReason = employeeContractInfo.getContractInfo().getSettleReason();
+		if(AonStringUtils.isNotBlank(settleReason))
+			builder.setSituation(settleReason);
 
 		return builder.build();
 	}

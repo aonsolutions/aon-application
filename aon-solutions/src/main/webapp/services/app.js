@@ -134,6 +134,14 @@ export const INVOICE = {
   ,disabled: true
 };
 
+export const CONFIGURATION = {
+  app: CONSTANT.CONFIGURATION,
+  title: MSG.CONFIGURATION,
+  description: MSG.CONFIGURATION,
+  icon: AON_ICONS.AON_APP,
+  color: 'black',
+};
+
 export const MESSENGER = {
   app: CONSTANT.MESSENGER,
   title: MSG.REQUESTS,

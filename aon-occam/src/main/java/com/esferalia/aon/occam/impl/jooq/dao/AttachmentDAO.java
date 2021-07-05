@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.AuthAttach.AUTH_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
@@ -28,6 +29,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.records.AuthAttachRecord;
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
 import com.esferalia.aon.jooq.tables.records.IattachRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceAttachRecord;
@@ -40,19 +42,23 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RattachTagFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.AuthAttach;
+import com.esferalia.aon.occam.api.model.security.AuthAttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachTagPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class AttachmentDAO {
-	
+
+	private static final AttachPropertiesDAO.AuthAttachPropertiesDAO AUTH_ATTACH_PROPERTIES = new AttachPropertiesDAO.AuthAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.RattachPropertiesDAO RATTACH_PROPERTIES = new AttachPropertiesDAO.RattachPropertiesDAO();
 	private static final AttachPropertiesDAO.ContractAttachPropertiesDAO CONTRACT_ATTACH_PROPERTIES = new AttachPropertiesDAO.ContractAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.IattachPropertiesDAO IATTACH_PROPERTIES = new AttachPropertiesDAO.IattachPropertiesDAO();
@@ -68,6 +74,10 @@ public class AttachmentDAO {
 	//-------------------- GETS 
 	
 	// WD -> Without Data
+
+	@SuppressWarnings("rawtypes")
+	private static SelectField[] authAttachWD = {AUTH_ATTACH.ID, AUTH_ATTACH.AUTH, AUTH_ATTACH.TYPE, AUTH_ATTACH.MIMETYPE};
+	
 	@SuppressWarnings("rawtypes")
 	private static SelectField[] rattachWD = {RATTACH.ID, RATTACH.DOMAIN, RATTACH.REGISTRY, RATTACH.MIMETYPE, RATTACH.DESCRIPTION,
 		RATTACH.TYPE, RATTACH.SCOPE, RATTACH.SECURITY_LEVEL, RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID, RATTACH.DPARENT_ID, RATTACH.CATEGORY,
@@ -112,6 +122,13 @@ public class AttachmentDAO {
 			DATA_ATTACH.DRIVE_ID, DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
 			DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER};
 
+	public static AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData) {
+		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(authAttachWD).from(AUTH_ATTACH);
+		if(withData) select = ctx.getDslContext().selectDistinct().from(AUTH_ATTACH);
+		return AUTH_ATTACH_PROPERTIES.build(select, filter).fetchInto(AUTH_ATTACH).stream().map(new AuthAttachFiller())
+				.findFirst().orElse(new AuthAttach());
+	}
+	
 	public static Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(rattachWD).from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
 		if(withData) select = ctx.getDslContext().selectDistinct().from(RATTACH).leftOuterJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH));
@@ -195,6 +212,35 @@ public class AttachmentDAO {
 	}	 
 	
 	//-------------------- INSERTS 
+	
+	public static AuthAttach saveAuthAttach(AONContext ctx, AuthAttach attach) {
+		return attach.getId() != null 
+				? updateAuthAttach(ctx, attach)
+				: insertAuthAttach(ctx, attach);
+	}
+	
+	public static AuthAttach updateAuthAttach(AONContext ctx, AuthAttach attach) {
+		ctx.checkWrite();
+		ctx.getDslContext().update(AUTH_ATTACH)
+			.set(AUTH_ATTACH.AUTH, attach.getAuth())
+			.set(AUTH_ATTACH.MIMETYPE, attach.getMimetype().value())
+			.set(AUTH_ATTACH.TYPE, attach.getType().value())
+			.set(AUTH_ATTACH.DATA, attach.getData())
+			.where(AUTH_ATTACH.ID.eq(attach.getId()))
+			.execute();
+		return attach;
+	}
+	
+	public static AuthAttach insertAuthAttach(AONContext ctx, AuthAttach attach) {
+		ctx.checkWrite();
+		Integer id = ctx.getDslContext()
+			.insertInto(AUTH_ATTACH, AUTH_ATTACH.AUTH, AUTH_ATTACH.MIMETYPE, AUTH_ATTACH.TYPE, AUTH_ATTACH.DATA)
+			.values(attach.getAuth(), attach.getMimetype().value(), attach.getType().value(), attach.getData())
+			.returning(AUTH_ATTACH.ID).fetchOne().getId();
+		return attach.setId(id);
+	}
+	
+	
 	
 	public static Integer insertContractAttach(AONContext ctx, Attach attach){
 		ctx.checkWrite();
@@ -750,6 +796,20 @@ public class AttachmentDAO {
 		return ctx.getDslContext().select(SEPE_BATCH_ATTACH.DOMAIN)
 			.from(SEPE_BATCH_ATTACH)
 			.where(SEPE_BATCH_ATTACH.DATA.isNotNull());
+	}
+	
+	
+	private static class AuthAttachFiller implements Function<AuthAttachRecord, AuthAttach> {
+		
+		@Override
+		public AuthAttach apply(AuthAttachRecord r) {
+			return new AuthAttach()
+					.setAuth(r.getAuth())
+					.setData(r.getData())
+					.setId(r.getId())
+					.setMimetype(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : MimeType.OCTECT_STREAM)
+					.setType(AuthAttachType.safeValueOf(r.getType()));			
+		}
 	}
 	
 	private static class FullDocumentalRattachFiller implements Function<RattachRecord, Attach> {

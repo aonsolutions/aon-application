@@ -312,7 +312,7 @@ public class CustomerModule extends MainEntryPoint {
 				final AonSimpleDialog dialog = new AonSimpleDialog();
 				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-				dialog.setCaption(AON.MSG.creditor());
+				dialog.setCaption(AON.MSG.customer());
 				AonCustomerFullPanel creditorPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
 					
 					@Override

@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime } from "../../services/utils.js";
+import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime, timePaser } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
@@ -9,9 +9,10 @@ import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
 import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createForm, createSpanFloat, createSelect, createInput, createIconButton } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
-import { CONSTANT, EVENT } from "../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { TYPE_USER, NOTIFICATION_TABS, badgeUpdate } from "./NotificationEnums.js";
+import { AonToast } from "../../components/aon-toast.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -69,13 +70,16 @@ export class AonNotification extends AonElement {
   }
 
   async build() {
+    let toast = new AonToast();
+    toast.id = "toastNotification";
+    this.appendChild(toast);
     this.eventListener();
-    if (this.isMobile()) { 
+    if (this.isMobile()) 
       this.paintMobile();
-    } else {
+    else 
       this.paintDesk();
-    }
-    this.notificationView();
+      
+    this.changeTabs(0);
 
     let elementScroll = this.isMobile() ? this.getElement(this.ROOT_PANEL) : undefined;
     scrollInfinite(elementScroll , async()=>{
@@ -93,13 +97,11 @@ export class AonNotification extends AonElement {
     this.appendChild(this.createContentDiv());
   }
 
-  async paintMobile() {
+  paintMobile() {
     const aonTabs = new AonTabs();
     aonTabs.id = this.AON_TABS;
     aonTabs.addEventListener(EVENT.CHANGE, ({ detail }) => {
-      if (detail) {
-        this.changeTabs(detail.position);
-      }
+      if (detail) this.changeTabs(detail.position);
     });
     aonTabs.setButtons(NOTIFICATION_TABS);
 
@@ -115,11 +117,13 @@ export class AonNotification extends AonElement {
       this.setFilter(filter);
       const aonNotification = this.getElement(this.AON_NOTIFICATION);
       aonNotification.style.width = "80%";
+      if(!this.isMobile())
+        aonNotification.style.margin = "auto";
 
       createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
       if(!this.getDur().isEmployee()) {
-        this.buttonFloat();
+        this.addFloatButton();
       }
       
       await this.loadMore();
@@ -153,10 +157,7 @@ export class AonNotification extends AonElement {
         datos.map((data) => {
           const aonCard = this.createCard(data, true);
           aonCard.flex = "true";
-          aonCard.addEventListener(EVENT.CLICK, () => {
-            this.goNotification(data);
-          });
-
+          aonCard.addEventListener(EVENT.CLICK, () =>  this.goNotification(data));
           const divFooter = createDivFooter();
           aonCard.setContent(divFooter.element);
           const dateText = firstLetters(setFullDate(data.date)) + " " + setTime(data.date);
@@ -240,7 +241,7 @@ export class AonNotification extends AonElement {
         aonNotification.style.width = "100%";
         if(this.isBeta()){
           const aonMessengerList = new AonMessengerList();
-          aonMessengerList.getTable(aonNotification.id);
+          aonMessengerList.paintTable(aonNotification);
         }
       }
     } catch (error) {
@@ -324,7 +325,7 @@ export class AonNotification extends AonElement {
     }
   }
 
-  buttonFloat(){
+  addFloatButton(){
     let aonNotification = this.getElement(this.AON_NOTIFICATION);
     const dialog = this.getElement(this.DIALOG) || new AonDialog();
     dialog.id = this.DIALOG;
@@ -441,12 +442,19 @@ export class AonNotification extends AonElement {
       buttonAccept.disabled = true;
       try {
           await sendNotification(formData);
+          this.showToast({ message: MSG.MSG_SENT, type: CONSTANT.SUCCESS, delay: 3000 });
       } catch (error) {
-        console.log(error);
+        this.showToast(error);
       }
       buttonAccept.disabled = false;
       dialog.close();
     }
+  }
+
+  showToast(obj) {
+    if(typeof obj === "string")  obj = JSON.parse(obj);
+    const toast = this.getElement("toastNotification");
+    if(toast) toast.start(obj);
   }
 }
 window.customElements.define("aon-notification", AonNotification);

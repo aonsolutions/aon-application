@@ -19,12 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.UpdateInvoiceSource;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2021Insert;
-import net.aonsolutions.db.up2date.irpf.IrpfNavarra2021Update;
-import net.aonsolutions.db.up2date.payroll.IndemnizacionFinIRPFFix;
-import net.aonsolutions.db.up2date.payroll.IntegrityFix;
-import net.aonsolutions.db.up2date.tgss.Bases2021Rollback;
+import net.aonsolutions.db.up2date.task.TaskAttachCreation;
+import net.aonsolutions.db.up2date.task.TaskWorkflowCreation;
 
 public class Up2Date {
 
@@ -153,7 +149,7 @@ public class Up2Date {
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
     		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
-    		IntegrityFix.INTEGRITYFIX,
+    		// IntegrityFix.INTEGRITYFIX,
    		   	//RetirementInsert.RETIREMENTINSERT,
     		//NotificationCreation.NOTIFICATION_CREATION,
     		//NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,
@@ -165,7 +161,11 @@ public class Up2Date {
     		//Bases2021Rollback.BASES2021ROLLBACK,
     		//IndemnizacionFinIRPFFix.INDEMNIZACIONFINIRPFFIX,
     		//IrpfNavarra2021Update.IRPFNAVARRA2021UPDATE,
-    		IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
+    		//IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
+    		//AuthAttachCreation.AUTH_ATTACH_CREATION,
+    		//AlterFsMod2002020.ALTER_FS_MODEL_200_2020,
+    		TaskWorkflowCreation.TASK_WORKFLOW_CREATION,
+    		TaskAttachCreation.TASK_ATTACH_CREATION
     };
 
 

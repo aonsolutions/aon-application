@@ -188,13 +188,15 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception  {
-	    	String situation = "01";
+			String situation = employee.getSituacion()!=null ? employee.getSituacion() : "01";
 	    	Integer mov = 0;
 			String ident = identity(employee.getIpf());
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
  			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
-	    	HtmlPage htmlPage = firstPageAltaBaja(
+ 			webclient.getOptions().setUseInsecureSSL(true);
+	    	
+ 			HtmlPage htmlPage = firstPageAltaBaja(
 					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
 					employee.getRegime(),  dni, ident, employee.getFra()
 	    	);
@@ -241,14 +243,15 @@ class SistemaREDMov {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws Exception {
-    	String situation = "63";
+    	String situation = employee.getSituacion()!=null ? employee.getSituacion() : "93";
     	Integer mov = 1;
 		String ident = identity(employee.getIpf());
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		
 		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
 		WebClient webClient = getWebClient(certificateInputStream,certificatePassword, certificateType);
-    	HtmlPage htmlPage = firstPageAltaBaja(
+		webClient.getOptions().setUseInsecureSSL(true);
+		HtmlPage htmlPage = firstPageAltaBaja(
     			webClient,
 				mov, employee.getNss(), employee.getCtaCti().get(),
 				employee.getRegime(),  dni, ident, employee.getFra()
@@ -278,7 +281,8 @@ class SistemaREDMov {
 			String situation, String regimen, String ctaCti, String nss, Date fecha) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
- 			Integer mov = "AL".equalsIgnoreCase(situation) ? 0 : 1;
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	Integer mov = "AL".equalsIgnoreCase(situation) ? 0 : 1;
  			//Date
  			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
  			
@@ -315,7 +319,8 @@ class SistemaREDMov {
 			String situation, String regimen, String ctaCti, String nss) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	        webClient.getOptions().setJavaScriptEnabled(true);
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	webClient.getOptions().setJavaScriptEnabled(true);
 		    webClient.getOptions().setThrowExceptionOnScriptError(false);
 		    webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
@@ -344,6 +349,7 @@ class SistemaREDMov {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	      webClient.getOptions().setJavaScriptEnabled(true);
+	      webClient.getOptions().setUseInsecureSSL(true);
 	      webClient.getOptions().setThrowExceptionOnScriptError(false);
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
@@ -392,6 +398,7 @@ class SistemaREDMov {
 			String ipf, String apellido1, String apellido2) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	      webClient.getOptions().setUseInsecureSSL(true);
 	      webClient.getOptions().setJavaScriptEnabled(true);
 	      webClient.getOptions().setThrowExceptionOnScriptError(false);
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
@@ -479,7 +486,8 @@ class SistemaREDMov {
 			String ipf, String regimen, String ctaCti, String nss, Date fecha, String newValue, String fieldValue, String fieldDate, String url) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClientExplorer(certificateInputStream, certificatePassword, certificateType)) {
-	      webClient.getOptions().setJavaScriptEnabled(true);
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	webClient.getOptions().setJavaScriptEnabled(true);
 	      webClient.getOptions().setThrowExceptionOnScriptError(false);
 	      webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage(url);
@@ -688,7 +696,8 @@ class SistemaREDMov {
 	public static void validateCert(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType
 	) throws SegSocialException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {			
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 			DomNode section = htmlPage.querySelector("#segsocial section");
 			if(section!=null && section.getVisibleText().toLowerCase().indexOf("no autorizado")>=0) {

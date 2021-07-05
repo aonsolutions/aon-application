@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryServic
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.COMPLETE;
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.DOMAIN;
 import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.USER;
+import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService.Params.TYPE;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,6 +49,7 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		String yearStr = req.getParameter(YEAR.getName());
 		boolean complete = req.getParameter(COMPLETE.getName()) != null && req.getParameter(COMPLETE.getName()).equalsIgnoreCase("true");
+		AggregatedAnnualSummary.SummaryType type = AggregatedAnnualSummary.SummaryType.valueOf(req.getParameter(TYPE.getName()));
 		
 		Optional<Integer> enterpriseId = Optional.empty();
 		Optional<Integer> workplaceId = Optional.empty();
@@ -77,6 +79,7 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 				, enterpriseId
 				, workplaceId
 				, year
+				, type
 				, complete);
 		os.flush();
 		}

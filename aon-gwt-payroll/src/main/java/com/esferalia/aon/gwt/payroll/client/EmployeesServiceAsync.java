@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -238,7 +239,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees,
 			AsyncCallback<ArrayList<EventEmployee>> callback);
 
-	void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft, AsyncCallback<String> callback);
+	void generateCertifaca2(String currentDomainName, Integer contractId, AsyncCallback<String> callback);
 	
 	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
 
@@ -261,31 +262,43 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
 			AsyncCallback<String> callback);
 
+	// ------------------------------------------------- TGSS Comunications
+	
 	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			AsyncCallback<Void> callback);
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			AsyncCallback<Void> callback);
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti,
-			String nss, Date fecha, AsyncCallback<Void> callback);
+			String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss, AsyncCallback<Void> callback);
+			String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback);
+	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String ocup, Date fecha, AsyncCallback<Void> callback);
+	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String cat, Date fecha, AsyncCallback<Void> callback);
+	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
+	// ------------------------------------------------- SEPE Comunications
+	
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			AsyncCallback<Void> callback);
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			AsyncCallback<Void> callback);
+
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	// ------------------------------------------------- SEPE Methods
+	
+	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
 
 }

@@ -26,6 +26,7 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private SecurityLevel securityLevel;
 	// private boolean confidential; 
 	
+	private int applyAccount; // 0 = BOTH, 1 = ACCOUNT, 2 = BALANCING ACOUNT
 	private Integer account;
 	private Double debit;
 	private Double credit;
@@ -141,6 +142,13 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	}
 	public AccountEntryParams setToDate(Date toDate) {
 		this.toDate = toDate;
+		return this;
+	}
+	public int getApplyAccount() {
+		return applyAccount;
+	}
+	public AccountEntryParams setApplyAccount(int applyAccount) {
+		this.applyAccount = applyAccount;
 		return this;
 	}
 	public Integer getAccount() {

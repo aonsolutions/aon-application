@@ -29,4 +29,27 @@ public enum TaskSource {
     	} 
     	return null;
     }
+    
+    public static TaskSource safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static TaskSource safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= TaskSource.values().length) return null;
+		return TaskSource.values()[i];
+	}
+	
+	public static TaskSource safeValueOf(String name) {
+		return valueNameOf(name);
+	}
+	
+	public static TaskSource valueNameOf(String name) {
+		for(TaskSource p :TaskSource.values())
+			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
+				return p;
+		return MANUAL;
+	}
+	
 }

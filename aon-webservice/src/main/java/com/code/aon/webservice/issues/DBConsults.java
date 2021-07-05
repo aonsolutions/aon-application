@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -42,46 +42,46 @@ public class DBConsults {
 				.and(f.getDomainProperty().eq(domain.getId()))).getId();
 	}
 	
-	public Task getTask(Domain domain, String login, Integer id){
+	public OldTask getTask(Domain domain, String login, Integer id){
 		return AON.getTask(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public Task getTaskWithNumber(Domain domain, String login, Integer number){
+	public OldTask getTaskWithNumber(Domain domain, String login, Integer number){
 		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number)
 				.and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
-	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter){
+	public Stream<OldTask> getTaskStream(Domain domain, String login, IssueFilter filter){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
-	public Stream<Task> getFaqTaskStream(Domain domain, String login,IssueFilter filter){
+	public Stream<OldTask> getFaqTaskStream(Domain domain, String login,IssueFilter filter){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getStatusProperty().eq(TaskStatus.FAQ.value())).and(f.getParentProperty().isNull()), filter);
 	}
 	
-	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter, TaskFilter f){
+	public Stream<OldTask> getTaskStream(Domain domain, String login, IssueFilter filter, TaskFilter f){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f, filter);
 	}
 	
-	public Stream<Task> getLightTaskStream(Domain domain, String login, IssueFilter filter, Integer act){
+	public Stream<OldTask> getLightTaskStream(Domain domain, String login, IssueFilter filter, Integer act){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getIdProperty().ne(act)), filter);
 	}
 
-	public Stream<Task> getDuplicateTaskStream(Domain domain, String login, Integer parent){
+	public Stream<OldTask> getDuplicateTaskStream(Domain domain, String login, Integer parent){
 		return AON.getDuplicateTaskStream(domain.getName(), domain.getId(), login, parent);
 	}
 	
-	public Stream<Task> getEnterpriseTaskStream(Domain domain, String login, Integer enterprise){
+	public Stream<OldTask> getEnterpriseTaskStream(Domain domain, String login, Integer enterprise){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(enterprise));
 	}
 	
-	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){
+	public LinkedList<OldTask> getTaskList(Domain domain, String login, IssueFilter filter){
 		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
-	public Boolean isPrincipal(Domain domain, String login, Task task){
+	public Boolean isPrincipal(Domain domain, String login, OldTask task){
 		if(task.getParent() != null && task.getParent().equals(task.getId()))
 			return true;
 		if(task.getParent() != null && !task.getId().equals(task.getParent()))

@@ -24,7 +24,8 @@ public class RegistryJSON {
 			.setAlias(json.optString(IJsonNames.ALIAS))
 			.setLegalPerson(json.optBoolean(IJsonNames.LEGAL_PERSON))
 			.setNationality(Country.safeValueOf(json.optString(IJsonNames.NATIONALITY)))
-			.setConfidential(json.optBoolean(IJsonNames.CONFIDENTIAL));
+			.setConfidential(json.optBoolean(IJsonNames.CONFIDENTIAL))
+			.setGlobal(json.optBoolean(IJsonNames.GLOBAL));
 	}
 	
 	public static JSONObject toJSON(Registry registry) {

@@ -1,22 +1,16 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/components.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSign } from '../signin/aon-sign.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import '../invoice/aon-invoice-panel.js';
-// import '../../components/aon-suggestion.js';
-// import './aon-mobile-parent.js';
-// import '../../components/aon-application.js';
-// import '../../components/aon-icon.js';
+import { AonStatistics } from '../signin/time-control/statistics.js/aon-statistics.js';
 
 export class AonMobileDesktop extends AonElement {
 
 	SUGGESTION;
 	DIV_PARENT;
-	static get observedAttributes() {
-		return ['company'];
-	}
 
 	get id() {
 		return this.getAttribute('id');
@@ -42,10 +36,6 @@ export class AonMobileDesktop extends AonElement {
 		this.setAttribute('user', user);
 	}
 
-	attributeChangedCallback(name, oldValue, newValue) {
-
-	}
-
 	constructor () {
 		super();
 	}
@@ -62,6 +52,10 @@ export class AonMobileDesktop extends AonElement {
 		this.id = 'aonDesktop';
 		this.DIV_PARENT = this.id + "DivParent";
 		this.SUGGESTION = this.id + 'Suggestion';
+		this.COMPANY_DIV = this.id + 'CompanyDiv';
+		this.PENDING_TASK = this.id + 'PendingTask';
+		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
+		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
 	}
 
 	getDur() {
@@ -72,10 +66,13 @@ export class AonMobileDesktop extends AonElement {
 		this.innerHTML = '';
 		let divParent = this.createElement(TAG.DIV);
 		divParent.id = this.DIV_PARENT;
-		divParent.style.height = "100%";
+		divParent.style.height = '100%';
+		divParent.style.maxWidth = '100%';
+		divParent.style.overflowX = 'hidden';
 		divParent.style.display = "flex";
 		divParent.style.flexDirection = "column";
 		this.appendChild(divParent);
+
 		if(localStorage.getItem('company')) {
 			let company = JSON.parse(localStorage.getItem('company'));
 			localStorage.setItem('aon_domain_id', company.id);
@@ -83,29 +80,26 @@ export class AonMobileDesktop extends AonElement {
 			getUser().then(user => {
 				localStorage.setItem('aon_domain_login', user.login);
 			});
-			getDomainNotice().then(notice => {
-				this.buildNotifications(notice);
-			});
+			this.buildCompany();
+			if(!this.getDur().isEmployee()){
+				getDomainNotice().then(notice => {
+					this.buildNotifications(notice);
+				});
+			}
 		} else {
-			getUserNotice().then(notice => {
-				this.buildNotifications(notice);
-			});
+			this.buildCompany();
+			if(!this.getDur().isEmployee()) {
+				getUserNotice().then(notice => {
+					this.buildNotifications(notice);
+				});
+			}
 		}
+		this.buildTimeControl();
 	}
 
-	buildNotifications(notice) {
-		//let searchDiv = document.createElement(TAG.DIV);
-		//searchDiv.id = 'aonHeaderCompany';
-		//this.getElement(this.DIV_PARENT).appendChild(searchDiv)
-		//searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
-		// let company = JSON.parse(localStorage.getItem('company'));
-
-		// let cSpan = this.createElement(TAG.SPAN);
-		// cSpan.innerHTML = company.name;
-		// cSpan.className = 'aonMobileDesktopCompanyName';
-		// this.getElement(this.DIV_PARENT).appendChild(cSpan);
-
-		let companyDiv = this.createElement(TAG.DIV);
+	buildCompany() {
+		let companyDiv = this.getElement(this.COMPANY_DIV) || this.createElement(TAG.DIV);
+		companyDiv.id = this.COMPANY_DIV;
 		companyDiv.style.margin = '10px';
 		companyDiv.style.marginLeft = '50px';
 		companyDiv.style.marginRight = '50px';
@@ -123,19 +117,14 @@ export class AonMobileDesktop extends AonElement {
 				img.src = '../../assets/aon-logo2.png';
 				//companyDiv.style.display = 'none';
 			}
+			this.clearElement(companyDiv);
 			companyDiv.appendChild(img);
 			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
 		});
 
-		// let searchSuggestion = this.getElement(this.SUGGESTION);
-
 		if(localStorage.getItem('company')) {
-			let company = JSON.parse(localStorage.getItem('company'));
-			// searchSuggestion.title = 'Empresa Seleccionada';
-			// searchSuggestion.value = company.name;
-			// searchSuggestion.readonly = true;
-			let menu = document.querySelector('aon-mobile-menu');
-			menu.reload();
+			// let menu = document.querySelector('aon-mobile-menu');
+			// menu.reload();
 		} else {
 			getCompanies()
 			.then( companies => {
@@ -147,63 +136,19 @@ export class AonMobileDesktop extends AonElement {
 					getUser().then(user => {
 						localStorage.setItem('aon_domain_login', user.login);
 					});
-					// searchSuggestion.title = 'Empresa Seleccionada';
-					// searchSuggestion.value = company.name;
-					// searchSuggestion.readonly = true;
-					let menu = document.querySelector('aon-mobile-menu');
-					menu.reload();
+					// let menu = document.querySelector('aon-mobile-menu');
+					// menu.reload();
 				}
 			});
 		}
+	}
 
-		document.addEventListener(EVENT.CLICK, ({target})=> {
-			let sg = this.getElement(this.SUGGESTION);
-			if(sg) {
-				let isClickInside = sg.contains(target);
-				if(!isClickInside){
-					if(localStorage.getItem('company')) {
-						sg.title = 'Empresa Seleccionada';
-						sg.value = JSON.parse(localStorage.getItem('company')).name;
-						sg.readonly = true;
-					}
-				}
-			}
-		});
-
-		// searchSuggestion.addIconButton('search', () => {
-		// 	searchSuggestion.title = 'Búsqueda Empresas';
-		// 	searchSuggestion.readonly = false;
-		// 	searchSuggestion.value = '';
-		// 	this.getElement(searchSuggestion.INPUT).focus();
-		// });
-		// searchSuggestion.addEventListener('keyup', () => {
-		// 	if(searchSuggestion.value.length > 2) {
-		// 		getCompanies().then( companies => searchSuggestion
-		// 			.buildOptions(companies.filter(f => this.companyFilter(f, {value: searchSuggestion.value})))
-		// 		);
-		// 	} else {
-		// 		searchSuggestion.closeOptions();
-		// 	}
-		// });
-		//
-		// searchSuggestion.addEventListener('select', (event) => {
-		// 		searchSuggestion.title = 'Empresa Seleccionada';
-		// 	let company = event.detail;
-		// 	searchSuggestion.setAttribute('readonly', true);
-		// 	localStorage.setItem('company', JSON.stringify(company));
-		// 	localStorage.setItem("aon_domain_id", company.id);
-		// 	localStorage.setItem("aon_domain_name", company.domain);
-		// 	getUser().then(user => {
-		// 		localStorage.setItem('aon_domain_login', user.login);
-		// 	});
-		// 	this.build();
-		// 	let menu = document.querySelector('aon-mobile-menu');
-		// 	menu.reload();
-		// });
-
-		let div = this.createElement(TAG.DIV);
-		div.style.paddingBottom = '25px';
+	buildNotifications(notice) {
+		let div = this.getElement(this.PENDING_TASK) || this.createElement(TAG.DIV);
+		div.id = this.PENDING_TASK;
+		div.style.borderTop = '1px solid #ddd';
 		this.getElement(this.DIV_PARENT).appendChild(div);
+		this.clearElement(div);
 
 		let titleA = this.createElement(TAG.DIV);
 		titleA.className = 'aonSidenavTitle';
@@ -238,36 +183,42 @@ export class AonMobileDesktop extends AonElement {
 		}
 		ul.appendChild(this.buildNotificationsLi('Solicitudes', 'assignment', 0, () => this.isBeta() 
 			? this.rootPanel(new AonMessenger()) : this.development('Solicitud')));
+	}
 
+	buildTimeControl() {
 		getTimeControl().then(r => {
-			let div2 = this.createElement(TAG.DIV);
+			let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
+			div2.id = this.TIMECONTROL_TITLE;
 			if(!this.isMobile()){
+				this.clearElement(div2);
 				div2.appendChild(this.createTitleTime());
 			}
 			this.getElement(this.DIV_PARENT).appendChild(div2);
-			let div3 = this.createElement(TAG.DIV);
+
+			let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+			div3.id = this.TIMECONTROL_SIGN;
 			div3.style.marginLeft = '25px';
 			if(this.isMobile()){
-				div3.style.marginTop = "auto";
+				// div3.style.marginTop = "auto";
 				div3.style.marginBottom = "10px";
+				div3.style.borderTop = '1px solid #ddd';
+				this.clearElement(div3);
 				div3.appendChild(this.createTitleTime());
 			}
+			div3.appendChild(new AonStatistics());
 			div3.appendChild(new AonSign());
 			this.getElement(this.DIV_PARENT).appendChild(div3);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
-
 	}
 
 	createTitleTime(){
 		let div = this.createElement(TAG.DIV);
 		div.className = 'aonSidenavTitle';
 		div.innerHTML = 'CONTROL HORARIO';
-		div.style.borderTop = '1px solid #ebebeb';
 		div.style.textAlign = "left";
 		div.style.marginLeft = "0";
-		div.style.paddingTop = "10";
 		div.style.paddingLeft = "10";
 		return div;
 	}
@@ -277,7 +228,7 @@ export class AonMobileDesktop extends AonElement {
 		li.className = 'aonAppMenuSidenavList aonOpacity';
 		li.style.height = '40px';
 		li.style.lineHeight = '40px';
-		li.style.borderBottom = '1px solid #ddd';
+		// li.style.borderBottom = '1px solid #ddd';
 
 		let i = this.createElement('i');
 		i.className = 'material-icons aonVerticalMiddle';
@@ -294,8 +245,7 @@ export class AonMobileDesktop extends AonElement {
 		li.appendChild(span);
 
 		let sp = this.createElement(TAG.SPAN);
-		sp.style.position = 'absolute';
-		sp.style.right = '0px';
+		sp.style.float = 'right';
 
 		let i2 = this.createElement('i');
 		i2.className = 'material-icons aonAvatar';

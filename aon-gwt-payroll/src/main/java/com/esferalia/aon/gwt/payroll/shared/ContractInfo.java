@@ -65,6 +65,10 @@ public class ContractInfo implements Serializable{
 	private Integer salariesCount;
 	private ArrayList<ContractSalaryInfo> contractSalariesInfo;
 	
+	private String settleReason;
+	private boolean hasSettle;
+	private boolean hasCertifica2;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -442,6 +446,30 @@ public class ContractInfo implements Serializable{
 
 	public void setContractSalariesInfo(ArrayList<ContractSalaryInfo> contractSalariesInfo) {
 		this.contractSalariesInfo = contractSalariesInfo;
+	}
+	
+	public String getSettleReason() {
+		return this.settleReason;
+	}
+	
+	public void setSettleReason(String settleReason) {
+		this.settleReason = settleReason;
+	}
+	
+	public boolean hasSettle() {
+		return hasSettle;
+	}
+	
+	public void setHasSettle(boolean hasSettle) {
+		this.hasSettle = hasSettle;
+	}
+	
+	public boolean hasCertifica2() {
+		return hasCertifica2;
+	}
+
+	public void setHasCertifica2(boolean hasCertifica2) {
+		this.hasCertifica2 = hasCertifica2;
 	}
 
 	public String toString(){

@@ -11,6 +11,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
+import Apps from '../../services/app.js';
 
 export class AonAccounting extends AonElement {
 
@@ -40,6 +41,10 @@ export class AonAccounting extends AonElement {
 		let application = this.getApplication();
 
 		this.aonGraphicsTrialView();
+
+		if(this.isMobile()){
+			application.addMobileSidenavHeader(Apps.ACCOUNTING);
+		}
 
 		let options = [{
 			name: 'Pérdidas y Ganancias',

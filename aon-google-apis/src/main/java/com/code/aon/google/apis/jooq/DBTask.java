@@ -7,23 +7,23 @@ import java.util.LinkedList;
 
 import org.jooq.Result;
 
-
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBTask {
 	
-	public static Project getProjectTask(Domain domain, User user, Task task){
+	public static Project getProjectTask(Domain domain, User user, OldTask task){
 		return AON.getProject(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getIdProperty().eq(task.getProject()));
 	}
 
-	public static LinkedList<Task> getTask(Domain domain, User user){
+	public static LinkedList<OldTask> getTask(Domain domain, User user){
+		
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
@@ -32,9 +32,9 @@ public class DBTask {
 				.from(TASK).join(USER).on(TASK.TASK_HOLDER.eq(USER.REGISTRY))
 				.where(USER.LOGIN.eq(user.getLogin()))
 				.fetchInto(TASK);			
-			LinkedList<Task> taskList = new LinkedList<Task>();;
+			LinkedList<OldTask> taskList = new LinkedList<OldTask>();;
 			for (TaskRecord tr : result) {
-				Task task = new Task();
+				OldTask task = new OldTask();
 				task.setActivityType(tr.getActivityType());
 				task.setComments(tr.getComments());
 				task.setDescription(tr.getDescription());

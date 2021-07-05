@@ -1,6 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
-import {getPosition} from '../services/maps.js';
+import {actionMobile, getTimeControl} from  '../services/service.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
 import './configuration/aon-configuration.js';
@@ -8,7 +7,6 @@ import './company/aon-mobile-desktop.js';
 import './notification/aon-notification-icon.js';
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
-import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import * as LS from '../services/localStorageService.js';
 
@@ -106,19 +104,9 @@ export class AonNewMobileHeader extends AonElement {
 		spanUser.appendChild(userButton);
 		div.appendChild(spanUser);
 
-		let spanNotification = this.createElement(TAG.SPAN);
-		spanNotification.id = this.USER;
-		spanNotification.classList.add(CSS.AON_RIGHT_60);
-		spanNotification.classList.add(CSS.AON_MOBILE_HEADER_BUTTON);
-		let notificationButton = new AonNotificationIcon();
-		notificationButton.id = this.NOTIFICATION_ICON;
-		if(!this.isParent()) notificationButton.color = 'white';
-		spanNotification.appendChild(notificationButton);
-		div.appendChild(spanNotification);
-
 		let spanCompanyList = this.createElement(TAG.SPAN);
 		spanCompanyList.id = this.COMPANY_LIST;
-		spanCompanyList.classList.add(CSS.AON_RIGHT_100);
+		spanCompanyList.classList.add(CSS.AON_RIGHT_60);
 		spanCompanyList.classList.add(CSS.AON_MOBILE_HEADER_BUTTON);
 		let companyListButton = new AonIconButton();
 		companyListButton.id = this.COMPANY_LIST_BUTTON;
@@ -142,65 +130,6 @@ export class AonNewMobileHeader extends AonElement {
 				this.timeControlStatus(r);
 			});
 		}
-
-		userButton.addEventListener('click', () => {
-			if(this.activeTimecontrol) {
-				getTimeControl().then(r => {
-					this.timeControlStatus(r);
-					const top  = userButton.getBoundingClientRect().top;
-					const left = userButton.getBoundingClientRect().left;
-					let d = this.getElement(this.DIALOG_MENU); 
-					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
-					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
-					let options = [{
-						name: fichajeText,
-						icon: 'alarm',
-						id: 'dialogAlarm',
-						fn: () => this.aonFichar(signin)
-					}, {
-						name: 'Configuración',
-						icon: 'settings',
-						id: 'dialogSettings',
-						fn: () => this.aonConfiguration()
-					}, {
-						name: 'Cerrar Sesión',
-						icon: 'input',
-						id: 'dialogLogout',
-						fn: () => {
-							this.activeTimecontrol = false;
-							closeSession()
-						}
-					}];
-
-					d.setMenuOptions(options, top, left);
-					d.open();
-
-					if(r && r.task_holder){
-						d.setContentTitle(r.task_holder.name)
-					}
-
-
-				});
-			} else {
-				const top  = userButton.getBoundingClientRect().top;
-				const left = userButton.getBoundingClientRect().left;
-				// let d = this.getElement('aonHeaderDialogUserOption');
-				let d = this.getElement(this.DIALOG_MENU);
-				let options = [{
-					name: 'Configuración',
-					icon: 'settings',
-					id: 'dialogSettings',
-					fn: () => this.aonConfiguration()
-				}, {
-					name: 'Cerrar Sesión',
-					icon: 'input',
-					id: 'dialogLogout',
-					fn: () => closeSession()
-				}];
-				d.setMenuOptions(options, top, left);
-				d.open();
-			}
-		});
 	}
 
 	timeControlStatus(signin) {
@@ -221,33 +150,6 @@ export class AonNewMobileHeader extends AonElement {
 			aonUserConnected.style.backgroundColor = '#F39F1D';
 		} else {
 			aonUserConnected.style.backgroundColor = '#DC4D30';
-		}
-	}
-
-
-	aonFichar(signin) {
-		getPosition().then(position => {
-			if(position && position.latitude) {
-				signin.coordinates = position.latitude + ',' + position.longitude;
-			}
-			saveTimeControl(signin).then(r => {
-				let aonSign = this.getElement('aonSign');
-				if(aonSign) {
-					aonSign.buildSignin(r);
-				}
-				this.timeControlStatus(r);
-			});
-		});
-	}
-
-	aonConfiguration() {
-		this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>');
-		let aonConfiguration = this.getElement('aon-configuration');
-		if(this.getAttribute('company')){
-			aonConfiguration.setAttribute('company', this.getAttribute('company'));
-		}
-		if(this.getAttribute('user')){
-			aonConfiguration.setAttribute('user', this.getAttribute('user'));
 		}
 	}
 
@@ -273,7 +175,10 @@ export class AonNewMobileHeader extends AonElement {
 
 	}
 
-	companyIn() {
+	companyIn(onlyOne) {
+		onlyOne = onlyOne || LS.isOnlyOne();
+		actionMobile({ action: "statusBar", statusBar: true});
+
 		this.parent = false;
 		let div = this.getElement(this.WEB);
 		div.style.backgroundColor = '#002469';
@@ -287,18 +192,23 @@ export class AonNewMobileHeader extends AonElement {
 		let spanCompany = this.createElement(TAG.SPAN);
 		spanCompany.id = this.COMPANY;
 		spanCompany.className = CSS.AON_MOBILE_HEADER_COMPANY;
-
+	
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = 'white';
 
-		let notificationButton = this.getElement(this.NOTIFICATION_BUTTON); //'aonHeaderNotificationButton');
-		notificationButton.color = 'white';
+		// let notificationButton = this.getElement(this.NOTIFICATION_BUTTON); //'aonHeaderNotificationButton');
+		// notificationButton.color = 'white';
 		
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = 'white';
+		if(onlyOne) {
+			this.getElement(this.COMPANY_LIST).style.display = 'none';
+		}
 	}
 
 	companyOut() {
+		actionMobile({ action: "statusBar", statusBar: false});
+
 		this.parent = true;
 		let div = this.getElement(this.WEB);
 		div.style.backgroundColor = 'white';
@@ -309,8 +219,8 @@ export class AonNewMobileHeader extends AonElement {
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = '#5f6368';
 
-		let notificationButton = this.getElement(this.NOTIFICATION_BUTTON);
-		notificationButton.color = '#5f6368';
+		// let notificationButton = this.getElement(this.NOTIFICATION_BUTTON);
+		// notificationButton.color = '#5f6368';
 		
 		let companyListButton = this.getElement(this.COMPANY_LIST_BUTTON);
 		companyListButton.color = '#5f6368';

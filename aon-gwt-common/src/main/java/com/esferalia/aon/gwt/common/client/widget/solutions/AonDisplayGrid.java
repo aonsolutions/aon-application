@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -73,10 +77,16 @@ public class AonDisplayGrid extends FlowPanel {
 		}
 	}
 
-	public static class AonDisplayGridRow extends FlowPanel {
+	public static class AonDisplayGridRow extends FlowPanel implements HasClickHandlers{
+		
 		public AonDisplayGridRow() {
-			setStyleName(AON.CSS.aonDisplayGridRow());		
+			setStyleName(AON.CSS.aonDisplayGridRow());
 		}
+		
+		public HandlerRegistration addClickHandler(ClickHandler handler) {
+			return addDomHandler(handler, ClickEvent.getType());
+		}
+		
 		public AonDisplayGridCell addCell() {
 			AonDisplayGridCell cell = new AonDisplayGridCell();
 			add(cell);

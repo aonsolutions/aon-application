@@ -294,11 +294,12 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
-
+			webClient.getOptions().setUseInsecureSSL(true);
 			//HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			//htmlPage = htmlPage.getAnchorByHref(href).click();
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/"+ href);
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+      HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
 			
@@ -524,7 +525,7 @@ class SistemaREDI {
 			htmlPage = jacadaform.getInputByValue("Continuar").click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			for(int i=0;i<clicks;i++) {
-				List<HtmlInput> htmlInputList=htmlPage.getByXPath("//input[@value='P醙. Sig.']");
+				List<HtmlInput> htmlInputList=htmlPage.getByXPath("//input[@value='P谩g. Sig.']");
 					htmlPage=htmlInputList.get(0).click();
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
@@ -567,7 +568,9 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
 			htmlPage = htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR")
 					.click();
@@ -618,6 +621,7 @@ class SistemaREDI {
 			//htmlPage = htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR")
 			//		.click();
 			
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR");
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -956,7 +960,7 @@ class SistemaREDI {
 						htmlPage=formDatos.getInputByValue("Continuar").click();
 						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
 						formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
-						DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidaci髇 ']").getNextSibling();
+						DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidaci贸n ']").getNextSibling();
 						String liq=Toolkit.removeWeirdCharacters(liqNode.getVisibleText());
 						List<HtmlRadioButtonInput> listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
 						HashMap<String, WorkerLiquidation> map=new HashMap<String, WorkerLiquidation>();
@@ -964,11 +968,11 @@ class SistemaREDI {
 							
 							htmlPage=listRadiosWorkers.get(i).click();
 							htmlPage=formDatos.getInputByValue("Consultar").click();
-							DomNode cafNode=htmlPage.querySelector("abbr[title='C骴igo alfab閠ico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+							DomNode cafNode=htmlPage.querySelector("abbr[title='C贸digo alfab茅tico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 							caf=caf.substring(caf.indexOf(":")+1).trim();
 							
-							DomNode keyNode=htmlPage.querySelector("abbr[title='N鷐ero de afiliaci髇 a la Seguridad Social']").getParentNode();
+							DomNode keyNode=htmlPage.querySelector("abbr[title='N煤mero de afiliaci贸n a la Seguridad Social']").getParentNode();
 							String key=Toolkit.removeWeirdCharacters(keyNode.getVisibleText());
 							key=key.substring(key.indexOf(":")+1).trim();
 							WorkerLiquidationBuilder wlb=new WorkerLiquidationBuilder();
@@ -1004,7 +1008,7 @@ class SistemaREDI {
 //				for(String match : list) {
 //					System.out.println(match);
 //				}
-				if(list.get(0).equalsIgnoreCase("Aplicaci髇 Cerrada temporalmente.")) {
+				if(list.get(0).equalsIgnoreCase("Aplicaci贸n Cerrada temporalmente.")) {
 					throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 				} else {
 					StatusCodeException.HandleStatusCodeException(e);
@@ -1072,7 +1076,7 @@ class SistemaREDI {
 						htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
 						try {
 						//Taking the CAF
-							DomNode cafNode=htmlPage.querySelector("abbr[title='C骴igo alfab閠ico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+							DomNode cafNode=htmlPage.querySelector("abbr[title='C贸digo alfab茅tico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 							caf=caf.substring(caf.indexOf(":")+1).trim();
 							
@@ -1091,7 +1095,7 @@ class SistemaREDI {
 						
 						} catch (NullPointerException e1) {}
 					}
-					DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidaci髇 ']").getNextSibling();
+					DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidaci贸n ']").getNextSibling();
 					String liq=Toolkit.removeWeirdCharacters(liqNode.getVisibleText());	
 					htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
 					if(!map.isEmpty())
@@ -1115,7 +1119,7 @@ class SistemaREDI {
 //			for(String match : list) {
 //				System.out.println(match);
 //			}
-			if(list.get(0).equalsIgnoreCase("Aplicaci髇 Cerrada temporalmente.")) {
+			if(list.get(0).equalsIgnoreCase("Aplicaci贸n Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
 				StatusCodeException.HandleStatusCodeException(e);
@@ -1167,11 +1171,11 @@ class SistemaREDI {
 						HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
 						htmlPage=rad.click();
 						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
-						DomNode cafNode=htmlPage.querySelector("abbr[title='C骴igo alfab閠ico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+						DomNode cafNode=htmlPage.querySelector("abbr[title='C贸digo alfab茅tico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 						String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 						caf=caf.substring(caf.indexOf(":")+1).trim();
 						
-						DomNode keyNode=htmlPage.querySelector("abbr[title='N鷐ero de afiliaci髇 a la Seguridad Social']").getParentNode();
+						DomNode keyNode=htmlPage.querySelector("abbr[title='N煤mero de afiliaci贸n a la Seguridad Social']").getParentNode();
 						String key=Toolkit.removeWeirdCharacters(keyNode.getVisibleText());
 						key=key.substring(key.indexOf(":")+1).trim();
 						WorkerLiquidationBuilder wlb=new WorkerLiquidationBuilder();
@@ -1199,7 +1203,7 @@ class SistemaREDI {
 //			for(String match : list) {
 //				System.out.println(match);
 //			}
-			if(list.get(0).equalsIgnoreCase("Aplicaci髇 Cerrada temporalmente.")) {
+			if(list.get(0).equalsIgnoreCase("Aplicaci贸n Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
 //				System.out.println(e.getStatusMessage());
@@ -1250,11 +1254,11 @@ class SistemaREDI {
 							HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
 							htmlPage=rad.click();
 							htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
-							DomNode cafNode=htmlPage.querySelector("abbr[title='C骴igo alfab閠ico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+							DomNode cafNode=htmlPage.querySelector("abbr[title='C贸digo alfab茅tico (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 							caf=caf.substring(caf.indexOf(":")+1).trim();
 							
-							DomNode keyNode=htmlPage.querySelector("abbr[title='N鷐ero de afiliaci髇 a la Seguridad Social']").getParentNode();
+							DomNode keyNode=htmlPage.querySelector("abbr[title='N煤mero de afiliaci贸n a la Seguridad Social']").getParentNode();
 							String key=Toolkit.removeWeirdCharacters(keyNode.getVisibleText());
 							key=key.substring(key.indexOf(":")+1).trim();
 							WorkerLiquidationBuilder wlb=new WorkerLiquidationBuilder();
@@ -1294,7 +1298,7 @@ class SistemaREDI {
 //			for(String match : list) {
 //				System.out.println(match);
 //			}
-			if(list.get(0).equalsIgnoreCase("Aplicaci髇 Cerrada temporalmente.")) {
+			if(list.get(0).equalsIgnoreCase("Aplicaci贸n Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
 //				System.out.println(e.getStatusMessage());
@@ -1313,13 +1317,13 @@ class SistemaREDI {
 	static void checkLiquidationExceptions(HtmlPage htmlPage) throws LiquidationDoesNotExist, DataDoesNotExist,
 			WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
 		HtmlDivision divError=(HtmlDivision) htmlPage.getElementById("ARQContenMensaje");
-		if(divError.getVisibleText().toUpperCase().contains("NO EXISTE LIQUIDACI覰"))
+		if(divError.getVisibleText().toUpperCase().contains("NO EXISTE LIQUIDACI脫N"))
 			throw new LiquidationDoesNotExist();
 		else if(divError.getVisibleText().toUpperCase().contains("NO EXISTEN DATOS"))
 			throw new DataDoesNotExist();
-		else if(divError.getVisibleText().toUpperCase().contains("CUENTA DE COTIZACI覰 NO EXISTE"))
+		else if(divError.getVisibleText().toUpperCase().contains("CUENTA DE COTIZACI脫N NO EXISTE"))
 			throw new WrongRegimeException();
-		else if(divError.getVisibleText().toUpperCase().contains("C.C.C. ERR覰EO"))
+		else if(divError.getVisibleText().toUpperCase().contains("C.C.C. ERR脫NEO"))
 			throw new invalidCccException();
 		else if(divError.getVisibleText().toUpperCase().contains("DEBE TENER CONTENIDO"))
 			throw new UnfilledMandatory();
@@ -1526,7 +1530,7 @@ class SistemaREDI {
 			Float nmbr4=cellToFloat(tr.getCell(4));
 			lb.setFogasaTotalFee(nmbr4);
 		}
-		else if(innerText.equalsIgnoreCase("FORMACI覰 PROFESIONAL")) {
+		else if(innerText.equalsIgnoreCase("FORMACI脫N PROFESIONAL")) {
 			String desc = Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
 			lb.setJobTrainingDescription(desc);
 			Float nmbr1=cellToFloat(tr.getCell(1));

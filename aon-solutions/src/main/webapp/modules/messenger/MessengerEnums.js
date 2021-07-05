@@ -33,12 +33,18 @@ export const MESSENGER_IDS = {
     MESSENGER_CHAT: "messengerChat",
     NEW_REQUEST_PANEL : "newRequestPanel", 
     NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
-    NEW_REQUEST_PANEL_TITLE : "newRequestPanelTitle", 
     NEW_REQUEST_PANEL_RECEIVER : "newRequestPanelReceiver", 
     NO_MESSAGES : "noMessages",
-    START : "start",
-    END : "end",
-    ADD_ICON_BUTTON : "aonMessengeraddButtonIconButton"
+    ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
+    BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
+    //NEW
+    MAIN_DIV: "mainDiv",
+    WORKGROUP: "workgroupTask",
+    TASKHOLDER: "taskHolderTask",
+    COMMENT_TASK: "commentTask",
+    TITLE_TASK: "titleTask",
+    DESCRIPTION_TASK: "descriptionTask",
+    TASK_ID: "taskId"
 }
 
 export const MESSENGER_MODES = {
@@ -47,20 +53,30 @@ export const MESSENGER_MODES = {
     TEST : "test",
 }
 
-export const MESSENGER_CHAT_TYPES = {
-    MESSAGE : "message",
-    ACTION : "action"
-}
+export const TASK_WORKFLOW_TYPE = {
+    OPEN: "opened",
+	CLOSE: "closed",
+	REOPEN: "reopened",
+	DUPLICATE: "duplicate",
+	LIBERATE: "liberate",
+	DELETE: "deleted",
+	RESTORE: "restore",
+	COMMENT: "comment"
+} 
+
+export const TASK_STATUS = {
+	DELETED:"deleted",
+	PENDING:"pending",
+	IN_PROGRESS: "in_progress",
+	FINISHED:"finished",
+	FAQ:"faq"
+} 
 
 export const ICON_TYPES = {
     MATERIAL : "material",
-    MATERIAL_OUTLINED : "material_outlined"
+    MATERIAL_OUTLINED : "material_outlined",
+    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
 }
-
-export const MESSENGER_ACTION_TYPES = {
-    CLOSE : "close",
-    MOVE : "move",
-} 
 
 export const REQUEST_FILTER = {
     ABIERTAS : "abiertas",

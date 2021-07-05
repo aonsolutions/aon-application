@@ -53,8 +53,8 @@ export class AonContractList extends AonElement {
   buildToobar() {
     this.applicationEl.removeToolbarOptions();
     this.applicationEl.addToolbarTitle("Contratos");
-    this.applicationEl.addSearchOption();
-    this.applicationEl.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+    const btnSearch = this.applicationEl.addSearchOption();
+    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
   }
 
 
@@ -139,19 +139,13 @@ export class AonContractList extends AonElement {
       } else {
         const contracts = await getContracts({ allEmployees: false });
         data = contracts.map(
-          ({ employeeInfo, contractInfo: { startDate, contractType, completeCCC, agreementCategory, workplaceName} }) => {
-            contractType = Number.parseInt(contractType);
-            if (contractType)      employeeInfo.contractType = contractType;
-            if (startDate)         employeeInfo.startDate = startDate;
-            if (agreementCategory) employeeInfo.agreementCategory = agreementCategory;
-            if (workplaceName)     employeeInfo.workplaceName = workplaceName;
-            if (completeCCC) {
-              employeeInfo.regime = completeCCC.toString().substr(0,4);
-              employeeInfo.ctaCti = completeCCC.toString().substr(4);
-            } else {
-              employeeInfo.contractType = undefined;
-            }
-            return employeeInfo;
+          (res) => {
+            res.contractType = Number.parseInt(res.contractType);
+            if (res.completeCCC) {
+              res.regime = res.completeCCC.toString().substr(0,4);
+              res.ctaCti = res.completeCCC.toString().substr(4);
+            } 
+            return res;
           }
         );
         this._list = data;

@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { setValueName, waitEl } from "../../services/utils.js";
+import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete } from "../../services/service.js";
+import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -14,6 +14,7 @@ import { MSG, CONSTANT } from "../../environments/environments.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
+import Apps from "../../services/app.js";
 
 
 export class AonLaboral extends AonElement {
@@ -21,7 +22,6 @@ export class AonLaboral extends AonElement {
   AON_LABORAL;
   dur;
   _filter;
-	_roles;
 	MOVEMENTS;
 	_movements;
 
@@ -49,9 +49,12 @@ export class AonLaboral extends AonElement {
     });
   }
 
+
   initialize(){
     this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
     this.title = this.title || MSG.PAYROLL;
+    this._movements = [];
+    this._filter = [];
   }
 
   getDur() {
@@ -76,6 +79,10 @@ export class AonLaboral extends AonElement {
   }
 
   buildToolbar(){
+    if(this.isMobile()){
+			this.applicationEl.addMobileSidenavHeader(Apps.PAYROLL);
+		}
+
     let laboralOptions = [];
     let conf = [];
     if(!this.isComunicaNotPayroll()){
@@ -228,12 +235,12 @@ export class AonLaboral extends AonElement {
     this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
         this.applicationEl.startLoading();
         try {
-          await postDeleteMov({
+          await movDelete({
             ...data,
             nombre: data.nombre || data.name
           });
           this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
-          if(this._movements){
+          if(this._movements.length){
             this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
               const dtFecha = data.frb || data.fra;
               const fecha = frb || fra;
@@ -263,7 +270,7 @@ export class AonLaboral extends AonElement {
         obj.color = "fin";
       break;
       case "DELAY":
-        obj.type="ATRASOS";
+        obj.type = "ATRASOS";
         obj.color = "pause";
       break;
     }
@@ -274,7 +281,7 @@ export class AonLaboral extends AonElement {
   showView(view, data = undefined, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
-      if(!this.getElement(view)){
+      // if(!this.getElement(view)){
         switch(view){
           case PAYROLL_VIEWS.AON_PAYROLL_LIST:
             aonView = new AonPayrollList();
@@ -312,13 +319,13 @@ export class AonLaboral extends AonElement {
           if(data) aonView.data = data;
           this.applicationEl.setContent(aonView);
         }
-      }
+      // }
       resolve(aonView);
     });
   }
 
   isComunica(){
-    return this.getDur().isComunica() && (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal());
+    return this.getDur().isComunica();
   }
 
   isEmployee(){

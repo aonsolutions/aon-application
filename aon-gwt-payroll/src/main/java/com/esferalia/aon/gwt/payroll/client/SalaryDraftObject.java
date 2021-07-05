@@ -546,7 +546,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 					callback.onCalculateSucces(SalaryDraftObject.this);
 				else {
 					// TODO: ¿Generate Certific@2 XML here?
-					employeesServiceAsync.generateCertifaca2(result, new AsyncCallback<String>() {
+					employeesServiceAsync.generateCertifaca2(result.getEmployee().getId(), new AsyncCallback<String>() {
 	
 						@Override
 						public void onFailure(Throwable caught) {

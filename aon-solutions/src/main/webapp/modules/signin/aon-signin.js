@@ -12,7 +12,8 @@ import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.j
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
-
+import Apps from "../../services/app.js";
+// import { AonStatistics } from "./time-control/statistics.js/aon-statistics.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
@@ -68,6 +69,9 @@ export class AonSignin extends AonElement {
   }
   
   buildToolbar() {
+    if(this.isMobile()){
+      this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
+    }
     const options = [
       {
         ...SigninSidenav.PRESENCE,
@@ -76,7 +80,7 @@ export class AonSignin extends AonElement {
       {
         ...SigninSidenav.LOCATION,
         fn: () =>this.showView(SIGNIN_VIEWS.AON_LOCATION_LIST)
-      },
+      }
     ];
 
     if( this.isEmployee()) {
@@ -121,8 +125,10 @@ export class AonSignin extends AonElement {
         data = {...data, ...getPeriod(data.period)};
       } 
       this._filter = {...this._filter, ...data};
-      this.applicationEl.getChild().filter = true;
-    } catch (error) {}
+      this.dispatchEvent(new CustomEvent("filterParent",{filter:this._filter}));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   changeFilter(){
@@ -144,7 +150,7 @@ export class AonSignin extends AonElement {
         } else if( SIGNIN_VIEWS.AON_LOCATION_ADD === view){ resolve(true);return; }
       }
 
-      if(!this.getElement(view)){
+      // if(!this.getElement(view)){
         switch(view){
           case SIGNIN_VIEWS.AON_PRESENCE_LIST:
               aonView = new AonPresenceList();
@@ -173,6 +179,9 @@ export class AonSignin extends AonElement {
               aonView = new AonLocationList();
               this.periodSideNavDisplay(false);
             break;
+          // case SIGNIN_VIEWS.AON_STATISTICS:
+          //   aonView = new AonStatistics();// : this.applicationEl.development();
+          //   break;
           case SIGNIN_VIEWS.AON_LOCATION_ADD:
             aonView = new AonLocationAdd();
             if(data){
@@ -184,10 +193,12 @@ export class AonSignin extends AonElement {
             } 
             break;
         }
-        aonView.id = view;
-        if(filter) aonView.filter = filter;
-        this.applicationEl.setContent(aonView);
-      }
+        if(aonView){
+          aonView.id = view;
+          if(filter) aonView.filter = filter;
+          this.applicationEl.setContent(aonView);
+        }
+      // }
       
       resolve(true);
     });

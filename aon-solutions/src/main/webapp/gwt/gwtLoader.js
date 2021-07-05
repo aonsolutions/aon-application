@@ -78,14 +78,14 @@
 			let script = window.document.createElement("script");
 			script.type = "text/javascript";
 			script.defer = "true";
-			script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}`;
+			script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}`;
 			let heads = window.document.getElementsByTagName("head");
 			if (heads && heads[0]) {
 				heads[0].appendChild(script);
 				triggerModuleStart(module);
 			}
 		}
-		if(rootPanel.childNodes && rootPanel.childNodes.length > 0)
+		if(rootPanel && rootPanel.childNodes && rootPanel.childNodes.length > 0)
 			rootPanel.childNodes[0].style.inset = '0px';
 	}
 
@@ -103,3 +103,7 @@
 			// window.setTimeout("triggerModuleStart()", 100 );
 		}
 	}
+
+	export const getRamdomId = () => {
+		return Math.floor(Math.random() * 10000000) + 1;
+	};

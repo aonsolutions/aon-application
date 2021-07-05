@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -215,7 +216,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
-	String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft);
+	String generateCertifaca2(String currentDomainName, Integer contractId);
 	
 	
 	// Sistema RED w2.seg-social.es
@@ -242,27 +243,39 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
 
-	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	// ------------------------------------------------- TGSS Comunications
+	
+	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
-	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
 	void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti,
-			String nss, Date fecha);
+			String nss, Date fecha) throws IllegalArgumentException;
 
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss);
+			String ctaCti, String nss) throws IllegalArgumentException;
 
-	void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String grup_ctz, Date fecha);
+	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String grup_ctz, Date fecha) throws IllegalArgumentException;
 
-	void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String ocup, Date fecha);
+	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String ocup, Date fecha) throws IllegalArgumentException;
 
-	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
-			String nss, String cat, Date fecha);
+	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String cat, Date fecha) throws IllegalArgumentException;
 
+	// ------------------------------------------------- SEPE Comunications
+	
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+
+	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
+
+	// ------------------------------------------------- SEPE Methods
+	
+	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 }

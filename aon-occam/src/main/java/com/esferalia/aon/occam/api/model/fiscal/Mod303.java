@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod303 extends FiscalModel implements Serializable {
 	
@@ -98,6 +99,12 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public Mod303Key getProrateKey() {
 		return Mod303Key.CM_003;
 	}
+	public Mod303Key getProrateTypeKey() {
+		return Mod303Key.CM_006;
+	}
+	public Mod303Key getPreviousProrateKey() {
+		return Mod303Key.CM_007;
+	}
 
 	public boolean isToCompensate() {
 		return (isFinished() || isSent()) && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
@@ -111,6 +118,20 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.PAYBACK
 				|| getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT);
 	}
+	public boolean hasProrate() {
+		return getProratePercent() != 0 && getProratePercent() != 100;
+	}
+	
+	public boolean isSpecialProrate() {
+		String prorateType = getDescription(getProrateTypeKey());
+		return AonStringUtils.isNotBlank(prorateType) && AonStringUtils.equals(prorateType,"E");
+	}
+	public String getSpecialProrateValue() {
+		return isSpecialProrate()?"E":"G";
+	}
+	public void setSpecialProrateValue(boolean value ) {
+		putDescription(getProrateTypeKey(), (value?"E":"G") );
+	}
 	
 	public double getProratePercent() {
 		double proratePercent = 100.0;
@@ -120,6 +141,14 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return proratePercent;
 	}
 	
+	public double getPreviousProratePercent() {
+		double previousProratePercent = 100.0;
+		Mod303Key key = getPreviousProrateKey();
+		previousProratePercent = getAmount(key); 
+		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
+		return previousProratePercent;
+	}
+
 	@Override
 	public void setDefaultDeclarationType(){
 		if (AonMathUtils.isZero(getResult() )) {

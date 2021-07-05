@@ -205,8 +205,8 @@ public class CCCLaboralLife {
 			"(?<nss1>\\d{2})" +
 					"\\s(?<nss2>\\d*)" +
 					"\\s(?<ipf1>\\d*)" +
-					"\\s(?<ipf2>\\d*\\p{Alpha})" +
-					"\\s(?<name>.*)" +
+					"\\s(?<ipf2>\\w{10})" +
+					"\\s(?<name>[A-Za-zÀ-ÿÁ-ý\\s\\u00F1\\u00D1]*)" +
 					"\\s\\S{3}" +
 					".*"
 			, Pattern.CASE_INSENSITIVE);

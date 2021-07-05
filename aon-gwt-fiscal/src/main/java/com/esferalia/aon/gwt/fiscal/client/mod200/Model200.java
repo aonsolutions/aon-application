@@ -24,6 +24,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2018.Mod2002018Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2018.Model2002018;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2019.Mod2002019Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2019.Model2002019;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2020.Mod2002020Object;
+import com.esferalia.aon.gwt.fiscal.client.mod200.e2020.Model2002020;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -70,6 +73,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002017ServiceAsync mod2002017Service;
 	static Mod2002018ServiceAsync mod2002018Service;
 	static Mod2002019ServiceAsync mod2002019Service;
+	static Mod2002020ServiceAsync mod2002020Service;
 	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	Model200Table table;
@@ -83,6 +87,14 @@ public class Model200 extends MainEntryPoint {
 		}
 		return mod200Service;
 	}
+	
+	public static Mod2002020ServiceAsync getMod2002020Service() {
+		if (mod2002020Service == null) {
+			Mod2002020ServiceAsync mod2002020ServiceRaw = GWT.create(Mod2002020Service.class);
+			mod2002020Service = new Mod2002020ServiceAsyncDecorator(mod2002020ServiceRaw);
+		}
+		return mod2002020Service;
+	}	
 
 	public static Mod2002019ServiceAsync getMod2002019Service() {
 		if (mod2002019Service == null) {
@@ -240,7 +252,8 @@ public class Model200 extends MainEntryPoint {
 			else if (options.getNewModel().getYear() == 2016) new2016(options); 
 			else if (options.getNewModel().getYear() == 2017) new2017(options); 
 			else if (options.getNewModel().getYear() == 2018) new2018(options); 
-			else if (options.getNewModel().getYear() == 2019) new2019(options); 
+			else if (options.getNewModel().getYear() == 2019) new2019(options);
+			else if (options.getNewModel().getYear() == 2020) new2020(options);
 		} else {
 			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 			LOGGER.info("Model200 setting NOTIFICATIONS_TAB");
@@ -289,21 +302,21 @@ public class Model200 extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
-		// Botón Nuevo 2019 
-		final Button new2019 = new Button();
-		new2019.setText(AON.MSG.newSomething("2019"));
-		//new2019.setTitle(new2019.getText()+" (Beta)");
-		new2019.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2019.addStyleName(AON.AON_CSS.aonIconReset());
-		//new2019.addStyleName("aon-icon-beta-text");
-		//new2019.setVisible(aonData.isBetaEnabled());
-		new2019.addClickHandler(new ClickHandler() {
+		// Botón Nuevo 2020 
+		final Button new2020 = new Button();
+		new2020.setText(AON.MSG.newSomething("2020"));
+		//new2020.setTitle(new2020.getText()+" (Beta)");
+		new2020.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		new2020.addStyleName(AON.AON_CSS.aonIconReset());
+		//new2020.addStyleName("aon-icon-beta-text");
+		//new2020.setVisible(options.getAonData().isBetaEnabled());
+		new2020.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				new2019(options);
+				new2020(options);
 			}
 		});
-		buttonContainer.add(new2019);
+		buttonContainer.add(new2020);
 		
 		final NewContextMenu newContextMenu = new NewContextMenu( options );
 		final Button newButton = new Button();
@@ -369,6 +382,13 @@ public class Model200 extends MainEntryPoint {
 				@Override
 				public void execute() {
 					new2018(options);
+				}
+			});
+			super.addItem("200", AON.MSG.newSomething("2019"), new ScheduledCommand() {
+				
+				@Override
+				public void execute() {
+					new2019(options);
 				}
 			});
 			
@@ -469,6 +489,19 @@ public class Model200 extends MainEntryPoint {
 						public void onFailure(Throwable caught) {
 						}
 					});
+		} else if (mod.getYear() == 2020) {
+			getMod2002020Service().getMod2002020ById(options.getDomainName(), options.getDomain(), options.getUser(), mod.getId()
+					, new AsyncCallback<Mod2002020>() {
+
+						@Override
+						public void onSuccess(Mod2002020 mod200) {
+							changeView2020(options, mod200);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
 		}		
 		
 		else {
@@ -535,6 +568,15 @@ public class Model200 extends MainEntryPoint {
 		Model2002019 model2002019 = new Model2002019( options, new Model200Callback() );
 		model2002019.startModel( mod200Obj );
 		container.setWidget(model2002019);
+		int i = deckPanel.getWidgetIndex(container);
+		deckPanel.showWidget(i);
+	}
+	
+	private void changeView2020(Model200ModuleOptions options,Mod2002020 mod200) {
+		Mod2002020Object mod200Obj = new Mod2002020Object(options.getDomainName(), options.getUser(), mod200);
+		Model2002020 model2002020 = new Model2002020( options, new Model200Callback() );
+		model2002020.startModel( mod200Obj );
+		container.setWidget(model2002020);
 		int i = deckPanel.getWidgetIndex(container);
 		deckPanel.showWidget(i);
 	}
@@ -633,6 +675,21 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(Mod2002019 mod200) {				
 				changeView2019(options, mod200);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+	
+	protected void new2020(Model200ModuleOptions options) {
+		getMod2002020Service().createMod2002020(options.getDomainName(), options.getDomain(), options.getUser(), 2020
+		, new AsyncCallback<Mod2002020>() {
+
+			@Override
+			public void onSuccess(Mod2002020 mod200) {				
+				changeView2020(options, mod200);
 			}
 
 			@Override

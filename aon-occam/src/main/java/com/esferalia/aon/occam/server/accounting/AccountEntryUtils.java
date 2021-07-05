@@ -82,10 +82,16 @@ public class AccountEntryUtils {
 		Filter prop = getFilterByHeader(ctx, p, params);
 
 		if (params.getAccount() != null) {
-			prop = prop.and(
-				p.getAccountProperty().eq(params.getAccount())
-					.or(p.getBalancingAccountProperty().eq(params.getAccount()))
-				);
+			if (params.getApplyAccount() == 1) {
+				prop = prop.and(p.getAccountProperty().eq(params.getAccount()));	
+			} else if (params.getApplyAccount() == 2) {
+				prop = prop.and(p.getBalancingAccountProperty().eq(params.getAccount()));
+			} else {
+				prop = prop.and(
+						p.getAccountProperty().eq(params.getAccount())
+						.or(p.getBalancingAccountProperty().eq(params.getAccount()))
+						);
+			}
 		}
 		if (AonStringUtils.isNotBlank(params.getConcept())) {
 			prop = prop.and(p.getConceptProperty().like(
