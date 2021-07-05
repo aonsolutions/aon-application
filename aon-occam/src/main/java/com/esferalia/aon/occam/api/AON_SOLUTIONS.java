@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
@@ -722,35 +724,34 @@ public class AON_SOLUTIONS {
 	}
 	
 	// TASKWORKFLOW
-	public static Task getTaskWorkflow(Domain domain, User user, TaskFilter filter) {
+	public static TaskWorkflow getTaskWorkflow(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTask(ctx, filter);
+			return getTask2().getTaskWorkflow(ctx, filter);
 		}
 	}
 	
-	public static Stream<Task> getTaskWorkflowStream(Domain domain, User user, TaskFilter filter) {
+	public static Stream<TaskWorkflow> getTaskWorkflowStream(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskStream(ctx, filter);
+			return getTask2().getTaskWorkflowStream(ctx, filter);
 		}
 	}
 
-	public static LinkedList<Task> getTaskWorkflowList(Domain domain, User user, TaskFilter filter) {
+	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskList(ctx, filter);
+			return getTask2().getTaskWorkflowList(ctx, filter);
 		}
 	}
 	
-	public static LinkedList<Task> getTaskWorkflowList(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskList(ctx, filter, page, perPage);
+			return getTask2().getTaskWorkflowList(ctx, filter, page, perPage);
 		}
 	}
 	
-	public static Task saveTaskWorkflow(Domain domain, User user, Task task) {
+	public static TaskWorkflow saveTaskWorkflow(Domain domain, User user, TaskWorkflow workflow) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().saveTask(ctx, task);
+			return getTask2().saveTaskWorkflow(ctx, workflow);
 		}
 	}
-	
 	
 }

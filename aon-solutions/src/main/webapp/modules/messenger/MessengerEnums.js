@@ -39,7 +39,8 @@ export const MESSENGER_IDS = {
     END : "end",
     ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
     BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
-    // DIV_DATA:"divData",
+    //NEW
+    MAIN_DIV: "mainDiv",
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
@@ -54,20 +55,22 @@ export const MESSENGER_MODES = {
     TEST : "test",
 }
 
-export const MESSENGER_CHAT_TYPES = {
-    MESSAGE : "message",
-    ACTION : "action"
-}
+export const TASK_WORKFLOW_TYPE = {
+    OPEN: "opened",
+	CLOSE: "closed",
+	REOPEN: "reopened",
+	DUPLICATE: "duplicate",
+	LIBERATE: "liberate",
+	DELETE: "deleted",
+	RESTORE: "restore",
+	COMMENT: "comment"
+} 
 
 export const ICON_TYPES = {
     MATERIAL : "material",
-    MATERIAL_OUTLINED : "material_outlined"
+    MATERIAL_OUTLINED : "material_outlined",
+    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
 }
-
-export const MESSENGER_ACTION_TYPES = {
-    CLOSE : "close",
-    MOVE : "move",
-} 
 
 export const REQUEST_FILTER = {
     ABIERTAS : "abiertas",

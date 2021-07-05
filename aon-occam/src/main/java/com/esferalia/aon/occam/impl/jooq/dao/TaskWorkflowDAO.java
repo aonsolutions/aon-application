@@ -1,27 +1,26 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
-
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskWorkflowProperties;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskWorkflowDAO {
@@ -55,6 +54,8 @@ public class TaskWorkflowDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(TASK_WORKFLOW)
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK_WORKFLOW.TASK_HOLDER))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter));
 	}
 	
@@ -136,7 +137,7 @@ public class TaskWorkflowDAO {
 				.setId(r.getValue(TASK_WORKFLOW.ID))
 				.setDomain(r.getValue(TASK_WORKFLOW.DOMAIN))
 				.setTask(r.getValue(TASK_WORKFLOW.TASK))
-				.setTaskHolder((TaskHolder) new TaskHolder().setId(r.getValue(TASK_WORKFLOW.TASK_HOLDER)))
+				.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
 				.setType(TaskWorkflowType.safeValueOf(r.getValue(TASK_WORKFLOW.TYPE)))
 				.setComment(r.getValue(TASK_WORKFLOW.COMMENT))
 				.setCreationDate(r.getValue(TASK_WORKFLOW.CREATION_DATE))

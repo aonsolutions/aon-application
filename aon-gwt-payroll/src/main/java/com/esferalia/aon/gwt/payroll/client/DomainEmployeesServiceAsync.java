@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -478,8 +479,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
-	public void generateCertifaca2(SalaryDraft salaryDraft, AsyncCallback<String> callback) {
-		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
+	public void generateCertifaca2(Integer contractId, AsyncCallback<String> callback) {
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, callback);
 	}
 	
 	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) {
@@ -569,6 +570,12 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2PDF(getCurrentDomainName(), getCurrentUser(), nif, endDate, callback);
+	}
+	
+	// ------------------------------------------------- SEPE Methods
+	
+	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), contractId, callback);
 	}
 
 	// ------------------------------------------------------------------------

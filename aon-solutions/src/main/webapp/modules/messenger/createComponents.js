@@ -12,6 +12,7 @@ const fontColor = CSS.variable(COLORS.GRAYSON);
 // ----------------------------------------------------
 export const createMainView = () => newComponent({
   type: "div",
+  id: MESSENGER_IDS.MAIN_DIV,
   classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
   styles: {
     transition: ".5s",
@@ -373,6 +374,7 @@ export const createAction = (icon, message, outlined) => {
   const text = createText({
     text : message,
     fontSize : "1.1em",
+    fontWeight:400,
     color : fontColor
   });
   

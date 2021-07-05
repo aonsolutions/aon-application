@@ -55,7 +55,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="T00276" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00277" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00278" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00279" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00253" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00254" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00281" type="{}tipo_ImpNegativo" minOccurs="0"/>
@@ -113,8 +112,7 @@ import javax.xml.bind.annotation.XmlType;
     "t00275",
     "t00276",
     "t00277",
-    "t00278",
-    "t00279",
+    "t00278",    
     "t00253",
     "t00254",
     "t00281",
@@ -196,8 +194,6 @@ public class TipoPagina07 {
     protected BigDecimal t00277;
     @XmlElement(name = "T00278")
     protected BigDecimal t00278;
-    @XmlElement(name = "T00279")
-    protected BigDecimal t00279;
     @XmlElement(name = "T00253")
     protected BigDecimal t00253;
     @XmlElement(name = "T00254")
@@ -953,30 +949,6 @@ public class TipoPagina07 {
      */
     public void setT00278(BigDecimal value) {
         this.t00278 = value;
-    }
-
-    /**
-     * Obtiene el valor de la propiedad t00279.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00279() {
-        return t00279;
-    }
-
-    /**
-     * Define el valor de la propiedad t00279.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00279(BigDecimal value) {
-        this.t00279 = value;
     }
 
     /**

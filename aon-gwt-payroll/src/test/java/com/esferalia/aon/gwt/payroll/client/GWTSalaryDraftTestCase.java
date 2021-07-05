@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Before;
 
+import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -279,8 +280,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void generateCertifaca2(String currentDomainName,
-					com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+			public void generateCertifaca2(String currentDomainName, Integer contractId, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -406,6 +406,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate,
 					AsyncCallback<String> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getCertifica2Info(String currentDomainName, Integer contractId,
+					AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

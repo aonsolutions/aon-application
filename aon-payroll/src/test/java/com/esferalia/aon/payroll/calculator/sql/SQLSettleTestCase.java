@@ -2154,16 +2154,24 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
 		
 		addPayment(aonContext, contract, salarioBase, "950.00 * DIAS_TRABAJADOS / DIAS_MES");
-		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.JUNE.ordinal());
-		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.DECEMBER.ordinal());
-		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.FEBRUARY.ordinal());
+		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA JUNIO", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA DICIEMBRE", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.DECEMBER.ordinal());
+		addPayment(aonContext, contract, contractStart, null, pagaExtra, "PAGA EXTRAORDINARIA FEBRERO", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, (byte)Month.FEBRUARY.ordinal());
 		
 		Date endDate = getLastDayOfMonth((add(contractStart, Calendar.MONTH, 2))); // 31/03
 		
 		ISQLContractSalaryCalculatorContext settleCtx = 
 				getSmartSQLContractSettleContext(connection, contractStart, endDate, contract);
 		
-		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + "= " + amount + ", " + startDate + "..." + endDate );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
 		
 		for ( SalaryPayment p : settle.getSalaryPayments() ) 
 			System.out.println(p.getDescription() + "= " + p.getAmount() );
@@ -2711,13 +2719,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		}).calculate(settleCtx);
 		
 		
-		int decemberExtramonths = get(getToday(), Calendar.MONTH );
+		int currentMonth = get(getToday(), Calendar.MONTH ) ;
 		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
-		int julyExtraMonths = (decemberExtramonths < 7 ? decemberExtramonths+5: decemberExtramonths -7);
+		int julyExtraMonths = (currentMonth < 7 ? currentMonth + 5: currentMonth -7);
+
 		//decemberExtramonths = decemberExtramonths == 11 ? 0 : decemberExtramonths;
 		
-		double decemberExtra = decemberExtramonths == Calendar.DECEMBER ? 0.00 : ( 1750.00 * 1.10 ) * ((decemberExtramonths * 30) + days ) / 360;
-		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
+		double decemberExtra = currentMonth == Calendar.DECEMBER ? 0.00 : ( 1750.00 * 1.10 ) * ((currentMonth * 30) + days ) / 360;
+		double julyExtra = currentMonth == Calendar.JULY ? 0.00 :  ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
 		
 		
 		for (SalaryPayment payment : settle.getSalaryPayments()) {

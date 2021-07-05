@@ -46,10 +46,9 @@ public class TaskWorkflowJSON {
 			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(taskWorkflow.getTaskHolder()))
 			.put(IJsonNames.TYPE, taskWorkflow.getType().getName())
 			.put(IJsonNames.COMMENT, taskWorkflow.getComment())
-			.put(IJsonNames.CREATION_DATE, taskWorkflow.getCreationDate())
+			.put(IJsonNames.CREATION_DATE, taskWorkflow.getCreationDate().getTime())
 			.put(IJsonNames.CREATION_USER, taskWorkflow.getCreationUser())
-			.put(IJsonNames.MODIFICATION_DATE, taskWorkflow.getModificationDate())
+			.put(IJsonNames.MODIFICATION_DATE, taskWorkflow.getModificationDate().getTime())
 			.put(IJsonNames.MODIFICATION_USER, taskWorkflow.getModificationUser());	
 	}
-
 }

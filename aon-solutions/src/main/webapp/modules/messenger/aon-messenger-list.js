@@ -8,7 +8,7 @@ import { getTasks } from "../../services/taskService.js";
 import { formatDate, setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin//signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { MESSENGER_VIEWS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_VIEWS } from "./MessengerEnums.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -113,7 +113,7 @@ export class AonMessengerList extends AonElement {
 					res.icon = MATERIAL_ICONS.INFO;
 					res.icon_title = "status";
 					res.icon_color = CSS.variable(COLORS.MATERIAL_BLUE);
-          res.icon_class = "material-icons-outlined";
+          res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
           aonTable.addRow({...res, dateParse}, (el) => {
             this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,res);
           });
@@ -135,7 +135,7 @@ export class AonMessengerList extends AonElement {
           const options = {
             icon: MATERIAL_ICONS.INFO,
             icon_color: CSS.variable(COLORS.MATERIAL_BLUE),
-            icon_class: "material-icons-outlined",
+            icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
             title: res.title,
             subtitle: dateParse,
           };

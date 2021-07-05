@@ -1,12 +1,12 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
-import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "../MessengerEnums.js";
 import { createStartJustifiedColumn } from "./creationUtils.js";
 import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
 import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.js";
@@ -17,9 +17,6 @@ import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.
  *  1 - DEMO mode disable.
  *  2 - Refactor 'send message code' --> @duplicated
  */
-
-let me = true;
-
 
 /**
  * Build desktop version of the writter 
@@ -38,6 +35,7 @@ export const buildDesktopWritter = (writter, data, parent) => {
     titleDiv.element.appendChild(title);
     //DESCRIPTION
     const description = createDivEditable(data.description, MESSENGER_IDS.DESCRIPTION_TASK, MSG.DESCRIPTION);
+    description.style.fontSize = "14px";
     titleDiv.element.appendChild(description);
     //----------------WORKGROUP    //----------------WORKGROUP
     const receiverDiv = createReceiverDiv();
@@ -87,18 +85,9 @@ export const buildDesktopWritter = (writter, data, parent) => {
 
     const sendButtonWrapper = createButtonWrapper();
     const sendButton = createSendButton();
-
-    // /**
-    //  * Set send button click envent
-    //  */
-    // setEvents(sendButton.element,{
-    //     click : () => sendMessage(aonTextArea)
-    // });
+    sendButton.element.addEventListener(EVENT.CLICK,()=>parent.save());
 
     const sendIcon = createSendIcon();
-
- 
-
     uploadIcon.appendTo(upload.element);
     uploadText.appendTo(upload.element);
     upload.appendTo(sendBar.element);
@@ -138,13 +127,25 @@ export const buildMobileWritter = (parent) => {
             zIndex : -9
         }
     });
+    
 
     const bar = new AonToolbar();
     bar.style.background = "#fff";
-
     bar.id = "writterbar";
     bar.type = ToolbarType.SECONDARY;
-    bar.title = "Comentario";
+    bar.title = MSG.COMMENT;
+    writter.element.appendChild(bar);
+
+    const textarea = setStyles(new AonTextArea(), {
+        flexDirection: 'column',
+        height: '100%',
+        width: '100%',
+        boxShadow: "none",
+        margin: 0,
+    });
+    textarea.id = MESSENGER_IDS.COMMENT_TASK
+    textarea.name = MESSENGER_IDS.COMMENT_TASK;
+    writter.element.appendChild(textarea);
 
     waitEl(`#${bar.id}`).then(tb => {
         /** 
@@ -184,18 +185,9 @@ export const buildMobileWritter = (parent) => {
       })
     })
 
-    writter.element.appendChild(bar);
 
-    const textarea = setStyles(new AonTextArea(), {
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        boxShadow: "none",
-        margin: 0,
-    });
-    textarea.id = MESSENGER_IDS.COMMENT_TASK
-    textarea.name = MESSENGER_IDS.COMMENT_TASK;
-    waitEl(`#${textarea.id}`).then(el => buildTextareaToolbar(el));
+    writter.appendTo(parent.element);
+
 
     waitChildEl(textarea, "#" + textarea.TEXTAREA).then(writtable => {
         setStyles(writtable, {
@@ -214,8 +206,8 @@ export const buildMobileWritter = (parent) => {
         });
     });
 
-    writter.element.appendChild(textarea);
-    writter.appendTo(parent.element);
+    waitEl(`#${textarea.id}`).then(el => buildTextareaToolbar(el));
+
 }
 
 /**
@@ -259,28 +251,29 @@ export const sendMessage = (aonTextArea) => {
     //     if(eyeButton) eyeButton.click();
     // }
 
-    const value =  aonTextArea.value;//aonTextArea.compiledValue.trim();
+    const value =  aonTextArea.value;
+    if(!value || (value && value.trim().length)) return ;
+    
     const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const data = parent._data;
     aonTextArea.clear();
-    
-    if(!value || value === "") return;
+
     
     const message = {
-        type: "message",
-        sender: "Tú",
+        type: TASK_WORKFLOW_TYPE.COMMENT,
+        sender: "Yo",
         message: value,
-        date: new Date()
+        creation_date: new Date()
     }
-    data.content.push(message);
+    data.workflows.push(message);
 
     appendChatMessage({
-        name: me ? message.sender : "Receptor@email.com",
-        message: message.message,
         id: "id",
-        date: message.date,
+        name: message.sender,
+        message:message.message,
+        date: message.creation_date,
         attach: message.attach,
-        direction : me ?  RIGHT : LEFT
+        direction : RIGHT
     });
 
     /**
@@ -291,7 +284,6 @@ export const sendMessage = (aonTextArea) => {
     if (lined)
         lined.style.setProperty("--height", lined.scrollHeight + "px");
 
-    me = !me;
     parent.data = data;
 }
 
@@ -432,8 +424,8 @@ const createLink =() =>{
             cursor:"pointer",
             color:"blue",
         });
-
-        aEl.onclick = () => window.open(linkURL);
+        aEl.href  = linkURL;
+        aEl.target = "_blank";
         aEl.textContent = selection;
         document.execCommand('insertHTML', false, aEl.outerHTML);
     }

@@ -261,6 +261,7 @@ public class JooqEmployeeAFI {
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataPCRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD")).orderBy(CONTRACT_DATA.START_DATE.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -273,6 +274,8 @@ public class JooqEmployeeAFI {
 		fab.put("year", (contractRecord.get(CONTRACT.START_DATE).getYear()+1900));
 		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("partialityCoef", contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		
 		fab.put("gender", gender+1);
 		
 		//OTD
@@ -301,6 +304,7 @@ public class JooqEmployeeAFI {
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
 		Result<Record> contractDataTC2Record = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		Result<Record> contractDataPCRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD")).orderBy(CONTRACT_DATA.START_DATE.desc()).fetch();
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON).where(PERSON.REGISTRY.in(
 				dslContext.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne().get(CONTRACT.PERSON)
 				)).fetchOne().get(PERSON.GENDER);
@@ -320,6 +324,7 @@ public class JooqEmployeeAFI {
 		fab.put("year", (contractRecord.get(CONTRACT.END_DATE).getYear()+1900));
 		fab.put("quoteGroup", parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("tc2", parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION)));
+		fab.put("partialityCoef", contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION)));
 		fab.put("gender", gender);
 		
 		//DAM

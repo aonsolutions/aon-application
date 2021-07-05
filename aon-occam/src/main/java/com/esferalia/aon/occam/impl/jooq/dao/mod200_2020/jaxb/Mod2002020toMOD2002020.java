@@ -230,8 +230,9 @@ public class Mod2002020toMOD2002020 {
 	    pagina07.setT00276(getKey(mod200,Mod2002020Key.PG276));
 	    pagina07.setT00277(getKey(mod200,Mod2002020Key.PG277));
 	    pagina07.setT00278(getKey(mod200,Mod2002020Key.PG278));
-	    if (mod200.getPygType() == BalanceType.ABREVIADO || mod200.getPygType() == BalanceType.PYMES)
-	    	pagina07.setT00279(getKey(mod200,Mod2002020Key.PG279)); // Solo A,P
+	    // La 279 pasa a ser un total en todos los formatos
+//	    if (mod200.getPygType() == BalanceType.ABREVIADO || mod200.getPygType() == BalanceType.PYMES)
+//	    	pagina07.setT00279(getKey(mod200,Mod2002020Key.PG279)); // Solo A,P
 	    pagina07.setT00253(getKey(mod200,Mod2002020Key.PG253));
 	    pagina07.setT00254(getKey(mod200,Mod2002020Key.PG254));
 	    pagina07.setT00281(getKey(mod200,Mod2002020Key.PG281));

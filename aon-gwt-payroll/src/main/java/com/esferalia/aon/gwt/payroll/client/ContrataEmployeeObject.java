@@ -561,6 +561,25 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void getCertifica2PDF(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getCertifica2PDF(
+				employeeContractData.getContractInfo().getContractId().toString(),
+				employeeContractData.getContractInfo().getEndDate(), 
+				new AsyncCallback<String>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						success.accept(result);	
+					}
+					
+				});
+	}
+	
 	// ------------------------------------------------- Database Methods (TGSS Comunications)
 	
 	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {

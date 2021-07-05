@@ -5,12 +5,12 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
-import { newComponent, setAttributes, setClasses, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
+import { newComponent, setAttributes, setClasses, setEvents, setFullDate, setStyles, setTime, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
-import { ICON_TYPES, MESSENGER_ACTION_TYPES, MESSENGER_CHAT_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
+import { ICON_TYPES, TASK_WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { createOutlinedMaterialIcon, createSpaceBetweenRow, createText } from "./creationUtils.js";
-import { buildMobileWritter, buildTextareaToolbar } from "./messenger-writter.js";
+import { buildMobileWritter } from "./messenger-writter.js";
 
 export const RIGHT = "RIGHT";
 export const LEFT = "LEFT";
@@ -36,9 +36,9 @@ export const buildMobileChat = (chatEl, data, parent) => {
             fontSize: '14px'
         }
     });
+    wrapper.appendTo(chatEl.element);
 
     if(!data.title){
-
         const newRequestPanel = newComponent({
             type: 'div',
             id : MESSENGER_IDS.NEW_REQUEST_PANEL,
@@ -54,43 +54,44 @@ export const buildMobileChat = (chatEl, data, parent) => {
                 zIndex : 10
             }
         });
-
-
+        newRequestPanel.appendTo(wrapper.element);
         /**
          * Building toolbars
          */
-        const toolbar = setAttributes(new AonToolbar(),{
+        const toolbars = setAttributes(new AonToolbar(),{
             id: MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR,
             type: ToolbarType.SECONDARY,
             title: "Nueva solicitud"
         });
-
-        setStyles(toolbar,{width : "100%"})
-
-        waitEl("#" + MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR).then(tb => {
-            tb.addButton2(ACTIONS.SAVE,() => {
-                parent.save();
-            })
-    
-            tb.addButton2(ACTIONS.BACK,() => {
-                wrapper.element.style.transition = ".25s";
-                wrapper.element.style.opacity = "0";
-  
-                setTimeout(() => {
-                    const button = document.getElementById("aonMessengerSidenavAbiertas");
-                    button.click();
-                }, 250);
-            });
-
-            waitChildEl(tb,"header").then(header => {
-                setStyles(header,{
-                    margin : 0,
-                    paddingLeft : "1.5em",
-                    paddingRight : "1.5em",
-                });
-            });
-
+        toolbars.style.width = "100%"; 
+        newRequestPanel.appendChild(toolbars);
+        toolbars.addButton2(ACTIONS.SAVE,() => {
+            parent.save();
+        })
+        
+        toolbars.addButton2(ACTIONS.BACK,() => {
+            wrapper.element.style.transition = ".25s";
+            wrapper.element.style.opacity = "0";
+            setTimeout(() => {
+                const button = document.getElementById("aonMessengerSidenavAbiertas");
+                button.click();
+            }, 250);
         });
+
+        waitChildEl(toolbars,"header").then(header => {
+            setStyles(header,{
+                margin : 0,
+                paddingLeft : "1.5em",
+                paddingRight : "1.5em",
+            });
+        });
+
+
+        const div = document.createElement("div");
+        div.className = CSS.AON_MOBILE_SUB_CONTENT;
+        div.style.width = "100%";
+        newRequestPanel.appendChild(div);
+
 
 
         /**
@@ -100,6 +101,7 @@ export const buildMobileChat = (chatEl, data, parent) => {
             display : "block",
             width: "100%",
         });
+        div.appendChild(titleIn); 
 
          /**
          * Creating description input
@@ -108,6 +110,7 @@ export const buildMobileChat = (chatEl, data, parent) => {
             display : "block",
             width: "100%",
         });
+        div.appendChild(descriptionIn); 
 
         /**
          * smooth border colors
@@ -146,11 +149,11 @@ export const buildMobileChat = (chatEl, data, parent) => {
             name:"Para",
             title:"Para",
         });
-        
         setStyles(workgroupSelect, {
             display : "block",
             width: "100%",
         });
+        div.appendChild(workgroupSelect);
         fillWorkGroup(workgroupSelect,data, application);
         changeStyleSelect(workgroupSelect);
 
@@ -164,40 +167,37 @@ export const buildMobileChat = (chatEl, data, parent) => {
             display : "block",
             width: "100%",
         });
+
+        div.appendChild(taskHolderSelect);
         changeStyleSelect(taskHolderSelect);
 
 
-        /**
-         * Creating text area
-         */
-        const aonTextArea = new AonTextArea();
-        aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-        aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
-        setStyles(aonTextArea,{
-            height: "100%",
-            width: "100%",
-            marginTop : 0,
-            boxShadow : "none",
-        })
+        // /**
+        //  * Creating text area
+        //  */
+        // const aonTextArea = new AonTextArea();
+        // aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+        // aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
+        // setStyles(aonTextArea,{
+        //     height: "100%",
+        //     width: "100%",
+        //     marginTop : 0,
+        //     boxShadow : "none",
+        // })
 
         /**
         * smooth border colors
         */
-        waitChildEl(aonTextArea,"toolbar").then(el => {
-            setStyles(el,{
-                paddingLeft  : "calc(1.5em - 5px)",
-                paddingRight : "calc(1.5em - 5px)",
-                borderBottom : "1px solid #e0e0e0"
-            });
-        });
+        // waitChildEl(aonTextArea,"toolbar").then(el => {
+        //     setStyles(el,{
+        //         paddingLeft  : "calc(1.5em - 5px)",
+        //         paddingRight : "calc(1.5em - 5px)",
+        //         borderBottom : "1px solid #e0e0e0"
+        //     });
+        // });
 
-        newRequestPanel.appendChild(toolbar);
-        newRequestPanel.appendChild(titleIn); 
-        newRequestPanel.appendChild(descriptionIn); 
-        newRequestPanel.appendChild(workgroupSelect);
-        newRequestPanel.appendChild(taskHolderSelect);
-        newRequestPanel.appendChild(aonTextArea);
-        newRequestPanel.appendTo(wrapper.element);
+        // div.appendChild(aonTextArea);
+  
     }
 
     
@@ -226,41 +226,8 @@ export const buildMobileChat = (chatEl, data, parent) => {
         }
     });
 
-    /**
-     * Back button and toolbar
-     */
-     const toolbar = setAttributes(new AonToolbar(),{
-        id: "id",
-        type: ToolbarType.SECONDARY,
-        title: "#" + data.id
-     });
+    chat.appendTo(wrapper.element);
 
-     wrapper.appendChild(toolbar);
-
-     waitEl(`#${toolbar.id}`).then(bar => {
-        bar.addButton2(ACTIONS.BACK,() => {
-            chat.element.style.opacity = "0";
-            chat.element.style.transition = ".25s";
-            
-            setTimeout(() => {
-                const button = document.getElementById("aonMessengerSidenavAbiertas");
-                button.click();
-            }, 250);
-        })
-        
-       const titleSpan = bar.querySelector(`.${CSS.AON_SECONDARY_TOOLBAR_TITLE}`)
-       titleSpan.style.fontWeight = 400;
-
-       setClasses(titleSpan,[CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER]);
- 
-       const status = createOutlinedMaterialIcon({
-         name: "info",
-         color: CSS.variable(COLORS.ONLINE_GREEN),
-         size: "22px"
-       });
-       status.element.style.marginLeft = "10px"
-       status.appendTo(titleSpan);
-     })
 
     const title = createTitle(data.title);
     setStyles(title.element,
@@ -275,7 +242,6 @@ export const buildMobileChat = (chatEl, data, parent) => {
         }
     );
 
-    wrapper.appendChild(toolbar);
     title.appendTo(chat.element);
 
 
@@ -289,36 +255,37 @@ export const buildMobileChat = (chatEl, data, parent) => {
     /**
      * If no message, put one ;)
      */
-    if(data && data.content && data.content.length){
-        data.content.forEach(element => {
-            if (element.type === MESSENGER_CHAT_TYPES.ACTION) {
-                const action = createAction(chooseActionIcon(element.action), element.message);
-                action.appendTo(chat.element);
-            }
+    // if(data && data.workflows && data.workflows.length){
+    //     data.workflows.forEach(element => {
+    //         if (element.type === TASK_WORKFLOW_TYPE.ACTION) {
+    //             const action = createAction(chooseActionIcon(element.action), element.message);
+    //             action.appendTo(chat.element);
+    //         }
     
-            if (element.type === MESSENGER_CHAT_TYPES.MESSAGE) {
-                const message = createChatMessage({
-                    name: element.sender,
-                    message: element.message,
-                    id: "noId",
-                    date: element.date,
-                    attach: element.attach
-                });
-                message.appendTo(chat.element);
-            }
-        });
-    } else {
-        let noMessage = newComponent({
-            type : MESSENGER_COMPONENTS.ADVICE,
-            id   : MESSENGER_IDS.NO_MESSAGES,
-            text : 'No hay mensajes en esta solicitud',
-            styles : {
-                fontSize : '1em',
-                color : CSS.variable(COLORS.GRAYSON),
-            }
-        });
-        noMessage.appendTo(chat.element);
-    }
+    //         if (element.type === TASK_WORKFLOW_TYPE.MESSAGE) {
+    //             const message = createChatMessage({
+    //                 name: element.sender,
+    //                 message: element.message,
+    //                 id: "noId",
+    //                 date: element.date,
+    //                 attach: element.attach,
+    //                 direction:null
+    //             });
+    //             message.appendTo(chat.element);
+    //         }
+    //     });
+    // } else {
+    //     let noMessage = newComponent({
+    //         type : MESSENGER_COMPONENTS.ADVICE,
+    //         id   : MESSENGER_IDS.NO_MESSAGES,
+    //         text : 'No hay mensajes en esta solicitud',
+    //         styles : {
+    //             fontSize : '1em',
+    //             color : CSS.variable(COLORS.GRAYSON),
+    //         }
+    //     });
+    //     noMessage.appendTo(chat.element);
+    // }
 
 
     const end = newComponent({ 
@@ -330,8 +297,6 @@ export const buildMobileChat = (chatEl, data, parent) => {
     end.appendTo(chat.element);
 
     buildMobileWritter(wrapper,data)
-    chat.appendTo(wrapper.element);
-    wrapper.appendTo(chatEl.element);
 }
 
 /**
@@ -339,8 +304,7 @@ export const buildMobileChat = (chatEl, data, parent) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildChat = (parent, data) => {
-
+export const buildChat = (parent) => {
     /**
      * Wrapper 
      * if some new side menus / toolbars needed, here.
@@ -359,6 +323,7 @@ export const buildChat = (parent, data) => {
      */
     const chat = newComponent({
         type: MESSENGER_COMPONENTS.CHAT,
+        id: MESSENGER_IDS.MESSENGER_CHAT,
         classes: ["continueLined", CSS.FLEX_COLUMN, CSS.MATERIAL_SCROLL, CSS.FLEX_ALIGN_CENTER],
         styles: {
             position: "relative",
@@ -391,42 +356,6 @@ export const buildChat = (parent, data) => {
     } });
     start.appendTo(chat.element);
 
-    /**
-     * If no message, put one ;)
-     */
-         if(data.content.length == 0){
-             let noMessage = newComponent({
-                 type : MESSENGER_COMPONENTS.ADVICE,
-                 id : MESSENGER_IDS.NO_MESSAGES,
-                 text : 'No hay mensajes en esta solicitud',
-                 styles : {
-                    fontSize : '1em',
-                    color : CSS.variable(COLORS.GRAYSON),
-                 }
-             });
-     
-             noMessage.appendTo(chat.element);
-         }
-
-    data.content.forEach(element => {
-        if (element.type == MESSENGER_CHAT_TYPES.ACTION) {
-            const action = createAction(chooseActionIcon(element.action), element.message);
-            action.appendTo(chat.element);
-        }
-
-        if (element.type == MESSENGER_CHAT_TYPES.MESSAGE) {
-            const message = createChatMessage({
-                name: element.sender,
-                message: element.message,
-                id: "is",
-                date: element.date,
-                attach: element.attach
-            });
-            message.appendTo(chat.element);
-        }
-
-    });
-
     const end = newComponent({ id: MESSENGER_IDS.END, styles : {
         padding : '10px'
     } });
@@ -446,66 +375,30 @@ export const buildChat = (parent, data) => {
             height: "100%"
         }
     });
+    leftButtonBar.appendTo(parent.element);
 
     const upIcon = setAttributes(new AonIconButton(), {
         icon: MATERIAL_ICONS.EXPAND_LESS,
         id: "upIcon",
         background: "transparent",
     });
-
-    setEvents(upIcon, {
-        click: () => {
-            document.getElementById(MESSENGER_IDS.START).scrollIntoView();
-        }
-    });
+    upIcon.onclick = () => start.element.scrollIntoView();
+    leftButtonBar.appendChild(upIcon);
 
     const downIcon = setAttributes(new AonIconButton(), {
         icon: MATERIAL_ICONS.EXPAND_MORE,
         id: "downIcon",
         background: "transparent",
     });
-
-    setEvents(downIcon, {
-        click: () => {
-            document.getElementById(MESSENGER_IDS.END).scrollIntoView();
-        }
-    });
-
-    leftButtonBar.appendChild(upIcon);
+    downIcon.onclick = () =>  end.element.scrollTop();
     leftButtonBar.appendChild(downIcon);
-    leftButtonBar.appendTo(parent.element);
 }
-
-/**
- * Choose icon for the actions
- * @param {*} actionType 
- * @returns 
- */
-const chooseActionIcon = (actionType) => {
-    let defaultColor = CSS.variable(COLORS.MATERIAL_BLUE);
-
-    switch (actionType) {
-        case MESSENGER_ACTION_TYPES.CLOSE: return {
-          icon : MATERIAL_ICONS.CLOSE,
-          type : ICON_TYPES.MATERIAL,
-          color : defaultColor,
-        };
-        default: return {
-           icon : MATERIAL_ICONS.INFO,
-           type : ICON_TYPES.MATERIAL_OUTLINED,
-           color: defaultColor,
-        }
-
-    }
-}
-
 
 /**
  * Append a new message to the chat with a little animation
  * @param {*} properties 
  */
 export const appendChatMessage = (properties) => {
-
     const noMessage = document.getElementById(MESSENGER_IDS.NO_MESSAGES);
     const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
     const end = chat.querySelector("#" + MESSENGER_IDS.END);
@@ -536,7 +429,6 @@ export const appendChatMessage = (properties) => {
         });
     }, 100);
 } 
-
 
 /**
  * Create a new message
@@ -592,7 +484,6 @@ const checkProperties = (properties) => {
 
     return properties;
 }
-
 
 /**
  * Fill aonSelect with possible receivers
@@ -654,3 +545,71 @@ export const changeStyleSelect = (aonSelect) => {
         el.style.marginBottom = "0px"
     });
 }
+
+//FILL CHAT
+export const fillChat = (workflows=[])=>{
+    waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
+        if(workflows.length == 0){
+            let noMessage = newComponent({
+                type : MESSENGER_COMPONENTS.ADVICE,
+                id : MESSENGER_IDS.NO_MESSAGES,
+                text : 'No hay mensajes en esta solicitud',
+                styles : {
+                    fontSize : '1em',
+                    color : CSS.variable(COLORS.GRAYSON),
+                }
+            });
+    
+            noMessage.appendTo(chat);
+        } else {
+            const applicationParent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).getApplicationParent();
+    
+            const meId = applicationParent.SENDER.id;
+    
+            workflows.forEach(workflow => {
+                const {comment, type, modification_date, task_holder:{name,alias,id}} = workflow;
+                const me = id == meId; // if taskHolder id is me
+                const message = {
+                    name: me ? "Yo" : alias,
+                    direction: me ? RIGHT : LEFT,
+                    message: comment,
+                    id: "is",
+                    date: new Date(modification_date),
+                    type,
+                    attach: workflow.attach
+                }
+                if (type == TASK_WORKFLOW_TYPE.COMMENT) {
+                    const messageEl = createChatMessage(message);
+                    messageEl.appendTo(chat);
+                } else{
+                    message.name = name;
+                    const actionJson = chooseIconMessage(message);
+                    const action = createAction(actionJson, actionJson.message);
+                    action.appendTo(chat);
+                }
+            });
+        }
+   })
+}
+
+/**
+ * Choose icon for the actions
+ * @param {*} actionType 
+ * @returns 
+ */
+ const chooseIconMessage = ({type, date, name}) => {
+    const dateParse = setFullDate(date) + " " + setTime(date);
+    let actionIcon = {
+        icon : MATERIAL_ICONS.INFO,
+        type : ICON_TYPES.MATERIAL_OUTLINED,
+        color : CSS.variable(COLORS.MATERIAL_BLUE),
+        message: `${type} por <b>${name ? name : null}</b> ${dateParse}`
+    }
+    if(TASK_WORKFLOW_TYPE.OPEN.indexOf(type)>=0){
+        actionIcon.color = CSS.variable(COLORS.ONLINE_GREEN);
+    }  else if(TASK_WORKFLOW_TYPE.CLOSE.indexOf(type)>=0){
+        actionIcon.icon = MATERIAL_ICONS.CLOSE;
+    } 
+    return actionIcon;
+}
+
