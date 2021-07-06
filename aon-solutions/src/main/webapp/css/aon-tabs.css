@@ -8,6 +8,7 @@
   }
   
   .tabs-box {
+    position: fixed;
     display: flex;
     justify-content: center;
     height: 61px;

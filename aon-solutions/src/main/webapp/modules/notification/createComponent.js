@@ -23,6 +23,7 @@ export const createUl = (id) => newComponent({
   styles:{
     listStyle: "none",
     padding: 0,
+    paddingTop: "5px",
     margin: 0
   }
 });
@@ -71,8 +72,7 @@ export const createDivFooter1 = (text) => createDiv({
 export const createAonNotification = (id) =>createDiv({
   id,
   styles:{
-    margin: "auto",
-    marginTop: "21px",
+    margin: "64px auto auto",
     width: "80%",
   }
 });

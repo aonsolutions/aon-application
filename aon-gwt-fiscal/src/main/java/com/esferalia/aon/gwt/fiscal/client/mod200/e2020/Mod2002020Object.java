@@ -113,8 +113,8 @@ public class Mod2002020Object implements Serializable {
 		});
 	}
 	
-	public void fillMod2002020AccountingData(final AsyncCallback<Mod2002020> callback) {
-		Model200.getMod2002020Service().fillMod2002020AccountingData(mod200, new AsyncCallback<Mod2002020>() {
+	public void fillMod2002020AccountingData(String domainName, int domain, String user, final AsyncCallback<Mod2002020> callback) {
+		Model200.getMod2002020Service().fillMod2002020AccountingData(domainName, domain, user, mod200, new AsyncCallback<Mod2002020>() {
 			
 			@Override
 			public void onSuccess(Mod2002020 result) {
