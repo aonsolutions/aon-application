@@ -42,7 +42,7 @@ public class TestContrato {
 			.setCodContract("401")
 			.setDateIniContract(fini)
 			.setCodFormativo(59)//review
-			.setCodOccupation(1311)//review
+			.setCodOccupation("1311")//review
 			.setCodPaisWork(724)
 			.setCodMunWork("01059")
 			.setOffer(OfferType.NO) //review

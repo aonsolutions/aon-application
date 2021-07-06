@@ -135,7 +135,6 @@ public class TestCertificado {
 		for(Map<String, String> ctz: dataCtz) {
 			System.out.println(ctz);
 		}
-
 	}
 	
 	
