@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
@@ -332,8 +336,8 @@ public class EmployeeDraft extends Composite {
 		private MenuItem afi;
 		private MenuItem idc;
 		private MenuItem idcPlNss;		
-		private MenuItem peculiarities = null;
-		private MenuItem bonifications = null;
+		private MenuItem pecs = null;
+		private MenuItem pecsSS = null;
 		
 		public NewContextMenu() {
 			
@@ -341,13 +345,13 @@ public class EmployeeDraft extends Composite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			afi.ensureDebugId("afi");
 			
-			peculiarities = addItem("Peculiaridades de cotizaci" + String.valueOf("\u00F3") + "n", new PeculiaritiesCommand(), 
+			pecs = addItem("Peculiaridades de Cotizaci\u00F3n (Manual)", new PeculiaritiesCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			peculiarities.ensureDebugId("peculiarities");
+			pecs.ensureDebugId("peculiarities");
 			
-			bonifications = addItem("Bonificaciones", new BonificationsCommand(), 
+			pecsSS = addItem("Peculiaridades de Cotizaci\u00F3n (SISTEMA RED)", new BonificationsCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			bonifications.ensureDebugId("bonifications");
+			pecsSS.ensureDebugId("bonifications");
 			
 			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
@@ -380,11 +384,11 @@ public class EmployeeDraft extends Composite {
 		}
 
 		public MenuItem getPeculiarities() {
-			return peculiarities;
+			return pecs;
 		}
 
 		public MenuItem getBonifications() {
-			return bonifications;
+			return pecsSS;
 		}
 		
 	}
@@ -481,18 +485,20 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	private void initializeIdcDateListBox() {
-		contextMenu.getIdc().setEnabled(false);
-		contextMenu.getIdc().setVisible(false);
+		//contextMenu.getIdc().setEnabled(false);
+		//contextMenu.getIdc().setVisible(false);
 		employeeDraftObject.getIdcDates(
 		(dates) -> {
+			// filter out 'Baja' dates
+			dates = filterEven(dates);
 			int count = dates.size();
 			idcDateListBox.setRowCount(count, true);
 			idcDateListBox.setRowData(0, dates);
 			idcDateListBox.setVisibleRange(0, count+1);
 			idcDateListBox.setSelected(count-1, true);
 			idcDateListBox.onResizeDropDownPopup();
-			contextMenu.getIdc().setEnabled(true);
-			contextMenu.getIdc().setVisible(true);
+			//contextMenu.getIdc().setEnabled(true);
+			//contextMenu.getIdc().setVisible(true);
 		}, 
 		(error) -> {
 		} );
@@ -1079,4 +1085,13 @@ public class EmployeeDraft extends Composite {
 		initializeIdcDateListBox();
 		contextMenu.getIdcPlNss().setVisible(visible);
 	}
+
+	private static <T> List<T> filterEven( List<T> list ){
+		return filter(list, i -> i % 2 == 0);
+	}
+	
+	private static <T> List<T> filter( List<T> list , Function<Integer, Boolean> filter){
+		return IntStream.range(0, list.size()).filter( i -> filter.apply(i)).mapToObj(i -> list.get(i) ).collect(Collectors.toList());
+	}
+	
 }

@@ -13,14 +13,14 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.Tipo
 
 public class Idcplccc {
 	
-	public static Collection<Bonus> getSSBonuses (byte pdf []) throws IOException, UnknownPDFException {
+	public static Collection<PEC> getSSBonuses (byte pdf []) throws IOException, UnknownPDFException {
 		try (InputStream is = new ByteArrayInputStream(pdf)){
 			return getSSBonuses(is);
 		}
 	}
 	
-	public static Collection<Bonus> getSSBonuses (InputStream is) throws IOException, UnknownPDFException {	
-		BonusListener  ssBonusListener = new BonusListener();
+	public static Collection<PEC> getSSBonuses (InputStream is) throws IOException, UnknownPDFException {	
+		PECListener  ssBonusListener = new PECListener();
 		IdcplcccParser.parse(is, ssBonusListener );
 		return ssBonusListener.getSSBonuses();
 		

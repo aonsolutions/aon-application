@@ -605,7 +605,7 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR");
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -634,19 +634,26 @@ class SistemaREDI {
 			boolean end = false;
 			ArrayList<Idc> ret = new ArrayList<Idc>();
 			while (!end) {
-				DomNodeList<DomNode> dnl = htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
+				DomNodeList<DomNode> dnl = htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
 
 				for (DomNode e : dnl) {
 					DomNodeList<DomNode> registros = e.querySelectorAll("td");
-					if (registros.get(2).getTextContent().trim().equals("")) {
+					if (registros.get(1).getTextContent().trim().equals("")) {
 						return ret;
 					} else {
-						String[] arrD = registros.get(2).getTextContent().trim().split(" ");
+						String[] arrD = registros.get(1).getTextContent().trim().split(" ");
 						GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(arrD[2]),
 								Integer.parseInt(arrD[1]) - 1, Integer.parseInt(arrD[0]));
 						Date d = gc.getTime();
-						String desc = Toolkit.removeNBSP(registros.get(1).querySelector("span>label").getTextContent());
-						ret.add(new Idc(desc, d));
+						ret.add(new Idc("ALTA", d));
+						
+						if (registros.get(2).getTextContent().trim().equals(""))
+							continue;
+						arrD = registros.get(2).getTextContent().trim().split(" ");
+						gc = new GregorianCalendar(Integer.parseInt(arrD[2]),
+								Integer.parseInt(arrD[1]) - 1, Integer.parseInt(arrD[0]));
+						d = gc.getTime();
+						ret.add(new Idc("BAJA", d));
 					}
 				}
 				htmlPage = htmlPage.getElementById("Sub2206501001").click();
