@@ -21,6 +21,7 @@ import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -41,6 +42,7 @@ import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -237,8 +239,6 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 		checkFieldsV2(driver);
 		log(SUCCESS, "Net test succeded");
 	}
-	
-	
 	
 	private static void selectMonth (WebDriver driver, Date date) throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
