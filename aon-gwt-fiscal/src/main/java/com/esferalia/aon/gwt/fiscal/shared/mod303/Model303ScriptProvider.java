@@ -9,7 +9,9 @@ public class Model303ScriptProvider {
 	public static IModelScript<Mod303Key>[] obtainScript(Mod303 mod303) {
 		IModelScript<Mod303Key>[] ms = null;
 		if (mod303.getYear() > 2014) {
-			if (mod303.isAEAT()) {
+			if (mod303.isAEAT() && mod303.getYear() >= 2021) {
+				ms = Model3032021PrintAEATScript.values();
+			} else if (mod303.isAEAT()) {
 				ms = Model3032017PrintAEATScript.values();
 			} else if (mod303.isAraba()) {
 				ms = Model3032017PrintARABAScript.values();
