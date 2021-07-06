@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -21,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Certificates;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
@@ -85,13 +85,20 @@ public class Certificado {
 			HtmlRadioButtonInput inputRadio2 = htmlPage.querySelector("#contenido form input[value=\""+columnCheck+"\"]");
 	        htmlPage = (HtmlPage) inputRadio2.click();
 
-	        UnexpectedPage document = htmlPage.getElementByName("btMostrar").click();
-			InputStream inp = document.getWebResponse().getContentAsStream();
-			byte[] pdf = inp.readAllBytes();
-			inp.close();
 
-			return pdf;
-		} 
+	        Page page = htmlPage.getElementByName("btMostrar").click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				handleSepeExceptions(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
+		}
+		return null; 
 	}
 	
 	public static String certEnterprise(final InputStream certificateInputStream,
