@@ -127,8 +127,8 @@ public class Contrato {
 				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
 				if(cto.getCodFormativo() > 0) ((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
-				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation().toString()); // disabled
-				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
+				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
+				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
 				((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
 				form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork().toString());//disabled
 

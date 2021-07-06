@@ -17,7 +17,7 @@ public class Contract {
 	private Integer codPaisDom;
 	private String codMunDom;
 	private Integer codFormativo;
-	private Integer codOccupation;
+	private String codOccupation;
 	private Integer codPaisWork;
 	private String codMunWork;
 	private String codContract;
@@ -101,7 +101,7 @@ public class Contract {
 		return codFormativo;
 	}
 
-	public Integer getCodOccupation() {
+	public String getCodOccupation() {
 		return codOccupation;
 	}
 
@@ -163,7 +163,7 @@ public class Contract {
 		private Integer codPaisDom;
 		private String codMunDom;
 		private Integer codFormativo;
-		private Integer codOccupation;
+		private String codOccupation;
 		private Integer codPaisWork;
 		private String codMunWork;
 		private String codContract;
@@ -254,7 +254,7 @@ public class Contract {
 			return this;
 		}
 
-		public ContractBuilder setCodOccupation(Integer codOccupation) {
+		public ContractBuilder setCodOccupation(String codOccupation) {
 			this.codOccupation = codOccupation;
 			return this;
 		}
@@ -386,6 +386,28 @@ public class Contract {
 		public String getValue() {
 			return value;
 		}
+		
+		public static JndType safeValueOf( Byte i ) {
+			if (i == null) return null;
+			return safeValueOf( i.intValue() ); 
+		}
+		
+		public static JndType safeValueOf( Integer i ) {
+			if (i == null) return null;
+			if (i < 0 || i >= JndType.values().length) return null;
+			return JndType.values()[i];
+		}
+		
+		public static JndType safeValueOf( String i ) {
+			for (JndType rs : values()) {
+				if(i.equalsIgnoreCase(rs.name()))
+					return rs;
+			}
+			return null;
+		}
+		
+		
+		
 	}
 	
 	  /**

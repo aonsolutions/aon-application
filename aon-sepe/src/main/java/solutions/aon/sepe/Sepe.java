@@ -38,7 +38,7 @@ public class Sepe {
 			return Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
 	}
 	
-	public static String sendContracto(final InputStream certificateInputStream, final String certificatePassword,
+	public static String sendContract(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Contract cto) throws SepeException  {
 		return Contrato.contrato(certificateInputStream, certificatePassword, certificateType, cto);
 	}
