@@ -40,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
+import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -506,11 +507,11 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			for ( String naf : nafs ) {
 				byte data [] = SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
-				Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = Idcplnss.getSSBonuses(data);
+				Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = Idcplnss.getSSBonuses(data);
 				Bonus bonuses [] =
 				ssBonus.stream()
-				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-				.filter(b -> b.isEnterprise() )
+				.filter(pec -> AonStringUtils.equals(pec.getSsNum(), naf))
+				.filter(pec -> PEC.isBonus(pec) )
 				.map( b -> 
 				new Bonus()
 				.setExpression(b.getFormula())
@@ -526,8 +527,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				
 				Deduction deductions [] =
 				ssBonus.stream()
-				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-				.filter(b -> b.isEmployee() )
+				.filter(pec -> AonStringUtils.equals(pec.getSsNum(), naf))
+				.filter(pec -> PEC.isDeduction(pec) )
 				.map( b -> 
 				new Deduction()
 				.setExpression(b.getFormula())

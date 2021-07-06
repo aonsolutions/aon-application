@@ -108,7 +108,7 @@ public class SSBonusDraft extends AonCustomDialog {
 	
 	public SSBonusDraft(Integer contractId) {
 		
-		setCaption("Bonificaciones");
+		setCaption("Peculiaridades de Cotizaci\u00F3n (SISTEMA RED)");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -121,9 +121,9 @@ public class SSBonusDraft extends AonCustomDialog {
 		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages.
 			Task syncTask = new Task();
-			syncTask.setDescription("Comprobando bonificaciones...");
+			syncTask.setDescription("Comprobando peculiaridades...");
 			progressPanel.showTask(syncTask);
-			syncTask.messageChanged("Sistema RED...");
+			syncTask.messageChanged("SISTEMA RED...");
 			handlerRegistration[0].removeHandler();
 		});
 

@@ -53,14 +53,14 @@ public class Idc {
 	}
 	
 	
-	public static Collection<Bonus> getSSBonuses (byte pdf []) throws IOException, UnknownPDFException {
+	public static Collection<PEC> getSSPECs (byte pdf []) throws IOException, UnknownPDFException {
 		try (InputStream is = new ByteArrayInputStream(pdf)){
-			return getSSBonuses(is);
+			return getSSPECs(is);
 		}
 	}
 	
-	public static Collection<Bonus> getSSBonuses (InputStream is) throws IOException, UnknownPDFException {	
-		BonusListener  ssBonusListener = new BonusListener();
+	public static Collection<PEC> getSSPECs (InputStream is) throws IOException, UnknownPDFException {	
+		PECListener  ssBonusListener = new PECListener();
 		IdcParser.parse(is, ssBonusListener );
 		return ssBonusListener.getSSBonuses();
 	}

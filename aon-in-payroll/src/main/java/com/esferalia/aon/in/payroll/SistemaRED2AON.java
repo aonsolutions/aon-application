@@ -38,6 +38,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -397,7 +398,7 @@ public class SistemaRED2AON {
 
 
 
-	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
+	public static void addPECs(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
 			String ccc, String  naf) {
 		
 		try {
@@ -405,11 +406,11 @@ public class SistemaRED2AON {
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
-			Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSBonuses(data);
+			Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSPECs(data);
 			Bonus bonuses [] =
 			ssBonus.stream()
 			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(b -> b.isEnterprise() )
+			.filter(pec -> PEC.isBonus(pec) )
 			.map( b -> 
 			new Bonus()
 			.setExpression(b.getFormula())
@@ -430,9 +431,10 @@ public class SistemaRED2AON {
 			Deduction deductions [] =
 			ssBonus.stream()
 			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(b -> b.isEmployee() )
+			.filter(pec -> PEC.isDeduction(pec))
 			.map( b -> 
 			new Deduction()
+			.setName(b.getName())
 			.setExpression(b.getFormula())
 			.setDescription(b.getDescription())
 			.setStartDate(b.getStartDate())
@@ -460,8 +462,10 @@ public class SistemaRED2AON {
 			Collection<solutions.aon.seg.social.object.Idc> idcDates = 
 			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
-			idcDates.stream().map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
-			.ifPresent( date -> addBonus(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+			idcDates.stream()
+			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
+			.map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
+			.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
 		
 		} catch (SegSocialException e) {
 			

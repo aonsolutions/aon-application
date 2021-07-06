@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -1274,6 +1276,8 @@ public class TestSistemaREDI extends SegSocialTest{
 			assertTrue(true);
 		} catch (FailingHttpStatusCodeException e) {
 			assertTrue(true);
+		} catch (WrongRegimeException e) {
+			assertTrue(true);
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -1673,5 +1677,56 @@ public class TestSistemaREDI extends SegSocialTest{
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testgetIDCDates() {
+		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR");
+		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+			Collection<Idc> idcs = SistemaREDI.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12", "011007308507",
+					"0111", "01105360062");
+			Date dates [] = 
+			idcs.stream()
+			.map(i -> i.getFecha() )
+			.sorted()
+			.toArray(Date[]::new);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2013);
+			calendar.set(Calendar.DAY_OF_MONTH, 4);
+			calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+			
+			Date september42013 = calendar.getTime();
+			Assert.assertEquals(september42013, dates[0]);
+			
+			calendar.set(Calendar.DAY_OF_MONTH, 3);
+			calendar.set(Calendar.YEAR, 2016);
+			
+			Date september32016 = calendar.getTime();
+			Assert.assertEquals(september32016, dates[1]);
+			
+			calendar.set(Calendar.DAY_OF_MONTH, 4);
+			
+			Date september42016 = calendar.getTime();
+			Assert.assertEquals(september42016, dates[2]);
+			
+			Assert.assertEquals(3, dates.length);
+
+		} catch (StatusCodeException | OutOfServiceException e) {
+			assertTrue(true);
+		} catch (FailingHttpStatusCodeException e) {
+			assertTrue(true);
+		} catch (IOException e1) {
+			fail("Error with the certificate input");
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
 
 }

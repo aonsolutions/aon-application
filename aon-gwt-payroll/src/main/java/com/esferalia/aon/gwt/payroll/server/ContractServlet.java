@@ -270,7 +270,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		SalaryInfoFilter filter = getFilter(api);
 		if(!api.getParams().optString("employee").isEmpty()) filter.setEmployeeId(api.getParams().optInt("employee")); //employee == contractId
 		else if(!api.getParams().optString("workplace").isEmpty()) filter.setWorkplaceId(api.getParams().optInt("workplace"));
-		else if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
+		else if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
 		return JooqPayrollSalaries.getSalaries(conn, filter);
 	}
 	
@@ -314,7 +314,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	private Date getEndDateSalary(AonApiData api, Optional<Integer> companyId) throws SQLException {
 		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
 		SalaryInfoFilter filter = getFilter(api);
-		if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
+		if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
 		SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn, filter);
 		Date date = salaryInfo.getEndDate();
 		if(date == null) date = new Date();
