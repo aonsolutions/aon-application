@@ -1,14 +1,24 @@
 package solutions.aon.selenium.tools;
 
+import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -343,6 +353,136 @@ public class SeleniumTools {
 		if (number != null)
 			return Math.round(number * 100.0) / 100.0;
 		return null;
+	}
+	
+	public static int differenceInMonths(Date d1, Date d2) {
+	    Calendar c1 = Calendar.getInstance();
+	    c1.setTime(d1);
+	    Calendar c2 = Calendar.getInstance();
+	    c2.setTime(d2);
+	    int diff = 0;
+	    if (c2.after(c1)) {
+	        while (c2.after(c1)) {
+	            c1.add(Calendar.MONTH, 1);
+	            if (c2.after(c1)) {
+	                diff++;
+	            }
+	        }
+	    } else if (c2.before(c1)) {
+	        while (c2.before(c1)) {
+	            c1.add(Calendar.MONTH, -1);
+	            if (c2.before(c1)) {
+	                diff++;
+	            }
+	        }
+	    }
+	    return diff;
+	}
+	
+	
+	@Deprecated
+	public static void selectMonthScrolling (WebDriver driver, Date date) throws InterruptedException, ParseException {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", new Locale("es", "ES"));
+		String dateStr = df.format(date);
+		WebElement monthPopup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#gwt-debug-monthListBox-popup > div > div")));
+		
+		String xpath = "//div[@id='gwt-debug-monthListBox-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+dateStr+"')]";
+
+		
+		List<WebElement> elems = monthPopup.findElements(By.xpath(xpath));
+//		List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
+		
+		String currentDateStr = driver.findElement(By.id("gwt-debug-monthListBox-item0")).getAttribute("innerText");
+		Date currentDate = df.parse(currentDateStr);
+		
+		Keys key = (currentDate.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
+		
+		
+		
+		while (elems.size() < 1) {
+			for (int i=0; i<20; i++) {
+				monthPopup.sendKeys(key);
+				Thread.sleep(100);
+			}
+			elems = monthPopup.findElements(By.xpath(xpath));
+		}
+		
+		
+		retryingFindClick(driver, By.xpath(xpath));
+		Thread.sleep(5000);
+	}
+	
+	public static void selectMonthScrollingV2 (WebDriver driver, Date date) throws InterruptedException, ParseException {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", new Locale("es", "ES"));
+		Date today = new Date();
+		String dateStr = df.format(today);
+		WebElement monthPopup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#gwt-debug-monthListBox-popup > div > div")));
+		
+		String xpath = "//div[@id='gwt-debug-monthListBox-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+dateStr+"')]/..";
+		
+		
+		WebElement currentElem = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+		String idx = currentElem.getAttribute("__idx");
+		int idxNum = Integer.parseInt(idx);
+		Keys key = (today.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
+		
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(Math.abs(date.getTime()-today.getTime()));
+		int diff = SeleniumTools.differenceInMonths(today,date);
+		
+		idxNum += (date.getTime() < today.getTime()) ? -diff : diff;
+		
+		String firstIdx = (today.getTime() > date.getTime()) ?
+				driver.findElement(By.cssSelector("#gwt-debug-monthListBox-celllist > div:nth-child(1) > div:nth-child(1)")).getAttribute("__idx")
+				:
+					driver.findElement(By.cssSelector("#gwt-debug-monthListBox-celllist > div:nth-child(1) > div:last-child")).getAttribute("__idx");
+		int firstIdxNum = Integer.parseInt(firstIdx);
+		
+		if (today.getTime() > date.getTime()) {
+			while (firstIdxNum > idxNum) {
+				monthPopup.sendKeys(key);
+//				Thread.sleep(250);
+				try {
+					firstIdx = driver.findElement(By.cssSelector("#gwt-debug-monthListBox-celllist > div:nth-child(1) > div:nth-child(1)")).getAttribute("__idx");
+					firstIdxNum = Integer.parseInt(firstIdx);
+				} catch (StaleElementReferenceException e) {}
+			}
+		} else {
+			while (firstIdxNum < idxNum) {
+				monthPopup.sendKeys(key);
+//				Thread.sleep(250);
+				try {
+					firstIdx = driver.findElement(By.cssSelector("#gwt-debug-monthListBox-celllist > div:nth-child(1) > div:last-child")).getAttribute("__idx");
+					firstIdxNum = Integer.parseInt(firstIdx);
+				} catch (StaleElementReferenceException e) {}
+			}
+		}
+		
+		monthPopup.sendKeys(key);
+		Thread.sleep(250);
+		monthPopup.sendKeys(key);
+		
+		xpath = "//div[@id='gwt-debug-monthListBox-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+df.format(date)+"')]";
+		
+		retryingFindClick(driver, By.xpath(xpath));
+//		driver.findElement(By.cssSelector(""))
+		
+		
+	}
+	
+	public static void draft(WebDriver driver, String employee) throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		By xpath = By.xpath("//tr [.//div[contains(text(), '"+employee+"')]] //td[1]");
+		wait.until(ExpectedConditions.elementToBeClickable(xpath));
+		retryingFindClick(driver, xpath);
+		String xpathStr = "//div[./table//div[contains(text(), '"+employee+"')]] //div[contains(@id, '-draft-content')]";
+		xpath = By.xpath(xpathStr);
+		wait.until(ExpectedConditions.elementToBeClickable(xpath));
+		retryingFindClick(driver, xpath);
+		Thread.sleep(200);
+		retryingFindClick(driver, xpath);
 	}
 
 	
