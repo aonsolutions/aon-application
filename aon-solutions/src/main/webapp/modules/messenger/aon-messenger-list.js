@@ -116,7 +116,6 @@ export class AonMessengerList extends AonElement {
     let data = []
     try {
       let filter = this.getFilter();    
-      console.log(filter);  
       filter.page = filter.page + 1;
       this.setFilter(filter);
 
@@ -125,10 +124,12 @@ export class AonMessengerList extends AonElement {
         this.MORE = false;
       else {
         data = tasks.map(task=>{
-          const titleDescription = `<span style="font-size:14px;font-weight: 500;">[${task.title}] ${task.description}</span>`;
+          const newTitle = `#${task.number.toString().padStart(5,0)} ${task.title}`;
+          const titleDescription = `<span style="font-size:14px;font-weight: 500;">${newTitle}</span>`;
           return {
             ...task,
             date:task.start_date,
+            newTitle,
             titleDescription
           };
         });
@@ -147,9 +148,9 @@ export class AonMessengerList extends AonElement {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         const options = {
           icon: MATERIAL_ICONS.INFO,
-          icon_color: CSS.variable(COLORS.MATERIAL_BLUE),
+          icon_color: CSS.variable(COLORS.ONLINE_GREEN),
           icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
-          title: res.title,
+          title: res.newTitle,
           subtitle: dateParse,
         };
         aonTable.addLi(options, idx, () => this.goMessengerChat(res));
@@ -159,7 +160,7 @@ export class AonMessengerList extends AonElement {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         res.icon = MATERIAL_ICONS.INFO;
         res.icon_title = "status";
-        res.icon_color = CSS.variable(COLORS.MATERIAL_BLUE);
+        res.icon_color = CSS.variable(COLORS.ONLINE_GREEN);
         res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
         aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res));
       });

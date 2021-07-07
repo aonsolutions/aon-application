@@ -51,7 +51,7 @@ export class AonMessenger extends AonElement {
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
-		getTaskHolder().then(task=>this.SENDER = task);
+		getTaskHolder({reload:true}).then(task=>this.SENDER = task);
 
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
@@ -168,7 +168,6 @@ export class AonMessenger extends AonElement {
 	}
 
 	deleteWorkgroup(workgroup) {
-		console.log(workgroup);
 		let d = this.getElement(this.getApplication().DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';

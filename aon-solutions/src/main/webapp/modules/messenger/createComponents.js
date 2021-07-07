@@ -1,5 +1,5 @@
-import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments.js";
-import { newComponent, setAttributes, setClasses, setStyles } from "../../services/utils.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { newComponent, setAttributes } from "../../services/utils.js";
 import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./shared/creationUtils.js";
 import { RIGHT } from "./shared/messenger-chat.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "./MessengerEnums.js";
@@ -11,7 +11,7 @@ const fontColor = CSS.variable(COLORS.GRAYSON);
 // MAIN VIEW
 // ----------------------------------------------------
 export const createMainView = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   id: MESSENGER_IDS.MAIN_DIV,
   classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
   styles: {
@@ -29,7 +29,7 @@ export const createMainView = () => newComponent({
 });
 
 export const createMobileMainView = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
   styles: {
     transition: ".5s",
@@ -46,7 +46,7 @@ export const createMobileMainView = () => newComponent({
 // TITLE AND INPUTS IN WRITTER SECTION IN DESKTOP VIEW
 // ----------------------------------------------------
 export const createTitleDiv = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes : [CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER],
   styles: {
     paddingTop: "10px",
@@ -110,15 +110,15 @@ export const createEditIcon = () => newComponent({
 });
 
 export const createReceiverDiv = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes: [
     CSS.FLEX_ROW,
     CSS.FLEX_ALIGN_CENTER,
     CSS.FLEX_JUSTIFY_START
   ],
   styles: {
-    marginTop: "15px",
-    marginBottom: "5px",
+    // marginTop: "15px",
+    // marginBottom: "5px",
     width: "100%",
     maxWidth: "600px",
   },
@@ -143,7 +143,7 @@ export const createReceiverDiv = () => newComponent({
 // SEND BAR IN DESKTOP VIEW
 // ----------------------------------------------------
 export const createSendBar = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes: [CSS.FLEX_ROW, CSS.NO_COPY, CSS.FLEX_JUSTIFY_START],
   styles: {
     maxWidth: "600px",
@@ -153,7 +153,7 @@ export const createSendBar = () => newComponent({
 });
 
 export const createUpload = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER],
   styles: {
     paddingTop: "15px",
@@ -191,7 +191,7 @@ export const createUploadText = () => newComponent({
 });
 
 export const createButtonWrapper = () => newComponent({
-  type: "div",
+  type: TAG.DIV,
   classes: [
     CSS.FLEX_ROW,
     CSS.FLEX_JUSTIFY_END,
@@ -204,9 +204,9 @@ export const createButtonWrapper = () => newComponent({
 });
 
 
-export const createSendButton = () => newComponent({
-  type: "button",
-  text: "Enviar",
+export const createSendButton = (text=null) => newComponent({
+  type: TAG.BUTTON,
+  text: text || MSG.SEND,
   id: MESSENGER_IDS.BUTTON_SUBMIT_COMMENT,
   classes: [
     "materialButton",
@@ -228,11 +228,18 @@ export const createSendButton = () => newComponent({
     borderRadius: "1000px",
     color: "#fff",
   },
-});
+}).element;
 
-export const createSendIcon = () => newComponent({
+export const createTaskButton = () => {
+  const btn = createSendButton(MSG.SAVE);
+  // btn.style.background = "#86D364"; //CSS.variable(COLORS.ONLINE_GREEN);
+  return btn;
+}
+
+
+export const createSendIcon = (icon) => newComponent({
   type: "i",
-  text: "send",
+  text: icon || "send",
   classes: ["material-icons"],
   styles: {
     fontSize: "1.2em",
@@ -264,7 +271,7 @@ export const createAttachHistory = () => newComponent({
 });
 
 export const createAttachTitle = () => newComponent({
-  type: 'div',
+  type: TAG.DIV,
   classes:
   [
     CSS.FLEX_ROW,
