@@ -40,6 +40,14 @@ export const AON_COMUNICA = {
   }
 }
 
+export const MOVEMENTS = {
+  name: 'Movimientos',
+  aonIcon: {
+    icon: 'aon_seg_social',
+    color: 'black'
+  }
+}
+
 export const SEPA_FILES = {
   id: 'SepaFiles',
   name: MSG.SEPA_FILES,
@@ -118,7 +126,7 @@ export const ACTION_COMUNICA = {
 }
 
 export const PayrollOptions = {
-  AON_CONTRACT ,COMPANY_COSTS, SEPA_FILES, PAYSHEET, AON_COMUNICA, AON_CERT, AON_CCC, AON_LABORAL
+  AON_CONTRACT ,COMPANY_COSTS, SEPA_FILES, PAYSHEET, AON_COMUNICA, AON_CERT, AON_CCC, AON_LABORAL, MOVEMENTS
 };
 
 export const PAYROLL_VIEWS = {
