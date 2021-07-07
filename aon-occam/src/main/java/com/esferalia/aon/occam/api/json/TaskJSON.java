@@ -46,7 +46,7 @@ public class TaskJSON {
 			//.setSourceId(sourceId)
 			.setStatus(TaskStatus.PENDING) 
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
-//			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
+			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 //			.setGtaskId(gtaskId)
 //			.setGtasklistId(gtasklistId)
 			;

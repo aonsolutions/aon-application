@@ -100,16 +100,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private void saveTaskWorkflow(AonApiData api, Task task) {
 //		Thread newThread = new Thread(() -> {
-			try {
-				TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(api.getData().optJSONObject("workflow"));
-				workflow.setTask(task.getId());
-				if(api.getData().getString("id").isEmpty()) { //open task
-					workflow.setType(TaskWorkflowType.OPEN);
-				} 
-				AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//				TaskWorkflow workflow = TaskWorkflowJSON.fromJSON(api.getData().opt("workflow"));
+//				workflow.setTask(task.getId());
+//				if(api.getData().getString("id").isEmpty()) { //open task
+//					workflow.setType(TaskWorkflowType.OPEN);
+//				} 
+			task.getWorkflows().stream().forEach(workflow -> AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow.setTask(task.getId())));
 //		});
 //		newThread.start();
 	}
