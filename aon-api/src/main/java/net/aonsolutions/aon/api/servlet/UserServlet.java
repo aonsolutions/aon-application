@@ -24,6 +24,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -288,7 +290,7 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONObject setUserAppRole(AonApiData api){
-		JSONArray roles = api.getData().optJSONArray("roles");
+		JSONArray roles = JsonUtils.getJSONArray(api.getData(), "roles");
 		Boolean portal = false;
 		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
 		for (Integer i = 0; i < roles.length(); i++) {
