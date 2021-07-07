@@ -51,8 +51,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		    String jsonInString = null;
 		    Domain domain = api.getDomain();
-			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
 			final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 			switch (api.getPath()) {
 				case "/get-employee":
@@ -61,7 +60,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					break;
 				case "/movements":
 					LOGGER.info("MOVEMENTS SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.getMovements(domain, "",  certificateInputStream, certificate.getPassword(), certificate.getType()));
+					jsonInString = gjson.toJson(this.getMovements(domain, api.getUser().getLogin(),  certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
 				case "/ipfxnaf":
 					LOGGER.info("IPFXNAF SERVLET - GET METHOD");

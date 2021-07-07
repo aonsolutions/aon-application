@@ -223,7 +223,7 @@ public class DomainUserRoles implements Serializable {
 	// COMUNIC@ - COMUNIC@
 	
 	public boolean hasComunica() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.COMUNICA);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.COMUNICA);
 	}
 	
 	public Boolean isComunica() {

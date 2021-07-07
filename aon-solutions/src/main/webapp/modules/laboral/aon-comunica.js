@@ -1,0 +1,231 @@
+import { AonElement } from "../../components/AonElement.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
+import { getDomainUserRoles, getIDC, getTA, movDelete } from "../../services/service.js";
+import { setValueName } from "../../services/utils.js";
+import { PayrollOptions, PAYROLL_VIEWS, CONTRACT_OPTIONS } from "./PayrollEnums.js";
+import { AonMovementsList } from "./comunic@/aon-movements-list.js";
+import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
+import { MSG, CONSTANT } from "../../environments/environments.js";
+import { AonApplication } from "../../components/aon-application.js";
+import { AonCtaList } from "./cta/aon-cta-list.js";
+import * as GWT from '../../gwt/gwt.js';
+import Apps from "../../services/app.js";
+
+
+export class AonComunica extends AonElement {
+
+  AON_COMUNICA;
+  dur;
+  _filter;
+	MOVEMENTS;
+	_movements;
+
+  static get observedAttributes() {
+    return [CONSTANT.TITLE];
+  }
+
+  get title() {
+    return this.getAttribute(CONSTANT.TITLE);
+  }
+
+  set title(title) {
+    this.setAttribute(CONSTANT.TITLE, title);
+  }
+
+  constructor () {
+    super();
+  }
+
+  connectedCallback () {
+    this.initialize();
+    getDomainUserRoles({reload:true}).then(r=>{
+      this.dur = new DomainUserRoles(r);
+      this.build();
+    });
+  }
+
+
+  initialize(){
+    this.AON_COMUNICA = 'aonComunica';
+    this.title = this.title || MSG.PAYROLL;
+    this._movements = [];
+    this._filter = [];
+  }
+
+  getDur() {
+    return this.dur;  
+  }
+
+  build() {
+    this.paintView();
+    this.buildToolbar();
+    this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
+  }
+
+  paintView(){
+    this.createApplication(this.AON_COMUNICA, this.title, new AonApplication());
+    this.applicationEl = this.getApplication();
+  }
+
+  buildToolbar(){
+    if(this.isMobile()){
+			this.applicationEl.addMobileSidenavHeader(Apps.COMUNICA);
+		}
+
+    let options = [];
+
+    let movements = PayrollOptions.MOVEMENTS;
+    movements.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
+    options.push(movements);
+
+    let aon_cta_list = PayrollOptions.AON_CCC;
+      aon_cta_list.fn = () =>{
+        this.applicationEl.removeToolbarOptions();
+        this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
+      }
+      options.push(aon_cta_list);
+      if(!this.isMobile()){
+        let aon_cert = PayrollOptions.AON_CERT;
+        aon_cert.fn = () => {
+          this.applicationEl.removeToolbarOptions();
+          if(window.innerWidth && window.innerWidth < 900){ this.applicationEl.closeSidenav(); }
+          this.showView(PAYROLL_VIEWS.AON_CERT);
+        }
+        options.push(aon_cert);
+      }
+
+    this.applicationEl.addSidenavOptions(MSG.COMUNICA, options);
+
+    let movButton = this.getElement('aonComunicaSidenavMovimientosAonIcon');
+    movButton.style.position = 'relative';
+    movButton.style.top = '3px';
+  }
+
+  async setDataFilter(data){
+    try {
+      this._filter = {...this._filter, ...data};
+      this.applicationEl.getChild().filter = true;
+    } catch (error) {}
+  }
+
+  changeFilter(){
+    try {
+      const filterParent = this._filter;
+      for(const obj in filterParent){
+        setValueName(obj, filterParent[obj]);
+      }
+    } catch (error) {}
+  }
+
+  removeToolbarOptions() {
+    let application = this.getApplication();
+    let toolbar = this.getElement(application.TOOLBAR);
+    if(toolbar)toolbar.removeButtons();
+  }
+
+  getOptions(res) {
+		let option = [
+			{
+				...CONTRACT_OPTIONS.TA,
+				fn: (el) => this.getTa(res, el)
+			},
+			{
+				...CONTRACT_OPTIONS.IDC,
+				fn: (el) => this.getIdc(res, el)
+			}
+		];
+		if (this.anularCondition(res.situation, res.fra)) {
+			option.push({
+				...CONTRACT_OPTIONS.DELETE,
+				fn: (el) => this.deleteMov(res, el)
+			});
+		}
+		return option;
+	}
+
+  async getTa(data, el) {
+		this.applicationEl.startLoading();
+		try {
+			const { regime, ctaCti, nss, fra } = data;
+			await getTA({ regime, ctaCti, nss, fra }); // open pdf
+		} catch (error) {
+      this.showToast(error);
+		}
+		this.applicationEl.stopLoading();
+	}
+
+  anularCondition(situation, fecha) {
+		const date_prev = new Date().addDay(-2);
+		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
+		// (situation.indexOf(sit) > -1) &&
+		return (date_prev.getTime() <= new Date(fecha).getTime());
+	}
+
+	async getIdc(data, el) {
+		this.applicationEl.startLoading();
+		try {
+			const { regime, ctaCti, nss, fra } = data;
+			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
+		} catch (error) {
+      this.showToast(error);
+		}
+    this.applicationEl.stopLoading();
+  }
+
+  async deleteMov(data, el) {
+    this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {
+        this.applicationEl.startLoading();
+        try {
+          await movDelete({
+            ...data,
+            nombre: data.nombre || data.name
+          });
+          this.showToast({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
+          if(this._movements.length){
+            this._movements = this._movements.filter(({ctaCti,fra,frb,ipf,nss,regime,situation}) => {
+              const dtFecha = data.frb || data.fra;
+              const fecha = frb || fra;
+              return !(ctaCti.includes(data.ctaCti) && fecha.includes(dtFecha) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation))
+            });
+          }
+          this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
+        } catch (error) {
+          this.showToast(error);
+        }
+      this.applicationEl.stopLoading();
+    });
+  }
+
+  showView(view, data = undefined, filter = undefined){
+    return new Promise(async(resolve)=>{
+      let aonView = undefined;
+      switch(view){
+      case PAYROLL_VIEWS.AON_CERT:
+          GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);
+          break;
+      case PAYROLL_VIEWS.AON_CTA_LIST:
+          if(this.isMobile()){
+            aonView = new AonCtaList();
+          } else {
+              GWT.load(GWT.MAIN_CCC, this.applicationEl.CONTENT);
+          }
+          break;
+      case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
+          aonView = new AonMovementsList();
+          break;
+      case PAYROLL_VIEWS.AON_ALTA_DIRECTA:
+          aonView = new AonAltaDirecta();
+          break;
+      }
+      if(aonView){
+          aonView.id = view;
+          if(filter) aonView.filter = filter;
+          if(data) aonView.data = data;
+          this.applicationEl.setContent(aonView);
+      }
+      
+      resolve(aonView);
+    });
+  }
+}
+window.customElements.define('aon-comunica', AonComunica);
