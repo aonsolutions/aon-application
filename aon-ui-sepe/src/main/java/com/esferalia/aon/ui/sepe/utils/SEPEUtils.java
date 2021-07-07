@@ -282,7 +282,7 @@ public class SEPEUtils {
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		Criteria criteria = new Criteria();
 		// Skip SLD salaries ( L00, L13 ... )
-		criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE),(byte)4);  
+		//criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE),(byte)4);  
 		
 		//criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), contract.getPerson().getId());
