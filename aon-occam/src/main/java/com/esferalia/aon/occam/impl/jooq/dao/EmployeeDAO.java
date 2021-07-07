@@ -38,7 +38,9 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
@@ -783,6 +785,13 @@ public class EmployeeDAO {
 		;
 		
 		for (Deduction deduction : deductionsList) {
+			
+			SelectConditionStep<Record1<Integer>> deductionConcept = 
+			dslContext.select(DEDUCTION_CONCEPT.ID)
+			.from(DEDUCTION_CONCEPT)
+			.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
+			.and(DEDUCTION_CONCEPT.CODE.eq(deduction.getName()));
+			
 			dslContext
 			.insertInto(CONTRACT_DEDUCTION)
 			.set(CONTRACT_DEDUCTION.DOMAIN, contractRecord.getDomain())
@@ -792,6 +801,7 @@ public class EmployeeDAO {
 			.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction.getDescription())
 			.set(CONTRACT_DEDUCTION.EXPRESSION, deduction.getExpression())
 			.set(CONTRACT_DEDUCTION.TYPE, valueOf(deduction.getType()))
+			.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, deductionConcept)
 			.execute()
 			;
 		}

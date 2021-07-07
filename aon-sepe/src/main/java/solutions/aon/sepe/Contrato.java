@@ -1,9 +1,14 @@
 package solutions.aon.sepe;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -44,6 +49,17 @@ public class Contrato {
 			catch (InterruptedException e) {throw new SepeException(e);}
 			catch (Exception e) {throw new SepeException(e);}
 			return null;
+	}
+	
+	public static void validateCert(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType) throws SepeException {
+			try {
+				validateCertImpl(certificateInputStream, certificatePassword, certificateType);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (Exception e) {throw new SepeException(e);}
 	}
 	
 	private static String contratoImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
@@ -111,8 +127,8 @@ public class Contrato {
 				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
 				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
 				if(cto.getCodFormativo() > 0) ((HtmlSelect)form.querySelector("select[name=codnivelformativo]")).setSelectedAttribute(cto.getCodFormativo().toString(), true);
-				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation().toString()); // disabled
-				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
+				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
+				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
 				((HtmlSelect)form.querySelector("select[name=codpais]")).setSelectedAttribute(cto.getCodPaisWork().toString(), true);
 				form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork().toString());//disabled
 
@@ -566,10 +582,21 @@ public class Contrato {
 		htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
 		return htmlPage;
 	}
+
+	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
+		try {
+			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
+			if(error!=null && !error.getVisibleText().isEmpty()) 
+				throw new SepeException(error.getVisibleText());
+		} catch (NullPointerException e) {}
+	}
 	
-	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType)  throws SepeException {
-	    try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {
+	
+	private static void validateCertImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType)  throws SepeException, IOException{
+		byte[] certByte = certificateInputStream.readAllBytes();
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte), certificatePassword, certificateType)) {
+	    	validateCertExpired( new ByteArrayInputStream(certByte), certificatePassword);
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
 	        DomNode fielset = htmlPage.querySelector("form > fieldset");
@@ -577,16 +604,26 @@ public class Contrato {
 	        	DomNode error =  fielset.querySelector("p");
 	        	if(error!=null && !error.getVisibleText().isEmpty())  throw new SepeException(error.getVisibleText());
 	        }	        
-		}
-		catch (Exception e) {throw new SepeException(e.getMessage());}
+	
+		} catch (Exception e) {throw new SepeException(e.getMessage());}
 	}
 	
-	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
-		try {
-			DomNode error = htmlPage.querySelector("#avisos > div > p:last-child");
-			if(error!=null && !error.getVisibleText().isEmpty()) 
-				throw new SepeException(error.getVisibleText());
-		} catch (NullPointerException e) {}
+	private static void validateCertExpired(InputStream certificateInputStream,  String certificatePassword) throws Exception {
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keystore.load(certificateInputStream, certificatePassword.toCharArray());
+        Enumeration<?> aliases = keystore.aliases();
+        Date expiryDate = null;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        for(; aliases.hasMoreElements();) {
+            String alias = (String) aliases.nextElement();
+            expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
+            if(expiryDate.compareTo(cal.getTime()) < 0 ) 
+            	throw new Exception("El certificado ha expirado");
+        }
 	}
 	
 	public enum FirmType {

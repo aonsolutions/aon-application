@@ -12,16 +12,30 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
+import com.esferalia.aon.in.payroll.tgss.idc.PEC.Deduction;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
-class BonusListener  implements IdcListener {
+class PECListener  implements IdcListener {
+	
+	@FunctionalInterface
+	private static interface DeductionProvider {
+		PEC.Deduction  newDeduction(			
+				String nss, 
+				String ccc, 
+				String pec, 
+				String quota, 
+				String porTipo,
+				String description, 
+				Date start, 
+				Date end);
+	}
 	
 	private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
 
 	static final int[] ssBonusCodes = new int[] { 1, 2, 13, 15, 16, 37, 41, 46, 48, 51, 52, 54, 55 };
 		
 	@SuppressWarnings("serial")
-	static final Map<String, String> ENTERPRISE_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+	static final Map<String, String> BONUS_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "CUOTA_EMPRESARIAL"); 	// 
 			put("03", "CGC_E"); 				// Cuota empresarial por Contingencias Comunes
@@ -33,12 +47,12 @@ class BonusListener  implements IdcListener {
 	};
 
 	@SuppressWarnings("serial")
-	static final Map<String, String> EMPLOYEE_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+	static final Map<String, DeductionProvider> DEDUCTION_QUOTA_PROVIDER_MAP = new HashMap<String, DeductionProvider>() {
 		{
-			put("68", "CGC");
-			//put("57", "CUOTA_OBRERA"); 	// Cuota Total
+			put("68", newRemoveDeduction(ContextVariable.CGC_EMPLOYEE));
 		}
 	};
+
 	
 	@SuppressWarnings("serial")
 	static final Map<String, String> PEC_TYPE_T_49_MAP = new HashMap<String, String>() {
@@ -75,6 +89,8 @@ class BonusListener  implements IdcListener {
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
 
+			put("42",  "MIN(%s, %.2f)"); 																	// 
+
 			put("51",  String.format(Locale.ROOT,"%%2$.2f * %s * %s / %s", ContextVariable.PARTIAL_FACTOR, ContextVariable.QUOTE_DAYS, ContextVariable.MONTH_DAYS )); 															// 
 
 		}
@@ -87,10 +103,10 @@ class BonusListener  implements IdcListener {
 		}
 	};
 
-	private Collection<Bonus> ssBonuses = new LinkedList<Bonus>();
+	private Collection<PEC> ssPECs = new LinkedList<PEC>();
 	
-	public Collection<Bonus> getSSBonuses() {
-		return Collections.unmodifiableCollection(ssBonuses);
+	public Collection<PEC> getSSBonuses() {
+		return Collections.unmodifiableCollection(ssPECs);
 	}
 
 	// ------------------------------------------------------------ IdcListener
@@ -100,10 +116,10 @@ class BonusListener  implements IdcListener {
 			String quota, Date start, Date end) {
 		if ( PEC_TYPE_T_49_MAP.containsKey(code )) {
 			try {
-				if ( ENTERPRISE_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssBonuses.add( newEnterpriseBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
-				if ( EMPLOYEE_QUOTA_EXPRESSION_MAP.containsKey(quota))
-					ssBonuses.add( newEmployeeBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
+				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota))
+					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
+				if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota))
+					ssPECs.add( DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).newDeduction(nss, ccc, code, quota, portTipo, description, start, end)) ;
 			} catch (ParseException e) {
 			}
 		}
@@ -114,12 +130,12 @@ class BonusListener  implements IdcListener {
 	
 	// ------------------------------------------------------------------------
 	
-	private static Bonus newEnterpriseBonus(String nss, String ccc, String code, String description, String portTipo,
+	private static PEC newBonus(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
 		
-		Bonus ssBonus = new Bonus();		
+		PEC ssBonus = new PEC.Bonus();		
 		ssBonus.setCcc(ccc);
 		ssBonus.setNss(nss);
 		ssBonus.setStartDate(start);
@@ -131,31 +147,6 @@ class BonusListener  implements IdcListener {
 		return ssBonus;
 	}
 
-	private static Bonus newEmployeeBonus(String nss, String ccc, String code, String description, String portTipo,
-			String quota, Date start, Date end) throws ParseException {
-		
-		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
-		
-		Bonus ssBonus = new Bonus();		
-		ssBonus.setCcc(ccc);
-		ssBonus.setNss(nss);
-		ssBonus.setStartDate(start);
-		ssBonus.setEndDate(end);
-		ssBonus.setFormula(String.format(Locale.ROOT,
-				"/*epoch:%d,pec:%s,quota:%s*/" +
-				"/*read-only*/( %s ) * %.2f / 100.00 * -1/**/", 
-				Calendar.getInstance().getTimeInMillis(),
-				code, 
-				quota,  
-				EMPLOYEE_QUOTA_EXPRESSION_MAP.get(quota), 
-				percent
-				));
-		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
-		ssBonus.setEmployee();
-		
-		return ssBonus;
-	}
-	
 	private static String getEnterpriseFormula(String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 
@@ -169,12 +160,46 @@ class BonusListener  implements IdcListener {
 			code, 
 			quota,
 			
-			String.format(Locale.ROOT, PEC_EXPRESSION_MAP.get(code), ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), percent), 
+			String.format(Locale.ROOT, PEC_EXPRESSION_MAP.get(code), BONUS_QUOTA_EXPRESSION_MAP.get(quota), percent), 
 			
 			(percent / 100.00)
 			
 			);
 		
 		return formula;
+	}
+	
+	
+	private static DeductionProvider newRemoveDeduction( ContextVariable var ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
+	private static PEC.Deduction newRemoveDeduction(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable var){
+		
+		PEC.Deduction deduction = 
+		new PEC.Deduction();	
+		deduction.setCcc(ccc);
+		deduction.setNss(nss);
+		deduction.setStartDate(start);
+		deduction.setEndDate(end);
+		deduction.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*//*read-only*/REMOVE()/**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				pec, 
+				quota
+				));
+		deduction.setDescription(String.format(new Locale("es", "ES"),"%s (%s)", description, portTipo));
+		deduction.setName(var.getName());
+		
+		return deduction;
 	}
 }

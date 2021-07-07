@@ -1,13 +1,17 @@
 package solutions.aon.seg.social;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +41,6 @@ import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-
 class SistemaREDMov {
 	//HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
@@ -53,6 +56,16 @@ class SistemaREDMov {
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 		return null;
 	}
+	
+	public static void validateCert(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws SegSocialException{
+		try {validateCertImpl(certificateInputStream, certificatePassword, certificateType);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}
+
 
 	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc) throws SegSocialException{
@@ -693,10 +706,12 @@ class SistemaREDMov {
 		return null;
 	}
 	
-	public static void validateCert(
+	private static void validateCertImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType
-	) throws SegSocialException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(certificateInputStream, certificatePassword, certificateType)) {
+	) throws SegSocialException, IOException {
+		byte[] certByte = certificateInputStream.readAllBytes();
+		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte), certificatePassword, certificateType)) {
+	    	validateCertExpired( new ByteArrayInputStream(certByte), certificatePassword);
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 			DomNode section = htmlPage.querySelector("#segsocial section");
@@ -705,6 +720,24 @@ class SistemaREDMov {
 				if(error!=null && !error.getVisibleText().isEmpty()) throw new SegSocialException(error.getVisibleText());
 			}
 		} catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}
+	
+	private static void validateCertExpired(InputStream certificateInputStream,  String certificatePassword) throws Exception {
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keystore.load(certificateInputStream, certificatePassword.toCharArray());
+        Enumeration<?> aliases = keystore.aliases();
+        Date expiryDate = null;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        for(; aliases.hasMoreElements();) {
+            String alias = (String) aliases.nextElement();
+            expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
+            if(expiryDate.compareTo(cal.getTime()) < 0 ) 
+            	throw new Exception("El certificado ha expirado");
+        }
 	}
 	
 	private static JavaScriptErrorListener jascriptFunctionExceptionError() {

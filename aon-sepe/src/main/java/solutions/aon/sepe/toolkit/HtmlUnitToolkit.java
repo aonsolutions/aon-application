@@ -58,6 +58,25 @@ public class HtmlUnitToolkit {
 		catch(RuntimeException e) {throw new InvalidCertificateException();}
 	}
 	
+	//GET THE WEB CLIENT OF HTMLUNIT
+	public static WebClient getWebClientExplorer(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType) throws InvalidCertificateException {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+			disableLogging(webClient);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
+			webClient.setJavaScriptTimeout(15000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
+					certificateType);
+			
+			return webClient;	
+		}
+		catch(RuntimeException e) {throw new InvalidCertificateException();}
+	}
+	
+	
 	public static WebClient getWebClientCert(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SepeException {
 		try {

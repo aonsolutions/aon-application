@@ -62,7 +62,7 @@ public class CostCSVServlet extends HttpServlet {
 			if (req.getParameterValues(FILTER.getName()) != null)
 				types = Arrays.stream(req.getParameterValues(FILTER.getName()))
 				.map(str -> Integer.parseInt(str))
-				.collect(Collectors.toUnmodifiableList());
+				.collect(Collectors.toList());
 			else
 				types = Collections.unmodifiableList(new ArrayList<Integer>());
 			

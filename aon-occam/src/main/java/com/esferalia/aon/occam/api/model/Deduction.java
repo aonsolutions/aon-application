@@ -11,6 +11,7 @@ public class Deduction implements Serializable, HasId, HasDomain, HasStartDate, 
 	private Integer domain;
 	private Date startDate;
 	private Date endDate;
+	private String name;
 	private String description;
 	private String expression;
 	private DeductionType type ;
@@ -64,6 +65,15 @@ public class Deduction implements Serializable, HasId, HasDomain, HasStartDate, 
 		this.endDate = endDate;
 		return this;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public Deduction setName(String name) {
+		this.name = name;
+		return this;
+	}
 
 	public String getDescription() {
 		return description;
@@ -82,6 +92,8 @@ public class Deduction implements Serializable, HasId, HasDomain, HasStartDate, 
 		this.expression = expression;
 		return this;
 	}
+	
+	
 
 
 }

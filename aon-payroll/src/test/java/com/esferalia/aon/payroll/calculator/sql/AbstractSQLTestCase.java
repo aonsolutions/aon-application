@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -80,6 +81,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.jooq.tables.ContractPayment;
+import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -1418,7 +1420,7 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final ContractDeductionRecord addDeduction(AONContext aonContext, ContractRecord contract,
-			Date startDate, Date endDate, String expression, String description, DeductionType type) {
+			Date startDate, Date endDate, String expression, String description , String concept) {
 		return aonContext.getDslContext()
 				.insertInto(CONTRACT_DEDUCTION)
 				.set(CONTRACT_DEDUCTION.DOMAIN, contract.getDomain())
@@ -1427,13 +1429,19 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_DEDUCTION.END_DATE, endDate)
 				.set(CONTRACT_DEDUCTION.EXPRESSION, expression)
 				.set(CONTRACT_DEDUCTION.DESCRIPTION, description)
-				
-				.set(CONTRACT_DEDUCTION.TYPE, (byte) type.ordinal())
-				.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, DSL.castNull(Integer.class))
+				.set(CONTRACT_DEDUCTION.TYPE, DSL.castNull(Byte.class))
+				.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, 
+				DSL.select(DEDUCTION_CONCEPT.ID)
+				.from(DEDUCTION_CONCEPT)
+				.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
+				.and(DEDUCTION_CONCEPT.CODE.eq(concept))
+				)
 				
 				.returning().fetchOne();
 
 	}
+	
+	
 
 	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
 			Date startDate, BonusConceptRecord concept) {

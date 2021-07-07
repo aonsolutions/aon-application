@@ -116,6 +116,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
@@ -177,10 +178,13 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.payroll.Contract;
@@ -6130,10 +6134,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Certificate certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 
-			aon.sepe.objects.Contract cto = createContract(employeeContractInfo,
+			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
 					employeeContractInfo.getEmployeeInfo().getDocument());
 
-			Sepe.sendContracto(certificateIS, certificate.getPassword(), certificate.getType(), cto);
+			Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e);
@@ -6287,35 +6291,43 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return builder.build();
 	}
 
-	private aon.sepe.objects.Contract createContract(EmployeeContractInfo employeeContractInfo, String ipf) {
-
+	private aon.sepe.objects.Contract createContract(String domainName, Integer domainId, String login, EmployeeContractInfo employeeContractInfo, String ipf) {
+		com.esferalia.aon.occam.api.model.Workplace wp = AON.getWorkplace(domainName, domainId, login, f -> f.getIdProperty().eq(employeeContractInfo.getContractInfo().getWorkplaceId()));
+		RegistryAddressFilter filter = f -> f.getIdProperty().eq(wp.getAddress());
+		RegistryAddress workAddress = AON.get(domainName, domainId, login, filter);
+		
+		RegistryAddressFilter employeefilter = f -> f.getRegistryProperty().eq(employeeContractInfo.getEmployeeInfo().getEmployeeId());
+		RegistryAddress employeeAddress = AON.get(domainName, domainId, login, employeefilter);
 		ContractBuilder builder = new ContractBuilder();
-
+		
 		builder.setCifEnterprise(employeeContractInfo.getContractInfo().getEnterpriseCIF());
 		builder.setRegimen(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
 		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 		builder.setNss(employeeContractInfo.getEmployeeInfo().getSsNumber());
 		builder.setIpf(ipf);
-//		builder.setName(employeeContractInfo.getContractSpecificData().getEnterpriseAgentName());
+		builder.setName(employeeContractInfo.getEmployeeInfo().getName());
 		builder.setSex(SexType.values()[Integer.parseInt(employeeContractInfo.getEmployeeInfo().getGender() + "")]);
-//		builder.setSurname(employeeContractInfo.getContractSpecificData().getEnterpriseAgentSurname());
-//		builder.setLastSurname(employeeContractInfo.getContractSpecificData().getEnterpriseAgentLastSurname());
-		builder.setCodNationality(Integer.parseInt(employeeContractInfo.getEmployeeInfo().getNationalityCode()));
-		builder.setCodPaisDom(Integer.parseInt(employeeContractInfo.getEmployeeInfo().getAddressProvinces()));
+		builder.setSurname(employeeContractInfo.getEmployeeInfo().getSurName());
+		builder.setLastSurname(employeeContractInfo.getEmployeeInfo().getSecondSurName());
+		builder.setCodNationality(	Country.safeValueOf(employeeContractInfo.getEmployeeInfo().getNationalityCode()).getIsoCode());
+		builder.setCodPaisDom(employeeAddress.getCountry() != null 
+				? employeeAddress.getCountry().getIsoCode()
+				: Country.ES.getIsoCode()); 
 		builder.setCodMunDom(employeeContractInfo.getEmployeeInfo().getAddressCity());
 		builder.setCodFormativo(Integer.parseInt(employeeContractInfo.getContractSpecificData().getFormativeLevel()));
-		builder.setCodOccupation(Integer.parseInt(employeeContractInfo.getContractInfo().getOcupation()));
-//		builder.setCodPaisWork(employeeContractInfo.getContractInfo().getWorkplaceAddressProvince());
-//		builder.setCodMunWork(employeeContractInfo.getContractInfo().getWorkplaceAddressCity());
+		builder.setCodOccupation(employeeContractInfo.getContractSpecificData().getCno()); 		
+		builder.setCodPaisWork(workAddress.getCountry() != null 
+				? workAddress.getCountry().getIsoCode() 
+				: Country.ES.getIsoCode());
+		builder.setCodMunWork(workAddress.getMunicipalityCode());
 		builder.setCodContract(employeeContractInfo.getContractInfo().getContractType());
 		builder.setDateIniContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setDateFinContract(employeeContractInfo.getContractInfo().getEndDate());
 		builder.setDateBirth(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setDateComContract(employeeContractInfo.getContractInfo().getStartDate());
 		builder.setOffer(OfferType.NO);
-		builder.setJndType(
-				JndType.values()[Integer.parseInt(employeeContractInfo.getContractSpecificData().getJourneyType())]);
+		builder.setJndType(JndType.safeValueOf(employeeContractInfo.getContractSpecificData().getJourneyType()));
 		builder.setDurationTypeJndHour(employeeContractInfo.getContractSpecificData().getJourneyDurationHours());
 		builder.setDurationTypeJndMin(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes());
 		builder.setDurationTypeCvnHour(employeeContractInfo.getContractSpecificData().getAgreementHours());
