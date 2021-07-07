@@ -38,6 +38,14 @@ export class AonTextArea extends AonElement {
 		this.RIGHT = value;
 	}
 
+	get placeholder(){
+		return this.getAttribute("placeholder");
+	}
+
+	set placeholder(value){
+		this.setAttribute("placeholder", value);
+	}
+
 	// get textarea(){
 	// 	return this.TEXTAREA;
 	// }
@@ -72,8 +80,7 @@ export class AonTextArea extends AonElement {
 
 	get value() {
 		const textarea = this.getElement(this.TEXTAREA);
-		return textarea ? textarea.innerHTML.trim() : null;
-		// return this.getAttribute(CONSTANT.VALUE);
+		return textarea && textarea.innerText.trim().length>0  ? textarea.innerHTML.trim() : null;
 	}
 
 	set value(value) {
@@ -100,50 +107,6 @@ export class AonTextArea extends AonElement {
 	set disabled(disabled) {
 		this.setAttribute(CONSTANT.DISABLED, disabled);
 	}
-
-	clear(){
-		const area = this.getDivTextArea();
-		area.innerHTML = "";
-		area.value = "";
-	}
-
-	getDivTextArea(){
-		return this.getElement(this.TEXTAREA);
-	}
-
-
-	addToolbarOptionLeft(properties,fn){
-		
-		if(!properties.id) properties.id = "noId";
-		if(!properties.icon && !properties.aonIcon) return;
-
-		if(properties.aonIcon){}
-		else if(properties.icon){
-			const icon = newComponent({
-				text: properties.icon,
-				id: properties.id,
-				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
-				events : {click : fn}
-			});
-			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
-		}
-	}
-
-	addToolbarOptionRight(properties,fn){
-		if(!properties.id) properties.id = "noId";
-		if(!properties.icon && !properties.aonIcon) return;
-		if(properties.aonIcon){} 
-		else if(properties.icon){
-			const icon = newComponent({
-				text: properties.icon,
-				id: properties.id,
-				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
-				events : {click : fn}
-			});
-			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
-		}
-	}
-
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
 			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
@@ -161,7 +124,7 @@ export class AonTextArea extends AonElement {
 
 	connectedCallback () {
 		this.TEXTAREA = "textarea" + this.id;
-		this.toolbar = "toolbar" + this.id;
+		this.TOOLBAR = "toolbar" + this.id;
 		this.build();
 	}
 
@@ -177,7 +140,8 @@ export class AonTextArea extends AonElement {
 				CSS.NO_COPY
 			],
 		});
-	  
+		bar.appendTo(this);
+
 		const left = newComponent({
 			id:this.LEFT,
 			classes: [
@@ -187,6 +151,7 @@ export class AonTextArea extends AonElement {
 				CSS.FLEX_ALIGN_CENTER
 			]
 		});
+		left.appendTo(bar.element);
 
 		const right = newComponent({
 			id:this.RIGHT, 
@@ -197,6 +162,7 @@ export class AonTextArea extends AonElement {
 				CSS.FLEX_JUSTIFY_END
 			]
 		});
+		right.appendTo(bar.element);
 
 		// const eye = newComponent({
 		// 	text: MATERIAL_ICONS.VISIBILITY,
@@ -213,6 +179,7 @@ export class AonTextArea extends AonElement {
 		// });
 
 		const textarea = this.generateTextArea();
+		textarea.appendTo(this);
 		// setEvents(eye.element,
 		// 	{click : 
 		// 		() => {
@@ -248,11 +215,10 @@ export class AonTextArea extends AonElement {
 		// );
 		// eye.appendTo(left.element);
 
-		left.appendTo(bar.element);
-		right.appendTo(bar.element);
+	
 
-		bar.appendTo(this);
-		textarea.appendTo(this);
+	
+
 
 	}
 
@@ -260,18 +226,16 @@ export class AonTextArea extends AonElement {
 		let userSelection;
 		if (window.getSelection) {
 			userSelection = window.getSelection();
-		}
-		else if (document.selection) { // Opera
+		} else if (document.selection) { // Opera
 			userSelection = document.selection.createRange();
 		}  
 		return userSelection;
-		
-	  } 
+	} 
 
 	generateTextArea(){
-		return newComponent({
+		const area = newComponent({
 			type: TAG.DIV,
-			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL],
+			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
@@ -285,6 +249,9 @@ export class AonTextArea extends AonElement {
 				background: '#fff'
 			}
 		});
+		if(this.placeholder) area.element.setAttribute("placeholder", this.placeholder);
+
+		return area;
 		// let area = newComponent({
 		// 	type: "textarea",
 		// 	classes : [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL],
@@ -338,6 +305,52 @@ export class AonTextArea extends AonElement {
 		// });
 
 		// return area;
+	}
+
+	clear(){
+		const area = this.getDivTextArea();
+		area.innerHTML = "";
+		area.value = "";
+	}
+
+	removeToolbar(){
+		this.getElement(this.TOOLBAR).remove();
+	}
+
+	getDivTextArea(){
+		return this.getElement(this.TEXTAREA);
+	}
+
+	addToolbarOptionLeft(properties,fn){
+		
+		if(!properties.id) properties.id = "noId";
+		if(!properties.icon && !properties.aonIcon) return;
+
+		if(properties.aonIcon){}
+		else if(properties.icon){
+			const icon = newComponent({
+				text: properties.icon,
+				id: properties.id,
+				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
+				events : {click : fn}
+			});
+			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
+		}
+	}
+
+	addToolbarOptionRight(properties,fn){
+		if(!properties.id) properties.id = "noId";
+		if(!properties.icon && !properties.aonIcon) return;
+		if(properties.aonIcon){} 
+		else if(properties.icon){
+			const icon = newComponent({
+				text: properties.icon,
+				id: properties.id,
+				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
+				events : {click : fn}
+			});
+			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
+		}
 	}
 
 	getValue() {return this.value && this.value === 'true';}
