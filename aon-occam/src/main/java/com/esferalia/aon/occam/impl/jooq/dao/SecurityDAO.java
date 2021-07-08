@@ -1171,7 +1171,9 @@ public class SecurityDAO {
 	
 	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
 		return 
-		getUserCertificate(aonContext.getDslContext(), userFilter).or(()->getDomainCertificate(aonContext.getDslContext(), userFilter));
+		getUserCertificate(aonContext.getDslContext(), userFilter)
+		.or(()->getDomainCertificate(aonContext.getDslContext(), userFilter))
+		.or(()-> getParentDomainCertificate(aonContext.getDslContext(), userFilter));
 	}
 	
 	
@@ -1205,6 +1207,31 @@ public class SecurityDAO {
 		.from(USER)
 		.innerJoin(DATA_ATTACH).on(
 		USER.DOMAIN.eq(DATA_ATTACH.DOMAIN)
+		,DATA_ATTACH.SOURCE.eq((byte)SISTEMA_RED.ordinal())
+		,DATA_ATTACH.TYPE.eq((byte)DataAttachType.DIGITAL_CERTIFICATE.ordinal())
+		);
+				
+		return 
+		USER_PROPERTIES
+		.build(select, userFilter)
+		.fetchOptional()
+		.map(r -> new Certificate()
+		.setType(MimeType.PKCS12.name())
+		.setCertificate(r.get(DATA_ATTACH.DATA))
+		.setPassword(r.get(DATA_ATTACH.DESCRIPTION))
+		)
+		;
+	}
+
+	public static Optional<Certificate> getParentDomainCertificate(DSLContext dslContext, UserFilter userFilter ) {
+		SelectOnConditionStep<Record> select = 
+		dslContext
+		.select()
+		.from(USER)
+		.innerJoin(DOMAIN).on(
+		USER.DOMAIN.eq(DOMAIN.ID))
+		.innerJoin(DATA_ATTACH).on(
+		DOMAIN.PARENT.eq(DATA_ATTACH.DOMAIN)
 		,DATA_ATTACH.SOURCE.eq((byte)SISTEMA_RED.ordinal())
 		,DATA_ATTACH.TYPE.eq((byte)DataAttachType.DIGITAL_CERTIFICATE.ordinal())
 		);
