@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -28,17 +30,37 @@ public class LoginServlet extends AonApiHttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 		String username = json.optString("username");
 		String password = json.optString("password");
-	    Boolean ok = false;
+		String login = "";
+		if(username.contains("=")) {
+			String[] strs = username.split("=");
+			login = strs[0];
+			username = strs[1];
+			
+		}
+		Boolean ok = false;
 		Auth auth = new Auth();
 	    if(Utils.isEmail(username)) {
 	    	List<String> schemas = AONContext.getSchemas();
+	    	if(!AonStringUtils.isBlank(login)) {
+	    		for(String schema: schemas) {
+	    			String domain = AONContext.getSchemaFirstDomain(schema);
+	    			if(!ok && !AonStringUtils.isBlank(domain)) {
+	    				User user = AON.getUser(domain, 0, login);
+	    				if(user.getId() != null) {
+	    					String pass = SECURITY.getUserPassword(domain, 0, login, user.getId());
+	    					String userPass = Utils.createPasswordHash(login, password);
+	    					ok = pass.equals(userPass);
+	    				}
+	    			}
+	    		}
+	    	}
 	    	for(String schema: schemas) {
 	    		String domain = AONContext.getSchemaFirstDomain(schema);
 	    		
 	    		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
     				auth = AON_SOLUTIONS.getAuth(domain, 0, username);
     				auth.setSchema(schema);
-	    	    	if(auth.getUuid() != null) {
+	    	    	if(!ok && auth.getUuid() != null) {
 	    	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 						ok = pass.equals(auth.getPassword());
 	    	    	} 
