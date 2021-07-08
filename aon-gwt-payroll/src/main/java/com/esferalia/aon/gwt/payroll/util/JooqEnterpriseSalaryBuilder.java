@@ -288,9 +288,10 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<String, EnterprisePayrollEntry>());
 			
-			String key  = String.format("%s-%s", 
+			String key  = String.format("%s-%s-%3$td", 
 			r.get(SALARY.SOCIAL_SECURITY_NUMBER), 
-			getSalaryTypeKey(salaryType)
+			getSalaryTypeKey(salaryType),
+			r.get(SALARY.END_DATE)
 			);
 			
 			map.get(r.get(WORKPLACE.DESCRIPTION)).put(key, entry);
