@@ -101,11 +101,18 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	}
 	
 	public double calculatePorcentajeIngresoCuenta2021(int actIdx,double covid) {
-		double por = this.mod303.getActivityList().get(actIdx).getPor();
-		if ( AonMathUtils.equals(1, covid)) {
-			String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
-			Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);
-			if (AonNumberUtils.equals(epig.getVatPorc(), por)) {
+//		double por = this.mod303.getActivityList().get(actIdx).getPor();
+		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
+		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		double por = 0.0;
+		if (epig != null)
+			por = epig.getVatPorc();
+		
+        // Reducción COVID (20% o 35% según epigrafe)
+		if (AonMathUtils.equals(1, covid)) {
+//			String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
+//			Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);
+//			if (AonNumberUtils.equals(epig.getVatPorc(), por)) {
 				double percent = 100;  
 				if ("419.1".equals(epi) || "419.2".equals(epi) || "419.3".equals(epi) || 
 					"423.9".equals(epi) || "641".equals(epi)   || "642.1".equals(epi) || 
@@ -136,7 +143,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 					percent = 35;
 				}
 				por = AonMathUtils.round(por - (por * percent / 100));		
-			}
+//			}
 		}
 		return por;
 	}
