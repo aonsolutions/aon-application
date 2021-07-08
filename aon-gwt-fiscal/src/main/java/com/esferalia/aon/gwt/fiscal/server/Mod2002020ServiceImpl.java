@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.Base64;
@@ -18,7 +17,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.XMLtoMod2002020;
 import com.esferalia.aon.occam.server.fiscal.format.Mod2002020Import2019;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 2020 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod2002020" })
@@ -50,22 +48,10 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	
 	@Override
 	public Mod2002020 initializeMod2002020(String domainName, int domain, String user, Mod2002020 mod200) {
-		HttpServletRequest request = getThreadLocalRequest();
-		try {
-			Mod2002019 mod2002019 = (Mod2002019) request.getSession().getAttribute("Mod2002019Import");
-			if (mod2002019 != null) {
-				if (!AonStringUtils.equals( mod2002019.getDocument(), mod200.getDocument())) {
-					throw new AonCoreException("El NIF del documento importado no coincide");
-				}
-				Mod2002020Import2019.import2019(mod200, mod2002019);
-				mod200.setInitializedFromLastYear(true);
-			}
-			return FISCAL.initializeMod2002020(domainName,domain,user,mod200);
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		} finally {
-			request.getSession().removeAttribute("Mod2002019Import");
-		}
+		Mod2002019 mod2002019 = FISCAL.getMod2002019ByYear(domainName, domain, user, 2019);
+		Mod2002020Import2019.import2019(mod200, mod2002019);
+		mod200.setInitializedFromLastYear(true);
+		return FISCAL.initializeMod2002020(domainName,domain,user,mod200);
 	}
 
 	@Override

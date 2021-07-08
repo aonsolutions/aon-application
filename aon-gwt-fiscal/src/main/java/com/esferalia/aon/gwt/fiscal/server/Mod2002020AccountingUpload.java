@@ -30,16 +30,14 @@ public class Mod2002020AccountingUpload extends UploadAction {
 
 	@Override
 	public String executeAction(HttpServletRequest request,
-			List<FileItem> sessionFiles) throws UploadActionException {
+			List<FileItem> files) throws UploadActionException {
+		
 		String domainName = request.getParameter("domain_name");
-		String domain_id = request.getParameter("domain_id");
-		Integer domainId = AonNumberUtils.toInteger(domain_id); 
 		String login = request.getParameter("login");
 		String hashId = Base64.encode(domainName + login);
 	
-	
 		String response = "";
-		for (FileItem item : sessionFiles) {
+		for (FileItem item : files) {
 			if (false == item.isFormField()) {
 				try {
 					ByteArrayInputStream input = new ByteArrayInputStream(item.get());
@@ -55,7 +53,7 @@ public class Mod2002020AccountingUpload extends UploadAction {
 			}
 		}
 		// Remove files from session because we have a copy of them
-		super.removeSessionFileItems(request);
+		// super.removeSessionFileItems(request);
 		// Send your customized message to the client.
 		return response;
 	}
