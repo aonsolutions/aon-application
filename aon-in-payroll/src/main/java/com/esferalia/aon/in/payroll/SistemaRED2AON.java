@@ -302,6 +302,7 @@ public class SistemaRED2AON {
 						if ( salary.getSalaryType() == SalaryType.L13 ) {
 							l13startDate = salary.getStartDate();
 							salary.setStartDate(employee.getStartDate());
+							salary.setIssueDate(min(salary.getEndDate(), endDate));
 						}
 						
 						employee.getName().ifPresent(name -> salary.setEmployeeName(name) );
@@ -314,6 +315,7 @@ public class SistemaRED2AON {
 									getEmployees(login, domainId, domainName, ccc, settleEndDate, settleEndDate, p -> p.getNafProperty().eq(naf));
 							oldEmployees.get(naf).forEach(oldEmployee -> {
 								salary.setStartDate(oldEmployee.getStartDate());
+								salary.setIssueDate(min(salary.getEndDate(), endDate));
 								AON.saveSalaries(aonContext, domainId, Collections.singleton(salary));	
 							} );
 						}
