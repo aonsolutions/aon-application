@@ -33,7 +33,6 @@ export const MESSENGER_IDS = {
     MESSENGER_CHAT: "messengerChat",
     NEW_REQUEST_PANEL : "newRequestPanel", 
     NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
-    NEW_REQUEST_PANEL_RECEIVER : "newRequestPanelReceiver", 
     NO_MESSAGES : "noMessages",
     ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
     BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
@@ -43,7 +42,6 @@ export const MESSENGER_IDS = {
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
     TITLE_TASK: "titleTask",
-    DESCRIPTION_TASK: "descriptionTask",
     TASK_ID: "taskId"
 }
 

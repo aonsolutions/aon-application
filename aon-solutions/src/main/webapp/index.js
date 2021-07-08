@@ -102,10 +102,18 @@ const loadScripts = () => {
     }
 }
 
-const loadScriptFirebase = () => Promise.all([
-    loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"),
-    loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js")
-]).then(() => setWindowApp());
+// const loadScriptFirebase = () => Promise.all([
+//     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"),
+//     loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js")
+// ]).then(() => setWindowApp());
+
+
+const loadScriptFirebase = async() =>{
+    await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js");
+    await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js");
+    setWindowApp()
+}
+
 
 load();
 

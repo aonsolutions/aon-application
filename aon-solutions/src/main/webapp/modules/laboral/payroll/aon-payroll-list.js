@@ -154,7 +154,7 @@ export class AonPayrollList extends AonElement {
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {SigninSidenav
+    if (aonTable) {
       aonTable.addColumn("Nombre", "string", "name", "30%");
       aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
       aonTable.addColumn("F. Inicio", "date", "startDateP", "10%");

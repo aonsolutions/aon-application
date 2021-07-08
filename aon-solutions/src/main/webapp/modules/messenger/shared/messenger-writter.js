@@ -5,7 +5,7 @@ import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environme
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import { createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
+import { createTaskButton, createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "../MessengerEnums.js";
 import { createStartJustifiedColumn } from "./creationUtils.js";
 import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
@@ -30,15 +30,16 @@ export const buildDesktopWritter = (writter, data, parent) => {
      */
     const titleDiv = createStartJustifiedColumn();
     setStyles(titleDiv.element ,{ width : "100%" });
+    titleDiv.element.style.marginBottom = "5px";
     //TITLE
     const title = createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, "Escriba su titulo aquí");
     titleDiv.element.appendChild(title);
-    //DESCRIPTION
-    const description = createDivEditable(data.description, MESSENGER_IDS.DESCRIPTION_TASK, MSG.DESCRIPTION);
-    description.style.fontSize = "14px";
-    titleDiv.element.appendChild(description);
-    //----------------WORKGROUP    //----------------WORKGROUP
+    titleDiv.appendTo(writter.element);
+
     const receiverDiv = createReceiverDiv();
+    receiverDiv.appendTo(writter.element);
+
+     //----------------WORKGROUP   
     const workgroupSelect = setAttributes( new AonSelect(),{
         id: MESSENGER_IDS.WORKGROUP,
         name: MESSENGER_IDS.WORKGROUP,
@@ -46,7 +47,7 @@ export const buildDesktopWritter = (writter, data, parent) => {
     });
 
     receiverDiv.element.appendChild(workgroupSelect);
-    fillWorkGroup(workgroupSelect,data, application);
+    fillWorkGroup(data, application);
 
     //-----------------TASK HOLDER
     const taskHolderSelect = setAttributes( new AonSelect(),{
@@ -57,52 +58,39 @@ export const buildDesktopWritter = (writter, data, parent) => {
     taskHolderSelect.style.marginLeft = "5px";
     receiverDiv.element.appendChild(taskHolderSelect);
 
-    /**
-     * Building aon-textarea
-     * 
-     * ----------------------------------
-     * | <o>  B  I                      |
-     * ----------------------------------
-     * | My text here...                |
-     * |                                |
-     * |                                |
-     * ----------------------------------
-     * 
-     */
+
     const aonTextArea = new AonTextArea();
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
-    waitEl(`#${aonTextArea.id}`).then(el =>  buildTextareaToolbar(el));
-
+    writter.appendChild(aonTextArea);
+    buildTextareaToolbar(aonTextArea);
+ 
 
     /**
      * Creating send bar
      */
     const sendBar = createSendBar();
+    sendBar.appendTo(writter.element);
+
     const upload = createUpload();
-    const uploadIcon = createUploadIcon();
-    const uploadText = createUploadText();
-
-    const sendButtonWrapper = createButtonWrapper();
-    const sendButton = createSendButton();
-    sendButton.element.addEventListener(EVENT.CLICK,()=>parent.save());
-
-    const sendIcon = createSendIcon();
-    uploadIcon.appendTo(upload.element);
-    uploadText.appendTo(upload.element);
     upload.appendTo(sendBar.element);
 
-    sendIcon.appendTo(sendButton.element);
-    sendButton.appendTo(sendButtonWrapper.element);
+    const uploadIcon = createUploadIcon();
+    uploadIcon.appendTo(upload.element);
+
+    const sendButtonWrapper = createButtonWrapper();
     sendButtonWrapper.appendTo(sendBar.element);
+   
+    const uploadText = createUploadText();
+    uploadText.element.addEventListener(EVENT.CLICK,()=> parent.getApplication().development());
+    uploadText.appendTo(upload.element);
 
-    /* main elements append */
-    titleDiv.appendTo(writter.element);
-
-    receiverDiv.appendTo(writter.element);
-    writter.appendChild(aonTextArea);
-
-    sendBar.appendTo(writter.element);
+    //BUTTON SAVE
+    const sendButton = parent.UPDATE ? createSendButton() : createTaskButton();
+    sendButton.addEventListener(EVENT.CLICK,()=> parent.save());
+    sendButtonWrapper.appendChild(sendButton);
+    const sendIcon = createSendIcon(parent.UPDATE ? "send" : "save");
+    sendIcon.appendTo(sendButton);
 }
 
 /**
@@ -127,7 +115,7 @@ export const buildMobileWritter = (parent) => {
             zIndex : -9
         }
     });
-    
+    writter.appendTo(parent.element);
 
     const bar = new AonToolbar();
     bar.style.background = "#fff";
@@ -135,58 +123,46 @@ export const buildMobileWritter = (parent) => {
     bar.type = ToolbarType.SECONDARY;
     bar.title = MSG.COMMENT;
     writter.element.appendChild(bar);
+    bar.addButton2(ACTIONS.SAVE,() => {
+        /*
+        * Showing float button 
+        * with little animation
+        */
+        let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
+            transition : "0.25s",
+            opacity : "1"
+        });
+
+        setTimeout(() => button.style.display = "block", 100);
+        sendMessage(textarea);
+        hideWritter();
+    });
+    bar.addButton2(ACTIONS.BACK,() => {
+        /*
+        * Showing float button 
+        * with little animation
+        */
+        let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
+            transition : "0.25s",
+            opacity : "1"
+        });
+
+        setTimeout(() => button.style.display = "block", 100);
+        hideWritter();
+    });
 
     const textarea = setStyles(new AonTextArea(), {
         flexDirection: 'column',
         height: '100%',
         width: '100%',
         boxShadow: "none",
+        background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
     textarea.id = MESSENGER_IDS.COMMENT_TASK
     textarea.name = MESSENGER_IDS.COMMENT_TASK;
     writter.element.appendChild(textarea);
-
-    waitEl(`#${bar.id}`).then(tb => {
-        /** 
-        * Set save button 
-        */    
-        tb.addButton2(ACTIONS.SAVE,() => {
-            /*
-            * Showing float button 
-            * with little animation
-            */
-            let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
-                transition : "0.25s",
-                opacity : "1"
-            });
-  
-            setTimeout(() => button.style.display = "block", 100);
-            sendMessage(textarea);
-            hideWritter();
-        })
-
-        /**
-         *  <- Set back button 
-         */
-        tb.addButton2(ACTIONS.BACK,() => {
-
-            /*
-            * Showing float button 
-            * with little animation
-            */
-            let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
-                transition : "0.25s",
-                opacity : "1"
-            });
-
-            setTimeout(() => button.style.display = "block", 100);
-            hideWritter();
-      })
-    })
-
-
-    writter.appendTo(parent.element);
+    buildTextareaToolbar(textarea);
 
 
     waitChildEl(textarea, "#" + textarea.TEXTAREA).then(writtable => {
@@ -205,9 +181,6 @@ export const buildMobileWritter = (parent) => {
             justifyContent: "flex-start"
         });
     });
-
-    waitEl(`#${textarea.id}`).then(el => buildTextareaToolbar(el));
-
 }
 
 /**
@@ -253,11 +226,10 @@ export const sendMessage = (aonTextArea) => {
 
     const value =  aonTextArea.value;
     if(!value || (value && !value.trim().length)) return ;
-    
+
     const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const data = parent._data;
     aonTextArea.clear();
-
 
     const message = {
         type: TASK_WORKFLOW_TYPE.COMMENT,
@@ -305,7 +277,7 @@ export const sendMessage = (aonTextArea) => {
         id: MATERIAL_ICONS.FORMAT_BOLD,
         icon: MATERIAL_ICONS.FORMAT_BOLD,
     },
-        (e) => {
+        () => {
             documentExec("bold")
             // setSelectionMarkup(el,
             // (selection) => {
@@ -341,13 +313,10 @@ export const sendMessage = (aonTextArea) => {
     /**
      * List bulleted button - listItem
      */
-    // aonTextArea.addToolbarOptionRight({
-    //     id: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
-    //     icon: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
-    // },(e) => {
-    //     waitChildEl(aonTextArea, "#" + aonTextArea.TEXTAREA)
-    //     .then(el => setSelectionMarkup(el, (selection) => list(selection), () => true));
-    // });
+    aonTextArea.addToolbarOptionRight({
+        id: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
+        icon: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
+    },() => documentExec("insertOrderedList") );
 
     /**
      * Link send button [Name](url)
@@ -355,10 +324,9 @@ export const sendMessage = (aonTextArea) => {
     aonTextArea.addToolbarOptionRight({
         id: MATERIAL_ICONS.LINK,
         icon: MATERIAL_ICONS.LINK,
-    },(e) => {
-        createLink();
+    },() => createLink()
         // setSelectionMarkup(el, (selection) => link(selection), () => true)
-    });
+    );
 
     /**
      * Attach file button
@@ -370,6 +338,25 @@ export const sendMessage = (aonTextArea) => {
     });
 
 }
+
+const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
+
+const createLink =() =>{
+    const selection = document.getSelection();
+    if(selection && selection.toString().trim()){
+        const linkURL = prompt('URL:', 'https://');
+        const aEl = setStyles(document.createElement("a"),{
+            textDecoration:"underline",
+            cursor:"pointer",
+            color:"blue",
+        });
+        aEl.href  = linkURL;
+        aEl.target = "_blank";
+        aEl.textContent = selection;
+        document.execCommand('insertHTML', false, aEl.outerHTML);
+    }
+}
+
 
 /**
  * Set markup to selection
@@ -412,21 +399,3 @@ export const sendMessage = (aonTextArea) => {
 //     }
 // }
 
-
-const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
-
-const createLink =() =>{
-    const selection = document.getSelection();
-    if(selection && selection.toString().trim()){
-        const linkURL = prompt('URL:', 'https://');
-        const aEl = setStyles(document.createElement("a"),{
-            textDecoration:"underline",
-            cursor:"pointer",
-            color:"blue",
-        });
-        aEl.href  = linkURL;
-        aEl.target = "_blank";
-        aEl.textContent = selection;
-        document.execCommand('insertHTML', false, aEl.outerHTML);
-    }
-}

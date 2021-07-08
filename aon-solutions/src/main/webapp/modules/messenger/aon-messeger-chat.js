@@ -4,7 +4,7 @@ import { COLORS, CONSTANT, CSS, EVENT } from "../../environments/environments.js
 import { ToolbarType } from "../../models/enums.js";
 import { newComponent, setClasses, setStyles, setValueName, waitEl } from "../../services/utils.js";
 import { createMainView, createMobileMainView, inputId } from "./createComponents.js";
-import { buildChat, buildMobileChat, fillChat } from "./shared/messenger-chat.js";
+import { buildDesktopChat, buildMobileChat, fillChat } from "./shared/messenger-chat.js";
 import { buildDesktopWritter, sendMessage } from "./shared/messenger-writter.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "./MessengerEnums.js";
 import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
@@ -13,12 +13,9 @@ import { saveTask, getTaskWorkflow } from "../../services/taskService.js";
 
 export class AonMessengerChat extends AonElement {
   _data;
+  UPDATE;
   static get observedAttributes() {
     return [CONSTANT.DATA];
-  }
-  
-  constructor() {
-    super();
   }
 
   get data() {
@@ -27,6 +24,10 @@ export class AonMessengerChat extends AonElement {
 
   set data(data){
     this.setAttribute(CONSTANT.DATA, JSON.stringify(data));
+  }
+  
+  constructor() {
+    super();
   }
 
   connectedCallback() {
@@ -47,9 +48,7 @@ export class AonMessengerChat extends AonElement {
       id: undefined,
       number:undefined,
       title: undefined,
-      type: 0,
-      author: "",
-      for: "Laboral",
+      for: "",
       workflows: []
     }
   }
@@ -62,7 +61,11 @@ export class AonMessengerChat extends AonElement {
   }
   
   build() {
-    if(this.data && this.data.id) this._data={...this._data,...this.data};
+    if(this.data && this.data.id){
+      this._data={...this._data,...this.data};
+      this.UPDATE = true;
+    } 
+
     this.paintView();
   }
 
@@ -79,15 +82,15 @@ export class AonMessengerChat extends AonElement {
     }
   
     this.appendChild(inputId());
-    if(this._data.id)  this.setValues();
+    if(this.UPDATE)  this.setValues();
   }
 
   paintDesktop() {
-    const data = this._data;
     this.buildToolbarDesktop();
 
     const mainView = createMainView();
     mainView.appendTo(this);
+
     const writter = newComponent({
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
       styles: {
@@ -103,9 +106,8 @@ export class AonMessengerChat extends AonElement {
     });
     writter.appendTo(mainView.element);
 
-    buildDesktopWritter(writter, data, this);
-
-    this.buildChatDesktop();
+    buildDesktopWritter(writter, this._data, this);
+    this.buildCommentDesktop();
    
     setTimeout(() => {
       mainView.element.style.opacity = 1;
@@ -113,37 +115,41 @@ export class AonMessengerChat extends AonElement {
     }, 100);
   }
 
-  buildChatDesktop(){
-      const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
-      const chat = newComponent({
-        classes: [CSS.FLEX_ROW],
-        styles: {
-          width: "50%",
-          height: '90%',
-          minWidth: "400px",
-          maxWidth: "600px",
-          paddingTop: '5vh',
-          paddingRight: '40px',
-          paddingLeft: '40px',
-        }
-      });
-      chat.appendTo(mainView);
-      buildChat(chat);
-      /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-      const lined = this.selector(".continueLined");
-      if (lined)
-        lined.style.setProperty("--height", lined.scrollHeight + "px");
+  buildCommentDesktop(){
+
+    const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
+    const chat = newComponent({
+      classes: [CSS.FLEX_ROW],
+      styles: {
+        width: "50%",
+        height: '90%',
+        minWidth: "400px",
+        maxWidth: "600px",
+        paddingTop: '5vh',
+        paddingRight: '40px',
+        paddingLeft: '40px',
+      }
+    }).element;
+    if(!this.UPDATE) chat.style.display="none";
+    
+    mainView.appendChild(chat);
+    buildDesktopChat(chat);
+    /**
+   * Setting the chat line once all is rendered
+   * DO NOT change this, is compulsory.
+   */
+    const lined = this.selector(".continueLined");
+    if (lined)
+      lined.style.setProperty("--height", lined.scrollHeight + "px");
   }
 
   buildToolbarDesktop(){
     const data = this._data;
+    console.log(data);
     const toolbar = new AonToolbar();
     toolbar.id = "id";
 		toolbar.type = ToolbarType.SECONDARY;
-    toolbar.title = "#" + (data.id  || "00000");
+    toolbar.title = "#" + (data.number  || "0").toString().padStart(5,0);
     this.appendChild(toolbar);
 
     toolbar.addButton2(ACTIONS.BACK,() => {
@@ -151,8 +157,7 @@ export class AonMessengerChat extends AonElement {
       mainView.style.opacity    = "0";
       mainView.style.transition = ".25s";
       setTimeout(() => {
-          const button = this.getElement("aonMessengerSidenavAbiertas");
-          button.click();
+        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
       }, 250);
     });
 
@@ -170,8 +175,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   paintMobile() {
-    const data = this._data;
-    if(data && data.id){
+    if(this.UPDATE){
       let span = this.applicationEl.addFloatOption({
         name: "Addcomment",
         icon: "add_comment",
@@ -200,6 +204,7 @@ export class AonMessengerChat extends AonElement {
 
     const mainView = createMobileMainView();
     mainView.appendTo(this);
+    
     const chat = newComponent({
       classes: [CSS.FLEX_ROW],
       styles: {
@@ -212,7 +217,7 @@ export class AonMessengerChat extends AonElement {
     });
     chat.appendTo(mainView.element);
 
-    buildMobileChat(chat, data, this);
+    buildMobileChat(chat, this._data, this);
 
     setTimeout(() => {
       mainView.element.style.opacity = 1;
@@ -230,61 +235,6 @@ export class AonMessengerChat extends AonElement {
     this.getTaskWorkflow(id);
   }
 
-  getData() {
-    let data = undefined;
-    if(this._data && this._data.id){
-      data = {
-        content: [
-          {
-            type: "message",
-            sender: "Emisor",
-            message: "Hola, las <i>bajas de IT deben </i> ser notificadas en <b>Laboral</b>. Ejemplo : <br><br><li>Ejemplo 1.</li> <li>Ejemplo 2.</li> ",
-            date:  new Date(2020,23,4),
-            attach: [
-              {
-                name: "File.docx"
-              }
-            ]
-          },
-          {
-            type: "message",
-            sender: "Receptor",
-            message: "Oh! Gracias. ¿Como se eliminan?",
-            date:  new Date(2020,23,4),
-          },
-          {
-            type: "action",
-            action: "move",
-            message: "Esta solicitud se movió a Laboral",
-          },
-          {
-            type: "message",
-            sender: "Emisor",
-            message: "Con el botón de borrar.",
-            date : new Date(2020,23,4),
-            attach: [
-              {
-                name: "File1.docx"
-              },
-              {
-                name: "File2.docx"
-              },
-              {
-                name: "File3.docx"
-              }
-            ]
-          },
-          {
-            type: "action",
-            action: "close",
-            message: "La solicitud se cerró.",
-          },
-        ]
-      }
-    } 
-    return data;
-  }
-  
   formSerialize(){
     let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
     const comment = aonTextArea.value;
@@ -292,25 +242,38 @@ export class AonMessengerChat extends AonElement {
     const sender = this.applicationParentEl.SENDER;
     const domain = sender.domain.id;
     const taskId = this.selector("#"+MESSENGER_IDS.TASK_ID).value;
-    return {
+    let json = {
       domain,
       sender,
       id: taskId,
       title:this.selector(`#${MESSENGER_IDS.TITLE_TASK}`).innerText,
-      description: this.selector(`#${MESSENGER_IDS.DESCRIPTION_TASK}`).innerText,
       workgroup: {
         id:this.selector("#"+MESSENGER_IDS.WORKGROUP).value
       },
       task_holder:{
         id:this.selector("#"+MESSENGER_IDS.TASKHOLDER).value
       },
-      workflow:{
+      workflow:[]
+    };
+    
+    if(!this.UPDATE) { // CREATE
+      json.description = comment;
+      json.workflow.push({
         domain,
         comment,
         task_holder:sender,
-        type:TASK_WORKFLOW_TYPE.COMMENT
-      }
-    }
+        type:TASK_WORKFLOW_TYPE.OPEN
+      });
+    } 
+
+    json.workflow.push({
+      domain,
+      comment,
+      task_holder:sender,
+      type:TASK_WORKFLOW_TYPE.COMMENT
+    })
+
+    return json;
   }
 
   getTaskWorkflow(taskId){
@@ -321,13 +284,15 @@ export class AonMessengerChat extends AonElement {
 
   async save(){
     this.applicationEl.startLoading();
-    // try {
+    try {
       const form = this.formSerialize();
-      const resp = await saveTask(form);
-      setValueName(MESSENGER_IDS.TASK_ID, resp.id);
-    // } catch (error) {
-    //   this.showError(error);
-    // }
+      const data = await saveTask(form);
+      if(!this.UPDATE){
+        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
+      }
+    } catch (error) {
+      this.showError(error);
+    }
     this.applicationEl.stopLoading();
   }
 

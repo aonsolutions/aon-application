@@ -1120,7 +1120,7 @@ public class InvoiceDAO {
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));
-		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
+//		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
 		insertDetails(ctx, config, invoice);
 		return invoice; 
 	}
@@ -1165,7 +1165,7 @@ public class InvoiceDAO {
 			.fetchOne();
 		detail.setId(record.getValue(INVOICE_DETAIL.ID));
 		detail.setInvoice(invoice);
-		ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
+//		ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
 		afterInsertDetail(ctx, config, invoice, detail);
 	}
 	
@@ -1192,7 +1192,7 @@ public class InvoiceDAO {
 				.returning(INVOICE_TAX.ID)
 				.fetchOne();
 			tax.setId(record.getValue(INVOICE_TAX.ID));
-			ctx.log().info("\t\tINSERT INVOICE_TAX tax: " + tax.getTaxType());
+//			ctx.log().info("\t\tINSERT INVOICE_TAX tax: " + tax.getTaxType());
 		}
 	}
 	
@@ -1248,7 +1248,7 @@ public class InvoiceDAO {
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
-		ctx.log().info("UPDATE INVOICE invoice: " + invoice.getId() + "("+i+" rows)");
+//		ctx.log().info("UPDATE INVOICE invoice: " + invoice.getId() + "("+i+" rows)");
 		updateDetails(ctx, config, invoice);
 		return invoice; 
 	}
@@ -1272,14 +1272,14 @@ public class InvoiceDAO {
 			.delete(INVOICE_TAX)
 			.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
 			.execute();
-		ctx.log().info("DELETE INVOICE_TAX detalles de la factura: " + detail.getId() + " ("+count+" filas)");
+//		ctx.log().info("DELETE INVOICE_TAX detalles de la factura: " + detail.getId() + " ("+count+" filas)");
 		
 		// Se borran la linea
 		count = ctx.getDslContext()
 			.delete(INVOICE_DETAIL)
 			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
 			.execute();
-		ctx.log().info("DELETE INVOICE_DETAIL detalle de la factura: " + detail.getId() + " ("+count+" filas)");
+//		ctx.log().info("DELETE INVOICE_DETAIL detalle de la factura: " + detail.getId() + " ("+count+" filas)");
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
@@ -1308,7 +1308,7 @@ public class InvoiceDAO {
 						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
-					ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): " + rectified.getId());
+//					ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): " + rectified.getId());
 				} else {
 					// En la factura rectificada no hay constancia de cual es la factura que la 
 					// rectifica, por lo tanto puede haber mas de una.
@@ -1337,7 +1337,7 @@ public class InvoiceDAO {
 						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
-				ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): " + rectified.getId());
+//				ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): " + rectified.getId());
 					
 				}
 			}
@@ -1370,7 +1370,7 @@ public class InvoiceDAO {
 				.findFirst()
 				.orElse(null);
 			if (importInvoice != null) {
-				ctx.log().info("\tDUA LINKED");
+//				ctx.log().info("\tDUA LINKED");
 				ctx.getDslContext()
 					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
 					.from(INVOICE_DETAIL)
@@ -1394,13 +1394,13 @@ public class InvoiceDAO {
 								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
 								.where(INVOICE_TAX.ID.equal( taxId ))
 								.execute();
-						ctx.log().info("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): " + id + " ("+count+" filas)");	
+//						ctx.log().info("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): " + id + " ("+count+" filas)");	
 					});
 				int count = ctx.getDslContext()
 						.delete(INVOICE_DUA)
 						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
 						.execute();
-				ctx.log().info("\tDELETE INVOICE_DUA: " + id + " ("+count+" filas)");
+//				ctx.log().info("\tDELETE INVOICE_DUA: " + id + " ("+count+" filas)");
 			}
 		}
 
@@ -1408,7 +1408,7 @@ public class InvoiceDAO {
 			.delete(INVOICE_ATTACH)
 			.where(INVOICE_ATTACH.INVOICE.equal(id))
 			.execute();
-		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
+//		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
 		
 		FinanceDAO.deleteInvoiceFinances(ctx,id);
 
@@ -1416,7 +1416,7 @@ public class InvoiceDAO {
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE INVOICE factura: " + id + " ("+count+" filas)");
+//		ctx.log().info("DELETE INVOICE factura: " + id + " ("+count+" filas)");
 	}
 
 	private static void deleteDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
@@ -1536,7 +1536,7 @@ public class InvoiceDAO {
 		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
 			insertInvoiceTaxes(ctx,detail);
 		} else {
-			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+//			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
@@ -1561,7 +1561,7 @@ public class InvoiceDAO {
 					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 					.execute();
 				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+//					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
 					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
 //					if (tax.getAccount() == null) 
 //						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
@@ -1570,10 +1570,10 @@ public class InvoiceDAO {
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
 						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 						.execute();
-						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+//						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
 					}
 				} else {
-					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+//					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 				}
 			}
 			
@@ -1586,7 +1586,7 @@ public class InvoiceDAO {
 					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 					.execute();
 				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+//					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
 					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
 //					if (tax.getAccount() == null) 
 //						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
@@ -1595,10 +1595,10 @@ public class InvoiceDAO {
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
 						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 						.execute();
-						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+//						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
 					}
 				} else {
-					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+//					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 				}
 			}
 		});
@@ -1623,7 +1623,7 @@ public class InvoiceDAO {
 					.delete(INVOICE_DETAIL_ACCOUNT)
 					.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
 					.execute();
-				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+//				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
 				
 				ctx.getDslContext().select(INVOICE_TAX.ID)
 					.from(INVOICE_TAX)
@@ -1636,7 +1636,7 @@ public class InvoiceDAO {
 								.delete(INVOICE_TAX_ACCOUNT)
 								.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
 								.execute();
-						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+//						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
 					});
 			}
 			
@@ -1645,7 +1645,7 @@ public class InvoiceDAO {
 						.delete(INVOICE_DETAIL_ACCOUNT)
 						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
 						.execute();
-					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+//					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
 					
 					ctx.getDslContext().select(INVOICE_TAX.ID)
 						.from(INVOICE_TAX)
@@ -1658,7 +1658,7 @@ public class InvoiceDAO {
 									.delete(INVOICE_TAX_ACCOUNT)
 									.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
 									.execute();
-							ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+//							ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
 						});
 			}
 			

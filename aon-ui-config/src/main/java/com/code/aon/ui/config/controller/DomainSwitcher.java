@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -61,12 +60,11 @@ import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.resources.bean.CustomizeController;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.jooq.tables.Enterprise;
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -93,7 +91,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private boolean showInactive;
 	private boolean showExpired;
 	private String beanName;
-
+	
 	public DomainSwitcher() {
 		try {
 			setPageLimit(15);
@@ -521,6 +519,17 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		DomainType type = getDomainType(AonUtil.getAuthPrincipal()
 				.getDomainId());
 		return type == DomainType.ADMIN;
+	}
+	
+	public DomainUserRoles getDur() {
+		com.esferalia.aon.occam.api.model.Domain domain = new com.esferalia.aon.occam.api.model.Domain();
+		domain.setName(getCurrentDomainNameURL()).setId(getDomainId());
+		User user = AON.getUser(getCurrentDomainNameURL(), getDomainId(), getCurrentUser());
+		return SECURITY.getDomainUserRoles(domain, user.getLogin(), user.getId());
+	}
+	
+	public boolean isComunica() {
+		return getDur().isComunica();
 	}
 	
 	public boolean isConsultancyDomain() {

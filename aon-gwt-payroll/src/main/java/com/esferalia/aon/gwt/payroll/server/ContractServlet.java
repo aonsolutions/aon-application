@@ -138,7 +138,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			json.put("secondSurName", info.getEmployeeInfo().getSecondSurName());
 			json.put("ssNumber", info.getEmployeeInfo().getSsNumber());
 			json.put("surName", info.getEmployeeInfo().getSurName());
-			json.put("startDate", info.getContractInfo().getStartDate());
+			json.put("startDate", info.getContractInfo().getStartDate().getTime());
 			json.put("contractType", info.getContractInfo().getContractType());
 			json.put("completeCCC", info.getContractInfo().getCompleteCCC());
 			json.put("agreementCategory", info.getContractInfo().getAgreementCategory());
