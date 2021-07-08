@@ -306,14 +306,22 @@ public class EnterprisePayrollTemplate extends PdfFile {
 
 		if (subtotalSs.stream().mapToDouble(p -> p).sum() != 0)
 		{
-			if (!painted)
+			if (!painted) {
 				table.fillCell(0, "CENTRO DE TRABAJO");
+				table.fillCell(1, "SUBTOTAL");
+			}
+			table.fillCell(0, "");
 			table.fillCell(1, "SUBTOTAL SS");
 
 			table.fontsize = 7.5f;
 
-			for (int i = 2; i < subtotalSs.size(); i++)
+			for (int i = 2; i < subtotalSs.size(); i++) {
+				if ( subtotalSs.get(i) == 0.00 )
+					continue;
+				
 				table.fillCell(i, toLatinNumber(subtotalSs.get(i)));
+				table.paintCell(i, getColor(subtotalAon.get(i),subtotalSs.get(i)));
+			}
 			table.newRow();
 		}
 		table.fontsize = 9;
@@ -591,13 +599,21 @@ public class EnterprisePayrollTemplate extends PdfFile {
 
 		if (totalSs.stream().mapToDouble(p -> p).sum() != 0)
 		{
-			table.fillCell(1, "TOTAL SS:");
-			for (int i = 2; i < totalSs.size(); i++)
-				table.fillCell(i, toLatinNumber(totalSs.get(i)));
-
-			table.newRow();
-			if (!painted)
+			if (!painted) {
 				table.fillCell(0, "EMPRESA");
+				table.fillCell(1, "TOTAL:");
+			}
+			
+			table.fillCell(0, "");
+			table.fillCell(1, "TOTAL SS:");
+			for (int i = 2; i < totalSs.size(); i++) {
+				if ( totalSs.get(i) == 0.00 )
+					continue;
+				
+				table.fillCell(i, toLatinNumber(totalSs.get(i)));
+				table.paintCell(i, getColor(totalAon.get(i),totalSs.get(i)));
+			}
+			table.newRow();
 		}
 		table.font = HELVETICA;
 		table.alignCell(0, LEFT);
