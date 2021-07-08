@@ -36,13 +36,13 @@ import com.esferalia.aon.in.payroll.pdf.api.component.advanced.PdfTable;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.ColManager;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class EnterprisePayrollTemplate extends PdfFile {
 
@@ -450,7 +450,13 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.fillCell(table.getColumn("Total S.S"), toLatinNumber(ssTotal));
 		table.fillCell(table.getColumn("Coste total"), toLatinNumber(costeTotal));
 
-		Color color = hasSs(t) ? RED : BLACK;
+		Color color = BLACK ;
+		if (hasSs(t) 
+			&& ( AonNumberUtils.zeroIfNull(ssTrab) > 0.00
+			|| AonNumberUtils.zeroIfNull(ssEmpresa) > 0.00
+			|| AonNumberUtils.zeroIfNull(bonificaciones) > 0.00 ) ) 
+			color = RED;
+		
 		table.paintCell(table.getColumn("Trabajador"), color);
 		table.paintCell(table.getColumn("Tipo"), color);
 		table.paintCell(table.getColumn("Devengado"), color);
@@ -462,6 +468,30 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("Bonificaciones"), color);
 		table.paintCell(table.getColumn("Total S.S"), color);
 		table.paintCell(table.getColumn("Coste total"), color);
+
+		table.newRow();
+		table.fillCell(table.getColumn("Trabajador"), "");
+		table.fillCell(table.getColumn("Tipo"), "-");
+		table.fillCell(table.getColumn("Devengado"), "");
+		table.fillCell(table.getColumn("S.S. Trab."), "");
+		table.fillCell(table.getColumn("I.R.P.F"), "");
+		table.fillCell(table.getColumn("Otr. ded."), "");
+		table.fillCell(table.getColumn("Liquido"), "");
+		table.fillCell(table.getColumn("S.S. Empr."), "");
+		table.fillCell(table.getColumn("Bonificaciones"), "");
+		table.fillCell(table.getColumn("Total S.S"), "");
+		table.fillCell(table.getColumn("Coste total"), "");
+
+		table.paintCell(table.getColumn("Tipo"), 			BLACK );
+		table.paintCell(table.getColumn("Devengado"),  		BLACK);
+		table.paintCell(table.getColumn("S.S. Trab."), 		BLACK);
+		table.paintCell(table.getColumn("I.R.P.F"), 		BLACK);
+		table.paintCell(table.getColumn("Otr. ded."),  		BLACK);
+		table.paintCell(table.getColumn("Liquido"),			BLACK);
+		table.paintCell(table.getColumn("S.S. Empr."),		BLACK);
+		table.paintCell(table.getColumn("Bonificaciones"),	BLACK);
+		table.paintCell(table.getColumn("Total S.S"),		BLACK);
+		table.paintCell(table.getColumn("Coste total"),		BLACK);
 
 		table.newRow();
 		t.y(table.y());
