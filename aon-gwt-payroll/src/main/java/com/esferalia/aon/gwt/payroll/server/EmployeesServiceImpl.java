@@ -3563,7 +3563,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-				d -> Math.round(d * 1000.00) / 1000.00);
+				d -> Math.round(d * 100.00) / 100.00);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
@@ -3626,7 +3626,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-					d -> Math.round(d * 1000.00) / 1000.00);
+					d -> Math.round(d * 100.00) / 100.00);
 			jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 			CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 					salaryDraftBuilder, roundSalaryBuilder);
