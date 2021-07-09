@@ -362,8 +362,9 @@ public class SistemaRED2AON {
 			Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate);
 			
 			employees.forEach((naf, list) -> System.out.println(naf + " :" + list.stream().map(e ->e.getName().orElse("") + "," + e.getContractType()).collect(Collectors.joining(","))) );
-
-			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf));
+			
+			// TODO : all employees
+			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf, null));
 			
 	}
 	
@@ -455,9 +456,8 @@ public class SistemaRED2AON {
 
 
 
-
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-			String ccc, String naf) {
+			String ccc, String naf, Date endDate) {
 	
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		try {
@@ -466,14 +466,13 @@ public class SistemaRED2AON {
 			
 			idcDates.stream()
 			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
+			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
 			.map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
 			.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
 		
 		} catch (SegSocialException e) {
 			
 		}
-		
 	}
-	
 	
 }

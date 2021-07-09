@@ -314,7 +314,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String date = req.getParameter(Parameter.DATE.name());
 
 			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
-			execute(() -> SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf) );
+			execute(() -> SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf, null) );
 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
