@@ -304,7 +304,7 @@ export class AonMessengerChat extends AonElement {
         type: TASK_WORKFLOW_TYPE.OPEN,
       });
       if (comment) {
-        json.workflow.push(json.newWorkflow);
+        json.workflow.push(json.workflowTmp);
       }
     }
     return json;
