@@ -47,6 +47,7 @@ import org.jooq.impl.DSL;
 import org.jooq.lambda.Seq;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDeductionRecord;
@@ -61,6 +62,7 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.Settle;
+import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -884,6 +886,9 @@ public class SalaryDAO {
 		int id = salaryRecord.getId();
 		int domain = salaryRecord.getDomain();
 		
+		List<SalaryBonusRecord> bonusRecords = toList(salary.getBonuses(), bonus -> getSalaryBonusRecord(domain, id, bonus));
+		insert(bonusRecords, ctx.getDslContext().insertInto(SALARY_BONUS));
+
 		List<SalaryCostRecord> costRecords = toList(salary.getCosts(), cost -> getSalaryCostRecord(domain, id, cost));
 		insert(costRecords, ctx.getDslContext().insertInto(SALARY_COST));
 		
@@ -975,6 +980,19 @@ public class SalaryDAO {
 		return record;
 		
 	}
+	
+	private static SalaryBonusRecord getSalaryBonusRecord(Integer domain, Integer salary, Salary.Bonus bonus) {
+		SalaryBonusRecord record = new SalaryBonusRecord();
+		
+		record.setDomain(domain);
+		record.setSalary(salary);
+		record.setAmount(bonus.getAmount());
+		record.setDescription(bonus.getDescription());
+		//record.setType(value(BonusType.SOCIAL_SECURITY, BonusType.class));
+		
+		return record;
+	}
+	
 	
 	private static SalaryDataRecord getSalaryDataRecord(Integer domain, Integer salary, String name, Salary.ContextData data) {
 		SalaryDataRecord record = new SalaryDataRecord();
