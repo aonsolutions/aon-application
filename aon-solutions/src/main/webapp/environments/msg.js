@@ -201,6 +201,7 @@ export const MSG_SENT = "Mensaje enviado";
 
 export const NAME = MSG.NAME;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
+export const NEW_REQUEST = "Nueva solicitud"; //TODO
 export const NEXT = MSG.NEXT;
 export const NIF = 'NIF';
 export const NUMBER = MSG.NUMBER;
@@ -337,6 +338,12 @@ export const WEB = MSG.WEB;
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 export const WORKGROUP = 'Grupo de trabajo'; // TODO
+export const WRITE_YOUR_TITLE = "Escribe tu título aquí" //TODO
+export const WRITE_A_COMMENT =  "Escribe un comentario"; //TODO
+export const WRITE_A_DESCRIPTION = "Escribe una descripción"; //TODO
+
+
+
 // ----- X
 
 // ----- Y

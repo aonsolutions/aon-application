@@ -91,7 +91,6 @@ export class AonTextArea extends AonElement {
 	// 	return this.COMPILE();
 	// }
 	
-
 	get visible() {
 		return this.getAttribute(CONSTANT.VISIBLE);
 	}
@@ -112,7 +111,8 @@ export class AonTextArea extends AonElement {
 			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
 			if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
 				input.setAttribute(CONSTANT.CHECKED, CONSTANT.CHECKED);
-			} else input.removeAttribute(CONSTANT.CHECKED);
+			} else 
+				input.removeAttribute(CONSTANT.CHECKED);
 		}
 	}
 
@@ -214,12 +214,6 @@ export class AonTextArea extends AonElement {
 		// 	}
 		// );
 		// eye.appendTo(left.element);
-
-	
-
-	
-
-
 	}
 
 	getSelection() {
@@ -322,10 +316,8 @@ export class AonTextArea extends AonElement {
 	}
 
 	addToolbarOptionLeft(properties,fn){
-		
 		if(!properties.id) properties.id = "noId";
 		if(!properties.icon && !properties.aonIcon) return;
-
 		if(properties.aonIcon){}
 		else if(properties.icon){
 			const icon = newComponent({

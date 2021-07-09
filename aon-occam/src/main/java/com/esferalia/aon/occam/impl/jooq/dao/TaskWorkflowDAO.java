@@ -112,8 +112,8 @@ public class TaskWorkflowDAO {
 				.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 				.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
 				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
-				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
 		return taskWorkflow.setId(id);
