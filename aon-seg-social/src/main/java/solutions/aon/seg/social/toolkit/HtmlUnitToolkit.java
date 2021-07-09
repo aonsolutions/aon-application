@@ -25,15 +25,17 @@ import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebResponseData;
-import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlListItem;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.parser.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
-import com.gargoylesoftware.htmlunit.javascript.host.fetch.Request;
-
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 
@@ -135,6 +137,12 @@ public class HtmlUnitToolkit {
 		else
 			return null;
 	}
+	public static String getTrimmedBySelector(HtmlPage htmlPage, String selector) {
+		if (htmlPage.querySelector(selector) != null)
+			return Toolkit.removeNBSP(htmlPage.querySelector(selector).getVisibleText());
+		else
+			return null;
+	}
 
 	// GETS THE SS STATUS CODE
 	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
@@ -156,7 +164,7 @@ public class HtmlUnitToolkit {
 				
 				return Integer.parseInt(status.substring(0, status.indexOf("*")));
 			} else
-				return null;
+				return 0;
 			
 		} catch (ElementNotFoundException e) {
 			return 3083;
@@ -168,7 +176,11 @@ public class HtmlUnitToolkit {
 	// GETS THE SS STATUS CODE
 	public static String getSSmessage(HtmlPage htmlPage) throws SegSocialException {
 		try {
-			return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
+			String msg = HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
+			if(msg==null) {
+				msg = getTrimmedBySelector(htmlPage, "#content p");
+			}
+			return msg;
 		} catch (ElementNotFoundException e) {
 			return "";
 		} catch (NumberFormatException e) {
