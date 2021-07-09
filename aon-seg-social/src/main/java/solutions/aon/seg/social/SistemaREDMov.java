@@ -653,6 +653,7 @@ class SistemaREDMov {
 			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regime);
 			form.getInputByName("txt_SDFTESO62").setValueAttribute(cccArr.get(0));
@@ -682,6 +683,7 @@ class SistemaREDMov {
 			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREGENT_ayuda").setValueAttribute(regime);
 			form.getInputByName("txt_SDFTESCCCENT").setValueAttribute(cccArr.get(0));
