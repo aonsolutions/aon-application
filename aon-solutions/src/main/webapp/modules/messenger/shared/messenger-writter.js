@@ -1,15 +1,16 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setEvents, setStyles, waitChildEl, waitEl } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import { createTaskButton, createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
+import {  createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "../MessengerEnums.js";
 import { createStartJustifiedColumn } from "./creationUtils.js";
-import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
-import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.js";
+import { appendChatMessage, fillWorkGroup, RIGHT } from "./messenger-chat.js";
+// import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
+
 
 /**
  * @TODO THINGS TO ENCHANCE
@@ -20,11 +21,11 @@ import { appendChatMessage, fillWorkGroup, LEFT, RIGHT } from "./messenger-chat.
 
 /**
  * Build desktop version of the writter 
- * @param {*} parent 
+ * @param {*} aonMessengerChat 
  * @param {*} data 
  */
-export const buildDesktopWritter = (writter, data, parent) => {
-    const application = parent.getApplication();
+export const buildDesktopWritter = (writter, data, aonMessengerChat) => {
+    const application = aonMessengerChat.applicationEl;
     /**
      * Building title
      */
@@ -32,7 +33,7 @@ export const buildDesktopWritter = (writter, data, parent) => {
     setStyles(titleDiv.element ,{ width : "100%" });
     titleDiv.element.style.marginBottom = "5px";
     //TITLE
-    const title = createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, "Escriba su titulo aquí");
+    const title = createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, MSG.WRITE_YOUR_TITLE);
     titleDiv.element.appendChild(title);
     titleDiv.appendTo(writter.element);
 
@@ -62,35 +63,38 @@ export const buildDesktopWritter = (writter, data, parent) => {
     const aonTextArea = new AonTextArea();
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
+    aonTextArea.placeholder = aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`;
     writter.appendChild(aonTextArea);
     buildTextareaToolbar(aonTextArea);
+
+    if(aonMessengerChat.UPDATE){ //UPDATE
+        /**
+         * Creating send bar
+         */
+        const sendBar = createSendBar();
+        sendBar.appendTo(writter.element);
+
+        const upload = createUpload();
+        upload.appendTo(sendBar.element);
+
+        const uploadIcon = createUploadIcon();
+        uploadIcon.appendTo(upload.element);
+
+        const sendButtonWrapper = createButtonWrapper();
+        sendButtonWrapper.appendTo(sendBar.element);
+    
+        const uploadText = createUploadText();
+        uploadText.element.addEventListener(EVENT.CLICK,()=> aonMessengerChat.applicationEl.development());
+        uploadText.appendTo(upload.element);
+
+        //BUTTON SEND COMMENT
+        const sendButton = createSendButton();
+        sendButton.addEventListener(EVENT.CLICK,()=> aonMessengerChat.saveTaskWorkflow());
+        sendButtonWrapper.appendChild(sendButton);
+        const sendIcon = createSendIcon();
+        sendIcon.appendTo(sendButton);
+    }
  
-
-    /**
-     * Creating send bar
-     */
-    const sendBar = createSendBar();
-    sendBar.appendTo(writter.element);
-
-    const upload = createUpload();
-    upload.appendTo(sendBar.element);
-
-    const uploadIcon = createUploadIcon();
-    uploadIcon.appendTo(upload.element);
-
-    const sendButtonWrapper = createButtonWrapper();
-    sendButtonWrapper.appendTo(sendBar.element);
-   
-    const uploadText = createUploadText();
-    uploadText.element.addEventListener(EVENT.CLICK,()=> parent.getApplication().development());
-    uploadText.appendTo(upload.element);
-
-    //BUTTON SAVE
-    const sendButton = parent.UPDATE ? createSendButton() : createTaskButton();
-    sendButton.addEventListener(EVENT.CLICK,()=> parent.save());
-    sendButtonWrapper.appendChild(sendButton);
-    const sendIcon = createSendIcon(parent.UPDATE ? "send" : "save");
-    sendIcon.appendTo(sendButton);
 }
 
 /**
@@ -98,8 +102,7 @@ export const buildDesktopWritter = (writter, data, parent) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildMobileWritter = (parent) => {
-       
+export const buildMobileWritter = (wrapper, aonMessengerChat) => { 
     const writter = newComponent({
         id : MESSENGER_COMPONENTS.WRITTER,
         classes: [CSS.FLEX_COLUMN],
@@ -115,39 +118,21 @@ export const buildMobileWritter = (parent) => {
             zIndex : -9
         }
     });
-    writter.appendTo(parent.element);
+    writter.appendTo(wrapper.element);
 
-    const bar = new AonToolbar();
+    const bar = setAttributes(new AonToolbar(),{
+       id:"writterbar",
+       type:ToolbarType.SECONDARY,
+       title:MSG.COMMENT
+    });
     bar.style.background = "#fff";
-    bar.id = "writterbar";
-    bar.type = ToolbarType.SECONDARY;
-    bar.title = MSG.COMMENT;
+
     writter.element.appendChild(bar);
     bar.addButton2(ACTIONS.SAVE,() => {
-        /*
-        * Showing float button 
-        * with little animation
-        */
-        let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
-            transition : "0.25s",
-            opacity : "1"
-        });
-
-        setTimeout(() => button.style.display = "block", 100);
-        sendMessage(textarea);
+        aonMessengerChat.saveTaskWorkflow();
         hideWritter();
     });
     bar.addButton2(ACTIONS.BACK,() => {
-        /*
-        * Showing float button 
-        * with little animation
-        */
-        let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
-            transition : "0.25s",
-            opacity : "1"
-        });
-
-        setTimeout(() => button.style.display = "block", 100);
         hideWritter();
     });
 
@@ -165,41 +150,27 @@ export const buildMobileWritter = (parent) => {
     buildTextareaToolbar(textarea);
 
 
-    waitChildEl(textarea, "#" + textarea.TEXTAREA).then(writtable => {
-        setStyles(writtable, {
-            resize: "none",
-            height: "100%",
-        });
-    });
-
-    waitChildEl(textarea, "toolbar").then(toolbar => {
-        setStyles(toolbar, {
+    const textAreaToolbar = textarea.querySelector("toolbar");
+    if(textAreaToolbar){
+        setStyles(textAreaToolbar, {
             background: CSS.variable(COLORS.AON_LIGHT_GRAY),
             border: "none",
             padding: "10px",
-            height: "50px",
-            justifyContent: "flex-start"
+            height: "50px"
         });
-    });
-}
-
-/**
- * Show the writter with animation
- */
-export const showWritter = () => {
-    setTimeout(() => {
-        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
-          zIndex : 9,
-          opacity : 1,
-          left : 0,
-        });
-      }, 100);
+    }
 }
 
 /**
  * Hide writter with animation
  */
-export const hideWritter = () => {
+const hideWritter = () => {
+    let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
+        transition : "0.25s",
+        opacity : "1"
+    });
+    setTimeout(() => button.style.display = "block", 100);
+
     setTimeout(() => {
         setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
           zIndex : -9,
@@ -214,16 +185,6 @@ export const hideWritter = () => {
  * @returns void.
  */
 export const sendMessage = (aonTextArea) => {
-
-    /**
-     * If preview mode is enabled, 
-     * click on eye to disable.
-     */
-    // if(aonTextArea.querySelector("textarea") == null){
-    //     const eyeButton = document.querySelector("#preview");
-    //     if(eyeButton) eyeButton.click();
-    // }
-
     const value =  aonTextArea.value;
     if(!value || (value && !value.trim().length)) return ;
 
@@ -264,19 +225,22 @@ export const sendMessage = (aonTextArea) => {
  * Build standard toolbar options 
  * @param {*} aonTextArea 
  */
- export const buildTextareaToolbar = async (aonTextArea) => {
-    waitChildEl(aonTextArea, "#" + aonTextArea.TEXTAREA).then(el=>{
-        el.style.minHeight = "300px";
-    // aonTextArea.compile = () => compileHTML(aonTextArea);
-
+ export const buildTextareaToolbar =  (aonTextArea) => {
+    const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
+    if(textAreaText){
+        setStyles(textAreaText, {
+            resize: "none",
+            height: "100%",
+            minHeight: "300px"
+        });
+    }
     /**
      * Bold format button **bold**
      */
-
-     aonTextArea.addToolbarOptionLeft({
+    aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.FORMAT_BOLD,
         icon: MATERIAL_ICONS.FORMAT_BOLD,
-    },
+        },
         () => {
             documentExec("bold")
             // setSelectionMarkup(el,
@@ -294,26 +258,15 @@ export const sendMessage = (aonTextArea) => {
     aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.FORMAT_ITALIC,
         icon: MATERIAL_ICONS.FORMAT_ITALIC,
-    },(e) => {
+    },() => {
         documentExec("italic")
         // setSelectionMarkup(el, (selection) => italic(selection), () => true)
     });
-
-    /**
-     * Indent format button \tIdented
-     */
-    // aonTextArea.addToolbarOptionRight({
-    //     id: MATERIAL_ICONS.FORMAT_INDENT_INCREASE,
-    //     icon: MATERIAL_ICONS.FORMAT_INDENT_INCREASE,
-    // },(e) => {
-    //     waitChildEl(aonTextArea, "#" + aonTextArea.TEXTAREA)
-    //     .then(el => setSelectionMarkup(el, (selection) => tab(selection), () => true));
-    // });
-
-    /**
+    
+        /**
      * List bulleted button - listItem
      */
-    aonTextArea.addToolbarOptionRight({
+     aonTextArea.addToolbarOptionRight({
         id: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
         icon: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
     },() => documentExec("insertOrderedList") );
@@ -327,15 +280,6 @@ export const sendMessage = (aonTextArea) => {
     },() => createLink()
         // setSelectionMarkup(el, (selection) => link(selection), () => true)
     );
-
-    /**
-     * Attach file button
-     */
-    // aonTextArea.addToolbarOptionRight({
-    //     id: MATERIAL_ICONS.ATTACH_FILE,
-    //     icon: MATERIAL_ICONS.ATTACH_FILE,
-    // },(e) => { alert("Not supported yet") });
-    });
 
 }
 

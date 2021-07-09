@@ -40,8 +40,8 @@ export const compileHTML = (parent) =>{
     compiled = compiled.replaceAll(tab, tabFormat);
   
     if(scripts)
-    scripts.forEach(scr => compiled += scr.replaceAll(script,scriptFormat));
-    return compiled;
+      scripts.forEach(scr => compiled += scr.replaceAll(script,scriptFormat));
 
+    return compiled;
   }
 

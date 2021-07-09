@@ -248,7 +248,7 @@ export class AonSign extends AonElement {
       div.style.fontSize = "12px";
       div.style.cursor = "default";
       div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
-      content.append(div);
+      content.appendChild(div);
       this.totalHourWeek();
     }
   }

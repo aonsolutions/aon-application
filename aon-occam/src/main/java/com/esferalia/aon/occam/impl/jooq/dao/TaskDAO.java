@@ -8,14 +8,12 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -75,11 +73,12 @@ public class TaskDAO {
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PARENT);}
 	}
 	
-	public static SelectConditionStep<Record> select(AONContext ctx, TaskFilter filter){	
+	public static SelectSeekStep1<Record, Timestamp> select(AONContext ctx, TaskFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
-				.where(TASK_PROPERTIES.getConditions(filter));
+				.where(TASK_PROPERTIES.getConditions(filter))
+				.orderBy(TASK.CREATION_DATE.desc());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	

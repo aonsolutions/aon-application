@@ -1,7 +1,9 @@
 import { MSG } from "../../../../environments/environments";
+import { waitEl } from "../../../../services/utils";
 
 // #9e9e9e
-export const charts = (div, data) => new Promise((resolve) => {
+export const charts = (div, data) => new Promise(async(resolve) => {
+    await waitEl("script[src*='jsapi']");
     const drawBasic = () => {
       const chart = new google.visualization.ComboChart(div);
       const table = google.visualization.arrayToDataTable([
@@ -62,15 +64,15 @@ export const charts = (div, data) => new Promise((resolve) => {
       resolve(chart);
     };
 
-  google.charts.load("current", {packages: ["corechart", "bar"]});
-  google.charts.setOnLoadCallback(drawBasic);
+    google.charts.load("current", {packages: ["corechart", "bar"]});
+    google.charts.setOnLoadCallback(drawBasic);
 });
 
 
 const changeBorderRadius = (div) =>  {
   const chartColumns = div.getElementsByTagName('rect');
-
   const lineAverage = div.querySelector('path');
+
   if(lineAverage) {
     lineAverage.style.transform = "scaleX(.93)";
   }
