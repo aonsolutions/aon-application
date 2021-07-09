@@ -440,7 +440,7 @@ public class Main {
 					new PrettyMainSalaryBuilder(connection) : new  MainSalaryBuilder(connection);
 			
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = 
-					new RoundSalaryBuilder<ISalary>(salaryBuilder, d->Math.round(d*1000.00)/1000.00 );		
+					new RoundSalaryBuilder<ISalary>(salaryBuilder, d->Math.round(d*100.00)/100.00 );		
 					
 			Criteria criteria = new Criteria();
 			if (cmd.hasOption(ccc.getLongOpt()))

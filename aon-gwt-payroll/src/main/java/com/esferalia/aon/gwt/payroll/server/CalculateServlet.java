@@ -300,7 +300,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				builders.add(new JooqSalaryDuplicator(connection));
 			} else if (save) {
 				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalarySaver<Salary>(connection),
-						d -> Math.round(d * 1000.00) / 1000.00));
+						d -> Math.round(d * 100.00) / 100.00));
 			}
 
 			return new CompositeSalaryBuilderExtended(builders.toArray(new ISalaryBuilderExtended[builders.size()]));
