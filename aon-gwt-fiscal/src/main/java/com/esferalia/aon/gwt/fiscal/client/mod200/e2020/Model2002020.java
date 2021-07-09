@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200ModuleOptions;
@@ -540,42 +541,20 @@ public class Model2002020 extends ResizeComposite  {
 			}
 		);
 	}
-
+	
 	@UiHandler("importAccountingButton")
-	void onImportAccountingButtonClick(ClickEvent event) {
-		String url =  GWT.getModuleBaseURL() + "ms/Mod2002020AccountingUpload"
-				+ "?domain_name="+ options.getDomainName() 
-				+ "&domain_id="+ options.getDomain()
-				+ "&login="+ options.getUser();
-
-		UploadDialog ud = new UploadDialog(AON.MSG.importAccounting(), url) {
+	void onImportAccountingButtonClick(ClickEvent event) {	
+		Upload upload = new Upload() {
 			
 			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				hide();
-				mod200Object.fillMod2002020AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Mod2002020>() {
-					@Override
-					public void onSuccess(Mod2002020 result) {
-						hide();
-					}
-					
-					@Override
-					public void onFailure(Throwable e) {
-						hide();
-						raiseException(e);
-					}
-				});
+			protected void onUpload(String data) {
+				mod200Object.fillMod2002020AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002020>() {
+					@Override public void onSuccess(Mod2002020 result) {}
+					@Override public void onFailure(Throwable caught) {}
+				});				
 			}
 		};
-		ud.addStyleName("gwt-PopupPanel-template");
-		ud.setGlassEnabled(true);
-		ud.center();
-		ud.show();
+		upload.upload();
 	}
 	
 	private class WestFocusPanel extends FocusPanel {

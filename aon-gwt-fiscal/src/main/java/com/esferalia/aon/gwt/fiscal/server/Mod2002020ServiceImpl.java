@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.util.HashMap;
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
-import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Mod2002020Service;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -21,19 +24,6 @@ import com.esferalia.aon.watson.error.AonCoreException;
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 2020 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod2002020" })
 public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod2002020Service {
-
-	public static HashMap<String, MOD2002020> modImport;
-	
-	public static HashMap<String, MOD2002020> getModImport() {
-		return modImport;
-	}
-	
-	public static void addModImport(String hashId, MOD2002020 data) {
-		if(modImport == null) {
-			modImport = new HashMap<String, MOD2002020>();
-		}
-		modImport.put(hashId, data);
-	}
 	
 	@Override
 	public Mod2002020 createMod2002020(String domainName, int domain, String user, int year)
@@ -48,10 +38,12 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	
 	@Override
 	public Mod2002020 initializeMod2002020(String domainName, int domain, String user, Mod2002020 mod200) {
-		// Esto no hace falta, porque cuando llega aqui ya están copiados los datos del ejercicio anterior, se copia en el createNewMod200 del DAO
+//		Esto no hace falta, porque cuando llega aqui ya están copiados los datos del ejercicio anterior, se copia en el createNewMod200 del DAO
 //		Mod2002019 mod2002019 = FISCAL.getMod2002019ByYear(domainName, domain, user, 2019);
-//		Mod2002020Import2019.import2019(mod200, mod2002019);
-//		mod200.setInitializedFromLastYear(true);
+//		if(mod2002019 != null) {
+//			Mod2002020Import2019.import2019(mod200, mod2002019);
+//			mod200.setInitializedFromLastYear(true);
+//		}
 		return FISCAL.initializeMod2002020(domainName,domain,user,mod200);
 	}
 
@@ -101,12 +93,19 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	}
 	
 	@Override
-	public Mod2002020 fillMod2002020AccountingData(String domainName, int domain, String user, Mod2002020 mod200) {
-		String hashId = Base64.encode(domainName + user);		
-		MOD2002020 mod = getModImport().get(hashId);
-		if (mod200 != null) {
-			XMLtoMod2002020.fillMod2002020(mod, mod200);
-		}
+	public Mod2002020 fillMod2002020AccountingData(String domainName, int domain, String user, Mod2002020 mod200, String base64) {
+		byte[] fileData = Base64.getDecoder().decode(base64);
+		ByteArrayInputStream input = new ByteArrayInputStream(fileData);
+		try {
+			JAXBContext context = JAXBContext.newInstance(MOD2002020.class);
+			Unmarshaller um = context.createUnmarshaller();
+			MOD2002020 mod = (MOD2002020) um.unmarshal(input);
+			if (mod200 != null && mod != null) {
+				XMLtoMod2002020.fillMod2002020(mod, mod200);
+			}
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}		
 		return mod200;
 	}
 	
