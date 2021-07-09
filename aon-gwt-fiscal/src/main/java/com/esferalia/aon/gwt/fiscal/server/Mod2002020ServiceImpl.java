@@ -48,9 +48,10 @@ public class Mod2002020ServiceImpl extends AonStatelessRemoteServiceServlet impl
 	
 	@Override
 	public Mod2002020 initializeMod2002020(String domainName, int domain, String user, Mod2002020 mod200) {
-		Mod2002019 mod2002019 = FISCAL.getMod2002019ByYear(domainName, domain, user, 2019);
-		Mod2002020Import2019.import2019(mod200, mod2002019);
-		mod200.setInitializedFromLastYear(true);
+		// Esto no hace falta, porque cuando llega aqui ya están copiados los datos del ejercicio anterior, se copia en el createNewMod200 del DAO
+//		Mod2002019 mod2002019 = FISCAL.getMod2002019ByYear(domainName, domain, user, 2019);
+//		Mod2002020Import2019.import2019(mod200, mod2002019);
+//		mod200.setInitializedFromLastYear(true);
 		return FISCAL.initializeMod2002020(domainName,domain,user,mod200);
 	}
 
