@@ -30,6 +30,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractInfo;
@@ -282,7 +283,7 @@ public class SEPEUtils {
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		Criteria criteria = new Criteria();
 		// Skip SLD salaries ( L00, L13 ... )
-		//criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE),(byte)4);  
+		criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE),SalaryType.L00);  
 		
 		//criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), contract.getPerson().getId());
