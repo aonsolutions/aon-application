@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="DK"/&gt;
  *     &lt;enumeration value="SK"/&gt;
  *     &lt;enumeration value="SI"/&gt;
+ *     &lt;enumeration value="ES"/&gt;
  *     &lt;enumeration value="EE"/&gt;
  *     &lt;enumeration value="FI"/&gt;
  *     &lt;enumeration value="FR"/&gt;
@@ -59,6 +60,7 @@ public enum CountryMiembroType {
     DK,
     SK,
     SI,
+    ES,
     EE,
     FI,
     FR,

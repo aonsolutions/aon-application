@@ -13,6 +13,7 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLRDetOpe
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLRFacturasEmitidas;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLRFacturasRecibidas;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLROperacionesSeguros;
+import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLRVentaBienesConsigna;
 
 
 /**
@@ -42,6 +43,7 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.BajaLROperac
     "cabecera"
 })
 @XmlSeeAlso({
+    BajaLRVentaBienesConsigna.class,
     BajaLRDetOperacionIntracomunitaria.class,
     BajaLROperacionesSeguros.class,
     BajaLRCobrosMetalico.class,

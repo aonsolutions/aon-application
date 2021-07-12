@@ -50,6 +50,7 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.Dat
     RespuestaLRBajaIMetalicoType.class,
     RespuestaLRBajaAgenciasViajesType.class,
     RespuestaLRBajaOperacionesSegurosType.class,
+    RespuestaLRBajaVentaBienesConsignaType.class,
     RespuestaLRBajaFRecibidasPagosType.class
 })
 public class RespuestaComunBajaType {
