@@ -41,6 +41,8 @@ public class ObjectFactory {
     private final static QName _RespuestaLRCobrosEmitidas_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", "RespuestaLRCobrosEmitidas");
     private final static QName _RespuestaLRPagosRecibidas_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", "RespuestaLRPagosRecibidas");
     private final static QName _RespuestaLRInmueblesAdicionales_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", "RespuestaLRInmueblesAdicionales");
+    private final static QName _RespuestaLRVentaBienesConsigna_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", "RespuestaLRVentaBienesConsigna");
+    private final static QName _RespuestaLRBajaVentaBienesConsigna_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", "RespuestaLRBajaVentaBienesConsigna");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro
@@ -250,6 +252,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RespuestaLRVentaBienesConsignaType }
+     * 
+     */
+    public RespuestaLRVentaBienesConsignaType createRespuestaLRVentaBienesConsignaType() {
+        return new RespuestaLRVentaBienesConsignaType();
+    }
+
+    /**
+     * Create an instance of {@link RespuestaLRBajaVentaBienesConsignaType }
+     * 
+     */
+    public RespuestaLRBajaVentaBienesConsignaType createRespuestaLRBajaVentaBienesConsignaType() {
+        return new RespuestaLRBajaVentaBienesConsignaType();
+    }
+
+    /**
      * Create an instance of {@link RespuestaComunAltaType }
      * 
      */
@@ -359,6 +377,22 @@ public class ObjectFactory {
      */
     public RespuestaComunitariaBajaType createRespuestaComunitariaBajaType() {
         return new RespuestaComunitariaBajaType();
+    }
+
+    /**
+     * Create an instance of {@link RespuestaVentaBienesConsignaType }
+     * 
+     */
+    public RespuestaVentaBienesConsignaType createRespuestaVentaBienesConsignaType() {
+        return new RespuestaVentaBienesConsignaType();
+    }
+
+    /**
+     * Create an instance of {@link RespuestaVentaBienesConsignaBajaType }
+     * 
+     */
+    public RespuestaVentaBienesConsignaBajaType createRespuestaVentaBienesConsignaBajaType() {
+        return new RespuestaVentaBienesConsignaBajaType();
     }
 
     /**
@@ -644,6 +678,32 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", name = "RespuestaLRInmueblesAdicionales")
     public JAXBElement<RespuestaLRInmueblesType> createRespuestaLRInmueblesAdicionales(RespuestaLRInmueblesType value) {
         return new JAXBElement<RespuestaLRInmueblesType>(_RespuestaLRInmueblesAdicionales_QNAME, RespuestaLRInmueblesType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RespuestaLRVentaBienesConsignaType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RespuestaLRVentaBienesConsignaType }{@code >}
+     */
+    @XmlElementDecl(namespace = "https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", name = "RespuestaLRVentaBienesConsigna")
+    public JAXBElement<RespuestaLRVentaBienesConsignaType> createRespuestaLRVentaBienesConsigna(RespuestaLRVentaBienesConsignaType value) {
+        return new JAXBElement<RespuestaLRVentaBienesConsignaType>(_RespuestaLRVentaBienesConsigna_QNAME, RespuestaLRVentaBienesConsignaType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RespuestaLRBajaVentaBienesConsignaType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RespuestaLRBajaVentaBienesConsignaType }{@code >}
+     */
+    @XmlElementDecl(namespace = "https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaSuministro.xsd", name = "RespuestaLRBajaVentaBienesConsigna")
+    public JAXBElement<RespuestaLRBajaVentaBienesConsignaType> createRespuestaLRBajaVentaBienesConsigna(RespuestaLRBajaVentaBienesConsignaType value) {
+        return new JAXBElement<RespuestaLRBajaVentaBienesConsignaType>(_RespuestaLRBajaVentaBienesConsigna_QNAME, RespuestaLRBajaVentaBienesConsignaType.class, null, value);
     }
 
 }

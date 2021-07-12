@@ -302,6 +302,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SuministroLRVentaBienesConsigna }
+     * 
+     */
+    public SuministroLRVentaBienesConsigna createSuministroLRVentaBienesConsigna() {
+        return new SuministroLRVentaBienesConsigna();
+    }
+
+    /**
+     * Create an instance of {@link LRVentaBienesConsignaType }
+     * 
+     */
+    public LRVentaBienesConsignaType createLRVentaBienesConsignaType() {
+        return new LRVentaBienesConsignaType();
+    }
+
+    /**
+     * Create an instance of {@link BajaLRVentaBienesConsigna }
+     * 
+     */
+    public BajaLRVentaBienesConsigna createBajaLRVentaBienesConsigna() {
+        return new BajaLRVentaBienesConsigna();
+    }
+
+    /**
+     * Create an instance of {@link LRBajaVentaBienesConsignaType }
+     * 
+     */
+    public LRBajaVentaBienesConsignaType createLRBajaVentaBienesConsignaType() {
+        return new LRBajaVentaBienesConsignaType();
+    }
+
+    /**
      * Create an instance of {@link InmueblesAdicionalType }
      * 
      */
