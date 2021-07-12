@@ -346,15 +346,6 @@
 									<aon:outputText value="Matriz de empresas y modelos fiscales"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-<!-- 
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="fiscalMatrix" 
-											action="fiscalMatrix_list"
-											actionListener="#{fiscalMatrix.onSearch}"
-											title="Matriz de empresas y modelos fiscales"
-											value="Matriz de empresas y modelos fiscales" />
-									</aon:div>
- --> 
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_modelMatrix" 
 											action="gwt_modelMatrix">
@@ -363,6 +354,13 @@
 												value="Matriz de empresas y modelos fiscales" />												
 										</aon:commandLink>
 									</aon:div> 
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="fiscalMatrix" 
+											action="fiscalMatrix_list"
+											actionListener="#{fiscalMatrix.onSearch}"
+											title="Matriz de empresas y modelos fiscales (Obsoleta)"
+											value="Matriz de empresas y modelos fiscales (Obsoleta)" />
+									</aon:div>
 								</aon:div> 
 							</aon:panelGrid>
 						</aon:panelGroup>
