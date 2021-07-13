@@ -238,6 +238,13 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			getSalaryPaymentOf(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
+			
+			if ( payments.isEmpty() )  {
+				salary.getPayments().forEach( salaryPayment -> 
+				getSalaryPaymentOf(salaryPayment, extraPayments)
+				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+				);
+			}
 
 			if ( payments.isEmpty() )  {
 				salary.getPayments().forEach( salaryPayment -> 
