@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { getToken , getCompanies, getUser, getUserAppRole } from '../services/service.js';
+import { getToken , getCompanies, getUser} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
@@ -82,18 +82,9 @@ export class AonModule extends AonElement {
 
 		getUser().then(user => {
 			LS.setDomainLogin(user.login);
-			getUserAppRole().then(user => {
-				if(!this.isMobile()){
-					aonHeader.setAttribute('company', JSON.stringify(company));
-					aonHeader.setAttribute('user', JSON.stringify(user));
-				}
-				this.rootPanelHtml(this.isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = document.getElementById('aonDesktop');
-				aonDesktop.setAttribute('company', JSON.stringify(company));
-				aonDesktop.setAttribute('user', JSON.stringify(user));
-			});
+			this.rootPanelHtml(this.isMobile()
+				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+				: '<aon-desktop id="aonDesktop"></aon-desktop>');
 		});
 	}
 

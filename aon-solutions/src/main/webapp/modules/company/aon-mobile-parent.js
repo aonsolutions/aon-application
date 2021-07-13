@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies, getUser} from  '../../services/service.js';
+import {closeSession, getCompanies, getUser} from  '../../services/service.js';
 import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
@@ -155,18 +155,9 @@ export class AonMobileParent extends AonElement {
 	  this.getElement(aonHeader.COMPANY_LIST).style.display = 'block';
       getUser().then(user => {
         localStorage.setItem('aon_domain_login', user.login);
-        getUserAppRole().then(user => {
-          if(!this.isMobile()){
-            aonHeader.setAttribute('company', JSON.stringify(company));
-            aonHeader.setAttribute('user', JSON.stringify(user));
-          }
-          this.rootPanelHtml(this.isMobile()
+        this.rootPanelHtml(this.isMobile()
             ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-            : '<aon-desktop id="aonDesktop"></aon-desktop>');
-          let aonDesktop = document.getElementById('aonDesktop');
-          aonDesktop.setAttribute('company', JSON.stringify(company));
-          aonDesktop.setAttribute('user', JSON.stringify(user));
-        });
+            : '<aon-desktop id="aonDesktop"></aon-desktop>');  
       });
     }
 

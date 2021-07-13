@@ -369,29 +369,9 @@ public class AON_SOLUTIONS {
 	
 	// INVOICE
 	
-	public static Stream<JSONObject> getDataResponseInvoices(String domainName, Integer domainId, String login, DataResponseFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().getDataResponseInvoices(ctx, filter);
-		} 
-	}
-	
 	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getApi().getInvoices(ctx, filter);
-		} 
-	}
-	
-	public static Invoice insertInvoices(String domainName, Integer domainId, String login, Invoice invoice) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getApi().insertInvoice(ctx, invoice);
-		} 
-	}
-	
-	public static void deleteInvoices(String domainName, Integer domainId, String login, LinkedList<Integer> ids) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			for (Integer id : ids) {
-				getApi().deleteInvoice(ctx, id);
-			}
 		} 
 	}
 

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
@@ -283,16 +283,7 @@ export class AonParent extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			getUserAppRole().then(user => {
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.setAttribute('company', JSON.stringify(company));
-				aonHeader.setAttribute('user', JSON.stringify(user));
-
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', JSON.stringify(company));
-				aonDesktop.setAttribute('user', JSON.stringify(user));
-			});
+			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 		});
 	}
 }

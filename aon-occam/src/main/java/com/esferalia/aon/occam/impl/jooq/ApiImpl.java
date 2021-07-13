@@ -13,28 +13,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.api.InvoiceApiDAO;
 
 public class ApiImpl implements IApi {
 
-	@Override
-	public Stream<JSONObject> getDataResponseInvoices(AONContext ctx, DataResponseFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceApiDAO.getDataResponseInvoices(ctx, filter));
-	}
-		
+
 	@Override
 	public Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceApiDAO.getInvoices(ctx, filter));
 	}
 
-	@Override
-	public void deleteInvoice(AONContext ctx, Integer id) {
-		ctx.getDslContext().transaction(configuration -> InvoiceApiDAO.deleteInvoice(ctx, id));
-	}
-
-	@Override
-	public Invoice insertInvoice(AONContext ctx, Invoice invoice) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> InvoiceApiDAO.insertInvoice(ctx, invoice));
-	}
-
-	
 }

@@ -65,9 +65,6 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/":
 				response(req, resp, getDomainUsers(api));
 				break;
-			case "/app":
-				response(req, resp, getDomainUserRoles(api));
-				break;
 			case "/notice":
 				List<String> schemas = AONContext.getSchemas();
 				RawdocUserData rawdocUserData = new RawdocUserData();
@@ -99,9 +96,6 @@ public class UserServlet extends AonApiHttpServlet {
 			case "/email":
 				response(req, resp, sendAuthInfoMail(api));
 				break;
-			case "/app":
-				response(req, resp, setUserAppRole(api));
-				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -125,24 +119,6 @@ public class UserServlet extends AonApiHttpServlet {
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
-	}
-	
-	private JSONArray getDomainUserRoles(AonApiData api) {
-		Integer userId = api.getParams().opt("user") != null ? api.getParams().optInt("user") : null;
-		User user = new User();
-		if(userId != null) {
-			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
-		} else {
-			if(AonStringUtils.isBlank(api.getToken())) {
-				user = api.getUser();
-			} else {
-				AonToken aonToken = SECURITY.getAonToken(api.getToken());
-				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-					(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
-					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
-			}
-		}
-		return getUserRoles(api.getDomain(), user);
 	}
 	
 	private JSONArray getDomainUsers(AonApiData api) {
@@ -289,7 +265,37 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private JSONObject setUserAppRole(AonApiData api){
+	private JSONObject setUserAppRole(AonApiData api, User user){
+		Domain domain = api.getDomain();
+		String login = api.getUser().getLogin();
+		Integer userId = user != null && user.getId() != null 
+				? user.getId() : JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+
+		LinkedList<AonRole> aRoles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(userId))
+				.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new));
+		
+		JSONArray roles = JsonUtils.getJSONArray(api.getData(), "roles");
+		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
+		for(Integer i = 0; i < roles.length(); i++) {
+			tRoles.add(AonRole.safeValueOf(roles.optString(i)));
+		}
+
+		AonRole.stream().forEach(role -> {	
+			if(aRoles.contains(role) && !tRoles.contains(role)) {
+				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> f.getRoleProperty().eq(role.value()));
+			}
+			if(!aRoles.contains(role) && tRoles.contains(role)) {
+				AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", new UserAppRole()
+						.setApp(null)
+						.setDomain(api.getDomain().getId())
+						.setRole(role)
+						.setUser(userId));
+			}
+		});
+		return new JSONObject();
+	}
+	
+	private JSONObject setUserAppRole3(AonApiData api){
 		JSONArray roles = JsonUtils.getJSONArray(api.getData(), "roles");
 		Boolean portal = false;
 		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
@@ -399,6 +405,41 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	private void saveTaskHolder(AonApiData api, User user) {
+		Integer userId = user != null && user.getId() != null 
+				? user.getId() : JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+		TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(userId)));
+		if(th == null || th.getId() == null) {
+			User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
+			Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
+
+			Registry r = null;
+			if(!AonStringUtils.isBlank(a.getDocument())) {
+				r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+				f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getDocumentProperty().eq(a.getDocument())));
+			}
+			if(r == null || r.getId() == null) {
+				r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
+						.setDocument(a.getDocument())
+						.setName(a.getName()+ " "+ a.getSurname())
+						.setAlias(a.getName())
+						.setDomain(api.getDomain()));
+			}
+			Integer registryId = r.getId();
+			th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+			if(th != null && th.getId() != null) {
+				th.setActive(true);
+			} else {
+				th = new TaskHolder().copy(r)
+					.setActive(true)
+					.setUserId(userId);
+			}
+		} else if(!th.isActive()) {
+			th.setActive(true);
+		}
+		AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+	}
 	
 	private JSONObject setUserAppRole2(AonApiData api){
 		JSONArray roles = api.getData().optJSONArray("roles");
@@ -551,11 +592,17 @@ public class UserServlet extends AonApiHttpServlet {
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
 					user = createUser(api, api.getDomain(), api.getData(), login, auth);
-					
-				} else AON_SOLUTIONS.assignAuthToUser(api.getDomain().getName(), api.getDomain().getId(), user, auth.getAuth());
+				} else {
+					Boolean portal = api.getData().optBoolean("portal");
+					Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
+					user.setEnterprise(portal ? cp.getId() : null);
+					AON.save(api.getDomain().getName(), api.getDomain().getId(), login, user);
+					AON_SOLUTIONS.assignAuthToUser(api.getDomain().getName(), api.getDomain().getId(), user, auth.getAuth());
+				}
 				
-				setUserAppRole(api);
-				
+				setUserAppRole(api, user);
+				saveTaskHolder(api, user);
+
 				js.put("id", user.getId());
 				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
 				js.put("uuid", auth.getUuid());

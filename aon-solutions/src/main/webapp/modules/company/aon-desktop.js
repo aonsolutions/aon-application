@@ -38,22 +38,6 @@ export class AonDesktop extends AonElement {
 		this.setAttribute('id', id);
 	}
 
-	get company() {
-		return this.getAttribute('company');
-	}
-
-	set company(company) {
-		this.setAttribute('company', company);
-	}
-
-	get user() {
-		return this.getAttribute('user');
-	}
-
-	set user(user) {
-		this.setAttribute('user', user);
-	}
-
 	constructor () {
 		super();
 	}
