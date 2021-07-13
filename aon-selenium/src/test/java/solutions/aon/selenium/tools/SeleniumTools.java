@@ -2,7 +2,6 @@ package solutions.aon.selenium.tools;
 
 import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
-import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -38,8 +36,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import solutions.aon.selenium.tools.SeleniumTools.SALARY_TYPE;
 
 /**
  * Toolkit for easy java test
@@ -80,7 +76,7 @@ public class SeleniumTools {
 		NONE
 	}
 	
-	public static enum SALARY_TYPE {
+	public static enum SalaryType {
 		SALARY,
 		EXTRA,
 		DELAY,
@@ -340,29 +336,70 @@ public class SeleniumTools {
 		
 	}
 	
-	public static boolean waitUntilElementContains(WebDriver driver, By selector, String text) throws InterruptedException {
+	public static Double getAmountNotEmptyValue(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		
-		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+		wait.until(ExpectedConditions.attributeToBeNotEmpty(baseSalaryAmount, "value"));
 		
-		String content = element.getAttribute("innerText");
-		String value = element.getAttribute("value");
+		String baseSalaryStr = baseSalaryAmount.getAttribute("value");
 		
-		content = content != null ? content.trim() : "";
-		value = value != null ? value.trim() : "";
-		
-		for (int i=0; i<10; i++) {
-			Thread.sleep(1000);
-			element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-			content = element.getAttribute("innerText");
-			value = element.getAttribute("value");			
-			if (content.equalsIgnoreCase(text) || content.equalsIgnoreCase(value))
-				return true;
+		Double baseSalary = null;
+		try {
+			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".").replaceAll("%", "").trim();
+			baseSalary = Double.parseDouble(baseSalaryStr);
+			
+			return baseSalary;
+			
+		} catch (NullPointerException | NumberFormatException e) {
+			return null;
 		}
 		
-		return false;
-		
 	}
+
+	
+	public static boolean waitAndCheckAmount(WebDriver driver, By selector, Double expected, String attrName) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		try {
+			wait.until(d -> {
+				String str = d.findElement(selector).getAttribute(attrName);
+				if (expected == null && str == null)
+					return true;
+				else {
+					str = str.replaceAll("\\.", "").replace(",", ".");
+					Double actual = Double.parseDouble(str);
+					return actual.equals(expected);
+				}
+			});			
+			return true;
+		} catch (TimeoutException e) {
+			return false;
+		}
+	}
+	
+//	public static boolean waitUntilElementContains(WebDriver driver, By selector, String text) throws InterruptedException {
+//		WebDriverWait wait = new WebDriverWait(driver, 10);
+//		
+//		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+//		
+//		String content = element.getAttribute("innerText");
+//		String value = element.getAttribute("value");
+//		
+//		content = content != null ? content.trim() : "";
+//		value = value != null ? value.trim() : "";
+//		
+//		for (int i=0; i<10; i++) {
+//			Thread.sleep(1000);
+//			element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+//			content = element.getAttribute("innerText");
+//			value = element.getAttribute("value");			
+//			if (content.equalsIgnoreCase(text) || content.equalsIgnoreCase(value))
+//				return true;
+//		}
+//		
+//		return false;
+//		
+//	}
 
 	public static Double unmessDouble(Double number) {
 		if (number != null)
@@ -408,52 +445,12 @@ public class SeleniumTools {
 		return c;
 	}
 	
-	/**
-	 * Don't use it, too slow. Use v2 instead
-	 * @param driver
-	 * @param date
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 */
-	@Deprecated
-	public static void selectMonthScrolling (WebDriver driver, Date date) throws InterruptedException, ParseException {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
-		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", new Locale("es", "ES"));
-		String dateStr = df.format(date);
-		WebElement monthPopup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#gwt-debug-monthListBox-popup > div > div")));
-		
-		String xpath = "//div[@id='gwt-debug-monthListBox-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+dateStr+"')]";
-
-		
-		List<WebElement> elems = monthPopup.findElements(By.xpath(xpath));
-//		List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
-		
-		String currentDateStr = driver.findElement(By.id("gwt-debug-monthListBox-item0")).getAttribute("innerText");
-		Date currentDate = df.parse(currentDateStr);
-		
-		Keys key = (currentDate.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
-		
-		
-		
-		while (elems.size() < 1) {
-			for (int i=0; i<20; i++) {
-				monthPopup.sendKeys(key);
-				Thread.sleep(100);
-			}
-			elems = monthPopup.findElements(By.xpath(xpath));
-		}
-		
-		
-		retryingFindClick(driver, By.xpath(xpath));
-		Thread.sleep(5000);
-	}
-	
 	public static void selectFromMonthScrollingV2 (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-fromMonthListBox-item0";
 		int att = 0;
 		do {
-			selectMonthScrollingCommon (driver, date, "gwt-debug-fromMonthListBox", false);
+			selectMonthScrollingCommon (driver, date, "gwt-debug-fromMonthListBox", null);
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 		
 	}
@@ -463,7 +460,7 @@ public class SeleniumTools {
 		int att = 0;
 		do {
 			
-			selectMonthScrollingCommon (driver, date, "gwt-debug-monthListBox", false);
+			selectMonthScrollingCommon (driver, date, "gwt-debug-monthListBox", null);
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 	}
 	
@@ -472,7 +469,7 @@ public class SeleniumTools {
 		String displayedDateId = "gwt-debug-fromMonthListBox-item0";
 		int att = 0;
 		do {
-			selectMonthScrollingCommon(driver, date, "gwt-debug-fromMonthListBox", true);
+			selectMonthScrollingCommon(driver, date, "gwt-debug-fromMonthListBox", SalaryType.DELAY);
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 		
 	}
@@ -482,7 +479,17 @@ public class SeleniumTools {
 		int att = 0;
 		do {
 			
-			selectMonthScrollingCommon (driver, date, "gwt-debug-monthListBox", true);
+			selectMonthScrollingCommon (driver, date, "gwt-debug-monthListBox", SalaryType.DELAY);
+		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
+	}
+	
+	public static void selectMonthScrollingSettle (WebDriver driver, Date date) throws Exception {
+		DateFormat df = new SimpleDateFormat("d 'de' MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
+		String displayedDateId = "gwt-debug-dateListBox-item0";
+		int att = 0;
+		do {
+			
+			selectMonthScrollingSettlement (driver, date);
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 	}
 	
@@ -503,40 +510,55 @@ public class SeleniumTools {
 		throw new Exception("Unable to get the attribute");
 	}
 	
-	private static void selectMonthScrollingCommon (WebDriver driver, Date date, String boxId, boolean slowDown) throws Exception {
+	public static String getAttributeNotEmpty(WebDriver driver, By selector, String attributeName) throws Exception {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebElement elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
+		String attribute = null;
+		int attempts = 0;
+		do {
+			try {
+				wait.until(ExpectedConditions.attributeToBeNotEmpty(elem, attributeName));
+				attribute = elem.getAttribute(attributeName);
+				return attribute;
+			} catch (StaleElementReferenceException e) {
+				elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
+			}
+			attempts++;
+		} while (attempts < 10);
+		throw new Exception("Unable to get the attribute");
+	}
+	
+	
+	private static void selectMonthScrollingCommon (WebDriver driver, Date date, String boxId, SalaryType type) throws Exception {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
-		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
+		String formatStr = "MMMMMMMMMM 'de' yyyy";
+		if (type == SalaryType.SETTLE)
+			formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
 		
-		String displayedDateId = boxId + "-item0";
-		String dateStr = getAttribute(driver, By.id(displayedDateId),	"innerText");
+		DateFormat df = new SimpleDateFormat(formatStr, new Locale("es", "ES"));
+		
+		String firstWea = "#" + boxId + "-celllist > div:first-child > div:first-child > span";
+		String dateStr = "";
+		
+		
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(boxId)));
+		retryingFindClick(driver, By.id(boxId));
+		dateStr = getAttributeNotEmpty(driver, By.cssSelector(firstWea), "innerText");
 		Date thatDay = df.parse(dateStr);
 		
-		retryingFindClick(driver, By.id(boxId));
-		
-		if (slowDown)
-			Thread.sleep(1500);
+		if (type==SalaryType.DELAY)
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-fromMonthListBox-item0")));
 		
 		WebElement monthPopup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#" + boxId + "-popup > div > div")));
 		
 		String xpath = "//div[@id='" + boxId + "-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+dateStr+"')]/..";
-		
-		
-//		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-		String idx = getAttribute(driver, By.xpath(xpath), "__idx");
-//		boolean stale = false;
-//		int attempts = 0;
-//		do {
-//			try {
-//				idx = currentElem.getAttribute("__idx");
-//				stale = false;
-//			} catch (StaleElementReferenceException e) {
-//				currentElem = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-//				stale = true;
-//			}
-//			attempts++;
-//		} while (stale == true && attempts < 10);
+
+		String idx = getAttributeNotEmpty(driver, By.xpath(xpath), "__idx");
+
 		int idxNum = Integer.parseInt(idx);
 		Keys key = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
+		Keys oppositeKey = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_DOWN : Keys.PAGE_UP;
 		
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(Math.abs(date.getTime()-thatDay.getTime()));
@@ -549,20 +571,126 @@ public class SeleniumTools {
 					:
 				getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:last-child"), "__idx");
 		int firstIdxNum = Integer.parseInt(firstIdx);
-		
+		int[] first = new int[2];
+		first[0] = firstIdxNum;
+		first[1] = 0;
 		if (thatDay.getTime() > date.getTime()) {
 			while (firstIdxNum > idxNum) {
 				monthPopup.sendKeys(key);
-//				Thread.sleep(250);
 				try {
-					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:nth-child(1)"), "__idx");
+					firstIdx = getAttributeNotEmpty(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:nth-child(1)"), "__idx");
 					firstIdxNum = Integer.parseInt(firstIdx);
+					if(first[0] == firstIdxNum) {
+						if(++first[1] > 10) {
+							monthPopup.sendKeys(oppositeKey);
+							Thread.sleep(700);
+							monthPopup.sendKeys(key);
+							Thread.sleep(700);
+							monthPopup.sendKeys(key);	
+						}
+					}
+					else {
+						first[0] = firstIdxNum;
+						first[1] = 0;
+					}	
+					
 				} catch (StaleElementReferenceException e) {}
 			}
 		} else {
 			while (firstIdxNum < idxNum) {
 				monthPopup.sendKeys(key);
-//				Thread.sleep(250);
+				try {
+					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:last-child"), "__idx");
+					firstIdxNum = Integer.parseInt(firstIdx);
+				} catch (StaleElementReferenceException e) {}
+			}
+		}
+		
+		xpath = "//div[@id='" + boxId + "-celllist'] //span[@class='aon-nowrap ' and text()='"+df.format(date)+"']";
+		By xpathSel = By.xpath(xpath);
+		wait.until(ExpectedConditions.elementToBeClickable(xpathSel));
+		
+		retryingFindClick(driver, xpathSel);
+	}
+	
+	public static void selectMonthScrollingSettlement (WebDriver driver, Date date) throws Exception {
+		String boxId = "gwt-debug-dateListBox";
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		String formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
+		
+		DateFormat df = new SimpleDateFormat(formatStr, new Locale("es", "ES"));
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(boxId)));
+		
+		retryingFindClick(driver, By.id(boxId));
+		
+		By popupSelector = By.cssSelector("#" + boxId + "-popup > div > div");
+		
+		WebElement monthPopup = wait.until(ExpectedConditions.visibilityOfElementLocated(popupSelector));
+		
+		SeleniumTools.focus(driver, "#gwt-debug-dateListBox-popup > div > div");
+		
+		String dateStr = SeleniumTools.getAttribute(driver, By.cssSelector("#gwt-debug-dateListBox-popup > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)"), "innerText");
+		
+		
+		String xpath = "//div[@id='" + boxId + "-celllist'] //span[@class='aon-nowrap ' and contains(text(), '"+dateStr+"')]/..";
+		
+		
+		String idx = getAttribute(driver, By.xpath(xpath), "__idx");
+		int idxNum = Integer.parseInt(idx);
+		
+		Date thatDay = df.parse(dateStr);
+		
+		long diffMilis = Math.abs(thatDay.getTime() - date.getTime());
+		long diff = diffMilis / (1000*60*60*24);
+		
+		
+		
+		
+		
+		
+		
+		Keys key = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
+		Keys oppositeKey = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_DOWN : Keys.PAGE_UP;
+		
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(Math.abs(date.getTime()-thatDay.getTime()));
+		
+		idxNum += (date.getTime() < thatDay.getTime()) ? -diff : diff;
+		
+		String firstIdx = (thatDay.getTime() > date.getTime()) ?
+				getAttribute(driver, By.cssSelector("#gwt-debug-dateListBox-popup > div > div > div > div > div:nth-of-type(1) > div:nth-of-type(1)"), "__idx")
+					:
+				getAttribute(driver, By.cssSelector("#gwt-debug-dateListBox-popup > div > div > div > div > div:nth-of-type(1) > div:last-child"), "__idx");
+		int firstIdxNum = Integer.parseInt(firstIdx);
+		int[] first = new int[2];
+		first[0] = firstIdxNum;
+		first[1] = 0;
+		if (thatDay.getTime() > date.getTime()) {
+			while (firstIdxNum > idxNum) {
+				monthPopup.sendKeys(key);
+				try {
+					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:nth-child(1)"), "__idx");
+					firstIdxNum = Integer.parseInt(firstIdx);
+					if(first[0] == firstIdxNum) {
+						if(++first[1] > 10) {
+							monthPopup.sendKeys(oppositeKey);
+							Thread.sleep(700);
+							monthPopup.sendKeys(key);
+							Thread.sleep(700);
+							monthPopup.sendKeys(key);	
+						}
+					}
+					else {
+						first[0] = firstIdxNum;
+						first[1] = 0;
+					}	
+					
+				} catch (StaleElementReferenceException e) {}
+			}
+		} else {
+			while (firstIdxNum < idxNum) {
+				monthPopup.sendKeys(key);
 				try {
 					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:last-child"), "__idx");
 					firstIdxNum = Integer.parseInt(firstIdx);
@@ -583,12 +711,24 @@ public class SeleniumTools {
 		String xpath = "";
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		String periodId = "gwt-debug-periodLabel";
+		wait.until(ExpectedConditions.attributeContains(By.id(periodId), "innerText", getPeriodStr(date)));
 		xpath = "//div[@id='" + periodId + "' and contains(text(), '" + getPeriodStr(date) + "')]";
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+	}
+	
+	public static void checkSettlePeriod (WebDriver driver, Date date) {
+		String xpath = "";
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		String periodId = "gwt-debug-periodLabel";
+		String formatStr = "d/M/yyyy";
+		DateFormat df = new SimpleDateFormat(formatStr);
+		
+		xpath = "//div[@id='" + periodId + "' and contains(text(), '" + df.format(date) + "')]";
 		wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
 	}
 	
-	public static void selectPayrollType (WebDriver driver, SALARY_TYPE type) {
+	public static void selectPayrollType (WebDriver driver, SalaryType type) {
 		String boxId = "gwt-debug-typeListBox";
 		retryingFindClick(driver, By.id(boxId));
 		retryingFindClick(driver, By.cssSelector("option[value='" + type.name() + "']"));
@@ -616,32 +756,33 @@ public class SeleniumTools {
 		xpath = By.xpath(xpathStr);
 		wait.until(ExpectedConditions.elementToBeClickable(xpath));
 		retryingFindClick(driver, xpath);
-		Thread.sleep(200);
-		retryingFindClick(driver, xpath);
+		try {
+			wait.until(ExpectedConditions.attributeContains(By.id("gwt-debug-employeeNameLabel"), "innerText", employee));
+		} catch (Exception e) {
+			retryingFindClick(driver, xpath);
+		}
 	}
 
 	public static void integralFromIndex(WebDriver driver) throws InterruptedException {
 		log(CLICK, "Entering \"Laboral\"");
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
-		Thread.sleep(1000);
+		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']")));
 		log(CLICK, "Entering \"Integral de Nóminas\"");
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 	}
 	
 	public static void openWorkplace(WebDriver driver, String workplaceId) throws InterruptedException {
-		By selector = By.cssSelector("#" + workplaceId + " > table > tbody > tr > td:nth-of-type(1)");
+		By selector = By.cssSelector("*[id='" + workplaceId + "'] > table > tbody > tr > td:nth-of-type(1)");
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
-		Thread.sleep(500);
 		log(CLICK, "Deploying \"WORKPLACE\"");
 		retryingFindClick(driver, selector);
 	}
 	
 	public static void delay (WebDriver driver, Date startDate, Date endDate) throws Exception {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		SeleniumTools.selectPayrollType(driver, SALARY_TYPE.DELAY);
+		SeleniumTools.selectPayrollType(driver, SalaryType.DELAY);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-fromMonthListBox")));
-		Thread.sleep(500);
 		
 		Calendar calendar = Calendar.getInstance();
 		
@@ -650,9 +791,7 @@ public class SeleniumTools {
 		calendar.setTime(startDate);
 		int startYear = calendar.get(Calendar.YEAR);
 		int startMonth = calendar.get(Calendar.MONTH) + 1;
-		Thread.sleep(1500);
 		SeleniumTools.selectMonthScrollingDelay(driver, endDate);
-		Thread.sleep(500);
 		calendar.setTime(endDate);
 		int endYear = calendar.get(Calendar.YEAR);
 		int endMonth = calendar.get(Calendar.MONTH) + 1;
@@ -683,6 +822,7 @@ public class SeleniumTools {
 		int attempts = 0;
 		do {
 			try {
+				focus(driver, cssSelector);
 				retryingFindClick(driver, By.cssSelector(cssSelector));
 				JavascriptExecutor js = (JavascriptExecutor) driver;
 				js.executeScript("document.querySelector('"+cssSelector+"').value = ''");
@@ -696,15 +836,13 @@ public class SeleniumTools {
 		}while (attempts < 10 && !value.equals(text));
 	}
 	
-	public static boolean changingElementAssert (WebDriver driver, By selector, String attribute, String text) throws Exception {
-		int attempts = 0;
-		do {
-			String attr = SeleniumTools.getAttribute(driver, selector, attribute);
-			if (attr != null && attr.equals(text))
-				return true;
-			attempts++;
-		} while (attempts < 10);
-		return false;
+	public static boolean changingElementAssert (WebDriver driver, By selector, String attribute, String text) throws Exception {	
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		try {
+		return wait.until(ExpectedConditions.attributeContains(selector, attribute, text));
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public static void acceptDraft (WebDriver driver) throws Exception {
@@ -717,6 +855,52 @@ public class SeleniumTools {
 		}
 		if (!checkAcceptButton)
 			throw new Exception("Could not click on save button");
+	}
+	
+	public static void scrollLeftBarUntilElementIsClickable(WebDriver driver) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("document.querySelector(\"#rootPanel > div > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(3) > div\").scroll(0,100)");
+		
+	}
+	
+	public static void search(WebDriver driver, String searchText) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		By searchBoxSelector = By.id("gwt-debug-searchTextBox");
+		wait.until(ExpectedConditions.elementToBeClickable(searchBoxSelector));
+		retryingFindClick(driver, searchBoxSelector);
+		safeInput(driver, "#gwt-debug-searchTextBox", searchText);
+	}
+	
+	public static void focus(WebDriver driver, String cssSelector) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("document.querySelector('" + cssSelector + "').focus()");
+	}
+	
+	public static void wait4periodStabilization(WebDriver driver) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(d -> {
+			DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy");
+			String currentDateStr = df.format(new Date());
+			String dateStr = d.findElement(By.id("gwt-debug-monthListBox-item0")).getText();
+			Date selected;
+			try {
+				selected = df.parse(dateStr);
+				Calendar c = Calendar.getInstance();
+				c.setTime(selected);
+				String period = d.findElement(By.id("gwt-debug-periodLabel")).getText();
+				return period.contains((c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR)) && dateStr.contains(currentDateStr);
+			} catch (ParseException e) {
+				return false;
+			}
+		});
+	}
+	
+	public static void wait4SettleToLoadDate(WebDriver driver) {
+		new WebDriverWait(driver, 10).until(d -> {
+			Pattern pattern = Pattern.compile("\\s*\\d+\\s*de\\s*\\w+\\s*de\\s*\\d+\\s*", Pattern.CASE_INSENSITIVE);
+			String date = d.findElement(By.id("gwt-debug-dateListBox-item0")).getText();
+			return pattern.matcher(date).matches();
+		});
 	}
 	
 }
