@@ -341,6 +341,7 @@ export class AonApplication extends AonElement {
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
     sidenavTitle.innerHTML = title;
+    sidenavTitle.title = title;
     div.appendChild(sidenavTitle);
 
     let content = this.createElement(TAG.DIV);
@@ -360,6 +361,7 @@ export class AonApplication extends AonElement {
       let sidenavTitle = this.createElement(TAG.DIV);
       sidenavTitle.className = "aonSidenavTitle";
       sidenavTitle.innerHTML = title;
+      sidenavTitle.title = title;
       div.appendChild(sidenavTitle);
 
       let content = this.createElement(TAG.DIV);
@@ -395,6 +397,7 @@ export class AonApplication extends AonElement {
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
     sidenavTitle.innerHTML = data.name;
+    sidenavTitle.title = data.name;
     div.appendChild(sidenavTitle);
 
     return div;
@@ -431,6 +434,7 @@ export class AonApplication extends AonElement {
       let id = this.SIDENAV + option.name;
       let li = this.createElement(TAG.LI);
       li.id = id;
+      li.title = option.name;
       li.className = "aonAppMenuSidenavList aonOpacity";
       ul.appendChild(li);
       if(option.options) {

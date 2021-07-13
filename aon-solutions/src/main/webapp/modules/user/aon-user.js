@@ -17,7 +17,6 @@ import { MSG, MATERIAL_ICONS, CONSTANT } from '../../environments/environments.j
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
-import { triggerModuleStart } from '../../gwt/gwtLoader.js';
 
 export class AonUser extends AonElement {
 
