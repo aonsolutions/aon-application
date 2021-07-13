@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -68,11 +67,6 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	protected AonApiData initialize(HttpServletRequest req, HttpServletResponse resp) {
 		AonApiData api = new AonApiData();
-		
-		LOGGER.info("SESSION_ID -> " + req.getHeader(IConstants.SESSION_ID));
-		LOGGER.info("DOMAIN_NAME -> " + req.getHeader(IConstants.DOMAIN_NAME));
-		LOGGER.info("DOMAIN_ID -> " + req.getHeader(IConstants.DOMAIN_ID));
-	
 		api.setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));

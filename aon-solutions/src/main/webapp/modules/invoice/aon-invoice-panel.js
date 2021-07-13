@@ -7,8 +7,6 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonNewInvoice } from './aon-new-invoice.js';
 import { AonMobileNewInvoice } from './aon-mobile-new-invoice.js';
 
-import './aon-invoice.js';
-import './aon-mobile-invoice.js';
 import './aon-invoice-list.js';
 import './aon-mobile-invoice-list.js';
 import './aon-invoice-print.js';

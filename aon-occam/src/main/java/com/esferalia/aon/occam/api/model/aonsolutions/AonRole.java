@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 public enum AonRole  implements Serializable {
 	ADMIN, 
@@ -97,6 +98,18 @@ public enum AonRole  implements Serializable {
 		list.add(OCR);
 		list.add(MANAGEMENT);
 		return list;
+	}
+	
+	public static LinkedList<AonRole> list() {
+		LinkedList<AonRole> list = new LinkedList<AonRole>();
+		for (AonRole rs : values()) {
+			list.add(rs);
+		}
+		return list;
+	}
+	
+	public static Stream<AonRole> stream() {
+		return list().stream();
 	}
 }
 
