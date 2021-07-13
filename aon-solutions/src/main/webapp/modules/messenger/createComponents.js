@@ -125,19 +125,6 @@ export const createReceiverDiv = () => newComponent({
 });
 
 
-// export const createReceiverselect = () => {
-  
-//   let comp = new AonSelect();
-//   comp.id = "";
-//   comp.title = "";
-//   comp.style.transition = "background-color .25s";
-//   setClasses(comp,[CSS.TRANSITION_CASCADE]);
-
-//   return comp;
-
-// }
-
-
 
 // ----------------------------------------------------
 // SEND BAR IN DESKTOP VIEW
@@ -147,8 +134,7 @@ export const createSendBar = () => newComponent({
   classes: [CSS.FLEX_ROW, CSS.NO_COPY, CSS.FLEX_JUSTIFY_START],
   styles: {
     maxWidth: "600px",
-    width: "100%",
-    maxWidth: "600px",
+    width: "100%"
   },
 });
 
@@ -230,16 +216,11 @@ export const createSendButton = (text=null) => newComponent({
   },
 }).element;
 
-export const createTaskButton = () => {
-  const btn = createSendButton(MSG.SAVE);
-  // btn.style.background = "#86D364"; //CSS.variable(COLORS.ONLINE_GREEN);
-  return btn;
-}
 
 
-export const createSendIcon = (icon) => newComponent({
+export const createSendIcon = () => newComponent({
   type: "i",
-  text: icon || "send",
+  text: "send",
   classes: ["material-icons"],
   styles: {
     fontSize: "1.2em",

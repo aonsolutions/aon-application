@@ -2526,7 +2526,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				userId, 
 				contract.getSsRegime().getCode(), 
 				contract.getEnterpriseCCC(), 
-				contract.getPersonSsNumber()) );
+				contract.getPersonSsNumber(),
+				contract.getEndDate() ) );
 	}
 
 	@Override

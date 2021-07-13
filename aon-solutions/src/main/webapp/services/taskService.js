@@ -7,6 +7,8 @@ export const saveTask = (data) => post(`${API_URL}/task`, data);
 
 export const getTaskWorkflow = (data) => get(`${API_URL}/task/workflow`, data);
 
+export const saveTaskWorkflow = (data) => post(`${API_URL}/task/workflow`, data);
+
 /**
  * Gegt messenger chat data
  * @returns 

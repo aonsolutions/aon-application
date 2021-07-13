@@ -38,6 +38,7 @@ public class ObjectFactory {
     private final static QName _RespuestaConsultaCobros_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", "RespuestaConsultaCobros");
     private final static QName _RespuestaConsultaInmueblesAdicionales_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", "RespuestaConsultaInmueblesAdicionales");
     private final static QName _RespuestaConsultaPagos_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", "RespuestaConsultaPagos");
+    private final static QName _RespuestaConsultaLRVentaBienesConsigna_QNAME = new QName("https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", "RespuestaConsultaLRVentaBienesConsigna");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr
@@ -215,6 +216,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RespuestaConsultaLRVentaBienesConsignaType }
+     * 
+     */
+    public RespuestaConsultaLRVentaBienesConsignaType createRespuestaConsultaLRVentaBienesConsignaType() {
+        return new RespuestaConsultaLRVentaBienesConsignaType();
+    }
+
+    /**
      * Create an instance of {@link RespuestaConsultaLRFacturasClienteType }
      * 
      */
@@ -300,6 +309,14 @@ public class ObjectFactory {
      */
     public RegistroRespuestaConsultaFactInformadasAgrupadasClienteType createRegistroRespuestaConsultaFactInformadasAgrupadasClienteType() {
         return new RegistroRespuestaConsultaFactInformadasAgrupadasClienteType();
+    }
+
+    /**
+     * Create an instance of {@link RegistroRespuestaConsultaVentaBienesConsignaType }
+     * 
+     */
+    public RegistroRespuestaConsultaVentaBienesConsignaType createRegistroRespuestaConsultaVentaBienesConsignaType() {
+        return new RegistroRespuestaConsultaVentaBienesConsignaType();
     }
 
     /**
@@ -396,6 +413,22 @@ public class ObjectFactory {
      */
     public RespuestaOperacionesSegurosType createRespuestaOperacionesSegurosType() {
         return new RespuestaOperacionesSegurosType();
+    }
+
+    /**
+     * Create an instance of {@link RespuestaVentaBienesConsignaType }
+     * 
+     */
+    public RespuestaVentaBienesConsignaType createRespuestaVentaBienesConsignaType() {
+        return new RespuestaVentaBienesConsignaType();
+    }
+
+    /**
+     * Create an instance of {@link RespuestaConsultaLRVentaBVType }
+     * 
+     */
+    public RespuestaConsultaLRVentaBVType createRespuestaConsultaLRVentaBVType() {
+        return new RespuestaConsultaLRVentaBVType();
     }
 
     /**
@@ -698,6 +731,19 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", name = "RespuestaConsultaPagos")
     public JAXBElement<RespuestaConsultaPagosType> createRespuestaConsultaPagos(RespuestaConsultaPagosType value) {
         return new JAXBElement<RespuestaConsultaPagosType>(_RespuestaConsultaPagos_QNAME, RespuestaConsultaPagosType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RespuestaConsultaLRVentaBienesConsignaType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RespuestaConsultaLRVentaBienesConsignaType }{@code >}
+     */
+    @XmlElementDecl(namespace = "https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd", name = "RespuestaConsultaLRVentaBienesConsigna")
+    public JAXBElement<RespuestaConsultaLRVentaBienesConsignaType> createRespuestaConsultaLRVentaBienesConsigna(RespuestaConsultaLRVentaBienesConsignaType value) {
+        return new JAXBElement<RespuestaConsultaLRVentaBienesConsignaType>(_RespuestaConsultaLRVentaBienesConsigna_QNAME, RespuestaConsultaLRVentaBienesConsignaType.class, null, value);
     }
 
 }

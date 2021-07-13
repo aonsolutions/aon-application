@@ -16,10 +16,12 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.LRConsultaDetO
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.LRConsultaEmitidasType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.LRConsultaLROperacionesSegurosType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.LRConsultaRecibidasType;
+import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.LRConsultaVentaBienesConsignaType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.RespuestaConsultaFacturaCobrosType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.RespuestaConsultaFacturaPagosType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.RespuestaConsultaInmueblesType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.RespuestaConsultaLRFacturasType;
+import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.RespuestaConsultaLRVentaBVType;
 
 
 /**
@@ -59,7 +61,9 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.Respu
     ConsultaInmueblesAdicionalesType.class,
     ConsultaPagosType.class,
     LRConsultaLROperacionesSegurosType.class,
+    LRConsultaVentaBienesConsignaType.class,
     RespuestaConsultaLRFacturasType.class,
+    RespuestaConsultaLRVentaBVType.class,
     RespuestaConsultaFacturaCobrosType.class,
     RespuestaConsultaInmueblesType.class,
     RespuestaConsultaFacturaPagosType.class

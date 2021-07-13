@@ -124,7 +124,8 @@ export class AonMessengerList extends AonElement {
         this.MORE = false;
       else {
         data = tasks.map(task=>{
-          const newTitle = `#${task.number.toString().padStart(5,0)} ${task.title}`;
+          const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
+          const newTitle  = `#${newNumber} ${task.title}`;
           const titleDescription = `<span style="font-size:14px;font-weight: 500;">${newTitle}</span>`;
           return {
             ...task,
@@ -151,7 +152,7 @@ export class AonMessengerList extends AonElement {
           icon_color: CSS.variable(COLORS.ONLINE_GREEN),
           icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
           title: res.newTitle,
-          subtitle: dateParse,
+          subtitle: dateParse, 
         };
         aonTable.addLi(options, idx, () => this.goMessengerChat(res));
       });

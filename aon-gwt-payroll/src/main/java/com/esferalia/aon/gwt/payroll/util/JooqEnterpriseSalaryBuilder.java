@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.util;
 
 import static com.esferalia.aon.gwt.payroll.shared.Salary.Type.LIQUIDATIONS;
+import static com.esferalia.aon.gwt.payroll.shared.Salary.Type.SALARIES;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -36,6 +37,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -286,24 +288,11 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<String, EnterprisePayrollEntry>());
 			
-			
-			long matches = map.get(r.get(WORKPLACE.DESCRIPTION)).keySet().stream().filter(k -> k.contains(r.get(SALARY.SOCIAL_SECURITY_NUMBER))).count();
-			
-			String key  = null;
-			
-			if (matches > 0) {
-				key = String.format("%s-%s", 
-						r.get(SALARY.SOCIAL_SECURITY_NUMBER) + "_" + (matches), 
-						getSalaryTypeKey(salaryType));
-			} else
-				key = String.format("%s-%s", 
-						r.get(SALARY.SOCIAL_SECURITY_NUMBER), 
-						getSalaryTypeKey(salaryType)
-						);
-			
-			if (map.get(r.get(WORKPLACE.DESCRIPTION)).containsKey(key)) {
-				
-			}
+			String key  = String.format("%s-%s-%3$td", 
+			r.get(SALARY.SOCIAL_SECURITY_NUMBER), 
+			getSalaryTypeKey(salaryType),
+			r.get(SALARY.END_DATE)
+			);
 			
 			map.get(r.get(WORKPLACE.DESCRIPTION)).put(key, entry);
 			
@@ -376,7 +365,16 @@ public class JooqEnterpriseSalaryBuilder {
 				return EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
 			}
 		});
-	}	
+	}
+	
+	
+	private static Condition getConditionSalaryIds(Integer... salaryId) {
+		Condition condition;
+		condition = Salary.SALARY.ID.in(salaryId);
+
+		return condition;
+	}
+	
 	
 	
 	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {

@@ -57,43 +57,17 @@ export const waitEl = (selector)=> new Promise((resolve,reject)=>{
   }, 100); // check every 100ms
 });
 
-
-/**
- * 
- * @param {string} selector selector html
- * @returns element
- */
- export const waitChildEl = (parent,selector)=> new Promise((resolve,reject)=>{
-  let i = 0;
-  let element = null;
-  let interval = setInterval(()=> {
-    i++;
-    element = parent.querySelector(selector);
-    if (element) {
-      clearInterval(interval);
-      resolve(element);
-    } else if(i >= 100){ // 10 seg
-      clearInterval(interval);
-      reject("Element empty");
-    }
-  }, 100); // check every 100ms
-});
-
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
 export const round = (value) => decimalAdjust('round', value, -2);
 
 export const decimalAdjust = (type, value, exp) => {
   // Si el exp no está definido o es cero...
-  if (typeof exp === 'undefined' || +exp === 0) {
-    return Math[type](value);
-  }
+  if (typeof exp === 'undefined' || +exp === 0)  return Math[type](value);
   value = +value;
   exp = +exp;
   // Si el valor no es un número o el exp no es un entero...
-  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-    return NaN;
-  }
+  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
   // Shift
   value = value.toString().split('e');
   value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));

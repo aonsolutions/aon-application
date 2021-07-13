@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.DeducirEnPeriodoPosteriorType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.DesgloseFacturaRecibidasType;
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.PersonaFisicaJuridicaType;
 
@@ -27,6 +28,9 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.Per
  *         &lt;element name="FechaRegContable" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}fecha"/&gt;
  *         &lt;element name="CuotaDeducible" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}ImporteSgn12.2Type"/&gt;
  *         &lt;element name="Pagos" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/RespuestaConsultaLR.xsd}FacturaARType"/&gt;
+ *         &lt;element name="ADeducirEnPeriodoPosterior" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}DeducirEnPeriodoPosteriorType" minOccurs="0"/&gt;
+ *         &lt;element name="EjercicioDeduccion" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}YearType" minOccurs="0"/&gt;
+ *         &lt;element name="PeriodoDeduccion" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}TipoPeriodoType" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
@@ -41,7 +45,10 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.Per
     "contraparte",
     "fechaRegContable",
     "cuotaDeducible",
-    "pagos"
+    "pagos",
+    "aDeducirEnPeriodoPosterior",
+    "ejercicioDeduccion",
+    "periodoDeduccion"
 })
 public class FacturaRespuestaRecibidaType
     extends FacturaRespuestaType
@@ -58,6 +65,13 @@ public class FacturaRespuestaRecibidaType
     @XmlElement(name = "Pagos", required = true)
     @XmlSchemaType(name = "string")
     protected FacturaARType pagos;
+    @XmlElement(name = "ADeducirEnPeriodoPosterior")
+    @XmlSchemaType(name = "string")
+    protected DeducirEnPeriodoPosteriorType aDeducirEnPeriodoPosterior;
+    @XmlElement(name = "EjercicioDeduccion")
+    protected String ejercicioDeduccion;
+    @XmlElement(name = "PeriodoDeduccion")
+    protected String periodoDeduccion;
 
     /**
      * Obtiene el valor de la propiedad desgloseFactura.
@@ -177,6 +191,78 @@ public class FacturaRespuestaRecibidaType
      */
     public void setPagos(FacturaARType value) {
         this.pagos = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad aDeducirEnPeriodoPosterior.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DeducirEnPeriodoPosteriorType }
+     *     
+     */
+    public DeducirEnPeriodoPosteriorType getADeducirEnPeriodoPosterior() {
+        return aDeducirEnPeriodoPosterior;
+    }
+
+    /**
+     * Define el valor de la propiedad aDeducirEnPeriodoPosterior.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DeducirEnPeriodoPosteriorType }
+     *     
+     */
+    public void setADeducirEnPeriodoPosterior(DeducirEnPeriodoPosteriorType value) {
+        this.aDeducirEnPeriodoPosterior = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad ejercicioDeduccion.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEjercicioDeduccion() {
+        return ejercicioDeduccion;
+    }
+
+    /**
+     * Define el valor de la propiedad ejercicioDeduccion.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEjercicioDeduccion(String value) {
+        this.ejercicioDeduccion = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad periodoDeduccion.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPeriodoDeduccion() {
+        return periodoDeduccion;
+    }
+
+    /**
+     * Define el valor de la propiedad periodoDeduccion.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPeriodoDeduccion(String value) {
+        this.periodoDeduccion = value;
     }
 
 }

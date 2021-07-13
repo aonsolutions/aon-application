@@ -4,6 +4,7 @@ package https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="CuotaRecargoEquivalencia" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}ImporteSgn12.2Type" minOccurs="0"/&gt;
  *         &lt;element name="PorcentCompensacionREAGYP" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}Tipo2.2Type" minOccurs="0"/&gt;
  *         &lt;element name="ImporteCompensacionREAGYP" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}ImporteSgn12.2Type" minOccurs="0"/&gt;
+ *         &lt;element name="BienInversion" type="{https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/SuministroInformacion.xsd}BienInversionType" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -40,7 +42,8 @@ import javax.xml.bind.annotation.XmlType;
     "tipoRecargoEquivalencia",
     "cuotaRecargoEquivalencia",
     "porcentCompensacionREAGYP",
-    "importeCompensacionREAGYP"
+    "importeCompensacionREAGYP",
+    "bienInversion"
 })
 public class DetalleIVARecibidaType {
 
@@ -58,6 +61,9 @@ public class DetalleIVARecibidaType {
     protected String porcentCompensacionREAGYP;
     @XmlElement(name = "ImporteCompensacionREAGYP")
     protected String importeCompensacionREAGYP;
+    @XmlElement(name = "BienInversion")
+    @XmlSchemaType(name = "string")
+    protected BienInversionType bienInversion;
 
     /**
      * Obtiene el valor de la propiedad tipoImpositivo.
@@ -225,6 +231,30 @@ public class DetalleIVARecibidaType {
      */
     public void setImporteCompensacionREAGYP(String value) {
         this.importeCompensacionREAGYP = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad bienInversion.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BienInversionType }
+     *     
+     */
+    public BienInversionType getBienInversion() {
+        return bienInversion;
+    }
+
+    /**
+     * Define el valor de la propiedad bienInversion.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BienInversionType }
+     *     
+     */
+    public void setBienInversion(BienInversionType value) {
+        this.bienInversion = value;
     }
 
 }

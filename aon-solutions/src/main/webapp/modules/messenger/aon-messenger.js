@@ -73,7 +73,7 @@ export class AonMessenger extends AonElement {
 		let list = MessengerOptions.AON_MESSENGER_LIST;
 		list.fn = () =>{
 			this._filter.status = TASK_STATUS.PENDING;
-			console.log(this._filter);
+			this._filter.workgroup =  undefined;
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 		} 
 		messengerOpts.push(list);
@@ -81,7 +81,7 @@ export class AonMessenger extends AonElement {
 		let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
 		listClose.fn = () => {
 			this._filter.status = TASK_STATUS.FINISHED;
-			console.log(this._filter);
+			this._filter.workgroup =  undefined;
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
 		messengerOpts.push(listClose);

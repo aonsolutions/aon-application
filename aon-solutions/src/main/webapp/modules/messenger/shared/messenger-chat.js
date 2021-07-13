@@ -2,14 +2,14 @@ import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
-import { newComponent, setAttributes, setClasses, setDateTimestampDay, setEvents, setFullDate, setStyles, setTime, waitChildEl, waitEl } from "../../../services/utils.js";
+import { newComponent, setAttributes, setDateTimestampDay, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, TASK_WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
-import { createOutlinedMaterialIcon, createSpaceBetweenRow, createText } from "./creationUtils.js";
+import { createSpaceBetweenRow, createText } from "./creationUtils.js";
 import { buildMobileWritter } from "./messenger-writter.js";
 
 export const RIGHT = "RIGHT";
@@ -17,11 +17,10 @@ export const LEFT = "LEFT";
 
 /**
  * Create desktop chat for messenger (mobile)
- * @param {*} parent 
+ * @param {*} aonMessengerChat 
  * @param {*} data 
  */
-export const buildMobileChat = (chatEl, data, parent) => {
-    const application = parent.getApplication();
+export const buildMobileChat = (chatEl, data, aonMessengerChat) => {
     chatEl.element.style.padding = 0;
     /**
      * Wrapper 
@@ -38,158 +37,33 @@ export const buildMobileChat = (chatEl, data, parent) => {
     });
     wrapper.appendTo(chatEl.element);
 
-    if(!data.title){
-        const newRequestPanel = newComponent({
-            type: 'div',
-            id : MESSENGER_IDS.NEW_REQUEST_PANEL,
-            classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
-            styles : {
-                height: '100%',
-                width: '100%',
-                background: CSS.variable(COLORS.AON_WHITE),
-                position: 'absolute',
-                top: '0%',
-                opacity: 1,
-                transition: '.5s',
-                zIndex : 10
-            }
-        });
-        newRequestPanel.appendTo(wrapper.element);
-        /**
-         * Building toolbars
-         */
-        const toolbars = setAttributes(new AonToolbar(),{
-            id: MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR,
-            type: ToolbarType.SECONDARY,
-            title: "Nueva solicitud"
-        });
-        toolbars.style.width = "100%"; 
-        newRequestPanel.appendChild(toolbars);
-        toolbars.addButton2(ACTIONS.SAVE,() => {
-            parent.save();
-        })
-        
-        toolbars.addButton2(ACTIONS.BACK,() => {
-            wrapper.element.style.transition = ".25s";
-            wrapper.element.style.opacity = "0";
-            setTimeout(() => {
-                const button = document.getElementById("aonMessengerSidenavAbiertas");
-                button.click();
-            }, 250);
-        });
-
-        waitChildEl(toolbars,"header").then(header => {
-            setStyles(header,{
-                margin : 0,
-                paddingLeft : "1.5em",
-                paddingRight : "1.5em",
-            });
-        });
-
-        const div = document.createElement("div");
-        div.className = CSS.AON_MOBILE_SUB_CONTENT;
-        div.style.width = "100%";
-        newRequestPanel.appendChild(div);
-
-        /**
-         * Creating title input
-         */
-        const titleIn = setStyles( createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, "Escriba su titulo aquí"), {
-            padding: "10px 20px",
-            display : "block",
-            width: "100%",
-        });
-        div.appendChild(titleIn); 
-
-        /**
-         * smooth border colors
-         */
-        const titleInInput = document.querySelector("input");
-        if(titleInInput){
-            setStyles(titleInInput,{
-                borderBottom : "1px solid #e0e0e0",
-                marginBottom : 0,
-                paddingLeft : "1.5em",
-                paddingRight : "1.5em",
-                transition : "background-color .25s"
-            });
-        }
-  
-
-        /**
-         * Adjust the space issues
-         * related to AonInput defaults
-         */
-         const titleInSpan = document.querySelector("span");
-         if(titleInSpan){
-            setStyles(titleInSpan,{
-                paddingLeft : "1.5em",
-                paddingRight : "1.5em",
-                transition: ".25s",
-                top : "5%"
-            });
-         }
+    /**
+     * Building toolbars
+     */
+    const toolbar = setAttributes(new AonToolbar(),{
+        id: MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR,
+        type: ToolbarType.SECONDARY,
+        title: aonMessengerChat.UPDATE ? "#"+(data.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
+    });
  
-         const titleInGroup = document.querySelector(".aonInputGroup");
-         if(titleInGroup)
-            titleInGroup.style.marginBottom = "0px"
-
-
-        //----------------WORKGROUP
-        const workgroupSelect = setAttributes(new AonSelect(),{
-            id:MESSENGER_IDS.WORKGROUP,
-            name:"Para",
-            title:"Para",
-        });
-        setStyles(workgroupSelect, {
-            display : "block",
-            width: "100%",
-        });
-        div.appendChild(workgroupSelect);
-        fillWorkGroup(data, application);
-        changeStyleSelect(workgroupSelect);
-
-          //-----------------TASK HOLDER
-        const taskHolderSelect = setAttributes( new AonSelect(),{
-            id: MESSENGER_IDS.TASKHOLDER,
-            name: MESSENGER_IDS.TASKHOLDER,
-            title: "Asignar a"
-        });
-        setStyles(taskHolderSelect, {
-            display : "block",
-            width: "100%",
-        });
-
-        div.appendChild(taskHolderSelect);
-        changeStyleSelect(taskHolderSelect);
-
-
-        // /**
-        //  * Creating text area
-        //  */
-        const aonTextArea = new AonTextArea();
-        aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-        aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
-        setStyles(aonTextArea,{
-            height: "100%",
-            width: "100%",
-            marginTop : 0,
-            boxShadow : "none",
-        });
-        div.appendChild(aonTextArea);
-
-       /**
-        * smooth border colors
-        */
-        const aonTextAreaToolbar = document.querySelector("toolbar");
-        if(aonTextAreaToolbar){
-            setStyles(aonTextAreaToolbar,{
-                paddingLeft  : "calc(1.5em - 5px)",
-                paddingRight : "calc(1.5em - 5px)",
-                borderBottom : "1px solid #e0e0e0"
-            });
-        }
+    if(aonMessengerChat.UPDATE){
+        wrapper.appendChild(toolbar);
+    } else {
+        buildMobileChatCreate(wrapper, toolbar, aonMessengerChat);
     }
+
+    //TOOLBAR BOTONS  
+    toolbar.style.width = "100%"; 
+    if(!aonMessengerChat.UPDATE){
+        toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+    }    
+    toolbar.addButton2(ACTIONS.BACK,() => {
+        wrapper.element.style.transition = ".25s";
+        wrapper.element.style.opacity = "0";
+        setTimeout(() => {
+            aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+        }, 250);
+    });
 
     
     /**
@@ -221,55 +95,18 @@ export const buildMobileChat = (chatEl, data, parent) => {
 
 
     const title = createTitle(data.title);
-    setStyles(title.element,
-        {
-            display : 'block',
-            fontSize: '1.3em',
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            width : '100%',
-            background : "#fff",
-            borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
-        }
-    );
+    setStyles(title.element,{
+        display : 'block',
+        fontSize: '1.3em',
+        paddingTop: "10px",
+        paddingBottom: "10px",
+        width : '100%',
+        background : "#fff",
+        borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
+    });
     title.appendTo(chat.element);
 
-    /**
-     * If no message, put one ;)
-     */
-    // if(data && data.workflows && data.workflows.length){
-    //     data.workflows.forEach(element => {
-    //         if (element.type === TASK_WORKFLOW_TYPE.ACTION) {
-    //             const action = createAction(chooseActionIcon(element.action), element.message);
-    //             action.appendTo(chat.element);
-    //         }
-    
-    //         if (element.type === TASK_WORKFLOW_TYPE.MESSAGE) {
-    //             const message = createChatMessage({
-    //                 name: element.sender,
-    //                 message: element.message,
-    //                 id: "noId",
-    //                 date: element.date,
-    //                 attach: element.attach,
-    //                 direction:null
-    //             });
-    //             message.appendTo(chat.element);
-    //         }
-    //     });
-    // } else {
-    //     let noMessage = newComponent({
-    //         type : MESSENGER_COMPONENTS.ADVICE,
-    //         id   : MESSENGER_IDS.NO_MESSAGES,
-    //         text : 'No hay mensajes en esta solicitud',
-    //         styles : {
-    //             fontSize : '1em',
-    //             color : CSS.variable(COLORS.GRAYSON),
-    //         }
-    //     });
-    //     noMessage.appendTo(chat.element);
-    // }
-
-    buildMobileWritter(wrapper,data)
+    buildMobileWritter(wrapper, aonMessengerChat)
 }
 
 /**
@@ -302,7 +139,6 @@ export const buildDesktopChat = (parent) => {
     );
     title.appendTo(wrapper.element);
     
-
     /**
      * The chat itself
      */
@@ -443,32 +279,32 @@ const checkProperties = (properties) => {
 }
 
 export const changeStyleSelect = (aonSelect) => {
-    waitChildEl(aonSelect,"input").then(el => {
-        setStyles(el,{
+    const aonSelectInput = aonSelect.querySelector(TAG.INPUT);
+    if(aonSelectInput){
+        setStyles(aonSelectInput,{
             borderBottom : "1px solid #e0e0e0",
             marginBottom : 0,
             paddingLeft : "1.5em",
             paddingRight : "1.5em",
             transition : "background-color .25s"
         });
-    });
-
+    }
     /**
      * Adjust the space issues
      * related to AonInput defaults
      */
-    waitChildEl(aonSelect,"span").then(el => {
-        setStyles(el,{
+    const aonSelectSpan = aonSelect.querySelector(TAG.SPAN);
+    if(aonSelectSpan){
+        setStyles(aonSelectSpan,{
             paddingLeft : "1.5em",
             paddingRight : "1.5em",
             transition: ".25s",
             top : "5%"
         });
-    });
-
-    waitChildEl(aonSelect,".aonInputGroup").then(el => {
-        el.style.marginBottom = "0px"
-    });
+    }
+    const aonSelectGroup = aonSelect.querySelector(".aonInputGroup");
+    if(aonSelectGroup)
+        aonSelectGroup.style.marginBottom = "0px"
 }
 
 /**
@@ -476,7 +312,7 @@ export const changeStyleSelect = (aonSelect) => {
  * @param {*} actionType 
  * @returns 
  */
- const chooseIconMessage = ({type, date, name}) => {
+const chooseIconMessage = ({type, date, name}) => {
     const dateParse = setFullDate(date) + " " + setTime(date);
     let actionIcon = {
         icon : MATERIAL_ICONS.INFO,
@@ -492,8 +328,151 @@ export const changeStyleSelect = (aonSelect) => {
     return actionIcon;
 }
 
+
+/**
+ VIEW CREATE TASK MOBILE
+ * @param {*} wrapper 
+ * @param {*} toolbar 
+ * @param {*} aonMessengerChat 
+ */
+const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
+    const application = aonMessengerChat.applicationEl;
+    const data = aonMessengerChat._data;
+    const newRequestPanel = newComponent({
+        type: TAG.DIV,
+        id : MESSENGER_IDS.NEW_REQUEST_PANEL,
+        classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
+        styles : {
+            height: '100%',
+            width: '100%',
+            background: CSS.variable(COLORS.AON_WHITE),
+            position: 'absolute',
+            top: '0%',
+            opacity: 1,
+            transition: '.5s',
+            zIndex : 10
+        }
+    });
+    newRequestPanel.appendTo(wrapper.element);
+
+    newRequestPanel.appendChild(toolbar);
+ 
+    const toolbarsHeader = toolbar.querySelector("header");
+    if(toolbarsHeader){
+        setStyles(toolbarsHeader,{
+            margin : 0,
+            paddingLeft : "1.5em",
+            paddingRight : "1.5em",
+        });
+    }
+
+
+    const div = document.createElement(TAG.DIV);
+    div.className = CSS.AON_MOBILE_SUB_CONTENT;
+    div.style.width = "100%";
+    newRequestPanel.appendChild(div);
+
+    /**
+     * Creating title input
+     */
+    const titleIn = setStyles( createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, MSG.WRITE_YOUR_TITLE), {
+        padding: "10px 20px",
+        display : "block",
+        width: "100%",
+    });
+    div.appendChild(titleIn); 
+
+    /**
+     * smooth border colors
+     */
+    const titleInInput = document.querySelector(TAG.INPUT);
+    if(titleInInput){
+        setStyles(titleInInput,{
+            borderBottom : "1px solid #e0e0e0",
+            marginBottom : 0,
+            paddingLeft : "1.5em",
+            paddingRight : "1.5em",
+            transition : "background-color .25s"
+        });
+    }
+    /**
+     * Adjust the space issues
+     * related to AonInput defaults
+     */
+     const titleInSpan = document.querySelector(TAG.SPAN);
+     if(titleInSpan){
+        setStyles(titleInSpan,{
+            paddingLeft : "1.5em",
+            paddingRight : "1.5em",
+            transition: ".25s",
+            top : "5%"
+        });
+     }
+
+     const titleInGroup = document.querySelector(".aonInputGroup");
+     if(titleInGroup)
+        titleInGroup.style.marginBottom = "0px"
+
+    //----------------WORKGROUP
+    const workgroupSelect = setAttributes(new AonSelect(),{
+        id:MESSENGER_IDS.WORKGROUP,
+        name:"Para",
+        title:"Para",
+    });
+    setStyles(workgroupSelect, {
+        display : "block",
+        width: "100%",
+    });
+    div.appendChild(workgroupSelect);
+    fillWorkGroup(data, application);
+    changeStyleSelect(workgroupSelect);
+
+      //-----------------TASK HOLDER
+    const taskHolderSelect = setAttributes( new AonSelect(),{
+        id: MESSENGER_IDS.TASKHOLDER,
+        name: MESSENGER_IDS.TASKHOLDER,
+        title: "Asignar a"
+    });
+    setStyles(taskHolderSelect, {
+        display : "block",
+        width: "100%",
+    });
+
+    div.appendChild(taskHolderSelect);
+    changeStyleSelect(taskHolderSelect);
+
+
+    // /**
+    //  * Creating text area
+    //  */
+    const aonTextArea = new AonTextArea();
+    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+    aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
+    aonTextArea.placeholder = aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`;
+    setStyles(aonTextArea,{
+        height: "100%",
+        width: "100%",
+        marginTop : 0,
+        boxShadow : "none",
+    });
+    div.appendChild(aonTextArea);
+
+   /**
+    * smooth border colors
+    */
+    const aonTextAreaToolbar = document.querySelector("toolbar");
+    if(aonTextAreaToolbar){
+        setStyles(aonTextAreaToolbar,{
+            paddingLeft  : "calc(1.5em - 5px)",
+            paddingRight : "calc(1.5em - 5px)",
+            borderBottom : "1px solid #e0e0e0"
+        });
+    }
+}
+
+
 //FILL WORKGROUP
- export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
+export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{

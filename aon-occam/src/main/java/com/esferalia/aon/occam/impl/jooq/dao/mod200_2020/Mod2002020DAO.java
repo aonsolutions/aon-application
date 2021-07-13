@@ -796,12 +796,15 @@ public class Mod2002020DAO  {
 	}
 	
 	public static Mod2002020 initializeNewMod200(AONContext ctx, Mod2002020 mod200) {
-		Mod2002019 old = Mod2002019DAO.getByYear(ctx, 2019);
+		//Mod2002019 old = Mod2002019DAO.getByYear(ctx, 2019);
+		Mod2002019 old = Mod2002019DAO.getByYear(ctx, 2019, false);
 		if (old != null && old.getId() != null) { 
+			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2019");
 			mod200.setEnterprise(old.getEnterprise());
 			Mod2002020Import2019.import2019(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
+			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM CONFIGURATION");
 			mod200.setPeriodType(1);
 			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(mod200.getYear()));
 			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(mod200.getYear()));
@@ -831,6 +834,7 @@ public class Mod2002020DAO  {
 			}			
 			
 		}
+		ctx.log().info("------ [END OK] INITIALIZE NEW MOD 200");
 		return mod200;
 	}
 	

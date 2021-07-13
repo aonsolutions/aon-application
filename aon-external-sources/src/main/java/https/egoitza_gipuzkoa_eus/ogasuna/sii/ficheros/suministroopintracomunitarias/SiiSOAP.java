@@ -32,8 +32,8 @@ import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.LROperacionI
 @XmlSeeAlso({
     https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestasuministro.ObjectFactory.class,
     https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.respuestaconsultalr.ObjectFactory.class,
-    https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.ObjectFactory.class,
     https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.consultalr.ObjectFactory.class,
+    https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.ObjectFactory.class,
     https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministrolr.ObjectFactory.class
 })
 public interface SiiSOAP {
