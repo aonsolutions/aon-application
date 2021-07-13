@@ -165,16 +165,17 @@ public class JooqMainCCC {
 				
 				if(null == geozoneRecords || geozoneRecords.isEmpty()) {
 					//TODO: No existe este geozone
-					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
-							.fetch();
-					
-					geozoneId = dslContext.insertInto(GEOZONE)
+//					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
+//							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+//							.fetch();
+					if(cccInfo.getGeozoneCode() != null) {
+						geozoneId = dslContext.insertInto(GEOZONE)
 							.set(GEOZONE.DOMAIN, domainId)
-							.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
-							.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+							.set(GEOZONE.NAME, cccInfo.getGeozone()) //gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+							.set(GEOZONE.CODE, cccInfo.getGeozoneCode()) //gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
 							.returning(GEOZONE.ID)
 							.fetchOne().get(GEOZONE.ID);
+					}
 				}else {
 					geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
 					
