@@ -5,8 +5,6 @@ import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.INPUT;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -39,36 +37,32 @@ public class AioBaseTestCase extends AbstractTestCase{
 		loginBtn.click();
 		log(CLICK, "Login button.");
 		
-		WebElement generalRegime = searchEnterprise(driver, "régimen general");
-	
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='aon-outputText' and contains(text(), 'RÉGIMEN GENERAL')]")));
 		
-		SeleniumTools.clickUntilNotExists(driver, generalRegime);
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			fail();
-		}
+		SeleniumTools.clickUntilNotExists(driver, By.xpath("//span[@class='aon-outputText' and contains(text(), 'RÉGIMEN GENERAL')]"));
+
+		
 		if (!checkIfEntered(driver, "RÉGIMEN GENERAL"))
 			fail("Didn't enter 'RÉGIMEN GENERAL'");
 		
 	}
 	
 	private static boolean checkIfEntered(WebDriver driver, String text) {
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		WebElement elem = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span.aon-header-domain-title")));
-		return elem.getAttribute("innerText").trim().equalsIgnoreCase(text);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		return wait.until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector("span.aon-header-domain-title"), text));
 	}
 	
-	private static WebElement searchEnterprise(WebDriver driver, String string) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".aon-dataTable .rich-table-row")));
-		
-		Logger.log(Status.GET, "Getting enterprises.");
-		return elements.stream().filter(elem -> {
-			WebElement nameElem = elem.findElement(By.cssSelector("td span.aon-outputText"));
-			return nameElem.getAttribute("innerText").equalsIgnoreCase(string);
-		}).findFirst().orElse(null);
-	}
+//	private static WebElement searchEnterprise(WebDriver driver, String string) {
+//		WebDriverWait wait = new WebDriverWait(driver, 10);
+//		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".aon-dataTable .rich-table-row")));
+//		
+//		Logger.log(Status.GET, "Getting enterprises.");
+//		return elements.stream().filter(elem -> {
+//			WebElement nameElem = elem.findElement(By.cssSelector("td span.aon-outputText"));
+//			return nameElem.getAttribute("innerText").equalsIgnoreCase(string);
+//		}).findFirst().orElse(null);
+//	}
 
 	protected static void logout(WebDriver driver) {
 		WebElement headerOptionsFormLogout = driver.findElement(By.cssSelector("a[id='headerOptionsForm:logout']"));

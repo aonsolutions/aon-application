@@ -272,7 +272,7 @@ public class SeleniumTools {
 		return downloadFolder;
 	}
 	
-	public static boolean clickUntilNotExists(WebDriver app, WebElement elem) {
+	public static boolean clickUntilNotExists(WebElement elem) {
 	    boolean result = false;
 	    int attempts = 0;
 	    while(attempts < 8) {
@@ -804,15 +804,18 @@ public class SeleniumTools {
 		
 		
 		String regex = String.format( new Locale("es","ES"),"\\s*[0-9]+\\/%2$d\\/%1$d\\s*\\-\\s*[0-9]+\\/%4$d\\/%3$d\\s*", startYear, startMonth, endYear, endMonth);
-		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-periodLabel")));
 		
-		String period = element.getAttribute("innerText");
 		
 		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(period);
-		if (!matcher.matches())
-			Assert.fail("Pediod ("+period+") does not math with selection");
 		
+		try {
+			if (!wait.until(ExpectedConditions.textMatches(By.id("gwt-debug-periodLabel"), pattern))) {
+				Assert.fail("Period (" + getAttribute(driver, By.id("gwt-debug-periodLabel"), "innerText") + ") does not math with selection");
+			}
+			
+		} catch (Exception e) {
+			Assert.fail("Period does not math with selection");
+		}
 	}
 	
 	public static void safeInput (WebDriver driver, String cssSelector, String text) {
