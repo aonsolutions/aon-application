@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Task.TASK;
-
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.project.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -26,8 +25,8 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskDAO {
@@ -77,19 +76,20 @@ public class TaskDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
+				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.orderBy(TASK.CREATION_DATE.desc());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter){	
-		return select(ctx, filter).fetchInto(TASK).stream().map(new TaskFiller());
+		return select(ctx, filter).fetch().stream().map(new TaskFiller());
 	}
 	
 	public static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
 		return select(ctx, filter)
 			.limit(perPage)
 			.offset(perPage * (page -1))
-			.fetchInto(TASK).stream().map(new TaskFiller());
+			.fetch().stream().map(new TaskFiller());
 	}
 	
 	public static LinkedList<Task> getList(AONContext ctx, TaskFilter filter){	
@@ -220,7 +220,7 @@ public class TaskDAO {
 				.setStartDate(r.getValue(TASK.START_DATE))
 				.setStatus(TaskStatus.safeValueOf(r.getValue(TASK.STATUS)))
 				.setTaskHolder((TaskHolder) new TaskHolder().setId(r.getValue(TASK.TASK_HOLDER)))
-				.setWorkgroup(new Workgroup().setId(r.getValue(TASK.WORKGROUP)))
+				.setWorkgroup(WorkgroupFiller.build(r))
 				.setNumber(r.getValue(TASK.NUMBER))
 				.setCreationUser(r.getValue(TASK.CREATION_USER))
 				.setCreationDate(r.getValue(TASK.CREATION_DATE))

@@ -3,9 +3,11 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 
 public interface ITask2 {
@@ -24,4 +26,12 @@ public interface ITask2 {
 	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
 	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
+	
+	
+	//TASKATTACH
+	public TaskAttach getTaskAttach(AONContext ctx, TaskAttachFilter filter);
+	public Stream<TaskAttach> getTaskAttachStream(AONContext ctx, TaskAttachFilter filter);
+	public LinkedList<TaskAttach> getTaskAttachList(AONContext ctx, TaskAttachFilter filter);
+	public TaskAttach saveTaskAttach(AONContext ctx, TaskAttach task);
+	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter);
 }
