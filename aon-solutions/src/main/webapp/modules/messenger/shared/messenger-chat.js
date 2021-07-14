@@ -1,26 +1,22 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { AonSelect } from "../../../components/aon-select.js";
-import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { newComponent, setAttributes, setDateTimestampDay, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createMessageContent, createTitle } from "../createComponents.js";
-import { ICON_TYPES, TASK_WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
-import { createSpaceBetweenRow, createText } from "./creationUtils.js";
+import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createCommentContent, createTitle } from "../createComponents.js";
+import { ICON_TYPES, WORKFLOW_TYPES, WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { checkProperties, createAonTextArea, createSpaceBetweenRow, createTaskHolder, createText, createWorkgroup, LEFT, RIGHT } from "./creationUtils.js";
 import { buildMobileWritter } from "./messenger-writter.js";
-
-export const RIGHT = "RIGHT";
-export const LEFT = "LEFT";
 
 /**
  * Create desktop chat for messenger (mobile)
  * @param {*} aonMessengerChat 
  * @param {*} data 
  */
-export const buildMobileChat = (chatEl, data, aonMessengerChat) => {
+export const buildMobileChat = (chatEl, aonMessengerChat) => {
+    const data = aonMessengerChat.getData();
     chatEl.element.style.padding = 0;
     /**
      * Wrapper 
@@ -41,11 +37,10 @@ export const buildMobileChat = (chatEl, data, aonMessengerChat) => {
      * Building toolbars
      */
     const toolbar = setAttributes(new AonToolbar(),{
-        id: MESSENGER_IDS.NEW_REQUEST_PANEL_TOOLBAR,
         type: ToolbarType.SECONDARY,
         title: aonMessengerChat.UPDATE ? "#"+(data.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
     });
- 
+    
     if(aonMessengerChat.UPDATE){
         wrapper.appendChild(toolbar);
     } else {
@@ -236,7 +231,7 @@ export const createChatMessage = (properties) => {
     const name = createMessageAuthor(properties);
     name.appendTo(message.element);
 
-    const description = createMessageContent(properties);
+    const description = createCommentContent(properties);
     description.appendTo(message.element);
 
     const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
@@ -253,30 +248,6 @@ export const createChatMessage = (properties) => {
     return message;
 }
 
-/**
- * Check the properties of the message
- * AVOID showing null or undefined in UI.
- * @param {*} properties 
- * @returns Valid properties object.
- */
-const checkProperties = (properties) => {
-    if (!properties.name)
-        properties.name = ""
-
-    if (!properties.direction || (properties.direction != RIGHT && properties.direction != LEFT))
-        properties.direction = LEFT;
-
-    if (!properties.message)
-        properties.message = ""
-
-    if (!properties.attach)
-        properties.attach = [];
-
-    if (!properties.date)
-        properties.date = "";
-
-    return properties;
-}
 
 export const changeStyleSelect = (aonSelect) => {
     const aonSelectInput = aonSelect.querySelector(TAG.INPUT);
@@ -306,29 +277,6 @@ export const changeStyleSelect = (aonSelect) => {
     if(aonSelectGroup)
         aonSelectGroup.style.marginBottom = "0px"
 }
-
-/**
- * Choose icon for the actions
- * @param {*} actionType 
- * @returns 
- */
-const chooseIconMessage = ({type, date, name}) => {
-    const dateParse = setFullDate(date) + " " + setTime(date);
-    let actionIcon = {
-        icon : MATERIAL_ICONS.INFO,
-        type : ICON_TYPES.MATERIAL_OUTLINED,
-        color : CSS.variable(COLORS.MATERIAL_BLUE),
-        message: `${type} por <b>${name ? name : null}</b> ${dateParse}`
-    }
-    if(TASK_WORKFLOW_TYPE.OPEN.indexOf(type)>=0){
-        actionIcon.color = CSS.variable(COLORS.ONLINE_GREEN);
-    }  else if(TASK_WORKFLOW_TYPE.CLOSE.indexOf(type)>=0){
-        actionIcon.icon = MATERIAL_ICONS.CLOSE;
-    } 
-    return actionIcon;
-}
-
-
 /**
  VIEW CREATE TASK MOBILE
  * @param {*} wrapper 
@@ -337,10 +285,9 @@ const chooseIconMessage = ({type, date, name}) => {
  */
 const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     const application = aonMessengerChat.applicationEl;
-    const data = aonMessengerChat._data;
+    const data = aonMessengerChat.getData();
     const newRequestPanel = newComponent({
         type: TAG.DIV,
-        id : MESSENGER_IDS.NEW_REQUEST_PANEL,
         classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
         styles : {
             height: '100%',
@@ -414,12 +361,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
         titleInGroup.style.marginBottom = "0px"
 
     //----------------WORKGROUP
-    const workgroupSelect = setAttributes(new AonSelect(),{
-        id:MESSENGER_IDS.WORKGROUP,
-        name:"Para",
-        title:"Para",
-    });
-    setStyles(workgroupSelect, {
+    const workgroupSelect = setStyles(createWorkgroup(), {
         display : "block",
         width: "100%",
     });
@@ -428,12 +370,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     changeStyleSelect(workgroupSelect);
 
       //-----------------TASK HOLDER
-    const taskHolderSelect = setAttributes( new AonSelect(),{
-        id: MESSENGER_IDS.TASKHOLDER,
-        name: MESSENGER_IDS.TASKHOLDER,
-        title: "Asignar a"
-    });
-    setStyles(taskHolderSelect, {
+    const taskHolderSelect = setStyles(createTaskHolder(), {
         display : "block",
         width: "100%",
     });
@@ -441,15 +378,10 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     div.appendChild(taskHolderSelect);
     changeStyleSelect(taskHolderSelect);
 
-
     // /**
     //  * Creating text area
     //  */
-    const aonTextArea = new AonTextArea();
-    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-    aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
-    aonTextArea.placeholder = aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`;
-    setStyles(aonTextArea,{
+    const aonTextArea = setStyles(createAonTextArea(aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`),{
         height: "100%",
         width: "100%",
         marginTop : 0,
@@ -469,7 +401,6 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
         });
     }
 }
-
 
 //FILL WORKGROUP
 export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
@@ -522,31 +453,57 @@ export const fillChat = (workflows=[])=>{
             });
             noMessage.appendTo(chat);
         } else {
-            const applicationParent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).getApplicationParent();
+            const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+            const applicationParent = aonMessengerChat.getApplicationParent();
     
             const meId = applicationParent.SENDER.id;
     
             workflows.forEach(workflow => {
-                const {comment, type, modification_date, task_holder:{name,alias,id}} = workflow;
+                const {comment, type, modification_date, task_holder:{name, alias, id}} = workflow;
                 const me = id == meId; // if taskHolder id is me
                 const message = {
                     name: me ? "Yo" : alias,
-                    direction: me ? RIGHT : LEFT,
-                    message: comment,
+                    direction: me ? RIGHT: LEFT,
                     id: "is",
                     date: new Date(modification_date),
-                    type
+                    type,
+                    comment
                 }
-                if (type == TASK_WORKFLOW_TYPE.COMMENT) {
+                if (type == WORKFLOW_TYPES.COMMENT) {
                     const messageEl = createChatMessage(message);
                     messageEl.appendTo(chat);
                 } else{
                     message.name = name;
                     const actionJson = chooseIconMessage(message);
-                    const action = createAction(actionJson, actionJson.message);
+                    const action = createAction(actionJson, actionJson.comment);
                     action.appendTo(chat);
                 }
             });
         }
    })
+}
+
+
+
+/**
+ * Choose icon for the actions
+ * @param {*} actionType 
+ * @returns 
+ */
+ const chooseIconMessage = ({type, date, name, comment}) => {
+    const dateParse = setFullDate(date) + " " + setTime(date);
+    let actionIcon = {
+        icon : MATERIAL_ICONS.INFO,
+        type : ICON_TYPES.MATERIAL_OUTLINED,
+        color : CSS.variable(COLORS.MATERIAL_BLUE),
+        comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
+    }
+    if(WORKFLOW_TYPES.OPEN.indexOf(type)>=0){
+        actionIcon.color = CSS.variable(COLORS.ONLINE_GREEN);
+    }  else if(WORKFLOW_TYPES.CLOSE.indexOf(type)>=0){
+        actionIcon.icon = MATERIAL_ICONS.CLOSE;
+    }  else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
+        actionIcon.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse} `;
+    } 
+    return actionIcon;
 }

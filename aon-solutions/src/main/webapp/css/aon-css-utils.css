@@ -62,7 +62,6 @@
     background: transparent; 
 }
 
-
 .noFocus:focus{
     outline: none;
 }
@@ -100,4 +99,13 @@
 
 .firstLetterUpper:first-letter {
     text-transform: uppercase;
+}
+
+.divDragOver:hover{
+    background-color: rgba(3,88,216,.1);
+}
+
+.divDragOver.highlight {
+    background-color: rgba(3,88,216,.1);
+    border-color: rgba(3, 88, 216) !important; 
 }

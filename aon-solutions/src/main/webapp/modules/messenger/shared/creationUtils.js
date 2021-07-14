@@ -1,4 +1,8 @@
-import { newComponent } from "../../../services/utils.js";
+import { AonSelect } from "../../../components/aon-select.js";
+import { AonTextArea } from "../../../components/aon-textarea.js";
+import { MSG } from "../../../environments/environments.js";
+import { newComponent, setAttributes } from "../../../services/utils.js";
+import { MESSENGER_IDS } from "../MessengerEnums.js";
 
 /**
  * Create a row with space between elements inside 
@@ -80,3 +84,55 @@ export const createMaterialIcon = (properties) => newComponent({
         color: properties.color? properties.color : "#404040"
     }
 });
+
+
+export const RIGHT = "RIGHT";
+export const LEFT = "LEFT";
+/**
+ * Check the properties of the comment
+ * AVOID showing null or undefined in UI.
+ * @param {*} properties 
+ * @returns Valid properties object.
+ */
+
+ export const checkProperties = (properties) => {
+    if (!properties.name)
+        properties.name = ""
+
+    if (!properties.direction || (properties.direction != RIGHT && properties.direction != LEFT))
+        properties.direction = LEFT;
+
+    if (!properties.comment)
+        properties.comment = ""
+
+    if (!properties.attach)
+        properties.attach = [];
+
+    if (!properties.date)
+        properties.date = "";
+
+    return properties;
+}
+
+
+//----------------WORKGROUP   
+export const createWorkgroup = () =>setAttributes( new AonSelect(),{
+    id: MESSENGER_IDS.WORKGROUP,
+    name: MESSENGER_IDS.WORKGROUP,
+    title: MSG.WORKGROUP
+});
+
+ //-----------------TASK HOLDER
+ export const createTaskHolder = () => setAttributes( new AonSelect(),{
+    id: MESSENGER_IDS.TASKHOLDER,
+    name: MESSENGER_IDS.TASKHOLDER,
+    title: "Asignar a"
+});
+
+//-------------TEXT AREA COMMENT
+export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
+    id:MESSENGER_IDS.COMMENT_TASK,
+    name:MESSENGER_IDS.COMMENT_TASK,
+    placeholder: placeholder || MSG.COMMENT+"..."
+});
+
