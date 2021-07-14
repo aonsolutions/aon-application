@@ -273,6 +273,7 @@ export const CONTENT_EDITABLE = "contentEditable";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
+export const DIV_DRAG_OVER = "divDragOver";
 
 // aon-textarea 
 

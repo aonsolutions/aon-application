@@ -255,6 +255,12 @@ export class AonSelect extends AonElement {
   clear(){
     this.value = "";
   }
+
+  getText() {
+    const input = this.getElement(this.INPUT);
+    if(!input) return null;
+  	return input.value;
+  }
 }
 if(!window.customElements.get('aon-select')){
   window.customElements.define('aon-select', AonSelect);

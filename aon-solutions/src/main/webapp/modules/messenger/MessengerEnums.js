@@ -1,3 +1,5 @@
+import { MSG } from "../../environments/environments";
+
 export const AON_MESSENGER_LIST = {
     name: 'Abiertas',
     icon: 'assignment',
@@ -30,28 +32,18 @@ export const MESSENGER_COMPONENTS = {
 }
 
 export const MESSENGER_IDS = {
-    MESSENGER_CHAT: "messengerChat",
-    NEW_REQUEST_PANEL : "newRequestPanel", 
-    NEW_REQUEST_PANEL_TOOLBAR : "newRequestPanelToolbar", 
-    NO_MESSAGES : "noMessages",
     ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
-    BUTTON_SUBMIT_COMMENT:"btnSubmitComment",
-    //NEW
+    MESSENGER_CHAT: "messengerChat",
     MAIN_DIV: "mainDiv",
+    NO_MESSAGES : "noMessages",
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
     TITLE_TASK: "titleTask",
-    TASK_ID: "taskId"
+    INPUT_FILES: "inputFiles"
 }
 
-export const MESSENGER_MODES = {
-    DEMO : "demo",
-    PRODUCTION : "production",
-    TEST : "test",
-}
-
-export const TASK_WORKFLOW_TYPE = {
+export const WORKFLOW_TYPES = {
     OPEN: "opened",
 	CLOSE: "closed",
 	REOPEN: "reopened",
@@ -59,7 +51,22 @@ export const TASK_WORKFLOW_TYPE = {
 	LIBERATE: "liberate",
 	DELETE: "deleted",
 	RESTORE: "restore",
-	COMMENT: "comment"
+	COMMENT: "comment",
+    ASSIGN: "assigned",
+    FILE: "file",
+} 
+
+export const WORKFLOW_TYPE = (type)=>{
+    if(WORKFLOW_TYPES.OPEN.indexOf(type)!=-1)      return "Abierta"; //TODO
+    if(WORKFLOW_TYPES.CLOSE.indexOf(type)!=-1)     return "Cerrada";//TODO
+    if(WORKFLOW_TYPES.REOPEN.indexOf(type)!=-1)    return "Reabierta";//TODO
+    if(WORKFLOW_TYPES.DUPLICATE.indexOf(type)!=-1) return "Duplicada";//TODO
+    if(WORKFLOW_TYPES.LIBERATE.indexOf(type)!=-1)  return "Liberada";//TODO
+    if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Eliminada";//TODO
+    if(WORKFLOW_TYPES.RESTORE.indexOf(type)!=-1)   return "Restaurada";//TODO
+    if(WORKFLOW_TYPES.ASSIGN.indexOf(type)!=-1)    return "Reasignada";//TODO
+    if(WORKFLOW_TYPES.FILE.indexOf(type)!=-1)    return "Archivo";//TODO
+    return "Comentada"; //TODO
 } 
 
 export const TASK_STATUS = {
@@ -80,15 +87,3 @@ export const REQUEST_FILTER = {
     ABIERTAS : "abiertas",
     CERRADAS : "cerradas"
 }
-
-/**
- * 
- * Current state of the view
- * ---------------------------------
- * DEMO - Demo mode.
- * TEST - Beta in aonsolutions.org
- * PRODUCTION - Disable possible logs and testing content.
- * 
- */
- export const MESSENGER_MODE = MESSENGER_MODES.DEMO;
-

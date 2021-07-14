@@ -1,30 +1,22 @@
-import { AonSelect } from "../../../components/aon-select.js";
-import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import {  createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
-import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_WORKFLOW_TYPE } from "../MessengerEnums.js";
-import { createStartJustifiedColumn } from "./creationUtils.js";
-import { appendChatMessage, fillWorkGroup, RIGHT } from "./messenger-chat.js";
+import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { createAonTextArea, createStartJustifiedColumn, createTaskHolder, createWorkgroup, RIGHT } from "./creationUtils.js";
+import { appendChatMessage, fillWorkGroup } from "./messenger-chat.js";
 // import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
 
-
-/**
- * @TODO THINGS TO ENCHANCE
- *  
- *  1 - DEMO mode disable.
- *  2 - Refactor 'send message code' --> @duplicated
- */
 
 /**
  * Build desktop version of the writter 
  * @param {*} aonMessengerChat 
  * @param {*} data 
  */
-export const buildDesktopWritter = (writter, data, aonMessengerChat) => {
+export const buildDesktopWritter = (writter, aonMessengerChat) => {
+    const data = aonMessengerChat.getData();
     const application = aonMessengerChat.applicationEl;
     /**
      * Building title
@@ -39,31 +31,18 @@ export const buildDesktopWritter = (writter, data, aonMessengerChat) => {
 
     const receiverDiv = createReceiverDiv();
     receiverDiv.appendTo(writter.element);
-
-     //----------------WORKGROUP   
-    const workgroupSelect = setAttributes( new AonSelect(),{
-        id: MESSENGER_IDS.WORKGROUP,
-        name: MESSENGER_IDS.WORKGROUP,
-        title: MSG.WORKGROUP
-    });
-
-    receiverDiv.element.appendChild(workgroupSelect);
+    
+    receiverDiv.element.appendChild(createWorkgroup());
     fillWorkGroup(data, application);
 
     //-----------------TASK HOLDER
-    const taskHolderSelect = setAttributes( new AonSelect(),{
-        id: MESSENGER_IDS.TASKHOLDER,
-        name: MESSENGER_IDS.TASKHOLDER,
-        title: "Asignar a"
-    });
+    const taskHolderSelect = createTaskHolder();
     taskHolderSelect.style.marginLeft = "5px";
     receiverDiv.element.appendChild(taskHolderSelect);
 
 
-    const aonTextArea = new AonTextArea();
-    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-    aonTextArea.name = MESSENGER_IDS.COMMENT_TASK;
-    aonTextArea.placeholder = aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`;
+    const aonTextArea = createAonTextArea(aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`);
+
     writter.appendChild(aonTextArea);
     buildTextareaToolbar(aonTextArea);
 
@@ -76,6 +55,9 @@ export const buildDesktopWritter = (writter, data, aonMessengerChat) => {
 
         const upload = createUpload();
         upload.appendTo(sendBar.element);
+        
+        customUpload(upload.element, aonMessengerChat);
+        
 
         const uploadIcon = createUploadIcon();
         uploadIcon.appendTo(upload.element);
@@ -84,8 +66,8 @@ export const buildDesktopWritter = (writter, data, aonMessengerChat) => {
         sendButtonWrapper.appendTo(sendBar.element);
     
         const uploadText = createUploadText();
-        uploadText.element.addEventListener(EVENT.CLICK,()=> aonMessengerChat.applicationEl.development());
         uploadText.appendTo(upload.element);
+
 
         //BUTTON SEND COMMENT
         const sendButton = createSendButton();
@@ -121,13 +103,13 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
     writter.appendTo(wrapper.element);
 
     const bar = setAttributes(new AonToolbar(),{
-       id:"writterbar",
        type:ToolbarType.SECONDARY,
        title:MSG.COMMENT
     });
     bar.style.background = "#fff";
 
     writter.element.appendChild(bar);
+
     bar.addButton2(ACTIONS.SAVE,() => {
         aonMessengerChat.saveTaskWorkflow();
         hideWritter();
@@ -136,7 +118,7 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
         hideWritter();
     });
 
-    const textarea = setStyles(new AonTextArea(), {
+    const textarea = setStyles(createAonTextArea(), {
         flexDirection: 'column',
         height: '100%',
         width: '100%',
@@ -144,11 +126,8 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
         background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
-    textarea.id = MESSENGER_IDS.COMMENT_TASK
-    textarea.name = MESSENGER_IDS.COMMENT_TASK;
     writter.element.appendChild(textarea);
     buildTextareaToolbar(textarea);
-
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -189,21 +168,22 @@ export const sendMessage = (aonTextArea) => {
     if(!value || (value && !value.trim().length)) return ;
 
     const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const data = parent._data;
+    const data = parent.getData();
     aonTextArea.clear();
 
     const message = {
-        type: TASK_WORKFLOW_TYPE.COMMENT,
+        type: WORKFLOW_TYPES.COMMENT,
         sender: "Yo",
-        message: value,
+        comment: value,
         creation_date: new Date()
     }
-    data.workflows.push(message);
+    
+    data.workflow.push(message);
 
     appendChatMessage({
         id: "id",
         name: message.sender,
-        message:message.message,
+        comment:message.comment,
         date: message.creation_date,
         attach: message.attach,
         direction : RIGHT
@@ -241,15 +221,7 @@ export const sendMessage = (aonTextArea) => {
         id: MATERIAL_ICONS.FORMAT_BOLD,
         icon: MATERIAL_ICONS.FORMAT_BOLD,
         },
-        () => {
-            documentExec("bold")
-            // setSelectionMarkup(el,
-            // (selection) => {
-            //     el.dataset.start = -1;
-            //     el.dataset.end = -1;
-            //     return bold(selection);
-            // },() => true)
-        }
+        () => documentExec("bold")
     );
 
     /**
@@ -258,10 +230,7 @@ export const sendMessage = (aonTextArea) => {
     aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.FORMAT_ITALIC,
         icon: MATERIAL_ICONS.FORMAT_ITALIC,
-    },() => {
-        documentExec("italic")
-        // setSelectionMarkup(el, (selection) => italic(selection), () => true)
-    });
+    },() =>  documentExec("italic"));
     
         /**
      * List bulleted button - listItem
@@ -277,9 +246,7 @@ export const sendMessage = (aonTextArea) => {
     aonTextArea.addToolbarOptionRight({
         id: MATERIAL_ICONS.LINK,
         icon: MATERIAL_ICONS.LINK,
-    },() => createLink()
-        // setSelectionMarkup(el, (selection) => link(selection), () => true)
-    );
+    },() => createLink());
 
 }
 
@@ -343,3 +310,31 @@ const createLink =() =>{
 //     }
 // }
 
+
+const customUpload = (upload, aonMessengerChat)=>{
+
+    const highlight = ()   => upload.classList.add('highlight');
+    const unhighlight = () => upload.classList.remove('highlight');
+    [EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => upload.addEventListener(eventName, highlight, false));
+    [EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => upload.addEventListener(eventName, unhighlight, false));
+
+    upload.addEventListener(EVENT.DROP, (ev) => {
+        if(ev && ev.dataTransfer && ev.dataTransfer.files){
+            aonMessengerChat.upload(ev.dataTransfer.files);
+        }
+    });
+    
+    //ADD INPUT
+    let inputFile = document.createElement(TAG.INPUT);
+    inputFile.type     = 'file';
+    inputFile.name     = 'file';
+    // inputFile.multiple = true;
+    inputFile.id = MESSENGER_IDS.INPUT_FILES;
+    inputFile.style.display = "none";
+    inputFile.addEventListener(EVENT.CHANGE, async() => {
+        aonMessengerChat.upload(inputFile.files)
+    });
+    upload.appendChild(inputFile);
+
+    upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
+}
