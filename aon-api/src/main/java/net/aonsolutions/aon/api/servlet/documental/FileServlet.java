@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
@@ -53,14 +55,27 @@ public class FileServlet extends AonApiHttpServlet{
 		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
 		Integer id = json.getInt("id");
 		
-		Attach attach = AttachType.RAWDOC == attachType
-			? AON.getRawdocAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+		Attach attach = new Attach();
+		if(AttachType.RAWDOC == attachType) {
+			attach = AON.getRawdocAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					f -> f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getIdProperty().eq(id)), attachType)
-			: AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getIdProperty().eq(id)) , attachType);
-
+					.and(f.getIdProperty().eq(id)), attachType);
+		} else if(AttachType.RAWDOC == attachType) {
+			TaskAttach ta = AON_SOLUTIONS.getTaskAttach(api.getDomain(), api.getUser(), 
+					f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getIdProperty().eq(id)));
+			attach = new Attach(AttachType.TASK)
+					.setId(ta.getId())
+					.setDomain(api.getDomain())
+					.setMimeType(ta.getMimetype())
+					.setData(ta.getData())
+					.setDescription("documento");
+		} else {
+			attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> f.getDomainProperty().eq(api.getDomain().getId())
+						.and(f.getIdProperty().eq(id)) , attachType);
+		}
+		
 		if(attach.getData() == null && attach.getDriveId() != null) {
 			attach = getDriveFile(api, attach);
 		}
