@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
+import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
@@ -731,6 +733,37 @@ public class AON_SOLUTIONS {
 	public static TaskWorkflow saveTaskWorkflow(Domain domain, User user, TaskWorkflow workflow) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().saveTaskWorkflow(ctx, workflow);
+		}
+	}
+	
+	// TASKATTACH
+	public static TaskAttach getTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAttach(ctx, filter);
+		}
+	}
+	
+	public static Stream<TaskAttach> getTaskAttachStream(Domain domain, User user, TaskAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAttachStream(ctx, filter);
+		}
+	}
+
+	public static LinkedList<TaskAttach> getTaskAttachList(Domain domain, User user, TaskAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskAttachList(ctx, filter);
+		}
+	}
+	
+	public static TaskAttach saveTaskAttach(Domain domain, User user, TaskAttach task) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().saveTaskAttach(ctx, task);
+		}
+	}
+	
+	public static void deleteTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
+			getTask2().deleteTaskAttach(ctx, filter);
 		}
 	}
 	

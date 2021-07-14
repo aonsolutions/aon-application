@@ -626,6 +626,7 @@ public interface Properties {
 		Property<Integer> getTaskProperty();
 		Property<Integer> getTaskWorkflowProperty();
 		Property<Byte> getMimetypeProperty();
+		Property<byte[]> getDataProperty();
 	}
 	
 	public interface TaskEventProperties extends AuditProperties{

@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.util.LinkedList;
@@ -12,15 +11,11 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
-import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 
 public class WorkgroupDAO {
 	
@@ -89,9 +84,13 @@ public class WorkgroupDAO {
 	}
 
 
-	private static class WorkgroupFiller implements Function<Record, Workgroup> {
+	public static class WorkgroupFiller implements Function<Record, Workgroup> {
 		@Override
 		public Workgroup apply(Record r) {
+			return build(r);
+		}
+
+		public static Workgroup build(Record r) {
 			return new Workgroup()
 					.setId(r.getValue(WORKGROUP.ID))
 					.setDomain(r.getValue(WORKGROUP.DOMAIN))
