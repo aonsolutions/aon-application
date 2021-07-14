@@ -17,7 +17,8 @@ public enum AttachType  implements Serializable {
 	,MOD123("mod123")
 	,PAYSHEET("paysheet")
 	,DATA("data")
-	,RAWDOC("rawdoc");
+	,RAWDOC("rawdoc")
+	,TASK("task");
 	
 	private String name;
 	
@@ -60,6 +61,8 @@ public enum AttachType  implements Serializable {
 			return DATA;
 		else if(RAWDOC.getName().equalsIgnoreCase(name))
 			return RAWDOC;
+		else if(TASK.getName().equalsIgnoreCase(name))
+			return TASK;
 		return null;
 	}
 	
