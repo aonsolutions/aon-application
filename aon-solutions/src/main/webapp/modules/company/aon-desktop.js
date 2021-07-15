@@ -6,6 +6,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
+import { AonSign } from '../signin/aon-sign.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
@@ -14,7 +15,7 @@ import '../laboral/aon-laboral.js';
 import '../messenger/aon-messenger.js';
 import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
-import '../signin/aon-signin.js';
+
 import './aon-stat.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
@@ -190,12 +191,15 @@ export class AonDesktop extends AonElement {
 		if(classicOptions.length > 0)
 			aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
 
-		getTimeControl().then(r => {
-			aonDesktop.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
-			let aonHeader = this.getElement('aonHeader');
-			aonHeader.timeControlStatus(r);
-		});
-
+		if(this.getDur().isTimecontrol()) {
+			getTimeControl().then(r => {
+				let aonSign = new AonSign();
+				aonDesktop.addSidenavWidget('CONTROL HORARIO', aonSign);
+				aonSign.buildSignin(r);
+				let aonHeader = this.getElement('aonHeader');
+				aonHeader.timeControlStatus(r);
+			});
+		}
 		let div = this.createElement(TAG.DIV);
 		div.style.marginLeft = '100px';
 		div.style.marginRight = '100px';

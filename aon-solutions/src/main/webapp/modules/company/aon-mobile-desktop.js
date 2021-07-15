@@ -186,31 +186,36 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	buildTimeControl() {
-		getTimeControl().then(r => {
-			let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
-			div2.id = this.TIMECONTROL_TITLE;
-			if(!this.isMobile()){
-				this.clearElement(div2);
-				div2.appendChild(this.createTitleTime());
-			}
-			this.getElement(this.DIV_PARENT).appendChild(div2);
-
-			let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
-			div3.id = this.TIMECONTROL_SIGN;
-			div3.style.marginLeft = '25px';
-			if(this.isMobile()){
-				// div3.style.marginTop = "auto";
-				div3.style.marginBottom = "10px";
-				div3.style.borderTop = '1px solid #ddd';
-				this.clearElement(div3);
-				div3.appendChild(this.createTitleTime());
-			}
-			div3.appendChild(new AonStatistics());
-			div3.appendChild(new AonSign());
-			this.getElement(this.DIV_PARENT).appendChild(div3);
-			let aonHeader = this.getElement('aonHeader');
-			aonHeader.timeControlStatus(r);
-		});
+		if(this.getDur().isTimecontrol()) {
+			getTimeControl().then(r => {
+				let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
+				div2.id = this.TIMECONTROL_TITLE;
+				if(!this.isMobile()){
+					this.clearElement(div2);
+					div2.appendChild(this.createTitleTime());
+				}
+				this.getElement(this.DIV_PARENT).appendChild(div2);
+	
+				let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+				div3.id = this.TIMECONTROL_SIGN;
+				div3.style.marginLeft = '25px';
+				if(this.isMobile()){
+					// div3.style.marginTop = "auto";
+					div3.style.marginBottom = "10px";
+					div3.style.borderTop = '1px solid #ddd';
+					this.clearElement(div3);
+					div3.appendChild(this.createTitleTime());
+				}
+				div3.appendChild(new AonStatistics());
+				let aonSign = new AonSign();
+				aonSign.setTimeControl(r);
+				div3.appendChild(aonSign);
+				this.getElement(this.DIV_PARENT).appendChild(div3);
+				
+				let aonHeader = this.getElement('aonHeader');
+				aonHeader.timeControlStatus(r);
+			});	
+		}
 	}
 
 	createTitleTime(){

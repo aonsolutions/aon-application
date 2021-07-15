@@ -70,4 +70,8 @@ public class Coordinates implements Serializable {
 		return json;
 	}
 	
+	public boolean isEmpty() {
+		return getLatitude() == null && getLongitude() == null;
+	}
+	
 }

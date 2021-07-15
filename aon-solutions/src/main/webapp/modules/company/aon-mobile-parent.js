@@ -3,7 +3,6 @@ import {closeSession, getCompanies, getUser} from  '../../services/service.js';
 import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
-import '../signin/aon-sign.js';
 
 export class AonMobileParent extends AonElement {
 

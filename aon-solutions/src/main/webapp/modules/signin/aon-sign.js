@@ -10,6 +10,8 @@ import { timeHour } from './time-control/utils.js';
 export class AonSign extends AonElement {
   _taskHolders;
   _taskHolder;
+  parent;
+  tc;
   AON_SIGN;
   CONTENT;
   TIME;
@@ -28,6 +30,10 @@ export class AonSign extends AonElement {
   }
 
   connectedCallback () {
+    this.initialize();
+  }
+
+  initialize() {
     this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
@@ -35,17 +41,29 @@ export class AonSign extends AonElement {
     this.TOTAL_HOUR = "totalHour";
     this.TIME_ID = "TIME_ID";
     this.applicationEl = this.getApplication();
-    getTaskHoldersUser().then(r => {
-      if(r.length > 0) {
-        this._taskHolders = r;
-        this._taskHolder = r[0].id;
-        this.build();
-      }
-    });
+    this.parent = this.parent || false;
+    console.log("PARENT -> " + this.parent);
+    if(this.parent) {
+      getTaskHoldersUser().then(r => {
+        if(r.length > 0) {
+         this._taskHolders = r;
+         this._taskHolder = r[0].id;
+         this.build();
+       }
+      });
+    } else this.build();
   }
 
   disconnectedCallback(){
     localStorage.removeItem(this.TIME_ID);
+  }
+
+  setParent(parent) {
+    this.parent = parent;
+  }
+
+  setTimeControl(tc) {
+    this.tc = tc;
   }
 
   build(){
@@ -58,7 +76,7 @@ export class AonSign extends AonElement {
       this.parentNode.style.paddingLeft = 0;
     }
 
-    if(this._taskHolders.length > 1){
+    if(this.parent && this._taskHolders.length > 1){
       let company = this.createElement(TAG.DIV);
       company.style.marginLeft = '20px';
       company.style.width = '200px';
@@ -70,11 +88,10 @@ export class AonSign extends AonElement {
       ));
       select.addEventListener(EVENT.CHANGE, () => {
         this._taskHolder = select.value;
-        getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
+        getTimeControl({parent:true, task_holder: this._taskHolder}).then(r => this.buildSignin(r));
       });
       company.appendChild(select);
       select.value = this._taskHolders[0].id
-
     }
 
     if(!this.getElement(this.TIME)){
@@ -89,7 +106,8 @@ export class AonSign extends AonElement {
     if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
     divGeneral.appendChild(div);
-    getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
+    if(this.tc)
+      this.buildSignin(this.tc);
   }
 
   entrada() {
@@ -180,6 +198,7 @@ export class AonSign extends AonElement {
   }
 
   buildSignin(signin) {
+    this._taskHolder = signin.task_holder.id;
 		const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
@@ -199,6 +218,7 @@ export class AonSign extends AonElement {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
     }
+    
     this.changeTime(time);
     this.divLastTime(signin);
   }
@@ -222,7 +242,7 @@ export class AonSign extends AonElement {
 
   changeTime(time){
     let timeDiv = this.getElement(this.TIME);
-    if( timeDiv && time>0 ) timeDiv.innerHTML = timePaser(time);
+    if( timeDiv && time >= 0 ) timeDiv.innerHTML = timePaser(time);
   }
 
   divLastTime(signin){
