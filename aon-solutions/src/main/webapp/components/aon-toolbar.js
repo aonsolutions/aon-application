@@ -73,6 +73,7 @@ export class AonToolbar extends AonElement {
 	}
 
 	initialize() {
+		this.id = this.id || Math.random().toString(36).substring(7);
 		this.HEADER = this.id + 'Header';
 		this.TITLE_SECTION = this.HEADER + 'TitleSection';
 		this.TITLE_SECTION_MENU = this.TITLE_SECTION + 'Menu';

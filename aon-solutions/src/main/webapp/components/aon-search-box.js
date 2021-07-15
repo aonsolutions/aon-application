@@ -1,5 +1,5 @@
 // import {AonElement} from './AonElement.js';
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, MSG } from '../environments/environments.js';
 import './aon-icon-button.js';
 
 
@@ -47,8 +47,8 @@ export class AonSearchBox extends HTMLElement {
 		this.innerHTML = `
 		<div id="aon-search-div" style="height: 40px;">
 			<aon-icon-button id="aon-search-button" icon="search"></aon-icon-button>
-			<input title="Búsqueda" id="search-input"
-				autocomplete="off" placeholder="Búsqueda" class="aonSearchBox">
+			<input title="${MSG.SEARCH}" id="search-input"
+				autocomplete="off" placeholder="${MSG.SEARCH}" class="aonSearchBox">
 		</div>
 		`;
 		this.setAttribute('opened', true);

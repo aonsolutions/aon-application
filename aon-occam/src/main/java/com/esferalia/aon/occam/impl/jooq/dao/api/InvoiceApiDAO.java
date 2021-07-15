@@ -42,15 +42,6 @@ import com.esferalia.aon.watson.util.AonEnumUtils;;
 public class InvoiceApiDAO {
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
-	private static final DataResponsePropertiesDAO DATA_RESPONSE_PROPERTIES = new DataResponsePropertiesDAO();
-	
-
-	public static Stream<JSONObject> getDataResponseInvoices(AONContext ctx, DataResponseFilter filter) {
-		return DATA_RESPONSE_PROPERTIES.build(
-				ctx.getDslContext().select().from(DATA_RESPONSE)
-				.join(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
-				, filter).fetch().stream().map(r -> new JSONObject(r.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE)));	
-	}
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
 		Integer page = INVOICE_PROPERTIES.getPage(filter);
@@ -62,19 +53,6 @@ public class InvoiceApiDAO {
 			.limit(perPage)
 			.offset(perPage * (page -1))
 			.fetch().stream().map(new InvoiceApiFiller(ctx));
-	}
-	
-	public static Invoice insertInvoice(AONContext ctx, Invoice invoice) {
-		if(invoice.getId() != null) {
-			return InvoiceDAO.update(ctx, invoice);
-		} else {
-			return InvoiceDAO.insert(ctx, invoice);
-		}
-	}
-	
-	
-	public static void deleteInvoice(AONContext ctx, Integer id) {
-		InvoiceDAO.delete(ctx, id);
 	}
 	
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, Integer invoiceId) {

@@ -1,7 +1,6 @@
 import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { newComponent, setAttributes } from "../../services/utils.js";
-import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText } from "./shared/creationUtils.js";
-import { RIGHT } from "./shared/messenger-chat.js";
+import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText, RIGHT } from "./shared/creationUtils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "./MessengerEnums.js";
 import { AonInput } from "../../components/aon-input.js";
 
@@ -76,15 +75,6 @@ export const createDivEditable = (title, id, placeholder) => newComponent({
   }
 }).element;
 
-
-export const inputId = () =>  setAttributes(new AonInput(),{
-  visible: false,
-  name: MESSENGER_IDS.TASK_ID,
-  id:  MESSENGER_IDS.TASK_ID,
-  value: "",
-  type: "text",
-});
-
 export const createTitle = (title) => newComponent({
   type: "text",
   text: title == "" ? "Escriba titulo aquí" : title,
@@ -138,13 +128,27 @@ export const createSendBar = () => newComponent({
   },
 });
 
+
+const preventDefault = (ev) =>{
+  ev.preventDefault();
+  ev.stopPropagation();
+}
+
 export const createUpload = () => newComponent({
   type: TAG.DIV,
-  classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER],
+  classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER, CSS.DIV_DRAG_OVER],
   styles: {
-    paddingTop: "15px",
+    marginTop: "15px",
+    padding: "0 10px",
+    border:"2px dashed rgba(3,88,216,.3)",
     cursor: "pointer",
   },
+  events:{
+    dragenter: preventDefault,
+    dragover:  preventDefault,
+    dragleave: preventDefault,
+    drop:      preventDefault
+  }
 });
 
 export const createUploadIcon = () => newComponent({
@@ -160,7 +164,7 @@ export const createUploadIcon = () => newComponent({
 
 export const createUploadText = () => newComponent({
   type: "span",
-  text: "Agregar un archivo",
+  text: "Suelta los archivos o haz clic para subirlos.",
   classes: [
     CSS.FLEX_ROW,
     CSS.FLEX_JUSTIFY_END,
@@ -193,7 +197,6 @@ export const createButtonWrapper = () => newComponent({
 export const createSendButton = (text=null) => newComponent({
   type: TAG.BUTTON,
   text: text || MSG.SEND,
-  id: MESSENGER_IDS.BUTTON_SUBMIT_COMMENT,
   classes: [
     "materialButton",
     CSS.FLEX_ROW,
@@ -321,8 +324,8 @@ export const createMessageAuthor = (properties) => newComponent({
   }
 });
 
-export const createMessageContent = (properties) => newComponent({
-  text: properties.message,
+export const createCommentContent = (properties) => newComponent({
+  text: properties.comment,
   styles: {
       fontSize: "1em",
       textAlign : "left",

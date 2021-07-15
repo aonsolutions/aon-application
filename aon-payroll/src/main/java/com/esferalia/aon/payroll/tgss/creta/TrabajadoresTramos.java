@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -1433,6 +1434,8 @@ public class TrabajadoresTramos {
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		int cccType = getContextData(CCC_TYPE.getName() ,salary, startDate, endDate, 0);
 		
+		double partialFactor = getContextData(PARTIAL_FACTOR.getName() ,salary, startDate, endDate, 0.00);
+		
 		boolean artistas = CCCType.ARTIST.ordinal() == cccType;
 		
 		boolean iT15primerosDias = (
@@ -1479,7 +1482,11 @@ public class TrabajadoresTramos {
 		boolean ereParcial = ( ereFactor > 0.00 && ereFactor < 1.00 ) ; 
 		
 
-		boolean tiempoCompleto = !ereParcial && fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
+		boolean tiempoCompleto = 
+				!ereParcial 
+				&& ( ( fullTime  && ("14".indexOf(tc2.charAt(0)) != -1 ) ) 
+					|| partialFactor == 1.00 )
+				;
 		
 		
 		boolean formacion = "421".equals(tc2) ;

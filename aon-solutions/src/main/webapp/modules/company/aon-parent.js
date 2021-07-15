@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import '../signin/aon-sign.js';
@@ -43,10 +43,10 @@ export class AonParent extends AonElement {
 		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
 			rejectedCount = notice.invoice.rejected.count;
 		}
-
+		
 		let taskOptions = [
 			{
-				name: 'Notificaciones',
+				name: MSG.NOTIFICATIONS,
 				icon: 'notifications',
 				fn: () => {}
 			},{
@@ -68,43 +68,44 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
-				name: 'Solicitudes Abiertas',
+				name: MSG.OPEN_REQUESTS,
 				icon: 'assignment',
 				fn: () => {}
 			}, {
-				name: 'Solicitudes para ti',
+				name: MSG.REQUESTS_FOR_YOU,
 				icon: 'assignment_ind',
 				fn: () => {}
 			}
 		];
-		aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
-
+		aonParent.addSidenavOptions(MSG.PENDING_TASKS.toUpperCase(), taskOptions);
+		
 		let filterOptions = [{
-				name: 'Activas',
+				name: MSG.ACTIVE,
 				icon: 'domain',
 				fn: () => this.init({active: true})
 			}, {
-				name: 'Inactivas',
+				name: MSG.INACTIVE,
 				icon: 'domain_disabled',
 				fn: () => this.init({inactive: true})
 			}, {
-				name: 'Compartidas',
+				name: MSG.SHARED,
 				icon: 'share',
 				fn: () => this.init({shared: true})
 			}, {
-				name: 'Entorno',
+				name: MSG.ENVIRONMENT,
 				icon: 'apartment',
 				fn: () => this.init({entorno:true})
 			},{
-				name: 'Despacho',
+				name: MSG.OFFICE,
 				icon: 'work',
 				fn: () => this.init({despacho:true})
 			}
 		];
-		aonParent.addSidenavOptions('FILTROS', filterOptions);
+		
+		aonParent.addSidenavOptions(MSG.FILTERS.toUpperCase(), filterOptions);
 
 		getTimeControl().then(r => {
-			aonParent.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
+			aonParent.addSidenavWidgetHTML(MSG.TIMECONTROL.toUpperCase(), '<aon-sign></aon-sign>');
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
@@ -181,7 +182,7 @@ export class AonParent extends AonElement {
 		div.style.marginRight = '20px';
 		div.style.paddingBottom = '10px';
 		div.style.paddingLeft = '16px';
-		div.innerHTML = 'EMPRESAS';
+		div.innerHTML = MSG.COMPANIES.toUpperCase();
 		content.appendChild(div);
 
 		let ul = this.createElement('ul');
@@ -283,16 +284,7 @@ export class AonParent extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			getUserAppRole().then(user => {
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.setAttribute('company', JSON.stringify(company));
-				aonHeader.setAttribute('user', JSON.stringify(user));
-
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', JSON.stringify(company));
-				aonDesktop.setAttribute('user', JSON.stringify(user));
-			});
+			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 		});
 	}
 }

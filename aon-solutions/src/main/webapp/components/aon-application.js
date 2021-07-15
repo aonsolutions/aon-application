@@ -166,33 +166,35 @@ export class AonApplication extends AonElement {
       content.addEventListener(EVENT.DRAGOVER, (event) => {
         event.preventDefault();
         console.log(EVENT.DRAGOVER);
+        content.style.border = "2px solid #002469";
+        content.style.opacity = "0.6";
       });
-
+  
       content.addEventListener(EVENT.DRAGENTER, (event) => {
         event.preventDefault();
         content.style.border = "2px solid #002469";
         content.style.opacity = "0.6";
       });
-
+  
       content.addEventListener(EVENT.MOUSELEAVE, (event) => {
         content.style.border = "0px";
         content.style.opacity = "1";
       });
-
+  
       content.addEventListener(EVENT.MOUSEOVER, (event) => {
         content.style.border = "0px";
         content.style.opacity = "1";
       });
-
+  
       document.addEventListener(EVENT.DRAGLEAVE, (event) => {
         event.preventDefault();
-        let isClickInside = content.contains(event.target);
+        let isClickInside = content.contains(event.target) || content === event.target;
         if (!isClickInside) {
           content.style.border = "0px";
           content.style.opacity = "1";
         }
       });
-
+  
       content.addEventListener(EVENT.DROP, (event) => {
         event.preventDefault();
         console.log(EVENT.DROP);
@@ -341,6 +343,7 @@ export class AonApplication extends AonElement {
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
     sidenavTitle.innerHTML = title;
+    sidenavTitle.title = title;
     div.appendChild(sidenavTitle);
 
     let content = this.createElement(TAG.DIV);
@@ -360,6 +363,7 @@ export class AonApplication extends AonElement {
       let sidenavTitle = this.createElement(TAG.DIV);
       sidenavTitle.className = "aonSidenavTitle";
       sidenavTitle.innerHTML = title;
+      sidenavTitle.title = title;
       div.appendChild(sidenavTitle);
 
       let content = this.createElement(TAG.DIV);
@@ -395,6 +399,7 @@ export class AonApplication extends AonElement {
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
     sidenavTitle.innerHTML = data.name;
+    sidenavTitle.title = data.name;
     div.appendChild(sidenavTitle);
 
     return div;
@@ -431,6 +436,7 @@ export class AonApplication extends AonElement {
       let id = this.SIDENAV + option.name;
       let li = this.createElement(TAG.LI);
       li.id = id;
+      li.title = option.name;
       li.className = "aonAppMenuSidenavList aonOpacity";
       ul.appendChild(li);
       if(option.options) {

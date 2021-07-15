@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteUser,
+import {getUser, setUser, deleteUser,
 	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
-import {ToolbarType} from '../../models/enums.js';
+import {Role, ToolbarType} from '../../models/enums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
@@ -110,7 +110,7 @@ export class AonUser extends AonElement {
 
 	connectedCallback () {
 		this.init();
-  }
+  	}
 
 	init() {
 		this.initialize();
@@ -216,10 +216,13 @@ export class AonUser extends AonElement {
 		if(this.getDur().checkUsers() || !user.portal || user.shared){
 			card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
 				let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-
+				
 				let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
 				let employee = { role: 'EMPLOYEE', active: false, user: user.id};
-				this.saveModeRole([enterprise, employee]);
+				this.updateRoles([enterprise, employee]);
+				this._user.portal = false;
+				user.portal = false;
+				this.setAttribute('user', JSON.stringify(user));
 			});
 		}
 
@@ -237,7 +240,10 @@ export class AonUser extends AonElement {
 					roles.push(rol2);
 				}
 			});
-			this.saveModeRole(roles);
+			this.updateRoles(roles);
+			this._user.portal = true;
+			user.portal = true;
+			this.setAttribute('user', JSON.stringify(user));
 		});
 
 		card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => {
@@ -253,23 +259,12 @@ export class AonUser extends AonElement {
 					roles.push(rol);
 				}
 			});
-			this.saveModeRole(roles);
+			this.updateRoles(roles);
+			this._user.portal = true;
+			user.portal = true;
+			this.setAttribute('user', JSON.stringify(user));
 		});
 	}
-
-	saveModeRole(roles) {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		setUserAppRole({roles}).then(() => {
-			getUserAppRole({user:user.id}).then(r => {
-				user.roles = r;
-				this._user.roles = r;
-				this.setAttribute('user', JSON.stringify(user));
-				this.initApps();
-				this.buildPermissionButtons();
-			});
-		});
-	}
-
 
 	buildUserToolbar() {
 		let userToolbar = this.getElement(this.TOOLBAR);
@@ -440,6 +435,10 @@ export class AonUser extends AonElement {
 	}
 
 	save() {
+		if(!this._user.portal && (!this._user.roles || this._user.roles.length == 0)) {
+			this._user.portal = true;
+			this._user.roles = [Role.ENTERPRISE];
+		}
 		setUser(this._user).then(r => {
 			this.setAttribute('showInfo', 'true');
 			this.setAttribute('user', JSON.stringify(r));
@@ -536,6 +535,7 @@ export class AonUser extends AonElement {
 			tr.appendChild(td4);
 
 			aonSwitch.addEventListener('change', () => {
+				
 				let rolePortal = app ? app.app.toUpperCase() : 'ADMIN';
 				let roleA = {
 					app: app ? app.app : 'ADMIN',
@@ -567,36 +567,7 @@ export class AonUser extends AonElement {
 					roles.push(roleC);
 				}
 
-				setUserAppRole({roles}).then(() => {
-					getUserAppRole({user:user.id}).then(r => {
-						// if(!aonSwitch.isChecked() && r.contains(role.app)) {
-						// 	r.forEach((item, i) => {
-						// 		if(item == role.app){
-						// 			r.splice(i, 1);
-						// 		}
-						// 	});
-						// }
-
-						user.roles = r;
-						this._user.roles = r;
-						this.setAttribute('user', JSON.stringify(user));
-						if(!app) {
-							this.initApps();
-						}
-						if(app && app.access && aonSwitch.isChecked() && this.isPersonalizado()) {
-							let selectId = this.SELECT + (app ? app.app : 'ADMIN');
-							td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
-							let select = this.getElement(selectId);
-							select.options = JSON.stringify(app.access);
-							select.value = this.getAccess(app);
-							select.addEventListener('change', () => {
-								this.accessAction(app, select.value);
-							});
-						} else {
-							td4.innerHTML = '';
-						}
-					});
-				});
+				this.updateRoles(roles);
 			});
 
 			if(app && app.access && active && this.isPersonalizado()) {
@@ -677,7 +648,7 @@ export class AonUser extends AonElement {
 					active: false
 				});
 			}
-			setUserAppRole({roles});
+			this.updateRoles(roles);
 		}
 	}
 
@@ -733,6 +704,39 @@ export class AonUser extends AonElement {
 		else if(AllApps.MESSENGER.app === app.app)
 			return this.getDur().hasMessenger();
 		else return this.getDur().hasApp(app.app.toUpperCase());
+	}
+
+	updateRoles(roles) {
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		this._user.roles = user && user.roles ? user.roles : [];
+		roles.forEach(role => this.updateRole(role));
+		console.log(roles);
+		console.log(user.roles);
+		console.log(this._user.roles);
+		user.roles = this._user.roles;
+		this.setAttribute('user', JSON.stringify(user));
+		this.initApps();
+		this.buildPermissionButtons();
+	}
+
+	updateRole(role) {
+		let bool = true;
+		this._user.roles.forEach((item, i) => {
+			if(role === Role.EMPLOYEE && (item.includes('PORTAL') || item.includes('MANAGER'))){
+				this._user.roles.splice(i, 1);
+			} 
+			if(role === Role.ENTERPRISE && item.includes('MANAGER')){
+				this._user.roles.splice(i, 1);				
+			}
+ 			if(item === role.role) {
+				bool = false;
+				if(!role.active) 
+					this._user.roles.splice(i, 1);
+			}
+		});
+		if(bool && role.active) {
+			this._user.roles.push(role.role);
+		}
 	}
 }
 
