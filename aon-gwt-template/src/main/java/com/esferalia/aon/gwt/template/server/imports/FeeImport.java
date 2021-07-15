@@ -359,7 +359,7 @@ public class FeeImport extends Import {
 			fee.setDescription(str);
 		}
 		
-		if(fee.getQuantity() == null || fee.getQuantity() == 0.0) {
+		if(fee.getQuantity() == null) {// ¿? || fee.getQuantity() == 0.0) {
 			fee.setQuantity(1.0);
 		}
 		if(fee.getPrice() == null) {

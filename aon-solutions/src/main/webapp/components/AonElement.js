@@ -82,7 +82,8 @@ export class AonElement extends HTMLElement{
   }
 
   isSab() {
-      return getComputedStyle(document.documentElement).getPropertyValue("--sab") != '0px';
+    const sab = getComputedStyle(document.documentElement).getPropertyValue("--sab");
+    return sab.split(" ").join("") !== '0px';
   }
   
   getRootPanel() {
