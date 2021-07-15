@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -78,7 +79,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 
 			switch (api.getPath()) {
 			case "/":
-				boolean parent = api.getParams().optBoolean("parent");
+				boolean parent = api.getData().optBoolean("parent");
 				if(parent && !AonStringUtils.isEmpty(api.getToken())) {
 					AonToken aonToken = SECURITY.getAonToken(api.getToken());
 					save(api, aonToken);
@@ -141,13 +142,16 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	private Object getTimeControl(AonApiData api, AonToken aonToken, Integer taskHolderId) throws Exception{
 		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
 		
-		TaskHolder taskHolder = taskHolders.stream().filter(th -> th.getId().equals(taskHolderId)).findFirst()
+		TaskHolder taskHolder = taskHolders.stream().filter(th -> th.getId().equals(taskHolderId) 
+				&& th.isActive() && TaskHolderType.INTERNAL.equals(th.getType())).findFirst()
 				.orElse(taskHolders.size() > 0 ? taskHolders.getFirst(): new TaskHolder());
 		
 		if(taskHolder == null || taskHolder.getId() == null) {
 			taskHolder = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getDomainProperty().eq(api.getDomain().getId())
-				.and(f.getUserIdProperty().eq(api.getUser().getId())));
+				.and(f.getUserIdProperty().eq(api.getUser().getId()))
+				.and(f.getActiveProperty().eq((byte) 1)
+				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value()))));
 		}
 		return getTimeControl(taskHolder);
 	}
@@ -239,10 +243,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		TaskHolder taskHolder = api.getData().opt("task_holder") != null 
 		    ? AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 		    	f.getDomainProperty().eq(domain.getId())
-		    	.and(f.getIdProperty().eq(api.getData().optInt("task_holder"))))
+		    	.and(f.getIdProperty().eq(api.getData().optInt("task_holder")))
+		    	.and(f.getActiveProperty().eq( (byte) 1))
+		    	.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())))
 		    : AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
-				.and(f.getUserIdProperty().eq(user.getId())));
+				.and(f.getUserIdProperty().eq(user.getId()))
+				.and(f.getActiveProperty().eq( (byte) 1))
+				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())));
 		  return save(api, taskHolder);
 	}
 	
@@ -250,11 +258,18 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		TaskHolder taskHolder = null;
 		if(api.getData().opt("task_holder") != null && api.getDomain().getId() != 0) {
 			taskHolder = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f ->
-				f.getIdProperty().eq(api.getData().optInt("task_holder")));
+				f.getIdProperty().eq(api.getData().optInt("task_holder"))
+				.and(f.getActiveProperty().eq( (byte) 1))
+				.and(f.getTypeProperty().eq(TaskHolderType.INTERNAL.value())));
 		} else if(api.getData().opt("task_holder") != null) {
-			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream().filter(th -> th.getId().equals(api.getData().optInt("task_holder"))).findFirst().orElse(null);
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream()
+				.filter(th -> th.getId().equals(api.getData().optInt("task_holder"))
+					&& th.isActive() && TaskHolderType.INTERNAL.equals(th.getType()))
+				.findFirst().orElse(null);
 		} else {
-			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream().findFirst().orElse(null);
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream()
+				.filter(th -> th.isActive() && TaskHolderType.INTERNAL.equals(th.getType()))
+				.findFirst().orElse(null);
 		}
 		
 		if(taskHolder != null ) {

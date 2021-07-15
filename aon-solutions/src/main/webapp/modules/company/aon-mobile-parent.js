@@ -107,7 +107,7 @@ export class AonMobileParent extends AonElement {
   		let li = this.createElement(TAG.LI);
   		li.className = CSS.AON_LI;
   		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
-  		li.addEventListener(EVENT.CLICK, () => this.companySelection(company));
+  		li.addEventListener(EVENT.CLICK, () => this.companySelection(company, false));
 
   		let span = this.createElement(TAG.SPAN);
   		span.className = 'aonLiSpan aonTextOverflow';
@@ -140,10 +140,11 @@ export class AonMobileParent extends AonElement {
   		return li;
   	}
 
-    companySelection(company) {
+    companySelection(company, onlyOne) {
       localStorage.setItem('company', JSON.stringify(company));
       localStorage.setItem("aon_domain_id", company.id);
       localStorage.setItem("aon_domain_name", company.domain);
+	  localStorage.setItem("onlyOne", onlyOne);
 
       let home = this.getElement('aonHome');
       home.showMenu(true);

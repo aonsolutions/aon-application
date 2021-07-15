@@ -179,7 +179,7 @@ export class AonSign extends AonElement {
 	}
 
   async saveTimeCtrl(status){
-    let signin = {status, task_holder: this._taskHolder}
+    let signin = {status, task_holder: this._taskHolder, parent: this.parent}
     this.disabledButton(true);
     try{
       await getPosition().then(async(position) => {
