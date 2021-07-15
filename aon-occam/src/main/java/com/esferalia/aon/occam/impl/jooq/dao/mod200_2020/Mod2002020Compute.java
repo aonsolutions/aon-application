@@ -389,7 +389,7 @@ public class Mod2002020Compute {
 		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible
 		addBreakdown(Mod2002020LQ1033_1Key.values(), Mod2002020Key.LQ1033);
 	
-		COMPUTE_EXPRESSION_MAP.put(Mod2002020Key.LQ1034,"C0006?LQ1034:0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002020Key.LQ1034,"C0006?LQ1034A:0.0");
 		
 		// Reserva de nivelación - Dotacion de la reserva
 		addBreakdown(Mod2002020LQ1033_2Key.values(), Mod2002020Key.LQ1158);
