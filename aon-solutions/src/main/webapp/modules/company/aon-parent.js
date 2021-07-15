@@ -2,7 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
-import '../signin/aon-sign.js';
+import {AonSign} from '../signin/aon-sign.js';
 import './aon-desktop.js';
 
 export class AonParent extends AonElement {
@@ -104,8 +104,11 @@ export class AonParent extends AonElement {
 		
 		aonParent.addSidenavOptions(MSG.FILTERS.toUpperCase(), filterOptions);
 
-		getTimeControl().then(r => {
-			aonParent.addSidenavWidgetHTML(MSG.TIMECONTROL.toUpperCase(), '<aon-sign></aon-sign>');
+		getTimeControl({parent: true}).then(r => {
+			let aonSign = new AonSign();
+			aonSign.setParent(true);
+			aonSign.setTimeControl(r);
+			aonParent.addSidenavWidget('CONTROL HORARIO', aonSign);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
