@@ -5,15 +5,18 @@ import java.util.Date;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractCost;
+import com.esferalia.aon.payroll.calculator.ISystemCost;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemCostColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractCost 
 	extends SQLCollection<IContractCost> 
-	implements IContractCost{
+	implements ISystemCost{
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	public static final String SCOPE_ALIAS = "scope";
 	
 	public SQLContractCost() {
 	}
@@ -75,7 +78,7 @@ public class SQLContractCost
 
 	@Override
 	public ExpressionScope getScope() {
-		return ExpressionScope.SYSTEM;
+		return getEnum(SCOPE_ALIAS, ExpressionScope.class );
 	}
 
 
@@ -96,5 +99,9 @@ public class SQLContractCost
 		return getDate(SystemCostColumns.END_DATE);
 	}
 
+	@Override
+	public int getDomain() {
+		return getInt(SystemCostColumns.DOMAIN);
+	}
 	
 }
