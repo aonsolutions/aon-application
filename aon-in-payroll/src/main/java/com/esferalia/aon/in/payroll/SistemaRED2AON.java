@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -44,6 +43,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -398,7 +399,34 @@ public class SistemaRED2AON {
 		.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
 		;
 	}
+	
+	
+	private static DeductionType getDeductionType(ContextVariable var) {
+		switch (var) {
+		case FP_EMPLOYEE:
+		case FP_ENTERPRISE:
+			return DeductionType.JOB_TRAINING;
+		case UNEMPLOY_EMPLOYEE:
+		case UNEMPLOY_ENTERPRISE:
+			return DeductionType.UNEMPLOYMENT;
+		case CGC_BASE:
+		case CGC_BASE_ENTERPRISE:
+			return DeductionType.COMMON_CONTINGENCY;
+		case IT_ENTERPRISE:
+			return DeductionType.IT;
+		case IMS_ENTERPRISE:
+			return DeductionType.IMS;
+		case FOGASA_ENTERPRISE:
+			return DeductionType.FOGASA;
+		default:
+			return DeductionType.OTHER;
+		}
+	}
 
+	private static DeductionType getDeductionType(String name) {
+		ContextVariable var = ContextVariable.getVariableByName(name);
+		return var != null ? getDeductionType(var ): DeductionType.OTHER;
+	}
 
 
 	public static void addPECs(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
@@ -435,24 +463,44 @@ public class SistemaRED2AON {
 			ssBonus.stream()
 			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
 			.filter(pec -> PEC.isDeduction(pec))
-			.map( b -> 
+			.map( d -> 
 			new Deduction()
-			.setName(b.getName())
-			.setExpression(b.getFormula())
-			.setDescription(b.getDescription())
-			.setStartDate(b.getStartDate())
-			.setEndDate(b.getEndDate())
-			.setType(DeductionType.BONUS)
+			.setName(d.getName())
+			.setExpression(d.getFormula())
+			.setDescription(d.getDescription())
+			.setStartDate(d.getStartDate())
+			.setEndDate(d.getEndDate())
+			.setType(getDeductionType(d.getName()))
 			)
 			.toArray(Deduction[]::new)
 			;
 			
 			PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
 			
+			Cost costs [] =
+			ssBonus.stream()
+			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+			.filter(pec -> PEC.isCost(pec))
+			.map( c -> 
+			new Cost()
+			.setName(c.getName())
+			.setExpression(c.getFormula())
+			.setDescription(c.getDescription())
+			.setStartDate(c.getStartDate())
+			.setEndDate(c.getEndDate())
+			.setType(getDeductionType(c.getName()))
+			)
+			.toArray(Cost[]::new)
+			;
+			
+			PAYROLL.setCosts(domainName, domainId, userLogin, ccc, naf, startDate, endDate, costs);
+
 		} catch ( Throwable e ) {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 
 

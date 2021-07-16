@@ -31,6 +31,23 @@ public abstract class PEC {
 		}
 	}
 
+	public static boolean isCost(PEC pec) {
+		return pec.visit(new Visitor<Boolean>() {
+			@Override
+			public Boolean visitCost(Cost cost) {
+				return true;
+			}
+			@Override
+			public Boolean visitBonus(Bonus bonus) {
+				return false;
+			}
+			@Override
+			public Boolean visitDeduction(Deduction deduction) {
+				return false;
+			}
+		});
+	}
+
 	public static boolean isBonus(PEC pec) {
 		return pec.visit(new Visitor<Boolean>() {
 			@Override
