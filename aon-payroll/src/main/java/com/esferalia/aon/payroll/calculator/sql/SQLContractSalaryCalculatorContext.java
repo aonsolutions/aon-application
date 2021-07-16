@@ -318,6 +318,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
 
 
+	private static final String COST_SQL = "SELECT *" 
+			+ ", " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractCost.SCOPE_ALIAS 
+			+ " FROM contract_cost" 
+			+ " WHERE contract = ? " 
+			+ " AND start_date <= ? "
+			+ " AND ( end_date IS NULL" + " OR end_date >= ? )";
+
 	private static final String DEDUCTION_SQL = "SELECT *" + ", " + ExpressionScope.CONTRACT.ordinal() + " AS "
 			+ SQLContractDeduction.SCOPE_ALIAS + " FROM contract_deduction" + " LEFT JOIN  deduction_concept" // LEFT
 																												// JOIN:
@@ -1260,9 +1267,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private PreparedStatement deductionStmt;
 	private PreparedStatement bonusStmt;
 	private PreparedStatement embargoStmt;
+	private PreparedStatement costStmt;
 
 	private SQLContractPayment sqlContractPayment;
 	private SQLContractDeduction sqlContractDeduction;
+	private SQLContractCost sqlContractCost;
 	private SQLContractBonus sqlContractBonus;
 	private SQLContractEmbargo sqlContractEmbargo;
 	private ContractExpressionContext contractExpressionContext;
@@ -1364,6 +1373,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		initResultSet(args);
 		initPaymentStmt();
 		initDeductionStmt();
+		initCostStmt();
 		initBonusStmt();
 		initEmbargoStmt();
 		initCeventStmt();
@@ -1374,6 +1384,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.sqlContractPayment = new SQLContractPayment();
 		this.sqlContractDeduction = new SQLContractDeduction();
+		this.sqlContractCost = new SQLContractCost();
 		this.sqlContractBonus = new SQLContractBonus();
 		this.sqlContractEmbargo = new SQLContractEmbargo();
 
@@ -1701,12 +1712,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<IContractCost> getContractCosts() throws AonException {
-		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts()) {
-			@Override
-			protected int getLevel(IContractCost item) {
-				return ((ISystemCost) item).getDomain();
-			}
-		};
+		try {
+			this.sqlContractCost.close();
+			int id = getId();
+			costStmt.setInt(1, id);
+			ResultSet rs = costStmt.executeQuery();
+			this.sqlContractCost.setResultSet(rs);
+			CompositeCosts hierarchyCosts = new CompositeCosts(this.sqlContractCost,
+					getCCCCosts(), getSSRegimeCosts()) {
+				@Override
+				protected int getLevel(IContractCost item) {
+					return ((ISystemCost) item).getDomain();
+				}
+			};
+			return hierarchyCosts;
+		} catch (SQLException e) {
+			throw new AonException(e);
+		}
+
+//		return new CompositeCosts(getCCCCosts(), getSSRegimeCosts()) {
+//			@Override
+//			protected int getLevel(IContractCost item) {
+//				return ((ISystemCost) item).getDomain();
+//			}
+//		};
 	}
 
 	@Override
@@ -1826,6 +1855,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if (this.deductionStmt != null) {
 			this.deductionStmt.close();
 			this.deductionStmt = null;
+		}
+		if (this.costStmt != null) {
+			this.costStmt.close();
+			this.costStmt = null;
 		}
 		if (this.bonusStmt != null) {
 			this.bonusStmt.close();
@@ -2320,6 +2353,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.paymentStmt = this.connection.prepareStatement(paymentSql);
 		this.paymentStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.paymentStmt.setDate(3, toSqlDate(this.startDate));
+	}
+
+	private void initCostStmt() throws SQLException {
+		this.costStmt = this.connection.prepareStatement(COST_SQL);
+		this.costStmt.setDate(2, toSqlDate(this.getEnd()));
+		this.costStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
 	private void initDeductionStmt() throws SQLException {
