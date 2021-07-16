@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
@@ -40,12 +41,15 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.ContractCost;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
+import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -58,6 +62,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
@@ -245,6 +250,10 @@ public class EmployeeDAO {
 
 	public static Deduction [] setDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions) {
 		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), deductions);
+	}
+
+	public static Cost [] setCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs) {
+		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
 	}
 
 	public static ContractData[] setContractData(AONContext aonContext, String domainName, ContractFilter filter, ContractData... contractDatas) {
@@ -484,10 +493,9 @@ public class EmployeeDAO {
 		});
 	}
 	
-	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Bonus ...bonuses) {
-		
-		List<ContractRecord> contractRecords = 
-		dslContext
+	private static Result<ContractRecord> getContracts(DSLContext dslContext, String domainName, String ccc, String naf,
+			java.sql.Date startDate, java.sql.Date endDate) {
+		return dslContext
 		.select()
 		.from(DOMAIN)
 		.innerJoin(PERSON).on(PERSON.DOMAIN.eq(DOMAIN.ID))
@@ -498,7 +506,14 @@ public class EmployeeDAO {
 		.and(ENTERPRISE_CCC.CCC.eq(ccc))
 		.and(DSL.condition(endDate == null ).or(CONTRACT.START_DATE.le(endDate)))
 		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
-		.fetchInto(CONTRACT)
+		.fetchInto(CONTRACT);
+	}
+
+
+	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Bonus ...bonuses) {
+		
+		List<ContractRecord> contractRecords = 
+		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
 		;
 		
 		for ( ContractRecord contractRecord : contractRecords  ) {
@@ -518,18 +533,7 @@ public class EmployeeDAO {
 	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Deduction ...deductions) {
 		
 		List<ContractRecord> contractRecords = 
-		dslContext
-		.select()
-		.from(DOMAIN)
-		.innerJoin(PERSON).on(PERSON.DOMAIN.eq(DOMAIN.ID))
-		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
-		.where(DOMAIN.NAME.eq(domainName))
-		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
-		.and(ENTERPRISE_CCC.CCC.eq(ccc))
-		.and(DSL.condition(endDate == null ).or(CONTRACT.START_DATE.le(endDate)))
-		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
-		.fetchInto(CONTRACT)
+		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
 		;
 		
 		for ( ContractRecord contractRecord : contractRecords  ) {
@@ -544,6 +548,26 @@ public class EmployeeDAO {
 		}
 		
 		return deductions;
+	}
+
+	private static Cost [] setCosts(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Cost ...costs) {
+		
+		List<ContractRecord> contractRecords = 
+		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
+		;
+		
+		for ( ContractRecord contractRecord : contractRecords  ) {
+			Cost contractCosts [] = 
+			Arrays.stream(costs)
+			.filter( c -> intersects(contractRecord, c) )
+			.toArray(Cost[]::new);
+			if ( contractCosts.length >= 0 ) {
+				setCosts(dslContext, domainName, startDate, endDate, contractRecord, contractCosts);
+			}
+			
+		}
+		
+		return costs;
 	}
 
 	private static ContractData [] setContractData(DSLContext dslContext, String domainName, ContractFilter filter, ContractData ...contractDatas) {
@@ -811,6 +835,77 @@ public class EmployeeDAO {
 		return deductions;
 		
 	}
+
+	private static Cost [] setCosts(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Cost ...costs) {
+		
+		List<Cost> costsList = new ArrayList<Cost>(costs.length);
+		Arrays.stream(costs).forEach( deduction -> costsList.add(deduction));
+		
+		dslContext
+		.select()
+		.from(CONTRACT_COST)
+		.where(CONTRACT_COST.CONTRACT.eq(contractRecord.getId()))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_COST.START_DATE.le(endDate)))
+		.and(CONTRACT_COST.END_DATE.isNull().or(CONTRACT_COST.END_DATE.ge(startDate)))
+		.fetchStream()
+		.filter( EmployeeDAO::filter )
+		.forEach( r -> {
+			
+			//DeductionConceptRecord deductionConcept = r.into(DEDUCTION_CONCEPT); 
+			ContractCostRecord contractCost = r.into(CONTRACT_COST); 
+			
+			if ( remove(costsList, contractCost) ) {
+				return;
+			}
+			
+			if ( compare(contractCost.getStartDate(), startDate) >= 0 ) { 
+				if ( compare(contractCost.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts after start date and ends before end date. So delete it.
+					contractCost.delete();
+				}
+				else { 
+					// contract bonus ends after end date. So now starts just after end date. 
+					contractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractCost.update();
+				}
+			} else {
+				if ( compare(contractCost.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts before start date and ends before end date. So ends just before start date.
+					contractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractCost.update();
+				} else {
+					// contract bonus starts before start date and ends after end date. So we need to split it.
+					ContractCostRecord leftContractCost = contractCost;
+					ContractCostRecord rightContractCost = contractCost.copy();
+					leftContractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractCost.update();
+					rightContractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractCost.insert();
+				}
+			}
+				
+		});
+		;
+		
+		for (Cost cost : costsList) {
+			
+			dslContext
+			.insertInto(CONTRACT_COST)
+			.set(CONTRACT_COST.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_COST.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_COST.START_DATE, toSql(cost.getStartDate()))
+			.set(CONTRACT_COST.END_DATE, toSql(cost.getEndDate()))
+			.set(CONTRACT_COST.DESCRIPTION, cost.getDescription())
+			.set(CONTRACT_COST.EXPRESSION, cost.getExpression())
+			.set(CONTRACT_COST.TYPE, valueOf(cost.getType()))
+			.set(CONTRACT_COST.CODE, cost.getName())
+			.execute()
+			;
+		}
+		
+		return costs;
+		
+	}
 	
 	private static <T extends Enum<?>> Byte valueOf(T t) {
 		if ( t == null )
@@ -866,6 +961,18 @@ public class EmployeeDAO {
 		return false; 
 	}
 	
+	private static boolean remove( List<Cost> list, ContractCostRecord r ) {
+		for (int i = 0; i < list.size(); i++) {
+			Cost c = list.get(i);
+			if ( !equals(c, r) )
+				continue;
+			list.remove(i);
+			return true;
+				
+		}	
+		return false; 
+	}
+
 	private static boolean equals( Bonus bonus, ContractBonusRecord record) {
 		if( equals(bonus.getStartDate(),record.getStartDate())
 				&& equals(bonus.getEndDate(),record.getEndDate())
@@ -902,6 +1009,24 @@ public class EmployeeDAO {
 				
 	}
 
+	private static boolean equals( Cost cost, ContractCostRecord record) {
+		if( equals(cost.getStartDate(),record.getStartDate())
+				&& equals(cost.getEndDate(),record.getEndDate())
+				&& AonStringUtils.equals(getExpression(cost), getExpression(record)))
+			return true;
+		if (  AonStringUtils.equals(getExpression(cost), getExpression(record)) ){
+			if ((compare( record.getStartDate(), cost.getStartDate()) <= 0 )
+				&& (compare( record.getEndDate(), cost.getEndDate()) >= 0 )
+				&& (AonDateUtils.get(cost.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (cost.getEndDate() == null || AonDateUtils.get(cost.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(cost.getEndDate(), Calendar.DAY_OF_MONTH) ))
+				return true;
+		}
+		
+		
+		return false;
+				
+	}
+
 	private static String getExpression(Bonus bonus) {
 		return Optional.ofNullable(bonus.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
@@ -910,11 +1035,19 @@ public class EmployeeDAO {
 		return Optional.ofNullable(deduction.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 
+	private static String getExpression(Cost cost) {
+		return Optional.ofNullable(cost.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
+	}
+
 	private static String getExpression(ContractBonusRecord record) {
 		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 	
 	private static String getExpression(ContractDeductionRecord record) {
+		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
+	}
+
+	private static String getExpression(ContractCostRecord record) {
 		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -44,6 +45,14 @@ public class PAYROLL {
 	public static Deduction[] setDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Deduction... deductions) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
 			return getPayroll().setDeductions(ctx, domainName, ccc, naf, startDate, endDate, deductions);
+		}
+	}
+
+	// -------------------- COSTS
+	
+	public static Cost[] setCosts(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Cost... costs) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().setCosts(ctx, domainName, ccc, naf, startDate, endDate, costs);
 		}
 	}
 

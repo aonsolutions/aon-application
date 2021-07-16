@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IPayroll;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -35,6 +36,12 @@ public class PayrollImpl implements IPayroll {
 	@Override
 	public Deduction[] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction... deductions) {
 		return EmployeeDAO.setDeductions(ctx, domainName, ccc, naf, startDate, endDate, deductions);
+	}
+	
+	@Override
+	public Cost[] setCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate,
+			Cost... costs) {
+		return EmployeeDAO.setCosts(ctx, domainName, ccc, naf, startDate, endDate, costs);
 	}
 	
 	// -------------------- EMPLOYEE
