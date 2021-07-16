@@ -538,4 +538,14 @@ public interface Filter {
 	public interface WorkgroupFilter{
 		Filter filter(WorkgroupProperties properties);
 	}
+	
+	@FunctionalInterface
+	public interface InvoiceDetailFilter{
+		Filter filter(InvoiceDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface InvoiceTaxFilter{
+		Filter filter(InvoiceTaxProperties properties);
+	}
 }

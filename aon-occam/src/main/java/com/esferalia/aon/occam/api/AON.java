@@ -1472,63 +1472,46 @@ public class AON {
 	}
 	
 	// ------------------------------------ BRAND
-	public static Brand getBrand(String domainName, Integer domainId, String login,
-			Integer id){
+	
+	public static Brand getBrand(String domainName, Integer domainId, String login, Integer id){
 		return getBrand(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static Brand getBrand(String domainName, Integer domainId, String login,
-			String name){
+	public static Brand getBrand(String domainName, Integer domainId, String login, String name){
 		return getBrand(domainName, domainId, login, f -> f.getNameProperty().eq(name)
 				.and(f.getDomainProperty().eq(domainId)));
 	}
 	
-	public static Stream<Brand> getBrandStream(String domainName, Integer domainId, String login,
-			BrandFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getBrandStream(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-	}
-	
-	
-	public static Brand getBrand(String domainName, Integer domainId, String login,
-			BrandFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Brand getBrand(String domainName, Integer domainId, String login, BrandFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProduct().getBrand(ctx, filter);
-		} finally {
-			if(ctx != null) ctx.close();
 		}
 	}
 	
-	public static Brand insertBrand(String domainName, Integer domainId,
-			String login, Brand brand) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().insertBrand(ctx, brand);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Stream<Brand> getBrandStream(String domainName, Integer domainId, String login, BrandFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProduct().getBrandStream(ctx, filter);
+		}
+	}
+	
+	public static Brand saveBrand(String domainName, Integer domainId, String login, Brand brand) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProduct().saveBrand(ctx, brand);
+		}
+	}
+
+	public static void deleteBrand(String domainName, Integer domainId, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getProduct().deleteBrand(ctx, id);
 		}
 	}
 
 	// ------------------------------------ PRODUCT CATEGORY
 	
 	public static Stream<ProductCategory> getProductCategoryStream(String domainName, Integer domainId, String login, ProductCategoryFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProduct().getProductCategoryStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		} 
 	}
 	
 	public static ProductCategory getProductCategory(String domainName, Integer domainId, String login, Integer id){
@@ -1545,15 +1528,15 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static ProductCategory insertProductCategory(String domainName,
-			Integer domainId, String login, ProductCategory productCategory) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().insertProductCategory(ctx, productCategory);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static ProductCategory saveProductCategory(String domainName, Integer domainId, String login, ProductCategory productCategory) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProduct().saveProductCategory(ctx, productCategory);
+		}
+	}
+	
+	public static void deleteProductCategory(String domainName, Integer domainId, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getProduct().deleteProductCategory(ctx, id);
 		}
 	}
 

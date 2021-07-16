@@ -246,6 +246,9 @@ public class Item implements Serializable {
 	}
 
 	public Product getProduct() {
+		if(product == null) {
+			product = new Product();
+		}
 		return product;
 	}
 	

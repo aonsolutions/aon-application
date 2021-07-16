@@ -140,6 +140,11 @@ public enum AonError implements Serializable{
 	,DUPLICATE_SERIAL_NUMBER("Ya existe el n\u00FAmero de serie {0}.")
 	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vac\u00EDo")
 
+	// --------------------------------------------- BRAND
+	, BRAND_NULL("El valor de la marca es nulo.")
+	, BRAND_EMPTY("El valor de la marca esta vacío.")
+	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
+	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")

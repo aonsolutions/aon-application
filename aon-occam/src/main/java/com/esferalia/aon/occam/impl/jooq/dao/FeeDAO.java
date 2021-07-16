@@ -3,13 +3,13 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -97,11 +97,10 @@ public class FeeDAO {
 			.fetch().stream().map(new FeeFiller());
 	}
 	
-	protected static class FeeFiller  implements Function<Record, Fee> {
+	protected static class FeeFiller extends Filler implements Function<Record, Fee> {
 
 		@Override
 		public Fee apply(Record r) {
-			
 			return buildFee(r);
 		}
 		
@@ -110,37 +109,37 @@ public class FeeDAO {
 			com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
 			
 			return new Fee()
-					.setId(r.getValue(CUSTOMER_FEE.ID))
-					.setDomain(r.get(DOMAIN.ID) != null 
-						? DomainFiller.buildDomain(r) 
-						: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
-					.setCustomer(r.get(CUSTOMER.REGISTRY) != null
-						? CustomerFiller.buildCustomer(r, customerRegistry)
-						: new Customer().copy(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
-					.setItem(r.get(ITEM.ID) != null
-						? ItemFiller.buildItem(r)
-						: new OldItem().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
-					.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))
-					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(CUSTOMER_FEE.SECURITY_LEVEL)))
-					.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))
-					.setEndDate(r.getValue(CUSTOMER_FEE.FINAL_DATE))
-					.setBillingDate(r.getValue(CUSTOMER_FEE.BILLING_DATE))
-					.setInvoicingGroup(r.get(INVOICING_GROUP.ID) != null
-							? InvoicingGroupFiller.buildInvoicingGroup(r)
-							: new InvoicingGroup().setId(r.getValue(CUSTOMER_FEE.INVOICING_GROUP)))
-					.setDiscountExpr(r.getValue(CUSTOMER_FEE.DISCOUNT_EXPR))
-					.setLine(r.getValue(CUSTOMER_FEE.LINE))
-					.setPeriod(BillingPeriod.values()[r.getValue(CUSTOMER_FEE.PERIOD)])
-					.setPrice(r.getValue(CUSTOMER_FEE.PRICE))
-					.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
-					.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
-					.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-					.setSeller(r.get(SELLER.REGISTRY) != null
-						? SellerFiller.buildSeller(r, sellerRegistry)
-						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-					.setWorkplace(r.get(WORKPLACE.ID) != null
-							? WorkplaceFiller.buildWorkplace(r)
-							: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
+				.setId(r.getValue(CUSTOMER_FEE.ID))
+				.setDomain(checkField(r, DOMAIN.ID) 
+					? DomainFiller.buildDomain(r) 
+					: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
+				.setCustomer(checkField(r, CUSTOMER.REGISTRY)
+					? CustomerFiller.buildCustomer(r, customerRegistry)
+					: new Customer().copy(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.buildItem(r)
+					: new OldItem().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
+				.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))
+				.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(CUSTOMER_FEE.SECURITY_LEVEL)))
+				.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))
+				.setEndDate(r.getValue(CUSTOMER_FEE.FINAL_DATE))
+				.setBillingDate(r.getValue(CUSTOMER_FEE.BILLING_DATE))
+				.setInvoicingGroup(checkField(r, INVOICING_GROUP.ID)
+					? InvoicingGroupFiller.buildInvoicingGroup(r)
+					: new InvoicingGroup().setId(r.getValue(CUSTOMER_FEE.INVOICING_GROUP)))
+				.setDiscountExpr(r.getValue(CUSTOMER_FEE.DISCOUNT_EXPR))
+				.setLine(r.getValue(CUSTOMER_FEE.LINE))
+				.setPeriod(BillingPeriod.values()[r.getValue(CUSTOMER_FEE.PERIOD)])
+				.setPrice(r.getValue(CUSTOMER_FEE.PRICE))
+				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
+				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
+				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
+				.setSeller(checkField(r, SELLER.REGISTRY)
+					? SellerFiller.buildSeller(r, sellerRegistry)
+					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
+				.setWorkplace(checkField(r, WORKPLACE.ID)
+					? WorkplaceFiller.buildWorkplace(r)
+					: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
 		}
 	}
 

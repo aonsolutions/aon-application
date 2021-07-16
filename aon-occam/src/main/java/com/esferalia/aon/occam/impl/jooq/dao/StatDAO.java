@@ -47,8 +47,8 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -115,7 +115,7 @@ public class StatDAO {
 					.setType(StatFilterType.PRODUCT_CATEGORY));
 		}
 		
-		ProductOldDAO.getBrandStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
+		BrandDAO.getStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
 			.forEach(brand -> params.getFilterItems().add(
 				new StatFilterItem().setId(AonNumberUtils.toString(brand.getId()))
 				.setLabel(brand.getName())

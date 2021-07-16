@@ -7,10 +7,9 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -31,7 +30,7 @@ public class InvoiceDetailJSON {
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setDescription(json.optString(IJsonNames.DESCRIPTION))
-			.setItem(new OldItem().setId(JsonUtils.getInteger(json, IJsonNames.ITEM)))
+			.setItem(new Item().setId(JsonUtils.getInteger(json, IJsonNames.ITEM)))
 			.setAccountCode(json.optString(IJsonNames.CATEGORY))
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
 			.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))

@@ -173,9 +173,9 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getInvoice().getAddressZIP() );
 		addCell( detail.getInvoice().getAddressProvince() );
 		 
-		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getBrand()  : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCode() : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCategory().getName() : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getBrand().getName() : null );
 		addCell( AonStringUtils.abbreviate(detail.getDescription(), 60) ) ;
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );
@@ -194,7 +194,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getSeller()!=null?detail.getSeller().getRegistryName():null );
 		
 		Integer productId = detail.getItem()!= null 
-				? detail.getItem().getProductId() : null;
+				? detail.getItem().getProduct().getId() : null;
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);
 			for (String tag : tags) {

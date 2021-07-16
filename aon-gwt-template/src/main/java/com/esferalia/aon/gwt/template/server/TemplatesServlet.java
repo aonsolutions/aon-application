@@ -1466,7 +1466,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					ProductCategory pc = productCategoryList.stream().filter(c -> strAux.equalsIgnoreCase(c.getName())).findFirst().orElse(new ProductCategory());
 					if(pc.getId() == null){
 						Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
-						ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), user.getLogin(),
+						ProductCategory productCategory = AON.saveProductCategory(domain.getName(), domain.getId(), user.getLogin(),
 							new ProductCategory().setDomain(domain.getId()).setName(strAux)
 							.setDetail(c==1 || c==2 || c==3 ? " " : null)
 							.setDetail2(c==2 || c==3 ? " " : null)
@@ -1487,7 +1487,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				} else {
 					Brand brand = brandList.stream().filter(b -> strAux.equalsIgnoreCase(b.getName())).findFirst().orElse(new Brand());
 					if(brand.getId() == null){
-						brand = AON.insertBrand(domain.getName(), domain.getId(), user.getLogin(),
+						brand = AON.saveBrand(domain.getName(), domain.getId(), user.getLogin(),
 								new Brand().setDomain(domain.getId()).setName(strAux));
 						product.getProduct().setBrand(brand.getId());
 						brandList.add(brand);

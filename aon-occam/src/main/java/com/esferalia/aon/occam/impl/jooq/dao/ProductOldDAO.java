@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
@@ -30,29 +29,23 @@ import org.jooq.Record3;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.jooq.tables.records.BrandRecord;
 import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.jooq.tables.records.PcategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.ProductTagRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
-import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -67,8 +60,6 @@ public class ProductOldDAO {
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
-	private static final BrandPropertiesDAO BRAND_PROPERTIES = new BrandPropertiesDAO();
-	private static final ProductCategoryPropertiesDAO PRODUCT_CATEGORY_PROPERTIES = new ProductCategoryPropertiesDAO();
 	private static final ProductTagPropertiesDAO PRODUCT_TAG_PROPERTIES = new ProductTagPropertiesDAO();
 	private static final ItemAddInfoPropertiesDAO INFO_ADDINFO_PROPERTIES = new ItemAddInfoPropertiesDAO();
 
@@ -150,32 +141,6 @@ public class ProductOldDAO {
 		
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-	}
-	
-	protected static class BrandPropertiesDAO implements BrandProperties {
-		protected Condition[] getConditions(BrandFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(BRAND.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(BRAND.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(BRAND.NAME);}
-	}
-	
-	protected static class ProductCategoryPropertiesDAO implements ProductCategoryProperties {
-		protected Condition[] getConditions(ProductCategoryFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PCATEGORY.NAME);}
-		@Override public Property<String> getDetailProperty() {return new FilterDAO.PropertyDAO<String>(PCATEGORY.DETAIL);}
-		@Override public Property<String> getDetail2Property() {return new FilterDAO.PropertyDAO<String>(PCATEGORY.DETAIL2);}
-		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<String>(PCATEGORY.DETAIL3);}
 	}
 	
 	protected static class ProductTagPropertiesDAO implements ProductTagProperties {
@@ -862,52 +827,7 @@ public class ProductOldDAO {
 							.execute();
 				});
 	}
-	
-	
-	// ------------------------------------- BRAND
-	
-	public static Brand getBrand(AONContext ctx, Integer brandId){
-		return ctx.getDslContext().select().from(BRAND).where(BRAND.ID.eq(brandId))
-				.fetchInto(BRAND).stream().map(new FullBrandFiller()).findFirst().orElse(new Brand());
-	}
-	
-	public static Brand getBrand(AONContext ctx, BrandFilter filter){
-		return ctx.getDslContext().select().from(BRAND).where(BRAND_PROPERTIES.getConditions(filter))
-				.fetchInto(BRAND).stream().map(new FullBrandFiller()).findFirst().orElse(new Brand());
-	}
-	
-	public static Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter){
-		return ctx.getDslContext().select().from(BRAND).where(BRAND_PROPERTIES.getConditions(filter))
-				.fetchInto(BRAND).stream().map(new FullBrandFiller());
-	}
-	
-	public static Brand insertBrand(AONContext ctx, Brand brand){
-		return ctx.getDslContext().insertInto(BRAND, BRAND.DOMAIN, BRAND.NAME)
-		.values(brand.getDomain(), brand.getName()).returning().fetch().stream()
-		.map(new FullBrandFiller()).findFirst().orElse(new Brand());
-	}
 
-	private static class FullBrandFiller implements Function<BrandRecord, Brand> {
-		@Override
-		public Brand apply(BrandRecord r) {
-			return new Brand().setId(r.getId())
-					.setName(r.getName())
-					.setDomain(r.getDomain());		
-		}
-	}
-	
-	// ------------------------------------- PRODUCT CATEGORY
-
-	public static Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter){
-		return ctx.getDslContext().select().from(PCATEGORY).where(PRODUCT_CATEGORY_PROPERTIES.getConditions(filter))
-				.fetchInto(PCATEGORY).stream().map(new FullProductCategoryFiller());
-	}
-		
-	public static ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
-		return ctx.getDslContext().insertInto(PCATEGORY, PCATEGORY.DOMAIN, PCATEGORY.NAME, PCATEGORY.DETAIL, PCATEGORY.DETAIL2, PCATEGORY.DETAIL3)
-		.values(productCategory.getDomain(), productCategory.getName(), productCategory.getDetail(), productCategory.getDetail2(), productCategory.getDetail3())
-		.returning().fetch().stream().map(new FullProductCategoryFiller()).findFirst().orElse(new ProductCategory());
-	}
 	
 	// ------------------------------------- ITEM ADD INFO
 

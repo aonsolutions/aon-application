@@ -101,6 +101,7 @@ public class TaskWorkflowDAO {
 			.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
 			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
 			.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
+			.where(TASK_WORKFLOW.ID.eq(taskWorkflow.getId()))
 			.execute();
 		return taskWorkflow;
 	}

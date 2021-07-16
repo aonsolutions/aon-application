@@ -3,7 +3,8 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 
@@ -19,11 +20,9 @@ public class InvoiceDetail implements Serializable {
 	private Integer project;
 	private String projectName;
 	private Seller seller;
-	private Integer warehouse;
-	private String warehouseName;
-	private Integer workPlace;
-	private String workPlaceName;
-	private OldItem item;
+
+
+	private Item item;
 	private short line;
 	private String description;
 	private double quantity;
@@ -36,6 +35,18 @@ public class InvoiceDetail implements Serializable {
 	private double surcharge;
 	private boolean prepayment;
 	
+	// WAREHOUSE
+	// TODO private Warehouse warehouse;
+	private Integer warehouse;
+	private String warehouseName;
+	
+	// WORKPLACE
+	private Workplace workplace;
+	private Integer workPlace;
+	private String workPlaceName;
+	
+	// ACCOUNT
+	// TODO private Account account;
 	private Integer account;
 	private String accountCode;
 	private String accountDescription;
@@ -105,6 +116,16 @@ public class InvoiceDetail implements Serializable {
 		this.warehouseName = warehouseName;
 		return this;
 	}
+	
+	public Workplace getWorkplace() {
+		return workplace;
+	}
+	
+	public InvoiceDetail setWorkplace(Workplace workplace) {
+		this.workplace = workplace;
+		return this;
+	}
+	
 	public Integer getWorkPlace() {
 		return workPlace;
 	}
@@ -119,10 +140,10 @@ public class InvoiceDetail implements Serializable {
 		this.workPlaceName = workPlaceName;
 		return this;
 	}
-	public OldItem getItem() {
+	public Item getItem() {
 		return item;
 	}
-	public InvoiceDetail setItem(OldItem item) {
+	public InvoiceDetail setItem(Item item) {
 		this.item = item;
 		return this;
 	}

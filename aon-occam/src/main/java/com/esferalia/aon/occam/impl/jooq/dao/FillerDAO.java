@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -1092,7 +1093,7 @@ public class FillerDAO {
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
 					.setDomain(r.getValue(INVOICE_DETAIL.DOMAIN))
 					.setId(r.getValue(INVOICE_DETAIL.ID))
-					.setItem(new OldItem().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+					.setItem(new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setInvoice(i)
 					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
 					.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY));

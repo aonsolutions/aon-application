@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 
@@ -191,18 +192,20 @@ public class ItemDAO {
 			.execute();	
 	}
 
-	private static class ItemFiller implements Function<Record, Item> {
+	public static class ItemFiller extends Filler implements Function<Record, Item> {
 		
 		@Override
 		public Item apply(Record r) {
 			return build(r);
 		}
 		
-		public Item build(Record r) {
+		public static Item build(Record r) {
 			return new Item()
 				.setId(r.getValue(ITEM.ID))
 				.setDomain(new Domain().setId(r.getValue(ITEM.DOMAIN)))
-				.setProduct(ProductFiller.buildProduct(r))
+				.setProduct(checkField(r, PRODUCT.ID)
+					? ProductFiller.buildProduct(r)
+					: new Product().setId(r.getValue(ITEM.PRODUCT)))
 				.setBarcode(r.getValue(ITEM.BARCODE))
 				.setDescription(r.getValue(ITEM.DESCRIPTION))
 				.setDetail(r.getValue(ITEM.DETAIL))

@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.util.function.Function;
@@ -22,11 +22,13 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
@@ -77,6 +79,7 @@ public class ProductDAO {
 				.select()
 				.from(PRODUCT)
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+				.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
 				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
@@ -108,7 +111,6 @@ public class ProductDAO {
 		ctx.checkWrite();
 		ProductValidation.insertValidate(ctx, product);
 		Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
-		
 		Integer id = ctx.getDslContext().insertInto(PRODUCT)
 		.set(PRODUCT.DOMAIN, product.getDomain().getId())
 		.set(PRODUCT.NAME, product.getName())
@@ -134,7 +136,6 @@ public class ProductDAO {
 		.set(PRODUCT.MODIFICATION_USER, ctx.getUser())
 		.set(PRODUCT.MODIFICATION_DATE, now)
 		.returning(PRODUCT.ID).fetchOne().getValue(PRODUCT.ID);
-	
 		return product.setId(id);	
 	}
 	
@@ -180,7 +181,7 @@ public class ProductDAO {
 	}
 	
 	
-	protected static class ProductFiller implements Function<Record, Product> {
+	protected static class ProductFiller extends Filler implements Function<Record, Product> {
 		@Override
 		public Product apply(Record r) {
 			return buildProduct(r);			
@@ -191,8 +192,12 @@ public class ProductDAO {
 					.setId(r.getValue(PRODUCT.ID))
 					.setName(r.getValue(PRODUCT.NAME))
 					.setDomain(new Domain().setId(r.getValue(PRODUCT.DOMAIN)))
-					.setBrand(new Brand().setId(r.getValue(PRODUCT.BRAND)))
-					.setCategory(ProductCategoryFiller.build(r))
+					.setBrand(checkField(r, BRAND.ID)
+						? BrandFiller.build(r)
+						: new Brand().setId(r.getValue(PRODUCT.BRAND)))
+					.setCategory(checkField(r, PCATEGORY.ID)
+							? ProductCategoryFiller.build(r)
+							: new ProductCategory().setId(r.getValue(PRODUCT.CATEGORY)))
 					.setCode(r.getValue(PRODUCT.CODE))
 					.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
 					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
@@ -212,7 +217,7 @@ public class ProductDAO {
 					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
 					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER));
-		}
+		}		
 		
 	}
 }
