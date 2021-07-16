@@ -147,7 +147,7 @@ public class SalaryDAO {
 							entry.setSalaryCompensation( AonMathUtils.round(entry.getSalaryCompensation() + amount));
 						} else if (AonNumberUtils.between(type, 13, 26) ) {
 							entry.setInKindSalary( AonMathUtils.round(entry.getInKindSalary() + amount));
-							entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
+						// entry.setSalaryOtherDeductions( AonMathUtils.round(entry.getSalaryOtherDeductions() + amount));
 						} else {
 							entry.setMoneySalary( AonMathUtils.round(entry.getMoneySalary() + amount));
 						}
