@@ -80,7 +80,8 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 		CRA_0058,
 		CRA_0059,
 		CRA_0060,
-		CRA_0061;
+		CRA_0061,
+		CRA_0062;
 		//@formatter:on
 
 		public String getDescription() {
@@ -176,6 +177,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0059, "VACACIONES NO DISFRUTADAS, RETRIBUIDAS TRAS EL FALLECIMIENTO DEL TRABAJADOR");
 				put(CRA_0060, "VACACIONES RETRIBUIDAS NO DISFRUTADAS. COTIZACI\u00D3N DURANTE EL CONTRATO");
 				put(CRA_0061, "PLUS DE TRANSPORTE Y DE DISTANCIA. UTILIZACI\u00D3N DE MEDIOS COLECTIVOS APORTADOS POR LA EMPRESA");
+				put(CRA_0062, "GASTOS DE TELETRABAJO");
 			}
 		};
 		//@formatter:on
@@ -244,6 +246,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0059, true); // CRA_0006
 				put(CRA_0060, true); // CRA_0006
 				put(CRA_0061, true); // CRA_0032
+				put(CRA_0062, false);
 			}
 		};
 		//@formatter:on
@@ -313,6 +316,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 				put(CRA_0059, false); // CRA_0006
 				put(CRA_0060, false); // CRA_0006
 				put(CRA_0061, false); // CRA_0032
+				put(CRA_0062, true);
 			}
 		};
 		//@formatter:on
