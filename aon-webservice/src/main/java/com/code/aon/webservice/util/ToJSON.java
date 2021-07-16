@@ -263,12 +263,12 @@ public class ToJSON {
 		json.put(MSG.ID, id.getId());
 		json.put(MSG.DOMAIN, id.getDomain());
 		json.put(MSG.DESCRIPTION, id.getDescription());
-		json.put(MSG.NAME, id.getItem().getName());
+		json.put(MSG.NAME, id.getItem().getProduct().getName());
 		json.put("quantity", id.getQuantity());
 		json.put("price", id.getPrice());
 		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
 		json.put("date", AonDateUtils.simpleFormat(id.getInvoice().getIssueDate()));
-		json.put("code", id.getItem().getCode());
+		json.put("code", id.getItem().getProduct().getCode());
 		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
 		json.put("reference_code", id.getInvoice().getReferenceCode());
 		return json;

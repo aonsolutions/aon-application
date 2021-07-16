@@ -362,8 +362,9 @@ public class InvoiceAutoComplete {
 						
 			if(!InvoiceSource.ACCOUNT.equals(detail.getSource()) 
 					&& (detail.getItem() == null || detail.getItem().getId() == null)
-					&& detail.getAccountCode() != null) {
-				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDescriptionProperty().eq(detail.getDescription()).or(f.getProductCodeProperty().eq(detail.getAccountCode())));
+					&& !AonStringUtils.isBlank(detail.getAccountCode())) {
+				Item i = ItemDAO.get(ctx.getContext(), f -> f.getDescriptionProperty().eq(detail.getDescription()).or(f.getProductCodeProperty().eq(detail.getAccountCode()))
+						.or(f.getProductNameProperty().eq(detail.getDescription())));
 				if(i.getId() == null) {
 					Product p = new Product();
 					p.setDomain(new Domain().setId(detail.getDomain()));
@@ -388,7 +389,7 @@ public class InvoiceAutoComplete {
 					i = ItemDAO.save(ctx.getContext(), i);
 
 				}
-				detail.setItem(new OldItem().setId(i.getId()));
+				detail.setItem(new Item().setId(i.getId()));
 			}
 		});
 	};

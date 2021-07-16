@@ -9,12 +9,10 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 
@@ -54,13 +52,18 @@ public interface IProduct {
 	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId);
 	
 	// BRAND
+	
 	public Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter);
 	public Brand getBrand(AONContext ctx, BrandFilter filter);
-	public Brand insertBrand(AONContext ctx, Brand brand); 
+	public Brand saveBrand(AONContext ctx, Brand brand);
+	public void deleteBrand(AONContext ctx, Integer id);
 	
 	// PRODUCT CATEGORY
+	
 	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter);
-	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory); 
+	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter);
+	public ProductCategory saveProductCategory(AONContext ctx, ProductCategory productCategory); 
+	public void deleteProductCategory(AONContext ctx, Integer id); 
 	
 	// ITEM ADD INFO
 	

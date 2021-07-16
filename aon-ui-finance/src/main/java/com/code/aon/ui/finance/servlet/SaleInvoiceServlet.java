@@ -396,11 +396,11 @@ public class SaleInvoiceServlet extends HttpServlet{
 				item.setDescription(id.getItem().getDescription());
 				
 				Product product = new Product();
-				product.setId(id.getItem().getProductId());
-				product.setName(id.getItem().getName());
-				product.setCode(id.getItem().getCode());
+				product.setId(id.getItem().getProduct().getId());
+				product.setName(id.getItem().getProduct().getName());
+				product.setCode(id.getItem().getProduct().getCode());
 				ProductCategory productCategory = new ProductCategory();
-				productCategory.setName(id.getItem().getCategory());
+				productCategory.setName(id.getItem().getProduct().getCategory().getName());
 				product.setCategory(productCategory);
 				item.setProduct(product);
 				

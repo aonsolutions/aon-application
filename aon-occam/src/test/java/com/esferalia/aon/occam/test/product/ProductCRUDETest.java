@@ -15,8 +15,8 @@ public class ProductCRUDETest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		Product product = AonFaker.getProduct( ctx ); 
-		System.out.println(product.getCode());
 		product = ProductDAO.insert(ctx, product);
+
 		Integer productId = product.getId();
 		Product inserted = ProductDAO.get(ctx, f -> f.getIdProperty().eq(productId));
 		Asserts.assertEqualsProduct(product, inserted);

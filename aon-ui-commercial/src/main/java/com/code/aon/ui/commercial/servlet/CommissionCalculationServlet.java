@@ -384,7 +384,7 @@ public class CommissionCalculationServlet extends HttpServlet implements Seriali
 				
 					LinkedList<CommissionCategory> ccList = AON.getCommissionCategoryStream(domain.getName(), domain.getId(), login,
 						f -> f.getCommissionProperty().eq(ctc.getCommission())
-						.and(f.getCategoryProperty().eq(id.getItem().getProduct().getCategory()))
+						.and(f.getCategoryProperty().eq(id.getItem().getProduct().getCategory().getId()))
 						.and(f.getQuantityProperty().le(id.getQuantity())))
 						.collect(Collectors.toCollection(LinkedList::new));
 					for(CommissionCategory cc : ccList) {

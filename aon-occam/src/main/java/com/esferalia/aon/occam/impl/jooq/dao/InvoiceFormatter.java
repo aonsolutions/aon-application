@@ -84,7 +84,7 @@ public class InvoiceFormatter {
 							,19),20)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 							det.getItem()!=null
-							?AonStringUtils.trimToEmpty( det.getItem().getCategory() )
+							?AonStringUtils.trimToEmpty( det.getItem().getProduct().getCategory().getName() )
 							:AonStringUtils.SPACE,19)
 							,20)
 					+ AonStringUtils.leftPad(DEC.format(det.getQuantity()),10)

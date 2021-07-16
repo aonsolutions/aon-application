@@ -389,9 +389,9 @@ public class FinanceServlet extends HttpServlet{
     		.forEach(id -> {
     			JSONObject json = ToJSON.boughtProductToJSON(id);
     			JSONArray ar = new JSONArray();
-    			if(id.getItem().getCode() != null){
+    			if(id.getItem().getProduct().getCode() != null){
     				AON.getInvoiceDetails(domain.getName(), domain.getId(), login,
-    						f2-> f2.getProductCodeProperty().eq(id.getItem().getCode())
+    						f2-> f2.getProductCodeProperty().eq(id.getItem().getProduct().getCode())
     						.and(f2.getRegistryProperty().eq(id.getInvoice().getRegistry())))
     				.sorted((e1, e2) -> e2.getInvoice().getIssueDate().compareTo(e1.getInvoice().getIssueDate()))
     				.forEach(id2 -> ar .put(ToJSON.boughtProductToJSON(id2)));

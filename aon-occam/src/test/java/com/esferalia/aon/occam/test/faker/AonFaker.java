@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -353,6 +354,13 @@ public class AonFaker {
 			.setName(faker.commerce().productName())
 			.setCode(AonRandom.string(0, 1, 14));
 	}
+	
+	public static Brand getBrand( AONContext ctx ) {
+		return new Brand()
+			.setDomain(ctx.getDomainId())
+			.setName(AonRandom.string(0, 1, 14));
+	}
+	
 	
 	public static Workgroup getWorkgroup( AONContext ctx ) {
 		return new Workgroup()

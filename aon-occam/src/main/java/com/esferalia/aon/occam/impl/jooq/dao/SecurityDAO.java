@@ -796,13 +796,17 @@ public class SecurityDAO {
 			.execute();
 	}
 	
-	private static class ScopeFiller implements Function<Record, Scope> {
+	public static class ScopeFiller implements Function<Record, Scope> {
 		@Override
 		public Scope apply(Record r) {
+			return buildScope(r);
+		}
+		
+		public static Scope buildScope(Record r) {
 			return new Scope()
-				.setId(r.getValue(SCOPE.ID))
-				.setDomain(r.getValue(SCOPE.DOMAIN))
-				.setDescription(r.getValue(SCOPE.DESCRIPTION));
+					.setId(r.getValue(SCOPE.ID))
+					.setDomain(r.getValue(SCOPE.DOMAIN))
+					.setDescription(r.getValue(SCOPE.DESCRIPTION));
 		}
 	}
 	

@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	ProductCRUDETest.class,
-	ProductCategoryCRUDETest.class
+	ProductCategoryCRUDETest.class,
+	BrandTest.class
 })
 public class ProductTestSuite {
 

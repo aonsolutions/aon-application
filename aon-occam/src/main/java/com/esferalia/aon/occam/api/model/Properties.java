@@ -92,7 +92,7 @@ public interface Properties {
 		Property<Byte> getSourceTypeProperty();
 	}
 	
-	public interface InvoicingGroupProperties extends AuditProperties{
+	public interface InvoicingGroupProperties extends AuditProperties {
 		Property<Integer> getCustomerProperty();
 		Property<Byte> getCustomerGroupedProperty();
 		Property<String> getDescriptionProperty();
@@ -1433,6 +1433,43 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
 		Property<Byte> getStatusProperty();
+	}
+	
+	public interface InvoiceDetailProperties extends AuditProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceProperty();
+		Property<Integer> getInvestAssetProperty();
+		Property<Short> getLineProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountExprProperty();
+		Property<Byte> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
+		Property<Double> getTaxableBaseProperty();
+		Property<Double> getTaxesProperty();
+		Property<Byte> getPrepaymentProperty();
+		Property<Integer> getSellerProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getWarehouseProperty();
+	}
+	
+	public interface InvoiceTaxProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getInvoiceDetailProperty();
+		Property<Byte> getTaxTypeProperty();
+		Property<Double> getBaseProperty();
+		Property<Double> getPercentageProperty();
+		Property<Double> getSurchargeProperty();
+		Property<Double> getQuotaProperty();
+		Property<Double> getSurchargeQuotaProperty();
+		Property<Byte> getVatDedcutionTypeProperty();
+		Property<Byte> getWithholdingTypeProperty();
+		Property<Double> getDeductiblePercentProperty();
+		Property<Double> getDeductibleQuotaProperty();
 	}
 	
 }

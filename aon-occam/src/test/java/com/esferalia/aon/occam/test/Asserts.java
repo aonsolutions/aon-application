@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -362,6 +363,8 @@ public class Asserts {
 		assertEquals("Domain",expected.getDomain().getId(), actual.getDomain().getId());
 		assertEquals("Code",expected.getCode(), actual.getCode());
 		assertEquals("Name",expected.getName(), actual.getName());
+		System.out.println(expected.getBrand().getName());
+		System.out.println(actual.getBrand().getName());
 		assertEquals("Brand", expected.getBrand().getId(), actual.getBrand().getId());
 		assertEquals("Category", expected.getCategory().getId(), actual.getCategory().getId());
 		assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());
@@ -386,6 +389,12 @@ public class Asserts {
 		assertEquals("Domain",expected.getDomain(), actual.getDomain());
 		assertEquals("Description",expected.getDescription(), actual.getDescription());
 		assertEquals("status",expected.getStatus(), actual.getStatus());
+	}
+	
+	public static void assertEqualsBrand(Brand expected, Brand actual) {
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Name",expected.getName(), actual.getName());
 	}
 	
 	public static void assertEqualsProductCategory(ProductCategory expected, ProductCategory actual) {

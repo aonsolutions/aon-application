@@ -17,6 +17,8 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 
 public class ProductImpl implements IProduct{
@@ -201,33 +203,51 @@ public class ProductImpl implements IProduct{
 	@Override
 	public Stream<Brand> getBrandStream(AONContext ctx, BrandFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductOldDAO.getBrandStream(ctx, filter));
+			BrandDAO.getStream(ctx, filter));
 	}
 	
 	@Override
 	public Brand getBrand(AONContext ctx, BrandFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductOldDAO.getBrand(ctx, filter));
+			BrandDAO.get(ctx, filter));
 	}
 	
 	@Override
-	public Brand insertBrand(AONContext ctx, Brand brand){
+	public Brand saveBrand(AONContext ctx, Brand brand){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			ProductOldDAO.insertBrand(ctx, brand));
+			BrandDAO.save(ctx, brand));
 	}
 
+	@Override
+	public void deleteBrand(AONContext ctx, Integer id){
+		ctx.getDslContext().transaction(configuration -> 
+			BrandDAO.delete(ctx, id));
+	}
+	
 	// ------------------------------------- PRODUCT CATEGORY
 	
 	@Override
 	public Stream<ProductCategory> getProductCategoryStream(AONContext ctx, ProductCategoryFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductOldDAO.getProductCategoryStream(ctx, filter));
+			ProductCategoryDAO.getStream(ctx, filter));
 	}
 	
 	@Override
-	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){
+	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ProductOldDAO.insertProductCategory(ctx, productCategory));
+			ProductCategoryDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public ProductCategory saveProductCategory(AONContext ctx, ProductCategory productCategory){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ProductCategoryDAO.save(ctx, productCategory));
+	}
+
+	@Override
+	public void deleteProductCategory(AONContext ctx, Integer id){
+		ctx.getDslContext().transaction(configuration ->
+			ProductCategoryDAO.delete(ctx, id));
 	}
 
 	// ------------------------------------- ITEM ADD INFO
