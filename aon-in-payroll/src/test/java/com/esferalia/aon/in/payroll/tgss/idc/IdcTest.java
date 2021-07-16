@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isBonus;
+import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isCost;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isDeduction;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
@@ -1623,8 +1624,8 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcIXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcIX.pdf") ){
-			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
-			assertEquals(1, ssBonuses.size());
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			assertEquals(3, ssPecs.size());
 			
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -1643,29 +1644,40 @@ public class IdcTest extends AbstractSQLTestCase {
 			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
 
 			Date december2024 = calendar.getTime();
-
-			PEC bonus = ssBonuses.stream().findFirst().get();
 			
-			Assert.assertEquals( december82020 , bonus.getStartDate());
-			Assert.assertEquals( december2024, bonus.getEndDate());
-			
+			ssPecs.stream().findFirst().ifPresent(
+			p -> {
+				Assert.assertEquals( december82020 , p.getStartDate());
+				Assert.assertEquals( december2024, p.getEndDate());
+			});
+			ssPecs.stream().skip(1).forEach(
+			p -> {
+				Assert.assertEquals( december82020 , p.getStartDate());
+				Assert.assertNull(p.getEndDate());
+			});
 			
 			calendar.set(Calendar.DAY_OF_MONTH,1);
 			Date may = calendar.getTime();
 			
-			Salary salary = calculate(ssBonuses, Collections.emptyList(), may);
+			Salary salary = calculate(ssPecs, Collections.emptyList(), may);
 
 			double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
-			double fogasa = salary.getSalaryCosts().stream()
-			.filter( c -> c.getType() == DeductionType.FOGASA)
-			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			
 			salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
 			
+			salary.getSalaryCosts().forEach(d -> System.out.println(d.getCostConcept() +" : " + d.getAmount() +", " + d.getType()));
+
 			assertEquals(totalCost - 50.00, salary.getTotalEnterprise(), DELTA);
 			
+			salary.getSalaryCosts().stream()
+			.filter( c -> c.getType() == DeductionType.FOGASA)
+			.forEach(c -> Assert.fail(c.getType().name()) );
+			
+			salary.getSalaryCosts().stream()
+			.filter( c -> c.getType() == DeductionType.JOB_TRAINING)
+			.forEach(c -> Assert.fail(c.getType().name()) );
+
 		}
 	}
 
@@ -1675,7 +1687,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcX.pdf") ){
 			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1+3*2, ssBonuses.size());
 			
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -1996,6 +2008,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		ssBonuses.stream().filter( pec -> isDeduction(pec) ).forEach( d -> addDeduction(aonContext, contract, toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
 		
+		ssBonuses.stream().filter( pec -> isCost(pec) ).forEach( d -> addCost(aonContext, contract, toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
+
 		return contract;
 	}
 	

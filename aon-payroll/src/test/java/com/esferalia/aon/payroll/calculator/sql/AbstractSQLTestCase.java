@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
@@ -80,8 +81,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.jooq.tables.ContractPayment;
-import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -90,6 +89,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
+import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
@@ -1441,6 +1441,21 @@ public abstract class AbstractSQLTestCase {
 
 	}
 	
+	public static final ContractCostRecord addCost(AONContext aonContext, ContractRecord contract,
+			Date startDate, Date endDate, String expression, String description , String concept) {
+		return aonContext.getDslContext()
+				.insertInto(CONTRACT_COST)
+				.set(CONTRACT_COST.DOMAIN, contract.getDomain())
+				.set(CONTRACT_COST.CONTRACT, contract.getId())
+				.set(CONTRACT_COST.START_DATE, startDate)
+				.set(CONTRACT_COST.END_DATE, endDate)
+				.set(CONTRACT_COST.EXPRESSION, expression)
+				.set(CONTRACT_COST.DESCRIPTION, description)
+				.set(CONTRACT_COST.TYPE, DSL.castNull(Byte.class))
+				.set(CONTRACT_COST.CODE, concept)
+				.returning().fetchOne();
+
+	}
 	
 
 	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
