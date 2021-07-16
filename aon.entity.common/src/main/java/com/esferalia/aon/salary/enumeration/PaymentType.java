@@ -149,7 +149,9 @@ public enum PaymentType implements IResourceable{
 	CRA_0058(true,false), // CRA_0002
 	CRA_0059(true,false), // CRA_0006
 	CRA_0060(true,false), // CRA_0006
-	CRA_0061(true,false)  // CRA_0032
+	CRA_0061(true,false), // CRA_0032
+
+	CRA_0062(false,true)
 	;
 
 	private boolean bBCCIncluded;
