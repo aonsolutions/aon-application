@@ -10,15 +10,19 @@ import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,6 +33,15 @@ import solutions.aon.selenium.tools.Logger;
 import solutions.aon.selenium.tools.SeleniumTools;
 import solutions.aon.selenium.tools.SeleniumTools.SalaryType;
 
+
+/*
+ -Dintegration.test.user=admin
+ -Dintegration.test.password=org
+ -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/aon-aio/
+ -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/aon-aio/
+ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/aon-aio/
+ -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/aon-aio/
+ * */
 public class GeneralIntegralTest extends AioBaseTestCase {
 	
 	private static WebDriver driver;
@@ -156,8 +169,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.resetCalendar(calendar);
 		for ( int month = 0; month < 12; month++ ) {
 			calendar.set(Calendar.MONTH, month);
-			SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-			SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+			switchSalaryMonth(calendar);
 			retryingFindClick(driver, By.id(GWT_ID_PROFIX + "salaryButton"));
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
 		}
@@ -201,8 +213,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.acceptDraft(driver);
 		
 		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		
 		SeleniumTools.safeInput(driver, "#"+ GWT_ID_PROFIX + "description-box-new-payment", "[3]ATRASOS");
 		input = wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment")));
@@ -295,13 +306,11 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
 		SeleniumTools.draft(driver, "SALARIO, MÍNIMO");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		assertTrue(SeleniumTools.changingElementAssert(driver, By.id(GWT_ID_PROFIX + "totalPaymentLabel"), "innerText", "900,00"));
 		
 		SeleniumTools.draft(driver, "INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		assertTrue(SeleniumTools.changingElementAssert(driver, By.id(GWT_ID_PROFIX + "totalPaymentLabel"), "innerText", "537,84"));
 		
 	}
@@ -324,8 +333,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.YEAR, 2016);
 		
 		SeleniumTools.draft(driver, "BRUTO, ENFERMEDAD COMÚN (BASES)");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		Double totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals(SeleniumTools.unmessDouble(1067.40 / 30 * 5 * 0.60 + 1000.00 * 22 / 30), totalPayments);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
@@ -334,27 +342,22 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.MAY);
 		
 		SeleniumTools.draft(driver, "BRUTO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals((Double)1500.0, totalPayments);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals((Double)1500.0, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.MAY);
 		
 		SeleniumTools.draft(driver, "NETO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalLiquidLabel"));
 		assertEquals((Double)2125.0, totalPayments);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalLiquidLabel"));
 		assertEquals((Double)2125.0, totalPayments);
 		
@@ -373,8 +376,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		
 		Double totalPayment = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		
@@ -386,8 +388,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.search(driver, "CONCEPTOS, APELLIDO");
 		SeleniumTools.draft(driver, "CONCEPTOS, APELLIDO");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		totalPayment = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		salarioMensual = 999 ;
 		plus = salarioMensual * 0.10;
@@ -407,8 +408,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.resetCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 				
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "description-box-new-payment", "[1] S4L4R10 B4S3");
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment")));
@@ -445,27 +445,25 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.selectMonthScrollingV2(driver, new Date());
 		SeleniumTools.checkSalaryPeriod(driver, new Date());
 		
-		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "db-amount-label-1")));
+		By amountLbl1 = By.id(GWT_ID_PROFIX + "db-amount-label-1");
+		wait.until(ExpectedConditions.elementToBeClickable(amountLbl1));
 		
-		SeleniumTools.retryingFindClick(driver, By.id(GWT_ID_PROFIX + "db-amount-label-1"));
-		SeleniumTools.focus(driver, "#" + GWT_ID_PROFIX + "db-amount-label-1");
-		try {
-			wait.until(ExpectedConditions.attributeContains(By.id(GWT_ID_PROFIX + "db-amount-label-1"), "value", "PLUS_SALARIAL"));			
-		} catch (Exception e) {
-			System.out.println(e.getClass());
-		}
+//		SeleniumTools.retryingFindClick(driver, By.id(GWT_ID_PROFIX + "db-amount-label-1"));
+		SeleniumTools.focusUntilValueContains(driver, amountLbl1, "PLUS_SALARIAL");
 //		assertTrue(SeleniumTools.changingElementAssert(driver, By.id(GWT_ID_PROFIX + "db-amount-label-1"), "value", "PLUS_SALARIAL"));
 		retryingFindClick(driver, By.id(GWT_ID_PROFIX + "fxButton"));
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "fxExpressionCodeArea")));
 		assertEquals("DIAS_TRABAJADOS / DIAS_MES * /*user*/PLUS_SALARIAL/**/", SeleniumTools.getAttribute(driver, By.id(GWT_ID_PROFIX + "fxExpressionCodeArea"), "value"));
-		do {			
-			SeleniumTools.retryingFindClick(driver, By.id(GWT_ID_PROFIX + "fxCancelButton"));
-		} while (wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"))).size() < 1);
+		By cancelBtn = By.id(GWT_ID_PROFIX + "fxCancelButton");
+		SeleniumTools.safelyCloseModal(driver, cancelBtn);
 		By amountLabel3 = By.id(GWT_ID_PROFIX + "db-amount-label-3");
 		wait.until(ExpectedConditions.elementToBeClickable(amountLabel3));
-		SeleniumTools.retryingFindClick(driver, By.id(GWT_ID_PROFIX + "db-amount-label-3"));
-		SeleniumTools.focus(driver, "#" + GWT_ID_PROFIX + "db-amount-label-3");
-		wait.until(ExpectedConditions.attributeContains(amountLabel3, "value", "PLUS_DISPONIBILIDAD"));
+//		SeleniumTools.retryingFindClick(driver, By.id(GWT_ID_PROFIX + "db-amount-label-3"));
+//		SeleniumTools.focus(driver, "#" + GWT_ID_PROFIX + "db-amount-label-3");
+//		wait.until(ExpectedConditions.attributeContains(amountLabel3, "value", "PLUS_DISPONIBILIDAD"));
+		
+		SeleniumTools.focusUntilValueContains(driver, amountLabel3, "PLUS_DISPONIBILIDAD");
+		
 //		assertTrue(SeleniumTools.changingElementAssert(driver, amountLabel3, "value", "PLUS_DISPONIBILIDAD"));
 		retryingFindClick(driver, By.id(GWT_ID_PROFIX + "fxButton"));
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "fxExpressionCodeArea")));
@@ -650,238 +648,497 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
 		SeleniumTools.draft(driver, "LACTANCIA, PERIODO");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		
-		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		By cgcBaseLabel = By.id(GWT_ID_PROFIX + "cgcBaseLabel");
+		Double cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		assertEquals(cgcBase, SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel")));
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		assertEquals(cgcBase, SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel")));
-		Double totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		By totalPaymentsLabel = By.id(GWT_ID_PROFIX + "totalPaymentsLabel");
+		Double totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)0.0, totalPayments);
 		
 		SeleniumTools.draft(driver, "RIESGO, DURANTE EL EMBARAZO");
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		assertEquals(cgcBase, SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel")));
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		assertEquals(cgcBase, SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel")));
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		SeleniumTools.draft(driver, "BASE MÍNIMA DIARIA, I.T");
 		calendar.set(Calendar.YEAR, 2016);
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(25.48 * 31), cgcBase);	//GRUPO 09
-		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		By cgpBaseLabel = By.id(GWT_ID_PROFIX + "cgpBaseLabel");
+		Double cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(25.48 * 31), cgpBase);	//GRUPO 09
 		
 		SeleniumTools.draft(driver, "BASE MÍNIMA MENSUAL, I.T");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double) 764.4, cgcBase);	//GRUPO 05
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double) 764.4, cgpBase);	//GRUPO 05
 		
 		SeleniumTools.draft(driver, "ENFERMEDAD, COMÚN");
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		
 		SeleniumTools.draft(driver, "ENFERMEDAD, PROFESIONAL");
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, 100%");
 		calendar.set(Calendar.MONTH, Calendar.JULY);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
-//		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
-//		assertEquals(SeleniumTools.unmessDouble(1067.40 * 13 / 30 + (1067.40 + 1067.40 / 6) * 17 / 30), totalPayments);// 17
+		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		assertEquals(SeleniumTools.unmessDouble(1067.40 * 13 / 30 + (1067.40 + 1067.40 / 6) * 17 / 30), totalPayments);// 17
 		
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
-//		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
-//		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), totalPayments);
+		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, ENFERMEDAD COMÚN");
 		calendar.set(Calendar.MAY, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1067.40, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1067.40, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1067.40, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1067.40, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1067.40, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1067.40, totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, ENFERMEDAD PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1067.40, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1067.40, totalPayments);
 
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1067.40, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1067.40, totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, EXTRAS CON GARANTIZADO");
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1200.0, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1200.0, totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADO ENFERMEDAD COMÚN, Y PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)764.4, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)764.4, totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADOS, ENFERMEDAD COMÚN");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)764.4, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)764.4, totalPayments);
 
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)764.4, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)764.4, totalPayments);
 		
 		SeleniumTools.draft(driver, "GARANTIZADOS, ENFERMEDAD PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1000.0, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1000.0, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals(SeleniumTools.unmessDouble(1000.00 * 20 / 30 + 900.00 * 10 / 30), totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1000.0, cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals((Double)1000.0, cgpBase);
-		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
 		assertEquals((Double)1000.0, totalPayments);
 		
 		SeleniumTools.draft(driver, "EXTRAS, IT");
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
 
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
 		
 		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
 		
 		calendar.set(Calendar.MONTH, Calendar.OCTOBER);
-		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
-		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgpBase);
 		
+		calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.DECEMBER, 31);
+		Date endDate = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH, 15);
+		Date issueDate = calendar.getTime();
+		
+		extra(issueDate, endDate);
+		do {
+			totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
+		} while (totalPayments == 0d);
+		assertEquals(SeleniumTools.unmessDouble(1067.40 * 4 / 30 /6  +  1067.40 * 14 / 30 /6), totalPayments);
+		
+		SeleniumTools.draft(driver, "EXTRAS, IT (REDEFINIDO)");
+		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
+		calendar.set(Calendar.MONTH, Calendar.JULY);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgpBase);
+		
+		calendar.set(Calendar.MONTH, Calendar.AUGUST);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgpBase);
+		
+		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
+		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgpBase);
+		
+		extra(issueDate, endDate);
+		totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
+		assertEquals(SeleniumTools.unmessDouble(1067.40/6 * 5  + (1067.40*20/30)/6), totalPayments);
+		
+		SeleniumTools.draft(driver, "MATERNIDAD, COMPLETA");
+		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+		switchSalaryMonth(calendar);
+		
+		
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		// Here start I.T
+		calendar.set(Calendar.MONTH, Calendar.APRIL);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		
+		calendar.set(Calendar.MONTH, Calendar.JUNE);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		
+		SeleniumTools.draft(driver, "MATERNIDAD, PARCIAL");
+		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		
+		SeleniumTools.draft(driver, "PATERNIDAD, PARCIAL");
+		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		switchSalaryMonth(calendar);
+		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
+		
+		calendar.set(Calendar.YEAR, 2018);
+		
+		SeleniumTools.draft(driver, "PAGO DIRECTO, REDEFINIDO");
+		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		switchSalaryMonth(calendar);
+		assertEquals((Double)0.00, SeleniumTools.getAmount(driver, cgcBaseLabel));
+	}
+	
+	//TODO DUNNO LOL
+	@Ignore
+	@Test
+	public void TestPercepcionesDelSistema() throws Exception {
+//		ENTER 'INTEGRAL DE NÓMINAS'
+		SeleniumTools.integralFromIndex(driver);
+		
+		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "percepciones_del_sistema");
+		SeleniumTools.draft(driver, "PREST, ENFERMEDAD COMUN");
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
+		SeleniumTools.resetCalendar(calendar);
+		calendar.set(Calendar.YEAR, 2018);
+		calendar.set(Calendar.MONTH, Calendar.JUNE);
+		switchSalaryMonth(calendar);
+		
+		assertTrue(	// SALARIO BASE MENSUAL
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-1"))).isEnabled()
+		);
+		assertTrue(
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-1"))).isEnabled()
+		);
+		
+		
+		assertTrue(	// PLUS SALARIAL MENSUAL
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-2"))).isEnabled()
+		);
+		assertTrue(
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-2"))).isEnabled()
+		);
+		
+		
+		assertTrue(	// PREST. POR ENFERMEDAD COMÚN
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-3"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "description-box-3"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-3"))).isEnabled()
+		);
+		
+		
+		assertTrue(	// PREST. POR ENFERMEDAD COMÚN
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-4"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "description-box-4"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-4"))).isEnabled()
+		);
+		
+		
+		assertTrue(	// PREST. POR ENFERMEDAD COMÚN
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-5"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "description-box-5"))).isEnabled()
+		);
+		assertTrue(
+			!wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-5"))).isEnabled()
+		);
+		
+		((JavascriptExecutor)driver).executeScript("let elem = document.getElementById('" + GWT_ID_PROFIX + "description-box-3');"
+				+ "elem.focus();"
+				+ "elem.value = '[1001]P. POR ENFERMEDAD COMÚN';"
+				+ "elem.blur();");
+		
+		wait.until(ExpectedConditions.attributeContains(By.id(GWT_ID_PROFIX + "payment-row-3"), "class", "aon-dataTable-row-highlight"));
+
+	}
+	
+	@Test
+	public void TestPracticas() throws Exception {
+		SeleniumTools.integralFromIndex(driver);
+		
+		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "practicas");
+		
+		SeleniumTools.draft(driver, "PRACTICAS, TIEMPO COMPLETO");
+
+		By percentInput = By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL");
+		By porcDesmplE = By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL_E");
+		By porcDempl = By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL");	
+		By check = By.id(GWT_ID_PROFIX + "costsCheck-input");
+		
+		wait.until(ExpectedConditions.attributeToBeNotEmpty(driver.findElement(percentInput), "value"));
+		assertEquals((Double)1.55, SeleniumTools.getAmount(driver, percentInput));
+		
+		SeleniumTools.checkboxCheck(driver, check);
+		
+		assertEquals((Double)5.5, SeleniumTools.getAmountNotEmptyValue(driver, porcDesmplE));
+		SeleniumTools.checkboxUncheck(driver, check);
+		
+		SeleniumTools.draft(driver, "PRACTICAS, TIEMPO PARCIAL");
+		assertEquals((Double)1.55, SeleniumTools.getAmountNotEmptyValue(driver, porcDempl));	
+		SeleniumTools.checkboxCheck(driver, check);		
+		assertEquals((Double)5.5, SeleniumTools.getAmountNotEmptyValue(driver, porcDesmplE));		
+		SeleniumTools.checkboxUncheck(driver, check);
+	}
+	
+	@Test
+	public void TestSonny() throws Exception {
+		SeleniumTools.integralFromIndex(driver);
+		
+		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "sonny");
+		
+		SeleniumTools.draft(driver, "CONSTANTES, I");
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
+		SeleniumTools.resetCalendar(calendar);
+		calendar.set(Calendar.YEAR, 2018);
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		
+		switchSalaryMonth(calendar);
+		
+		By cgcBaseLabel = By.id(GWT_ID_PROFIX + "cgcBaseLabel");
+		By totalPaymentLabel = By.id(GWT_ID_PROFIX + "totalPaymentsLabel");
+		
+		Double cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		Double totalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
+		assertEquals(cgcBase, totalPayment);
+		
+		calendar.set(Calendar.MONTH, Calendar.APRIL);
+		switchSalaryMonth(calendar);
+		Double sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		Double sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
+		assertEquals(cgcBase, sonnyCgcBase);
+		assertEquals(totalPayment, sonnytotalPayment);
+		
+		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
+		
+		SeleniumTools.draft(driver, "CONSTANTES, II (PAGAS)");
+		calendar.set(Calendar.MONTH, Calendar.MARCH);
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		totalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
+		
+		calendar.set(Calendar.MONTH, Calendar.APRIL);
+		switchSalaryMonth(calendar);
+		sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
+		assertEquals(cgcBase, sonnyCgcBase);
+
+		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
+		
+		SeleniumTools.draft(driver, "CONSTANTES, III (BONO)");
+		calendar.set(Calendar.MONTH, Calendar.MARCH);	
+		switchSalaryMonth(calendar);
+		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		totalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
+		
+		calendar.set(Calendar.MONTH, Calendar.APRIL);
+		switchSalaryMonth(calendar);
+		sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
+		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);		
+		assertEquals(cgcBase, sonnyCgcBase);
+
+		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
+	}
+
+
+	private void switchSalaryMonth(Calendar calendar) throws Exception {
+		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+	}
+	
+	private void extra(Date issueDate, Date endDate) {
+		SeleniumTools.selectPayrollType(driver, SalaryType.EXTRA);
+		
+		By extraDateItem = By.id(GWT_ID_PROFIX + "dateListBox");
+		
+		wait.until(ExpectedConditions.elementToBeClickable(extraDateItem));
+		retryingFindClick(driver, extraDateItem);
+		
+		String dateXpath = "//span[text()='" + String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate) + "']";
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(dateXpath)));
+		retryingFindClick(driver, By.xpath(dateXpath));
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar.setTime(endDate);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int end = calendar.get(Calendar.DAY_OF_MONTH);
+		String periodStr = String.format( new Locale("es","ES"),"[0-9]+/[0-9]+/[0-9]+\\s*-\\s*%3$d/%2$d/%1$d", year, month, end);
+		By periodSelector = By.id(GWT_ID_PROFIX + "periodLabel");
+		try {
+			wait.until(ExpectedConditions.textMatches(periodSelector, Pattern.compile(periodStr, Pattern.CASE_INSENSITIVE)));
+		} catch (Exception e) {
+			fail("Didn't change the extra date");
+		}
 	}
 	
 	private void checkCgcAndCgpByDate(int year, int month, Double expectedCgcBase, Double expectedCgpBase) throws Exception {
@@ -890,8 +1147,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals(expectedCgcBase, cgcBase);
 		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
@@ -904,20 +1160,19 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals(expectedCgcBase, cgcBase);
 	}
 	
+	@SuppressWarnings("unused")
 	private void checkCgpByDate(int year, int month, Double expectedCgpBase) throws Exception {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+		switchSalaryMonth(calendar);
 		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
 		assertEquals(expectedCgpBase, cgpBase);
 	}

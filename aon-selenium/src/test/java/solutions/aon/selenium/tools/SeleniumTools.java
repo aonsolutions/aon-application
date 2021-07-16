@@ -2,6 +2,7 @@ package solutions.aon.selenium.tools;
 
 import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
+import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -34,6 +35,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -879,6 +881,21 @@ public class SeleniumTools {
 		js.executeScript("document.querySelector('" + cssSelector + "').focus()");
 	}
 	
+	public static void focusUntilValueContains (WebDriver driver, By selector, String containingText) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		boolean focused;
+		int max = 4;
+		do {
+			SeleniumTools.retryingFindClick(driver, selector);
+			try {				
+				wait.until(ExpectedConditions.attributeContains(selector, "value", containingText));
+				focused = true;
+			} catch (Exception e) {
+				focused = false;
+			}
+		} while (max-- > 0 && !focused);
+	}
+	
 	public static void wait4periodStabilization(WebDriver driver) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(d -> {
@@ -898,6 +915,21 @@ public class SeleniumTools {
 		});
 	}
 	
+	public static void safelyCloseModal (WebDriver driver, By exitBtnToClick) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		int max = 4;
+		boolean modalClosed;
+		do {			
+			SeleniumTools.retryingFindClick(driver, exitBtnToClick);
+			try {
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(exitBtnToClick));
+				modalClosed = true;	
+			} catch (Exception e) {
+				modalClosed = false;
+			}
+		} while (!modalClosed && max-- > 0);
+	}
+	
 	public static void wait4SettleToLoadDate(WebDriver driver) {
 		new WebDriverWait(driver, 10).until(d -> {
 			Pattern pattern = Pattern.compile("\\s*\\d+\\s*de\\s*\\w+\\s*de\\s*\\d+\\s*", Pattern.CASE_INSENSITIVE);
@@ -905,5 +937,39 @@ public class SeleniumTools {
 			return pattern.matcher(date).matches();
 		});
 	}
+	
+	private static void checkboxCheckUncheck(WebDriver driver, By checkboxId, boolean checked) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(checkboxId));
+		
+		int max = 4;
+		boolean status;
+		
+		ExpectedCondition<Boolean> condition;
+		if (checked)
+			condition = ExpectedConditions.elementToBeSelected(checkboxId);
+		else
+			condition = ExpectedConditions.not(ExpectedConditions.elementToBeSelected(checkboxId));
+		
+		do {
+			retryingFindClick(driver, checkboxId);
+			try {
+				wait.until(condition);
+				status = true;				
+			} catch (Exception e) {
+				status = false;
+			}				
+		} while (!status && max-- >0);
+	}
+	
+	public static void checkboxCheck(WebDriver driver, By checkboxId) {
+		checkboxCheckUncheck(driver, checkboxId, true);
+	}
+	
+	public static void checkboxUncheck(WebDriver driver, By checkboxId) {
+		checkboxCheckUncheck(driver, checkboxId, false);
+	}
+	
 	
 }
