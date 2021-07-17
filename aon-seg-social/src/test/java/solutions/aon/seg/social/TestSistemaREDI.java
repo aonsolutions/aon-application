@@ -35,7 +35,7 @@ import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.SituacionEmpresa;
 
-//@Ignore
+@Ignore
 public class TestSistemaREDI extends SegSocialTest{
 	
 	@Test
