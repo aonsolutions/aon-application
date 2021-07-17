@@ -1,6 +1,7 @@
 package solutions.aon.seg.social;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import junit.framework.Assert;
 import solutions.aon.seg.social.SistemaREDEmployee;
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class TestEmployee {
 
 	//GET TOTAL EMPLOYEES
