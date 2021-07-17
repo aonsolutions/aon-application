@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.product;
 
-public enum ProductStatus {
+import java.io.Serializable;
+
+public enum ProductStatus implements Serializable {
 	
 	ACTIVE,
     DISCONTINUED;

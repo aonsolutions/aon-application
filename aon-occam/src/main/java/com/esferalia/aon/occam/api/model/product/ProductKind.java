@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.product;
 
-public enum ProductKind {
+import java.io.Serializable;
+
+public enum ProductKind implements Serializable {
 	
 	SALE_PURCHASE,
 	
