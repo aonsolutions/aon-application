@@ -1,6 +1,10 @@
 package com.esferalia.aon.occam.api.model.product;
 
-public class Brand {
+import java.io.Serializable;
+
+public class Brand implements Serializable {
+	
+	private static final long serialVersionUID = 4975851969213366192L;
 	
 	Integer id;
 	Integer domain;
