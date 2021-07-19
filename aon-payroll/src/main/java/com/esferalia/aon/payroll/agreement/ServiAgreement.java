@@ -35,20 +35,22 @@ public class ServiAgreement {
 		}
 	}
 	
-	public static InputStream get_online_file(String serviAgreementCode, Extension extension) {
+	public static InputStream get_online_file(String serviAgreementCode, Extension extension) throws IllegalArgumentException {
 		String url = URL + serviAgreementCode + extension.getValue();
 		return get_online_file(url, USER, PASS);
 	}
 	
-	public static InputStream get_online_file(String url, String user, String password) {
+	public static InputStream get_online_file(String url, String user, String password) throws IllegalArgumentException {
 		WebClient webClient;
 		try {
 			webClient = getWebClient(user, password);
 			Page page = webClient.getPage("https://" + url);
 			InputStream is = page.getWebResponse().getContentAsStream();
 			return is;
-		} catch (InvalidCertificateException | FailingHttpStatusCodeException | IOException e) {e.printStackTrace();}
-		return null;
+		} catch (InvalidCertificateException | FailingHttpStatusCodeException | IOException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 	// GET THE WEB CLIENT OF HTMLUNIT
