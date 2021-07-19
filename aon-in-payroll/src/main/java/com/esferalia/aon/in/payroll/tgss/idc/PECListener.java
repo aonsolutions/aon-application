@@ -59,17 +59,44 @@ class PECListener  implements IdcListener {
 		}
 	};
 
+	static final Collection<DeductionProvider> REMOVE_ALL_DEDUCTIONS =  collection(
+			newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
+			newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
+			newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)
+	);
+
 	@SuppressWarnings("serial")
-	static final Map<String, DeductionProvider> DEDUCTION_QUOTA_PROVIDER_MAP = new HashMap<String, DeductionProvider>() {
+	static final Map<String, Collection<DeductionProvider>> DEDUCTION_QUOTA_PROVIDER_MAP = new HashMap<String, Collection<DeductionProvider>>() {
 		{
-			put("68", newRemoveDeduction(ContextVariable.CGC_EMPLOYEE));
+			put("08", REMOVE_ALL_DEDUCTIONS);
+			put("53", collection(
+					newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
+					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)));
+			put("68", collection(newRemoveDeduction(ContextVariable.CGC_EMPLOYEE)));
+			put("78", collection(newRemoveDeduction(ContextVariable.FP_EMPLOYEE)));
 		}
 	};
-
+	
+	static final Collection<CostProvider> REMOVE_ALL_COSTS =  collection(
+			newRemoveCost(ContextVariable.CGC_ENTERPRISE),
+			newRemoveCost(ContextVariable.FP_ENTERPRISE),
+			newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE),
+			newRemoveCost(ContextVariable.IT_ENTERPRISE),
+			newRemoveCost(ContextVariable.IMS_ENTERPRISE),
+			newRemoveCost(ContextVariable.FOGASA_ENTERPRISE));
+	
 	@SuppressWarnings("serial")
 	static final Map<String, Collection<CostProvider>> COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
-			put("62", collection(newRemoveCost(ContextVariable.FP_ENTERPRISE),newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));
+			put("01", REMOVE_ALL_COSTS );
+			put("53", collection(
+					newRemoveCost(ContextVariable.FP_ENTERPRISE),
+					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE),
+					newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE)));
+			put("62", collection(
+					newRemoveCost(ContextVariable.FP_ENTERPRISE),
+					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));
+			put("78", collection(newRemoveCost(ContextVariable.FP_ENTERPRISE)));
 		}
 	};
 	
@@ -77,27 +104,48 @@ class PECListener  implements IdcListener {
 	static final Map<String, String> PEC_TYPE_T_49_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
-			//put("02", "BONIFICACIÓN HACIENDA EMBARCACIONES ZONA ESPECIAL DE CANARIAS");
-			//put("07", "EXONERACIÓN");
-			//put("10", "DECREMENTO DE CUOTAS");
+			put("03", "RED.CUOTA SS-PORCENT");
 			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
 			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
 			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
-			//put("19", "BONIFICACIÓN SPEE CON CARGO A HACIENDA");
 			put("37", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO COMPLETO");
 			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
 			put("41", "BONIFICACIÓN PROGRAMA FOMENTO DE EMPLEO. CUANTÍA DIARIA");
 			put("42", "RED.CUOTA SS-CUANTÍA");
-			//put("46", "BONIFICACIÓN SISTEMA NACIONLA GARANTÍA JUVENIL");
-			//put("48", "BONIFICACIÓN - CUANTÍA - SIN HORAS COMPLEMENTARIAS");
-			//put("51", "BONIFICACIÓN SEA TRANSFORMACIÓN EN INDEFINIDO. CUANTÍA MENSUAL");
-			//put("52", "BONIFICACIÓN SEA TRANSFORMACIÓN EN INDEFINIDO. CUANTÍA DIARIA");
-			//put("54", "BONIFICACIÓN SEA TRANSFORMACIÓN EN INDEFINIDO. CUOTA FIJA MENSUAL");
-			//put("55", "BONIFICACIÓN SEA TRANSFORMACIÓN EN INDEFINIDO. CUOTA FIJA DIARIA");
-
 		}
 	};
 		
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
+		{
+			put("01", "BONIFICACIÓN INEM");
+			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
+			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
+			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
+			put("37", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO COMPLETO");
+			put("41", "BONIFICACIÓN PROGRAMA FOMENTO DE EMPLEO. CUANTÍA DIARIA");
+			put("42", "RED.CUOTA SS-CUANTÍA");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_DEDUCTION_MAP = new HashMap<String, String>() {
+		{
+			put("03", "RED.CUOTA SS-PORCENT");
+			put("09", "EXCLUSIONES");
+			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_COST_MAP = new HashMap<String, String>() {
+		{
+			put("03", "RED.CUOTA SS-PORCENT");
+			put("09", "EXCLUSIONES");
+			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
+		}
+	};
+
 	@SuppressWarnings("serial")
 	static final Map<String, String> PEC_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
@@ -134,16 +182,20 @@ class PECListener  implements IdcListener {
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
-		if ( PEC_TYPE_T_49_MAP.containsKey(code )) {
+		if ( PEC_BONUS_MAP.containsKey(code )) {
 			try {
 				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota))
 					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
-				if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota))
-					ssPECs.add( DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).newDeduction(nss, ccc, code, quota, portTipo, description, start, end)) ;
-				if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota))
-					COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> ssPECs.add(f.newCost(nss, ccc, code, quota, portTipo, description, start, end))) ;
 			} catch (ParseException e) {
 			}
+		}
+		if ( PEC_COST_MAP.containsKey(code )) {
+			if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota))
+				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> ssPECs.add(f.newCost(nss, ccc, code, quota, portTipo, description, start, end))) ;
+		}
+		if ( PEC_DEDUCTION_MAP.containsKey(code )) {
+			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota))
+				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> ssPECs.add( f.newDeduction(nss, ccc, code, quota, portTipo, description, start, end))) ;
 		}
 	}
 	
