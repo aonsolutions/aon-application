@@ -450,7 +450,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
 	
-	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Integer> asyncCallback) {
+	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, asyncCallback);
 	}
 	

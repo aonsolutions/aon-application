@@ -159,7 +159,7 @@ public interface EnterprisesServiceAsync {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
-	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> asyncCallback);
+	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
 	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,

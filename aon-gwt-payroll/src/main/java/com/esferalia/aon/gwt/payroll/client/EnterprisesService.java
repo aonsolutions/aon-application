@@ -83,7 +83,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	Agreement copyAgreement(String domain, Agreement agreement);
 
-	Agreement getAgreement(String domain, Integer agreementId) ;
+	Agreement getAgreement(String domain, Integer agreementId);
 
 	List<Agreement> getAgreements(String domain, int offset, int limit) ;
 	
@@ -250,7 +250,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
-	int getServiAgreement(String currentDomainName, String serviAgreementCode);
+	int getServiAgreement(String currentDomainName, String serviAgreementCode) throws IllegalArgumentException;
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
 
