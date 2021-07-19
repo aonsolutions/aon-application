@@ -8,6 +8,7 @@ import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
@@ -2715,7 +2716,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public int getServiAgreement(String domainName, String serviAgreementCode) {
+	public int getServiAgreement(String domainName, String serviAgreementCode) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
@@ -2732,8 +2733,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer agreementId = agreementLog.getFirst();
 			return agreementId;
 		
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("El convenio con c\u00F3digo " + serviAgreementCode + " (ServiConvenios) no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
