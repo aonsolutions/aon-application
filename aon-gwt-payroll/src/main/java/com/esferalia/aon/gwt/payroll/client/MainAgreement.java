@@ -677,7 +677,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
+						AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+						dialog.warning();
 					}
 
 					@Override
