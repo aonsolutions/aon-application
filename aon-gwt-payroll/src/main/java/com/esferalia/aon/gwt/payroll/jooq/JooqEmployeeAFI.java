@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -33,6 +35,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeAFI {
@@ -225,14 +228,38 @@ public class JooqEmployeeAFI {
 				))
 				.fetchOne();
 		
-		json.put("documentType", registryRecord.get(REGISTRY.DOCUMENT_TYPE) == 0 ? 1 : 0);
-		json.put("documentCountry", /*registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)*/ "");		//¿Es opcional?
+		json.put("documentType", getDocumentType(registryRecord.get(REGISTRY.DOCUMENT)));
+		json.put("documentCountry", getDocumentCountry(registryRecord.get(REGISTRY.DOCUMENT_COUNTRY)));		//¿Es opcional?
 		json.put("document", registryRecord.get(REGISTRY.DOCUMENT));
 		json.put("nationality", /*registryRecord.get(REGISTRY.NATIONALITY)*/ "724");			//¿Es opcional?
 		
 		return json;
 	}
+
+	private static String getDocumentType(String document) {
+		Pattern dniPattern = Pattern.compile("[0-9]{7,8}[A-Z a-z]");
+		Matcher dniMatcher = dniPattern.matcher(document);
+		
+		if(dniMatcher.matches())
+			return "1";
+		
+		Pattern niePattern = Pattern.compile("([a-z]|[A-Z]|[0-9])[0-9]{7}([a-z]|[A-Z]|[0-9]){1,2}");
+		Matcher nieMatcher = niePattern.matcher(document);
+		
+		if(nieMatcher.matches())
+			return "6";
+		
+		return "2";
+	}
 	
+	private static String getDocumentCountry(String iso2) {
+		if(AonStringUtils.isBlank(iso2))
+			return null;
+		
+		Country country = Country.valueOf(iso2);
+		return country.getIsoCode() + "";
+	}
+
 	@SuppressWarnings("unchecked")
 	private static JSONObject getAYN(Integer contractId, DSLContext dslContext) {
 		JSONObject json = new JSONObject();
