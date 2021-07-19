@@ -114,7 +114,7 @@ public class RawdocModule extends MainEntryPoint {
 	private AonTableButton attachOpenButton;
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton searchButton;
+	private AonToolbarButton refreshButton;
 	private AonToolbarButton allInboxButton;
 	private AonToolbarButton inboxButton;
 	private AonToolbarButton rejectedButton;
@@ -343,15 +343,15 @@ public class RawdocModule extends MainEntryPoint {
 	private Widget getToolbarPanel(final RawdocModuleOptions opt) {
 		toolbar = new AonToolbar(AON.MSG.rawdocModule());
 
-		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
-		searchButton.addClickHandler(new ClickHandler() {
+		refreshButton = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
+		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				search( opt );
 			}
 
 		});
-		toolbar.add(searchButton);
+		toolbar.add(refreshButton);
 
 		allInboxButton = new AonToolbarButton( AON.MSG.all(), AON.CSS.aonIconAllInbox() );
 		allInboxButton.addClickHandler(new ClickHandler() {
