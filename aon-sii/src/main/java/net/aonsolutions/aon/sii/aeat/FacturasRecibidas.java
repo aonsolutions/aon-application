@@ -279,7 +279,7 @@ public class FacturasRecibidas extends SIIBuilt {
 				.mapToDouble(a -> a.getDeductibleQuota()).sum()) + ""); // TODO
 		
 		if(isCuotaDeducible0(emisor)) {
-			frt.setCuotaDeducible("0"); // TODO
+//			frt.setCuotaDeducible("0"); // TODO
 		}
 			// DESCRIPCION OPERACION
 		AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoiceId);
