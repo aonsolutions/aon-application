@@ -461,11 +461,18 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcplcccBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
-			Collection<PEC> ssBonuses = Idcplccc.getSSBonuses(is);
-			assertEquals(8, ssBonuses.size());
-			assertEquals(4, ssBonuses.stream().filter(pec -> isBonus(pec)).count());
-			assertEquals(4, ssBonuses.stream().filter(pec -> isDeduction(pec)).count());
-			ssBonuses.forEach( b -> System.out.println(b));
+			Collection<PEC> ssPecs = Idcplccc.getSSBonuses(is);
+			assertEquals(4
+					+ 4*(2+3), 
+					ssPecs.size());
+			assertEquals(4, ssPecs.stream().filter(pec -> isBonus(pec)).count());
+			
+			assertEquals(4*2, ssPecs.stream().filter(pec -> isDeduction(pec)).count());
+			assertEquals(4*3, ssPecs.stream().filter(pec -> isCost(pec)).count());
+			
+
+			
+			ssPecs.forEach( b -> System.out.println(b));
 		}
 	}
 
@@ -890,7 +897,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcVI.pdf") ){
 			Collection<PEC> ssPECs = Idc.getSSPECs(is);
-			assertEquals(2, ssPECs.size());
+			assertEquals(1+2+3, ssPECs.size());
 			
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -1077,9 +1084,10 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcplnssIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssII.pdf") ){
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(2, ssBonuses.size());
+			assertEquals(1+2+3, ssBonuses.size());
 			assertEquals(1, ssBonuses.stream().filter(pec -> isBonus(pec)).count());
-			assertEquals(1, ssBonuses.stream().filter(pec -> isDeduction(pec)).count());
+			assertEquals(2, ssBonuses.stream().filter(pec -> isDeduction(pec)).count());
+			assertEquals(3, ssBonuses.stream().filter(pec -> isCost(pec)).count());
 			
 			Salary salary = calculate(ssBonuses);
 			
@@ -1735,6 +1743,50 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testIdcXIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() > 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+
+			Date may202021 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( may202021 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull( pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.MONTH,Calendar.JUNE);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date june = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println(c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+
+			Assert.assertEquals(0, salary.getSalaryDeductions().size());
+			Assert.assertEquals(0, salary.getSalaryCosts().size());
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
+
 	private static class IdcPEC {
 		private String pec;
 		private Date startDate;
@@ -1942,7 +1994,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				getFirstDayOfYear(startDate), "IMS_E",
 				DeductionType.PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IMS ? PORCENTAJE_IMS : (PORCENTAJE_IMS=( isdef OCUPACION ? OCUPACION_IMS[OCUPACION] : TARIFA_IMS)))/100");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
-				getFirstDayOfYear(startDate), "DESEMPL_E",
+				getFirstDayOfYear(startDate), "DESMPL_E",
 				DeductionType.UNEMPLOYMENT, "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(startDate), "FOGASA_E",
