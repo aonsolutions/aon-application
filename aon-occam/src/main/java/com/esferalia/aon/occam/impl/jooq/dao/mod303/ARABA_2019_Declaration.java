@@ -164,7 +164,7 @@ public class ARABA_2019_Declaration extends Mod303Declaration {
 		,AR_C223	(Mod303Key.AR_C223,null,null,(ctx,mod) -> add(Mod303Key.AR_C223,mod,PERCENT2),null,null)
 		,AR_C224	(Mod303Key.AR_C224
 			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent2(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C222,mod,vat.getQuota())
+			,(ctx,mod,vat) -> add(Mod303Key.AR_C224,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Adquisiciones intracomunitarias al tercer tipo.		
