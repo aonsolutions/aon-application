@@ -944,7 +944,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 	}
 	
 	//TODO DUNNO LOL
-//	@Ignore
+	@Ignore
 	@Test
 	public void TestPercepcionesDelSistema() throws Exception {
 //		ENTER 'INTEGRAL DE NÓMINAS'
