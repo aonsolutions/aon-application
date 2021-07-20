@@ -1046,6 +1046,9 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 	
 		  let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 	
+		  let send = ACTION.SEND_INVOICE;
+		  send.fn = () => this.sendInvoice();
+
 		  let record = ACTION.RECORD_INVOICE;
 		  record.fn = () => this.recordInvoice();
 	
@@ -1080,10 +1083,12 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 			actions = [restore, deleteForever];
 		  }  else if(this.invoice.isInbox()){
 			  if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){
-				actions = [addComment, deleteInvoice, reject, record, rectify, duplicate];
+				actions = [addComment, send, deleteInvoice, reject, record, duplicate];
 			  } else {
-				actions = [addComment, deleteInvoice, rectify, duplicate];
+				actions = [addComment, deleteInvoice, duplicate];
 			  }
+		  } else {
+			actions = [send, rectify, duplicate];
 		  }
 		  if(!this.invoice.file && !this.invoice.isEmitida()){
 			actions.push(addFile);

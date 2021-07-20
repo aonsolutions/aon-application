@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -264,18 +264,24 @@ export class AonNewInvoice extends AonElement {
 				comment.fn = () => this.addInvoiceComment();
 				moreActions.push(comment);
 			}
-			let rectify = ACTION.RECTIFY_INVOICE;
-			rectify.fn = () => this.rectifyInvoice();
-			moreActions.push(rectify);
+			let send = ACTION.SEND_INVOICE;
+			send.fn = () => this.sendInvoice();
+			moreActions.push(send);
+
+			if(!this.getInvoice().isRawdoc()){
+				let rectify = ACTION.RECTIFY_INVOICE;
+				rectify.fn = () => this.rectifyInvoice();
+				moreActions.push(rectify);
+			}
 
 			let duplicate = ACTION.DUPLICATE_INVOICE;
 			duplicate.fn = () => this.duplicateInvoice();
 			moreActions.push(duplicate);
-
-			let changeType = ACTION.CHANGE_TYPE;
-			changeType.fn = () => this.changeType();
-			moreActions.push(changeType);
-
+			if(this.getInvoice().isInbox() ){
+				let changeType = ACTION.CHANGE_TYPE;
+				changeType.fn = () => this.changeType();
+				moreActions.push(changeType);
+			}
 			d.setMenuOptions(moreActions, top, left);
 			d.open();
 		});
@@ -446,7 +452,7 @@ export class AonNewInvoice extends AonElement {
 		card.setContent(table);
 
 		table.addRow(); // ----- ROW 1
-		if(this.invoice.isEmitida()){
+		if(this.invoice.isEmitida()) {
 
 			// ----- SERIE
 
@@ -472,7 +478,6 @@ export class AonNewInvoice extends AonElement {
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
 		} else {
-
 			// ----- REFERENCE
 
 			let reference = new AonInput();
@@ -500,6 +505,7 @@ export class AonNewInvoice extends AonElement {
 		});
 		table.addCell(date, this.invoice.isEmitida() ? '1' : '2');
 		date.value = this.invoice.date;
+		
 		// ----- TOTAL
 
 		let total = new AonNumber();
@@ -1533,6 +1539,24 @@ export class AonNewInvoice extends AonElement {
 		d.setTitle(MSG.RECTIFY_INVOICE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	sendInvoice() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.SEND_INVOICES);
+		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
+		d.addAcceptAction(() => {
+			let mail = this.getElement('sendInvoicesMail');
+			let message = {
+				to: mail.value,
+				invoices: [this.invoice]
+			};
+			sendInvoiceMail(message).then(() => {});
+		});
 		d.open();
 	}
 

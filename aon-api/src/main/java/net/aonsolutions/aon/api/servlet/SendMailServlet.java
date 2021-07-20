@@ -26,6 +26,8 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -141,10 +143,33 @@ public class SendMailServlet extends HttpServlet{
 	}
 	
 	private String getInvoiceUrl(Domain domain, String login, JSONObject invoice) {	
-		String str = "domain="+ domain.getId() + "&id=" + invoice.getInt("id") + "&attach_type=data";
-	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-	    return "https://" +domain.getName() +"/ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
-
+		JSONObject file = invoice.optJSONObject(IJsonNames.FILE);
+		if(file != null && file.opt(IJsonNames.URL) != null) {
+			return file.optString(IJsonNames.URL);
+		} else {
+			Integer id = JsonUtils.getInteger(invoice, IJsonNames.ID);
+			String status = JsonUtils.getString(invoice, IJsonNames.STATUS);
+			
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.ID, id);
+			json.put(IJsonNames.SOURCE, isRawdoc(status) ? "rawdoc" : "invoice");
+			json.put("domain_id", domain.getId());
+			json.put("domain_name", domain.getName());
+			json.put("login", login);
+		    String result = Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+			return "https://" +domain.getName() +"/ms/api/download_invoice_pdf?json=" + result;
+		}
+		
+//		String str = "domain="+ domain.getId() + "&id=" + invoice.getInt("id") + "&attach_type=data";
+//	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+//	    
+//	    return "https://" +domain.getName() +"/ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
+	}
+	
+	private boolean isRawdoc(String status) {
+		return "trash".equalsIgnoreCase(status) || "draft".equalsIgnoreCase(status)
+			|| "refused".equalsIgnoreCase(status) || "rejected".equalsIgnoreCase(status)
+			|| "inbox".equalsIgnoreCase(status);
 	}
 	
 	private String getDocumentUrl(Domain domain, String login, JSONObject document) {	
