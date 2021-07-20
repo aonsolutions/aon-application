@@ -31,9 +31,11 @@ public class InvoiceValidation {
 			this.ctx = ctx;
 			this.config = config;
 		}
+	
 		private AONContext getContext() {
 			return ctx;
 		}
+		
 		private AonConfiguration getConfiguration() {
 			return config;
 		}
