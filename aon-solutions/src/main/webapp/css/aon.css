@@ -1250,3 +1250,9 @@ button:disabled, button[disabled]{
   0% { opacity: 0; -moz-transform: translateX(-100%); }   
   100% { opacity: 1; -moz-transform: translateX(0); }
 }
+
+.aonImgComment{
+  max-width: 100%;
+  max-height:  100%;
+  cursor: pointer;
+}

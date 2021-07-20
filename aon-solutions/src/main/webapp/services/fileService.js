@@ -1,5 +1,5 @@
 
-import { post, openFileMobile, openFileDesktop, webkitRequestMobile, actionRequestMobile, requestFile } from "./request.js";
+import { post, openFileMobile, openFileDesktop, webkitRequestMobile, actionRequestMobile, requestFile, get } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const uploadFile = (data) => post(`${API_URL}/file`, data);

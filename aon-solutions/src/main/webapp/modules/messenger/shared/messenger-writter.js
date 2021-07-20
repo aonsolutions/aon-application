@@ -1,7 +1,8 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { API_URL, COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utils.js";
+import { domainName } from "../../../services/request.js";
+import { convertBase64Url, getReader, newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import {  createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
@@ -56,9 +57,8 @@ export const buildDesktopWritter = (writter, aonMessengerChat) => {
         const upload = createUpload();
         upload.appendTo(sendBar.element);
         
-        customUpload(upload.element, aonMessengerChat);
+        addButtonFileSend(upload.element);
         
-
         const uploadIcon = createUploadIcon();
         uploadIcon.appendTo(upload.element);
 
@@ -163,20 +163,23 @@ const hideWritter = () => {
  * @param {*} aonTextArea - The mensaje source
  * @returns void.
  */
-export const sendMessage = (aonTextArea) => {
+export const sendMessage = async (aonTextArea) => {
+    await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT
+
     const value =  aonTextArea.value;
     if(!value || (value && !value.trim().length)) return ;
 
-    const parent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const data = parent.getData();
-    aonTextArea.clear();
-
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const data = aonMessengerChat.getData();
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
         sender: "Yo",
         comment: value,
         creation_date: new Date()
     }
+
+
+    aonTextArea.clear();
     
     data.workflow.push(message);
 
@@ -185,7 +188,6 @@ export const sendMessage = (aonTextArea) => {
         name: message.sender,
         comment:message.comment,
         date: message.creation_date,
-        attach: message.attach,
         direction : RIGHT
     });
 
@@ -197,7 +199,9 @@ export const sendMessage = (aonTextArea) => {
     if (lined)
         lined.style.setProperty("--height", lined.scrollHeight + "px");
 
-    parent.data = data;
+    aonMessengerChat.data = data;
+
+    return value;
 }
 
 
@@ -211,7 +215,8 @@ export const sendMessage = (aonTextArea) => {
         setStyles(textAreaText, {
             resize: "none",
             height: "100%",
-            minHeight: "300px"
+            minHeight: "300px",
+            maxHeight: "300px"
         });
     }
     /**
@@ -268,6 +273,125 @@ const createLink =() =>{
     }
 }
 
+/**
+ * 
+ * @param {HTMLElement} upload div button and file send
+ */
+const addButtonFileSend = (upload)=>{
+
+    const highlight = ()   => upload.classList.add('highlight');
+    const unhighlight = () => upload.classList.remove('highlight');
+    [EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => upload.addEventListener(eventName, highlight, false));
+    [EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => upload.addEventListener(eventName, unhighlight, false));
+
+    upload.addEventListener(EVENT.DROP, (ev) => {
+        if(ev && ev.dataTransfer && ev.dataTransfer.files){
+            uploadFileView(ev.dataTransfer.files);
+        }
+    });
+    
+    //ADD INPUT
+    let inputFile = setAttributes(document.createElement(TAG.INPUT),{ // multiple = true;
+        id:MESSENGER_IDS.INPUT_FILES,
+        type:'file',
+        name:'file',
+        multiple:true
+    });        
+    inputFile.style.display = "none";
+    inputFile.addEventListener(EVENT.CHANGE, async() => {
+        uploadFileView(inputFile.files)
+    });
+    upload.appendChild(inputFile);
+
+    upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
+}
+
+const uploadFileView = async (files)=> {
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const textAreaDiv = document.getElementById(MESSENGER_IDS.COMMENT_TASK).getDivTextArea();
+    const data = aonMessengerChat.getData();
+    for await (const file of files) {
+        const reader = await getReader(file).catch(e=>null);
+        if(reader) {
+            const fileId = Math.random().toString(36).substring(7);
+            aonMessengerChat.FILES.push({
+                domain: data.domain,
+                task: data.id,
+                content_type: reader.contentType,
+                content: reader.content,
+                id:fileId
+            })
+            const url = convertBase64Url(reader.content, reader.contentType);
+            let element = null;
+            if(reader.contentType && reader.contentType.indexOf("image")>-1){
+                element = document.createElement("img");
+                element.src = url;
+                element.className = CSS.AON_IMG_COMMENT;
+            } else  {
+                element = setStyles(document.createElement("a"),{
+                    // textDecoration:"underline",
+                    // cursor:"pointer",
+                    // color:"blue",
+                });
+                element.target = "_blank";
+                element.className = CSS.AON_LINK;
+                element.href = url;
+                element.textContent = reader.name;
+            }
+            element.dataset.id = fileId;
+            element.setAttribute("type",WORKFLOW_TYPES.AON_FILE);
+            element.setAttribute("onclick", `window.open('${url}')`);
+            textAreaDiv.appendChild(element);
+            textAreaDiv.appendChild(document.createElement("br"));
+        }
+    }
+}
+
+/**
+ * 
+ * @param {HTMLElement} textArea htmlElement textArea
+ * check files and send uploadFile(taskAttach) 
+ */
+const checkFilesAndSend = async (textArea)=>{
+    try {
+        const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+        const textAreaDiv = textArea.getDivTextArea();
+        const elements = textAreaDiv.querySelectorAll(`[type=${WORKFLOW_TYPES.AON_FILE}]`);
+        const {id:taskId} = aonMessengerChat.getData();
+        const files = aonMessengerChat.FILES;
+        for await (const el of elements) {
+            const fileId = el.dataset.id;
+            const file = files.find(({id})=> id == fileId);
+            if(file){
+                const taskAttach = await aonMessengerChat.uploadFile({file, taskId});
+                if(taskAttach){
+                    const json = {
+                        domain_name: domainName(),
+                        attach_type:"task",
+                        domain_id:taskAttach.domain,
+                        id:taskAttach.id
+                    };
+                    const jsonBase64 = btoa( JSON.stringify(json) );
+                    
+                    let linkTmp = `/${API_URL}/file/${jsonBase64}`
+    
+                    if(file.content_type.indexOf("image")>=0){
+                        el.src = linkTmp;
+                    }
+                    else {
+                        // el.href = linkTmp;
+                        el.removeAttribute("href");
+                    }
+                    el.setAttribute("onclick", `window.open('${linkTmp}')`);
+
+                }
+            }
+        }
+    } catch (error) { 
+        console.log(error);
+    }
+}
+
 
 /**
  * Set markup to selection
@@ -309,32 +433,3 @@ const createLink =() =>{
 //         element.value = pre + compiled + post;
 //     }
 // }
-
-
-const customUpload = (upload, aonMessengerChat)=>{
-
-    const highlight = ()   => upload.classList.add('highlight');
-    const unhighlight = () => upload.classList.remove('highlight');
-    [EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => upload.addEventListener(eventName, highlight, false));
-    [EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => upload.addEventListener(eventName, unhighlight, false));
-
-    upload.addEventListener(EVENT.DROP, (ev) => {
-        if(ev && ev.dataTransfer && ev.dataTransfer.files){
-            aonMessengerChat.upload(ev.dataTransfer.files);
-        }
-    });
-    
-    //ADD INPUT
-    let inputFile = document.createElement(TAG.INPUT);
-    inputFile.type     = 'file';
-    inputFile.name     = 'file';
-    // inputFile.multiple = true;
-    inputFile.id = MESSENGER_IDS.INPUT_FILES;
-    inputFile.style.display = "none";
-    inputFile.addEventListener(EVENT.CHANGE, async() => {
-        aonMessengerChat.upload(inputFile.files)
-    });
-    upload.appendChild(inputFile);
-
-    upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
-}

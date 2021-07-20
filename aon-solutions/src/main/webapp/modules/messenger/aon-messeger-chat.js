@@ -38,11 +38,11 @@ import {
   saveTaskAttach,
   getTaskAttach
 } from "../../services/taskService.js";
-import { openFileBase64 } from "../../services/request.js";
 
 export class AonMessengerChat extends AonElement {
   _data;
   UPDATE;
+  FILES;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -69,10 +69,11 @@ export class AonMessengerChat extends AonElement {
   }
 
   initialize() {
-    this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_CHAT;
+    this.id = MESSENGER_VIEWS.AON_MESSENGER_CHAT;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
+    this.FILES=[];
     this.setData({
       id: undefined,
       number: undefined,
@@ -277,15 +278,9 @@ export class AonMessengerChat extends AonElement {
 
     //FILL CHATS WORKFLOW
     this.getTaskWorkflow();
-
-    //TEST 
-    this.getTaskAttach();
   }
 
   formSerialize() {
-    let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    const comment = aonTextArea.value;
-    if (comment) sendMessage(aonTextArea); //remove comment and processed
     const sender = this.applicationParentEl.SENDER;
     const domain = sender.domain.id;
     const workgroupEl = this.selector("#" + MESSENGER_IDS.WORKGROUP);
@@ -304,21 +299,13 @@ export class AonMessengerChat extends AonElement {
       workflow: [],
       workflowTmp:{
         domain,
-        comment,
+        comment:"",
         task_holder: sender,
         type: WORKFLOW_TYPES.COMMENT,
       }
     };
     if (!this.UPDATE) {
-      json.workflow.push({
-        domain,
-        comment,
-        task_holder: sender,
-        type: WORKFLOW_TYPES.OPEN,
-      });
-      if (comment) {
-        json.workflow.push(json.workflowTmp);
-      }
+      json.workflow.push({...json.workflowTmp, type: WORKFLOW_TYPES.OPEN});
     } else { //UPDATE
       const workflowTmpTwo ={
         domain,
@@ -339,10 +326,13 @@ export class AonMessengerChat extends AonElement {
   }
 
   async saveTaskWorkflow() {
+    let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
+    const comment = await sendMessage(aonTextArea); 
     try {
       let {workflowTmp, id} = this.formSerialize();
-      if(workflowTmp.comment){
+      if(comment){
         workflowTmp.task = id;
+        workflowTmp.comment = comment;
         await saveTaskWorkflow(workflowTmp);
       }
     } catch (error) {
@@ -353,7 +343,6 @@ export class AonMessengerChat extends AonElement {
   getTaskWorkflow() {
     getTaskWorkflow({ taskId:this.getData().id }).then((workflow) => fillChat(workflow));
   }
-
 
   getTaskAttach() {
     getTaskAttach({ taskId:this.getData().id }).then((taskAttachs) => {
@@ -380,15 +369,12 @@ export class AonMessengerChat extends AonElement {
     this.applicationEl.stopLoading();
   }
 
-  async upload(files) {
-    const [file] = files; // ONE FILE
-    let {workflowTmp, id} = this.formSerialize();
-    
-    const reader = await getReader(file).catch(e=>null);
-    if(reader){
-      const {content, content_type} = await saveTaskAttach({file:reader, taskId:id, workflow:workflowTmp});
-      await openFileBase64(content, content_type);
-    }
+  async uploadFile({file, taskId}) {
+    let taskAttach = null;
+    try {
+      taskAttach = saveTaskAttach({file, taskId});saveTaskAttach({reader, taskId});
+    } catch (error) { }
+    return taskAttach
   }
 
   selector(selector) {

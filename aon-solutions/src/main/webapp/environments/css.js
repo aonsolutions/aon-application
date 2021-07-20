@@ -97,7 +97,7 @@ export const AON_COMPANY_LOGO_SPAN = 'aonCompanyLogoSpan';
 export const AON_COMPANY_LOGO_IMG = 'aonCompanyLogoImg';
 export const CONTINUE_LINED = 'continueLined';
 export const MATERIAL_SCROLL = 'materialScroll';
-
+export const AON_IMG_COMMENT = 'aonImgComment';
 // aon-toast.css
 
 export const AON_TOAST = 'aonToast';

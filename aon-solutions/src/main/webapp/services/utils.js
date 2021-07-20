@@ -18,16 +18,41 @@ export const getReader = (file) =>  new Promise((resolve) => {
   };
 });
 
+/**
+ * 
+ * @param {string} base64Str base64 file
+ * @param {string} contentType mimeType
+ * @returns 
+ */
+export const convertBase64Url = (base64Str, contentType)=> {
+  let byteCharacters = atob(base64Str);
+  let byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+  let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
+  return URL.createObjectURL(file);
+}
+
 export const formatBytes = (a,b=2)=>{if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
 
 export const isEmptyObject = (obj) => !obj || (obj.constructor === Object &&  Object.keys(obj).length === 0);
 
+/**
+ * 
+ * @param {Object} obj obj
+ * @returns obj sin datos vacios
+ */
 export const removeEmpty = (obj) => {
   Object.keys(obj).forEach((key) =>  isEmptyObject(obj[key]) ?  delete obj[key] : null);
   return obj;
 };
 
-//order by obj, campo, order asc or desc
+/**
+ * 
+ * @param {array} obj array a ordenar
+ * @param {string} value // key por ordenar
+ * @param {string} orderBy  asc o desc
+ * @returns 
+ */
 export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => {
   let num = 0;
   if (!a[value]) num = 1;

@@ -53,7 +53,7 @@ export const WORKFLOW_TYPES = {
 	RESTORE: "restore",
 	COMMENT: "comment",
     ASSIGN: "assigned",
-    FILE: "file",
+    AON_FILE: "aonFile",
 } 
 
 export const WORKFLOW_TYPE = (type)=>{
@@ -65,7 +65,6 @@ export const WORKFLOW_TYPE = (type)=>{
     if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Eliminada";//TODO
     if(WORKFLOW_TYPES.RESTORE.indexOf(type)!=-1)   return "Restaurada";//TODO
     if(WORKFLOW_TYPES.ASSIGN.indexOf(type)!=-1)    return "Reasignada";//TODO
-    if(WORKFLOW_TYPES.FILE.indexOf(type)!=-1)    return "Archivo";//TODO
     return "Comentada"; //TODO
 } 
 
