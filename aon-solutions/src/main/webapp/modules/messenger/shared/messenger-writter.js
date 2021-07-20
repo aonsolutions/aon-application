@@ -1,6 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { API_URL, COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
+import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
 import { convertBase64Url, getReader, newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
@@ -164,7 +165,7 @@ const hideWritter = () => {
  * @returns void.
  */
 export const sendMessage = async (aonTextArea) => {
-    await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT
+    await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
 
     const value =  aonTextArea.value;
     if(!value || (value && !value.trim().length)) return ;
@@ -260,14 +261,12 @@ const documentExec = (exec) => document.execCommand(exec) ? document.execCommand
 const createLink =() =>{
     const selection = document.getSelection();
     if(selection && selection.toString().trim()){
-        const linkURL = prompt('URL:', 'https://');
-        const aEl = setStyles(document.createElement("a"),{
-            textDecoration:"underline",
-            cursor:"pointer",
-            color:"blue",
+        const url = prompt('URL:', 'https://');
+        const aEl = setAttributes(document.createElement("a"),{
+            target:"_blank",
+            class:CSS.AON_LINK,
+            href:url
         });
-        aEl.href  = linkURL;
-        aEl.target = "_blank";
         aEl.textContent = selection;
         document.execCommand('insertHTML', false, aEl.outerHTML);
     }
@@ -286,27 +285,25 @@ const addButtonFileSend = (upload)=>{
 
     upload.addEventListener(EVENT.DROP, (ev) => {
         if(ev && ev.dataTransfer && ev.dataTransfer.files){
-            uploadFileView(ev.dataTransfer.files);
+            previewFile(ev.dataTransfer.files);
         }
     });
     
     //ADD INPUT
-    let inputFile = setAttributes(document.createElement(TAG.INPUT),{ // multiple = true;
+    let inputFile = setAttributes(document.createElement(TAG.INPUT),{
         id:MESSENGER_IDS.INPUT_FILES,
         type:'file',
         name:'file',
         multiple:true
     });        
     inputFile.style.display = "none";
-    inputFile.addEventListener(EVENT.CHANGE, async() => {
-        uploadFileView(inputFile.files)
-    });
+    inputFile.addEventListener(EVENT.CHANGE, () => previewFile(inputFile.files));
     upload.appendChild(inputFile);
 
     upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
 }
 
-const uploadFileView = async (files)=> {
+const previewFile = async (files)=> {
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const textAreaDiv = document.getElementById(MESSENGER_IDS.COMMENT_TASK).getDivTextArea();
     const data = aonMessengerChat.getData();
@@ -317,30 +314,28 @@ const uploadFileView = async (files)=> {
             aonMessengerChat.FILES.push({
                 domain: data.domain,
                 task: data.id,
-                content_type: reader.contentType,
+                contentType: reader.contentType,
                 content: reader.content,
                 id:fileId
             })
             const url = convertBase64Url(reader.content, reader.contentType);
             let element = null;
             if(reader.contentType && reader.contentType.indexOf("image")>-1){
-                element = document.createElement("img");
-                element.src = url;
-                element.className = CSS.AON_IMG_COMMENT;
-            } else  {
-                element = setStyles(document.createElement("a"),{
-                    // textDecoration:"underline",
-                    // cursor:"pointer",
-                    // color:"blue",
+                element = setAttributes(document.createElement(TAG.IMG),{
+                    src:url,
+                    class:CSS.AON_IMG_COMMENT
                 });
-                element.target = "_blank";
-                element.className = CSS.AON_LINK;
-                element.href = url;
+            } else  {
+                element = setAttributes(document.createElement("a"),{
+                    target:"_blank",
+                    class:CSS.AON_LINK,
+                    href:url
+                });
                 element.textContent = reader.name;
             }
             element.dataset.id = fileId;
-            element.setAttribute("type",WORKFLOW_TYPES.AON_FILE);
-            element.setAttribute("onclick", `window.open('${url}')`);
+            element.setAttribute(CONSTANT.TYPE, WORKFLOW_TYPES.AON_FILE);
+            element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
             textAreaDiv.appendChild(element);
             textAreaDiv.appendChild(document.createElement("br"));
         }
@@ -356,7 +351,7 @@ const checkFilesAndSend = async (textArea)=>{
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const textAreaDiv = textArea.getDivTextArea();
-        const elements = textAreaDiv.querySelectorAll(`[type=${WORKFLOW_TYPES.AON_FILE}]`);
+        const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
         const {id:taskId} = aonMessengerChat.getData();
         const files = aonMessengerChat.FILES;
         for await (const el of elements) {
@@ -373,17 +368,12 @@ const checkFilesAndSend = async (textArea)=>{
                     };
                     const jsonBase64 = btoa( JSON.stringify(json) );
                     
-                    let linkTmp = `/${API_URL}/file/${jsonBase64}`
+                    const linkTmp = `/${API_URL}/file/${jsonBase64}`;
     
-                    if(file.content_type.indexOf("image")>=0){
+                    if(file.contentType.indexOf("image")>=0)
                         el.src = linkTmp;
-                    }
-                    else {
-                        // el.href = linkTmp;
-                        el.removeAttribute("href");
-                    }
-                    el.setAttribute("onclick", `window.open('${linkTmp}')`);
-
+                    else 
+                        el.href = linkTmp;
                 }
             }
         }
