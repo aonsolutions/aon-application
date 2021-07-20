@@ -971,26 +971,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		referenceCode = new TextBox();
 		
 		if (inv.isSales()) {
-			series.addItem(" --- ","");
-			if (invoiceCallback.getConfiguration().getInvoiceSalesSeries() != null 
-				&& invoiceCallback.getConfiguration().getInvoiceSalesSeries().size() > 0) {
-				LinkedList<String> rectificationSeries = invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries();
-				for (String ser : invoiceCallback.getConfiguration().getInvoiceSalesSeries()) {
-					boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
-					if (!rectifierSerie || (rectifierSerie && inv.getInvoice().isRectifier())) {
-						series.addItem(ser);
-					}
-				}
-			}
-
-			for (int i = 0; i < series.getItemCount(); i++) {
-				if (AonStringUtils.isBlank(inv.getInvoice().getSeries()) 
-						&& AonStringUtils.isBlank(series.getValue(i))
-						||  (AonStringUtils.equals(inv.getInvoice().getSeries(), series.getValue(i)))) {
-					series.setSelectedIndex(i);
-					break;
-				}
-			}
+			fillSeriesWidget(invoiceCallback, inv );
 			number.setValue(inv.getInvoice().getNumber());
 		} else {
 			referenceCode.setValue(inv.getInvoice().getReferenceCode());
@@ -1323,6 +1304,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
 				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+				fillSeriesWidget(invoiceCallback, inv);
 				headerDataChanged(invoiceCallback);
 			}
 		});
@@ -1768,6 +1750,33 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 
 		return invoicePanel;
+	}
+
+	private void fillSeriesWidget(InvoicePanelCallback invoiceCallback, AccountingInvoice inv) {
+		series.clear();
+		series.addItem(" --- ","");
+		if (invoiceCallback.getConfiguration().getInvoiceSalesSeries() != null 
+			&& invoiceCallback.getConfiguration().getInvoiceSalesSeries().size() > 0) {
+			LinkedList<String> rectificationSeries = invoiceCallback.getConfiguration().getInvoiceRectificationSalesSeries();
+			for (String ser : invoiceCallback.getConfiguration().getInvoiceSalesSeries()) {
+				LOGGER.info("Serie ..: " + ser);
+				boolean rectifierSerie = (rectificationSeries != null && rectificationSeries.contains(ser));
+				LOGGER.info("\t rectifierSerie ..: " + rectifierSerie);
+				if (!rectifierSerie || (rectifierSerie && inv.getInvoice().isRectifier())) {
+					LOGGER.info("\t Adding ..: " + ser);
+					series.addItem(ser);
+				}
+			}
+		}
+
+		for (int i = 0; i < series.getItemCount(); i++) {
+			if (AonStringUtils.isBlank(inv.getInvoice().getSeries()) 
+					&& AonStringUtils.isBlank(series.getValue(i))
+					||  (AonStringUtils.equals(inv.getInvoice().getSeries(), series.getValue(i)))) {
+				series.setSelectedIndex(i);
+				break;
+			}
+		}
 	}
 
 	protected void duaInvoiceChanged(IInvoicePanelCallback invoiceCallback) {
