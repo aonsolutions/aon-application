@@ -80,7 +80,7 @@ export class AonTextArea extends AonElement {
 
 	get value() {
 		const textarea = this.getElement(this.TEXTAREA);
-		return textarea && textarea.innerText.trim().length>0  ? textarea.innerHTML.trim() : null;
+		return textarea && textarea.innerHTML.trim().length>0  ? textarea.innerHTML.trim() : null;
 	}
 
 	set value(value) {

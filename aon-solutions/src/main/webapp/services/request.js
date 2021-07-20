@@ -267,23 +267,3 @@ export const openFileMobile = async (url) => new Promise((resolve, reject) => {
       }
     });
 });
-
-
-export const openFileBase64 = (base64Str, contentType)=> new Promise(async(resolve, reject)=>{
-      if (webkitRequestMobile()){  //------------ IS MOBILE APP---------
-        const obj = objFileMobile(base64Str, null);
-        await actionRequestMobile(obj);
-      } else {         // ------------IS DESKTOP---------------
-        try {
-          let byteCharacters = atob(base64Str);
-          let byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-          let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
-          let fileURL = URL.createObjectURL(file);
-          openFileDesktop(fileURL);
-        } catch (e) {
-          reject({message:e.message, type:CONSTANT.ERROR});
-        }
-      }
-      resolve(true);
-})

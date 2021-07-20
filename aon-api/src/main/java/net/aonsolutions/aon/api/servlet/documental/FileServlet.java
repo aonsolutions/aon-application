@@ -60,7 +60,7 @@ public class FileServlet extends AonApiHttpServlet{
 			attach = AON.getRawdocAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getIdProperty().eq(id)), attachType);
-		} else if(AttachType.RAWDOC == attachType) {
+		} else if(AttachType.TASK == attachType) {
 			TaskAttach ta = AON_SOLUTIONS.getTaskAttach(api.getDomain(), api.getUser(), 
 					f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getIdProperty().eq(id)));
