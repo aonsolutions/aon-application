@@ -5,6 +5,8 @@ import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.INPUT;
 
+import java.util.Calendar;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,9 +19,16 @@ import solutions.aon.selenium.tools.Logger.Status;
 import solutions.aon.selenium.tools.SeleniumTools;
 
 public class AioBaseTestCase extends AbstractTestCase{
+	
+	protected static WebDriver driver;
+	protected static WebDriverWait wait;
+	
+	protected static final String GWT_ID_PROFIX = "gwt-debug-";
 
+	protected static final String GENERAL = "RÉGIMEN GENERAL";
+	protected static final String HOME = "EMPLEADOS DE HOGAR";
 
-	protected static void login(WebDriver driver) {
+	protected static void login(WebDriver driver, String section) {
 		
 		Logger.start("AON AIO - LOGIN");
 		log(Status.CONNECT, "URL", getUrl());
@@ -38,14 +47,19 @@ public class AioBaseTestCase extends AbstractTestCase{
 		log(CLICK, "Login button.");
 		
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='aon-outputText' and contains(text(), 'RÉGIMEN GENERAL')]")));
 		
-		SeleniumTools.clickUntilNotExists(driver, By.xpath("//span[@class='aon-outputText' and contains(text(), 'RÉGIMEN GENERAL')]"));
+		if (section != null) {
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='aon-outputText' and contains(text(), '" + section + "')]")));
+			
+			SeleniumTools.clickUntilNotExists(driver, By.xpath("//span[@class='aon-outputText' and contains(text(), '" + section + "')]"));
 
-		
-		if (!checkIfEntered(driver, "RÉGIMEN GENERAL"))
-			fail("Didn't enter 'RÉGIMEN GENERAL'");
-		
+			
+			if (!checkIfEntered(driver, section))
+				fail("Didn't enter "+ section);
+
+		} else {
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='aon-outputText' and contains(text(), 'RÉGIMEN GENERAL')]")));
+		}
 	}
 	
 	private static boolean checkIfEntered(WebDriver driver, String text) {
@@ -80,6 +94,11 @@ public class AioBaseTestCase extends AbstractTestCase{
 
 	protected static String getPassword() {
 		return System.getProperty("password", "org");
+	}
+	
+	protected static void switchSalaryMonth(WebDriver driver, Calendar calendar) throws Exception {
+		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
 	}
 	
 }

@@ -44,10 +44,6 @@ import solutions.aon.selenium.tools.SeleniumTools.SalaryType;
  * */
 public class GeneralIntegralTest extends AioBaseTestCase {
 	
-	private static WebDriver driver;
-	private static WebDriverWait wait;
-	private static final String GWT_ID_PROFIX = "gwt-debug-";
-	
 	@Rule
 	public TestName testName = new TestName();
 	
@@ -62,7 +58,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
         driver = newChromeDriver();
         
         wait = new WebDriverWait(driver, 10);
-        login(driver);
+        login(driver, GENERAL);
         
         // Click on Top Menu 'Laboral'        
         retryingFindClick(driver, By.id(LABORAL_BUTTON));
@@ -169,7 +165,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.resetCalendar(calendar);
 		for ( int month = 0; month < 12; month++ ) {
 			calendar.set(Calendar.MONTH, month);
-			switchSalaryMonth(calendar);
+			switchSalaryMonth(driver, calendar);
 			retryingFindClick(driver, By.id(GWT_ID_PROFIX + "salaryButton"));
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
 		}
@@ -213,7 +209,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.acceptDraft(driver);
 		
 		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		SeleniumTools.safeInput(driver, "#"+ GWT_ID_PROFIX + "description-box-new-payment", "[3]ATRASOS");
 		input = wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment")));
@@ -306,11 +302,11 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
 		SeleniumTools.draft(driver, "SALARIO, MÍNIMO");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertTrue(SeleniumTools.changingElementAssert(driver, By.id(GWT_ID_PROFIX + "totalPaymentLabel"), "innerText", "900,00"));
 		
 		SeleniumTools.draft(driver, "INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertTrue(SeleniumTools.changingElementAssert(driver, By.id(GWT_ID_PROFIX + "totalPaymentLabel"), "innerText", "537,84"));
 		
 	}
@@ -333,7 +329,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.YEAR, 2016);
 		
 		SeleniumTools.draft(driver, "BRUTO, ENFERMEDAD COMÚN (BASES)");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		Double totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals(SeleniumTools.unmessDouble(1067.40 / 30 * 5 * 0.60 + 1000.00 * 22 / 30), totalPayments);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
@@ -342,22 +338,22 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.MAY);
 		
 		SeleniumTools.draft(driver, "BRUTO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals((Double)1500.0, totalPayments);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		assertEquals((Double)1500.0, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.MAY);
 		
 		SeleniumTools.draft(driver, "NETO TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalLiquidLabel"));
 		assertEquals((Double)2125.0, totalPayments);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		totalPayments = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalLiquidLabel"));
 		assertEquals((Double)2125.0, totalPayments);
 		
@@ -376,7 +372,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		Double totalPayment = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		
@@ -388,7 +384,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.search(driver, "CONCEPTOS, APELLIDO");
 		SeleniumTools.draft(driver, "CONCEPTOS, APELLIDO");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		totalPayment = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "totalPaymentsLabel"));
 		salarioMensual = 999 ;
 		plus = salarioMensual * 0.10;
@@ -408,7 +404,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.resetCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 				
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "description-box-new-payment", "[1] S4L4R10 B4S3");
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment")));
@@ -648,16 +644,16 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
 		SeleniumTools.draft(driver, "LACTANCIA, PERIODO");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		By cgcBaseLabel = By.id(GWT_ID_PROFIX + "cgcBaseLabel");
 		Double cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		By totalPaymentsLabel = By.id(GWT_ID_PROFIX + "totalPaymentsLabel");
 		Double totalPayments = SeleniumTools.getAmount(driver, totalPaymentsLabel);
@@ -665,21 +661,21 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "RIESGO, DURANTE EL EMBARAZO");
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		SeleniumTools.draft(driver, "BASE MÍNIMA DIARIA, I.T");
 		calendar.set(Calendar.YEAR, 2016);
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(25.48 * 31), cgcBase);	//GRUPO 09
 		By cgpBaseLabel = By.id(GWT_ID_PROFIX + "cgpBaseLabel");
@@ -687,7 +683,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals(SeleniumTools.unmessDouble(25.48 * 31), cgpBase);	//GRUPO 09
 		
 		SeleniumTools.draft(driver, "BASE MÍNIMA MENSUAL, I.T");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double) 764.4, cgcBase);	//GRUPO 05
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -695,14 +691,14 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "ENFERMEDAD, COMÚN");
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		SeleniumTools.draft(driver, "ENFERMEDAD, PROFESIONAL");
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, 100%");
 		calendar.set(Calendar.MONTH, Calendar.JULY);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -711,7 +707,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals(SeleniumTools.unmessDouble(1067.40 * 13 / 30 + (1067.40 + 1067.40 / 6) * 17 / 30), totalPayments);// 17
 		
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -721,7 +717,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, ENFERMEDAD COMÚN");
 		calendar.set(Calendar.MAY, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -730,7 +726,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)1067.40, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -739,7 +735,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)1067.40, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -749,7 +745,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, ENFERMEDAD PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -758,7 +754,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)1067.40, totalPayments);
 
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1067.40, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -768,7 +764,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADO, EXTRAS CON GARANTIZADO");
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -777,7 +773,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)1200.0, totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1200.00 + 1200.00 / 4), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -787,7 +783,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADO ENFERMEDAD COMÚN, Y PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -797,7 +793,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADOS, ENFERMEDAD COMÚN");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -806,7 +802,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)764.4, totalPayments);
 
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)764.4, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -816,7 +812,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "GARANTIZADOS, ENFERMEDAD PROFESIONAL");
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1000.0, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -825,7 +821,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals(SeleniumTools.unmessDouble(1000.00 * 20 / 30 + 900.00 * 10 / 30), totalPayments);
 		
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals((Double)1000.0, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -834,7 +830,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)1000.0, totalPayments);
 		
 		SeleniumTools.draft(driver, "EXTRAS, IT");
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40 + 1067.40 / 6), cgcBase);
@@ -874,21 +870,21 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "EXTRAS, IT (REDEFINIDO)");
 		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgpBase);
 		
 		calendar.set(Calendar.MONTH, Calendar.AUGUST);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgpBase);
 		
 		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		assertEquals(SeleniumTools.unmessDouble(1067.40  + 1067.40 / 6), cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, cgpBaseLabel);
@@ -900,55 +896,55 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "MATERNIDAD, COMPLETA");
 		calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		// Here start I.T
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.MAY);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		SeleniumTools.draft(driver, "MATERNIDAD, PARCIAL");
 		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		SeleniumTools.draft(driver, "PATERNIDAD, PARCIAL");
 		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals(cgcBase, SeleniumTools.getAmount(driver, cgcBaseLabel));
 		
 		calendar.set(Calendar.YEAR, 2018);
 		
 		SeleniumTools.draft(driver, "PAGO DIRECTO, REDEFINIDO");
 		calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		assertEquals((Double)0.00, SeleniumTools.getAmount(driver, cgcBaseLabel));
 	}
 	
 	//TODO DUNNO LOL
-	@Ignore
+//	@Ignore
 	@Test
 	public void TestPercepcionesDelSistema() throws Exception {
 //		ENTER 'INTEGRAL DE NÓMINAS'
@@ -961,7 +957,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.resetCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		assertTrue(	// SALARIO BASE MENSUAL
 			!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(GWT_ID_PROFIX + "db-amount-label-1"))).isEnabled()
@@ -1061,7 +1057,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		
 		By cgcBaseLabel = By.id(GWT_ID_PROFIX + "cgcBaseLabel");
 		By totalPaymentLabel = By.id(GWT_ID_PROFIX + "totalPaymentsLabel");
@@ -1071,7 +1067,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals(cgcBase, totalPayment);
 		
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		Double sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		Double sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
 		assertEquals(cgcBase, sonnyCgcBase);
@@ -1081,12 +1077,12 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "CONSTANTES, II (PAGAS)");
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		totalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
 		
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
 		assertEquals(cgcBase, sonnyCgcBase);
@@ -1095,23 +1091,17 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "CONSTANTES, III (BONO)");
 		calendar.set(Calendar.MONTH, Calendar.MARCH);	
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		cgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		totalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
 		
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
 		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);		
 		assertEquals(cgcBase, sonnyCgcBase);
 
 		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
-	}
-
-
-	private void switchSalaryMonth(Calendar calendar) throws Exception {
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
-		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
 	}
 	
 	private void extra(Date issueDate, Date endDate) {
@@ -1147,7 +1137,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals(expectedCgcBase, cgcBase);
 		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
@@ -1160,7 +1150,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals(expectedCgcBase, cgcBase);
 	}
@@ -1172,7 +1162,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, month);
 		SeleniumTools.resetCalendar(calendar);
 		
-		switchSalaryMonth(calendar);
+		switchSalaryMonth(driver, calendar);
 		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
 		assertEquals(expectedCgpBase, cgpBase);
 	}

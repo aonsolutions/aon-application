@@ -773,6 +773,15 @@ public class SeleniumTools {
 		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 	}
 	
+	public static void mainAgreementFromIndex(WebDriver driver) throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		log(CLICK, "Entering \"Laboral\"");
+		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement2']")));
+		log(CLICK, "Entering \"Convenios\"");
+		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement2']"));
+	}
+	
 	public static void openWorkplace(WebDriver driver, String workplaceId) throws InterruptedException {
 		By selector = By.cssSelector("*[id='" + workplaceId + "'] > table > tbody > tr > td:nth-of-type(1)");
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -971,5 +980,23 @@ public class SeleniumTools {
 		checkboxCheckUncheck(driver, checkboxId, false);
 	}
 	
+	public static void agreementSearch (WebDriver driver, String agreement) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		String cssSel = "#gwt-debug-agreementsTreeToolbar > input";
+		By input = By.cssSelector(cssSel );
+		wait.until(ExpectedConditions.elementToBeClickable(input));
+		retryingFindClick(driver, input);
+		safeInput(driver, cssSel, agreement);
+	}
 	
+	public static void searchAndEnterAgreement (WebDriver driver, String agreement) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		
+		SeleniumTools.agreementSearch(driver, agreement);
+		
+		String xpath = "//div[contains(text(), '" + agreement + "')]";
+		
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+		SeleniumTools.retryingFindClick(driver, By.xpath(xpath));
+	}
 }
