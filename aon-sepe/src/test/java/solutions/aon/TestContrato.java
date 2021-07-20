@@ -149,7 +149,7 @@ public class TestContrato {
 			@SuppressWarnings("deprecation")
 			Date fend =  new Date("2020/09/09");
 			String ipf = "Y7514970X";
-			Contract contract = Contrato.getContratoData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			Contract contract = Contrato.getContractData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 			System.out.println(contract.getSepeId());
 		} catch (Exception e) {
 			e.printStackTrace();

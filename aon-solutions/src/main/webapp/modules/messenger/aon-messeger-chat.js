@@ -3,7 +3,6 @@ import { AonElement } from "../../components/AonElement.js";
 import { COLORS, CONSTANT, CSS } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import {
-  getReader,
   newComponent,
   setAttributes,
   setClasses,
@@ -43,6 +42,7 @@ export class AonMessengerChat extends AonElement {
   _data;
   UPDATE;
   FILES;
+  task;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -78,7 +78,6 @@ export class AonMessengerChat extends AonElement {
       id: undefined,
       number: undefined,
       title: undefined,
-      for: "",
       workgroup:{
         id:null
       },
@@ -284,18 +283,13 @@ export class AonMessengerChat extends AonElement {
     const sender = this.applicationParentEl.SENDER;
     const domain = sender.domain.id;
     const workgroupEl = this.selector("#" + MESSENGER_IDS.WORKGROUP);
-    const task_holderEl = this.selector("#" + MESSENGER_IDS.TASKHOLDER);
+    const taskHolderEl = this.selector("#" + MESSENGER_IDS.TASKHOLDER);
+    const titleEl = this.selector(`#${MESSENGER_IDS.TITLE_TASK}`);
     let json = {
       domain,
       sender,
       id: this.getData().id,
-      title: this.selector(`#${MESSENGER_IDS.TITLE_TASK}`).innerText,
-      workgroup: {
-        id:workgroupEl.value
-      },
-      task_holder: {
-        id:task_holderEl.value
-      },
+      title: titleEl ? titleEl.innerText : "",
       workflow: [],
       workflowTmp:{
         domain,
@@ -304,6 +298,10 @@ export class AonMessengerChat extends AonElement {
         type: WORKFLOW_TYPES.COMMENT,
       }
     };
+
+    if(workgroupEl) json.workgroup =  { id:workgroupEl.value};
+    if(taskHolderEl) json.task_holder =  {id:taskHolderEl.value};
+    
     if (!this.UPDATE) {
       json.workflow.push({...json.workflowTmp, type: WORKFLOW_TYPES.OPEN});
     } else { //UPDATE
@@ -313,12 +311,13 @@ export class AonMessengerChat extends AonElement {
         task_holder: sender,
         type: WORKFLOW_TYPES.ASSIGN,
       }
-      if(this.getData().workgroup && this.getData().workgroup.id!= json.workgroup.id){
+
+      if( json.workgroup && this.getData().workgroup && this.getData().workgroup.id!= json.workgroup.id){
         workflowTmpTwo.comment = workgroupEl.getText();
         json.workflow.push(workflowTmpTwo);
       }
-      if(this.getData().task_holder && this.getData().task_holder.id!= json.task_holder.id){
-        workflowTmpTwo.comment = task_holderEl.getText();
+      if( json.task_holder && this.getData().task_holder && this.getData().task_holder.id!= json.task_holder.id){
+        workflowTmpTwo.comment = taskHolderEl.getText();
         json.workflow.push(workflowTmpTwo);
       }
     }
@@ -372,13 +371,13 @@ export class AonMessengerChat extends AonElement {
   async uploadFile({file, taskId}) {
     let taskAttach = null;
     try {
-      taskAttach = saveTaskAttach({file, taskId});saveTaskAttach({reader, taskId});
+      taskAttach = saveTaskAttach({file, taskId});
     } catch (error) { }
     return taskAttach
   }
 
   selector(selector) {
-    return document.querySelector(selector) || {};
+    return document.querySelector(selector);
   }
 
   getData(){

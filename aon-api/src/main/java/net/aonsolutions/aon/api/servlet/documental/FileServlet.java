@@ -69,7 +69,7 @@ public class FileServlet extends AonApiHttpServlet{
 					.setDomain(api.getDomain())
 					.setMimeType(ta.getMimetype())
 					.setData(ta.getData())
-					.setDescription("documento");
+					.setDescription("document");
 		} else {
 			attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 					f -> f.getDomainProperty().eq(api.getDomain().getId())

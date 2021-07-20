@@ -46,7 +46,8 @@ public enum MimeType implements Serializable {
     SIGNED_FACTURAE ("text/xml", "xml"),
     JSON("application/json","js"),
     PKCS12("application/x-pkcs12","p12"),
-    JKS("application/x-java-keystore","jks")
+    JKS("application/x-java-keystore","jks"),
+    SVG ("image/svg+xml", "svg")
     ;
     
 	private String name;

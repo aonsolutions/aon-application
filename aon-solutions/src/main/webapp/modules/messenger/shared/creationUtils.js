@@ -1,8 +1,9 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
-import { MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { openFileUrl } from "../../../services/fileService.js";
 import { newComponent, setAttributes } from "../../../services/utils.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, WORKFLOW_TYPES } from "../MessengerEnums.js";
 
 /**
  * Create a row with space between elements inside 
@@ -136,3 +137,15 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
     placeholder: placeholder || MSG.COMMENT+"..."
 });
 
+/**
+ * 
+ * @param {HTMLElement} parent check html and add event 
+ * @param {*} json 
+ */
+ export const checkFilesAddEventClick = (parent)=>{
+    const elements = parent.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
+    for (const element of elements) {
+        const url = element.src || element.href;
+        if(url) element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
+    }
+}

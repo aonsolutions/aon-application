@@ -183,10 +183,10 @@ public class Contrato {
 		} 
 	}
 	
-	public static Contract getContratoData(final InputStream certificateInputStream,
+	public static Contract getContractData(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
 			try {
-				return getContratoDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+				return getContractDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -196,7 +196,7 @@ public class Contrato {
 			return null;
 	}
 	
-	private static Contract getContratoDataImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static Contract getContractDataImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);

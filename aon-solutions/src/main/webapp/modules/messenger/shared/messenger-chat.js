@@ -7,7 +7,7 @@ import { newComponent, setAttributes, setDateTimestampDay, setFullDate, setStyle
 import * as ACTIONS from "../../actions.js";
 import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createCommentContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, WORKFLOW_TYPES, WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
-import { checkProperties, createAonTextArea, createSpaceBetweenRow, createTaskHolder, createText, createWorkgroup, LEFT, RIGHT } from "./creationUtils.js";
+import { checkFilesAddEventClick, checkProperties, createAonTextArea, createSpaceBetweenRow, createTaskHolder, createText, createWorkgroup, LEFT, RIGHT } from "./creationUtils.js";
 import { buildMobileWritter } from "./messenger-writter.js";
 
 /**
@@ -197,15 +197,12 @@ export const appendChatMessage = (properties) => {
     if(noMessage)
         chat.removeChild(noMessage);
 
-    const message = createChatMessage(properties);
+    const message = createChatMessage(properties, chat);
     setStyles(message.element, {
         opacity : 0,
         marginTop : '20px',
         transition : ".25s"
     });
-    message.appendTo(chat);
-
-    chat.scrollTo(0, chat.scrollHeight)
 
     /**
      * Appearing animation
@@ -223,7 +220,7 @@ export const appendChatMessage = (properties) => {
  * @param {*} properties 
  * @returns 
  */
-export const createChatMessage = (properties) => {
+export const createChatMessage = (properties, chat) => {
     properties = checkProperties(properties);
 
     const message = createMessageBox(properties);
@@ -234,8 +231,8 @@ export const createChatMessage = (properties) => {
     const description = createCommentContent(properties);
     description.appendTo(message.element);
 
-    const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
-    footer.appendTo(message.element);
+    // const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
+    // footer.appendTo(message.element);
 
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
@@ -244,6 +241,12 @@ export const createChatMessage = (properties) => {
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);
+
+    message.appendTo(chat); //ADD MESSAGE IN DIV CHAT
+
+    checkFilesAddEventClick(message.element); //ADD EVENT CLICK
+
+    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
 
     return message;
 }
@@ -459,19 +462,18 @@ export const fillChat = (workflows=[])=>{
             const meId = applicationParent.SENDER.id;
     
             workflows.forEach(workflow => {
-                const {comment, type, modification_date, task_holder:{name, alias, id}} = workflow;
-                const me = id == meId; // if taskHolder id is me
+                const {id, comment, type, modification_date, task_holder:{name, alias, id:taskHolderId}} = workflow;
+                const me = taskHolderId == meId; // if taskHolder id is me
                 const message = {
                     name: me ? "Yo" : alias,
                     direction: me ? RIGHT: LEFT,
-                    id: "is",
+                    id: `messageId${id}`,
                     date: new Date(modification_date),
                     type,
                     comment
                 }
                 if (type == WORKFLOW_TYPES.COMMENT) {
-                    const messageEl = createChatMessage(message);
-                    messageEl.appendTo(chat);
+                    createChatMessage(message, chat);
                 } else{
                     message.name = name;
                     const actionJson = chooseIconMessage(message);
@@ -484,7 +486,6 @@ export const fillChat = (workflows=[])=>{
 }
 
 
-
 /**
  * Choose icon for the actions
  * @param {*} actionType 
@@ -492,18 +493,21 @@ export const fillChat = (workflows=[])=>{
  */
  const chooseIconMessage = ({type, date, name, comment}) => {
     const dateParse = setFullDate(date) + " " + setTime(date);
+    
     let actionIcon = {
         icon : MATERIAL_ICONS.INFO,
         type : ICON_TYPES.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
         comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
     }
+
     if(WORKFLOW_TYPES.OPEN.indexOf(type)>=0){
         actionIcon.color = CSS.variable(COLORS.ONLINE_GREEN);
     }  else if(WORKFLOW_TYPES.CLOSE.indexOf(type)>=0){
         actionIcon.icon = MATERIAL_ICONS.CLOSE;
     }  else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
-        actionIcon.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse} `;
-    } 
+        actionIcon.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
+    }
+
     return actionIcon;
 }

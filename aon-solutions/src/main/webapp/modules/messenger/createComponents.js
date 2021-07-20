@@ -331,7 +331,8 @@ export const createCommentContent = (properties) => newComponent({
       textAlign : "left",
       fontWeight : "400",
       color :  CSS.variable(COLORS.GRAYSON),
-      paddingTop :"5px"
+      paddingTop :"5px",
+      wordWrap: "break-word"
   }
 });
 
