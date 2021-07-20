@@ -242,6 +242,7 @@ public interface IJsonNames {
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
 	String RECTIFICATION = "rectification";
+	String RECTIFICATION_INVOICE = "rectification_invoice";
 	String RECTIFIED = "rectified";
 	String REFERENCE_CODE = "referenceCode";
 	String REFERENCE = "reference";

@@ -38,7 +38,9 @@ export class Invoice {
   withholding_farmer; // boolean | regimen agrario
   vat_accrual_payment; // boolean | criterio de caja
   surcharge; // boolean | recargo de equivalencia
+
   rectified; // boolean | rectificativa
+  rectification_invoice;
 
   creation_user;
 
@@ -157,6 +159,8 @@ export class Invoice {
       this.vat_accrual_payment = invoice.vat_accrual_payment || company.vat_accrual_payment; // boolean | criterio de caja
       this.surcharge = invoice.surcharge || company.surcharge;
       this.rectified = invoice.rectified || false;
+      this.rectification_invoice = invoice.rectification_invoice || undefined;
+      this.documentNumber = invoice.documentNumber || undefined;
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
     }
   }
@@ -326,6 +330,15 @@ export class Invoice {
 
   setRectified(rectified) {
     this.rectified = rectified;
+  }
+
+  getRectificationInvoice() {
+    return this.rectification_invoice;
+  }
+
+  setRectificationInvoice(invoice) {
+    this.setRectified(true);
+    this.rectification_invoice = invoice.id;
   }
 
   isSurcharge() {

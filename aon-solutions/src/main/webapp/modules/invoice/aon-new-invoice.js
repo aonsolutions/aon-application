@@ -1537,8 +1537,54 @@ export class AonNewInvoice extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.RECTIFY_INVOICE);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
+		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea" placeholder="Causa..."></textarea>');
+		d.addAcceptAction(() => {
+			let recInv = this.invoice;
+			recInv.setRectificationInvoice(this.getInvoice());
+
+			let ta = this.getElement('commentTextArea');
+			let dt = new Date()
+			let m = dt.getMonth() + 1;
+			let month = m < 10 ? '0' + m : m;
+			let dateStr = dt.getDay() + '/' + month  + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+			let comment = {
+				date: dateStr,
+				user: '',
+				status: this.getCommentStatus(),
+				reason: ta.value
+			};
+			recInv.comments.push(comment);
+			recInv.id = undefined;
+			recInv.date = new Date();
+			recInv.series = 'R' + new Date().getFullYear();
+			recInv.serie = 'R' + new Date().getFullYear();
+			recInv.number = undefined;
+			recInv.reference = undefined;
+			recInv.status = 'inbox';
+
+			if(recInv.finances) {
+				recInv.finances.forEach((item, i) => {
+					recInv.finances[i].due_date = new Date();
+					recInv.finances[i].amount = recInv.finances[i].amount * (-1);
+				});
+			}
+
+			if(recInv.details) {
+				recInv.details.forEach((item, i) => {
+					item.quantity= item.quantity * (-1);
+					recInv.setDetail(item, i);
+				});
+			}
+
+	
+			let aip = document.querySelector('aon-invoice-panel');
+			aip.aonInvoice(recInv.type, recInv);
+		});
+
+		let ta = this.getElement('commentTextArea');
+		ta.style.outline = 'none';
+		ta.style.width = '100%';
+		ta.style.height = '100px';
 		d.open();
 	}
 
@@ -1564,9 +1610,9 @@ export class AonNewInvoice extends AonElement {
 		let dupInv = this.invoice;
 		dupInv.id = undefined;
 		dupInv.date = new Date();
-		dupInv.series = undefined;
 		dupInv.number = undefined;
-		dupInv.reference = undefined;
+		dupInv.reference = '';
+		dupInv.status = 'inbox';
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].due_date = new Date();
