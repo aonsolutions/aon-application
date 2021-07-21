@@ -48,14 +48,20 @@ public interface IPayroll {
 	
 	// -------------------- BONUS 
 	
+	public Bonus [] getBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+
 	public Bonus [] setBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses);
 
 	// -------------------- DEDUCTIONS 
 	
+	public Deduction [] getDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+
 	public Deduction [] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions);
 
 	// -------------------- COSTS 
 	
+	public Cost [] getCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate);
+
 	public Cost [] setCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs);
 
 	// -------------------- BONUS 

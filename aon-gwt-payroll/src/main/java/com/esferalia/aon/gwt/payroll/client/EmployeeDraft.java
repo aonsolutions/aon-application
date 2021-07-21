@@ -325,7 +325,7 @@ public class EmployeeDraft extends Composite {
 
 		@Override
 		public void execute() {
-			SSBonusDraft dialog = new SSBonusDraft(employeeDraftObject.getContractId());
+			SSPECDraft dialog = new SSPECDraft(employeeDraftObject.getContractId());
 			dialog.setPopupPositionAndShow((x,y) -> dialog.center() );
 		}
 	}

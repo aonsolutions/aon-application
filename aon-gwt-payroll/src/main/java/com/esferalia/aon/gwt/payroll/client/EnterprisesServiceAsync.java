@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -96,6 +97,8 @@ public interface EnterprisesServiceAsync {
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
 			AsyncCallback<String> asyncCallback);
+	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId,
+			AsyncCallback<List<SSPECData>> asyncCallback);
 	void getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);

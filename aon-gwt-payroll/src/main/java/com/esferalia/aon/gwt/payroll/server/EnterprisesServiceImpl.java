@@ -91,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -107,6 +108,8 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
@@ -133,6 +136,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
@@ -1954,12 +1958,34 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(currentDomainName);
+			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+			
+			syncPECs(currentDomainName, currentUser, contractId, connection);
+			
+			return getPECs(currentDomainName, domainId, currentUser, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
 	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			
-			syncBonus(currentDomainName, currentUser, contractId, connection);
+			syncPECs(currentDomainName, currentUser, contractId, connection);
 			
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (SQLException e) {
@@ -2507,7 +2533,109 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	private static void syncBonus(String currentDomainName, String currentUser, Integer contractId, Connection connection)
+	private static List<SSPECData> getPECs(String domainName, Integer domainId, String user, Integer contractId) {
+		List<SSPECData> pecs = new ArrayList<SSPECData>();
+		
+		Date startDate = AonDateUtils.getSqlDate(1900, Calendar.JANUARY, 1);
+		
+		PAYROLL.getContract(domainName, domainId, user, p -> p.getIdProperty().eq(contractId))
+		.ifPresent(contract -> {
+			String ccc = contract.getEnterpriseCCC();
+			String naf = contract.getPersonSsNumber();
+			
+			com.esferalia.aon.occam.api.model.Cost costs [] = 
+			PAYROLL.getCosts(domainName, domainId, user, ccc, naf, startDate, null);
+			
+			for (com.esferalia.aon.occam.api.model.Cost cost : costs)
+				if ( isPEC(cost.getExpression()) )
+					pecs.add(newSSPECData(
+							cost.getType(), 
+							cost.getStartDate(), 
+							cost.getEndDate(), 
+							String.format("%s. %s %s", cost.getDescription(), "CUOTA EMPRESARIAL", getName(cost.getType())), 
+							cost.getExpression()));
+						
+			com.esferalia.aon.occam.api.model.Bonus bonuses [] = 
+			PAYROLL.getBonuses(domainName, domainId, user, ccc, naf, startDate, null);
+			for (com.esferalia.aon.occam.api.model.Bonus bonus : bonuses)
+				if ( isPEC(bonus.getExpression()) )
+					pecs.add(newSSPECData(
+							bonus.getType(), 
+							bonus.getStartDate(), 
+							bonus.getEndDate(), 
+							bonus.getDescription(), 
+							bonus.getExpression()));
+			
+			com.esferalia.aon.occam.api.model.Deduction deductions [] = 
+			PAYROLL.getDeductions(domainName, domainId, user, ccc, naf, startDate, null);
+			for (com.esferalia.aon.occam.api.model.Deduction deduction : deductions)
+				if ( isPEC(deduction.getExpression()) )
+					pecs.add(newSSPECData(
+							deduction.getType(),
+							deduction.getStartDate(), 
+							deduction.getEndDate(), 
+							String.format("%s. %s %s", deduction.getDescription(), "CUOTA TRABAJADOR", getName(deduction.getType())), 
+							deduction.getExpression()));
+			
+		});
+		
+		
+		return pecs;
+	}
+	
+	private static boolean isPEC(String expression) {
+		return AonStringUtils.startsWithIgnoreCase(expression, "/*epoch");
+	}
+	
+	private static String getName (DeductionType type) {
+		if ( type == null )
+			return "";
+		return type.accept(new Visitor<String>() {
+			@Override
+			public String visitIT(DeductionType deductionType) {
+				return "IT";
+			}
+
+			@Override
+			public String visitJobTraining(DeductionType deductionType) {
+				return "FP";
+			}
+
+			@Override
+			public String visitIMS(DeductionType deductionType) {
+				return "IMS";
+			}
+			
+			@Override
+			public String visitFogasa(DeductionType deductionType) {
+				return "FOGASA";
+			}
+			
+			@Override
+			public String visitProfessionalContigency(DeductionType deductionType) {
+				return "AT y EP";
+			}
+			
+			@Override
+			public String visitUnemployent(DeductionType deductionType) {
+				return "DESEMPLEO";
+			}
+			
+			@Override
+			public String visitCommonContigency(DeductionType deductionType) {
+				return "CONTINGENCIAS COMUNES";
+			}
+			
+		});
+	}
+	
+	private static <T extends Enum<?>> SSPECData newSSPECData(T type, java.util.Date startDate, java.util.Date endDate, String description, String expression) {
+		Boolean isSystem = true;
+		Byte ordinal = type == null ? null : (byte) type.ordinal();
+		return new SSPECData(isSystem, startDate, endDate, description, ordinal, expression);
+	}
+	
+	private static void syncPECs(String currentDomainName, String currentUser, Integer contractId, Connection connection)
 			throws SQLException {
 		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
