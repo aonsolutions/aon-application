@@ -42,6 +42,12 @@ public class PAYROLL {
 
 	// -------------------- DEDUCTIONS
 	
+	public static Deduction[] getDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().getDeductions(ctx, domainName, ccc, naf, startDate, endDate);
+		}
+	}
+
 	public static Deduction[] setDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Deduction... deductions) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
 			return getPayroll().setDeductions(ctx, domainName, ccc, naf, startDate, endDate, deductions);
@@ -50,6 +56,12 @@ public class PAYROLL {
 
 	// -------------------- COSTS
 	
+	public static Cost[] getCosts(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().getCosts(ctx, domainName, ccc, naf, startDate, endDate);
+		}
+	}
+
 	public static Cost[] setCosts(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Cost... costs) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
 			return getPayroll().setCosts(ctx, domainName, ccc, naf, startDate, endDate, costs);
@@ -58,6 +70,12 @@ public class PAYROLL {
 
 	// -------------------- BONUS
 	
+	public static Bonus[] getBonuses(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().getBonuses(ctx, domainName, ccc, naf, startDate, endDate);
+		}
+	}
+
 	public static Bonus[] setBonuses(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Bonus... bonuses) {
 		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
 			return getPayroll().setBonuses(ctx, domainName, ccc, naf, startDate, endDate, bonuses);

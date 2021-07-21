@@ -34,8 +34,19 @@ public class PayrollImpl implements IPayroll {
 	}
 	
 	@Override
+	public Deduction[] getDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate,
+			Date endDate) {
+		return EmployeeDAO.getDeductions(ctx, domainName, ccc, naf, startDate, endDate);
+	}
+	
+	@Override
 	public Deduction[] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction... deductions) {
 		return EmployeeDAO.setDeductions(ctx, domainName, ccc, naf, startDate, endDate, deductions);
+	}
+	
+	@Override
+	public Cost[] getCosts(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return EmployeeDAO.getCosts(ctx, domainName, ccc, naf, startDate, endDate);
 	}
 	
 	@Override
@@ -45,6 +56,11 @@ public class PayrollImpl implements IPayroll {
 	}
 	
 	// -------------------- EMPLOYEE
+	
+	@Override
+	public Bonus[] getBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return EmployeeDAO.getBonuses(ctx, domainName, ccc, naf, startDate, endDate);
+	}
 	
 	@Override
 	public Bonus[] setBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus... bonuses) {

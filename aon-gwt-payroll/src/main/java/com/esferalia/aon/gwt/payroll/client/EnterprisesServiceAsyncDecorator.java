@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -413,6 +414,12 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.setEmployeePeculiarities(domain, contractId, peculiarities, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeeSSPECs(String domain, String user, Integer contractId, AsyncCallback<List<SSPECData>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeSSPECs(domain, user, contractId, new AsyncCallbackWrapper<List<SSPECData>>(callback));
 	}
 
 	@Override

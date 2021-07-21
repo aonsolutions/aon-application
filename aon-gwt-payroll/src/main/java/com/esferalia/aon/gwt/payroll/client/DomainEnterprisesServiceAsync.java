@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -252,11 +253,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
-	// SS_BONUS DIALOG
 	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
+	public void getEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	}
+
 	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> asyncCallback) {
 		enterprisesServiceAsync.getBonusConcepts(getCurrentDomainName(), asyncCallback);
 	}

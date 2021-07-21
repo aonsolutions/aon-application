@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -147,6 +148,8 @@ public interface EnterprisesService extends RemoteService {
 	Peculiarities getEmployeePeculiarities(String currentDomainName, Integer contractId);
 
 	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
+	
+	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
 
 	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId);
 
@@ -296,5 +299,7 @@ public interface EnterprisesService extends RemoteService {
 	Integer getEnterpriseId(String currentDomainName);
 
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType) throws IllegalArgumentException;
+
+	
 	
 }
