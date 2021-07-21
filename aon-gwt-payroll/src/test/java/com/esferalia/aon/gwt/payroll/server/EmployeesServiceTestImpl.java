@@ -600,7 +600,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract) {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;

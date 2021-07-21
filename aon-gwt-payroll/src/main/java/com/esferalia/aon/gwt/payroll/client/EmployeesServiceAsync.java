@@ -199,7 +199,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace, AsyncCallback<EventsWorkplace> asyncCallback);
 
-	void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeContractInfo> asyncCallback);
+	void getEmployeeInfoDataBase(String domain, String user, Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException;
 
 	void setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
