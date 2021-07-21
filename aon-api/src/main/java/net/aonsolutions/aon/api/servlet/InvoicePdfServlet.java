@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate2;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -61,45 +61,27 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			String login = json.optString("login");
 			
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
-			
+			Invoice invoice = new Invoice();
 			if(json.opt(IConstants.ID) != null && json.opt("source") != null && "rawdoc".equalsIgnoreCase(json.optString("source"))) {
 				Integer id = json.optInt(IConstants.ID);
 				Rawdoc r = AON.getRawdocStream(domainName, domainId, login, 
 						f -> f.getDomainProperty().eq(domainId)
 						.and(f.getIdProperty().eq(id))).findFirst().orElse(new Rawdoc());
 				if(r.getId() != null) json = new JSONObject(r.getJson());
-//				Invoice invoice = InvoiceJSON.fromJSON(json);
-//				InvoiceTemplate2.create(resp.getOutputStream(), invoice, config, null);
+				invoice = InvoiceJSON.fromJSON(json);
 			} else if(json.opt(IConstants.ID) != null){
 				Integer id = json.optInt(IConstants.ID);
 				json = AON_SOLUTIONS.getInvoiceJSON(domainName, domainId, login, id);
-				//Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
-				//InvoiceTemplate2.create(resp.getOutputStream(), invoice, config, null);
+				invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			}
 			
-			PdfMaker.printInvoice(resp.getOutputStream(), json, config, null);
+			PdfMaker.printInvoice(resp.getOutputStream(), invoice, config, null);
 			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
 			error(req, resp, e);
 		}
 	}
-	
-//	@Override
-//	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-//		// TODO Auto-generated method stub
-//		String param = req.getParameter("json");
-//		param = new String(Base64.getDecoder().decode(param));
-//		JSONObject json = new JSONObject(param);
-//		TediInvoice invoice = TediInvoiceJSON.fromJSON(json);
-//		File file = createPdf(invoice);
-//		
-//		try {
-//			responseFile(req, resp, file, MimeType.PDF);
-//		} catch (IOException e) {
-//			error(req, resp, e);
-//		}
-//	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
