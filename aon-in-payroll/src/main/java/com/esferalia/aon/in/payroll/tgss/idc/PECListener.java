@@ -72,7 +72,7 @@ class PECListener  implements IdcListener {
 			put("53", collection(
 					newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
 					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)));
-			put("68", collection(newRemoveDeduction(ContextVariable.CGC_EMPLOYEE)));
+			put("68", collection(newNegativeDeduction(ContextVariable.CGC_EMPLOYEE)));
 			put("78", collection(newRemoveDeduction(ContextVariable.FP_EMPLOYEE)));
 		}
 	};
@@ -131,6 +131,7 @@ class PECListener  implements IdcListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> PEC_DEDUCTION_MAP = new HashMap<String, String>() {
 		{
+			put("01", "BONIFICACIÓN INEM");
 			put("03", "RED.CUOTA SS-PORCENT");
 			put("09", "EXCLUSIONES");
 			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
@@ -244,12 +245,30 @@ class PECListener  implements IdcListener {
 	}
 	
 	
+	private static DeductionProvider newNegativeDeduction( ContextVariable var ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newNegativeDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
 	private static DeductionProvider newRemoveDeduction( ContextVariable var ) {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
 	private static CostProvider newRemoveCost( ContextVariable var ) {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
+	private static PEC.Deduction newNegativeDeduction(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable var){
+		PEC.Deduction deduction =  new PEC.Deduction();	
+		return newNegativePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
 	private static PEC.Deduction newRemoveDeduction(
@@ -308,6 +327,34 @@ class PECListener  implements IdcListener {
 		return t;
 	}
 	
+	private static <T extends PEC> T newNegativePEC(
+			T t,
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable var){
+		
+		t.setCcc(ccc);
+		t.setNss(nss);
+		t.setStartDate(start);
+		t.setEndDate(end);
+		t.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*//*read-only*/-1 * %s/**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				pec, 
+				quota,
+				var.getName()
+				));
+		t.setDescription(String.format(new Locale("es", "ES"),"%s (%s)", description, portTipo));
+		
+		return t;
+	}
+
 	private static  <T> Collection<T> collection (T ...ts) {
 		ArrayList<T> list = new ArrayList<T>(ts.length);
 		
