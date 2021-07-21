@@ -116,7 +116,6 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
-import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
@@ -287,7 +286,6 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation;
-import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
@@ -5281,21 +5279,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqEmployee.getEmployeeInfo(connection, employeeContract);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Domain, parentDomain and User id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Get certificate
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			// Get EmployeeContractInfo
+			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
+			
+			try {
+				// Get SistemaRED employee to check situation
+				if(AonStringUtils.isNotBlank(employeeContractInfo.getContractInfo().getCompleteCCC())) {
+				
+					solutions.aon.seg.social.object.Employee employeeSistemaRED = SistemaRED.getEmployee(
+							new ByteArrayInputStream(certificate.getCertificate()), 
+							certificate.getPassword(), 
+							certificate.getType(), 
+							employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4), 
+							employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
+							employeeContractInfo.getEmployeeInfo().getSsNumber());
+					
+					System.out.println("\nGetEmployeeInfoDataBase Situation SistemaRED\n" + employeeSistemaRED.toString() + "\n");
+					
+					if(null != employeeSistemaRED)
+						employeeContractInfo.getContractInfo().setIsTGSSActive(AonStringUtils.containsIgnoreCase(employeeSistemaRED.getSituacion(), "AL"));
 				}
-			}
-		}
+				
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+			} 
+			
+			return employeeContractInfo;
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+		
 	}
 
 	@Override
@@ -5787,7 +5811,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			InputStream certificateInputStream = new ByteArrayInputStream(certificaSepe.getCertificate());
 
-			byte[] pdfBytes = Contrato.getCopyBasicPdf(certificateInputStream, certificaSepe.getPassword(),
+			byte[] pdfBytes = Sepe.getCopyBasicPdf(certificateInputStream, certificaSepe.getPassword(),
 					certificaSepe.getType(), ipf, startDate, endDate);
 
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
@@ -5815,7 +5839,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			InputStream certificateInputStream = new ByteArrayInputStream(certificaSepe.getCertificate());
 
-			byte[] pdfBytes = Contrato.contratoPdf(certificateInputStream, certificaSepe.getPassword(),
+			byte[] pdfBytes = Sepe.getContratoPdf(certificateInputStream, certificaSepe.getPassword(),
 					certificaSepe.getType(), ipf, startDate, endDate);
 
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
@@ -5826,7 +5850,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.flush();
 			String dataUri = stringWriter.toString();
 			stringWriter.close();
-
+			
 			return dataUri;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -6137,7 +6161,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
 					employeeContractInfo.getEmployeeInfo().getDocument());
 
-			Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
+			// Devuelve el ide del contrato en el SEPE
+			String ide = Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
+			
+			// Set Sepe Ide
+			JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e);
@@ -6221,7 +6249,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.flush();
 			String dataUri = stringWriter.toString();
 			stringWriter.close();
-
+			
 			return dataUri;
 
 		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {

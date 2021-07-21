@@ -599,9 +599,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeInfoDataBase(String domain, Integer employeeContract, AsyncCallback<EmployeeContractInfo> callback) {
+	public void getEmployeeInfoDataBase(String domain, String user, Integer contractId, AsyncCallback<EmployeeContractInfo> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeInfoDataBase(domain, employeeContract, 
+		employeesServiceAsync.getEmployeeInfoDataBase(domain, user, contractId, 
 				new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
 
 	}
