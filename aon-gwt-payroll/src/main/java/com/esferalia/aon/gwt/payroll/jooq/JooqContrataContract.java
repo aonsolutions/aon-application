@@ -2621,4 +2621,23 @@ public class JooqContrataContract {
 		return employeesInfo;
 	}
 
+	public static void setSepeId(String domainName, Integer contractId, String ide) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.NAME, "SEPE_ID")
+				.set(CONTRACT_DATA.EXPRESSION, ide)
+				.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+				.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
 }
