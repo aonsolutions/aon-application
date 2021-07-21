@@ -419,13 +419,13 @@ public class SistemaRED2AON {
 		case FOGASA_ENTERPRISE:
 			return DeductionType.FOGASA;
 		default:
-			return DeductionType.OTHER;
+			return DeductionType.BONUS;
 		}
 	}
 
 	private static DeductionType getDeductionType(String name) {
 		ContextVariable var = ContextVariable.getVariableByName(name);
-		return var != null ? getDeductionType(var ): DeductionType.OTHER;
+		return var != null ? getDeductionType(var ): DeductionType.BONUS;
 	}
 
 

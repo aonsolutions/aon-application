@@ -50,6 +50,7 @@ import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -475,11 +476,12 @@ public class IdcTest extends AbstractSQLTestCase {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
 			Collection<PEC> ssPecs = Idcplccc.getSSBonuses(is);
 			assertEquals(4
-					+ 4*(2+3), 
+					+ 4*(2+3)
+					+ 4 , 
 					ssPecs.size());
 			assertEquals(4, ssPecs.stream().filter(pec -> isBonus(pec)).count());
 			
-			assertEquals(4*2, ssPecs.stream().filter(pec -> isDeduction(pec)).count());
+			assertEquals(4*2+4, ssPecs.stream().filter(pec -> isDeduction(pec)).count());
 			assertEquals(4*3, ssPecs.stream().filter(pec -> isCost(pec)).count());
 			
 
@@ -909,7 +911,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcVI.pdf") ){
 			Collection<PEC> ssPECs = Idc.getSSPECs(is);
-			assertEquals(1+2+3, ssPECs.size());
+			assertEquals(1+2+3+1, ssPECs.size());
 			
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -932,19 +934,24 @@ public class IdcTest extends AbstractSQLTestCase {
 			Date october = calendar.getTime();
 			
 			Salary salary = calculate(ssPECs, Collections.emptyList(), october);
-
+			
 			double totalCost = salary.getSalaryCosts().stream()
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.FOGASA))
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
+			//.peek(c -> System.out.println(c.getCostConcept() +" : " + c.getAmount() +", " + c.getType()) )
 			.filter( c -> c.getType() != DeductionType.COMMON_CONTINGENCY )
 			.filter( c -> c.getType() != DeductionType.PROFESSIONAL_CONTINGENCY )
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
 			
 			double totalDeduction = salary.getSalaryDeductions().stream()
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.FOGASA))
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.UNEMPLOYMENT))
+			.peek(c -> Assert.assertNotEquals(c.getType(), DeductionType.JOB_TRAINING))
+			.peek(c -> System.out.println(c.getDeductionConcept() +" : " + c.getAmount() +", " + c.getType()) )
+			//.filter( c -> c.getType() != DeductionType.COMMON_CONTINGENCY )
+			.filter( c -> c.getType() != DeductionType.PROFESSIONAL_CONTINGENCY )
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			
-			salary.getSalaryDeductions().forEach(d -> assertNotEquals(ContextVariable.CGC_EMPLOYEE, d.getDeductionConcept()));
-			
-
-			salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
 			
 			assertEquals(totalCost, salary.getTotalEnterprise(), DELTA);
 			assertEquals(totalDeduction, salary.getSocialSecurityContributions(), DELTA);
@@ -1096,9 +1103,9 @@ public class IdcTest extends AbstractSQLTestCase {
 	public void testIdcplnssIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssII.pdf") ){
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1+2+3, ssBonuses.size());
+			assertEquals(1+2+3+1, ssBonuses.size());
 			assertEquals(1, ssBonuses.stream().filter(pec -> isBonus(pec)).count());
-			assertEquals(2, ssBonuses.stream().filter(pec -> isDeduction(pec)).count());
+			assertEquals(2+1, ssBonuses.stream().filter(pec -> isDeduction(pec)).count());
 			assertEquals(3, ssBonuses.stream().filter(pec -> isCost(pec)).count());
 			
 			Salary salary = calculate(ssBonuses);
@@ -2136,7 +2143,14 @@ public class IdcTest extends AbstractSQLTestCase {
 		
 		ssBonuses.stream().filter( pec -> isBonus(pec)).forEach( b -> addBonus(aonContext, contract, toSQL(b.getStartDate()), toSQL(b.getEndDate()), b.getFormula(), b.getDescription()) );
 
-		ssBonuses.stream().filter( pec -> isDeduction(pec) ).forEach( d -> addDeduction(aonContext, contract, toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
+		ssBonuses.stream().filter( pec -> isDeduction(pec) ).forEach( d -> { 
+			ContractDeductionRecord deduction = 
+			addDeduction(aonContext, contract, toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName());
+			if ( deduction.getDeductionConcept() == null ) {
+				deduction.setType((byte)com.esferalia.aon.occam.api.model.type.DeductionType.BONUS.ordinal());
+				deduction.update();
+			}
+		});
 		
 		ssBonuses.stream().filter( pec -> isCost(pec) ).forEach( d -> addCost(aonContext, contract, toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
 
