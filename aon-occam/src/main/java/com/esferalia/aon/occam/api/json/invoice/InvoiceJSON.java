@@ -126,7 +126,6 @@ public class InvoiceJSON {
 		return json;
 	}
 	
-	
 	private static InvoiceType getType(String t, String account) {
 		if("emitida".equalsIgnoreCase(t)) {
 			return InvoiceType.SALES;

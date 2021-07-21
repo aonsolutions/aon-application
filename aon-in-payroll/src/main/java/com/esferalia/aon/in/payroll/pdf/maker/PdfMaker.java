@@ -6,79 +6,34 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.json.JSONObject;
-
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetPrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.exception.JsonParseException;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceMaker;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 public class PdfMaker {
 
 	/**
-	 * CREATE THE INVOICE WITH A JSON
+	 * CREATE INVOICE PDF
 	 * 
 	 * @param out
-	 * @param json
-	 * @param config
-	 * @param qrCode
-	 * @throws CanNotCreatePdfException
-	 * @throws JsonParseException
+	 * @param invoice, Invoice Object
+	 * @param config, print invoice configuration
 	 */
-	public static void printInvoice(OutputStream out, InputStream json, PrintInvoiceConfiguration config,
-			InputStream qrCode) throws CanNotCreatePdfException, JsonParseException {
-		InvoiceMaker.createWithJson(out, json, config, qrCode);
-	}
-	
-	/**
-	 * CREATE THE INVOICE WITH A JSON
-	 * 
-	 * @param out
-	 * @param json
-	 * @param config
-	 * @param qrCode
-	 * @throws CanNotCreatePdfException
-	 * @throws JsonParseException
-	 */
-	public static void printInvoice(OutputStream out, JSONObject json, PrintInvoiceConfiguration config, InputStream qrCode) {
-		InvoiceMaker.createWithJson(out, json, config, qrCode);
-	}
-
-	/**
-	 * CREATE THE INVOICE WITH A JAVA OBJECT
-	 * 
-	 * @param out
-	 * @param invoice
-	 * @param adaptBackground
-	 * @throws IOException
-	 * @throws CanNotCreatePdfException
-	 */
-	public static void printInvoice(OutputStream out, Invoice invoice, boolean adaptBackground)
-			throws IOException, CanNotCreatePdfException {
-		InvoiceMaker.create(out, invoice, adaptBackground);
-	}
-
-	/**
-	 * CREATE DEMO INVOICE
-	 * 
-	 * @param out
-	 * @param config
-	 * @param qrCode
-	 * @throws IOException
-	 * @throws CanNotCreatePdfException
-	 */
-	public static void printDemoInvoice(OutputStream out, PrintInvoiceConfiguration config, InputStream qrCode)
-			throws IOException, CanNotCreatePdfException {
-		InvoiceMaker.demoPdf(out, config, qrCode);
+	public static void printInvoice(OutputStream out, Invoice invoice, PrintInvoiceConfiguration config, byte[] qr) {
+		try {
+			InvoiceTemplate.create(out, invoice, config, qr);
+		} catch (IOException | CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	/**

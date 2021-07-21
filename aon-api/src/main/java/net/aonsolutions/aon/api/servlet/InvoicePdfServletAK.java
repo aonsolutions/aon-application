@@ -14,6 +14,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.JsonParseException;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -44,12 +45,10 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 			
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
 			
-			//InputStream is = new ByteArrayInputStream(json.toString().getBytes());
-//			PdfMaker.printInvoice(resp.getOutputStream(), json, config, null);
-			PdfMaker.printDemoInvoice(resp.getOutputStream(), config, null);
-//			PdfMaker.printInvoice(resp.getOutputStream(), is, config, null );
+			PdfMaker.printInvoice(resp.getOutputStream(), new Invoice(), config, null);
+			
 			responseFile(req, resp, "factura", MimeType.PDF);
-		} catch (CanNotCreatePdfException  | IOException e) {
+		} catch (IOException e) {
 			error(req, resp, e);
 		}
 	}

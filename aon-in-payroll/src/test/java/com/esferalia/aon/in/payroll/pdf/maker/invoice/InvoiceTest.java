@@ -258,8 +258,8 @@ public class InvoiceTest {
 			config.setFooter(50);
 			
 
-			InvoiceTemplate2.create(os, invoice, config, qrCode);
-			InvoiceTemplate2.create(dos, invoice, config, qrCode);
+			InvoiceTemplate.create(os, invoice, config, qrCode);
+			InvoiceTemplate.create(dos, invoice, config, qrCode);
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);
