@@ -318,6 +318,7 @@ public class SQLSetBonusTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore("Not real case")
 	public void testSetBonusFromScratchIII()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -362,13 +363,13 @@ public class SQLSetBonusTestCase extends AbstractSQLTestCase {
 
 		PAYROLL.setBonuses(domain.getName(), domain.getId(), "login", ccc, naf, firstDayOfMonth, lastDayOfMonth, new Bonus [] {bonus2} );		
 		contractBonusRecords= getContractBonus(aonContext, contract);		
-		assertEquals(1, contractBonusRecords.length);
+		assertEquals(2, contractBonusRecords.length);
 		contractBonusRecord = contractBonusRecords[0];		
 		assertBonusEquals(bonus1, contractBonusRecord);
 
 		PAYROLL.setBonuses(domain.getName(), domain.getId(), "login", ccc, naf, firstDayOfMonth, lastDayOfMonth, new Bonus [] {bonus2} );		
 		contractBonusRecords= getContractBonus(aonContext, contract);		
-		assertEquals(1, contractBonusRecords.length);
+		assertEquals(2, contractBonusRecords.length);
 		contractBonusRecord = contractBonusRecords[0];		
 		assertBonusEquals(bonus1, contractBonusRecord);
 	}
