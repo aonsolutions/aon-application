@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -658,6 +659,47 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 			
+		});
+	}
+	
+	public void movPrevDelete(Consumer<Void> success, Consumer<Throwable> failure) {
+		String situation = employeeContractData.getContractInfo().isTGSSActive() ? "ALTA" : "BAJA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getEndDate() : employeeContractData.getContractInfo().getStartDate();
+		
+		employeesService.movPrevDelete(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void altaConsolidadaDelete(Consumer<Void> success, Consumer<Throwable> failure) {
+		String situation = "ALTA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		
+		employeesService.altaConsolidadaDelete(situation, regimen, ctaCti, nss, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 	}
 	

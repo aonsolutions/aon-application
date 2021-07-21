@@ -72,6 +72,8 @@ public class ContractInfo implements Serializable{
 	private boolean hasSettle;
 	private boolean hasCertifica2;
 	
+	private boolean isTGSSActive;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -473,6 +475,14 @@ public class ContractInfo implements Serializable{
 
 	public void setHasCertifica2(boolean hasCertifica2) {
 		this.hasCertifica2 = hasCertifica2;
+	}
+	
+	public boolean isTGSSActive() {
+		return this.isTGSSActive;
+	}
+	
+	public void setIsTGSSActive(boolean isTGSSActive) {
+		this.isTGSSActive = isTGSSActive;
 	}
 
 	public String toString(){

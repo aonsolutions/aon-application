@@ -202,6 +202,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class MovPrevDeleteCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			movPrevDelete();
+		}
+	}
+	
+	class AltaConsolidadaDeleteCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			altaConsolidadaDelete();
+		}
+	}
+	
 	class NewTGSSContextMenu extends ContextMenu {
 		
 		private MenuItem ta;
@@ -209,6 +225,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem idc;
 		private MenuItem idcPlNss;		
 		private MenuItem peculiarities = null;
+		
+		private MenuItem movPrevDelete = null;
+		private MenuItem altaConsolidadaDelete = null;
 		
 		public NewTGSSContextMenu() {
 			
@@ -232,6 +251,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
+			addSeparator();
+			
+			movPrevDelete = addItem("Eliminar movimiento previo", new IDCPlNssCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			movPrevDelete.ensureDebugId("movPrevDelete");
+			
+			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new IDCPlNssCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			altaConsolidadaDelete.ensureDebugId("altaConsolidadaDelete");
+			
 		}
 
 		public MenuItem getTa() {
@@ -252,6 +281,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		public MenuItem getPeculiarities() {
 			return peculiarities;
+		}
+		
+		public MenuItem getMovPrevDelete() {
+			return movPrevDelete;
+		}
+		
+		public MenuItem getAltaConsolidadaDelete() {
+			return altaConsolidadaDelete;
 		}
 		
 	}
@@ -602,6 +639,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, employeeContractInfoIn);
 					checkStatus(this.contrataEmployeeObject);
 					checkCertificateSEPE();
+					checkTGSSStatus();
 				}, f -> {});
 				break;
 			case 1:
@@ -730,6 +768,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
 		checkStatus(this.contrataEmployeeObject);
 		checkCertificateSEPE();
+		checkTGSSStatus();
 	}
 	
 	// ------------------------------------------------- Show/Hide Toolbar methods
@@ -974,6 +1013,40 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, f -> {});
 	}
 	
+	private void movPrevDelete() {
+		contrataEmployeeObject.movPrevDelete(
+				s -> {
+					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
+						checkStatus(contrataEmployeeObject);
+						checkCertificateSEPE();
+						checkTGSSStatus();
+					}, f -> {});
+				}, 
+				f -> {
+					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+					dialog.warning();
+				}
+		);
+	}
+
+	private void altaConsolidadaDelete() {
+		contrataEmployeeObject.altaConsolidadaDelete(
+				s -> {
+					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
+						checkStatus(contrataEmployeeObject);
+						checkCertificateSEPE();
+						checkTGSSStatus();
+					}, f -> {});
+				}, 
+				f -> {
+					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+					dialog.warning();
+				}
+		);
+	}
+	
 	private void onAFIChanges() {
 		new EmployeeAFIDialog(
 				contractEmployeeUI.getStartDate(),
@@ -994,11 +1067,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
 							checkStatus(contrataEmployeeObject);
 							checkCertificateSEPE();
+							checkTGSSStatus();
 						}, f -> {});
 					}
 			
 					@Override
-					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {
+						// TODO: esperar a Ray
+					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
@@ -1569,6 +1645,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //		setVisible(sepe.getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCto().getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCbc().getElement(), hasCertificateSEPE);
+	}
+	
+	// ------------------------------------------------- TGSS status
+	
+	private void checkTGSSStatus() {
+		boolean isTGSSActive = contrataEmployeeObject.getContractData().isTGSSActive();
+		Date startDate = contrataEmployeeObject.getContractData().getStartDate();
+		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
+		
+		if(isTGSSActive && DateUtils.isAfterOrEquals(new Date(), startDate))
+			setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), true);
+		else
+			setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), false);
 	}
 	
 	// ------------------------------------------------- Messages panel
