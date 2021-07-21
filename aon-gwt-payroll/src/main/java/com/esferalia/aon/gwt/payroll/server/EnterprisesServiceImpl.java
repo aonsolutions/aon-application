@@ -8,7 +8,6 @@ import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
@@ -142,7 +141,6 @@ import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
 import solutions.aon.seg.social.object.SecondaryUser;
-import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -2893,7 +2891,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
 			InputStream is = new ByteArrayInputStream(certificateSEPE.getCertificate());
 			
-			Contract contract = Contrato.getContratoData(is, certificateSEPE.getPassword(), certificateSEPE.getType(), ipf, startDate, endDate);
+			Contract contract = Sepe.getContractData(is, certificateSEPE.getPassword(), certificateSEPE.getType(), ipf, startDate, endDate);
 			
 			return null == contract ? null : contract.getSepeId();
 			
