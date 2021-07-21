@@ -48,11 +48,22 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Cost;
+import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -62,6 +73,7 @@ import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -1786,6 +1798,72 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() > 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+
+			Date may202021 = calendar.getTime();
+
+			Connection connection = getConnection();
+			AONContext aonContext = new AONContext(connection);
+			
+			String ccc = "11120603901"; 	//Long.toString(System.currentTimeMillis()).substring(0, 11);
+			String naf = "111035757934"; 	//Long.toString(System.currentTimeMillis()).substring(0, 12);
+			String doc = "052418812H"; 		//Long.toString(System.currentTimeMillis()).substring(0, 9);
+
+			DomainRecord domain = newDomain(aonContext);
+			ScopeRecord scope = newScope(aonContext, domain.getId());
+			EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(aonContext, domain.getId(), scope.getId(), SSRegimeType.GENERAL);
+			EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getId(), CCCType.TRAINING, ccc );
+			WorkplaceRecord workplace = newWorkplace(aonContext, domain.getId(),scope.getId(), enterpriseActivity.getEnterprise());
+			RegistryRecord person = newPerson( aonContext, domain.getId(), doc, naf);			
+			
+			ContractRecord contract = newContract(aonContext,
+					SSRegimeType.GENERAL, 
+					CCCType.TRAINING,			
+					toSQL(getFirstDayOfYear(may202021)),
+					null,
+					Collections.emptyMap(),
+					new String[] {}, 
+					new String[] {},
+					null,
+					domain.getId(), 			//domainId, 
+					person.getId(),				//personId, 
+					workplace.getId(),			//workplaceId, 
+					enterpriseCcc.getId(),		//enterpriseCccId,
+					enterpriseActivity.getId()	//enterpriseActivityId
+					);
+			
+			
+			
+			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
+			Cost[] costsI = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Bonus[] bonusI = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Deduction [] deductionsI = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			
+			SistemaRED2AON.addPECs(ssPecs, "login", domain.getName(), domain.getId(), may202021, ccc, naf);
+			Cost[] costsII = PAYROLL.getCosts(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Bonus[] bonusII = PAYROLL.getBonuses(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+			Deduction [] deductionsII = PAYROLL.getDeductions(domain.getName(), domain.getId(), "login", ccc, naf, contract.getStartDate(), null);
+		
+			Assert.assertEquals(bonusI.length, bonusII.length);
+			Assert.assertEquals(costsI.length, costsII.length);
+			Assert.assertEquals(deductionsI.length, deductionsII.length);
+		}
+	}
 
 	private static class IdcPEC {
 		private String pec;
