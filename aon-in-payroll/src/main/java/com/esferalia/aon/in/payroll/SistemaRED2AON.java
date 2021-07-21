@@ -409,8 +409,8 @@ public class SistemaRED2AON {
 		case UNEMPLOY_EMPLOYEE:
 		case UNEMPLOY_ENTERPRISE:
 			return DeductionType.UNEMPLOYMENT;
-		case CGC_BASE:
-		case CGC_BASE_ENTERPRISE:
+		case CGC_EMPLOYEE:
+		case CGC_ENTERPRISE:
 			return DeductionType.COMMON_CONTINGENCY;
 		case IT_ENTERPRISE:
 			return DeductionType.IT;
@@ -438,68 +438,81 @@ public class SistemaRED2AON {
 			
 			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSPECs(data);
-			Bonus bonuses [] =
-			ssBonus.stream()
-			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(pec -> PEC.isBonus(pec) )
-			.map( b -> 
-			new Bonus()
-			.setExpression(b.getFormula())
-			.setDescription(b.getDescription())
-			.setType(BonusType.SOCIAL_SECURITY)
-			.setStartDate(b.getStartDate())
-			.setEndDate(b.getEndDate())
-			)
-			.toArray(Bonus[]::new)
-			;
-			
-			Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
-			Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
-			
-	
-			PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, startDate, endDate, bonuses);					
-			
-			Deduction deductions [] =
-			ssBonus.stream()
-			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(pec -> PEC.isDeduction(pec))
-			.map( d -> 
-			new Deduction()
-			.setName(d.getName())
-			.setExpression(d.getFormula())
-			.setDescription(d.getDescription())
-			.setStartDate(d.getStartDate())
-			.setEndDate(d.getEndDate())
-			.setType(getDeductionType(d.getName()))
-			)
-			.toArray(Deduction[]::new)
-			;
-			
-			PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
-			
-			Cost costs [] =
-			ssBonus.stream()
-			.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-			.filter(pec -> PEC.isCost(pec))
-			.map( c -> 
-			new Cost()
-			.setName(c.getName())
-			.setExpression(c.getFormula())
-			.setDescription(c.getDescription())
-			.setStartDate(c.getStartDate())
-			.setEndDate(c.getEndDate())
-			.setType(getDeductionType(c.getName()))
-			)
-			.toArray(Cost[]::new)
-			;
-			
-			PAYROLL.setCosts(domainName, domainId, userLogin, ccc, naf, startDate, endDate, costs);
 
+			addPECs(ssBonus, userLogin, domainName, domainId, date, ccc, naf);
+			
 		} catch ( Throwable e ) {
 			e.printStackTrace();
 		}
 	}
 	
+	public static void addPECs(Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> pecs, String userLogin, String domainName, Integer domainId, Date date, 
+			String ccc, String  naf) {
+		
+		Bonus bonuses [] =
+		pecs.stream()
+		.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+		.filter(pec -> PEC.isBonus(pec) )
+		.map( b -> 
+		new Bonus()
+		.setExpression(b.getFormula())
+		.setDescription(b.getDescription())
+		.setType(BonusType.SOCIAL_SECURITY)
+		.setStartDate(b.getStartDate())
+		.setEndDate(b.getEndDate())
+		)
+		.toArray(Bonus[]::new)
+		;
+		
+		Date startDate = Arrays.stream(bonuses).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
+		Date endDate = Arrays.stream(bonuses).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+		
+
+		PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, startDate, endDate, bonuses);					
+		
+		Deduction deductions [] =
+		pecs.stream()
+		.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+		.filter(pec -> PEC.isDeduction(pec))
+		.map( d -> 
+		new Deduction()
+		.setName(d.getName())
+		.setExpression(d.getFormula())
+		.setDescription(d.getDescription())
+		.setStartDate(d.getStartDate())
+		.setEndDate(d.getEndDate())
+		.setType(getDeductionType(d.getName()))
+		)
+		.toArray(Deduction[]::new)
+		;
+		
+		startDate = Arrays.stream(deductions).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
+		endDate = Arrays.stream(deductions).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+
+		PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
+		
+		Cost costs [] =
+		pecs.stream()
+		.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+		.filter(pec -> PEC.isCost(pec))
+		.map( c -> 
+		new Cost()
+		.setName(c.getName())
+		.setExpression(c.getFormula())
+		.setDescription(c.getDescription())
+		.setStartDate(c.getStartDate())
+		.setEndDate(c.getEndDate())
+		.setType(getDeductionType(c.getName()))
+		)
+		.toArray(Cost[]::new)
+		;
+		
+		startDate = Arrays.stream(costs).map(b -> b.getStartDate()).reduce(date, (d1,d2) -> min(d1,d2));
+		endDate = Arrays.stream(costs).map(b -> b.getEndDate()).reduce(date, (d1,d2) -> max(d1,d2));
+
+		PAYROLL.setCosts(domainName, domainId, userLogin, ccc, naf, startDate, endDate, costs);
+
+	}
 	
 
 
