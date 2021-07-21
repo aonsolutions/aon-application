@@ -18,6 +18,7 @@ public class MainContrataContractObject {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
 	private List<EmployeeContractInfo> allEmployeesList;
 	private List<EmployeeContractInfo> employeesList;
@@ -78,7 +79,8 @@ public class MainContrataContractObject {
 	
 	public void getEmployeeInfo(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
 		
-		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
+		employeesService.getEmployeeInfoDataBase(contractId, new AsyncCallback<EmployeeContractInfo>() {
+//		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
