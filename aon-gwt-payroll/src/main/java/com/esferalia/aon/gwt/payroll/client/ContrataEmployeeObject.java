@@ -581,6 +581,56 @@ public class ContrataEmployeeObject {
 				});
 	}
 	
+	// ------------------------------------------------- Database Methods (SEPE Comunications)
+	
+	public void sendBasicCopy(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractoCBSEPE(employeeContractData, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void sendContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.sendContractoSEPE(employeeContractData, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
+	public void removeContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.removeContractoSEPE(employeeContractData, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+		});
+	}
+	
 	// ------------------------------------------------- Database Methods (TGSS Comunications)
 	
 	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {
