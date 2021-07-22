@@ -253,11 +253,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			addSeparator();
 			
-			movPrevDelete = addItem("Eliminar movimiento previo", new IDCPlNssCommand(), 
+			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			movPrevDelete.ensureDebugId("movPrevDelete");
 			
-			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new IDCPlNssCommand(), 
+			altaConsolidadaDelete = addItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			altaConsolidadaDelete.ensureDebugId("altaConsolidadaDelete");
 			
@@ -327,12 +327,42 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class SendBasicCopyCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			sendBasicCopy();
+		}
+	}
+	
+	class SendContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			sendContract();
+		}
+	}
+	
+	class RemoveContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			removeContract();
+		}
+
+	}
+	
 	class NewSEPEContextMenu extends ContextMenu {
 		
 		private MenuItem cto;
 		private MenuItem cbc;
 		private MenuItem cetifica2;
 		private MenuItem cetifica2PDF;
+		
+		private MenuItem sendBasicCopy;
+		private MenuItem sendContract;
+		
+		private MenuItem removeContract;
 		
 		public NewSEPEContextMenu() {
 			
@@ -344,6 +374,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			cbc.ensureDebugId("cbc");
 			
+			addSeparator();
+			
 			cetifica2 = addItem("Cetifica2", new Certifica2Command(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			cetifica2.ensureDebugId("cetifica2");
@@ -351,6 +383,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cetifica2PDF = addItem("Cetifica2 PDF", new Certifica2PDFCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			cetifica2PDF.ensureDebugId("cetifica2PDF");
+			
+			addSeparator();
+			
+			sendBasicCopy = addItem("Notificar Copia B\u00E1sica", new SendBasicCopyCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			sendBasicCopy.ensureDebugId("sendBasicCopy");
+			
+			sendContract = addItem("Notificar Contrato", new SendContractCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			sendContract.ensureDebugId("sendContract");
+			
+			removeContract = addItem("Eliminar Contrato", new RemoveContractCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			removeContract.ensureDebugId("removeContract");
 			
 		}
 
@@ -360,6 +406,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		public MenuItem getCbc() {
 			return cbc;
+		}
+		
+		public MenuItem getSendBasicCopy() {
+			return sendBasicCopy;
+		}
+		
+		public MenuItem getSendContract() {
+			return sendContract;
+		}
+		
+		public MenuItem getRemoveContract() {
+			return removeContract;
 		}
 		
 	}
@@ -1234,6 +1292,44 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
 		pdfViewer.download(fileName);
 	}
+
+	private void sendBasicCopy() {
+		contrataEmployeeObject.sendBasicCopy(
+				s -> {
+					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
+						checkStatus(contrataEmployeeObject);
+						checkCertificateSEPE();
+						checkTGSSStatus();
+					}, f -> {});
+				}, 
+				f -> {});
+	}
+
+	private void sendContract() {
+		contrataEmployeeObject.sendContract(
+				s -> {
+					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
+						checkStatus(contrataEmployeeObject);
+						checkCertificateSEPE();
+						checkTGSSStatus();
+					}, f -> {});
+				}, 
+				f -> {});
+	}
+	private void removeContract() {
+		contrataEmployeeObject.removeContract(
+				s -> {
+					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
+						checkStatus(contrataEmployeeObject);
+						checkCertificateSEPE();
+						checkTGSSStatus();
+					}, f -> {});
+				}, 
+				f -> {});
+	}
 	
 	// ------------------------------------------------- EmployeeSalaryButtons
 	
@@ -1645,6 +1741,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //		setVisible(sepe.getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCto().getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCbc().getElement(), hasCertificateSEPE);
+		
+		String sepeId = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeId();
+		
+		setVisible(sepeContextMenu.getSendBasicCopy().getElement(), hasCertificateSEPE && AonStringUtils.isBlank(sepeId));
+		setVisible(sepeContextMenu.getSendContract().getElement(), hasCertificateSEPE && AonStringUtils.isBlank(sepeId));
+		setVisible(sepeContextMenu.getRemoveContract().getElement(), hasCertificateSEPE && AonStringUtils.isNotBlank(sepeId));
+		
+		
 	}
 	
 	// ------------------------------------------------- TGSS status
