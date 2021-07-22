@@ -6,11 +6,12 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -50,7 +51,11 @@ public class FeeImport extends Import {
 	}
 	
 	public LinkedList<FeeInfo> importation(Domain domain, String login, byte[] data){
-		return importation(domain, login, rowIterator(data));
+		try {
+			return importation(domain, login, rowIterator(data));
+		} catch (OfficeXmlFileException e){
+			return importationX(domain, login, data);
+		} 
 	}
 
 	public LinkedList<FeeInfo> importationX(Domain domain, String login, byte[] data){
@@ -217,6 +222,12 @@ public class FeeImport extends Import {
 		}
 		
 		FeeInfo feeInfo = fees.get(index);	
+		return insertFee(domain, user, index, feeInfo);
+	}
+	
+	public static Error insertFee(Domain domain, User user, Integer index, FeeInfo feeInfo) {
+		Error error = new Error().setLine(index).setError(true);
+	
 		Fee fee = feeInfo.getFee();
 		fee.setDomain(domain);
 		if(fee.getPeriod() == null) {

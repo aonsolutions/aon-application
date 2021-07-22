@@ -8,9 +8,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import com.esferalia.aon.gwt.template.shared.Error;
+
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,10 +19,11 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -37,32 +39,7 @@ import com.esferalia.aon.watson.util.AonArrayUtils;
 
 
 public class DiaryImport {
-	
-	public class AccountEntryImportClass {
-		private AccountEntry entry;
-		private Integer line;
 		
-		public AccountEntryImportClass() {
-			this.entry = new AccountEntry();
-		}
-
-		public AccountEntry getEntry() {
-			return entry;
-		}
-
-		public void setAccount(AccountEntry entry) {
-			this.entry = entry;
-		}
-	
-		public Integer getLine() {
-			return line;
-		}
-
-		public void setLine(Integer line) {
-			this.line = line;
-		}
-	}
-	
 	public static DiaryImport getInstance() {
 		return new DiaryImport();
 	}
@@ -91,6 +68,8 @@ public class DiaryImport {
 			return new LinkedList<AccountEntryImportClass>(diary.values());
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (OfficeXmlFileException e){
+			return importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {
@@ -361,6 +340,12 @@ public class DiaryImport {
 		}
 
 		AccountEntryImportClass ae = dvs.get(index);
+		return insertDiary(domain, user, index, ae);
+	}
+	
+	public static Error insertDiary(Domain domain, User user, Integer index, AccountEntryImportClass ae) {
+		Error error = new Error().setError(true);
+		
 		try {
 			
 			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), "", ae.getEntry().getEntryDate());

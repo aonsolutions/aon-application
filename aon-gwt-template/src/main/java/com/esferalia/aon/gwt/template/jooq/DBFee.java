@@ -20,8 +20,8 @@ import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.template.server.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AON;

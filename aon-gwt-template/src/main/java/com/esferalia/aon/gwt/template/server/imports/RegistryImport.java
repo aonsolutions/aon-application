@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +17,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 
 import com.esferalia.aon.gwt.template.server.projectCommercial.BankBic11;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -27,7 +29,6 @@ import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -60,7 +61,11 @@ public class RegistryImport extends Import {
 	}
 
 	public LinkedList<RegistryImportClass> importation(Domain domain, String login, byte[] data){
-		return importation(domain, login, rowIterator(data));
+		try {
+			return importation(domain, login, rowIterator(data));
+		} catch (OfficeXmlFileException e){
+			return importationX(domain, login, data);
+		} 
 	}
 
 	public LinkedList<RegistryImportClass> importationX(Domain domain, String login, byte[] data){
@@ -275,6 +280,11 @@ public class RegistryImport extends Import {
 			return error;
 		}
 		RegistryImportClass r = rvs.get(index);
+		return insertRegistry(domain, user, index, r);
+	}
+	
+	public static Error insertRegistry(Domain domain, User user, Integer index, RegistryImportClass r) {
+		Error error = new Error().setError(true);
 	
 		try {
 			if(r.getRegistry() != null && AonStringUtils.isBlank(r.getRegistry().getDocument()) && AonStringUtils.isBlank(r.getRegistry().getName())) {
@@ -542,124 +552,5 @@ public class RegistryImport extends Import {
 		return geoZone;
 	}
 	
-	public class RegistryImportClass {
-		
-		private Registry registry;
-		private Account account;
-		private String iban;
-		private String ccc;
-		private String bic;
-		private String type;
-		private Integer line;
-		private LinkedList<RegistryMedia> rmediaList;
-		private PayMethod paymethod;
 
-		
-		public RegistryImportClass() {
-			this.registry = new Registry()
-				.setMainAddress(new RAddress());
-			this.account = new Account();
-			this.paymethod = new PayMethod();
-		}
-
-		public Registry getRegistry() {
-			return registry;
-		}
-
-		public void setRegistry(Registry registry) {
-			this.registry = registry;
-		}
-
-		public Account getAccount() {
-			return account;
-		}
-
-		public void setAccount(Account account) {
-			this.account = account;
-		}
-
-		public String getIban() {
-			return iban;
-		}
-
-		public void setIban(String iban) {
-			this.iban = iban;
-		}
-
-		public String getBic() {
-			return bic;
-		}
-
-		public void setBic(String bic) {
-			this.bic = bic;
-		}
-		
-		public String getCcc( ) {
-			return ccc;
-		}
-		
-		public void setCcc(String ccc) {
-			this.ccc = ccc;
-		}
-		
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public Integer getLine() {
-			return line;
-		}
-
-		public void setLine(Integer line) {
-			this.line = line;
-		}
-
-		public LinkedList<RegistryMedia> getRmediaList() {
-			if(rmediaList == null) {
-				this.rmediaList = new LinkedList<RegistryMedia>();
-			}
-			return rmediaList;
-		}
-
-		public void setRmediaList(LinkedList<RegistryMedia> rmediaList) {
-			this.rmediaList = rmediaList;
-		}
-
-		public PayMethod getPaymethod() {
-			return paymethod;
-		}
-
-		public void setPaymethod(PayMethod paymethod) {
-			this.paymethod = paymethod;
-		}
-
-		public Boolean isCustomer() {
-			return (this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER")))
-					|| (this.account != null && this.account.getCode() != null
-						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("430"));
-		}
-
-		public Boolean isSupplier() {
-			return (this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR")))
-					|| (this.account != null && this.account.getCode() != null
-						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("400"));
-		}
-
-		public Boolean isCreditor() {
-			return (this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR")))
-					|| (this.account != null && this.account.getCode() != null
-						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410"));
-		}
-
-		public String getAccountPrefix() {
-			if(isCustomer()) return "430";
-			if(isSupplier()) return "400";
-			if(isCreditor()) return "410";
-			return null;
-		}
-	}
 }

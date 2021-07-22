@@ -1,8 +1,14 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class InvoicingGroup {
+public class InvoicingGroup implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private Date creationDate;
 	private String creationUser;

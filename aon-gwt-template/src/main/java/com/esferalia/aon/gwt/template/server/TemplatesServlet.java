@@ -47,19 +47,17 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.imports.DiaryImport;
-import com.esferalia.aon.gwt.template.server.imports.DiaryImport.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.server.imports.FeeImport;
 import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImport;
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
-import com.esferalia.aon.gwt.template.server.imports.PGCImport.AccountImportClass;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
-import com.esferalia.aon.gwt.template.server.imports.RegistryImport.RegistryImportClass;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIbanImport;
 import com.esferalia.aon.gwt.template.server.projectCommercial.ProjectCommercialImport;
+import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.shared.AccountImportClass;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
@@ -67,8 +65,11 @@ import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce.PresetValues;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
+import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
@@ -234,6 +235,37 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	HashMap<String,LinkedList<AccountImportClass>> accounts = new HashMap<String, LinkedList<AccountImportClass>>();
 	HashMap<String, DeliveryInfo> di;
 	LinkedList<String> verror;
+	
+	public LinkedList<InvoiceImportClass> executeInvoice(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.INVOICE, fileData);
+		return InvoiceImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	
+	public LinkedList<RegistryImportClass> executeRegistry(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.REGISTRY, fileData);
+		return RegistryImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	
+	public LinkedList<AccountImportClass> executePGC(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.PGC, fileData);
+		return PGCImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+
+	public LinkedList<AccountEntryImportClass> executeDiary(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.DIARY, fileData);
+		return DiaryImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	
+	public LinkedList<FeeInfo> executeFee(Domain domain , User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		saveImportation(domain, user, ImportType.FEE, fileData);
+		return FeeImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
 		this.ti = ti;
@@ -2723,9 +2755,19 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 	
 	@Override
+	public Error insertInvoice(Domain domain, User user, InvoiceImportClass invoice, Integer index) {
+		return InvoiceImport.insertInvoice(domain, user, index, invoice);
+	}
+	
+	@Override
 	public Error insertRegistries(Domain domain, User user, Integer index) {
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		return RegistryImport.insertRegistries(domain, user, index, rvs.get(hashId));			
+	}
+	
+	@Override
+	public Error insertRegistry(Domain domain, User user, RegistryImportClass registry, Integer index) {
+		return RegistryImport.insertRegistry(domain, user, index, registry);			
 	}
 	
 	@Override
@@ -2735,15 +2777,30 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	@Override
+	public Error insertDiary(Domain domain, User user, AccountEntryImportClass diary, Integer index) {
+		return DiaryImport.insertDiary(domain, user, index, diary);
+	}
+
+	@Override
 	public Error insertPGC(Domain domain, User user, Integer index) {
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		return PGCImport.insertPGC(domain, user, index, accounts.get(hashId));			
 	}
 	
 	@Override
+	public Error insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index) {
+		return PGCImport.insertPGC(domain, user, index, pgc);			
+	}
+	
+	@Override
 	public Error insertFee(Domain domain, User user, Integer index) {
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		return FeeImport.insertFees(domain, user, index, fis.get(hashId));			
+	}
+	
+	@Override
+	public Error insertFee(Domain domain, User user, FeeInfo fee, Integer index) {
+		return FeeImport.insertFee(domain, user, index, fee);
 	}
 
 	@Override

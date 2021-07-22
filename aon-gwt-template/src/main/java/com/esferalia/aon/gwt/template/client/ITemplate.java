@@ -3,11 +3,16 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.shared.AccountImportClass;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
+import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -56,14 +61,28 @@ public interface ITemplate extends RemoteService{
 	public Error insertProjectCommercial(Domain domain, User user);
 	
 	public Error insertInvoices(Domain domain, User user, Integer index);
+	public Error insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index);
 
 	public Error insertRegistries(Domain domain, User user, Integer index);
+	public Error insertRegistry(Domain domain, User user, RegistryImportClass registry, Integer index);
 	
 	public Error insertDiary(Domain domain, User user, Integer index);
+	public Error insertDiary(Domain domain, User user, AccountEntryImportClass diary, Integer index);
 	
 	public Error insertPGC(Domain domain, User user, Integer index);
+	public Error insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index);
 	
 	public Error insertCustomerIban(Domain domain, User user);
+	
+	public LinkedList<InvoiceImportClass> executeInvoice(Domain domain , User user, String data);
+	
+	public LinkedList<RegistryImportClass> executeRegistry(Domain domain , User user, String data);
+	
+	public LinkedList<AccountImportClass> executePGC(Domain domain , User user, String data);
+
+	public LinkedList<AccountEntryImportClass> executeDiary(Domain domain , User user, String data);	
+
+	public LinkedList<FeeInfo> executeFee(Domain domain , User user, String data);
 
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
 			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
@@ -106,5 +125,6 @@ public interface ITemplate extends RemoteService{
 	public void importRegistryEmptyFix(Domain domain, User user);
 
 	public Error insertFee(Domain domain, User user, Integer index);
+	public Error insertFee(Domain domain, User user, FeeInfo fee, Integer index);
 
 }

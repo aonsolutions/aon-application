@@ -1,12 +1,16 @@
-package com.esferalia.aon.gwt.template.server.imports;
+package com.esferalia.aon.gwt.template.shared;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 
-public class InvoiceImportClass {
+public class InvoiceImportClass implements IsSerializable {
+	
 	InvoiceOpType type;
 	InvoiceType invoiceType;
 	Date date;
@@ -38,6 +42,8 @@ public class InvoiceImportClass {
 	Date financeDate;
 	String financeAccount;
 	Boolean investment;
+	
+	LinkedList<InvoiceImportClass> lines;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -321,6 +327,18 @@ public class InvoiceImportClass {
 		this.investment = investment;
 		return this;
 	}
+	
+	public LinkedList<InvoiceImportClass> getLines() {
+		if(lines == null)
+			lines = new LinkedList<>();
+		return lines;
+	}
+	
+	public InvoiceImportClass setLines(LinkedList<InvoiceImportClass> lines) {
+		this.lines = lines;
+		return this;
+	}
+	
 	
 	public Boolean isEmpty() {
 		return getType() == null && getDate() == null && getRef() == null
