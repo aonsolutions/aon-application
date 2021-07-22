@@ -23,7 +23,7 @@ export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
-
+export const AON_FILE = 'aonFile';
 
 // ----- B
 

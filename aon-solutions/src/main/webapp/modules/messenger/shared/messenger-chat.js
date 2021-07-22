@@ -1,23 +1,37 @@
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
+import { openFileUrl } from "../../../services/fileService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { newComponent, setAttributes, setDateTimestampDay, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import { createAction, createDivEditable, createMessageAuthor, createMessageBox, createCommentContent, createTitle } from "../createComponents.js";
 import { ICON_TYPES, WORKFLOW_TYPES, WORKFLOW_TYPE, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
-import { checkFilesAddEventClick, checkProperties, createAonTextArea, createSpaceBetweenRow, createTaskHolder, createText, createWorkgroup, LEFT, RIGHT } from "./creationUtils.js";
+import { checkProperties, createAonTextArea, createTaskHolder, createText, createWorkgroup, LEFT, RIGHT } from "./creationUtils.js";
 import { buildMobileWritter } from "./messenger-writter.js";
 
 /**
  * Create desktop chat for messenger (mobile)
- * @param {*} aonMessengerChat 
- * @param {*} data 
+ * @param {HTMLElement} mainView htmlElement div principal
+ * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-export const buildMobileChat = (chatEl, aonMessengerChat) => {
-    const data = aonMessengerChat.getData();
-    chatEl.element.style.padding = 0;
+export const buildMobileChat = (mainView, aonMessengerChat) => {
+    const data = aonMessengerChat.task;
+
+    const firstView = newComponent({
+        classes: [CSS.FLEX_ROW],
+        styles: {
+          width: "100%",
+          height: "100%",
+          maxWidth: "600px",
+          padding: "0",
+        //   paddingRight: "20px",
+        //   paddingLeft: "20px",
+        },
+    });
+    firstView.appendTo(mainView);
+
     /**
      * Wrapper 
      * if some new menus / toolbars needed, here.
@@ -31,17 +45,17 @@ export const buildMobileChat = (chatEl, aonMessengerChat) => {
             fontSize: '14px'
         }
     });
-    wrapper.appendTo(chatEl.element);
+    wrapper.appendTo(firstView.element);
 
     /**
      * Building toolbars
      */
     const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title: aonMessengerChat.UPDATE ? "#"+(data.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
+        title: aonMessengerChat.task.id ? "#"+(data.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
     });
     
-    if(aonMessengerChat.UPDATE){
+    if(aonMessengerChat.task.id){
         wrapper.appendChild(toolbar);
     } else {
         buildMobileChatCreate(wrapper, toolbar, aonMessengerChat);
@@ -49,7 +63,7 @@ export const buildMobileChat = (chatEl, aonMessengerChat) => {
 
     //TOOLBAR BOTONS  
     toolbar.style.width = "100%"; 
-    if(!aonMessengerChat.UPDATE){
+    if(!aonMessengerChat.task.id){
         toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
     }    
     toolbar.addButton2(ACTIONS.BACK,() => {
@@ -101,7 +115,14 @@ export const buildMobileChat = (chatEl, aonMessengerChat) => {
     });
     title.appendTo(chat.element);
 
-    buildMobileWritter(wrapper, aonMessengerChat)
+    buildMobileWritter(wrapper, aonMessengerChat);
+
+    setTimeout(() => {
+        setStyles(mainView, {
+          opacity: 1,
+          marginTop: 0,
+        });
+      }, 100);
 }
 
 /**
@@ -109,7 +130,25 @@ export const buildMobileChat = (chatEl, aonMessengerChat) => {
  * @param {*} parent 
  * @param {*} data 
  */
-export const buildDesktopChat = (parent) => {
+export const buildDesktopChat = (aonMessengerChat) => {
+    const mainView = document.getElementById(MESSENGER_IDS.MAIN_DIV);
+    
+    const firstDiv = newComponent({
+        classes: [CSS.FLEX_ROW],
+        styles: {
+            width: "50%",
+            height: "90%",
+            minWidth: "400px",
+            maxWidth: "600px",
+            paddingTop: "5vh",
+            paddingRight: "40px",
+            paddingLeft: "40px",
+            display: !aonMessengerChat.task.id  ? "none" : null
+        },
+    }).element;
+
+    mainView.appendChild(firstDiv);
+
     /**
      * Wrapper 
      * if some new side menus / toolbars needed, here.
@@ -122,7 +161,7 @@ export const buildDesktopChat = (parent) => {
             height: '100%',
         }
     });
-    wrapper.appendTo(parent);
+    wrapper.appendTo(firstDiv);
 
     const title = createTitle(MSG.COMMENTS);
     setStyles(title.element, {
@@ -166,7 +205,7 @@ export const buildDesktopChat = (parent) => {
             height: "100%"
         }
     });
-    leftButtonBar.appendTo(parent);
+    leftButtonBar.appendTo(firstDiv);
 
     const upIcon = setAttributes(new AonIconButton(), {
         icon: MATERIAL_ICONS.EXPAND_LESS,
@@ -184,6 +223,16 @@ export const buildDesktopChat = (parent) => {
     downIcon.onclick = () =>  chat.element.scrollTo(0, chat.element.scrollHeight);
     leftButtonBar.appendChild(downIcon);
 
+     /**
+     * Setting the chat line once all is rendered
+     * DO NOT change this, is compulsory.
+     */
+    const lined = document.querySelector(".continueLined");
+    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
+    setTimeout(() => {
+      mainView.style.opacity = 1;
+      mainView.style.marginTop = 0;
+    }, 100);
 }
 
 /**
@@ -197,8 +246,8 @@ export const appendChatMessage = (properties) => {
     if(noMessage)
         chat.removeChild(noMessage);
 
-    const message = createChatMessage(properties, chat);
-    setStyles(message.element, {
+    const message = createChatMessage(properties, chat).element;
+    setStyles(message,{
         opacity : 0,
         marginTop : '20px',
         transition : ".25s"
@@ -208,7 +257,7 @@ export const appendChatMessage = (properties) => {
      * Appearing animation
      */
     setTimeout(() => {
-        setStyles(message.element, {
+        setStyles(message, {
             opacity : 1,
             marginTop : '10px'
         });
@@ -231,9 +280,6 @@ export const createChatMessage = (properties, chat) => {
     const description = createCommentContent(properties);
     description.appendTo(message.element);
 
-    // const footer = createSpaceBetweenRow({ paddingTop: '5px', height: "20px" });
-    // footer.appendTo(message.element);
-
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
@@ -246,11 +292,8 @@ export const createChatMessage = (properties, chat) => {
 
     checkFilesAddEventClick(message.element); //ADD EVENT CLICK
 
-    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
-
     return message;
 }
-
 
 export const changeStyleSelect = (aonSelect) => {
     const aonSelectInput = aonSelect.querySelector(TAG.INPUT);
@@ -288,7 +331,7 @@ export const changeStyleSelect = (aonSelect) => {
  */
 const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     const application = aonMessengerChat.applicationEl;
-    const data = aonMessengerChat.getData();
+    const data = aonMessengerChat.task;
     const newRequestPanel = newComponent({
         type: TAG.DIV,
         classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
@@ -315,7 +358,6 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
             paddingRight : "1.5em",
         });
     }
-
 
     const div = document.createElement(TAG.DIV);
     div.className = CSS.AON_MOBILE_SUB_CONTENT;
@@ -384,7 +426,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     // /**
     //  * Creating text area
     //  */
-    const aonTextArea = setStyles(createAonTextArea(aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`),{
+    const aonTextArea = setStyles(createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`),{
         height: "100%",
         width: "100%",
         marginTop : 0,
@@ -415,13 +457,15 @@ export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
         })
         const workgroups = application.getParent()._workgroups;
         if(workgroups && workgroups.length>0){
-            aonSelect.options = JSON.stringify(workgroups);
+            aonSelect.options = JSON.stringify(
+                workgroups.map( wg=> ({...wg, id: wg.value}) )
+            );
         }
         if(workgroup && workgroup.id){
             aonSelect.value = workgroup.id;
 
             if(task_holder && task_holder.id) 
-                fillTaskHolder(workgroup.id, taskHolderId);
+                fillTaskHolder(workgroup.id, task_holder.id);
         } 
        
     } catch (error) { console.log(error);}
@@ -434,7 +478,9 @@ const fillTaskHolder = async (workgroupId, taskHolderId=undefined) => {
         if(aonSelect){
             const taskHolders = await getTastHoldersWorkGroup({workgroupId});
             if(taskHolders && taskHolders.length>0){
-                aonSelect.options = JSON.stringify(taskHolders);
+                aonSelect.options = JSON.stringify(
+                    taskHolders.map( th=> ({...th, id: th.value}) )
+                );
             }
             if(taskHolderId) aonSelect.value = taskHolderId;
         }
@@ -465,12 +511,12 @@ export const fillChat = (workflows=[])=>{
                 const {id, comment, type, modification_date, task_holder:{name, alias, id:taskHolderId}} = workflow;
                 const me = taskHolderId == meId; // if taskHolder id is me
                 const message = {
+                    id,
+                    type,
+                    comment,
                     name: me ? "Yo" : alias,
                     direction: me ? RIGHT: LEFT,
-                    id: `messageId${id}`,
-                    date: new Date(modification_date),
-                    type,
-                    comment
+                    date: new Date(modification_date)
                 }
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
@@ -485,16 +531,15 @@ export const fillChat = (workflows=[])=>{
    })
 }
 
-
 /**
  * Choose icon for the actions
- * @param {*} actionType 
- * @returns 
+ * @param {Object} message
+ * @returns {Object} actionJson message new object
  */
  const chooseIconMessage = ({type, date, name, comment}) => {
     const dateParse = setFullDate(date) + " " + setTime(date);
     
-    let actionIcon = {
+    let actionJson = {
         icon : MATERIAL_ICONS.INFO,
         type : ICON_TYPES.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
@@ -502,12 +547,30 @@ export const fillChat = (workflows=[])=>{
     }
 
     if(WORKFLOW_TYPES.OPEN.indexOf(type)>=0){
-        actionIcon.color = CSS.variable(COLORS.ONLINE_GREEN);
+        actionJson.color = CSS.variable(COLORS.ONLINE_GREEN);
     }  else if(WORKFLOW_TYPES.CLOSE.indexOf(type)>=0){
-        actionIcon.icon = MATERIAL_ICONS.CLOSE;
+        actionJson.icon = MATERIAL_ICONS.CLOSE;
     }  else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
-        actionIcon.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
+        actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
     }
 
-    return actionIcon;
+    return actionJson;
+}
+
+/**
+ * 
+ * @param {HTMLElement} parent check html and add event 
+ * @param {*} json 
+ */
+const checkFilesAddEventClick = (parent)=>{
+    const elements = parent.querySelectorAll(`[${CONSTANT.TYPE}=${CONSTANT.AON_FILE}]`);
+    for (const element of elements) {
+        const url = element.src || element.href;
+        if(url) {
+            element.addEventListener(EVENT.CLICK, (ev)=>{
+                ev.preventDefault();
+                openFileUrl(url);
+            });
+        } 
+    }
 }

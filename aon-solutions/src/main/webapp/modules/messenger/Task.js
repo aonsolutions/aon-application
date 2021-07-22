@@ -10,34 +10,46 @@ export class Task {
     title;
     workflow;
     workflowTmp;
-
+    description;
     constructor() {
-        this.id          = undefined,
-        this.number      = undefined,
-        this.title       = undefined,
-        this.workgroup   = { id:null };
-        this.task_holder = { id:null };
+        this.id          = undefined;
+        this.number      = undefined;
+        this.title       = undefined;
+        this.description = undefined;
+        this.workgroup   = { };
+        this.task_holder = { };
         this.workflow    = [];
+        this.workflowTmp = {};
     }
 
-    createTask(task) {
-        if(task) {
-            this.id          = task.id || undefined;
-            this.number      = task.number || undefined;
-            this.domain      = task.domain || localStorage.getItem('aon_domain_id');
-            this.sender      = task.sender || undefined;
-            this.workgroup   = task.workgroup || {};
-            this.task_holder = task.task_holder || {};
-            this.title       = task.title || "";
-            this.workflow    = task.workflow || [];
-            this.workflowTmp = {
-                domain:this.domain,
-                comment:"",
-                task_holder: this.sender,
-                type: WORKFLOW_TYPES.COMMENT,
-            }
+  createTask(task) {
+    if(task) {
+        this.id          = task.id || undefined;
+        this.number      = task.number || undefined;
+        this.workgroup   = task.workgroup || {};
+        this.task_holder = task.task_holder || {};
+        this.title       = task.title || "";
+        this.workflow    = task.workflow || [];
+        this.workflowTmp = {
+            domain:this.domain,
+            comment:"",
+            task_holder: this.sender,
+            type: WORKFLOW_TYPES.COMMENT,
         }
+    }   
+  }
+
+  editTask(task){
+    if(task) {
+      if(task.id)                                 this.id          = task.id;
+      if(task.number)                             this.number      = task.number;
+      if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
+      if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
+      // if(task.title)                              this.title       = task.title;
+      // if(task.domain)                             this.domain      = task.domain;
+      // if(task.workflow)                           this.workflow    = task.workflow;
     }
+  }
 
   getId() {
     return this.id;
@@ -102,13 +114,30 @@ export class Task {
   setWorkflow(workflow){
     this.workflow = workflow;
   }
+
+  getWorkflowTmp(){
+    return this.workflowTmp;
+  }
+
+  setWorkflowTmp(workflowTmp){
+    this.workflowTmp = workflowTmp;
+  }
  
   addWorkflow(workflow) {
     this.workflow.push(workflow);
   }
 
+  setDescription(description) {
+    this.description = description;
+  }
+
+  getDescription(){
+    return this.description;
+  }
+ 
   deleteWorkflow(id) {
     this.workflow = this.workflow.filter(workflow=> workflow.id!=id);
   }
+  
 }
 

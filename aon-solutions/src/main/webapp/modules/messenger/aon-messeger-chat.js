@@ -1,18 +1,13 @@
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import {
-  newComponent,
   setAttributes,
   setClasses,
   setStyles,
   setValueName,
 } from "../../services/utils.js";
-import {
-  createMainView,
-  createMobileMainView
-} from "./createComponents.js";
 import {
   buildDesktopChat,
   buildMobileChat,
@@ -23,6 +18,7 @@ import {
   sendMessage,
 } from "./shared/messenger-writter.js";
 import {
+  MessengerSidenav,
   MESSENGER_COMPONENTS,
   MESSENGER_IDS,
   MESSENGER_VIEWS,
@@ -34,15 +30,14 @@ import {
   saveTask,
   getTaskWorkflow,
   saveTaskWorkflow,
-  saveTaskAttach,
-  getTaskAttach
+  saveTaskAttach
 } from "../../services/taskService.js";
+import { Task } from "./Task.js";
+import { createMainView, createMobileMainView } from "./createComponents.js";
 
 export class AonMessengerChat extends AonElement {
-  _data;
-  UPDATE;
-  FILES;
   task;
+  _data;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -68,26 +63,6 @@ export class AonMessengerChat extends AonElement {
     this.deleteToolbar();
   }
 
-  initialize() {
-    this.id = MESSENGER_VIEWS.AON_MESSENGER_CHAT;
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
-    this.deleteToolbar();
-    this.FILES=[];
-    this.setData({
-      id: undefined,
-      number: undefined,
-      title: undefined,
-      workgroup:{
-        id:null
-      },
-      task_holder:{
-        id:null
-      },
-      workflow: [],
-    });
-  }
-
   deleteToolbar() {
     try {
       this.getApplication().removeFloatOption();
@@ -95,108 +70,90 @@ export class AonMessengerChat extends AonElement {
     } catch (error) {}
   }
 
-  build() {
-    if (this.data && this.data.id) {
-      this.setData({...this._data,...this.data});
-      this.UPDATE = true;
-    }
+  initialize() {
+    this.id = MESSENGER_VIEWS.AON_MESSENGER_CHAT;
+    this.applicationEl = this.getApplication();
+    this.applicationParentEl = this.getApplicationParent();
+    this.deleteToolbar();
+    this.task = new Task();
+    const sender = this.applicationParentEl.SENDER;
+    this.task.setSender(sender);
+    this.task.setDomain(sender.domain.id);
+    this.task.createTask(this.data);
+    if(this.data.id) this.setData(this.data);
+  }
 
+ 
+  build() {
     this.paintView();
   }
 
   paintView() {
-    console.log(this.data);
     /*Base font-size*/
     this.style.fontSize = "12px";
-    /**
-     * Switching between mobile and desktop
-     */
-    if (this.isMobile()) {
+    
+    if (this.isMobile()) 
       this.paintMobile();
-    } else {
+    else 
       this.paintDesktop();
-    }
-    if (this.UPDATE) this.setValues();
+
+    if (this.task.id)   //FILL CHATS WORKFLOW
+      this.getTaskWorkflow();
+
+    this.eventListenerAll();
   }
 
   paintDesktop() {
     this.buildToolbarDesktop();
 
-    const mainView = createMainView();
-    mainView.appendTo(this);
+    const mainView = createMainView().element;
+    this.appendChild(mainView);
 
-    const writter = newComponent({
-      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
-      styles: {
-        width: "50%",
-        height: "100%",
-        minWidth: "400px",
-        maxWidth: "600px",
-        paddingTop: "5vh",
-        paddingRight: "20px",
-        paddingLeft: "60px",
-        top: 0,
-      },
-    });
-    writter.appendTo(mainView.element);
+    buildDesktopWritter(mainView, this);
 
-    buildDesktopWritter(writter, this);
-    this.buildCommentDesktop();
-
-    setTimeout(() => {
-      mainView.element.style.opacity = 1;
-      mainView.element.style.marginTop = 0;
-    }, 100);
+    buildDesktopChat(this);
   }
 
-  buildCommentDesktop() {
-    const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
-    const chat = newComponent({
-      classes: [CSS.FLEX_ROW],
-      styles: {
-        width: "50%",
-        height: "90%",
-        minWidth: "400px",
-        maxWidth: "600px",
-        paddingTop: "5vh",
-        paddingRight: "40px",
-        paddingLeft: "40px",
-      },
-    }).element;
-    if (!this.UPDATE) chat.style.display = "none";
+  paintMobile() {
+    if (this.task.id) {
+      let span = this.applicationEl.addFloatOption(MessengerSidenav.ADD_COMMENT, () => {
+          //Hidding float button
+          setStyles(span.querySelector("button"), { transition: "0.25s", opacity: 0});
+          // show writter
+          let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER), { display: "flex" });
+          setTimeout(() => setStyles(componentWrite, {zIndex: 9,opacity: 1,left: 0}), 100);
+        }
+      );
+    }
+    
+    const mainView = createMobileMainView().element;
+    this.appendChild(mainView);
 
-    mainView.appendChild(chat);
-    buildDesktopChat(chat);
-    /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = this.selector(".continueLined");
-    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
+    buildMobileChat(mainView, this);
   }
 
   buildToolbarDesktop() {
     const toolbar = setAttributes(new AonToolbar(), {
       id:"id",
       type:ToolbarType.SECONDARY,
-      title:"#" + (this.getData().number || "0").toString().padStart(5, 0)
+      title:"#" + (this.task.number || "0").toString().padStart(5, 0)
     });
 
     this.appendChild(toolbar);
 
+    toolbar.addButton2(ACTIONS.DELETE, () => this.applicationEl.development());
+
     toolbar.addButton2(ACTIONS.SAVE, () => this.save());
     toolbar.addButton2(ACTIONS.BACK, () => {
-      const mainView = this.getElement(MESSENGER_IDS.MAIN_DIV);
-      mainView.style.opacity = "0";
-      mainView.style.transition = ".25s";
-      setTimeout(() => {
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-      }, 250);
+      setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{
+        opacity:"0",
+        transition:".25s"
+      });
+
+      setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST), 250);
     });
 
-    const titleSpan = toolbar.querySelector(
-      `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}`
-    );
+    const titleSpan = toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` );
 
     setClasses(titleSpan, [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
 
@@ -209,130 +166,63 @@ export class AonMessengerChat extends AonElement {
     status.appendTo(titleSpan);
   }
 
-  paintMobile() {
-    if (this.UPDATE) {
-      let span = this.applicationEl.addFloatOption(
-        {
-          name: "Addcomment",
-          icon: "add_comment",
-          id: "Addcomment",
-        },
-        () => {
-          /**
-           * Hidding float button
-           */
-          setStyles(span.querySelector("button"), {
-            transition: "0.25s",
-            opacity: 0,
-          });
-          /**
-           * show writter
-           */
-          let componentWrite = setStyles(
-            document.getElementById(MESSENGER_COMPONENTS.WRITTER),
-            { display: "flex" }
-          );
-          setTimeout(() => {
-            setStyles(componentWrite, {
-              zIndex: 9,
-              opacity: 1,
-              left: 0,
-            });
-          }, 100);
-        }
-      );
-    }
-
-    const mainView = createMobileMainView();
-    mainView.appendTo(this);
-
-    const chat = newComponent({
-      classes: [CSS.FLEX_ROW],
-      styles: {
-        width: "100%",
-        height: "100%",
-        maxWidth: "600px",
-        paddingRight: "20px",
-        paddingLeft: "20px",
-      },
-    });
-    chat.appendTo(mainView.element);
-
-    buildMobileChat(chat, this);
-
-    setTimeout(() => {
-      setStyles(mainView.element, {
-        opacity: 1,
-        marginTop: 0,
-      });
-    }, 100);
-  }
-
-  setValues() {
-    const { workgroup, task_holder } = this.getData();
-    if (workgroup && workgroup.id)
-      setValueName(MESSENGER_IDS.WORKGROUP, workgroup.id);
-    if (task_holder && task_holder.id)
-      setValueName(MESSENGER_IDS.TASKHOLDER, task_holder.id);
-
-    //FILL CHATS WORKFLOW
-    this.getTaskWorkflow();
-  }
-
-  formSerialize() {
-    const sender = this.applicationParentEl.SENDER;
-    const domain = sender.domain.id;
-    const workgroupEl = this.selector("#" + MESSENGER_IDS.WORKGROUP);
-    const taskHolderEl = this.selector("#" + MESSENGER_IDS.TASKHOLDER);
-    const titleEl = this.selector(`#${MESSENGER_IDS.TITLE_TASK}`);
-    let json = {
-      domain,
-      sender,
-      id: this.getData().id,
-      title: titleEl ? titleEl.innerText : "",
-      workflow: [],
-      workflowTmp:{
-        domain,
-        comment:"",
-        task_holder: sender,
-        type: WORKFLOW_TYPES.COMMENT,
+  buildData(){
+    if (this.task.id) { //UPDATE
+      this.task.setWorkflow([]);
+      if( this.getData().workgroup && this.getData().workgroup.id!= this.task.getWorkgroup().id){
+        this.task.addWorkflow({
+            comment: this.task.getWorkgroup().description,
+            domain:this.task.getDomain(),
+            modification_date:new Date().getTime(),
+            task_holder: this.task.getSender(),
+            type: WORKFLOW_TYPES.ASSIGN,
+        });
       }
-    };
-
-    if(workgroupEl) json.workgroup =  { id:workgroupEl.value};
-    if(taskHolderEl) json.task_holder =  {id:taskHolderEl.value};
+      if( this.getData().task_holder && this.getData().task_holder.id!= this.task.getTaskHolder().id){
+        this.task.addWorkflow({
+          comment: this.task.getTaskHolder().description,
+          domain:this.task.getDomain(),
+          modification_date:new Date().getTime(),
+          task_holder: this.task.getSender(),
+          type: WORKFLOW_TYPES.ASSIGN,
+        });
+      }
+    } else {
+      this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
+      this.task.addWorkflow({...this.task.getWorkflowTmp(), comment:this.task.getDescription()}); // ADD COMMENT
+    }
+  }
+  
+  eventListenerAll(){
+    let titleEl = this.getElement(MESSENGER_IDS.TITLE_TASK)
+    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ()=> this.task.setTitle(titleEl.innerText) )
     
-    if (!this.UPDATE) {
-      json.workflow.push({...json.workflowTmp, type: WORKFLOW_TYPES.OPEN});
-    } else { //UPDATE
-      const workflowTmpTwo ={
-        domain,
-        modification_date:new Date().getTime(),
-        task_holder: sender,
-        type: WORKFLOW_TYPES.ASSIGN,
-      }
+    let workgroupEl = this.getElement(MESSENGER_IDS.WORKGROUP);
+    if(workgroupEl) workgroupEl.addEventListener(EVENT.CHANGE, ({detail})=> {
+      if(detail) this.task.setWorkgroup(detail);
+    });
 
-      if( json.workgroup && this.getData().workgroup && this.getData().workgroup.id!= json.workgroup.id){
-        workflowTmpTwo.comment = workgroupEl.getText();
-        json.workflow.push(workflowTmpTwo);
-      }
-      if( json.task_holder && this.getData().task_holder && this.getData().task_holder.id!= json.task_holder.id){
-        workflowTmpTwo.comment = taskHolderEl.getText();
-        json.workflow.push(workflowTmpTwo);
-      }
-    }
-    return json;
+    let taskHolderEl = this.getElement(MESSENGER_IDS.TASKHOLDER);
+    if(taskHolderEl) taskHolderEl.addEventListener(EVENT.CHANGE, ({detail})=>{
+      if(detail) this.task.setTaskHolder(detail)
+    });
+
+    let commentTaskEl = this.getElement(MESSENGER_IDS.COMMENT_TASK);
+    if(commentTaskEl) commentTaskEl.addEventListener(EVENT.KEYUP, ()=>{
+      if(commentTaskEl.value) this.task.setDescription(commentTaskEl.value)
+    });
   }
 
   async saveTaskWorkflow() {
     let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
     const comment = await sendMessage(aonTextArea); 
     try {
-      let {workflowTmp, id} = this.formSerialize();
       if(comment){
-        workflowTmp.task = id;
-        workflowTmp.comment = comment;
-        await saveTaskWorkflow(workflowTmp);
+        await saveTaskWorkflow({
+          ...this.task.getWorkflowTmp(),
+          task: this.task.id,
+          comment
+        });
       }
     } catch (error) {
       this.showError(error);
@@ -340,27 +230,25 @@ export class AonMessengerChat extends AonElement {
   }
 
   getTaskWorkflow() {
-    getTaskWorkflow({ taskId:this.getData().id }).then((workflow) => fillChat(workflow));
-  }
-
-  getTaskAttach() {
-    getTaskAttach({ taskId:this.getData().id }).then((taskAttachs) => {
-      console.log(taskAttachs);
+    getTaskWorkflow({ taskId:this.task.id }).then((workflow) => {
+      this.task.setWorkflow(workflow);
+      fillChat(workflow);
     });
   }
 
   async save() {
+    this.buildData();
     this.applicationEl.startLoading();
     try {
-      const form = this.formSerialize();
-      if (form.title) {
-        const data = await saveTask(form);
-        if(this.UPDATE){
-          this.setData({...form,...data});
-          if(form.workflow.length) fillChat(form.workflow);
+      if (this.task.getTitle()) {
+        const data = await saveTask(this.task);
+        this.task.editTask(data);
+        if(this.getData().id){
+          this.setData(data);
+          if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+        } else {
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
         }
-        else 
-          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
       }
     } catch (error) {
       this.showError(error);
@@ -370,21 +258,15 @@ export class AonMessengerChat extends AonElement {
 
   async uploadFile({file, taskId}) {
     let taskAttach = null;
-    try {
-      taskAttach = saveTaskAttach({file, taskId});
-    } catch (error) { }
-    return taskAttach
+    try { taskAttach = await saveTaskAttach({file, taskId}); } catch (e) {}
+    return taskAttach;
   }
 
-  selector(selector) {
-    return document.querySelector(selector);
-  }
-
-  getData(){
-    return this._data;
-  }
   setData(data){
     this._data = data;
+  }
+  getData(){
+    return this._data || {};
   }
 }
 
