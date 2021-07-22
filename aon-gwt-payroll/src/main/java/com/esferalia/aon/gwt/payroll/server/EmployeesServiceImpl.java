@@ -5292,8 +5292,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get EmployeeContractInfo
 			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
 			
+			// Get SistemaRED employee to check situation
 			try {
-				// Get SistemaRED employee to check situation
+				
 				if(AonStringUtils.isNotBlank(employeeContractInfo.getContractInfo().getCompleteCCC())) {
 				
 					solutions.aon.seg.social.object.Employee employeeSistemaRED = SistemaRED.getEmployee(
@@ -5304,7 +5305,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 							employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
 							employeeContractInfo.getEmployeeInfo().getSsNumber());
 					
-					System.out.println("\nGetEmployeeInfoDataBase Situation SistemaRED\n" + employeeSistemaRED.toString() + "\n");
+					System.out.println("\nEmployee SistemaRED\n" + employeeSistemaRED.toString() + "\n");
 					
 					if(null != employeeSistemaRED)
 						employeeContractInfo.getContractInfo().setIsTGSSActive(AonStringUtils.containsIgnoreCase(employeeSistemaRED.getSituacion(), "AL"));
@@ -5314,11 +5315,49 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				e.printStackTrace();
 			} 
 			
+			// Check SepeId
+			String sepeId = employeeContractInfo.getContractInfo().getSepeId();
+			
+			if(AonStringUtils.isBlank(sepeId)) {
+				
+					try {
+						// Get SEPE certificate
+						Certificate certificaSepe = null;
+						try {
+							certificaSepe = AON.getCertificateSEPE(domainName, domainId, userLogin);
+						} catch (CertificateNotFoundException e) {}
+						
+						if(null != certificaSepe) {
+							aon.sepe.objects.Contract contratoSEPE = Sepe.getContractData(
+									new ByteArrayInputStream(certificaSepe.getCertificate()), 
+									certificaSepe.getPassword(), 
+									certificaSepe.getType(), 
+									employeeContractInfo.getEmployeeInfo().getDocument(), 
+									employeeContractInfo.getContractInfo().getStartDate(), 
+									null == employeeContractInfo.getContractInfo().getEndDate() ? employeeContractInfo.getContractInfo().getStartDate() : employeeContractInfo.getContractInfo().getEndDate());
+							
+							System.out.println("\nContract SEPE\n" + contratoSEPE.toString() + "\n");
+							
+							if(AonStringUtils.isNotBlank(contratoSEPE.getSepeId())) {
+								// Set Sepe Ide
+								JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), contratoSEPE.getSepeId());
+
+								employeeContractInfo.getContractInfo().setSepeId(contratoSEPE.getSepeId());
+							}
+						}
+						
+					} catch (SepeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+			}
+			
 			return employeeContractInfo;
 			
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} 
+			throw new IllegalArgumentException(e);
+		}
 		
 	}
 
@@ -6131,7 +6170,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println(employeeAux.getNss());
 
 			// cambioCatProf
-			SistemaRED.cambioCatProf(new ByteArrayInputStream(certificate.getCertificate()), 
+			SistemaRED.cambioCatProf(
+					new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					employeeContractInfo.getEmployeeInfo().getDocument(),
@@ -6192,6 +6232,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Sepe.sendContratoCopyBasic(certificateIS, certificate.getPassword(), certificate.getType(), ipf, startDate,
 					endDate, FirmType.values()[signType], workplaceAddress, restContract);
+
+		} catch (SQLException | SepeException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void removeContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			// Get SEPE certificate
+			Certificate certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
+
+			// Get contract SEPE id
+			String sepeId = employeeContractInfo.getContractInfo().getSepeId();
+			
+			// Remove Contrato from SEPE
+			Sepe.removeContrato(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(),
+					sepeId);
+			
+			// Remove SEPE id from DB
+			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e);

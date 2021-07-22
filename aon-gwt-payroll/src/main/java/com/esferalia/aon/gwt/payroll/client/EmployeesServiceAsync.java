@@ -287,12 +287,12 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- SEPE Comunications
 	
-	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			AsyncCallback<Void> callback);
+	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			AsyncCallback<Void> callback);
+	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
+	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback);
+	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;

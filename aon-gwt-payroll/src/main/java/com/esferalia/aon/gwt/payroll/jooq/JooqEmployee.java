@@ -965,6 +965,17 @@ public class JooqEmployee {
 			
 			contractData.setHasCertifica2(sepeBatchAttachRecord != null);
 		}
+		
+		// ---------------------------------------------- Sepe Id
+		
+		Record sepeIdRecord = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("SEPE_ID"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contract))
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetchOne();
+		
+		if(null != sepeIdRecord)
+			contractData.setSepeId(sepeIdRecord.get(CONTRACT_DATA.EXPRESSION));
 			
 //		System.out.println(employeeData.toString());
 //		System.out.println(contractData.toString());

@@ -354,6 +354,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void removeContractoSEPE(String currentDomainName, String currentUser,
+				EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
@@ -700,6 +707,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void getCertifica2Info(String currentDomainName, Integer contractId,
 							AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void removeContractoSEPE(String currentDomainName, String currentUser,
+							EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}

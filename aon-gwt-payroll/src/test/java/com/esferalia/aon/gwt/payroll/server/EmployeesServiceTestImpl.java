@@ -876,4 +876,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public void removeContractoSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractData) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

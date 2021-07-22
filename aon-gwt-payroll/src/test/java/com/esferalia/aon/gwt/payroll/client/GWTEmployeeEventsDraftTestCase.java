@@ -414,6 +414,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void removeContractoSEPE(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

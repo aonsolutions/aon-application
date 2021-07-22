@@ -2640,4 +2640,19 @@ public class JooqContrataContract {
 		} 
 	}
 
+	public static void removeSepeId(String domainName, Integer contractId, String sepeId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
+				.and(CONTRACT_DATA.EXPRESSION.eq(sepeId))
+				.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+
 }
