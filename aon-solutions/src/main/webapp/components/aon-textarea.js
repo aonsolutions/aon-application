@@ -1,5 +1,6 @@
-import { CONSTANT, CSS, TAG} from '../environments/environments.js';
-import { newComponent, waitEl } from '../services/utils.js';
+import { CONSTANT, CSS, EVENT, TAG} from '../environments/environments.js';
+import { openFileUrl } from '../services/fileService.js';
+import { convertBase64Url, getReader, newComponent, waitEl } from '../services/utils.js';
 import { AonElement } from './AonElement.js';
 
 export class AonTextArea extends AonElement {
@@ -8,6 +9,7 @@ export class AonTextArea extends AonElement {
 	TOOLBAR;
 	LEFT;
 	RIGHT;
+	FILES;
 	// COMPILE;
 
 	static get observedAttributes() {
@@ -120,6 +122,7 @@ export class AonTextArea extends AonElement {
 		super();
 		this.left = "left";
 		this.right = "right";
+		this.FILES = [];
 	}
 
 	connectedCallback () {
@@ -164,56 +167,8 @@ export class AonTextArea extends AonElement {
 		});
 		right.appendTo(bar.element);
 
-		// const eye = newComponent({
-		// 	text: MATERIAL_ICONS.VISIBILITY,
-		// 	id: "preview",
-		// 	classes: 
-		// 	[
-		// 		'icon',
-		// 		"material-icons",
-		// 		CSS.CENTER_FLEX
-		// 	],
-		// 	dataset :{
-		// 		selected : false
-		// 	}, 
-		// });
-
 		const textarea = this.generateTextArea();
 		textarea.appendTo(this);
-		// setEvents(eye.element,
-		// 	{click : 
-		// 		() => {
-		// 			const backup = this.generateTextArea().element;
-		// 			if(eye.element.dataset.selected == "false"){
-		// 				eye.element.innerHTML = MATERIAL_ICONS.VISIBILITY_OFF;
-		// 				eye.element.dataset.selected = true;
-		// 				this.dataset.value = backup.value;
-						
-		// 				const preview = newComponent({
-		// 					type : 'pre',
-		// 					classes : [CSS.NO_COPY],
-		// 					text :  this.COMPILE(),
-		// 					styles : {
-		// 						height : '100%',
-		// 						margin : 0
-		// 					}
-		// 				});
-
-		// 				this.removeChild(backup);
-		// 				this.appendChild(preview.element);
-		// 			} 
-		// 			else{
-		// 				eye.element.innerHTML = MATERIAL_ICONS.VISIBILITY;
-		// 				eye.element.dataset.selected = false;
-
-		// 				const preview = this.querySelector("pre");
-		// 				this.removeChild(preview);
-		// 				this.appendChild(backup);
-		// 			} 	
-		// 		}
-		// 	}
-		// );
-		// eye.appendTo(left.element);
 	}
 
 	getSelection() {
@@ -227,14 +182,15 @@ export class AonTextArea extends AonElement {
 	} 
 
 	generateTextArea(){
-		const area = newComponent({
+		return  newComponent({
 			type: TAG.DIV,
 			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
 				contentEditable: true,
-				name: this.name
+				name: this.name,
+				placeholder: this.placeholder ? this.placeholder : null
 			},
 			styles : {
 				userSelect : 'text',
@@ -243,66 +199,10 @@ export class AonTextArea extends AonElement {
 				background: '#fff'
 			}
 		});
-		if(this.placeholder) area.element.setAttribute("placeholder", this.placeholder);
-
-		return area;
-		// let area = newComponent({
-		// 	type: "textarea",
-		// 	classes : [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL],
-		// 	id: this.TEXTAREA,
-		// 	text : this.dataset.value,
-		// 	styles : {
-		// 		userSelect : 'text',
-		// 		height: '100%'
-		// 	}
-		// });
-
-
-
-		// area.element.addEventListener('keydown', function(e) {
-		// 	if (e.key == 'Tab') {
-		// 	  e.preventDefault();
-		// 	  const start = this.selectionStart;
-		// 	  const end = this.selectionEnd;
-		  
-		// 	  // set textarea value to: text before caret + tab + text after caret
-		// 	  this.innerHTML = this.innerHTML.substring(0, start) +
-		// 		"\t" + this.innerHTML.substring(end);
-		  
-		// 	  // put caret at right position again
-		// 	  this.selectionStart =
-		// 		this.selectionEnd = start + 1;
-		// 	}
-		// });
-		
-		// area.element.addEventListener('focusout', ({target}) => {
-
-		// 	let start = area.element.selectionStart;
-		// 	let end = area.element.selectionEnd;
-		// 	let text = target.value;
-		// 	if(start === end)
-		// 		end = parseInt(start) +(text ? parseInt(text.substr(start).split(" ")[0].length) : -1);
-
-		// 	setDataset(area.element,{
-		// 		lastFocusedText : getSelection(),
-		// 		start,
-		// 		end
-		// 	});
-		// });
-
-		// area.element.addEventListener('focusin', () => {
-		// 	setDataset(area.element,{
-		// 		lastFocusedText : "",
-		// 		start: -1,
-		// 		end: -1
-		// 	});
-		// });
-
-		// return area;
 	}
 
 	clear(){
-		const area = this.getDivTextArea();
+		const area = this.getTextAreaDiv();
 		area.innerHTML = "";
 		area.value = "";
 	}
@@ -311,7 +211,7 @@ export class AonTextArea extends AonElement {
 		this.getElement(this.TOOLBAR).remove();
 	}
 
-	getDivTextArea(){
+	getTextAreaDiv(){
 		return this.getElement(this.TEXTAREA);
 	}
 
@@ -346,6 +246,40 @@ export class AonTextArea extends AonElement {
 	}
 
 	getValue() {return this.value && this.value === 'true';}
+
+	async addFiles(files){
+		const textAreaDiv = this.getTextAreaDiv();
+		for await (const file of files) {
+			const reader = await getReader(file).catch(e=>null);
+			if(reader) {
+				const fileId = Math.random().toString(36).substring(7);
+				this.FILES.push({
+					contentType: reader.contentType,
+					content: reader.content,
+					id:fileId
+				})
+				const url = convertBase64Url(reader.content, reader.contentType);
+				let element = null;
+				if(reader.contentType && reader.contentType.indexOf("image")>-1){
+					element = document.createElement(TAG.IMG);
+					element.src = url;
+					element.className = CSS.AON_IMG_COMMENT;
+				} else  {
+					element = document.createElement("a");
+					element.target = "_blank";
+					element.className = CSS.AON_LINK;
+					element.href = url;
+					element.textContent = reader.name;
+				}
+
+				element.dataset.id = fileId;
+				element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
+				element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
+				textAreaDiv.appendChild(element);
+				textAreaDiv.appendChild(document.createElement("br"));
+			}
+		}
+	}
 }
 if(!window.customElements.get('aon-textarea')){
 	window.customElements.define('aon-textarea',  AonTextArea);

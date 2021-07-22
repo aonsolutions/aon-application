@@ -1,9 +1,8 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
-import { convertBase64Url, getReader, newComponent, setAttributes, setStyles } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import {  createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
@@ -14,12 +13,28 @@ import { appendChatMessage, fillWorkGroup } from "./messenger-chat.js";
 
 /**
  * Build desktop version of the writter 
- * @param {*} aonMessengerChat 
- * @param {*} data 
+ * @param {HTMLElement} mainView htmlElement div principal
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-export const buildDesktopWritter = (writter, aonMessengerChat) => {
-    const data = aonMessengerChat.getData();
+export const buildDesktopWritter = (mainView, aonMessengerChat) => {
+    const data = aonMessengerChat.task;
     const application = aonMessengerChat.applicationEl;
+
+    const writter = newComponent({
+      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
+      styles: {
+        width: "50%",
+        height: "100%",
+        minWidth: "400px",
+        maxWidth: "600px",
+        paddingTop: "5vh",
+        paddingRight: "20px",
+        paddingLeft: "60px",
+        top: 0,
+      },
+    });
+    writter.appendTo(mainView);
+
     /**
      * Building title
      */
@@ -43,12 +58,12 @@ export const buildDesktopWritter = (writter, aonMessengerChat) => {
     receiverDiv.element.appendChild(taskHolderSelect);
 
 
-    const aonTextArea = createAonTextArea(aonMessengerChat.UPDATE ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`);
+    const aonTextArea = createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`);
 
     writter.appendChild(aonTextArea);
     buildTextareaToolbar(aonTextArea);
 
-    if(aonMessengerChat.UPDATE){ //UPDATE
+    if(aonMessengerChat.task.id){ //UPDATE
         /**
          * Creating send bar
          */
@@ -77,13 +92,12 @@ export const buildDesktopWritter = (writter, aonMessengerChat) => {
         const sendIcon = createSendIcon();
         sendIcon.appendTo(sendButton);
     }
- 
 }
 
 /**
  * Build mobile version of the writter 
- * @param {*} parent 
- * @param {*} data 
+ * @param {HTMLElement} wrapper 
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat component 
  */
 export const buildMobileWritter = (wrapper, aonMessengerChat) => { 
     const writter = newComponent({
@@ -171,7 +185,7 @@ export const sendMessage = async (aonTextArea) => {
     if(!value || (value && !value.trim().length)) return ;
 
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const data = aonMessengerChat.getData();
+    const data = aonMessengerChat.task;
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
         sender: "Yo",
@@ -202,9 +216,11 @@ export const sendMessage = async (aonTextArea) => {
 
     aonMessengerChat.data = data;
 
+    const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
+    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
+
     return value;
 }
-
 
 /**
  * Build standard toolbar options 
@@ -277,7 +293,8 @@ const createLink =() =>{
  * @param {HTMLElement} upload div button and file send
  */
 const addButtonFileSend = (upload)=>{
-
+    const textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+    
     const highlight = ()   => upload.classList.add('highlight');
     const unhighlight = () => upload.classList.remove('highlight');
     [EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => upload.addEventListener(eventName, highlight, false));
@@ -285,7 +302,7 @@ const addButtonFileSend = (upload)=>{
 
     upload.addEventListener(EVENT.DROP, (ev) => {
         if(ev && ev.dataTransfer && ev.dataTransfer.files){
-            previewFile(ev.dataTransfer.files);
+            textArea.addFiles(ev.dataTransfer.files);
         }
     });
     
@@ -297,49 +314,10 @@ const addButtonFileSend = (upload)=>{
         multiple:true
     });        
     inputFile.style.display = "none";
-    inputFile.addEventListener(EVENT.CHANGE, () => previewFile(inputFile.files));
+    inputFile.addEventListener(EVENT.CHANGE, () => textArea.addFiles(inputFile.files));
     upload.appendChild(inputFile);
 
     upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
-}
-
-const previewFile = async (files)=> {
-    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const textAreaDiv = document.getElementById(MESSENGER_IDS.COMMENT_TASK).getDivTextArea();
-    const data = aonMessengerChat.getData();
-    for await (const file of files) {
-        const reader = await getReader(file).catch(e=>null);
-        if(reader) {
-            const fileId = Math.random().toString(36).substring(7);
-            aonMessengerChat.FILES.push({
-                domain: data.domain,
-                task: data.id,
-                contentType: reader.contentType,
-                content: reader.content,
-                id:fileId
-            })
-            const url = convertBase64Url(reader.content, reader.contentType);
-            let element = null;
-            if(reader.contentType && reader.contentType.indexOf("image")>-1){
-                element = setAttributes(document.createElement(TAG.IMG),{
-                    src:url,
-                    class:CSS.AON_IMG_COMMENT
-                });
-            } else  {
-                element = setAttributes(document.createElement("a"),{
-                    target:"_blank",
-                    class:CSS.AON_LINK,
-                    href:url
-                });
-                element.textContent = reader.name;
-            }
-            element.dataset.id = fileId;
-            element.setAttribute(CONSTANT.TYPE, WORKFLOW_TYPES.AON_FILE);
-            element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
-            textAreaDiv.appendChild(element);
-            textAreaDiv.appendChild(document.createElement("br"));
-        }
-    }
 }
 
 /**
@@ -348,17 +326,19 @@ const previewFile = async (files)=> {
  * check files and send uploadFile(taskAttach) 
  */
 const checkFilesAndSend = async (textArea)=>{
+    const buttonSend = document.getElementById(MESSENGER_IDS.BUTTON_SEND);
+    buttonSend.disabled = true;
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-        const textAreaDiv = textArea.getDivTextArea();
+        const textAreaDiv = textArea.getTextAreaDiv();
         const elements = textAreaDiv.querySelectorAll(`[${CONSTANT.TYPE}=${WORKFLOW_TYPES.AON_FILE}]`);
-        const {id:taskId} = aonMessengerChat.getData();
-        const files = aonMessengerChat.FILES;
+        const {id:taskId} = aonMessengerChat.task;
+        const files = textArea.FILES;
         for await (const el of elements) {
             const fileId = el.dataset.id;
             const file = files.find(({id})=> id == fileId);
             if(file){
-                const taskAttach = await aonMessengerChat.uploadFile({file, taskId});
+                const taskAttach = await aonMessengerChat.uploadFile({ file, taskId });
                 if(taskAttach){
                     const json = {
                         domain_name: domainName(),
@@ -377,49 +357,6 @@ const checkFilesAndSend = async (textArea)=>{
                 }
             }
         }
-    } catch (error) { 
-        console.log(error);
-    }
+    } catch (error) { console.log(error); }
+    buttonSend.disabled = false;
 }
-
-
-/**
- * Set markup to selection
- * @param {*} element - The input itself (Aon-textarea>textarea)
- * @param {*} funct - The Compile function.
- */
-//  const setSelectionMarkup = (element, funct, conditions) => {
-//     /**
-//      * Get text and selected 
-//      * text start and end indexes
-//      */
-//     const text = element.innerText;
-//     let start = element.dataset.start;
-//     let end = element.dataset.end;
-//     /**
-//      * If invalid index then return;
-//      */
-//     if (start == -1)  return;
-//     /**
-//      * If conditions are valid,
-//      * then compile in markup.
-//      */
-//     const selection = text.substring(start, end);
-
-//     console.log(start, end, selection);
-
-//     if (conditions(text, selection , start, end)){
-
-//         const compiled = funct(selection);
-//         let pre = "";
-//         let post = "";
-
-//         if(start !== 0)
-//             pre = text.substr(0, start);
-        
-//         if(end !== text.length)
-//             post = text.substr(end, text.length);
-
-//         element.value = pre + compiled + post;
-//     }
-// }

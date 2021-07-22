@@ -1,8 +1,7 @@
 import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
-import { newComponent, setAttributes } from "../../services/utils.js";
+import { newComponent } from "../../services/utils.js";
 import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText, RIGHT } from "./shared/creationUtils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "./MessengerEnums.js";
-import { AonInput } from "../../components/aon-input.js";
 
 const fontColor = CSS.variable(COLORS.GRAYSON);
 
@@ -29,6 +28,7 @@ export const createMainView = () => newComponent({
 
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
+  id: MESSENGER_IDS.MAIN_DIV,
   classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
   styles: {
     transition: ".5s",
@@ -197,6 +197,7 @@ export const createButtonWrapper = () => newComponent({
 export const createSendButton = (text=null) => newComponent({
   type: TAG.BUTTON,
   text: text || MSG.SEND,
+  id: MESSENGER_IDS.BUTTON_SEND,
   classes: [
     "materialButton",
     CSS.FLEX_ROW,
@@ -299,7 +300,6 @@ export const createExpandIcon = () => newComponent({
 export const createMessageBox = (properties) => newComponent({
   type: MESSENGER_COMPONENTS.MESSAGE,
   classes : [CSS.FLEX_COLUMN],
-  id : properties.id,
   styles: {
       margin: '10px',
       padding: '20px',
@@ -309,6 +309,9 @@ export const createMessageBox = (properties) => newComponent({
       maxWidth: '500px',
       width: '96%',
      // overflow: 'hidden'
+  },
+  dataset:{
+    id: properties.id
   }
 });
 

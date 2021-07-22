@@ -45,3 +45,45 @@
 //     return compiled;
 //   }
 
+
+
+/**
+ * Set markup to selection
+ * @param {*} element - The input itself (Aon-textarea>textarea)
+ * @param {*} funct - The Compile function.
+ */
+//  const setSelectionMarkup = (element, funct, conditions) => {
+//     /**
+//      * Get text and selected 
+//      * text start and end indexes
+//      */
+//     const text = element.innerText;
+//     let start = element.dataset.start;
+//     let end = element.dataset.end;
+//     /**
+//      * If invalid index then return;
+//      */
+//     if (start == -1)  return;
+//     /**
+//      * If conditions are valid,
+//      * then compile in markup.
+//      */
+//     const selection = text.substring(start, end);
+
+//     console.log(start, end, selection);
+
+//     if (conditions(text, selection , start, end)){
+
+//         const compiled = funct(selection);
+//         let pre = "";
+//         let post = "";
+
+//         if(start !== 0)
+//             pre = text.substr(0, start);
+        
+//         if(end !== text.length)
+//             post = text.substr(end, text.length);
+
+//         element.value = pre + compiled + post;
+//     }
+// }

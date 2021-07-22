@@ -40,7 +40,8 @@ export const MESSENGER_IDS = {
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
     TITLE_TASK: "titleTask",
-    INPUT_FILES: "inputFiles"
+    INPUT_FILES: "inputFiles",
+    BUTTON_SEND: "buttonSend"
 }
 
 export const WORKFLOW_TYPES = {
@@ -86,3 +87,13 @@ export const REQUEST_FILTER = {
     ABIERTAS : "abiertas",
     CERRADAS : "cerradas"
 }
+
+
+export const MessengerSidenav = {
+    ADD_COMMENT: {
+        name: "Addcomment",
+        icon: "add_comment",
+        id: "Addcomment",
+    }
+};
+  
