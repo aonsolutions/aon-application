@@ -1517,7 +1517,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		extraButton.ensureDebugId("extraButton");
 		extraButton.setVisible(false);
 		salaryDraft.setExtraButton(extraButton);
-		salaryDraftButtos.add(extraButton);
+		hPanel.add(extraButton);
 
 		fxButton = new AonToolbarButton( "FX", AON.CSS.aonIconFx() );
 		fxButton.addClickHandler(e -> {
