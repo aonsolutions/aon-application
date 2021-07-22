@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,12 +16,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import solutions.aon.selenium.AbstractTestCase;
 import solutions.aon.selenium.solutions.id.AonIdHome;
-
+@Ignore
 public class TimeControlTestCase extends AbstractTestCase {
 	
 	private static WebDriver driver;
 	
-	@BeforeClass
+//	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
         driver = newChromeDriver();
@@ -29,7 +30,7 @@ public class TimeControlTestCase extends AbstractTestCase {
         
 	}
 
-	@AfterClass
+//	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		logout(driver);
 		driver.quit();

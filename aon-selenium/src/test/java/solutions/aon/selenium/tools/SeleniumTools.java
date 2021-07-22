@@ -2,7 +2,6 @@ package solutions.aon.selenium.tools;
 
 import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
-import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -16,7 +15,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -237,7 +235,12 @@ public class SeleniumTools {
 		js.executeScript(script);
 	}
 	
-	//The way to get elements clicked without random 'StaleElementReferenceException' exceptions
+	/**
+	 * Method to get elements clicked without random 'StaleElementReferenceException' exceptions
+	 * @param driver The WebDriver
+	 * @param by The selector
+	 * @return returns if element's been eventually clicked or failed
+	 */
 	public static boolean retryingFindClick(WebDriver driver, By by) {
 	    boolean result = false;
 	    int attempts = 0;
@@ -252,17 +255,42 @@ public class SeleniumTools {
 	    }
 	    return result;
 	}
-		
-	public static void waitNClick(WebDriver app, By by) {
-		waitNClick(app,by, 10);
-	}
 	
-	public static void waitNClick(WebDriver app, By by, int customTimeout) {
-		WebDriverWait wait = new WebDriverWait(app, customTimeout);
+	/**
+	 * Clicks an element with a 10s explicit wait
+	 * @param driver The WebDriver
+	 * @param by The selector
+	 */
+	public static void click(WebDriver driver, By by) {
+		waitNClick(driver,by, 10);
+	}
+	/**
+	 * Clicks an element with the desired WebDriverWait object
+	 * @param driver The WebDriver
+	 * @param wait The explicit wait
+	 * @param by The selector
+	 */
+	public static void click(WebDriver driver, WebDriverWait wait, By by) {
 		wait.until(ExpectedConditions.elementToBeClickable(by));
-		retryingFindClick(app, by);
+		retryingFindClick(driver, by);
 	}
 	
+	/**
+	 * Clicks an element with a custom timeout
+	 * @param driver The WebDriverWait
+	 * @param by The selector
+	 * @param customTimeout The custom timeout to wait for the wished element
+	 */
+	public static void waitNClick(WebDriver driver, By by, int customTimeout) {
+		WebDriverWait wait = new WebDriverWait(driver, customTimeout);
+		wait.until(ExpectedConditions.elementToBeClickable(by));
+		retryingFindClick(driver, by);
+	}
+	
+	/**
+	 * Returns system's default download path (only if the system language is set in english or spanish)
+	 * @return System's default download path
+	 */
 	public static String getDownloadPath() {
 		String downloadFolder = System.getProperty("user.home") + File.separator + "Descargas";
 		
@@ -274,6 +302,11 @@ public class SeleniumTools {
 		return downloadFolder;
 	}
 	
+	/**
+	 * Clicks an element until it throws an exception
+	 * @param elem The WebElement to click
+	 * @return Returns whether the element's been eventually clicked
+	 */
 	public static boolean clickUntilNotExists(WebElement elem) {
 	    boolean result = false;
 	    int attempts = 0;
@@ -289,11 +322,16 @@ public class SeleniumTools {
 	    return result;
 	}
 	
-	
-	public static boolean clickUntilNotExists(WebDriver app, By by) {
+	/**
+	 * Clicks an element until it throws an exception
+	 * @param driver The WebDriver
+	 * @param by The selector
+	 * @return Returns whether the element's been eventually clicked
+	 */
+	public static boolean clickUntilNotExists(WebDriver driver, By by) {
 	    boolean result = false;
 	    int attempts = 0;
-	    WebElement elem = new WebDriverWait(app, 10).until(ExpectedConditions.elementToBeClickable(by));
+	    WebElement elem = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(by));
 	    while(attempts < 8) {
 	    	try {
 	            elem.click();
@@ -306,12 +344,33 @@ public class SeleniumTools {
 	    return result;
 	}
 	
+	/**
+	 * Compares two Doubles (e.g. the one extracted from an element and the expected one), rounding the expected one if necessary
+	 * @param actualAmount The real amount (e.g. the one extracted from an element)
+	 * @param expectedAmount The expected amount
+	 * @return Returns if two numbers are the same
+	 */
 	public static boolean checkAmount(Double actualAmount, Double expectedAmount) {
-		expectedAmount = Math.round(expectedAmount*100.0) / 100.0;
-		return actualAmount.equals(expectedAmount);
+		if (actualAmount == expectedAmount)
+			return true;
+		else if (actualAmount == null || expectedAmount == null)
+			return false;
+		else {
+			expectedAmount = Math.round(expectedAmount*100.0) / 100.0;
+			return actualAmount.equals(expectedAmount);			
+		}
 	}
 	
-	
+	/**
+	 * Extracts the amount from the chosen field. The field may contain the number in different formats: <br/>
+	 * <ul>
+	 * <li>0.000,00</li>
+	 * <li>00,00 %</li>
+	 * </ul>
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @return The Double after parsing the text or null if incompatible or no value found
+	 */
 	public static Double getAmount(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		
@@ -338,6 +397,17 @@ public class SeleniumTools {
 		
 	}
 	
+	/**
+	 * Extracts the amount from the chosen field, only if the amount is placed in the 'value' attribute and it's not empty.
+	 * The field may contain the number in different formats:
+	 * <ul>
+	 * <li>0.000,00</li>
+	 * <li>00,00 %</li>
+	 * </ul>
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @return The Double after parsing the text or null if incompatible or no value found
+	 */
 	public static Double getAmountNotEmptyValue(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		
@@ -358,9 +428,48 @@ public class SeleniumTools {
 		}
 		
 	}
-
 	
-	public static boolean waitAndCheckAmount(WebDriver driver, By selector, Double expected, String attrName) {
+	/**
+	 * Extracts the amount from the chosen field, only if the amount is placed in the 'innerText' attribute and it's not empty.
+	 * The field may contain the number in different formats:
+	 * <ul>
+	 * <li>0.000,00</li>
+	 * <li>00,00 %</li>
+	 * </ul>
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @return The Double after parsing the text or null if incompatible or no value found
+	 */
+	public static Double getAmountNotEmptyText(WebDriver driver, By selector) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		
+		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+		wait.until(ExpectedConditions.attributeToBeNotEmpty(baseSalaryAmount, "innerText"));
+		
+		String baseSalaryStr = baseSalaryAmount.getText();
+		
+		Double baseSalary = null;
+		try {
+			baseSalaryStr = baseSalaryStr.replaceAll("\\.", "").replaceAll(",", ".").replaceAll("%", "").trim();
+			baseSalary = Double.parseDouble(baseSalaryStr);
+			
+			return baseSalary;
+			
+		} catch (NullPointerException | NumberFormatException e) {
+			return null;
+		}
+		
+	}
+
+	/**
+	 * Waits (max 10s) until the chosen element's attribute (passed as parameter) is equal to the expected value
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @param attrName The name of the chosen attribute
+	 * @param expected The expected value for the attribute
+	 * @return Whether the attribute matches the extected value
+	 */
+	public static boolean waitAndCheckAmount(WebDriver driver, By selector, String attrName, Double expected) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		try {
 			wait.until(d -> {
@@ -378,45 +487,31 @@ public class SeleniumTools {
 			return false;
 		}
 	}
-	
-//	public static boolean waitUntilElementContains(WebDriver driver, By selector, String text) throws InterruptedException {
-//		WebDriverWait wait = new WebDriverWait(driver, 10);
-//		
-//		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-//		
-//		String content = element.getAttribute("innerText");
-//		String value = element.getAttribute("value");
-//		
-//		content = content != null ? content.trim() : "";
-//		value = value != null ? value.trim() : "";
-//		
-//		for (int i=0; i<10; i++) {
-//			Thread.sleep(1000);
-//			element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-//			content = element.getAttribute("innerText");
-//			value = element.getAttribute("value");			
-//			if (content.equalsIgnoreCase(text) || content.equalsIgnoreCase(value))
-//				return true;
-//		}
-//		
-//		return false;
-//		
-//	}
-
+	/**
+	 * Rounds a double to 2 decimals
+	 * @param number The Double to round
+	 * @return The Double rounded
+	 */
 	public static Double unmessDouble(Double number) {
 		if (number != null)
 			return Math.round(number * 100.0) / 100.0;
 		return null;
 	}
 	
+	/**
+	 * Returns the difference in months between two dates (absolute integer value). Only considers month and year of the given dates.
+	 * @param d1 The first date
+	 * @param d2 The second date
+	 * @return The difference in months between the two given dates
+	 */
 	public static int differenceInMonths(Date d1, Date d2) {
 	    Calendar c1 = Calendar.getInstance();
 	    c1.setTime(d1);
-	    c1 = resetCalendar(c1);
+	    cleanCalendar(c1);
 	    
 	    Calendar c2 = Calendar.getInstance();
 	    c2.setTime(d2);
-	    c2 = resetCalendar(c2);
+	    cleanCalendar(c2);
 	    int diff = 0;
 	    if (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) && c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH)) {
 	    	return 0;
@@ -438,16 +533,25 @@ public class SeleniumTools {
 	    return diff;
 	}
 	
-	public static Calendar resetCalendar (Calendar c) {
+	/**
+	 * Resets the given calendar's fields except for month and year
+	 * @param c The calendar object
+	 */
+	public static void cleanCalendar (Calendar c) {
 		c.set(Calendar.MILLISECOND, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.DAY_OF_MONTH, 1);
-		return c;
 	}
 	
-	public static void selectFromMonthScrollingV2 (WebDriver driver, Date date) throws Exception {
+	/**
+	 * Selects the start date from the dropdown menu when there are two dates to choose
+	 * @param driver The WebDriver
+	 * @param date The wished start date
+	 * @throws Exception
+	 */
+	public static void selectFromMonthScrolling (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-fromMonthListBox-item0";
 		int att = 0;
@@ -456,7 +560,14 @@ public class SeleniumTools {
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 		
 	}
-	public static void selectMonthScrollingV2 (WebDriver driver, Date date) throws Exception {
+	
+	/**
+	 * Selects the date from the dropdown menu
+	 * @param driver The WebDriver
+	 * @param date The wished date
+	 * @throws Exception
+	 */
+	public static void selectMonthScrolling (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-monthListBox-item0";
 		int att = 0;
@@ -466,6 +577,12 @@ public class SeleniumTools {
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 	}
 	
+	/**
+	 * Selects the start date from the dropdown menu when delay is selected
+	 * @param driver The WebDriver
+	 * @param date The wished start date
+	 * @throws Exception
+	 */
 	public static void selectFromMonthScrollingDelay (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-fromMonthListBox-item0";
@@ -475,6 +592,13 @@ public class SeleniumTools {
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 		
 	}
+	
+	/**
+	 * Selects the end date from the dropdown menu when delay is selected
+	 * @param driver The WebDriver
+	 * @param date The wished end date
+	 * @throws Exception
+	 */
 	public static void selectMonthScrollingDelay (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-monthListBox-item0";
@@ -485,6 +609,12 @@ public class SeleniumTools {
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 	}
 	
+	/**
+	 * Selects the date from the dropdown menu when settle is selected
+	 * @param driver The WebDriver
+	 * @param date The wished date
+	 * @throws Exception
+	 */
 	public static void selectMonthScrollingSettle (WebDriver driver, Date date) throws Exception {
 		DateFormat df = new SimpleDateFormat("d 'de' MMMMMMMMMM 'de' yyyy", new Locale("es", "ES"));
 		String displayedDateId = "gwt-debug-dateListBox-item0";
@@ -495,6 +625,14 @@ public class SeleniumTools {
 		} while (!changingElementAssert(driver, By.id(displayedDateId), "innerText", df.format(date)) && att++ < 10);
 	}
 	
+	/**
+	 * Method to get the selected attribute from an element
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @param attributeName The wished attribute name
+	 * @return The attribute value
+	 * @throws Exception
+	 */
 	public static String getAttribute(WebDriver driver, By selector, String attributeName) throws Exception {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		WebElement elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
@@ -512,6 +650,14 @@ public class SeleniumTools {
 		throw new Exception("Unable to get the attribute");
 	}
 	
+	/**
+	 * Method to get the selected attribute from an element if this is not empty
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @param attributeName The wished attribute name
+	 * @return The attribute value
+	 * @throws Exception
+	 */
 	public static String getAttributeNotEmpty(WebDriver driver, By selector, String attributeName) throws Exception {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		WebElement elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
@@ -530,9 +676,8 @@ public class SeleniumTools {
 		throw new Exception("Unable to get the attribute");
 	}
 	
-	
 	private static void selectMonthScrollingCommon (WebDriver driver, Date date, String boxId, SalaryType type) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, 7);
 		String formatStr = "MMMMMMMMMM 'de' yyyy";
 		if (type == SalaryType.SETTLE)
 			formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
@@ -542,10 +687,7 @@ public class SeleniumTools {
 		String firstWea = "#" + boxId + "-celllist > div:first-child > div:first-child > span";
 		String dateStr = "";
 		
-		
-		
-		wait.until(ExpectedConditions.elementToBeClickable(By.id(boxId)));
-		retryingFindClick(driver, By.id(boxId));
+		click(driver, wait, By.id(boxId));
 		dateStr = getAttributeNotEmpty(driver, By.cssSelector(firstWea), "innerText");
 		Date thatDay = df.parse(dateStr);
 		
@@ -610,21 +752,17 @@ public class SeleniumTools {
 		
 		xpath = "//div[@id='" + boxId + "-celllist'] //span[@class='aon-nowrap ' and text()='"+df.format(date)+"']";
 		By xpathSel = By.xpath(xpath);
-		wait.until(ExpectedConditions.elementToBeClickable(xpathSel));
-		
-		retryingFindClick(driver, xpathSel);
+		click(driver, wait, xpathSel);
 	}
-	
-	public static void selectMonthScrollingSettlement (WebDriver driver, Date date) throws Exception {
+
+	private static void selectMonthScrollingSettlement (WebDriver driver, Date date) throws Exception {
 		String boxId = "gwt-debug-dateListBox";
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		String formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
 		
 		DateFormat df = new SimpleDateFormat(formatStr, new Locale("es", "ES"));
 		
-		wait.until(ExpectedConditions.elementToBeClickable(By.id(boxId)));
-		
-		retryingFindClick(driver, By.id(boxId));
+		click(driver, wait, By.id(boxId));
 		
 		By popupSelector = By.cssSelector("#" + boxId + "-popup > div > div");
 		
@@ -646,12 +784,6 @@ public class SeleniumTools {
 		long diffMilis = Math.abs(thatDay.getTime() - date.getTime());
 		long diff = diffMilis / (1000*60*60*24);
 		
-		
-		
-		
-		
-		
-		
 		Keys key = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_UP : Keys.PAGE_DOWN;
 		Keys oppositeKey = (thatDay.getTime() > date.getTime()) ? Keys.PAGE_DOWN : Keys.PAGE_UP;
 		
@@ -672,7 +804,7 @@ public class SeleniumTools {
 			while (firstIdxNum > idxNum) {
 				monthPopup.sendKeys(key);
 				try {
-					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:nth-child(1)"), "__idx");
+					firstIdx = getAttributeNotEmpty(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:nth-child(1)"), "__idx");
 					firstIdxNum = Integer.parseInt(firstIdx);
 					if(first[0] == firstIdxNum) {
 						if(++first[1] > 10) {
@@ -694,7 +826,8 @@ public class SeleniumTools {
 			while (firstIdxNum < idxNum) {
 				monthPopup.sendKeys(key);
 				try {
-					firstIdx = getAttribute(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:last-child"), "__idx");
+					
+					firstIdx = getAttributeNotEmpty(driver, By.cssSelector("#" + boxId + "-celllist > div:nth-child(1) > div:last-child"), "__idx");
 					firstIdxNum = Integer.parseInt(firstIdx);
 				} catch (StaleElementReferenceException e) {}
 			}
@@ -703,12 +836,14 @@ public class SeleniumTools {
 		xpath = "//div[@id='" + boxId + "-celllist'] //span[@class='aon-nowrap ' and text()='"+df.format(date)+"']";
 //		By cssSel = By.cssSelector("*[__idx='" + idxNum + "']");
 		By xpathSel = By.xpath(xpath);
-		wait.until(ExpectedConditions.elementToBeClickable(xpathSel));
-//		System.out.println(getAttribute(driver, By.xpath(xpath+"/.."), "__idx"));
-		
-		retryingFindClick(driver, xpathSel);
+		click(driver, wait, xpathSel);
 	}
 	
+	/**
+	 * Checks if the date text has changed according to the chosen date in salaries
+	 * @param driver The WebDriver
+	 * @param date The expected date
+	 */
 	public static void checkSalaryPeriod (WebDriver driver, Date date) {
 		String xpath = "";
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -718,6 +853,11 @@ public class SeleniumTools {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
 	}
 	
+	/**
+	 * Checks if the date text has changed according to the chosen date in settlements
+	 * @param driver The WebDriver
+	 * @param date The expected date
+	 */
 	public static void checkSettlePeriod (WebDriver driver, Date date) {
 		String xpath = "";
 		WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -730,6 +870,11 @@ public class SeleniumTools {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
 	}
 	
+	/**
+	 * Chooses the payroll type
+	 * @param driver The WebDriver
+	 * @param type The payroll type from a enum
+	 */
 	public static void selectPayrollType (WebDriver driver, SalaryType type) {
 		String boxId = "gwt-debug-typeListBox";
 		retryingFindClick(driver, By.id(boxId));
@@ -740,7 +885,7 @@ public class SeleniumTools {
 		DateFormat df = new SimpleDateFormat("d/M/yyyy");
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		String d1 = df.format(calendar.getTime());
 		
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -749,15 +894,19 @@ public class SeleniumTools {
 		return d1 + " - " + d2;
 	}
 	
+	/**
+	 * Selects a draft when it's displayed
+	 * @param driver The WebDriver
+	 * @param employee The name of the employee
+	 * @throws InterruptedException
+	 */
 	public static void draft(WebDriver driver, String employee) throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		By xpath = By.xpath("//tr [.//div[contains(text(), '"+employee+"')]] //td[1]");
-		wait.until(ExpectedConditions.elementToBeClickable(xpath));
-		retryingFindClick(driver, xpath);
+		click(driver, wait, xpath);
 		String xpathStr = "//div[./table//div[contains(text(), '"+employee+"')]] //div[contains(@id, '-draft-content')]";
 		xpath = By.xpath(xpathStr);
-		wait.until(ExpectedConditions.elementToBeClickable(xpath));
-		retryingFindClick(driver, xpath);
+		click(driver, wait, xpath);
 		try {
 			wait.until(ExpectedConditions.attributeContains(By.id("gwt-debug-employeeNameLabel"), "innerText", employee));
 		} catch (Exception e) {
@@ -765,31 +914,64 @@ public class SeleniumTools {
 		}
 	}
 
+	/**
+	 * Enters 'integral de nóminas' from index page
+	 * @param driver The WebDriver
+	 * @throws InterruptedException
+	 */
 	public static void integralFromIndex(WebDriver driver) throws InterruptedException {
 		log(CLICK, "Entering \"Laboral\"");
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
-		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']")));
 		log(CLICK, "Entering \"Integral de Nóminas\"");
-		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
+		click(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_employee']"));
 	}
 	
+	/**
+	 * Enters 'convenios' from index page when there isn't chosen any enterprise
+	 * @param driver
+	 * @throws InterruptedException
+	 */
 	public static void mainAgreementFromIndex(WebDriver driver) throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		log(CLICK, "Entering \"Laboral\"");
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
-		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement2']")));
 		log(CLICK, "Entering \"Convenios\"");
-		retryingFindClick(driver, By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement2']"));
+		click(driver, wait, By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement2']"));
 	}
 	
+	/**
+	 * Enters 'convenios' from index page
+	 * @param driver
+	 * @throws InterruptedException
+	 */
+	public static void generalAgreementFromIndex(WebDriver driver) throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		log(CLICK, "Entering \"Laboral\"");
+		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
+		log(CLICK, "Entering \"Convenios\"");
+		click(driver, wait, By.cssSelector("*[id='aonContent:payrollMenu:gwt_agreement']"));
+	}
+	
+	/**
+	 * Opens a workplace on integral
+	 * @param driver The WebDriver
+	 * @param workplaceId The 'id' attribute of the workplace
+	 * @throws InterruptedException
+	 */
 	public static void openWorkplace(WebDriver driver, String workplaceId) throws InterruptedException {
 		By selector = By.cssSelector("*[id='" + workplaceId + "'] > table > tbody > tr > td:nth-of-type(1)");
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		log(CLICK, "Deploying \"WORKPLACE\"");
-		retryingFindClick(driver, selector);
+		click(driver, wait, selector);
 	}
 	
+	/**
+	 * Opens a draft
+	 * @param driver The WebDriver
+	 * @param startDate The start date
+	 * @param endDate The end date
+	 * @throws Exception
+	 */
 	public static void delay (WebDriver driver, Date startDate, Date endDate) throws Exception {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		SeleniumTools.selectPayrollType(driver, SalaryType.DELAY);
@@ -829,6 +1011,12 @@ public class SeleniumTools {
 		}
 	}
 	
+	/**
+	 * Safely inputs text on textboxes, removes the existing content first
+	 * @param driver The WebDriver
+	 * @param cssSelector The query selector
+	 * @param text The text to input
+	 */
 	public static void safeInput (WebDriver driver, String cssSelector, String text) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)));
@@ -850,6 +1038,15 @@ public class SeleniumTools {
 		}while (attempts < 10 && !value.equals(text));
 	}
 	
+	/**
+	 * Checks if an element which has been refreshed has changed the selected attribute to a determinate value
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @param attribute The attribute
+	 * @param text The expected text contained on the attribute
+	 * @return Returns whether the value matches
+	 * @throws Exception
+	 */
 	public static boolean changingElementAssert (WebDriver driver, By selector, String attribute, String text) throws Exception {	
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		try {
@@ -859,6 +1056,11 @@ public class SeleniumTools {
 		}
 	}
 	
+	/**
+	 * Saves a draft
+	 * @param driver The WebDriver
+	 * @throws Exception
+	 */
 	public static void acceptDraft (WebDriver driver) throws Exception {
 		boolean checkAcceptButton = false;
 		int att = 0;
@@ -871,25 +1073,34 @@ public class SeleniumTools {
 			throw new Exception("Could not click on save button");
 	}
 	
-	public static void scrollLeftBarUntilElementIsClickable(WebDriver driver) {
-		JavascriptExecutor js = (JavascriptExecutor) driver;
-		js.executeScript("document.querySelector(\"#rootPanel > div > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(3) > div\").scroll(0,100)");
-		
-	}
-	
+	/**
+	 * Searches an employee
+	 * @param driver The WebDriver
+	 * @param searchText The employee name to be found
+	 */
 	public static void search(WebDriver driver, String searchText) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		By searchBoxSelector = By.id("gwt-debug-searchTextBox");
-		wait.until(ExpectedConditions.elementToBeClickable(searchBoxSelector));
-		retryingFindClick(driver, searchBoxSelector);
+		click(driver, wait, searchBoxSelector);
 		safeInput(driver, "#gwt-debug-searchTextBox", searchText);
 	}
 	
+	/**
+	 * Focuses an element via JavaScript
+	 * @param driver The WebDriver
+	 * @param cssSelector The query selector
+	 */
 	public static void focus(WebDriver driver, String cssSelector) {
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("document.querySelector('" + cssSelector + "').focus()");
 	}
 	
+	/**
+	 * Clicks an element until this one's value contains a text
+	 * @param driver The WebDriver
+	 * @param selector The selector
+	 * @param containingText The text which must be contained into the element
+	 */
 	public static void focusUntilValueContains (WebDriver driver, By selector, String containingText) {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		boolean focused;
@@ -905,6 +1116,10 @@ public class SeleniumTools {
 		} while (max-- > 0 && !focused);
 	}
 	
+	/**
+	 * Waits until period dropdown has been properly loaded
+	 * @param driver The WebDriver
+	 */
 	public static void wait4periodStabilization(WebDriver driver) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(d -> {
@@ -924,6 +1139,11 @@ public class SeleniumTools {
 		});
 	}
 	
+	/**
+	 * Clicks the exit button on modal window until this one disappears
+	 * @param driver The WebDriver
+	 * @param exitBtnToClick The exit button to click
+	 */
 	public static void safelyCloseModal (WebDriver driver, By exitBtnToClick) {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		int max = 4;
@@ -939,6 +1159,10 @@ public class SeleniumTools {
 		} while (!modalClosed && max-- > 0);
 	}
 	
+	/**
+	 * Waits until settle's displayed date is loaded after choosing months
+	 * @param driver The WebDriver
+	 */
 	public static void wait4SettleToLoadDate(WebDriver driver) {
 		new WebDriverWait(driver, 10).until(d -> {
 			Pattern pattern = Pattern.compile("\\s*\\d+\\s*de\\s*\\w+\\s*de\\s*\\d+\\s*", Pattern.CASE_INSENSITIVE);
@@ -972,23 +1196,42 @@ public class SeleniumTools {
 		} while (!status && max-- >0);
 	}
 	
+	/**
+	 * Checks a checkbox
+	 * @param driver The WebDriver
+	 * @param checkboxId The selector
+	 */
 	public static void checkboxCheck(WebDriver driver, By checkboxId) {
 		checkboxCheckUncheck(driver, checkboxId, true);
 	}
 	
+	/**
+	 * Unchecks a checkbox
+	 * @param driver The WebDriver
+	 * @param checkboxId The selector
+	 */
 	public static void checkboxUncheck(WebDriver driver, By checkboxId) {
 		checkboxCheckUncheck(driver, checkboxId, false);
 	}
 	
+	/**
+	 * Search an agreement
+	 * @param driver The WebDriver
+	 * @param agreement The agreement name
+	 */
 	public static void agreementSearch (WebDriver driver, String agreement) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		String cssSel = "#gwt-debug-agreementsTreeToolbar > input";
 		By input = By.cssSelector(cssSel );
-		wait.until(ExpectedConditions.elementToBeClickable(input));
-		retryingFindClick(driver, input);
+		click(driver, wait, input);
 		safeInput(driver, cssSel, agreement);
 	}
 	
+	/**
+	 * Searches an agreement and chooses it
+	 * @param driver The WebDriver
+	 * @param agreement The agreement name
+	 */
 	public static void searchAndEnterAgreement (WebDriver driver, String agreement) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		
@@ -996,7 +1239,6 @@ public class SeleniumTools {
 		
 		String xpath = "//div[contains(text(), '" + agreement + "')]";
 		
-		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-		SeleniumTools.retryingFindClick(driver, By.xpath(xpath));
+		click(driver, wait, By.xpath(xpath));
 	}
 }
