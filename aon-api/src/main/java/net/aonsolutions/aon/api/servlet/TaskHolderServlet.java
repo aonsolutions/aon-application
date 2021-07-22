@@ -115,8 +115,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		Domain domain = api.getDomain();
 		JSONArray array = new JSONArray();
 		Integer workgroupId = api.getParams().optInt("workgroupId");
-		
-		AON.getTaskMemberWStream(domain.getName(), domain.getId(), api.getUser().getLogin(), "", workgroupId)
+		AON.getTaskHolderWorkgroupStream(domain, api.getUser(), f->f.getDomainProperty().eq(domain.getId()), workgroupId)
 		.forEach(th->{
 			JSONObject json = new JSONObject();
 			json.put("id", th.getId());

@@ -2,15 +2,13 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
-
+import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
@@ -134,6 +132,16 @@ public class TaskHolderDAO {
 			.execute();
 		ctx.log().info("DELETE TASK HOLDER id:" + taskHolder.getId() + " ("+count+" rows)");
 		return taskHolder;
+	}
+	
+	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+		return ctx.getDslContext().select()
+				.from(TASK_HOLDER)
+				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(REGISTRY.NAME)
+			.fetch().stream().map(new TaskHolderFiller());
 	}
 
 	// *************************************************

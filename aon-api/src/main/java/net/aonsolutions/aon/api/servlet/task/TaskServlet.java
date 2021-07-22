@@ -53,7 +53,6 @@ public class TaskServlet extends AonApiHttpServlet{
 			e.printStackTrace();
 			error(req, resp, e);
 		}
-		
 	}
 
 	@Override

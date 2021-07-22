@@ -156,9 +156,16 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	@Deprecated
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskOldDAO.getTaskWorkgroupStream(ctx, filter));	
+	}
+	
+	@Override
+	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId));	
 	}
 
 	@Override
