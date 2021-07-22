@@ -266,10 +266,12 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- SEPE Comunications
 	
-	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
-	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
+	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
+	
 	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;

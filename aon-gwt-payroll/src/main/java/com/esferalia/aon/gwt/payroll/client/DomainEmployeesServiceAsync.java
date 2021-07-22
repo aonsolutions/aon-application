@@ -556,12 +556,16 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- SEPE Comunications
 	
-	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}
 
-	public void sendContractoCBSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+	public void sendContractoCBSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractoCBSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
+	public void removeContractoSEPE(EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.removeContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
 	
 	public void sendCertifica2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
