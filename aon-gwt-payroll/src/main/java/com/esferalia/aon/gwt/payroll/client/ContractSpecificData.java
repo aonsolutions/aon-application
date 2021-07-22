@@ -6,24 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -32,9 +25,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -58,9 +49,6 @@ public class ContractSpecificData extends ResizeComposite {
 
 	@UiField
 	MyStyle style;
-	
-	@UiField
-	HTMLPanel comunicaMeesage;
 	
 	@UiField
 	SuggestBox cnoSB;
@@ -340,70 +328,21 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-	private DomainEmployeesServiceAsync employeesImpl = DomainEmployeesServiceAsync.newInstance();
 	private EmployeeContractInfo employeeContractInfo;
 	private Map<String, CNO> cnoMap;
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
-	private DomainUserRoles userRoles;
-	
 	public ContractSpecificData() {
 		initWidget(uiBinder.createAndBindUi(this));
 		cnoMap = new HashMap<String, CNO>();
-		this.userRoles = new DomainUserRoles();
-		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
-			
-			@Override
-			public void onSuccess(DomainUserRoles result) {
-				userRoles = result;
-				initializeView();
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-		
+		initializeView();
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		setDefaultView(this.employeeContractInfo.getContractInfo().getContractType());
 		fillSpecificData();
-		
-		if(userRoles.isComunica())
-			getContratoSepe(s -> {
-	//			Window.alert("SEPE Id : " + s);
-				setVisible(comunicaMeesage.getElement(), false);
-			}, f -> {
-	//			Window.alert("SEPE Id Not Found");
-				setVisible(comunicaMeesage.getElement(), true);
-			});
-		else
-			setVisible(comunicaMeesage.getElement(), false);
-			
-	}
-	
-	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
-		String ipf = employeeContractInfo.getEmployeeInfo().getDocument();
-		Date startDate = employeeContractInfo.getContractInfo().getStartDate();
-		Date endDate = employeeContractInfo.getContractInfo().getStartDate();
-		
-		impl.getContratoSepe(ipf, startDate, endDate, new AsyncCallback<String>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);	
-			}
-			
-		});
-		
 	}
 
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
@@ -502,16 +441,6 @@ public class ContractSpecificData extends ResizeComposite {
 	void onTeoricFormationRBChange(ValueChangeEvent<Boolean> event) {
 		this.employeeContractInfo.getContractSpecificData().setTeoricFormation(event.getValue());
 	}
-	
-//	@UiHandler("teoricFormationYesRB")
-//	void onTeoricFormationYesRBChange(ValueChangeEvent<Boolean> event) {
-//		this.employeeContractInfo.getContractSpecificData().setTeoricFormationYes(event.getValue());
-//	}
-//	
-//	@UiHandler("teoricFormationNoRB")
-//	void onTeoricFormationNoRBChange(ValueChangeEvent<Boolean> event) {
-//		this.employeeContractInfo.getContractSpecificData().setTeoricFormationNo(event.getValue());
-//	}
 	
 	@UiHandler("formationHoursTB")
 	void onFormationHoursTBChange(ValueChangeEvent<String> event) {
@@ -1290,62 +1219,8 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
 	
 	private void initializeView() {
-		if(userRoles.isComunica())
-			createComunicaMessage();
 		hideTables();
 		resetTables();
-	}
-
-	private void createComunicaMessage() {
-		Label comunicaL = new Label("El contrato no ha sido notificado el SEPE. Por favor comunique la copia basica y el contrato.");
-		FlowPanel flowPanel = new FlowPanel();
-		AonToolbarButton sendBasicCopyBtn = new AonToolbarButton("Comunicar Copia Basica", AON.CSS.aonIconSepeCto());
-		sendBasicCopyBtn.addClickHandler(e -> {
-			sendBasicCopy(e);
-		});
-		sendBasicCopyBtn.getElement().getStyle().setMarginRight(10, Unit.PX);
-		
-		AonToolbarButton sendContractBtn = new AonToolbarButton("Comunicar Contrato", AON.CSS.aonIconSepeCt());
-		sendContractBtn.addClickHandler(e -> {
-			sendContract(e);
-		});
-		
-		flowPanel.add(sendBasicCopyBtn);
-		flowPanel.add(sendContractBtn);
-		
-		comunicaMeesage.add(comunicaL);
-		comunicaMeesage.add(flowPanel);	
-		
-		setVisible(comunicaMeesage.getElement(), false);
-	}
-	
-
-	private void sendBasicCopy(ClickEvent e) {
-		employeesImpl.sendContractoCBSEPE(employeeContractInfo, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Void result) {
-				
-			}
-			
-		});
-	}
-
-	private void sendContract(ClickEvent e) {
-		employeesImpl.sendContractoSEPE(employeeContractInfo, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Void result) {
-				
-			}
-			
-		});
 	}
 
 	private void resetTables() {
