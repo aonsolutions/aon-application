@@ -292,19 +292,31 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		if(api.getData().isNull("fecha")) {
 			throw new Exception("fecha requerida");
 		}
-		String regimen = api.getData().optString("regimen");
-		String ctaCti = api.getData().optString("ctaCti");
-		String nss = api.getData().optString("nss");
-		String ipf = api.getData().optString("ipf");
-		String name = api.getData().optString("nombre");
-		Date fecha = Toolkit.parseDate(api.getData().optString("fecha"), "yyyy-MM-dd");
 		
-		String ocup = api.getData().optString("ocupacion");
-		if(!ocup.isEmpty() && !api.getData().optString("ocupacion_edit").isEmpty() && api.getData().getBoolean("ocupacion_edit")) {
+		updateOccupation(api, new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, map, errors);
+		
+		updateGrupCtz(api, new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, map, errors);
+
+		
+		return map;
+	}
+	
+	private void updateOccupation(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType, Map<String, Object> map, List<String> errors){
+		JSONObject data = api.getData();
+		String ocup = data.optString("ocupacion");
+		String regimen = data.optString("regimen");
+		String ctaCti = data.optString("ctaCti");
+		String nss = data.optString("nss");
+		String ipf = data.optString("ipf");
+		String name = data.optString("nombre");
+		Date fecha = Toolkit.parseDate(data.optString("fecha"), "yyyy-MM-dd");
+		
+		if(!ocup.isEmpty() && !data.optString("ocupacion_edit").isEmpty() && data.getBoolean("ocupacion_edit")) {
             try {
-            	SistemaRED.cambioOcupacion(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);
+            	SistemaRED.cambioOcupacion( new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);
             	map.put("ocupacion_edit", true);
-            	if(!api.getData().isNull("nombre")) {
+            	if(!data.isNull("nombre")) {
         			String body = "Te informamos que se ha realizado un Cambio de ocupación a "
         					+ "(<b>"+ocup.toUpperCase()+"</b>) en la Seguridad Social de <b>"+ name+"</b> en la Cuenta de Cotización <b>"
         					+ regimen+"-"+ctaCti+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
@@ -316,13 +328,23 @@ public class ComunicaServlet extends AonApiHttpServlet{
             	errors.add(e.getMessage());
             }	
 		}
-		
-		String grup_ctz = api.getData().optString("grup_ctz");
-		if(!grup_ctz.isEmpty() && !api.getData().optString("grup_ctz_edit").isEmpty() && api.getData().getBoolean("grup_ctz_edit")) {
+	}
+	
+	private void updateGrupCtz(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType, Map<String, Object> map, List<String> errors){
+		JSONObject data = api.getData();
+		String regimen = data.optString("regimen");
+		String ctaCti = data.optString("ctaCti");
+		String nss = data.optString("nss");
+		String ipf = data.optString("ipf");
+		String name = data.optString("nombre");
+		String grup_ctz = data.optString("grup_ctz");
+		Date fecha = Toolkit.parseDate(data.optString("fecha"), "yyyy-MM-dd");
+		if(!grup_ctz.isEmpty() && !data.optString("grup_ctz_edit").isEmpty() && data.getBoolean("grup_ctz_edit")) {
 			 try{
-				 SistemaRED.cambioGrupCtz(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
+				 SistemaRED.cambioGrupCtz( new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
 				 map.put("grup_ctz_edit", true);
-            	 if(!api.getData().isNull("nombre")) {
+            	 if(!data.isNull("nombre")) {
         			String body = "Te informamos que se ha realizado un Cambio de Grupo de cotización a (<b>"+grup_ctz+"</b>) en la Seguridad Social de <b>"
             	 + name+"</b> en la Cuenta de Cotización <b>"+ regimen+"-"+ctaCti+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
         			sendEmail(api, body); // send mov mail
@@ -333,9 +355,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				errors.add(e.getMessage());
 			}	
 		}
-		if(errors.size() > 0) map.put("errors",errors);
-		
-		return map;
 	}
 	
 	private void validateAlta(AonApiData api) throws Exception {

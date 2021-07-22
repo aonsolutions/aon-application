@@ -24,7 +24,7 @@ public class TaskWorkflowJSON {
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setTask(JsonUtils.getInteger(json, IJsonNames.TASK))
-			.setTaskHolder(TaskHolderJSON.fromJSON(json.getJSONObject(IJsonNames.TASK_HOLDER)))
+			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 			.setType(TaskWorkflowType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
 			.setComment(JsonUtils.getString(json, IJsonNames.COMMENT));
 	}

@@ -20,6 +20,7 @@ public class TaskHolderJSON {
 	}
 	
 	public static TaskHolder fromJSON(JSONObject json) {
+		if(json.isEmpty()) return new TaskHolder();
 		return new TaskHolder()
 				.copy(RegistryJSON.fromJSON(json))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))

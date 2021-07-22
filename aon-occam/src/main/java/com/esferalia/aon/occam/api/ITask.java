@@ -78,5 +78,7 @@ public interface ITask {
 	public Boolean isTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
 	public void insertTaskHolderWorkgroup(AONContext ctx, Integer taskHolder, Integer workgroup);
 	public void deleteTaskHolderWorkgroup(AONContext ctx, TaskHolderWorkgroupFilter filter);
+	
+	Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId);
 
 }

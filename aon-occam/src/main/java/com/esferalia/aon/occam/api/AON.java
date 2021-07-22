@@ -5517,6 +5517,12 @@ public class AON {
 		}
 	}
 	
+	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
+		}
+	}
+	
 	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
 		AONContext ctx = null;
 		try {

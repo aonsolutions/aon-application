@@ -42,7 +42,7 @@ public class TaskJSON {
 			.setProject(new Project().setId(JsonUtils.getInteger(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
-			.setSource(TaskSource.safeValueOf(json.optString(IJsonNames.SOURCE)))
+			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			//.setSourceId(sourceId)
 			.setStatus(TaskStatus.PENDING) 
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
