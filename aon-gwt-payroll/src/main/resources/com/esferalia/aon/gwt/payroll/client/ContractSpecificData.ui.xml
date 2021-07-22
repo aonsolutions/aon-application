@@ -79,8 +79,7 @@
 	</ui:style>
 
    	<g:HTMLPanel> 
-   		<g:HTMLPanel ui:field="comunicaMeesage" styleName="{style.flex}"></g:HTMLPanel>
-        <g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
+   		<g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>CNO</g:Label>
 	    	<g:HTMLPanel>
 				<table ui:field="contractCNOTable" debugId="contractCNOTable"
