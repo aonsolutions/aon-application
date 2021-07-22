@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,10 +19,11 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceClaveRetencion;
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceOpType;
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceClaveRetencion;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceOpType;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -74,7 +76,8 @@ public class InvoiceImport {
 	}
 	
 	InvoiceImportClass inv; 
-	
+	InvoiceImportClass ant;
+
 	public LinkedList<InvoiceImportClass> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
 		try {
@@ -88,7 +91,7 @@ public class InvoiceImport {
 			Iterator<Row> rowIterator = sheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
-
+			ant = null;
 			rowStream.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -103,7 +106,11 @@ public class InvoiceImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0 && !inv.isEmpty()) {
+				if(ant != null && isSameReference(ant.getRef(), ant.getSerie(), ant.getNumber(), inv)) {
+					list.getLast().getLines().add(inv);
+				} else if(row.getRowNum() != 0 && !inv.isEmpty()) {
+					inv.getLines().add(inv);
+					ant = inv;
 					list.add(inv);
 				}
 			});
@@ -111,7 +118,10 @@ public class InvoiceImport {
 			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (OfficeXmlFileException e){
+			return importationX(domain, login, data);
 		} finally {
+		
 			if(workbook != null) {
 				try {
 					workbook.close();
@@ -137,7 +147,7 @@ public class InvoiceImport {
 			Iterator<Row> rowIterator = sheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
-
+			ant = null;
 			rowStream.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
@@ -152,8 +162,12 @@ public class InvoiceImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0 && (inv.getSerie()!= null
-					|| inv.getNumber() != null || inv.getRef() != null)) {
+				
+				if(ant != null && isSameReference(ant.getRef(), ant.getSerie(), ant.getNumber(), inv)) {
+					list.getLast().getLines().add(inv);
+				} else if(row.getRowNum() != 0 && !inv.isEmpty()) {
+					inv.getLines().add(inv);
+					ant = inv;
 					list.add(inv);
 				}
 			});
@@ -636,6 +650,252 @@ public class InvoiceImport {
 			e.printStackTrace();
 			error.setError(false);
 			error.setTextError("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
+		}
+		error.setLine(i);
+		return error;
+	}
+	
+	
+	public static Error insertInvoice(Domain domain, User user, Integer i, InvoiceImportClass iic) {
+		Error error = new Error().setError(true);
+
+		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	
+		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
+		Account outputAccount = aonCtx.getDefaultChargedVatAccount();
+		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
+		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+		
+		try {
+			if(iic.getAccount() == null || iic.getAccount().isBlank()) {
+				throw new Exception("La cuenta contable es un dato obligatorio.");
+			}
+			
+			if(iic.getRef() == null && iic.getNumber() == null) {
+				throw new Exception("La Referencia o Serie/Número son incorrectas.");
+			}
+			
+			if(iic.getSerie() != null && iic.getSerie().length() > 5) {
+				throw new Exception("La serie no puede tener más de 5 carácteres");
+			}
+			
+			AccountingInvoice ai = new AccountingInvoice();
+			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
+
+			Invoice invoice = new Invoice();
+			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+			invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
+			invoice.setTransaction(getTransaction(iic));
+			invoice.setInvestment(iic.isInvestment() != null && iic.isInvestment());
+			invoice.setDomain(domain.getId());
+			invoice.setIssueDate(iic.getDate());
+			invoice.setTaxDate(iic.getDate());
+			invoice.setType(iic.getInvoiceType() != null
+				? iic.getInvoiceType()
+				: getInvoiceType(iic.getAccount()));
+			if(iic.getSerie() != null && invoice.isSales()) {
+				invoice.setSeries(iic.getSerie());
+			} 
+			
+			if(iic.getNumber() != null && invoice.isSales()) {
+				invoice.setNumber(iic.getNumber());	
+			}
+			
+			invoice.setReferenceCode(iic.getRef() != null ? iic.getRef() 
+					: (invoice.getSeries() != null ? invoice.getSeries() + "/" : "") 
+					+ AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0"));
+			
+			invoice.setWithholding(iic.getRetentionQuota() != null 
+				&& iic.getRetentionQuota() != 0);
+			invoice.setRemarks(iic.getConcept());
+			invoice.setSurcharge(iic.getRePercentage() != null && iic.getPercentage() > 0);
+			if(iic.getTotal() < 0) {
+				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
+			}
+		
+			RAddress address = new RAddress();
+			address.setDomain(domain.getId());
+			address.setType((byte) 0);
+			address.setAddress(iic.getAddress());
+			address.setCity(iic.getCity());
+			address.setZip(iic.getZip() != null && iic.getZip().length() < 5 
+				? "0" + iic.getZip() : iic.getZip());
+			if(iic.getProvince() != null) {
+				GeoZone prgz = null;
+				GeoZone crgz = null;
+				Provinces pr = Provinces.getProvince(iic.getProvince());
+				if(pr == null && address.getZip() != null ) {
+					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
+				}
+				for(GeoZone gz : aonCtx.getGeozones()) {
+					if(gz.getCode().equals(iic.getCountry().getIso2())) {
+						crgz = gz;
+					}
+					if(pr != null && gz.getCode().equals(pr.getId())) {
+						prgz = gz;
+					}
+				}
+			
+				if(prgz != null) {
+					address.setGeozone(prgz.getId());
+					address.setGeozoneCode(prgz.getCode());
+					address.setGeozoneName(prgz.getName());
+				} else if(crgz != null) {
+					address.setGeozone(crgz.getId());
+					address.setGeozoneCode(crgz.getCode());
+					address.setGeozoneName(crgz.getName());
+				}
+			}
+
+			String nif = iic.getNif();
+			String name = iic.getName();
+			
+			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address, iic.getCountry());			
+			invoice.setRegistry(ar.getId());
+			ai.setRegistry(ar);
+			ai.setInvoice(invoice);
+
+			String reference = iic.getRef();
+			String serie = iic.getSerie();
+			Integer number = iic.getNumber();
+			Double total = 0.0;
+			Double base = 0.0;
+			Double retBase = 0.0;
+			Double retQuota = 0.0;
+			Double retPercentage = 0.0;
+	
+			for(InvoiceImportClass aux : iic.getLines()) {
+				if(aux.getRetentionQuota() != null) {
+					retBase = retBase + aux.getBase();
+					retPercentage = aux.getRetentionPercentage();
+					retQuota = retQuota + aux.getRetentionQuota();
+					ai.getInvoice().setWithholding(true);
+				}
+				
+				Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), aux.getAccount());
+				if(expAccount == null) {
+					expAccount = new Account()
+						.setCode(aux.getAccount())
+						.setDescription(aux.getAccountDescription() != null 
+								? aux.getAccountDescription()
+								: "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+						.setAlias(aux.getAccountDescription() != null 
+								? aux.getAccountDescription()
+								:"SIN DESCRIPCIÓN")
+						.setDomain(domain.getId())
+						.setActive(true);
+					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
+				}
+				
+				
+				InvoiceVAT vat = new InvoiceVAT()
+					.setPrepayment("5600".equals(iic.getAccount().substring(0, 4)) || "5660".equals(iic.getAccount().substring(0, 4)))
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+					.setBase(aux.getBase() != null 
+							? aux.getBase() : 0.0)
+					.setPercentage(aux.getPercentage() != null
+							? aux.getPercentage() : 0.0)
+					.setQuota(aux.getQuota() != null
+							? aux.getQuota() : 0.0)
+					.setSurcharge(aux.getRePercentage() != null
+							? aux.getRePercentage() : 0.0)
+					.setSurchargeQuota(aux.getReQuota() != null
+							? aux.getReQuota() : 0.0)
+					//.setInvestAsset(ivs.get(j).getInvestAsset())
+					.setDeductiblePercent(100.0)
+					.setDeductibleQuota(aux.getQuota() != null
+							? aux.getQuota() : 0.0)
+					.setWithholding(aux.getRetentionQuota() != null
+							&& aux.getRetentionQuota() != 0)
+					.setExpAccountId(expAccount.getId())
+					.setExpAccountCode(expAccount.getCode())
+					.setExpAccountDescription(expAccount.getDescription())
+						
+					.setOutputAccountCode(outputAccount.getCode())
+					.setOutputAccountDescription(outputAccount.getDescription())
+					.setOutputAccountId(outputAccount.getId())
+						
+					.setInputAccountCode(inputAccount.getCode())
+					.setInputAccountDescription(inputAccount.getDescription())
+					.setInputAccountId(inputAccount.getId())
+					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
+					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
+					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+				ai.addVat(vat);
+				total = total + (invoice.mustApplyISP() ? aux.getBase() : aux.getTotal());
+				base = base + aux.getBase();
+				checkCuotas(domain, aux);
+			}
+
+			ai.getInvoice().setTotal(total);
+			ai.getInvoice().setTaxableBase(base);
+			ai.getInvoice().setVatQuota(total - base);
+		
+			if(ai.getInvoice().isWithholding()) {
+				Account retentionAccount = (invoice.isSales() )
+						?aonCtx.getDefaultPaidRetAccount()
+						:aonCtx.getDefaultChargedRetAccount();
+		
+				InvoiceWithholding iw = new InvoiceWithholding()
+					.setWithholdingType(getWithholdingType(iic.getRetentionKey(), iic.getAccount()))
+					.setBase(retBase)
+					.setPercentage(retPercentage)
+					.setQuota(retQuota)
+					.setAccountCode(retentionAccount.getCode())
+					.setAccountDescription(retentionAccount.getDescription())
+					.setAccountId(retentionAccount.getId());
+				ai.setWithholdingData(iw);
+			}
+			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
+			Account financeAccount = new Account();
+			if(iic.getFinanceAccount() != null && !iic.getFinanceAccount().isBlank() ) {
+				financeAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), iic.getFinanceAccount());
+				if(financeAccount == null || financeAccount.getId() == null) {
+					financeAccount = new Account()
+						.setCode(iic.getFinanceAccount())
+						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+						.setAlias("SIN DESCRIPCIÓN")
+						.setDomain(domain.getId())
+						.setActive(true);
+					financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
+				}
+			}
+				
+			ai.setPayAccountId(financeAccount.getId())
+			  .setPayAccountCode(financeAccount.getCode())
+			  .setPayAccountDescription(financeAccount.getDescription());
+			
+			Finance f = new Finance()
+					.setAmount(ai.getInvoice().getTotal())
+					.setDueDate(iic.getFinanceDate() != null ? iic.getFinanceDate() : ai.getInvoice().getIssueDate())
+					.setPayMethod(pm.getId())
+					.setPayment(!invoice.isSales());
+			
+			ai.getInvoice().setFinances(new LinkedList<Finance>());
+			if(financeAccount != null && financeAccount.getId() != null) {
+				ai.getInvoice().addFinance(f);
+			}
+
+			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+				
+			if(financeAccount == null || financeAccount.getId() == null){
+				f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
+					.setDomain(domain.getId())
+					.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
+					.setRegistryDocument(ai.getInvoice().getRegistryDocument())
+					.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
+					.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
+					.setRegistryName(ai.getInvoice().getRegistryName())
+					.setScope(ai.getInvoice().getScope())
+					.setSecurityLevel(ai.getInvoice().getSecurityLevel())
+					.setConcept(ai.getInvoice().getDocumentNumber())
+					.setFinanceStatus(FinanceStatus.PENDING);
+				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			error.setError(false);
+			error.setTextError("Línea " + iic.getLine() + ": " + e.getMessage());
 		}
 		error.setLine(i);
 		return error;

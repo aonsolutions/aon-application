@@ -7,10 +7,13 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.esferalia.aon.gwt.template.shared.AccountImportClass;
 import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,31 +29,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PGCImport {
 
-	public class AccountImportClass {
-		private Account account;
-		private Integer line;
-		
-		public AccountImportClass() {
-			this.account = new Account()
-					.setActive(true);
-		}
-
-		public Account getAccount() {
-			return account;
-		}
-
-		public void setAccount(Account account) {
-			this.account = account;
-		}
 	
-		public Integer getLine() {
-			return line;
-		}
-
-		public void setLine(Integer line) {
-			this.line = line;
-		}
-	}
 	
 	public static PGCImport getInstance() {
 		return new PGCImport();
@@ -99,6 +78,8 @@ public class PGCImport {
 					.collect(Collectors.toCollection(LinkedList::new));
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (OfficeXmlFileException e){
+			importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {
@@ -189,6 +170,11 @@ public class PGCImport {
 			return error;
 		}
 		AccountImportClass acc = accountList.get(index);
+		return insertPGC(domain, user, index, acc);
+	}
+	
+	public static Error insertPGC(Domain domain, User user, Integer index, AccountImportClass acc) {
+		Error error = new Error().setError(true);
 		try {
 			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount().getCode());
 			if(account == null || account.getId() == null) {

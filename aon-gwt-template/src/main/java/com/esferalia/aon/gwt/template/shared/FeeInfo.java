@@ -1,10 +1,11 @@
-package com.esferalia.aon.gwt.template.server;
+package com.esferalia.aon.gwt.template.shared;
 
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class FeeInfo {
+public class FeeInfo implements IsSerializable {
 
 	String client;
 	Integer clientId;

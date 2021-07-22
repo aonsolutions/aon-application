@@ -3,11 +3,16 @@ package com.esferalia.aon.gwt.template.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.shared.AccountImportClass;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
+import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
+import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.shared.ProductCategory;
+import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
@@ -106,4 +111,29 @@ public interface ITemplateAsync {
 	void importRegistryEmptyFix(Domain domain, User user, AsyncCallback<Void> callback);
 
 	void insertFee(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
+
+	void insertInvoice(Domain domain, User user, InvoiceImportClass invoices, Integer index, AsyncCallback<Error> callback);
+
+	void executeInvoice(Domain domain, User user, String data, AsyncCallback<LinkedList<InvoiceImportClass>> callback);
+
+	void executeRegistry(Domain domain, User user, String data,
+			AsyncCallback<LinkedList<RegistryImportClass>> callback);
+
+	void executePGC(Domain domain, User user, String data, AsyncCallback<LinkedList<AccountImportClass>> callback);
+
+	void executeDiary(Domain domain, User user, String data,
+			AsyncCallback<LinkedList<AccountEntryImportClass>> callback);
+
+	void executeFee(Domain domain, User user, String data, AsyncCallback<LinkedList<FeeInfo>> callback);
+
+	void insertRegistry(Domain domain, User user, RegistryImportClass registry, Integer index,
+			AsyncCallback<Error> callback);
+
+	void insertDiary(Domain domain, User user, AccountEntryImportClass diary, Integer index,
+			AsyncCallback<Error> callback);
+
+	void insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index,
+			AsyncCallback<Error> callback);
+
+	void insertFee(Domain domain, User user, FeeInfo fee, Integer index, AsyncCallback<Error> callback);
 }
