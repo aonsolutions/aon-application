@@ -424,4 +424,19 @@ public class Contract {
 			return value;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Contract [sepeId=" + sepeId + ", cifEnterprise=" + cifEnterprise + ", regimen=" + regimen + ", ctaCti="
+				+ ctaCti + ", nss=" + nss + ", ipf=" + ipf + ", name=" + name + ", sex=" + sex + ", surname=" + surname
+				+ ", lastSurname=" + lastSurname + ", codNationality=" + codNationality + ", codPaisDom=" + codPaisDom
+				+ ", codMunDom=" + codMunDom + ", codFormativo=" + codFormativo + ", codOccupation=" + codOccupation
+				+ ", codPaisWork=" + codPaisWork + ", codMunWork=" + codMunWork + ", codContract=" + codContract
+				+ ", dateIniContract=" + dateIniContract + ", dateFinContract=" + dateFinContract + ", dateBirth="
+				+ dateBirth + ", dateComContract=" + dateComContract + ", offer=" + offer + ", jndType=" + jndType
+				+ ", durationTypeJndHour=" + durationTypeJndHour + ", durationTypeJndMin=" + durationTypeJndMin
+				+ ", durationTypeCvnHour=" + durationTypeCvnHour + ", durationTypeCvnMin=" + durationTypeCvnMin + "]";
+	}
+	
+	
 }

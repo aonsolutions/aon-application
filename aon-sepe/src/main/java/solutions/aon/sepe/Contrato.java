@@ -65,6 +65,7 @@ public class Contrato {
 	private static String contratoImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
@@ -199,6 +200,8 @@ public class Contrato {
 	private static Contract getContractDataImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	webClient.getOptions().setUseInsecureSSL(true);
+	    	
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 			
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
@@ -264,6 +267,7 @@ public class Contrato {
 			String ipf, Date fini, Date ffin, FirmType firmType, String workAddress, String restContract) 
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click(); 
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_comunica_copiaBasicaContrato.jsp?origen=copiabasica").click();
