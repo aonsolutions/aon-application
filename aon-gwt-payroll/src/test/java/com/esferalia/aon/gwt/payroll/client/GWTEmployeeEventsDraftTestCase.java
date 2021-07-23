@@ -423,6 +423,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info,
+					AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

@@ -5567,6 +5567,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public String generateCertifaca2(String domainName, Integer contractId, Certifica2Info certifica2Info) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqCertifica2.generateCertifica2(connection, domainId, contractId, certifica2Info);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	@Override
 	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) {
