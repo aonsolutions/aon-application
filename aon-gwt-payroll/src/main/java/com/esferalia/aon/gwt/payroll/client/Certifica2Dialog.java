@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -8,8 +12,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -19,7 +25,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,6 +33,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
@@ -82,7 +90,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 	Label contractDurationL;
 	
 	@UiField
-	Label suspensionCodeL;
+	ListBox suspensionCodeLB;
+	
+	@UiField
+	SuggestBox profesionalCategorySB;
 	
 	@UiField
 	Label settleQuoteDaysL;
@@ -133,6 +144,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 	private FormPanel formPanel;
 	private Hidden documentHidden;
 	
+	private Map<String, CNO> cnoMap;
+	
+	private boolean hasChange = false;
+	
 	// ------------------------------------------------- Constructor
 	
 	public Certifica2Dialog(Integer contractId) {
@@ -143,10 +158,12 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		this.contractId = contractId;
 		this.pdfViewer = new Viewer();
+		this.cnoMap = new HashMap<String, CNO>();
 		
 		getToolbarPanel();
 		getButtonsPanel();
 		initLoadingPanel();
+		initListBox();
 		
 		enterprisesService.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 			
@@ -157,22 +174,33 @@ public class Certifica2Dialog extends AonCustomDialog {
 				if(!userRoles.isComunica())
 					comunicateCertifica2.setVisible(false);
 				
-				employeesService.getCertifica2Info(contractId, new AsyncCallback<Certifica2Info>() {
+				enterprisesService.getCNOs(new AsyncCallback<Map<String, CNO>>() {
 
 					@Override
-					public void onFailure(Throwable caught) {
-						AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
-						dialog.warning();
-					}
+					public void onFailure(Throwable caught) {}
 
 					@Override
-					public void onSuccess(Certifica2Info certifica2InfoDB) {
-						certifica2Info = certifica2InfoDB;
-						documentHidden.setValue(certifica2Info.getDocument());
-						fillFields();
-						showDialog();
-					}
-				});
+					public void onSuccess(Map<String, CNO> result) {
+						cnoMap = result;
+						initSuggestBox();
+						
+						employeesService.getCertifica2Info(contractId, new AsyncCallback<Certifica2Info>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+								dialog.warning();
+							}
+
+							@Override
+							public void onSuccess(Certifica2Info certifica2InfoDB) {
+								certifica2Info = certifica2InfoDB;
+								documentHidden.setValue(certifica2Info.getDocument());
+								fillFields();
+								showDialog();
+							}
+						});
+					}});
 				
 			}
 			
@@ -184,8 +212,73 @@ public class Certifica2Dialog extends AonCustomDialog {
 			
 		});
 	}
-	
+
 	// ------------------------------------------------- Constructor Methods
+	
+	private void initListBox() {
+		this.suspensionCodeLB.addItem("-", "-1");
+		this.suspensionCodeLB.addItem("DESPIDO DEL TRABAJADOR", "01");
+		this.suspensionCodeLB.addItem("DESPIDO POR CAUSAS OBJETIVAS. AMORTIZACI\u00D3N POR CAUSAS ECON\u00D3MICAS, T\u00C9CNICAS, ORGANIZATIVAS O DE PRODUCCI\u00D3N", "02");
+		this.suspensionCodeLB.addItem("MUERTE DEL EMPRESARIO", "03");
+		this.suspensionCodeLB.addItem("JUBILACI\u00D3N DEL EMPRESARIO", "04");
+		this.suspensionCodeLB.addItem("INCAPACIDAD DEL EMPRESARIO/EXTINCI\u00D3N PERSONALIDAD JURIDICA DEL EMPRESARIO", "05");
+		this.suspensionCodeLB.addItem("CESE POR DECLARACI\u00D3N DE INVALIDEZ PERMANENTE TOTAL DEL TRABAJADOR", "06");
+		this.suspensionCodeLB.addItem("CESE EN PERIODO DE PRUEBA A INSTANCIA DEL EMPRESARIO", "07");
+		this.suspensionCodeLB.addItem("CESE EN PERIODO DE PRUEBA POR ACUERDO DEL CONSEJO RECTOR EN EL SUPUESTO DE SOCIOS DE COOPERATIVAS", "08");
+		this.suspensionCodeLB.addItem("CESE EN PERIODO DE PRUEBA A INSTANCIA DEL TRABAJADOR", "09");
+		this.suspensionCodeLB.addItem("CESE POR VOLUNTAD DEL EMPRESARIO EN LA RELACI\u00D3N LABORAL DE ALTA DIRECCI\u00D3N", "10");
+		this.suspensionCodeLB.addItem("FIN DE CONTRATO TEMPORAL", "11");
+		this.suspensionCodeLB.addItem("FIN DE CONTRATO TEMPORAL A INSTANCIA DEL TRABAJADOR (RECHAZO PR\u00D3RROGA)", "12");
+		this.suspensionCodeLB.addItem("FIN DE LA RELACION ADMINISTRATIVA TEMPORAL DE FUNCIONARIOS DE EMPLEO Y CONTRATADOS ADMINISTRATIVOS", "13");
+		this.suspensionCodeLB.addItem("RESOLUCI\u00D3N DEL TRABAJADOR POR TRASLADO", "14");
+		this.suspensionCodeLB.addItem("FIN O INTERRUPICI\u00D3N DE LA ACTIVIDAD DE LOS TRABAJADORES FIJOS-DISCONTINUOS", "15");
+		this.suspensionCodeLB.addItem("DESPIDO COLECTIVO O EXTINCI\u00D3N DEL CONTRATO POR ERE", "16");
+		this.suspensionCodeLB.addItem("SUSPENSI\u00D3N DEL CONTRATO O ERE", "17");
+		this.suspensionCodeLB.addItem("REDUCCI\u00D3N TEMPORAL DE JORNADA O ERE", "18");
+		this.suspensionCodeLB.addItem("SUSPENSI\u00D3N VOLUNTARIA DE LA RELACI\u00D3N LABORAL. V\u00CDCTIMAS DE VIOLENCIA DE G\u00C9NERO", "19");
+		this.suspensionCodeLB.addItem("EXPULSI\u00D3N DEL SOCIO DE LA COOPERATIVA, POR ACUERDO DEL CONSEJO RECTOR", "20");
+		this.suspensionCodeLB.addItem("BAJA VOLUNTARIA DEL TRABAJADOR", "21");
+		this.suspensionCodeLB.addItem("FINALIZACI\u00D3N O RESOLUCI\u00D3N INVOLUNTARIA DEL COMPROMISO CON LAS FUERZAS(INDICAR ARMADAS, CON O SIN DERECHO A PENSI\u00D3N DE RETIRO)", "22");
+		this.suspensionCodeLB.addItem("FIN DE ACTUACI\u00D3N CON FINALIZACI\u00D3N DE CONTRATO, EN EL CASO DE ARTISTAS", "23");
+		this.suspensionCodeLB.addItem("FIN DE LA ACTIVIDAD FIJA DISCONTINUA POR LA REALIZACI\u00D3N DE TRABAJOS FIJOS Y PERI\u00D3DICOS QUE SE REPITEN EN FECHAS CIERTAS", "24");
+		this.suspensionCodeLB.addItem("FINALIZACI\u00D3N DEL VINCULO SOCIETARIO DE DURACI\u00D3N DETERMINADA, FIJADO EN EL ACUERDO DE ADMISI\u00D3N Y EN LOS ESTATUTOS DE LA COOPERATIVA", "25");
+		this.suspensionCodeLB.addItem("EXCEDENCIA", "26");
+		this.suspensionCodeLB.addItem("CESE INVOLUNTARIO Y CON CARACTER DEFINITIVO EN CARGO PUBLICO O SINDICAL", "27");
+		this.suspensionCodeLB.addItem("PERDIDA CON CARACTER INVOLUNTARIO Y DEFINITIVO  DE LA DEDICACION EXCLUSIVA O PARCIAL POR PARTE  DE UN CARGO PUBLICO O SINDICAL", "28");
+		this.suspensionCodeLB.addItem("CONCLUSI\u00D3N DEL SERVICIO O DEL TIEMPO M\u00C1XIMO COMO RESERVISTA VOLUNTARIO ACTIVADO EN LAS FUERZAS ARMADAS", "29");
+		this.suspensionCodeLB.addItem("DESPIDO POR CAUSAS OBJETIVAS. INEPTITUD, FALTA DE ADAPTACI\u00D3N Y ASISTENCIA AL TRABAJO", "30");
+		this.suspensionCodeLB.addItem("RESOLUCI\u00D3N DEL TRABAJADOR POR MODIFICACI\u00D3N SUSTANCIAL DE LAS CONDICIONES DE TRABAJO", "31");
+		this.suspensionCodeLB.addItem("EXTINCI\u00D3N VOLUNTARIA DE LA RELACI\u00D3N LABORAL. V\u00CDCTIMAS DE VIOLENCIA DE G\u00C9NERO", "32");
+		this.suspensionCodeLB.addItem("RESOLUCI\u00D3N DEL TRABAJADOR POR CAUSA JUSTA", "33");
+		
+		this.suspensionCodeLB.addChangeHandler(e -> {
+			hasChange = true;
+			certifica2Info.setSuspensionCode(this.suspensionCodeLB.getSelectedValue());
+		});
+	}
+	
+	private void initSuggestBox() {
+		List<String> cnoEntry = new ArrayList<String>();
+		for(Entry<String, CNO> entry : cnoMap.entrySet())
+			cnoEntry.add(entry.getKey() + " - " + entry.getValue().getTitle());
+		List<String> cnoSuggest = new ArrayList<String>();
+		for(String cno : cnoEntry)
+			cnoSuggest.add(cno);
+		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) profesionalCategorySB.getSuggestOracle();
+		orclIbans.addAll(cnoSuggest);
+		
+		profesionalCategorySB.setAutoSelectEnabled(true);
+		profesionalCategorySB.addSelectionHandler(e -> {
+			hasChange = true;
+			
+			String cnoStr = profesionalCategorySB.getValueBox().getValue();
+			String cno = "";
+			if(!AonStringUtils.isBlank(cnoStr))
+				cno = cnoStr.split(" -")[0];
+			
+			certifica2Info.setProfesionalCategory(cno);
+		});
+	}
 	
 	private void fillFields() {
 		this.enterpriceDocumentL.setText(certifica2Info.getEnterpriseDocument());
@@ -197,7 +290,11 @@ public class Certifica2Dialog extends AonCustomDialog {
 		this.startDateL.setText(dateFormat.format(certifica2Info.getStartDate()));
 		this.endDateL.setText(null == certifica2Info.getEndDate() ? "" : dateFormat.format(certifica2Info.getEndDate()));
 		this.contractDurationL.setText(certifica2Info.getContractDuration() + " d\u00EDa(s)");
-		this.suspensionCodeL.setText(certifica2Info.getSuspensionCode());
+		setSelectedValueLB(this.suspensionCodeLB, certifica2Info.getSuspensionCode());
+//		this.suspensionCodeL.setText(certifica2Info.getSuspensionCode());
+		CNO cnoObj = cnoMap.get(certifica2Info.getProfesionalCategory());
+		if(null != cnoObj)
+			profesionalCategorySB.setText(cnoObj.getCode() + " - " + cnoObj.getTitle());
 		this.settleQuoteDaysL.setText(certifica2Info.getSettleQuoteDays() + " d\u00EDas");
 		this.baseCgcL.setText(certifica2Info.getBaseCgc() + "");
 		this.baseUnemploymentL.setText(certifica2Info.getBaseUnemployment() + "");
@@ -263,6 +360,18 @@ public class Certifica2Dialog extends AonCustomDialog {
 		});
 	}
 	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
 	// ------------------------------------------------- ToolbarPanel
 	
 	private void getToolbarPanel() {
@@ -272,16 +381,24 @@ public class Certifica2Dialog extends AonCustomDialog {
 		downloadCertifica2 = new AonToolbarSmallButton("Descargar XML", AON.CSS.aonIconDownload());
 		downloadCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		downloadCertifica2.addClickHandler(e -> {
-//			String certifica2URL = GWT.getModuleBaseURL()+ "/certifica2/"
-//		            + "?currentUser=" + Wnd.getCurrentUser()
-//					+ "&currentDomain=" +  Wnd.getCurrentDomainNameURL()
-//					+ "&token=" + Wnd.getToken()
-//					+ "&contractId=" + contractId
-//					+ "&document=" + certifica2Info.getDocument();
-//			
-//			Window.open(certifica2URL, "_blank", null);
-			
-			formPanel.submit();
+			if(hasChange) {
+				messageL.setText("Generando nuevo Certifica2...");
+				messagesPanel.setVisible(true);
+				
+				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String result) {
+						messageL.setText("Descargando XML Certifica2...");
+						hasChange = false;
+						formPanel.submit();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			} else
+				formPanel.submit();
 		});
 		
 		toolbar.add(downloadCertifica2);
@@ -290,27 +407,65 @@ public class Certifica2Dialog extends AonCustomDialog {
 		comunicateCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		comunicateCertifica2.addClickHandler(e -> {
 			
-			messageL.setText("Comunicando Certifica2 al SEPE...");
-			messagesPanel.setVisible(true);
+			if(hasChange) {
+				messageL.setText("Generando nuevo Certifica2...");
+				messagesPanel.setVisible(true);
+				
+				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String result) {
+						hasChange = false;
+						messageL.setText("Comunicando Certifica2 al SEPE...");
+						messagesPanel.setVisible(true);
+						
+						employeesService.sendCertifica2(contractId, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								messagesPanel.setVisible(false);
+								comunicateCertifica2PDF.setVisible(true);
+								AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente"));
+								dialog.info();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								messagesPanel.setVisible(false);
+								comunicateCertifica2PDF.setVisible(false);
+								AonDialog dialog = new AonDialog("Error Certifica2", new HTML(caught.getMessage()));
+								dialog.warning();
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+			} else {
 			
-			employeesService.sendCertifica2(contractId, new AsyncCallback<Void>() {
+				messageL.setText("Comunicando Certifica2 al SEPE...");
+				messagesPanel.setVisible(true);
 				
-				@Override
-				public void onSuccess(Void result) {
-					messagesPanel.setVisible(false);
-					comunicateCertifica2PDF.setVisible(true);
-					AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente"));
-					dialog.info();
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {
-					messagesPanel.setVisible(false);
-					comunicateCertifica2PDF.setVisible(false);
-					AonDialog dialog = new AonDialog("Error Certifica2", new HTML(caught.getMessage()));
-					dialog.warning();
-				}
-			});
+				employeesService.sendCertifica2(contractId, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						messagesPanel.setVisible(false);
+						comunicateCertifica2PDF.setVisible(true);
+						AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente"));
+						dialog.info();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						messagesPanel.setVisible(false);
+						comunicateCertifica2PDF.setVisible(false);
+						AonDialog dialog = new AonDialog("Error Certifica2", new HTML(caught.getMessage()));
+						dialog.warning();
+					}
+				});
+			}
 		});
 		
 		toolbar.add(comunicateCertifica2);
@@ -372,6 +527,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 		flowPanel.add(documentHidden);
 		
 		formPanel.add(flowPanel);
+		formPanel.addSubmitHandler(e -> {
+			messagesPanel.setVisible(false);
+		});
 	}
 
 	// ------------------------------------------------- ButtonsPanel
