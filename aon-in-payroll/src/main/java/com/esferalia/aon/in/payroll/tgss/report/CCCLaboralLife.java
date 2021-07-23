@@ -230,7 +230,7 @@ public class CCCLaboralLife {
 	//	 BAJA 01-12-2014 01-12-2014 13-07-2018 13-07-2018 07 100  A 0,65 0,35 1,00 1321 9Z1
     
 	private static final Pattern GENERAL_INFO = Pattern.compile(
-			"\\s*(?<type>\\D+)" +
+			"\\s*(?<type>\\S+)" +
 			"\\s*(?<startDate>\\d{0,2}-\\d{0,2}-\\d{0,4})" +
 			"\\s*(?<effectDate>\\d{0,2}-\\d{0,2}-\\d{0,4})" +
 			"\\s*(?<realSitDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
