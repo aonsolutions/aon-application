@@ -997,11 +997,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		initZoomList();
 		zoomListBox.addChangeHandler(e -> {
-			int index =zoomListBox.getSelectedIndex();
+			int index = zoomListBox.getSelectedIndex();
 			String text = zoomListBox.getItemText(index);
 			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
 			pdfViewer.scale(zoom / 100.00);
 		});
+		zoomListBox.setVisible(false);
 		hPanel.add(zoomListBox);
 		
 		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
@@ -1586,7 +1587,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		zoomSalaryListBox = new ListBox();
 		salaryDraft.initPrintPreview(zoomSalaryListBox);
-		hPanel.add(zoomListBox);
+		zoomSalaryListBox.setVisible(false);
+		hPanel.add(zoomSalaryListBox);
 		
 		saveSalaryButton = new AonToolbarButton( "Descargar", AON.CSS.aonIconPdf() );
 		saveSalaryButton.addClickHandler(e -> {
