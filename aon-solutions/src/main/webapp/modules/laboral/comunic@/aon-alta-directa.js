@@ -3,7 +3,7 @@ import { setValueName, serializeForm, disabledForm, formatDateOrigin } from '../
 import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
-import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createCardEnterprise, createCardEmployee, createCardContract } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 

@@ -2,12 +2,7 @@ import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
 import { COLORS, CONSTANT, CSS, EVENT } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
-import {
-  setAttributes,
-  setClasses,
-  setStyles,
-  setValueName,
-} from "../../services/utils.js";
+import { setAttributes, setClasses, setStyles } from "../../services/utils.js";
 import {
   buildDesktopChat,
   buildMobileChat,
