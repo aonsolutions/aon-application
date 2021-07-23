@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -146,6 +147,20 @@ class SistemaREDMov {
 		catch (InterruptedException e) {throw new SegSocialException(e);}
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
+	
+	public static void cambioContratoCoef(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef) throws SegSocialException{
+		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
+		try {cambioContratoCoefImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}
+	
 	
 	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String situation, String regimen, String ctaCti, String nss) throws SegSocialException{
@@ -492,6 +507,54 @@ class SistemaREDMov {
 		  String fieldValue = "NueCat";
 		  String fieldDate = "fecSit";
 		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, cat, fieldValue, fieldDate, url);
+	}
+	
+	private static void cambioContratoCoefImpl(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			String ipf, String regimen, String ctaCti, String nss, Date fecha, Optional<String>contract, String coef) throws Exception  {
+		
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+
+	        Integer ident  = 1; 
+		     if(identity(ipf).equals("6")) ident = 3; // NIE
+ 			//Date
+ 			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
+ 			
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR45&E=I&AP=AFIR");
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			//form fist
+			form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
+			form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
+			
+			form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident.toString());
+			form.getInputByName("txt_SDFNUMPFI").setValueAttribute(ipf);
+			
+			form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
+			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
+			form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
+			
+	
+			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207601004");
+			htmlPage = btnSubmit.click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fr[0]); 
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]); 
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]); 
+			
+			if(!contract.isEmpty())form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
+			if(coef==null) coef = "0";
+			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); //coef 3 digits
+			
+			btnSubmit = htmlPage.querySelector("#Sub2207401004");
+			htmlPage = btnSubmit.click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+		} 
 	}
 	
 	private static void pageCambioCatOcupGc(final InputStream certificateInputStream, 

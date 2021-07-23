@@ -1,16 +1,21 @@
 package solutions.aon.seg.social;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import solutions.aon.seg.social.SistemaREDMov;
+
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.object.Employee;
@@ -23,7 +28,7 @@ public class TestSistemaREDMov {
 	public void testSendAlta() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
-			c.add(Calendar.DATE, 8);
+//			c.add(Calendar.DATE, 8);
 			Date fecha=c.getTime();
 			EmployeeBuilder builder = new EmployeeBuilder();
 			Employee employee = builder
@@ -32,7 +37,7 @@ public class TestSistemaREDMov {
 			.setNss("010022757387")
 			.setIpf("16262835H")
 			.setFra(fecha)
-			.setOcup("e")
+			.setOcup("a")
 			.setColec("60888888888888")
 			.setGc("03")
 			.setContract("401")
@@ -80,7 +85,7 @@ public class TestSistemaREDMov {
 	}
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testValidateCert() {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("test_error.p12")){
 		    SistemaREDMov.validateCert(certificateInputStream, "ZH2021Aon", "pkcs12");
@@ -123,5 +128,29 @@ public class TestSistemaREDMov {
 		} 
 	}
 
+	@Test
+	@Ignore
+	public void testCambioContratoCoef() {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			Calendar c=Calendar.getInstance();
+			Date fecha=c.getTime();
+			SistemaREDMov.cambioContratoCoef(certificateInputStream,"jg@FNMT", "pkcs12", 
+					"16262835H", //IPF
+					"0111", //REGIMEN
+					"01105360062", //CCC
+					"010022757387",//NSS 
+					fecha,// FECHA DE CAMBIO
+					Optional.of("502"), // CODIGO DEL CONTRATO (OPCIONAL) Optional.empty
+					"725" // COEFICIENTE 3 digits o null
+					
+			);
+		} catch (NotExistingYetException e) {} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+		} catch (FailingHttpStatusCodeException e) {
+			assertTrue(true);
+		}
+	}
 
 }

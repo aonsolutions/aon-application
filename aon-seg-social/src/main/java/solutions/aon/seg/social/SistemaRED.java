@@ -473,6 +473,14 @@ public class SistemaRED {
 		SistemaREDMov.cambioCatProf(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti,
 				nss, cat, fecha);
 	}
+	
+	public static void cambioContratoCoef(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, Date fechaCambio, Optional<String>contract, String coef)
+			throws SegSocialException {
+		
+		SistemaREDMov.cambioContratoCoef(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fechaCambio, contract, coef);
+	}
+
 
 	public static boolean recordCertificate(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime,

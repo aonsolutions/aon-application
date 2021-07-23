@@ -53,6 +53,7 @@ import com.google.gson.JsonParser;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 @MultipartConfig
@@ -387,9 +388,10 @@ public class ContractServlet extends AonApiHttpServlet {
 						certificate.getType(), regimen, cti, startDate, endDate
 					);
 		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
-		  } catch(Exception e) {
+		  } catch(InvalidCertificateException e) {
 		      e.printStackTrace();
-		  }
+		      errors.add(e.getClass().getSimpleName());
+		  } catch(Exception e) {}
 		});	
 
 		if(errors.size() > 0) throw new Exception(errors.get(0));
