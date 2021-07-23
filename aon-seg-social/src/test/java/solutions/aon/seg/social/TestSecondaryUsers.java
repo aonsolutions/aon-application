@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaREDSecondaryUser;
@@ -89,6 +90,7 @@ public class TestSecondaryUsers {
 	}
 	
 	@Test
+	@Ignore
 	public void getSecondaryUsersContentTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
