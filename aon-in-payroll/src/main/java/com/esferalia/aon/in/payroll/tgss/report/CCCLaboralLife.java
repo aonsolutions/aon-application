@@ -87,29 +87,45 @@ public class CCCLaboralLife {
 					if(employeeData.group("realSitDate") != null)  	realSitDate 	= 	parseDate(employeeData.group("realSitDate"),"dd-MM-yyyy");
 					if(employeeData.group("effectSitDate") != null) effectSitDate 	= 	parseDate(employeeData.group("effectSitDate"),"dd-MM-yyyy");
 
-					String gc =				employeeData.group("gc");
-					String tc = 			employeeData.group("tc");
-					String ep = 			employeeData.group("ep");
+					String gc =	employeeData.group("gc");
+					String tc = employeeData.group("tc");
+					String ep = employeeData.group("ep");
 
-					Float ctp = 			null;
-					String ctp_str = 		employeeData.group("ctp");
-					if(ctp_str != null){
-						String[] ctp_arr = 	ctp_str.split(",");
-						ctp = 				Float.parseFloat(ctp_arr[0] + "." + ctp_arr[1]);
+					Float ctp = 			0.0f;
+					if(employeeData.group("ctp")!=null) {
+						String ctp_str = 		employeeData.group("ctp");
+						if(ctp_str != null){
+							String[] ctp_arr = 	ctp_str.split(",");
+							ctp = 				Float.parseFloat(ctp_arr[0] + "." + ctp_arr[1]);
+						}
+					}
+					
+					Float at = 0.0f;
+					if(employeeData.group("at")!=null) {
+						String[] at_arr = 		employeeData.group("at").split(",");
+						at = Float.parseFloat(at_arr[0] + "." + at_arr[1]);
+					}
+					
+					float ims = 0.0f;
+					if(employeeData.group("ims")!=null) {
+						String[] ims_arr =		employeeData.group("ims").split(",");
+						ims = 			Float.parseFloat(ims_arr[0] + "." + ims_arr[1]);
 					}
 
-					String[] at_arr = 		employeeData.group("at").split(",");
-					Float at = 				Float.parseFloat(at_arr[0] + "." + at_arr[1]);
+					float total = 0.0f;
+					if(employeeData.group("total")!=null) {
+						String[] total_arr =	employeeData.group("total").split(",");
+						total = 			Float.parseFloat(total_arr[0] + "." + total_arr[1]);
+	
+					}
 
-					String[] ims_arr =		employeeData.group("ims").split(",");
-					float ims = 			Float.parseFloat(ims_arr[0] + "." + ims_arr[1]);
-
-					String[] total_arr =	employeeData.group("total").split(",");
-					float total = 			Float.parseFloat(total_arr[0] + "." + total_arr[1]);
-
-					int cotDays = 			Integer.parseInt(employeeData.group("cotDays"));
+					int cotDays = 	0;
+					if(employeeData.group("cotDays")!=null) {
+						cotDays = Integer.parseInt(employeeData.group("cotDays"));
+					}
 
 					if(ctp != null) 		builder.setCtp(ctp);
+
 
 					builder.setNss(nss)
 							.setIpf(ipf)
@@ -212,20 +228,21 @@ public class CCCLaboralLife {
 			, Pattern.CASE_INSENSITIVE);
 
 	//	 BAJA 01-12-2014 01-12-2014 13-07-2018 13-07-2018 07 100  A 0,65 0,35 1,00 1321 9Z1
+    
 	private static final Pattern GENERAL_INFO = Pattern.compile(
-			"\\s*(?<type>\\S+)" +
-					"\\s(?<startDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
-					"\\s(?<effectDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
-					"\\s(?<realSitDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
-					"\\s(?<effectSitDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
-					"\\s(?<gc>\\d{2})?" +
-					"\\s(?<tc>\\d{3})?" +
-					"\\s(?<ctp>\\d+,\\d+)?" +
-					"\\s(?<ep>\\p{Alpha})?" +
-					"\\s(?<at>\\d,\\d{2})?" +
-					"\\s(?<ims>\\d,\\d{2})?" +
-					"\\s(?<total>\\d,\\d{2})?" +
-					"\\s(?<cotDays>\\d*)?" +
-					".*"
-			, Pattern.CASE_INSENSITIVE);
+			"\\s*(?<type>\\D+)" +
+			"\\s*(?<startDate>\\d{0,2}-\\d{0,2}-\\d{0,4})" +
+			"\\s*(?<effectDate>\\d{0,2}-\\d{0,2}-\\d{0,4})" +
+			"\\s*(?<realSitDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
+			"\\s*(?<effectSitDate>\\d{0,2}-\\d{0,2}-\\d{0,4})?" +
+			"\\s*(?<gc>\\d{2})" +
+			"\\s*(?<tc>\\d{3})?" +
+			"\\s*(?<ctp>\\d+,\\d+)?" +
+			"\\s*(?<ep>[A-Za-z]{1})?" +
+			"\\s(?<at>\\d,\\d{2})?" +
+			"\\s(?<ims>\\d,\\d{2})?" +
+			"\\s(?<total>\\d,\\d{2})?" +
+			"\\s*(?<cotDays>\\d{1,5})" +
+			"\\s*([\\d\\w]+)\\s*$"
+	, Pattern.CASE_INSENSITIVE);
 }

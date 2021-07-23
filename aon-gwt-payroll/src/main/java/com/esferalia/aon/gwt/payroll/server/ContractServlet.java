@@ -50,11 +50,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 @MultipartConfig
@@ -381,14 +379,14 @@ public class ContractServlet extends AonApiHttpServlet {
 		Date endDate = !api.getParams().optString("endDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd") : new Date();
 		
 		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
-		  String cti = ccc.getCccAccount();
+		  String cti     = ccc.getCccAccount();
 		  String regimen = ccc.getCccRegimeCode();
 		  try {
-			byte[] pdf = SistemaRED.getCccLaboralLife(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti, startDate, endDate);
+			byte[] pdf = SistemaRED.getCccLaboralLife(
+						new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), 
+						certificate.getType(), regimen, cti, startDate, endDate
+					);
 		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
-		  } catch(InvalidCertificateException e) {
-		      e.printStackTrace();
-		      errors.add(e.getClass().getSimpleName());
 		  } catch(Exception e) {
 		      e.printStackTrace();
 		  }
