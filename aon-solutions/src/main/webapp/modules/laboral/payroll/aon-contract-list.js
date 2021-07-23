@@ -115,20 +115,27 @@ export class AonContractList extends AonElement {
   }
 
   getOptions(res) {
-    return [
-      {
+    let options = [];
+    const prev = new Date(res.startDate).getTime() > new Date().getTime();
+    
+    if(!prev){
+      options.push({
         ...CONTRACT_OPTIONS.CONTRACT,
         fn: (el) => this.applicationParentEl.getContratoPdf(res, el),
-      },
-      {
-        ...CONTRACT_OPTIONS.TA,
-        fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
-      },
-			{
-        ...CONTRACT_OPTIONS.IDC,
-				fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
-			}
-    ];
+      });
+    }
+
+    options.push({
+      ...CONTRACT_OPTIONS.TA,
+      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+    });
+
+    options.push({
+      ...CONTRACT_OPTIONS.IDC,
+      fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+    });
+
+    return options;
   }
 
   async getData() {
