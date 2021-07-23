@@ -16,6 +16,14 @@
 			font-style: italic;
 			color: gray;
 		}
+		
+		.suspensionReasonWidth{
+			width: 320px;
+		}
+		
+		.profesionalCatWidth{
+			width: 303px;
+		}
 	
 		.form {
 			display: flex;
@@ -129,9 +137,19 @@
 					<g:Label styleName="{style.subTitle}">Duración Contrato:</g:Label>
 					<g:Label ui:field="contractDurationL" />
 				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:Label styleName="{style.subTitle}">Código Suspensión:</g:Label>
-					<g:Label ui:field="suspensionCodeL" />
+					<g:ListBox ui:field="suspensionCodeLB" styleName="{style.suspensionReasonWidth}" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.subTitle}">Categoría profesional:</g:Label>
+					<g:SuggestBox ui:field="profesionalCategorySB" styleName="{style.profesionalCatWidth}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
