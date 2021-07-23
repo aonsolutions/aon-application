@@ -17,6 +17,7 @@ public class Certifica2Info implements Serializable {
 	private String ccc;
 	private String completeCCC;
 	private String document;
+	private String ssNumber;
 	private String name;
 	private String surname;
 	private String secondSurname;
@@ -73,6 +74,14 @@ public class Certifica2Info implements Serializable {
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+	
+	public String getSSNumber() {
+		return ssNumber;
+	}
+
+	public void setSSNumber(String ssNumber) {
+		this.ssNumber = ssNumber;
 	}
 
 	public String getName() {
