@@ -557,7 +557,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		
 		Double partialityCoef = contractData.getPartialityCoef();
-		if(null == partialityCoef || partialityCoef == 0.00) {
+		if( (null == partialityCoef || partialityCoef == 0.00) && 
+			(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))) {
+			
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
 		}
@@ -573,6 +575,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 				hours += Double.parseDouble(expression);
 			}
 		}
+		
 		hours = hours / 40;
 				
 		return Math.round(hours * 100.0) / 100.0;
