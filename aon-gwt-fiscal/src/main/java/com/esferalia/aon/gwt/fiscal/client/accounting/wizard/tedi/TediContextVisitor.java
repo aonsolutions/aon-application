@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
@@ -505,7 +506,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 						
 					}
 					// TODO Inicializar los datos del registry.
-					registryBox.showDialog(getOptions(),ar);
+//					registryBox.showDialog(getOptions(),ar);
+					AonAccountingRegistryPanel regitryNewPanel = registryBox.getAonAccountingRegistryPanel(getOptions(),ar);
+					dialog.setContent("", regitryNewPanel);
 				}
 			});
 			dialog.setContent("", newCreditor);		

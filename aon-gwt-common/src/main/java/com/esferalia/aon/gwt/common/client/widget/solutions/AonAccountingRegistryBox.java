@@ -480,14 +480,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	public void showDialog(AonModuleOptions<?> options, AccountingRegistry ar) {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption(AON.MSG.titular());
-		final AonAccountingRegistryPanel accountPanel = new AonAccountingRegistryPanel( 
-				options.getDomainName(), 
-				options.getDomain(), 
-				options.getUser(), 
-				getId(),
-				options.getConfiguration(), 
-				ar, 
-				new AonAccountingRegistryPanelCallback() {
+		final AonAccountingRegistryPanel accountPanel = getAonAccountingRegistryPanel(options, ar, new AonAccountingRegistryPanelCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -506,8 +499,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			public void setFocus(boolean b) {
 				AonAccountingRegistryBox.this.setFocus(b);
 			}
-		});
-		
+		});		
 		dialog.add( accountPanel );
 		dialog.center();
 		dialog.show();
@@ -519,6 +511,38 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	    });		
 	}
 	
+	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar) {
+		return getAonAccountingRegistryPanel(options, ar, new AonAccountingRegistryPanelCallback() {
+					
+					@Override
+					public void onCancel() {
+						setFocus(true);
+					}
+					
+					@Override
+					public void onAccept(AccountingRegistry registry) {
+						setValue(registry,false);
+						select(registry);
+					}
+
+					@Override
+					public void setFocus(boolean b) {
+						AonAccountingRegistryBox.this.setFocus(b);
+					}
+				});
+	}
+	
+	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar, AonAccountingRegistryPanelCallback callback) {
+		return new AonAccountingRegistryPanel( 
+				options.getDomainName(), 
+				options.getDomain(), 
+				options.getUser(), 
+				getId(),
+				options.getConfiguration(), 
+				ar, 
+				callback);
+	}
+
 	public void showNewDialog(AonModuleOptions<?> options) {
 		final AonSimpleDialog dialog = new AonSimpleDialog();
 		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
