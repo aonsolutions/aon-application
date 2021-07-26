@@ -734,10 +734,10 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private void setTableHeights() {
 		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 175), Unit.PX);
 		
 		trashEmployeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTrashTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		mainTrashTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 175), Unit.PX);
 	}
 
 	// --------------------------------------------------------------------------------------------
