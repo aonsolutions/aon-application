@@ -667,6 +667,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						public void onSuccess(AccountingInvoice result) {
 							if (invoiceCallback.getInvoice().isDocumentAttached()) {
 								result.setAttach(invoiceCallback.getInvoice().getAttach());
+								result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
 							}
 							AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 							invoiceCallback.setInvoice(result);
