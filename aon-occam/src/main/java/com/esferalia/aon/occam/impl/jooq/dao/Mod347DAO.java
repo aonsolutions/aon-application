@@ -245,20 +245,24 @@ public class Mod347DAO {
 	}
 	
 	public static Mod347 save(AONContext ctx, Mod347 mod347) {
-		ctx.checkWrite();
-		if (mod347.getId() == null) {
-			mod347 = insert(ctx, mod347); 
-			 
-		} else {
-			mod347 = update(ctx, mod347);
+		try {	
+			ctx.checkWrite();
+			if (mod347.getId() == null) {
+				mod347 = insert(ctx, mod347); 
+				 
+			} else {
+				mod347 = update(ctx, mod347);
+			}
+			for (Mod347Declared declared : mod347.getDeclared()) {
+				saveDeclared(ctx,mod347,declared);
+			}
+			for (Mod347Asset asset : mod347.getAssets()) {
+				saveAsset(ctx,mod347,asset);
+			}
+			return getById(ctx, mod347.getId());
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
 		}
-		for (Mod347Declared declared : mod347.getDeclared()) {
-			saveDeclared(ctx,mod347,declared);
-		}
-		for (Mod347Asset asset : mod347.getAssets()) {
-			saveAsset(ctx,mod347,asset);
-		}
-		return getById(ctx, mod347.getId());
 	}
 
 	private static Mod347 insert(AONContext ctx, Mod347 mod347) {
@@ -356,7 +360,11 @@ public class Mod347DAO {
 		
 		// Comprobar que está cumplimentado el ejercicio
 		if (mod347.getYear() == 0)
-			throw new AonCoreException("Debe cumplimentar el Ejercicio.");			
+			throw new AonCoreException("Debe cumplimentar el Ejercicio.");
+		
+		// NIF Declarante debe estar cumplimentado y de longitud menor de 9
+		if (AonStringUtils.isBlank(mod347.getDocument()) || mod347.getDocument().length() > 9)
+			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");
 		
 		// Se comprueba que no exista otra declaración sustitutiva que sustituya a la misma anterior
 		if (mod347.isReplacement()) {
@@ -710,13 +718,13 @@ public class Mod347DAO {
 	private static void insertDetailsFromInvoice(AONContext ctx , final Mod347 mod347) {
 		
 		// PROCEDIMIENTO A SEGUIR:
-		// - Se leen las facturas normales o ISP, que no lleven retencion, del ejercicio actual y del anterior (para las facturas RECC)
+		// - Se leen las facturas, según los filtros, del ejercicio actual y del anterior (para las facturas RECC)
 		// - Se asigna a todas las compras y gastos, el tipo "0" y a las ventas el "1"
-		// - Se guardan en un mapa agrupandolas por Documento + Tipo + ISP + RECC
+		// - Se guardan en un mapa agrupandolas por "Documento + Tipo + ISP + RECC"
 		// - Si la factura es RECC se acumula el importe total de la factura, si es del ejercicio actual y 
 		//   además se acumula tambien el importe declarado según la regla RECC del IVA
-		// - Se van leyendo y por cada Documento + Tipo + ISP + RECC, se va creando una linea de 
-		//   declarado (si el total de operaciones de Documento + Tipo supera el valor mínimo)
+		// - Se van leyendo y por cada "Documento + Tipo + ISP + RECC", se va creando una linea de 
+		//   declarado (si el total de operaciones de "Documento + Tipo" supera el valor mínimo)
 		
 		// Se pone solo el ejercicio actual, porque getVatBreakdown ya lee automaticamente las facturas RECC del ejercicio anterior
 		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
@@ -724,11 +732,11 @@ public class Mod347DAO {
 		
 		Calendar cal = Calendar.getInstance();
 
-		// Mapa que guardará los datos agrupando por Documento + Tipo + ISP + RECC
+		// Mapa que guardará los datos agrupando por "Documento + Tipo + ISP + RECC"
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
-		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion) ya se filtraran mas abajo
+		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion), que cumplan los filtros 
 		getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY))
 				.peek( vat -> {					
@@ -739,12 +747,11 @@ public class Mod347DAO {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
 				})
 				.forEach( vat -> {
-//					boolean exclude = vat.isSales() && AonMathUtils.isZero( vat.getPercentage()) && mod347.isExcludeOutputNationalZero();
-//					if (!exclude) {
 						// Añadir la factura al registro que corresponda del declarado
 						// Dado que es necesario separar las operaciones normales de las ISP y de las RECC, se usa como clave esos dos datos
-						// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347
-						String document = AonStringUtils.substring(vat.getRegistryDocument(), 0, 15);
+						// además del NIF y el tipo, para posteriormente crear tantos registros como sea necesario en las lineas del 347						
+						String document = AonStringUtils.trimToEmpty(vat.getRegistryDocument());
+						String name = AonStringUtils.trimToEmpty(vat.getRegistryName());
 						String c = document + ";" + vat.getInvoiceType() + ";" + vat.getTransaction() + ";" + vat.isVatAccrualRegime();						
 						Mod347Declared declared = mapResult.get(c);
 						if (declared == null) {
@@ -756,24 +763,27 @@ public class Mod347DAO {
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
-								if (AonStringUtils.length(document) > 9) {
-									declared.setDocument(AonStringUtils.substring(document, 0, 9));
-								} else {
-									declared.setDocument(document);
-								}
-	
+								if (AonStringUtils.length(document) > 9) {									
+									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+								} 
+									
+								declared.setDocument(document);
+									
 								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
 								declared.setProvince(Province.safeValueOf(getRegistryMainAddressProvince(ctx, vat.getRegistry())));
 	
 							} else {
-	
+								
+								if (AonStringUtils.length(document) > 15) {									
+									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
+								}	
+								
 								declared.setOperatorNif(AonStringUtils.substring((country.getIso2() + document), 0, 17));
 								declared.setCountry(country);
-								declared.setProvince(Province.NO_RESIDENTE);
+								declared.setProvince(Province.NO_RESIDENTE);								
 								
-							}
-	
-							String name = vat.getRegistryName();
+							}	
+							
 							if (AonStringUtils.length(name) > 64) {
 								name = AonStringUtils.substring(name, 0, 63);
 							}
@@ -832,7 +842,6 @@ public class Mod347DAO {
 						
 						// Acumular el total
 						declared.setAmount(declared.getAmount() + amount);
-//					}		
 				});
 		
 		String control = "";
@@ -982,9 +991,6 @@ public class Mod347DAO {
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
 			.filter(vat ->  !(mod347.isExcludeRetention() && vat.hasRetention()))
 			.filter(vat ->  !(mod347.isExcludeIntracommunity() && vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY));
-
-//		.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
-//		.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat));		
 		
 	}
 	

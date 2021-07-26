@@ -122,17 +122,21 @@ public class Mod349DAO {
 	}
 	
 	public static Mod349 save(AONContext ctx, Mod349 mod349) {
-		ctx.checkWrite();
-		if (mod349.getId() == null) {
-			mod349 = insert(ctx, mod349); 
-			 
-		} else {
-			mod349 = update(ctx, mod349);
+		try {
+			ctx.checkWrite();
+			if (mod349.getId() == null) {
+				mod349 = insert(ctx, mod349); 
+				 
+			} else {
+				mod349 = update(ctx, mod349);
+			}
+			for (Mod349Detail detail : mod349.getDetails()) {
+				saveDetail(ctx,mod349,detail);
+			}
+			return getById(ctx, mod349.getId());			 
+		} catch (Throwable t) {
+			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
 		}
-		for (Mod349Detail detail : mod349.getDetails()) {
-			saveDetail(ctx,mod349,detail);
-		}
-		return getById(ctx, mod349.getId());
 	}
 
 	private static Mod349 insert(AONContext ctx, Mod349 mod349) {
@@ -206,7 +210,11 @@ public class Mod349DAO {
 		
 		// Comprobar que está cumplimentado el ejercicio y el periodo
 		if (mod349.getYear() == 0 || mod349.getPeriod() == null)
-			throw new AonCoreException("Debe cumplimentar Ejercicio y Periodo.");			
+			throw new AonCoreException("Debe cumplimentar Ejercicio y Periodo.");
+		
+		// NIF Declarante debe estar cumplimentado y de longitud menor de 9
+		if (AonStringUtils.isBlank(mod349.getDocument()) || mod349.getDocument().length() > 9)
+			throw new AonCoreException("El NIF del Declarante debe estar cumplimentado y su longitud no puede ser mayor de 9 caracteres.");
 		
 		// Se comprueba que no exista otra declaración sustitutiva que sustituya a la misma anterior
 		if (mod349.isReplacement()) {
@@ -640,7 +648,7 @@ public class Mod349DAO {
 				});
 		
 		return Stream.concat(s1, s2);				
-	}
+	}	
 	
 	// Obtiene el desglose de las facturas intracomunitarias, para el periodo del modelo, según sea por diferencias o no
 	public static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod349 mod349, final boolean isDiffEnabled) {
@@ -651,7 +659,13 @@ public class Mod349DAO {
 		// Obtenemos el desglose de las facturas intracomunitarias entre las fechas indicadas
 		return VATDAO.getVatBreakdown(ctx,fromDate,toDate)
 				.filter(mod -> mod.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY)
-				.peek(vat -> vat.setInsidePeriod(mod349==null ? false : FiscalUtils.isInPeriodRange(mod349, vat.getTaxDate())));
+				.peek(vat -> { 
+					vat.setInsidePeriod(mod349==null ? false : FiscalUtils.isInPeriodRange(mod349, vat.getTaxDate()));
+					
+					// NIF Operador Intracomunitario debe estar cumplimentado y de longitud menor de 15
+					if (AonStringUtils.isBlank(vat.getRegistryDocument()) || vat.getRegistryDocument().length() > 15)
+						throw new AonCoreException("El NIF del Operador Intracomunitario debe estar cumplimentado y su longitud no puede ser mayor de 15 caracteres. ["+vat.getRegistryDocument()+" - "+vat.getRegistryName()+" - Factura "+vat.getDocumentNumber()+"]");					
+				});
 		
 	}
 	
