@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,8 +12,8 @@ public class SSBonusData implements Serializable {
 	
 	private Integer id;
 	private Boolean system;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private String description;
 	private Byte type;
 	private String formula;
@@ -23,8 +26,8 @@ public class SSBonusData implements Serializable {
 	public SSBonusData(Integer id, Boolean system, Date startDate, Date endDate, String description, Byte type, String formula) {
 		this.id = id;
 		this.system = system;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDate = Shared.format(startDate);
+		this.endDate = format(endDate);
 		this.description = description;
 		this.type = type;
 		this.formula = formula;
@@ -49,19 +52,19 @@ public class SSBonusData implements Serializable {
 	}
 	
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public String getDescription() {

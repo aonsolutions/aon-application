@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -137,25 +140,25 @@ public abstract class EmployeeStatus implements Serializable {
 
 	public static class MismatchedStartDate extends AndEmployeeStatus {
 		
-		private Date ssStartDate;
-		private Date aonStartDate;
+		private String ssStartDate;
+		private String aonStartDate;
 
 		
 		public Date getAonStartDate() {
-			return aonStartDate;
+			return parse(aonStartDate);
 		}
 
 		public Date getSsStartDate() {
-			return ssStartDate;
+			return Shared.parse(ssStartDate);
 		}
 
 		public MismatchedStartDate setSsStartDate(Date ssStartDate) {
-			this.ssStartDate = ssStartDate;
+			this.ssStartDate = format(ssStartDate);
 			return this;
 		}
 		
 		public MismatchedStartDate setAonStartDate(Date aonStartDate) {
-			this.aonStartDate = aonStartDate;
+			this.aonStartDate = format(aonStartDate);
 			return this;
 
 		}

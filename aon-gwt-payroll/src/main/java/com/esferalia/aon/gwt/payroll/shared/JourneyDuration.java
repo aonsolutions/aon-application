@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,8 +10,8 @@ public class JourneyDuration implements Serializable {
 
 	private String name;
 	private String expression;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	
 	public JourneyDuration(){
 		super();
@@ -31,19 +34,19 @@ public class JourneyDuration implements Serializable {
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 	
 }

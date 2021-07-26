@@ -86,7 +86,7 @@ public class ErrorDescription {
 	//
 	
 	// ------------------------------------------------------------------------
-	// 				ERRORES QUE IMPIDEN EL TRATAMIENTO DE LA LIQUIDACIÓN
+	// 				ERRORES QUE IMPIDEN EL TRATAMIENTO DE LA LIQUIDACIóN
 	// 				(En todos estos supuestos la liquidación no se trata) 
 	//
 		put(/*R*/"2470", new ErrorDescription()

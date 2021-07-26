@@ -1,14 +1,16 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 
-public class  Salary implements Serializable {
+public class  Salary implements Serializable{
 	
 	public static interface TypeVisitor<E> {
 		
@@ -127,11 +129,11 @@ public class  Salary implements Serializable {
 	
 	private Type type;
 	
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	
-	private Date issueDate;
-	private Date chargeDate;
+	private String issueDate;
+	private String chargeDate;
 	
 	
 	public int getId() {
@@ -154,38 +156,38 @@ public class  Salary implements Serializable {
 
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public <T extends Salary> T  setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate =format(startDate);
 		return thix();
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public <T extends Salary> T  setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 		return thix();
 	}
 
 	public Date getIssueDate() {
-		return issueDate;
+		return parse(issueDate);
 	}
 
 	public <T extends Salary> T  setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
+		this.issueDate = format(issueDate);
 		return thix();
 	}
 
 	public Date getChargeDate() {
-		return chargeDate;
+		return parse(chargeDate);
 	}
 
 	public <T extends Salary> T  setChargeDate(Date chargeDate) {
-		this.chargeDate = chargeDate;
+		this.chargeDate = format(chargeDate);
 		return thix();
 	}
 	
@@ -195,7 +197,7 @@ public class  Salary implements Serializable {
 		return (T) this;
 	}
 
-	
-	
+	// ------------------------------------------------------------------------
+
 	
 }

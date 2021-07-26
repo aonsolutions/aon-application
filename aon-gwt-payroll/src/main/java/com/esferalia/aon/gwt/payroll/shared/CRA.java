@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +13,9 @@ public class CRA implements Serializable{
 	
 	private Integer code; //ID UNIQUE
 	private Integer domain;
-	private Date creationDate;
+	private String creationDate;
 	private byte status;
-	private Date date;
+	private String date;
 	
 	private Boolean isConsignment;
 	private List<CCCInfo> includeCCCs;
@@ -51,11 +53,11 @@ public class CRA implements Serializable{
 	}
 
 	public Date getCreationDate() {
-		return creationDate;
+		return parse(creationDate);
 	}
 
 	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+		this.creationDate = Shared.format(creationDate);
 	}
 
 	public byte getStatus() {
@@ -75,11 +77,11 @@ public class CRA implements Serializable{
 	}
 
 	public Date getDate() {
-		return date;
+		return parse(date);
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
+		this.date = Shared.format(date);
 	}
 
 	public Boolean getIsConsignment() {

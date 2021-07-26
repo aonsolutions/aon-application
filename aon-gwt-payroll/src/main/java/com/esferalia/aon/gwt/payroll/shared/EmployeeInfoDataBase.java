@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +16,7 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	//PERSON TABLE
 	private Integer person_table_id;		//ID Person Table
-	private Date birth_date;				//Person Birth Date
+	private String birth_date;				//Person Birth Date
 	private Byte gender;					//Person Gender
 	private String social_security_num;		//Person S.S.
 	private String name;					//Person Name
@@ -59,9 +62,9 @@ public class EmployeeInfoDataBase implements Serializable {
 	
 	//CONTRACT TABLE
 	private Integer contract_table_id;		//ID Contract Table
-	private Date start_date;				//Contract StartDate
-	private Date end_date;					//Contract EndDate
-	private Date seniority_date;			//Contract SeniorityDate
+	private String start_date;				//Contract StartDate
+	private String end_date;					//Contract EndDate
+	private String seniority_date;			//Contract SeniorityDate
 	private String category_description;	//Contract CategoryDescription
 	private Byte regime;					//Contract SS Regime
 	
@@ -130,7 +133,7 @@ public class EmployeeInfoDataBase implements Serializable {
 		// -------------------------------------------------------------------
 		
 		this.person_table_id = employeeInfo.getPerson_table_id();
-		this.birth_date = employeeInfo.getBirth_date();
+		this.birth_date = employeeInfo.birth_date;
 		this.gender = employeeInfo.getGender();
 		this.social_security_num = employeeInfo.getSocial_security_num();
 		this.name = employeeInfo.getName();
@@ -173,9 +176,9 @@ public class EmployeeInfoDataBase implements Serializable {
 		// -------------------------------------------------------------------
 		
 		this.contract_table_id = employeeInfo.getContract_table_id();
-		this.start_date = employeeInfo.getStart_date();
-		this.end_date = employeeInfo.getEnd_date();
-		this.seniority_date = employeeInfo.getSeniority_date();
+		this.start_date = employeeInfo.start_date;
+		this.end_date = employeeInfo.end_date;
+		this.seniority_date = employeeInfo.seniority_date;
 		this.category_description = employeeInfo.getCategory_description();
 		this.regime = employeeInfo.getSSRegime();
 		
@@ -260,11 +263,11 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public Date getBirth_date() {
-		return birth_date;
+		return parse(birth_date);
 	}
 
 	public void setBirth_date(Date birth_date) {
-		this.birth_date = birth_date;
+		this.birth_date = format(birth_date);
 	}
 
 	public String getNationality() {
@@ -372,27 +375,27 @@ public class EmployeeInfoDataBase implements Serializable {
 	}
 
 	public Date getStart_date() {
-		return start_date;
+		return parse(start_date);
 	}
 
 	public void setStart_date(Date start_date) {
-		this.start_date = start_date;
+		this.start_date = format(start_date);
 	}
 
 	public Date getEnd_date() {
-		return end_date;
+		return parse(end_date);
 	}
 
 	public void setEnd_date(Date end_date) {
-		this.end_date = end_date;
+		this.end_date = format(end_date);
 	}
 
 	public Date getSeniority_date() {
-		return seniority_date;
+		return parse(seniority_date);
 	}
 
 	public void setSeniority_date(Date seniority_date) {
-		this.seniority_date = seniority_date;
+		this.seniority_date = format(seniority_date);
 	}
 
 	public String getEnterprise_activity() {

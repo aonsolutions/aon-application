@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +40,7 @@ public class SalaryDraft extends SalaryPreview {
 	private String employeeDocument;
 	private String employeeQuoteGroup;
 	private String employeeAgreementCategory;
-	private Date employeeSeniorityDate;
+	private String employeeSeniorityDate;
 	private String community;
 
 	private Integer timeUnits;
@@ -546,11 +549,11 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public Date getEmployeeSeniorityDate() {
-		return employeeSeniorityDate;
+		return parse(employeeSeniorityDate);
 	}
 
 	public SalaryDraft setEmployeeSeniorityDate(Date employeeSeniorityDate) {
-		this.employeeSeniorityDate = employeeSeniorityDate;
+		this.employeeSeniorityDate = format(employeeSeniorityDate);
 		return this;
 	}
 

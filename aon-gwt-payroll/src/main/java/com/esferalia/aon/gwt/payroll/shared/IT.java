@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +19,8 @@ public class IT implements Serializable {
 	private Byte typeLowPart;
 	private Integer contract;
 	private String description;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private Double dailyCGCBase;
 	private Double dailyCGPBase;
 	private Integer parent; // Parent when is relapse
@@ -29,10 +32,10 @@ public class IT implements Serializable {
 	private Double baseReg;
 	private Double partialityCoef;
 	
-	private Date comunicationDate;
+	private String comunicationDate;
 	private Boolean isComunicate;
 	
-	private Date directPayDate;
+	private String directPayDate;
 	
 	private String fullName;
 	
@@ -94,19 +97,19 @@ public class IT implements Serializable {
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public Double getDailyCGCBase() {
@@ -218,19 +221,19 @@ public class IT implements Serializable {
 	}
 
 	public Date getComunicationDate() {
-		return comunicationDate;
+		return parse(comunicationDate);
 	}
 
 	public void setComunicationDate(Date comunicationDate) {
-		this.comunicationDate = comunicationDate;
+		this.comunicationDate = format(comunicationDate);
 	}
 
 	public Date getDirectPayDate() {
-		return directPayDate;
+		return parse(directPayDate);
 	}
 
 	public void setDirectPayDate(Date directPayDate) {
-		this.directPayDate = directPayDate;
+		this.directPayDate = format(directPayDate);
 	}
 	
 }

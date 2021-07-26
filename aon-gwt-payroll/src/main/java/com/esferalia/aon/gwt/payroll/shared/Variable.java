@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,14 +10,13 @@ import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>, Serializable {
 
 	Integer id;
 	String name;
-	Date startDate;
-	Date endDate;
+	String startDate;
+	String endDate;
 	boolean implicit;
 	Scope scope;
 	String expression;
@@ -48,19 +50,19 @@ public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>
 	}
 	
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return Shared.parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public boolean isImpicit() {

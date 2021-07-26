@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +17,8 @@ public class ActivityInfo implements Serializable{
 	private String cnae2009Code;
 	private String cnae2009Title;
 	private String regime;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private Boolean active;
 	
 	private Map<Integer, CCCInfo> cccs = new HashMap<>();
@@ -83,19 +86,19 @@ public class ActivityInfo implements Serializable{
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public Boolean getActive() {

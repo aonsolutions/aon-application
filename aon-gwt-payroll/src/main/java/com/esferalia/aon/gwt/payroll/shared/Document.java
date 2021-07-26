@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class Document implements Serializable {
 	
 	private int 	id;
-	private Date 	date;
+	private String 	date;
 	private String 	mimeType;
 	private String 	category;
 	private String 	description;
@@ -18,10 +20,10 @@ public class Document implements Serializable {
 		this.id = id;
 	}
 	public Date getDate() {
-		return date;
+		return parse(date);
 	}
 	public void setDate(Date date) {
-		this.date = date;
+		this.date = Shared.format(date);
 	}
 	public String getMimeType() {
 		return mimeType;

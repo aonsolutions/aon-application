@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -68,8 +71,8 @@ public class ITDataPerson implements Serializable, Comparable {
 	private Type type;
 	private int numType;
 	private DischargeCause discharge;
-	private Date leaveStartDate;
-	private Date leaveEndDate;
+	private String leaveStartDate;
+	private String leaveEndDate;
 	private int discharge_cause;
 	
 	private String regBase;
@@ -95,19 +98,19 @@ public class ITDataPerson implements Serializable, Comparable {
 	}	
 
 	public Date getLeaveStartDate() {
-		return this.leaveStartDate;
+		return parse(this.leaveStartDate);
 	}
 
 	public void setLeaveStartDate(Date start_date) {
-		this.leaveStartDate = start_date;
+		this.leaveStartDate = format(start_date);
 	}
 
 	public Date getLeaveEndDate() {
-		return this.leaveEndDate;
+		return parse(this.leaveEndDate);
 	}
 
 	public void setLeaveEndDate(Date end_date) {
-		this.leaveEndDate = end_date;
+		this.leaveEndDate = format(end_date);
 	}	
 
 	public int getDischarge_cause() {

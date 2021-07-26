@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +18,9 @@ public class ContractInfo implements Serializable{
 	private String workplaceFullAddress;
 	private Integer cccId;
 	private String completeCCC;
-	private Date startDate;
-	private Date endDate;
-	private Date seniorityDate;
+	private String startDate;
+	private String endDate;
+	private String seniorityDate;
 	private Integer activityId;
 	private String enterpriseCIF;
 	private Byte ssRegimen;
@@ -46,12 +49,12 @@ public class ContractInfo implements Serializable{
 	//Contract Journey Duration
 	private ContractJourneyDuration contractJourneyDuration;
 	
-	private Date oldStartDate;
-	private Date oldEndDate;
+	private String oldStartDate;
+	private String oldEndDate;
 	
 	//Has Payroll
 	private Boolean hasPayroll;
-	private Date payrollDate;
+	private String payrollDate;
 	
 	// Comunic@ Fields
 	private String colectiveAgreement;
@@ -214,27 +217,27 @@ public class ContractInfo implements Serializable{
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return parse(startDate);
 	}
 
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		this.startDate = format(startDate);
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return Shared.parse(endDate);
 	}
 
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = format(endDate);
 	}
 
 	public Date getSeniorityDate() {
-		return seniorityDate;
+		return parse(seniorityDate);
 	}
 
 	public void setSeniorityDate(Date seniorityDate) {
-		this.seniorityDate = seniorityDate;
+		this.seniorityDate = format(seniorityDate);
 	}
 
 	public Integer getAgreementId() {
@@ -364,19 +367,19 @@ public class ContractInfo implements Serializable{
 	}
 	
 	public Date getOldStartDate() {
-		return oldStartDate;
+		return parse(oldStartDate);
 	}
 
 	public void setOldStartDate(Date oldStartDate) {
-		this.oldStartDate = oldStartDate;
+		this.oldStartDate = format(oldStartDate);
 	}
 
 	public Date getOldEndDate() {
-		return oldEndDate;
+		return parse(oldEndDate);
 	}
 
 	public void setOldEndDate(Date oldEndDate) {
-		this.oldEndDate = oldEndDate;
+		this.oldEndDate = format(oldEndDate);
 	}
 
 	public Boolean hasPayroll() {
@@ -388,11 +391,11 @@ public class ContractInfo implements Serializable{
 	}
 
 	public Date getPayrollDate() {
-		return payrollDate;
+		return parse(payrollDate);
 	}
 
 	public void setPayrollDate(Date payrollDate) {
-		this.payrollDate = payrollDate;
+		this.payrollDate = format(payrollDate);
 	}
 	
 	public String getAgreementColective() {

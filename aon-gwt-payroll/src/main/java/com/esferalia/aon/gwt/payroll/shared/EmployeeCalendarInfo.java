@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,8 +15,8 @@ public class EmployeeCalendarInfo implements Serializable {
 	
 	private Boolean fullTimeJourney;
 	private Boolean agrarianContract;
-	private Date contractStartDate;
-	private Date contractEndDate;
+	private String contractStartDate;
+	private String contractEndDate;
 	
 	HashMap<Date, String> monthExtraHoursMap;
 	
@@ -126,19 +129,19 @@ public class EmployeeCalendarInfo implements Serializable {
 	}
 
 	public Date getContractStartDate() {
-		return contractStartDate;
+		return parse(contractStartDate);
 	}
 
 	public void setContractStartDate(Date contractStartDate) {
-		this.contractStartDate = contractStartDate;
+		this.contractStartDate = format(contractStartDate);
 	}
 
 	public Date getContractEndDate() {
-		return contractEndDate;
+		return parse(contractEndDate);
 	}
 
 	public void setContractEndDate(Date contractEndDate) {
-		this.contractEndDate = contractEndDate;
+		this.contractEndDate = format(contractEndDate);
 	}
 	
 }

@@ -11,7 +11,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CompositePayment extends Payment {
 
-	private static final Date UNSET_DATE = new Date(); 
+	private static final String UNSET_DATE = new String(); 
 	private static final String UNSET_STRING = new String(); 
 	private static final Integer UNSET_INTEGER = new Integer(1); 
 	
@@ -88,22 +88,22 @@ public class CompositePayment extends Payment {
 	public Date getEndDate() {
 		
 		if ( endDate != UNSET_DATE )
-			return endDate;
+			return getEndDate();
 		
 		Date end = new Date(0); // January 1, 1970, 00:00:00
 		for (Payment child : childs)
-			end = DateUtils.after(end, child.endDate);
+			end = DateUtils.after(end, child.getEndDate());
 		return end;
 	}
 
 	@Override
 	public Date getStartDate() {
 		if ( startDate != UNSET_DATE )
-			return startDate;
+			return getStartDate();
 
 		Date start = null;
 		for (Payment child : childs)
-			start = DateUtils.before(start, child.startDate);
+			start = DateUtils.before(start, child.getStartDate());
 		return start;
 	}
 

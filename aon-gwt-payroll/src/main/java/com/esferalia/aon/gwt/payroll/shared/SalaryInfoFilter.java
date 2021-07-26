@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,8 +13,8 @@ public class SalaryInfoFilter implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// Dates filter
-	private Date dateTillT;
-	private Date dateTTo;
+	private String dateTillT;
+	private String dateTTo;
 	
 	// Salary type filter
 	private Integer salaryType; // -1 || null == all // 0 == salary // 2 == delay // 3 == settlement
@@ -40,18 +43,18 @@ public class SalaryInfoFilter implements Serializable {
 	}
 
 	public Date getDateTillT() {
-		return dateTillT;
+		return parse(dateTillT);
 	}
 	public void setDateTillT(Date dateTillT) {
 		DateUtils.resetTime(dateTillT);
-		this.dateTillT = dateTillT;
+		this.dateTillT = format(dateTillT);
 	}
 	public Date getDateTTo() {
-		return dateTTo;
+		return parse(dateTTo);
 	}
 	public void setDateTTo(Date dateTTo) {
 		DateUtils.resetTime(dateTTo);
-		this.dateTTo = dateTTo;
+		this.dateTTo = format(dateTTo);
 	}
 	public Integer getSalaryType() {
 		return salaryType;

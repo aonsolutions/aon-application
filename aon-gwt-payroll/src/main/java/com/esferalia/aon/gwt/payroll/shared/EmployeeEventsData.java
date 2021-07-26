@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +30,13 @@ public class EmployeeEventsData implements Serializable {
 	
 	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
 
-		private Date startDate;
-		private Date endDate;
+		private String startDate;
+		private String endDate;
 		private Double value;
 		
 		public EmployeeEventsVariable(Date startDate, Date endDate, Double value) {
-			this.startDate = startDate;
-			this.endDate = endDate;
+			this.startDate = Shared.format(startDate);
+			this.endDate = format(endDate);
 			this.value = value;
 		}
 		
@@ -45,12 +48,12 @@ public class EmployeeEventsData implements Serializable {
 
 		@Override
 		public Date getStartDate() {
-			return this.startDate;
+			return parse(this.startDate);
 		}
 
 		@Override
 		public Date getEndDate() {
-			return this.endDate;
+			return parse(this.endDate);
 		}
 
 		@Override
@@ -67,8 +70,8 @@ public class EmployeeEventsData implements Serializable {
 	private boolean fullTimeJourney;
 	private String tc2;
 	
-	private Date contractStartDate;
-	private Date contractEndDate;
+	private String contractStartDate;
+	private String contractEndDate;
 	
 	private ArrayList<String> employeeContractVariables;
 	
@@ -85,8 +88,8 @@ public class EmployeeEventsData implements Serializable {
 		this.fullTimeJourney = fullTimeJourney;
 		this.tc2 = tc2;
 		
-		this.contractStartDate = contractStartDate;
-		this.contractEndDate = contractEndDate;
+		this.contractStartDate = format(contractStartDate);
+		this.contractEndDate = format(contractEndDate);
 	}
 	
 	// ------------------------------- GETTERS / SETTERS
@@ -117,19 +120,19 @@ public class EmployeeEventsData implements Serializable {
 		this.tc2 = tc2;
 	}
 	public void setContractStartDate(Date contractStartDate) {
-		this.contractStartDate =  contractStartDate;
+		this.contractStartDate =  format(contractStartDate);
 	}
 	
 	public void setContractEndDate(Date contractEndDate) {
-		this.contractEndDate =  contractEndDate;
+		this.contractEndDate =  format(contractEndDate);
 	}
 	
 	public Date getContractStartDate() {
-		return this.contractStartDate;
+		return parse(this.contractStartDate);
 	}
 	
 	public Date getContractEndDate() {
-		return this.contractEndDate;
+		return parse(this.contractEndDate);
 	}
 	
 	public ArrayList<String> getEmployeeContractVariables() {
