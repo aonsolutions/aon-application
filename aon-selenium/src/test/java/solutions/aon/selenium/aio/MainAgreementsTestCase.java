@@ -11,11 +11,11 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -57,9 +57,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	@Test
 	public void TestEstatutoDeLosTrabajadores() throws Exception {
 		SeleniumTools.mainAgreementFromIndex(driver);
-		By showAll = By.cssSelector("button[title='Mostrar todos los convenios']");
-		wait.until(ExpectedConditions.elementToBeClickable(showAll));
-		SeleniumTools.retryingFindClick(driver, showAll);
+		clickShowAllAgreements(driver);
 		
 		SeleniumTools.searchAndEnterAgreement(driver, "ESTATUTO DE LOS TRABAJADORES");
 		try {
@@ -68,8 +66,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 			fail("Draft button still visible");
 		}
 		By collapseAllButton = By.id(GWT_ID_PROFIX + "collapseAllButton");
-		wait.until(ExpectedConditions.elementToBeClickable(collapseAllButton));
-		SeleniumTools.retryingFindClick(driver, collapseAllButton);
+		SeleniumTools.click(driver, wait, collapseAllButton);
 		try {
 			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(GWT_ID_PROFIX + "deleteItem")));
 		} catch (Exception e) {
@@ -120,14 +117,52 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 			}
 		}
 	}
-	//TODO
-	@Ignore
+	
 	@Test
 	public void TestMensajesdeAyuda() throws Exception {
 		SeleniumTools.mainAgreementFromIndex(driver);
-		
-		
+		clickShowAllAgreements(driver);
+		By by = By.id(GWT_ID_PROFIX + "mensajes_de_ayuda,_ejemplos");
+		SeleniumTools.click(driver, wait, by);
+		try {
+			wait.until(ExpectedConditions.attributeToBe(By.id(GWT_ID_PROFIX + "descriptionTextBox"), "value", "MENSAJES DE AYUDA, EJEMPLOS"));
+		} catch (Exception e) {
+			fail("descriptionTextBox's value is not 'MENSAJES DE AYUDA, EJEMPLOS'");
+		}
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(GWT_ID_PROFIX + "toggleButton_01_01_1970")));
 	}
 	
+	@Test
+	public void TestPrintPreview() throws Exception {
+		SeleniumTools.mainAgreementFromIndex(driver);
+		clickShowAllAgreements(driver);
+		
+		By convenioMadrid = By.id(GWT_ID_PROFIX + "convenio_colectivo_de_oficinas_y_despachos_para_madrid");
+		
+		SeleniumTools.click(driver, wait, convenioMadrid);
+		wait.until(ExpectedConditions.attributeToBe(By.id(GWT_ID_PROFIX + "descriptionTextBox"), "value", "CONVENIO COLECTIVO DE OFICINAS Y DESPACHOS PARA MADRID"));
+		By printPreview = By.id(GWT_ID_PROFIX + "printPreviewButton");
+		SeleniumTools.click(driver, wait, printPreview);
+		assertTrue(wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#" + GWT_ID_PROFIX + "printPreviewViewer table"))).size() > 0);
+	}
 	
+	@Test
+	public void TestExtras() throws Exception {
+		SeleniumTools.mainAgreementFromIndex(driver);
+		clickShowAllAgreements(driver);
+		By extrasAnuales = By.id(GWT_ID_PROFIX + "pagas_extras_anulaes,_semestrales_y_trimestreales");
+		SeleniumTools.click(driver, wait, extrasAnuales);
+		wait.until(ExpectedConditions.attributeToBe(By.id(GWT_ID_PROFIX + "descriptionTextBox"), "value", "PAGAS EXTRAS ANULAES, SEMESTRALES Y TRIMESTREALES"));
+		for ( int i = 1; i < 8; i++ ) {
+			wait.until(ExpectedConditions.attributeContains(By.id(GWT_ID_PROFIX + "endDateBox" + i), "value", "2021"));
+			wait.until(ExpectedConditions.attributeContains(By.id(GWT_ID_PROFIX + "startDateBox" + i), "value", "2021"));
+			
+		}
+	}
+	
+	private static void clickShowAllAgreements (WebDriver driver) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		By showAll = By.cssSelector("button[title='Mostrar todos los convenios']");
+		SeleniumTools.click(driver, wait, showAll);
+	}
 }

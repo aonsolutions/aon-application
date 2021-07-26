@@ -3,8 +3,6 @@ package solutions.aon.selenium.aio;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static solutions.aon.selenium.aio.id.AonHeaderId.LABORAL_BUTTON;
-import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.text.ParseException;
@@ -22,9 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -60,12 +56,6 @@ public class GeneralIntegralTest extends AioBaseTestCase {
         wait = new WebDriverWait(driver, 10);
         login(driver, GENERAL);
         
-        // Click on Top Menu 'Laboral'        
-        retryingFindClick(driver, By.id(LABORAL_BUTTON));
-        
-        // Click on 'integral de nominas'
-        retryingFindClick(driver, By.id(INTEGRAL_DE_NOMINAS));
-        
 	}
 	
 	@AfterClass
@@ -90,13 +80,13 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		assertTrue(SeleniumTools.waitAndCheckAmount(driver,
 				By.id(GWT_ID_PROFIX + "totalPaymentsLabel"),
-				SeleniumTools.unmessDouble(
+				"value"
+				, SeleniumTools.unmessDouble(
 						15454.46 / 14 					// SALARIO_BASE
 						+ 15454.46 / 14 * 5 / 100 		// ANTIGUEDAD 1989-1992 ( 1 TRIENIO 5%)
 						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1992-1995 ( 1 TRIENIO 4%)
 						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1995-2016 ( 6 CUATRIENIOS 4% )
 						)
-				, "value"
 				)
 		);
 		
@@ -104,35 +94,35 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		assertTrue(SeleniumTools.waitAndCheckAmount(driver,
 				By.id(GWT_ID_PROFIX + "totalPaymentsLabel"),
+				"value",
 				SeleniumTools.unmessDouble(
 						15454.46 / 14 					// SALARIO_BASE
 						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1991-1994 ( 1 TRIENIO 4%)
 						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1994-2016 ( 6 CUATRIENIOS 4% )
-						),
-				"value"
+						)
 				)
 		);
 		SeleniumTools.draft(driver, "1993 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		
 		assertTrue(SeleniumTools.waitAndCheckAmount(driver,
 				By.id(GWT_ID_PROFIX + "totalPaymentsLabel"),
+				"value",
 				SeleniumTools.unmessDouble(
 						15454.46 / 14 					// SALARIO_BASE
 						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1993-1996 ( 1 TRIENIO 4%)
 						+ 15454.46 / 14 * 6 * 4 / 100 	// ANTIGUEDAD 1996-2016 ( 6 CUATRIENIOS 4% )
-						),
-				"value"
+						)
 				)
 		);
 		
 		SeleniumTools.draft(driver, "2012 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertTrue(SeleniumTools.waitAndCheckAmount(driver,
 				By.id(GWT_ID_PROFIX + "totalPaymentsLabel"),
+				"value",
 				SeleniumTools.unmessDouble(
 						15454.46 / 14 					// SALARIO_BASE
 						+ 15454.46 / 14 * 2 * 4 / 100	// ANTIGUEDAD 2012-2016 ( 2 CUATRIENIOS 4% )
-						),
-				"value"
+						)
 				)
 		);
 
@@ -140,14 +130,6 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		By byid = By.id(GWT_ID_PROFIX + "employeeNameLabel");
 		assertTrue(wait.until(ExpectedConditions.attributeContains(byid, "innerText", "CONCEPTO ANTIGUEDAD, DESCRIPCION")));
 	}
-	
-//	@Test
-//	public void repeatTestAtrasos() throws Exception {
-//		for (int i=10; i>0; i--) {
-//			setUp();
-//			testAtrasos();
-//		}
-//	}
 	
 	@Test
 	public void testAtrasos() throws Exception {
@@ -162,7 +144,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "ATRASOS TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		for ( int month = 0; month < 12; month++ ) {
 			calendar.set(Calendar.MONTH, month);
 			switchSalaryMonth(driver, calendar);
@@ -190,7 +172,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 			Assert.fail("'redo' button not hidden");
 		
 		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
 		
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX +  "description-box-new-payment", "[3]ATRASOS");
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment")));
@@ -204,8 +186,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.acceptDraft(driver);
 		
 		By deleteButton = By.id(GWT_ID_PROFIX + "delete-button-3");
-		wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
-		retryingFindClick(driver, deleteButton);
+		SeleniumTools.click(driver, wait, deleteButton);
 		SeleniumTools.acceptDraft(driver);
 		
 		SeleniumTools.selectPayrollType(driver, SalaryType.SALARY);
@@ -297,7 +278,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "smi_&_iprem");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2019);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
@@ -311,11 +292,6 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 	}
 	
-	public static void calculate(WebDriver driver, Date date) throws Exception {
-		SeleniumTools.selectMonthScrollingV2(driver, date);
-		
-	}
-	
 	@Test
 	public void TestBrutoYNeto() throws Exception {
 //		ENTER 'INTEGRAL DE NÓMINAS'
@@ -324,7 +300,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "bruto_y_neto");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
 		calendar.set(Calendar.YEAR, 2016);
 		
@@ -368,7 +344,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "CONCEPTOS, SIN NOMBRE");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
 		calendar.set(Calendar.YEAR, 2018);
 		
@@ -401,7 +377,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "DRAFT COMPLETO, VACIO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
 		switchSalaryMonth(driver, calendar);
@@ -438,7 +414,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.search(driver, "USER EXPRESSION, /*user*/.../**/");
 		SeleniumTools.draft(driver, "USER EXPRESSION, /*user*/.../**/");
 		
-		SeleniumTools.selectMonthScrollingV2(driver, new Date());
+		SeleniumTools.selectMonthScrolling(driver, new Date());
 		SeleniumTools.checkSalaryPeriod(driver, new Date());
 		
 		By amountLbl1 = By.id(GWT_ID_PROFIX + "db-amount-label-1");
@@ -468,6 +444,15 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 	}
 	
+//	@Test
+//	public void repeatTestFiniquito() throws Exception {
+//		
+//		for (int i = 0; i < 30; i++) {
+//			setUp();
+//			TestFiniquito();
+//		}
+//	}
+	
 	@Test
 	public void TestFiniquito() throws Exception {
 //		ENTER 'INTEGRAL DE NÓMINAS'
@@ -477,7 +462,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "COTIZACIÓN, CERO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(2016, Calendar.JUNE, 25);
 		
 		SeleniumTools.selectPayrollType(driver, SalaryType.SETTLE);
@@ -498,7 +483,6 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.selectPayrollType(driver, SalaryType.SETTLE);
 		SeleniumTools.selectMonthScrollingSettle(driver, calendar.getTime());
 		SeleniumTools.checkSettlePeriod(driver, calendar.getTime());
-		
 		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals((Double)666000.00, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
@@ -513,8 +497,8 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.selectPayrollType(driver, SalaryType.SETTLE);
 		SeleniumTools.wait4SettleToLoadDate(driver);
 		SeleniumTools.selectMonthScrollingSettle(driver, calendar.getTime());
-//		SeleniumTools.checkSettlePeriod(driver, calendar.getTime());
-		
+		String regex = String.format("\\s*\\d+\\/%1$d\\/%2$d\\s*-\\s*\\d+\\/%1$d\\/%2$d\\s*", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+		wait.until(ExpectedConditions.textMatches(By.id(GWT_ID_PROFIX + "periodLabel"), Pattern.compile(regex)));
 		cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
 		assertEquals((Double)200.00, cgcBase);
 		cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));
@@ -539,14 +523,12 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		By costsCheck = By.id(GWT_ID_PROFIX + "costsCheck-input");
 		
-		wait.until(ExpectedConditions.elementToBeClickable(costsCheck));
-		retryingFindClick(driver, costsCheck);
+		SeleniumTools.click(driver, wait, costsCheck);
 		
 		Double unemployPercentE = SeleniumTools.getAmountNotEmptyValue(driver, By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL_E"));
 		assertEquals((Double)5.5, unemployPercentE);
 		
-		wait.until(ExpectedConditions.elementToBeClickable(costsCheck));
-		retryingFindClick(driver, costsCheck);
+		SeleniumTools.click(driver, wait, costsCheck);
 		
 		SeleniumTools.search(driver, "INTERINIDAD, TIEMPO PARCIAL");
 		SeleniumTools.draft(driver, "INTERINIDAD, TIEMPO PARCIAL");
@@ -554,14 +536,12 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		unemployPercent = SeleniumTools.getAmountNotEmptyValue(driver, By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL"));
 		assertEquals((Double)1.55, unemployPercent);
 		
-		wait.until(ExpectedConditions.elementToBeClickable(costsCheck));
-		retryingFindClick(driver, costsCheck);
+		SeleniumTools.click(driver, wait, costsCheck);
 		
 		unemployPercentE = SeleniumTools.getAmountNotEmptyValue(driver, By.id(GWT_ID_PROFIX + "textBox_PORCENTAJE_DESMPL_E"));
 		assertEquals((Double)5.5, unemployPercentE);
 
-		wait.until(ExpectedConditions.elementToBeClickable(costsCheck));
-		retryingFindClick(driver, costsCheck);
+		SeleniumTools.click(driver, wait, costsCheck);
 	}
 	
 	@Test
@@ -573,11 +553,11 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2017);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
 		By irpfPercentBox = By.id(GWT_ID_PROFIX + "irpfPercentTexTBox");
 		try {			
 			wait.until(ExpectedConditions.attributeToBe(irpfPercentBox, "value", "2,00 %"));
@@ -596,11 +576,11 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "I.R.P.F BIZKAIA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2017);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
 		By irpfPercentBox = By.id(GWT_ID_PROFIX + "irpfPercentTexTBox");
 		try {			
 			wait.until(ExpectedConditions.attributeToBe(irpfPercentBox, "value", "39,00 %"));
@@ -619,10 +599,10 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "I.R.P.F GIPUZKOA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
 		By irpfPercentBox = By.id(GWT_ID_PROFIX + "irpfPercentTexTBox");
 		try {			
 			wait.until(ExpectedConditions.attributeToBe(irpfPercentBox, "value", "0,00 %"));
@@ -639,7 +619,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.openWorkplace(driver, GWT_ID_PROFIX + "i.t");
 		
 		Calendar calendar = Calendar.getInstance();
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		
@@ -943,7 +923,6 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals((Double)0.00, SeleniumTools.getAmount(driver, cgcBaseLabel));
 	}
 	
-	//TODO DUNNO LOL
 	@Ignore
 	@Test
 	public void TestPercepcionesDelSistema() throws Exception {
@@ -954,7 +933,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "PREST, ENFERMEDAD COMUN");
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.JUNE);
 		switchSalaryMonth(driver, calendar);
@@ -1007,12 +986,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 			!wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "delete-button-5"))).isEnabled()
 		);
 		
-		((JavascriptExecutor)driver).executeScript("let elem = document.getElementById('" + GWT_ID_PROFIX + "description-box-3');"
-				+ "elem.focus();"
-				+ "elem.value = '[1001]P. POR ENFERMEDAD COMÚN';"
-				+ "elem.blur();");
 		
-		wait.until(ExpectedConditions.attributeContains(By.id(GWT_ID_PROFIX + "payment-row-3"), "class", "aon-dataTable-row-highlight"));
 
 	}
 	
@@ -1053,7 +1027,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.draft(driver, "CONSTANTES, I");
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
 		
@@ -1098,7 +1072,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		calendar.set(Calendar.MONTH, Calendar.APRIL);
 		switchSalaryMonth(driver, calendar);
 		sonnyCgcBase = SeleniumTools.getAmount(driver, cgcBaseLabel);
-		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);		
+		sonnytotalPayment = SeleniumTools.getAmount(driver, totalPaymentLabel);
 		assertEquals(cgcBase, sonnyCgcBase);
 
 		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
@@ -1109,13 +1083,11 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		By extraDateItem = By.id(GWT_ID_PROFIX + "dateListBox");
 		
-		wait.until(ExpectedConditions.elementToBeClickable(extraDateItem));
-		retryingFindClick(driver, extraDateItem);
+		SeleniumTools.click(driver, wait, extraDateItem);
 		
 		String dateXpath = "//span[text()='" + String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate) + "']";
 		
-		wait.until(ExpectedConditions.elementToBeClickable(By.xpath(dateXpath)));
-		retryingFindClick(driver, By.xpath(dateXpath));
+		SeleniumTools.click(driver, wait, By.xpath(dateXpath));
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
 		calendar.setTime(endDate);
@@ -1135,7 +1107,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		
 		switchSalaryMonth(driver, calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
@@ -1148,7 +1120,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		
 		switchSalaryMonth(driver, calendar);
 		Double cgcBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgcBaseLabel"));
@@ -1160,7 +1132,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		
 		switchSalaryMonth(driver, calendar);
 		Double cgpBase = SeleniumTools.getAmount(driver, By.id(GWT_ID_PROFIX + "cgpBaseLabel"));

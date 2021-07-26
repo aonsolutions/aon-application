@@ -1,9 +1,6 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertEquals;
-import static solutions.aon.selenium.aio.id.AonHeaderId.LABORAL_BUTTON;
-import static solutions.aon.selenium.aio.id.LaboralId.INTEGRAL_DE_NOMINAS;
-import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -39,12 +36,6 @@ public class HomeIntegralTest extends AioBaseTestCase {
         wait = new WebDriverWait(driver, 10);
         login(driver, HOME);
         
-        // Click on Top Menu 'Laboral'        
-        retryingFindClick(driver, By.id(LABORAL_BUTTON));
-        
-        // Click on 'integral de nominas'
-        retryingFindClick(driver, By.id(INTEGRAL_DE_NOMINAS));
-        
 	}
 	
 	@AfterClass
@@ -69,7 +60,7 @@ public class HomeIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "TRAMO, 1");
 		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.MONTH, Calendar.MAY);
 
@@ -156,7 +147,7 @@ public class HomeIntegralTest extends AioBaseTestCase {
 		
 		SeleniumTools.draft(driver, "TRAMO, 1");
 		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
-		SeleniumTools.resetCalendar(calendar);
+		SeleniumTools.cleanCalendar(calendar);
 		calendar.set(Calendar.YEAR, 2019);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 

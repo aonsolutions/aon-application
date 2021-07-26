@@ -6,6 +6,7 @@ import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.INPUT;
 
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -27,6 +28,7 @@ public class AioBaseTestCase extends AbstractTestCase{
 
 	protected static final String GENERAL = "RÉGIMEN GENERAL";
 	protected static final String HOME = "EMPLEADOS DE HOGAR";
+	protected static final String TRAINNING = "FORMACIÓN Y APRENDIZAJE";
 
 	protected static void login(WebDriver driver, String section) {
 		
@@ -66,17 +68,6 @@ public class AioBaseTestCase extends AbstractTestCase{
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		return wait.until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector("span.aon-header-domain-title"), text));
 	}
-	
-//	private static WebElement searchEnterprise(WebDriver driver, String string) {
-//		WebDriverWait wait = new WebDriverWait(driver, 10);
-//		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".aon-dataTable .rich-table-row")));
-//		
-//		Logger.log(Status.GET, "Getting enterprises.");
-//		return elements.stream().filter(elem -> {
-//			WebElement nameElem = elem.findElement(By.cssSelector("td span.aon-outputText"));
-//			return nameElem.getAttribute("innerText").equalsIgnoreCase(string);
-//		}).findFirst().orElse(null);
-//	}
 
 	protected static void logout(WebDriver driver) {
 		WebElement headerOptionsFormLogout = driver.findElement(By.cssSelector("a[id='headerOptionsForm:logout']"));
@@ -97,8 +88,18 @@ public class AioBaseTestCase extends AbstractTestCase{
 	}
 	
 	protected static void switchSalaryMonth(WebDriver driver, Calendar calendar) throws Exception {
-		SeleniumTools.selectMonthScrollingV2(driver, calendar.getTime());
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
 		SeleniumTools.checkSalaryPeriod(driver, calendar.getTime());
+	}
+	
+	protected static void switchSalaryMonthMatchingMonth(WebDriver driver, Calendar calendar) throws Exception {
+		SeleniumTools.selectMonthScrolling(driver, calendar.getTime());
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		
+		String regex = String.format("\\s*\\d+\\/%1$d\\/%2$d\\s*-\\s*\\d+\\/%1$d\\/%2$d\\s*", month, year);
+		
+		new WebDriverWait(driver, 10).until(ExpectedConditions.textMatches(By.id(GWT_ID_PROFIX + "periodLabel"), Pattern.compile(regex)));
 	}
 	
 }
