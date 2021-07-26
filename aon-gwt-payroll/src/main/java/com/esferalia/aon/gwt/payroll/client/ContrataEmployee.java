@@ -1132,7 +1132,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-						// TODO: esperar a Ray
+						contrataEmployeeObject.cambioCoef(partialityCoef, date, s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Tipo contrato", "El coeficiente de parcialidad ha sido notificado a la Seguridad Social.");
+						}, f -> {
+							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+							dialog.warning();
+						});
 					}
 
 					@Override
@@ -1159,7 +1165,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-						contrataEmployeeObject.cambioCatProf(contract, date, s -> {
+						contrataEmployeeObject.cambioContrato(contract, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social.");
 						}, f -> {

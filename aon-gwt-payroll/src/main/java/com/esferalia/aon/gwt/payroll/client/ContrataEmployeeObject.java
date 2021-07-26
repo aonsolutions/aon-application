@@ -680,6 +680,38 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void cambioCoef(String coef, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioCoef(employeeContractData, coef, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
+	public void cambioContrato(String tc2, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.cambioContrato(employeeContractData, tc2, date, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+			
+		});	
+	}
+	
 	public void cambioOcupacion(String ocupation, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.cambioOcupacion(employeeContractData, ocupation, date, new AsyncCallback<Void>() {
 			
