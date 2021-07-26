@@ -1,8 +1,8 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
-import { MSG } from "../../../environments/environments.js";
+import { CSS, MSG } from "../../../environments/environments.js";
 import { newComponent, setAttributes } from "../../../services/utils.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_IDS } from "../MessengerEnums.js";
 
 /**
  * Create a row with elements inside aligned to the end 
@@ -10,7 +10,7 @@ import { MESSENGER_IDS } from "../MessengerEnums.js";
  * @returns 
  */
  export const createEndJustifiedRow = (styles) => newComponent({
-    classes: ['flexRow', 'flexJustifyEnd', 'flexAlignCenter'],
+    classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER],
     styles: styles
 });
 
@@ -20,12 +20,12 @@ import { MESSENGER_IDS } from "../MessengerEnums.js";
  * @returns 
  */
  export const createStartJustifiedRow = (styles) => newComponent({
-    classes: ['flexRow', 'flexJustifyStart', 'flexAlignCenter'],
+    classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: styles
 });
 
 export const createStartJustifiedColumn = (styles) => newComponent({
-    classes: ['flexColumn', 'flexJustifyStart', 'flexAlignCenter'],
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: styles
 });
 
@@ -68,7 +68,7 @@ export const createMaterialIcon = (properties) => newComponent({
  export const createOutlinedMaterialIcon = (properties) => newComponent({
     type: 'i',
     text: properties.name,
-    classes: ['material-icons-outlined'],
+    classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
     styles: {
         fontSize: properties.size ? properties.size : "24px",
         color: properties.color? properties.color : "#404040"
@@ -104,7 +104,6 @@ export const LEFT = "LEFT";
     return properties;
 }
 
-
 //----------------WORKGROUP   
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.WORKGROUP,
@@ -125,4 +124,3 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
     name:MESSENGER_IDS.COMMENT_TASK,
     placeholder: placeholder || MSG.COMMENT+"..."
 });
-

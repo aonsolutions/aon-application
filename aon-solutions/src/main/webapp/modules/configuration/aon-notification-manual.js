@@ -8,6 +8,9 @@ import '../../components/aon-input.js';
 import '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
 
+/**
+ * @deprecated
+ */
 export class AonNotificationManual extends AonElement {
 
     set id(id) {

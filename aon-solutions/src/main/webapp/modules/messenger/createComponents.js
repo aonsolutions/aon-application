@@ -8,24 +8,34 @@ const fontColor = CSS.variable(COLORS.GRAYSON);
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------
-export const createMainView = () => newComponent({
-  type: TAG.DIV,
-  id: MESSENGER_IDS.MAIN_DIV,
-  classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
-  styles: {
-    transition: ".5s",
-    display: "flex",
-    flexDirection: "row",
-    opacity: 0,
-    marginTop: "0vh",
-    padding: "0px",
-    width: "100%",
-    maxWidth: "1400px",
-    height: "100%",
-    overflow: 'hidden'
-  },
-});
+export const createMainView = (aonMessengerChat) =>{
+  const div = document.createElement(TAG.DIV);
+  div.className = CSS.AON_SUB_CONTENT;
+  div.style.width = "100%";
+  aonMessengerChat.appendChild(div);
+  const mainView = newComponent({
+    type: TAG.DIV,
+    id: MESSENGER_IDS.MAIN_DIV,
+    classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
+    styles: {
+      transition: ".5s",
+      display: "flex",
+      flexDirection: "row",
+      opacity: 0,
+      marginTop: "0vh",
+      padding: "0px",
+      width: "100%",
+      maxWidth: "1400px",
+      height: "100%",
+      overflow: 'hidden'
+    },
+  }).element;
 
+  div.appendChild(mainView);
+
+  return mainView;
+  
+} 
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
   id: MESSENGER_IDS.MAIN_DIV,
@@ -282,7 +292,7 @@ export const createAttachTitleText = () => newComponent({
 export const createExpandIcon = () => newComponent({
   type: "i",
   text: "expand_more",
-  classes: ["material-icons-outlined"],
+  classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
   styles: {
     fontSize: "1.2em",
     color: "#c5c5c5",

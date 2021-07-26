@@ -129,11 +129,13 @@ export class AonContractList extends AonElement {
       ...CONTRACT_OPTIONS.TA,
       fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
     });
-
-    options.push({
-      ...CONTRACT_OPTIONS.IDC,
-      fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
-    });
+    
+    if(!prev){
+      options.push({
+        ...CONTRACT_OPTIONS.IDC,
+        fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+      });
+    }
 
     return options;
   }

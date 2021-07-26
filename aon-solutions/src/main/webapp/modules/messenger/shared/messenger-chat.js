@@ -323,6 +323,7 @@ export const changeStyleSelect = (aonSelect) => {
     if(aonSelectGroup)
         aonSelectGroup.style.marginBottom = "0px"
 }
+
 /**
  VIEW CREATE TASK MOBILE
  * @param {*} wrapper 
@@ -476,10 +477,11 @@ const fillTaskHolder = async (workgroupId, taskHolderId=undefined) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`);
         if(aonSelect){
+            aonSelect.clear();
             const taskHolders = await getTastHoldersWorkGroup({workgroupId});
-            if(taskHolders && taskHolders.length>0){
+            if(taskHolders){
                 aonSelect.options = JSON.stringify(
-                    taskHolders.map( th=> ({...th, id: th.value}) )
+                    taskHolders.map( th=> ({...th, value: th.id}) )
                 );
             }
             if(taskHolderId) aonSelect.value = taskHolderId;

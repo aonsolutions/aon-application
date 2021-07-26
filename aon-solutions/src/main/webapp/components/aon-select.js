@@ -254,6 +254,8 @@ export class AonSelect extends AonElement {
 
   clear(){
     this.value = "";
+    let input = this.getElement(this.INPUT);
+    if(input) input.value = "";
   }
 
   getText() {

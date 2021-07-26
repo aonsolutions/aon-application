@@ -172,16 +172,17 @@ export class AonLaboral extends AonElement {
   }
 
   getOptions(res) {
-		let option = [
-			{
-				...CONTRACT_OPTIONS.TA,
-				fn: (el) => this.getTa(res, el)
-			},
-			{
+    let option = [];
+    option.push({
+      ...CONTRACT_OPTIONS.TA,
+      fn: (el) => this.getTa(res, el)
+    });
+    if(!res.prev){
+      option.push({
 				...CONTRACT_OPTIONS.IDC,
 				fn: (el) => this.getIdc(res, el)
-			}
-		];
+		  });
+    }
 		if (this.anularCondition(res.situation, res.fra)) {
 			option.push({
 				...CONTRACT_OPTIONS.DELETE,
@@ -223,8 +224,9 @@ export class AonLaboral extends AonElement {
 	async getIdc(data, el) {
 		this.applicationEl.startLoading();
 		try {
-			const { regime, ctaCti, nss, fra } = data;
-			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
+			const { regime, ctaCti, nss, fra, fea } = data;
+      const fecha = fea || fra;
+			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);
 		}
@@ -281,7 +283,6 @@ export class AonLaboral extends AonElement {
   showView(view, data = undefined, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
-      // if(!this.getElement(view)){
         switch(view){
           case PAYROLL_VIEWS.AON_PAYROLL_LIST:
             aonView = new AonPayrollList();
@@ -319,7 +320,6 @@ export class AonLaboral extends AonElement {
           if(data) aonView.data = data;
           this.applicationEl.setContent(aonView);
         }
-      // }
       resolve(aonView);
     });
   }

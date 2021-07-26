@@ -84,12 +84,17 @@ public class TaskServlet extends AonApiHttpServlet{
 		Integer peerPage = api.getParams().optInt("peerPage");
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
-
+		
 		return TaskJSON.toJSON(
 				AON_SOLUTIONS.getTaskList(api.getDomain(), api.getUser(),  
 						f-> 
 						f.getDomainProperty().eq(api.getDomain().getId())
 						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
+						.or(
+								status.equalsIgnoreCase("finished") ?
+								f.getStatusProperty().eq(TaskStatus.DELETED.value()) :
+								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) 
+						)
 						.and( 
 							workgroup > 0 ?  
 							f.getWorkgroupProperty().eq(workgroup) :

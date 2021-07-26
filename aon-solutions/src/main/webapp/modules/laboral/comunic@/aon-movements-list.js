@@ -121,17 +121,19 @@ export class AonMovementsList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("#", "number", "count", "2%");
-      aonTable.addColumn("Nombre", "string", "name", "33%");
+      aonTable.addColumn("Nombre", "string", "name", "31%");
       aonTable.addColumn("DNI/NIE", "string", "dni", "15%");
       aonTable.addColumn("Movimiento", "string", "status", "10%");
       aonTable.addColumn("Cuenta", "string", "ctaCtiCompleta", "10%");
       aonTable.addColumn("Fecha", "date", "fechaParse", "10%");
+      aonTable.addColumn("Opción", "fn", "option", "2%");
       try {
         const resp = await this.getData();
         if(resp){
           aonTable.removeRows();
           resp.map((res, idx) => {
             res.count = `<b>${idx+1}</b>`;
+            res.option = this.applicationParentEl.getOptions(res);
             aonTable.addRow(res, () => this.aonMovement(res));
           });
         }
@@ -166,12 +168,12 @@ export class AonMovementsList extends AonElement {
     }
   }
 
-  async aonMovement({ regime, ctaCti, nss, prev, situation, status, fra }) {
+  async aonMovement(dt) {
     this.applicationEl.startLoading();
     try {
-      let resp = await getEmployee({ regime, ctaCti, nss });
+      let resp = await getEmployee({ regime:dt.regime, ctaCti:dt.ctaCti, nss: dt.nss });
       if (resp) {
-        const data = { ...resp, prev, situation, status, fra };
+        const data = { ...resp, ...dt };
         const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
         if (aonAltaDirecta) {
           disabledForm(`${aonAltaDirecta.id}EmpresaCard`);

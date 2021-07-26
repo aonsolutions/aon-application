@@ -1,7 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-// import { AonNotificationManual } from "./aon-notification-manual.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
 import "../../components/aon-address.js";
@@ -265,12 +264,6 @@ export class AonConfiguration extends AonElement {
     aonCompany.company = company;
     this.getApplication().setContent(aonCompany);
   }
-
-  // buildNotification() {
-  //   let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-  //   aonConfiguration.removeToolbarOptions();
-  //   aonConfiguration.setContent(new AonNotificationManual());
-  // }
 
   buildCreateUser(share) {
     let content =  this.getApplication().getContent();

@@ -1,6 +1,6 @@
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, TAG } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { setAttributes, setClasses, setStyles } from "../../services/utils.js";
 import {
@@ -101,8 +101,7 @@ export class AonMessengerChat extends AonElement {
   paintDesktop() {
     this.buildToolbarDesktop();
 
-    const mainView = createMainView().element;
-    this.appendChild(mainView);
+    const mainView = createMainView(this);
 
     buildDesktopWritter(mainView, this);
 
