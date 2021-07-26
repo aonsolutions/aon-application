@@ -889,4 +889,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public void cambioCoef(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String coef, Date fecha) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String tc2, Date fecha) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

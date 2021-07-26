@@ -546,6 +546,14 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, callback);
 	}
 	
+	public void cambioCoef(EmployeeContractInfo employeeContractInfo, String coef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioCoef(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, coef, fecha, callback);
+	}
+
+	public void cambioContrato(EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, fecha, callback);
+	}
+	
 	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, grup_ctz, fecha, callback);
 	}

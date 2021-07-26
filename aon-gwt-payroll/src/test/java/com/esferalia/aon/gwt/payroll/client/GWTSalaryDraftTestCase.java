@@ -437,6 +437,26 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void cambioCoef(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, String coef, Date fecha, AsyncCallback<Void> callback)
+					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cambioContrato(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, String tc2, Date fecha, AsyncCallback<Void> callback)
+					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

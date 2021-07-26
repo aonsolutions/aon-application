@@ -256,6 +256,12 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
 			String ctaCti, String nss) throws IllegalArgumentException;
 
+	void cambioCoef(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String coef, Date fecha) throws IllegalArgumentException;
+
+	void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String tc2, Date fecha) throws IllegalArgumentException;
+
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String grup_ctz, Date fecha) throws IllegalArgumentException;
 

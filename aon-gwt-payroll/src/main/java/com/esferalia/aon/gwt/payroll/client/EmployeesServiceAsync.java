@@ -278,6 +278,12 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
 			String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
+	void cambioCoef(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String coef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+
+	void cambioContrato(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
@@ -302,5 +308,4 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
-
 }
