@@ -728,6 +728,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
+	public void downloadTA_IDC(String domain, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.downloadTA_IDC(domain, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
 	public void getEmployeeTa(String domain, String user, Integer contractId, Date date,
 			AsyncCallback<String> callback) {
 		AON.start();

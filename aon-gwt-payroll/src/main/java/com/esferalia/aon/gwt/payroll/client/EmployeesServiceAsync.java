@@ -243,6 +243,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<String> callback);
 	
+	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
 	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
 
 	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
@@ -308,4 +310,5 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
+
 }

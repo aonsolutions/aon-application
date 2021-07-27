@@ -487,19 +487,20 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
 	}
 	
+	public void downloadTA_IDC(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.downloadTA_IDC(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	}
+	
 	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) {
-		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
-
+		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 	
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
-
 	}
 
 	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) {
 		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
-
 	}
 	
 	public void getEmployeeIdcDates(Integer contractId, Date date, AsyncCallback<List<Date>> callback) {

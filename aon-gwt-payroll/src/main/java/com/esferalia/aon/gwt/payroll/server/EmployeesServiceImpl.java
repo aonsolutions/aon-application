@@ -94,6 +94,7 @@ import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
@@ -5579,6 +5580,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
+	public void downloadTA_IDC(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			String base64Pdf_TA = EmployeesServiceHelper.getTA(connection, domainName, domainId, userLogin, userId, contractId);
+			JooqContractAttach.setContractTA(connection, domainId, contractId, base64Pdf_TA.getBytes());
+			
+			String base64Pdf_IDC = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId, contractId, new Date());
+			JooqContractAttach.setContractIDC(connection, domainId, contractId, base64Pdf_IDC.getBytes());
+			
+		} catch (SQLException | IOException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
 	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -5687,6 +5707,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, parentDomainId, contractId, contractType,
 					formativeLvl);
+			
 			JooqContrataContract.saveDraftContract(domainName, contractId, pdfBytes);
 			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
 

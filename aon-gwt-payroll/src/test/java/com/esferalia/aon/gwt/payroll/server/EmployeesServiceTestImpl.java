@@ -903,4 +903,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

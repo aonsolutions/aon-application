@@ -452,6 +452,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

@@ -383,6 +383,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
@@ -758,6 +765,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void cambioContrato(String currentDomainName, String currentUser,
 							EmployeeContractInfo employeeContractInfo, String tc2, Date fecha,
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId,
 							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						

@@ -226,6 +226,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 //	
 //	EmployeeStatus unregister(String domain, Integer contractId);
 	
+	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	
 	String getEmployeeTa(String domain, String user, Integer contractId, Date date);
 
 	String getEmployeeIdc(String domain, String user, Integer contractId, Date date);
