@@ -786,6 +786,19 @@ public class ContrataEmployeeObject {
 	}
 	
 	// ------------------------------------------------- Database Methods (TGSS Get files)
+	
+	public void downloadTA_IDC(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.downloadTA_IDC(contractData.getContractId(), new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
 
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {

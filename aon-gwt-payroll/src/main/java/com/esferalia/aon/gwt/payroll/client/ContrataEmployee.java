@@ -1191,40 +1191,28 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
 							
-							downloadTA();
+							downloadTA_IDC();
 						}, f -> {
 							AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
 							dialog.warning();
 						});
 					}
-
 				};
 	}
 	
-	private void downloadTA() {
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "comunica_file/";
-		String query = "?currentUser=" + Wnd.getCurrentUser()
-				+ "&currentDomain=" + Wnd.getCurrentDomainNameURL()
-				+ "&token=" + Wnd.getToken()
-	            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
-	            + "&document=" + contrataEmployeeObject.getEmployeeData().getDocument()
-	            + "&fileType=TA";
-		
-		Window.open(fileDownloadURL+query, "ComunicaFileExporter", "resizable=yes,scrollbars=yes,status=yes");
-		
-		downloadIDC();
-	}
-	
-	private void downloadIDC() {
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "comunica_file/";
-		String query = "?currentUser=" + Wnd.getCurrentUser()
-				+ "&currentDomain=" + Wnd.getCurrentDomainNameURL()
-				+ "&token=" + Wnd.getToken()
-	            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
-	            + "&document=" + contrataEmployeeObject.getEmployeeData().getDocument()
-	            + "&fileType=IDC";
-		
-		Window.open(fileDownloadURL+query, "ComunicaFileExporter", "resizable=yes,scrollbars=yes,status=yes");
+
+
+	private void downloadTA_IDC() {
+		contrataEmployeeObject.downloadTA_IDC(
+				s -> {
+					AonDialog dialog = new AonDialog("IDC y TA", new HTML("Se han descargado el IDC y el TA del trabajador. Ambos documentos se encuentran en el apartado de <b>Adjuntos</b>"));
+					dialog.info();
+				},
+				f -> {
+					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
+					dialog.warning();
+				}
+		);
 	}
 
 	private void showTa() {
