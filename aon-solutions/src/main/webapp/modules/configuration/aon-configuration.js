@@ -239,10 +239,10 @@ export class AonConfiguration extends AonElement {
         : new AonUserList();
     aonConfiguration.setContent(userList);
     
-    const btnSearch = aonConfiguration.addSearchOption();
-    btnSearch.addEventListener(EVENT.SEARCH, (event) => {
-      userList.setValue(event.detail);
-    });
+    // const btnSearch = aonConfiguration.addSearchOption();
+    // btnSearch.addEventListener(EVENT.SEARCH, (event) => {
+    //   userList.setValue(event.detail);
+    // });
 
   }
 

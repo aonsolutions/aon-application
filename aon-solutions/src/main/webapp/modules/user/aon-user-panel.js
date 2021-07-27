@@ -5,7 +5,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-application.js';
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
-import '../user/aon-user-list.js';
+import {AonUserList} from '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import { MSG } from '../../environments/environments.js';
 
@@ -72,13 +72,18 @@ export class AonUserPanel extends AonElement {
 		];
 		aonUserPanel.addSidenavOptions('Usuarios', filterOptions);
 
-		aonUserPanel.setContentHTML('<aon-user-list> </aon-user-list>');
+		aonUserPanel.setContent(new AonUserList());
 		aonUserPanel.closeSidenav();
 	}
 
 	init(filter){
 		let aonUserPanel = this.getElement(this.AON_USER_PANEL);
-		aonUserPanel.setContentHTML(`<aon-user-list filter="${filter}"> </aon-user-list>`);
+		
+		let userList = new AonUserList();
+		userList.setFilter({filter});
+		aonUserPanel.setContent(userList);
+		
+		aonUserPanel.setContent(`<aon-user-list filter="${filter}"> </aon-user-list>`);
 	}
 
 	buildCreateUser(share) {

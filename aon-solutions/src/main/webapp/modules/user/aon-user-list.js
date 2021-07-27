@@ -1,41 +1,40 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getUsers} from  '../../services/service.js';
+import {setUsers, setIndex} from './UserCache.js';
+
 
 import './aon-user.js'
 import '../../components/aon-table.js';
+import { AonUser } from './aon-user.js';
+import { EVENT } from '../../environments/environments.js';
 
 export class AonUserList extends AonElement {
 
-	static get observedAttributes() {
-		return ['filter'];
-	}
-
-	get filter() {
-    	return this.getAttribute('filter');
- 	 }
-
-	set filter(filter) {
-		this.setAttribute('filter', filter);
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if('filter' === name) {
-			this.init();
-		}
-	}
+	users; 
+	filter;
 
 	constructor () {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.innerHTML = `
 			<aon-table id='aonUserTable'></aon-table>
 		`;
+		this.initialize()
 		this.build();
  	}
 
+	initialize() {
+		this.filter = this.filter || {filter: 'company'};
+	}
+
 	build() {
+
+		const btnSearch = this.getApplication().addSearchOption();
+		let searchFn = (event) => this.search(event.detail);
+		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
+
 		let table = this.getElement('aonUserTable');
 		table.addColumn('Nombre', 'string', 'name', '25%');
 		table.addColumn('Apellidos', 'string', 'surname', '25%');
@@ -47,6 +46,23 @@ export class AonUserList extends AonElement {
 		this.init();
 	}
 
+
+	setFilter(filter) {
+		this.filter = filter;
+	}
+
+	search(value) {
+		const usrs = this.users.filter( f => (f.name && f.name.includes(value)) || (f.surname && f.surname.includes(value)) 
+			|| (f.document && f.document.includes(value)) || (f.email && f.email.includes(value)));
+		setUsers(usrs);
+		let table = this.getElement('aonUserTable');
+
+		table.removeRows();
+		usrs.forEach((user, i) => {
+			table.addRow(user, () => this.aonUser(user, i));
+		});
+	}
+
 	init() {
 		let filter = {
 			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
@@ -54,39 +70,46 @@ export class AonUserList extends AonElement {
 		let table = document.getElementById('aonUserTable');
 		if(table) {
 			getUsers(filter).then(users => {
+				setUsers(users);
+				this.users = users;
 				table.removeRows();
 				users.forEach((user, i) => {
-					table.addRow(user, () => this.aonUser(user));
+					table.addRow(user, () => this.aonUser(user, i));
 				});
 			});
 		}
 	}
 
-	aonUser(user) {
-		let content = this.parentElement;
-		content.innerHTML = '<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>';
-		let aonUser = document.getElementById('aonUser-' + user.id);
+	aonUser(user, index) {
+		setIndex(index);
+
+		let aonUser = new AonUser();
+		aonUser.id = 'aonUser-' + user.id;
+		aonUser.setShowApps(true);
+		aonUser.setShowToolbar(true);
+		aonUser.setUser(user);
 		aonUser.style.width = "100%";
-		aonUser.setAttribute('user', JSON.stringify(user));
+
+		this.getApplication().setContent(aonUser);	
 	}
 
-	setValue(value) {
-		let filter = {
-			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
-		};
-		let table = document.getElementById('aonUserTable');
-		if(table) {
-			getUsers(filter).then(users => {
-				table.removeRows();
-				users.filter(f => 
-					f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
-					|| f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
-				).forEach((user, i) => {
-					table.addRow(user, () => this.aonUser(user));
-				});
-			});
-		}
-	}
+	// setValue(value) {
+	// 	let filter = {
+	// 		filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
+	// 	};
+	// 	let table = document.getElementById('aonUserTable');
+	// 	if(table) {
+	// 		getUsers(filter).then(users => {
+	// 			table.removeRows();
+	// 			users.filter(f => 
+	// 				f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
+	// 				|| f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
+	// 			).forEach((user, i) => {
+	// 				table.addRow(user, () => this.aonUser(user, i));
+	// 			});
+	// 		});
+	// 	}
+	// }
 
 }
 window.customElements.define('aon-user-list', AonUserList);

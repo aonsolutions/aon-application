@@ -178,25 +178,29 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
-	addSearchButton(advanced) {
-		let search = new AonSearch();
-		search.id = this.TOOL_SECTION + 'Search';
+	addSearchButton() {
+		const id = this.TOOL_SECTION + 'Search';
+		let search = this.getElement(id);
+		if(!search) {
+			search = new AonSearch();
+			search.id = id;
 
-		const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
-		const searchValueFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
+			const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
+			const searchValueFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH_VALUE, { detail: event.detail }));
 
-		// search.removeEventListener(EVENT.SEARCH, searchFn, true);
-		// search.removeEventListener(EVENT.SEARCH_VALUE, searchValueFn, true);
+			// search.removeEventListener(EVENT.SEARCH, searchFn, true);
+			// search.removeEventListener(EVENT.SEARCH_VALUE, searchValueFn, true);
 		
-		search.addEventListener(EVENT.SEARCH, searchFn);
-		search.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
+			search.addEventListener(EVENT.SEARCH, searchFn);
+			search.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
-		let aonMenu = this.getElement('aonMenu');
-		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
-		if(toolSection.children.length > 0) {
-			toolSection.insertBefore(search, toolSection.children[0]);
-		} else toolSection.appendChild(search);
+			let aonMenu = this.getElement('aonMenu');
+			let toolSection = this.getElement(this.TOOL_SECTION);
+			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			if(toolSection.children.length > 0) {
+				toolSection.insertBefore(search, toolSection.children[0]);
+			} else toolSection.appendChild(search);
+		}
 		return search;
 	}
 

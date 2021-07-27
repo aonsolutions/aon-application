@@ -17,6 +17,7 @@ import { MSG, MATERIAL_ICONS, CONSTANT } from '../../environments/environments.j
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
+import { getNextUser, getPreviousUser, getUsers } from './UserCache.js';
 
 export class AonUser extends AonElement {
 
@@ -115,11 +116,12 @@ export class AonUser extends AonElement {
 	init() {
 		this.initialize();
 		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+		let login = this._user.login ? ' (' + this._user.login + ')' : '';
 		this.innerHTML = this.isMobile() 
 			? `
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
 				<div class="aonMobileSubContent">
-					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
 					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 					<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
 				</div>
@@ -128,7 +130,7 @@ export class AonUser extends AonElement {
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
 				<div style="display:flex;width:100%;" class="aonSubContent">
 					<div id="aonConfigurationUserDiv" style="width:50%;">
-						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER}"></aon-card>
+						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
 						<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 					</div>
 					<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
@@ -267,18 +269,23 @@ export class AonUser extends AonElement {
 	}
 
 	buildUserToolbar() {
-		let userToolbar = this.getElement(this.TOOLBAR);
+		let toolbar = this.getElement(this.TOOLBAR);
 		if(!this.hasAttribute('showToolbar'))
-			userToolbar.style.display = 'none';
-		userToolbar.removeButtons();
+		toolbar.style.display = 'none';
+		toolbar.removeButtons();
+		if(!this.isOnlyAuth() && getUsers().length > 1) {
+			toolbar.addButton2(ACTION.NEXT, () => this.next());
+			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
+			toolbar.addSeparator();
+		}
 		if(!this.isOnlyAuth() && this._user && this._user.uuid)
-			userToolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
+			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
-			userToolbar.addButton2(ACTION.SAVE, () => this.save());
+			toolbar.addButton2(ACTION.SAVE, () => this.save());
 		if(!this.isOnlyAuth() && this._user.id)
-			userToolbar.addButton2(ACTION.DELETE, () => this.delete());
+			toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(!this.isOnlyAuth()) 
-			userToolbar.addButton2(ACTION.BACK, () => this.back());
+			toolbar.addButton2(ACTION.BACK, () => this.back());
 		
 	}
 
@@ -469,6 +476,21 @@ export class AonUser extends AonElement {
 	back() {
 		this.getApplication().setContent( this.isMobile() 
 			? new AonMobileUserList() : new AonUserList());
+	}
+
+	next() {
+		let user = getNextUser();
+		this.changeUser(user);
+	}
+
+	previous() {
+		let user = getPreviousUser();
+		this.changeUser(user);
+	}
+
+	changeUser(user) {
+		this.setUser(user);
+		this.init();
 	}
 
 	sendEmail() {
@@ -737,6 +759,21 @@ export class AonUser extends AonElement {
 		if(bool && role.active) {
 			this._user.roles.push(role.role);
 		}
+	}
+
+	setUser(user) {
+		this._user = user;
+		this.setAttribute('user', JSON.stringify(user));
+	}
+
+	setShowToolbar(showToolbar) {
+		// this.showToolbar = showToolbar;
+		this.setAttribute('showToolbar', showToolbar);
+	}
+
+	setShowApps(showApps) {
+		// this.showToolbar = showToolbar;
+		this.setAttribute('showApps', showApps);
 	}
 }
 

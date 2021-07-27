@@ -29,8 +29,11 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
+import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -123,15 +126,8 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private JSONArray getDomainUsers(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
-		Stream<User> users;
-		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null && api.getParams().optString("filter").equals("entorno")) {
-			users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getParentId()));
-		} else if(api.getParams().opt("filter") != null && api.getParams().optString("filter").equals("shared")) {
-			users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getSharedProperty().eq((byte)1)));
-		} else users = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-
-		users.forEach(r -> {
+		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
+		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			if(r.getAuth() != null) {
 				Auth auth = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), r.getAuth());
@@ -148,11 +144,35 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put("roles", getUserRoles(api.getDomain(), r));
 				json.put("portal", r.isPortal());
 				json.put("shared", r.isShared());
+				json.put("login", r.getLogin());
 				jsArray.put(json);
 			} else jsArray.put(userToJSON(r, json));
 		});
 		return jsArray;
 	}
+	
+	private Filter userFilter(AonApiData api, UserProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+
+		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null 
+				&& api.getParams().optString("filter").equals("entorno")) {
+			filter = f.getDomainProperty().eq(api.getDomain().getParentId());
+		} else if(api.getParams().opt("filter") != null &&
+				api.getParams().optString("filter").equals("shared")) {
+			filter = f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getSharedProperty().eq((byte)1));
+		}
+		
+		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
+			String value = api.getParams().optString(IJsonNames.VALUE);
+			Filter valueFilter = f.getLoginProperty().like("%" + value + "%")
+					.or(f.getNameProperty().like("%" + value + "%"));
+			filter = valueFilter;
+		}
+		
+		return filter;
+	}
+	
 	
 	private JSONObject getDomainUser(AonApiData api) {
 		Integer userId = api.getParams().opt("user") != null ? api.getParams().optInt("user") : null;
@@ -721,6 +741,7 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("surname", "");
 		if(json.opt("email") == null)
 			json.put("email", "");
+		json.put("login", user.getLogin());
 		return json;
 	}	
 	
