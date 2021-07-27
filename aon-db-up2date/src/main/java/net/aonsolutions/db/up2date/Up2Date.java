@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.irpf.IrpfHomeUpdate;
 import net.aonsolutions.db.up2date.payroll.ContractCostCreation;
 import net.aonsolutions.db.up2date.tgss.CRA0062Insert;
 
@@ -166,8 +167,9 @@ public class Up2Date {
     		//AlterFsMod2002020.ALTER_FS_MODEL_200_2020,
     		//TaskWorkflowCreation.TASK_WORKFLOW_CREATION,
     		//TaskAttachCreation.TASK_ATTACH_CREATION
-    		ContractCostCreation.CONTRACTCOSTCREATION,
-    		CRA0062Insert.CRA0062INSERT
+    		//ContractCostCreation.CONTRACTCOSTCREATION,
+    		//CRA0062Insert.CRA0062INSERT
+    		IrpfHomeUpdate.IRPFHOMEUPDATE
     };
 
 

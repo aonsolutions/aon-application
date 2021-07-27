@@ -4138,7 +4138,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.implicitExpressionContext.setVariable(CONTRACT_END, salaryType == SalaryType.SETTLE ? contractEndDate
 				: getContractEndDate(), startDate, getEnd());
 
-		this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
+		if (!this.implicitExpressionContext.containsVariable(IRPF_PERCENT, startDate, getEnd()))
+			this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
 
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
