@@ -27,7 +27,6 @@ public interface ITask2 {
 	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
 	
-	
 	//TASKATTACH
 	public TaskAttach getTaskAttach(AONContext ctx, TaskAttachFilter filter);
 	public Stream<TaskAttach> getTaskAttachStream(AONContext ctx, TaskAttachFilter filter);

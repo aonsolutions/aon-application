@@ -78,7 +78,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			error(req, resp, e);
 		}
 	}
-
+	
 	private Object getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt("page");
 		Integer peerPage = api.getParams().optInt("peerPage");
@@ -91,9 +91,9 @@ public class TaskServlet extends AonApiHttpServlet{
 						f.getDomainProperty().eq(api.getDomain().getId())
 						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
 						.or(
-								status.equalsIgnoreCase("finished") ?
-								f.getStatusProperty().eq(TaskStatus.DELETED.value()) :
-								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) 
+								status.equalsIgnoreCase("pending") ?
+								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) :
+								f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()) 
 						)
 						.and( 
 							workgroup > 0 ?  
@@ -112,7 +112,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	private Object saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
-		saveAllTaskWorkflow(api, task); //ADD WORKFLOW
+		if(task.getWorkflows().size() > 0) {
+			saveAllTaskWorkflow(api, task); //ADD WORKFLOW
+		}
 		return TaskJSON.toJSON(task);
 	}
 	

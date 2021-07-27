@@ -176,10 +176,6 @@ public class TaskDAO {
 		return task.setId(id);
 	}	
 
-	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
-	}
-	
 	public static void delete(AONContext ctx, TaskFilter filter){
 		ctx.getDslContext().delete(TASK)
 		.where(TASK_PROPERTIES.getConditions(filter))

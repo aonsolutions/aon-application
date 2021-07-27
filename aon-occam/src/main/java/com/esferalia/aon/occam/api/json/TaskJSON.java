@@ -44,7 +44,7 @@ public class TaskJSON {
 			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			//.setSourceId(sourceId)
-			.setStatus(TaskStatus.PENDING) 
+			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, "status"))) 
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 //			.setGtaskId(gtaskId)
