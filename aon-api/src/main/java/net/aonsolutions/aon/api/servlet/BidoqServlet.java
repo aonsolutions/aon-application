@@ -2,6 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -13,10 +14,20 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -47,12 +58,14 @@ public class BidoqServlet extends AonApiHttpServlet {
 				}
 				
 				Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
-				if(auth.getUuid() == null) {
-					throw new Exception("El usuario no existe");
+				Company cp = new Company();
+				String token = "";
+				if(auth.getUuid() != null) {
+					String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
+					token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1));
+					cp = AON.getCompany(domain, 0, "", f -> f.getDocumentProperty().eq(company));
 				}
-		   		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
-				String token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1));
-				Company cp = AON.getCompany(domain, 0, "", f -> f.getDocumentProperty().eq(company));
+		   	
 				if(cp.getId() == null) {
 					List<String> schemas = AONContext.getSchemas();
 					Integer index = 0;
@@ -67,8 +80,24 @@ public class BidoqServlet extends AonApiHttpServlet {
 				if(cp.getId() == null) {
 					throw new Exception("La empresa no existe");
 				}
+				
+				if(auth.getUuid() == null) {
+					auth = createAuth(cp.getDomain(), user);
+					token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1), cp.getDomain().getName());
+				}
+				
+				byte[] a = auth.getAuth();
+				Domain domain = cp.getDomain();
+				User usr = AON.getUser(cp.getDomain().getName(), cp.getDomain().getId(), "", f ->
+					f.getAuthProperty().eq(a)
+					.and(f.getDomainProperty().eq(domain.getId())
+						.or(f.getDomainProperty().eq(domain.getParentId()))));
+				if(usr == null || usr.getId() == null) {
+					createUser(cp, auth);
+				}
+				
 				String url = "";
-				if(AonStringUtils.isEmpty(action)) {
+				if(AonStringUtils.isBlank(action)) {
 					url = "https://" +  cp.getDomain().getName() +"/login?token=" + token;
 				} else {
 					url = "https://" +  cp.getDomain().getName() +"/login?initAction=" + action + "&token=" + token;
@@ -88,5 +117,108 @@ public class BidoqServlet extends AonApiHttpServlet {
 			e.printStackTrace();
 			error(req, resp, e);
 		}
+	}
+	
+	
+	private Auth createAuth(Domain domain, String document) {
+		String email = document + "@aon.solutions";
+		String pass = Utils.createPasswordHash(email, document);
+
+		Auth auth = new Auth()
+			.setEmail(email)
+			.setPassword(pass)
+			.setName("")
+			.setSurname("")
+			.setDocument(document)
+			.setPhone("");
+		auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
+		return auth;
+	}
+	
+	private User createUser(Company cp, Auth auth) {
+		User user = new User()
+			.setAuth(auth.getAuth())
+			.setActive(true)
+			.setDomain(cp.getDomain().getId())
+			.setLogin(auth.getDocument())
+			.setName(cp.getName())
+			.setShared(false)
+			.setEnterprise(cp.getId())
+			.setToolbar(UserToolbar.GOOGLE);
+		
+		if(!AonStringUtils.isBlank(auth.getDocument()) && AonDocumentUtil.isValid(auth.getDocument())) {
+			Integer registryId = null;
+			Optional<Person> p = AON.getPerson(cp.getDomain().getName(), cp.getDomain().getId(), "", f -> 
+				f.getDomainProperty().eq(cp.getDomain().getId())
+				.and(f.getDocumentProperty().eq(auth.getDocument())));
+			if(p.isPresent() && p.get().getId() != null) {
+				registryId = p.get().getId();
+			}
+				
+			if(registryId == null) {
+				Registry r = AON.getRegistry(cp.getDomain().getName(), cp.getDomain().getId(), "", f -> 
+					f.getDomainProperty().eq(cp.getDomain().getId())
+					.and(f.getDocumentProperty().eq(auth.getDocument())));
+				registryId = r.getId();
+			}
+			user.setRegistry(registryId);
+		}
+			
+		user = AON.save(cp.getDomain().getName(), cp.getDomain().getId(), "", user);
+		AON.updateUserPassword(cp.getDomain().getName(), cp.getDomain().getId(), "", user.getId(), auth.getPassword());
+		Scope s = getScope(cp.getDomain(), "");
+		if(s != null) {
+			AON.insertUserScope(cp.getDomain().getName(), cp.getDomain().getId(), "", new UserScope()
+					.setDomain(cp.getDomain().getId())
+					.setScope(s.getId())
+					.setUserId(user.getId()));
+		}
+				
+//		int value = 0;
+//		value |= 1; 	//	PAYROLL_INFO_PORTAL
+//		value |= 2; 	//	FISCAL_INFO_PORTAL
+//		value |= 4; 	// 	DOCUMENTAL_INFO_PORTAL
+//		value |= 8; 	// 	PAYROLL_PORTAL
+//		value |= 16; 	//	ACCOUNTING_PORTAL
+//		value |= 32; 	//	ACTIVE_PORTAL
+//		value |= 64; 	//	INACTIVE_PORTAL
+//		value |= 128;	//	DOCUMENTAL_MANAGEMENT_PORTAL
+//		value |= 256; 	//	FINANCE_MANAGEMENT_PORTAL
+		
+		ApplicationParameter a = AON.getApplicationParameter(cp.getDomain().getName(), cp.getDomain().getId(), "", AppParam.AON_PORTAL);
+		ApplicationParameter appParam = new ApplicationParameter()
+				.setDomain(cp.getDomain().getId())
+				.setValue("288")
+				.setName(AppParam.AON_PORTAL.getValue());
+
+		if(a == null || a.getId() == null)
+			AON.insertApplicationParameter(cp.getDomain().getName(), cp.getDomain().getId(), "", appParam);
+	
+		AON_SOLUTIONS.saveUserFinancePortal(cp.getDomain(), "", user.getId());		
+		
+		return user;
+	}
+	
+	private Scope getScope(Domain domain, String login) {
+		Scope s = AON.getScopeStream(domain.getName(), domain.getId(), login,
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getDescriptionProperty().eq("GENERAL")))
+				.findFirst().orElse(null);
+		if(s == null && domain.getParentId() != null) {
+			s =   AON.getScopeStream(domain.getName(), domain.getId(), login,
+					f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+					.findFirst().orElse(null);
+		}
+		
+		if(s== null){
+			s = AON.getScopeStream(domain.getName(), domain.getId(), login,
+					f -> f.getDomainProperty().eq(domain.getId()))
+					.findFirst().orElse(null);
+		}
+		if(s == null && domain.getParentId() != null) {
+			s = AON.getScopeStream(domain.getName(), domain.getId(), login,
+					f -> f.getDomainProperty().eq(domain.getParentId()))
+					.findFirst().orElse(null);
+		}
+		return s;
 	}
 }

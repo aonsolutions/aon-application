@@ -83,10 +83,14 @@ public class AonToken implements Serializable{
 	}
 	
 	public static String build(Auth auth, Date expireDate) {
+		return build(auth, expireDate, AONContext.getSchemaFirstDomain(auth.getSchema()));
+	}
+	
+	public static String build(Auth auth, Date expireDate, String domain) {
 		JSONObject tokenObject = new JSONObject();
 		tokenObject
 			.put("schema", auth.getSchema())
-			.put("schema_first_domain", AONContext.getSchemaFirstDomain(auth.getSchema()))
+			.put("schema_first_domain", domain)
 			.put("uuid", auth.getUuid());
 		String token = "";
 		try {

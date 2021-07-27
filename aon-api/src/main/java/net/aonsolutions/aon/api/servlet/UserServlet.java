@@ -722,7 +722,7 @@ public class UserServlet extends AonApiHttpServlet {
 				.setValue("288")
 				.setName(AppParam.AON_PORTAL.getValue());
 
-		if(a == null && a.getId() == null)
+		if(a == null || a.getId() == null)
 			AON.insertApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), appParam);
 	
 		AON_SOLUTIONS.saveUserFinancePortal(api.getDomain(), api.getUser().getLogin(), user.getId());		
