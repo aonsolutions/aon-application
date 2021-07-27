@@ -626,13 +626,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void setScrollPanelsHeight() {
 		int height = Window.getClientHeight(); 
-		scrolledPanel.setHeight((height-220)+"px");
-		scrolledPanelContractOtherData.setHeight((height-220)+"px");
-		scrolledPanelClauses.setHeight((height-220)+"px");
-		scrolledPanelAttach.setHeight((height-220)+"px");
-		scrolledPanelBonus.setHeight((height-220)+"px");
-		scrolledPanelContractSpecificData.setHeight((height-220)+"px");
-		scrolledPDFPanel.setHeight((height-220)+"px");
+		double emCoef = 0.063;
+		double scrollHeight = height * emCoef - 4;
+		scrolledPanel.setHeight(scrollHeight+"em");
+		scrolledPanelContractOtherData.setHeight(scrollHeight+"em");
+		scrolledPanelClauses.setHeight(scrollHeight+"em");
+		scrolledPanelAttach.setHeight(scrollHeight+"em");
+		scrolledPanelBonus.setHeight(scrollHeight+"em");
+		scrolledPanelContractSpecificData.setHeight(scrollHeight+"em");
+		scrolledPDFPanel.setHeight(scrollHeight+"em");
 	}
 	
 	private void initZoomList() {
@@ -824,6 +826,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, EmployeeContractInfo employeeContractInfo) {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+		showContractButtons();
 		checkStatus(this.contrataEmployeeObject);
 		checkCertificateSEPE();
 		checkTGSSStatus();
