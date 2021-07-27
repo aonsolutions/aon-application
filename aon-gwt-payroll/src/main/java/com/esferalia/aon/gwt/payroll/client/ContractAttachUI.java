@@ -454,6 +454,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		typeLB.addItem("Borrador prorroga", "10");
 		typeLB.addItem("Prorroga", "11");
 		typeLB.addItem("Borrador del certificado de empresa", "22");
+		typeLB.addItem("TA", "98");
+		typeLB.addItem("IDC", "99");
 	}
 	
 	private String getFileName(String filename) {
