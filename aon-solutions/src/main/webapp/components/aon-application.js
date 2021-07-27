@@ -537,10 +537,11 @@ export class AonApplication extends AonElement {
       }
 
       li.addEventListener(EVENT.CLICK, () => {
+        const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
         document
-          .querySelectorAll(`[id^='${this.SIDENAV}']`)
+          .querySelectorAll(`[id^='${sidenavId}'] li`)
           .forEach((el, i) => {
-            if (el.id !== this.SIDENAV)
+            if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
           });
         this.selected = id;

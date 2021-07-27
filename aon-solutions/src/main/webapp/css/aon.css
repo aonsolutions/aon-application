@@ -10,6 +10,7 @@
   --grayson : #787878;
   --materialBlue : #007bff;
   --materialBlack : #404040;
+  --materialRed : #f44336;
   --materialSoftBlack : #202020;
 
   --sat: env(safe-area-inset-top);

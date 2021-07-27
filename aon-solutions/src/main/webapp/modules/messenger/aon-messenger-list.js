@@ -149,7 +149,7 @@ export class AonMessengerList extends AonElement {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         const options = {
           icon: MATERIAL_ICONS.INFO,
-          icon_color: CSS.variable(COLORS.ONLINE_GREEN),
+          icon_color: CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
           icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
           title: res.newTitle,
           subtitle: dateParse, 
@@ -161,7 +161,7 @@ export class AonMessengerList extends AonElement {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         res.icon = MATERIAL_ICONS.INFO;
         res.icon_title = "status";
-        res.icon_color = CSS.variable(COLORS.ONLINE_GREEN);
+        res.icon_color = CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON);
         res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
         aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res));
       });

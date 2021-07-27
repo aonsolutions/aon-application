@@ -17,7 +17,7 @@ import { buildMobileWritter } from "./messenger-writter.js";
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
 export const buildMobileChat = (mainView, aonMessengerChat) => {
-    const data = aonMessengerChat.task;
+    const task = aonMessengerChat.task;
 
     const firstView = newComponent({
         classes: [CSS.FLEX_ROW],
@@ -52,7 +52,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
      */
     const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title: aonMessengerChat.task.id ? "#"+(data.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
+        title: aonMessengerChat.task.id ? "#"+(task.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
     });
     
     if(aonMessengerChat.task.id){
@@ -81,6 +81,9 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
     const chat = newComponent({
         type: 'chat',
         id: MESSENGER_IDS.MESSENGER_CHAT,
+        attributes:{
+            title: MSG.COMMENTS
+        },
         classes: [
             "continueLined", 
             CSS.FLEX_COLUMN, 
@@ -102,8 +105,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
 
     chat.appendTo(wrapper.element);
 
-
-    const title = createTitle(data.title);
+    const title = createTitle(task.title);
     setStyles(title.element,{
         display : 'block',
         fontSize: '1.3em',
@@ -128,7 +130,6 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
 /**
  * Create desktop chat for messenger
  * @param {*} parent 
- * @param {*} data 
  */
 export const buildDesktopChat = (aonMessengerChat) => {
     const mainView = document.getElementById(MESSENGER_IDS.MAIN_DIV);
@@ -295,7 +296,7 @@ export const createChatMessage = (properties, chat) => {
     return message;
 }
 
-export const changeStyleSelect = (aonSelect) => {
+const changeStyleSelect = (aonSelect) => {
     const aonSelectInput = aonSelect.querySelector(TAG.INPUT);
     if(aonSelectInput){
         setStyles(aonSelectInput,{
@@ -332,7 +333,7 @@ export const changeStyleSelect = (aonSelect) => {
  */
 const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     const application = aonMessengerChat.applicationEl;
-    const data = aonMessengerChat.task;
+    const task = aonMessengerChat.task;
     const newRequestPanel = newComponent({
         type: TAG.DIV,
         classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
@@ -368,7 +369,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     /**
      * Creating title input
      */
-    const titleIn = setStyles( createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, MSG.WRITE_YOUR_TITLE), {
+    const titleIn = setStyles( createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.ISSUE), {
         padding: "10px 20px",
         display : "block",
         width: "100%",
@@ -412,7 +413,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
         width: "100%",
     });
     div.appendChild(workgroupSelect);
-    fillWorkGroup(data, application);
+    fillWorkGroup(task, application);
     changeStyleSelect(workgroupSelect);
 
       //-----------------TASK HOLDER
@@ -538,7 +539,7 @@ export const fillChat = (workflows=[])=>{
  * @param {Object} message
  * @returns {Object} actionJson message new object
  */
- const chooseIconMessage = ({type, date, name, comment}) => {
+const chooseIconMessage = ({type, date, name, comment}) => {
     const dateParse = setFullDate(date) + " " + setTime(date);
     
     let actionJson = {
@@ -548,11 +549,14 @@ export const fillChat = (workflows=[])=>{
         comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
     }
 
-    if(WORKFLOW_TYPES.OPEN.indexOf(type)>=0){
+    if(WORKFLOW_TYPES.OPEN.indexOf(type)>=0 || WORKFLOW_TYPES.REOPEN.indexOf(type)>=0){
         actionJson.color = CSS.variable(COLORS.ONLINE_GREEN);
     }  else if(WORKFLOW_TYPES.CLOSE.indexOf(type)>=0){
-        actionJson.icon = MATERIAL_ICONS.CLOSE;
-    }  else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
+        actionJson.icon = MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE;
+        actionJson.color = CSS.variable(COLORS.MATERIAL_RED);
+    } else if(WORKFLOW_TYPES.DELETE.indexOf(type)>=0){
+        actionJson.color = CSS.variable(COLORS.GRAYSON);
+    } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
         actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
     }
 

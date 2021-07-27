@@ -1,6 +1,6 @@
-import { CONSTANT, CSS, EVENT, TAG} from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
-import { convertBase64Url, getReader, newComponent, waitEl } from '../services/utils.js';
+import { convertBase64Url, getReader, newComponent, setAttributes, waitEl } from '../services/utils.js';
 import { AonElement } from './AonElement.js';
 
 export class AonTextArea extends AonElement {
@@ -169,6 +169,19 @@ export class AonTextArea extends AonElement {
 
 		const textarea = this.generateTextArea();
 		textarea.appendTo(this);
+
+  	 //ADD INPUT
+		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
+			id:this.id+"Files",
+			type:'file',
+			name:'file',
+			multiple:true
+		});        
+		inputFile.style.display = "none";
+		inputFile.addEventListener(EVENT.CHANGE, () => this.addFiles(inputFile.files));
+		this.appendChild(inputFile);
+
+		this.draggableEnable();
 	}
 
 	getSelection() {
@@ -182,6 +195,10 @@ export class AonTextArea extends AonElement {
 	} 
 
 	generateTextArea(){
+		const preventDefault = (ev) =>{
+			ev.preventDefault();
+			ev.stopPropagation();
+		}  
 		return  newComponent({
 			type: TAG.DIV,
 			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
@@ -191,6 +208,12 @@ export class AonTextArea extends AonElement {
 				contentEditable: true,
 				name: this.name,
 				placeholder: this.placeholder ? this.placeholder : null
+			},
+			events:{
+				dragenter: preventDefault,
+				dragover:  preventDefault,
+				dragleave: preventDefault,
+				drop:      preventDefault
 			},
 			styles : {
 				userSelect : 'text',
@@ -224,10 +247,24 @@ export class AonTextArea extends AonElement {
 				text: properties.icon,
 				id: properties.id,
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
-				events : {click : fn}
+				attributes:{
+					title: properties.name ? properties.name : "",
+				},
+				events : {click : (ev)=> 
+					properties.id === MATERIAL_ICONS.ATTACH_FILE ? 
+					this.clickFile(ev) : 
+					fn(ev)
+				}
 			});
 			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
 		}
+		if(properties.id === MATERIAL_ICONS.ATTACH_FILE){
+			
+		}
+	}
+
+	clickFile(ev){
+		this.getElement(this.id+"Files").click();
 	}
 
 	addToolbarOptionRight(properties,fn){
@@ -239,9 +276,13 @@ export class AonTextArea extends AonElement {
 				text: properties.icon,
 				id: properties.id,
 				classes: ['icon',"material-icons",CSS.CENTER_FLEX],
+				attributes:{
+					title: properties.name ? properties.name : "",
+				},
 				events : {click : fn}
 			});
 			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
+			return icon.element;
 		}
 	}
 
@@ -279,6 +320,28 @@ export class AonTextArea extends AonElement {
 				textAreaDiv.appendChild(document.createElement("br"));
 			}
 		}
+	}
+
+	draggableEnable(){
+		const divTextArea = this.getTextAreaDiv();
+		divTextArea.classList.add("divDragOver");
+
+		const highlight = ()   => divTextArea.classList.add('highlight');
+		const unhighlight = () => divTextArea.classList.remove('highlight');
+
+		[EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => divTextArea.addEventListener(eventName, highlight, false));
+		[EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => divTextArea.addEventListener(eventName, unhighlight, false));
+
+	    divTextArea.addEventListener(EVENT.DROP, (ev) => {
+			if(ev && ev.dataTransfer && ev.dataTransfer.files){
+				this.addFiles(ev.dataTransfer.files);
+			}
+		});
+	}
+
+	addToolbarRight(element, fn){
+		element.addEventListener(EVENT.CLICK, fn);
+		waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(element));
 	}
 }
 if(!window.customElements.get('aon-textarea')){

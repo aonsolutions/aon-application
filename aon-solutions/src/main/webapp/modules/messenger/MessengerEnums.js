@@ -1,20 +1,28 @@
-import { MSG } from "../../environments/environments";
+import { MATERIAL_ICONS } from "../../environments/environments";
 
-export const AON_MESSENGER_LIST = {
+const AON_MESSENGER_LIST = {
     name: 'Abiertas',
-    icon: 'assignment',
-    id: 'messenger'
+    icon: MATERIAL_ICONS.ASSIGNMENT,
+    id: MATERIAL_ICONS.ASSIGNMENT
 };
 
-export const AON_MESSENGER_LIST_CLOSE = {
+const AON_MESSENGER_LIST_CLOSE = {
     name: 'Cerradas',
-    icon: 'assignment',
-    id: 'messenger_close'
+    icon: MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE,
+    id: MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
 };
+
+const AON_MESSENGER_LIST_TRASH = {
+    name: 'Papelera',
+    icon: MATERIAL_ICONS.DELETE,
+    id: MATERIAL_ICONS.DELETE
+};
+
 
 export const MessengerOptions = {
     AON_MESSENGER_LIST,
-    AON_MESSENGER_LIST_CLOSE
+    AON_MESSENGER_LIST_CLOSE,
+    AON_MESSENGER_LIST_TRASH
 };
 
 export const MESSENGER_VIEWS = {
@@ -40,7 +48,6 @@ export const MESSENGER_IDS = {
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
     TITLE_TASK: "titleTask",
-    INPUT_FILES: "inputFiles",
     BUTTON_SEND: "buttonSend"
 }
 

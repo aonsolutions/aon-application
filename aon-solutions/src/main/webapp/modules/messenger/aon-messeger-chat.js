@@ -1,6 +1,6 @@
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, TAG } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { setAttributes, setClasses, setStyles } from "../../services/utils.js";
 import {
@@ -13,10 +13,12 @@ import {
   sendMessage,
 } from "./shared/messenger-writter.js";
 import {
+  MessengerOptions,
   MessengerSidenav,
   MESSENGER_COMPONENTS,
   MESSENGER_IDS,
   MESSENGER_VIEWS,
+  TASK_STATUS,
   WORKFLOW_TYPES,
 } from "./MessengerEnums.js";
 import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
@@ -43,6 +45,14 @@ export class AonMessengerChat extends AonElement {
 
   set data(data) {
     this.setAttribute(CONSTANT.DATA, JSON.stringify(data));
+  }
+
+  setData(data){
+    this._data = data;
+  }
+  
+  getData(){
+    return this._data || {};
   }
 
   constructor() {
@@ -77,7 +87,6 @@ export class AonMessengerChat extends AonElement {
     this.task.createTask(this.data);
     if(this.data.id) this.setData(this.data);
   }
-
  
   build() {
     this.paintView();
@@ -135,24 +144,31 @@ export class AonMessengerChat extends AonElement {
 
     this.appendChild(toolbar);
 
-    toolbar.addButton2(ACTIONS.DELETE, () => this.applicationEl.development());
+    if(this.task.id){
+      if(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS){
+        toolbar.addButton2({
+          ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
+          name: 'Cerrar',
+        }, () => this.updateTaskStatus(TASK_STATUS.FINISHED));
+      }
+      if(this.task.status == TASK_STATUS.DELETED || this.task.status == TASK_STATUS.FINISHED)
+        toolbar.addButton2({...ACTIONS.RESTORE,name:"Reabrir"}, () => this.updateTaskStatus(TASK_STATUS.PENDING));
 
-    toolbar.addButton2(ACTIONS.SAVE, () => this.save());
-    toolbar.addButton2(ACTIONS.BACK, () => {
-      setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{
-        opacity:"0",
-        transition:".25s"
-      });
+      if(this.task.status != TASK_STATUS.DELETED) 
+        toolbar.addButton2(ACTIONS.DELETE, () => this.updateTaskStatus(TASK_STATUS.DELETED));
+    }
 
-      setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST), 250);
-    });
+    if(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS)
+      toolbar.addButton2(ACTIONS.SAVE, () => this.save());
+
+    toolbar.addButton2(ACTIONS.BACK, () => this.back());
 
     const titleSpan = toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` );
 
     setClasses(titleSpan, [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
 
     const status = createOutlinedMaterialIcon({
-      color: CSS.variable(COLORS.ONLINE_GREEN),
+      color: CSS.variable(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
       name: "info",
       size: "20px",
     });
@@ -214,13 +230,33 @@ export class AonMessengerChat extends AonElement {
       if(comment){
         await saveTaskWorkflow({
           ...this.task.getWorkflowTmp(),
-          task: this.task.id,
           comment
         });
       }
     } catch (error) {
       this.showError(error);
     }
+  }
+
+  async updateTaskStatus(status){
+    // this.applicationEl.confirmDialog(MSG.CONFIRM, "Estas seguro?", async()=>{
+      this.task.setStatus(status);
+      let type = undefined;
+      switch(status){
+        case TASK_STATUS.PENDING:
+          type = WORKFLOW_TYPES.REOPEN;
+        break;
+        case TASK_STATUS.DELETED:
+          type = WORKFLOW_TYPES.DELETE;
+        break;
+        case TASK_STATUS.FINISHED:
+          type = WORKFLOW_TYPES.CLOSE;
+        break;
+      }
+      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type});
+      await this.save();
+      this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+    // });
   }
 
   getTaskWorkflow() {
@@ -256,11 +292,13 @@ export class AonMessengerChat extends AonElement {
     return taskAttach;
   }
 
-  setData(data){
-    this._data = data;
-  }
-  getData(){
-    return this._data || {};
+  back(){
+    setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{
+      opacity:"0",
+      transition:".25s"
+    });
+
+    setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST), 250);
   }
 }
 

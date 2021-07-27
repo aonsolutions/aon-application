@@ -74,5 +74,18 @@ aon-textarea pre{
     color: var(--fontColor);
     background: var(--aonWhite);
     border-radius : 3px;
-   
+}
+
+/* .divDragOver{ */
+    /* border: 2px dashed rgba(3,88,216,.3);
+    content: "Arrastre el archivo"; */
+/* } */
+
+/* .divDragOver:hover{
+    background-color: rgba(3,88,216,.1);
+} */
+
+.divDragOver.highlight {
+    content: "Arrastre el archivo";
+    border: 2px dashed rgba(3,88,216,.3);
 }

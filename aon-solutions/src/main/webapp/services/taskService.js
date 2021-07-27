@@ -12,14 +12,3 @@ export const getTaskAttach = (data) => get(`${API_URL}/task/attach`, data);
 export const getTaskWorkflow = (data) => get(`${API_URL}/task/workflow`, data);
 
 export const saveTaskWorkflow = (data) => post(`${API_URL}/task/workflow`, data);
-
-/**
- * Gegt messenger chat data
- * @returns 
- */
-export const getTaskChat = () => new Promise(resolve => {
-    resolve({
-        //No data available
-        status : "Not implemented" 
-    });
-});

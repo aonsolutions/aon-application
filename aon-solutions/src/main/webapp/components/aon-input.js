@@ -245,6 +245,7 @@ export class AonInput extends AonElement {
     input.id = this.INPUT;
     input.name = this.getAttribute(CONSTANT.NAME);
     input.style.textOverflow = "ellipsis";
+    input.style.fontSize = "14px";
     if (this.getAttribute(CONSTANT.PATTERN)) {
       input.pattern = this.getAttribute(CONSTANT.PATTERN);
     }
@@ -270,7 +271,7 @@ export class AonInput extends AonElement {
 
     let span = this.createElement(TAG.SPAN);
     span.id = this.DESCRIPTION;
-    span.className = CSS.AON_INPUT_LABEL;;
+    span.className = CSS.AON_INPUT_LABEL;
     span.innerHTML = this.getAttribute(CONSTANT.DESCRIPTION);
     if(input.value && CONSTANT.EMPTY !== input.value) {
       span.classList.add(CSS.AON_INPUT_NOT_EMPTY);

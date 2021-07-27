@@ -85,6 +85,14 @@ export class AonMessenger extends AonElement {
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
 		messengerOpts.push(listClose);
+
+		let listTrash = MessengerOptions.AON_MESSENGER_LIST_TRASH;
+		listTrash.fn = () => {
+			this._filter.status = TASK_STATUS.DELETED;
+			this._filter.workgroup =  undefined;
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+		}
+		messengerOpts.push(listTrash);
 		
 		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
 		this.addWorkGroupOptions();
@@ -113,17 +121,20 @@ export class AonMessenger extends AonElement {
 					this._filter.workgroup = item.id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
-				};
-				option.actions = [{
+			};
+
+			option.actions = [
+				{
 					id: 'Delete',
 					icon: 'delete',
 					action: () => this.deleteWorkgroup(item)
-				},{
+				},
+				{
 					id: 'Edit',
 					icon: 'edit',
 					action: () => this.dialogWorkgroup(item)
 				}
-				];
+			];
 			application.addSidenavOptionsListValue({
 				id: 'Workgroup',
 				name: MSG.WORKGROUP.toUpperCase()

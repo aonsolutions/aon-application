@@ -112,7 +112,11 @@ export const FORMAT_INDENT_INCREASE = "format_indent_increase";
 export const FORMAT_ITALIC = "format_italic";
 export const FORMAT_BOLD = "format_bold";
 export const FORMAT_LIST_BULLETED = "format_list_bulleted";
+export const FORMAT_LIST_NUMBERED = "format_list_numbered";
 export const FORWARD_TO_INBOX = "forward_to_inbox";
+export const FORMAT_UNDERLINED = "format_underlined"; 
+export const FORMAT_CLEAR = "format_clear"; 
+export const FORMAT_QUOTE = "format_quote"; 
 
 // ----- G
 

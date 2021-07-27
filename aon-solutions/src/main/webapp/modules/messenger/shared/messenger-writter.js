@@ -1,15 +1,13 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { domainName } from "../../../services/request.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import {  createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton, createSendIcon, createUpload, createUploadIcon, createUploadText } from "../createComponents.js";
+import { createButtonWrapper, createDivEditable, createReceiverDiv, createSendBar, createSendButton } from "../createComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAonTextArea, createStartJustifiedColumn, createTaskHolder, createWorkgroup, RIGHT } from "./creationUtils.js";
 import { appendChatMessage, fillWorkGroup } from "./messenger-chat.js";
-// import { bold, compileHTML, italic, link, list, tab } from "./markup.js";
-
 
 /**
  * Build desktop version of the writter 
@@ -17,7 +15,7 @@ import { appendChatMessage, fillWorkGroup } from "./messenger-chat.js";
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
 export const buildDesktopWritter = (mainView, aonMessengerChat) => {
-    const data = aonMessengerChat.task;
+    const task = aonMessengerChat.task;
     const application = aonMessengerChat.applicationEl;
 
     const writter = newComponent({
@@ -35,33 +33,45 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
     });
     writter.appendTo(mainView);
 
-    /**
-     * Building title
-     */
     const titleDiv = createStartJustifiedColumn();
-    setStyles(titleDiv.element ,{ width : "100%" });
-    titleDiv.element.style.marginBottom = "5px";
+    setStyles(titleDiv.element ,{ width : "100%", marginBottom: "5px" });
+
+
+    //TEST SPAN
+    let span = setStyles(document.createElement("span"),{
+        fontSize: "0.9375rem",
+        width:"100%",
+        color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
+    });
+    span.textContent = MSG.ISSUE;
+    titleDiv.appendChild(span);
+
     //TITLE
-    const title = createDivEditable(data.title, MESSENGER_IDS.TITLE_TASK, MSG.WRITE_YOUR_TITLE);
-    titleDiv.element.appendChild(title);
+    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.ISSUE);
+    titleDiv.appendChild(title);
     titleDiv.appendTo(writter.element);
 
     const receiverDiv = createReceiverDiv();
     receiverDiv.appendTo(writter.element);
-    
-    receiverDiv.element.appendChild(createWorkgroup());
-    fillWorkGroup(data, application);
+
+     //-----------------WORKGROUP
+    const workgroupSelect = createWorkgroup();
+    workgroupSelect.style.width = "100%";
+    receiverDiv.appendChild(workgroupSelect);
+    // document.getElementById(workgroupSelect.INPUT).style.fontSize = "14px";
+    fillWorkGroup(task, application);
 
     //-----------------TASK HOLDER
     const taskHolderSelect = createTaskHolder();
     taskHolderSelect.style.marginLeft = "5px";
-    receiverDiv.element.appendChild(taskHolderSelect);
-
+    taskHolderSelect.style.width = "100%";
+    receiverDiv.appendChild(taskHolderSelect);
+    // document.getElementById(workgroupSelect.INPUT).style.fontSize = "14px";
 
     const aonTextArea = createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`);
 
     writter.appendChild(aonTextArea);
-    buildTextareaToolbar(aonTextArea);
+    buildTextareaToolbar(aonTextArea, task);
 
     if(aonMessengerChat.task.id){ //UPDATE
         /**
@@ -70,27 +80,14 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
         const sendBar = createSendBar();
         sendBar.appendTo(writter.element);
 
-        const upload = createUpload();
-        upload.appendTo(sendBar.element);
-        
-        addButtonFileSend(upload.element);
-        
-        const uploadIcon = createUploadIcon();
-        uploadIcon.appendTo(upload.element);
 
         const sendButtonWrapper = createButtonWrapper();
         sendButtonWrapper.appendTo(sendBar.element);
-    
-        const uploadText = createUploadText();
-        uploadText.appendTo(upload.element);
-
 
         //BUTTON SEND COMMENT
         const sendButton = createSendButton();
         sendButton.addEventListener(EVENT.CLICK,()=> aonMessengerChat.saveTaskWorkflow());
         sendButtonWrapper.appendChild(sendButton);
-        const sendIcon = createSendIcon();
-        sendIcon.appendTo(sendButton);
     }
 }
 
@@ -142,7 +139,7 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
         margin: 0,
     });
     writter.element.appendChild(textarea);
-    buildTextareaToolbar(textarea);
+    buildTextareaToolbar(textarea, aonMessengerChat.task);
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -185,7 +182,7 @@ export const sendMessage = async (aonTextArea) => {
     if(!value || (value && !value.trim().length)) return ;
 
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const data = aonMessengerChat.task;
+    const task = aonMessengerChat.task;
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
         sender: "Yo",
@@ -193,10 +190,9 @@ export const sendMessage = async (aonTextArea) => {
         creation_date: new Date()
     }
 
-
     aonTextArea.clear();
     
-    data.workflow.push(message);
+    task.workflow.push(message);
 
     appendChatMessage({
         id: "id",
@@ -214,7 +210,7 @@ export const sendMessage = async (aonTextArea) => {
     if (lined)
         lined.style.setProperty("--height", lined.scrollHeight + "px");
 
-    aonMessengerChat.data = data;
+    aonMessengerChat.data = task;
 
     const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
     chat.scrollTo(0, chat.scrollHeight); //GO DOWN
@@ -226,7 +222,7 @@ export const sendMessage = async (aonTextArea) => {
  * Build standard toolbar options 
  * @param {*} aonTextArea 
  */
- export const buildTextareaToolbar =  (aonTextArea) => {
+ export const buildTextareaToolbar =  (aonTextArea, task) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText){
         setStyles(textAreaText, {
@@ -242,9 +238,8 @@ export const sendMessage = async (aonTextArea) => {
     aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.FORMAT_BOLD,
         icon: MATERIAL_ICONS.FORMAT_BOLD,
-        },
-        () => documentExec("bold")
-    );
+        name:MSG.BOLD
+    },() => documentExec("bold"));
 
     /**
      * Italic format buttton _italic_
@@ -252,24 +247,60 @@ export const sendMessage = async (aonTextArea) => {
     aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.FORMAT_ITALIC,
         icon: MATERIAL_ICONS.FORMAT_ITALIC,
+        name:"Cursiva"
     },() =>  documentExec("italic"));
     
         /**
      * List bulleted button - listItem
      */
-     aonTextArea.addToolbarOptionRight({
-        id: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
-        icon: MATERIAL_ICONS.FORMAT_LIST_BULLETED,
+     aonTextArea.addToolbarOptionLeft({
+        id: MATERIAL_ICONS.FORMAT_LIST_NUMBERED,
+        icon: MATERIAL_ICONS.FORMAT_LIST_NUMBERED,
+        name:"Lista numerada"
     },() => documentExec("insertOrderedList") );
 
     /**
      * Link send button [Name](url)
      */
-    aonTextArea.addToolbarOptionRight({
+    aonTextArea.addToolbarOptionLeft({
         id: MATERIAL_ICONS.LINK,
         icon: MATERIAL_ICONS.LINK,
+        name:"Insertar enlace"
     },() => createLink());
 
+    //UNDERLINED
+    aonTextArea.addToolbarOptionLeft({
+        id: MATERIAL_ICONS.FORMAT_UNDERLINED,
+        icon: MATERIAL_ICONS.FORMAT_UNDERLINED,
+        name:"Subrayado"
+    },() =>documentExec('underline'));
+
+    //FORMAT_QUOTE
+    aonTextArea.addToolbarOptionLeft({
+        id: MATERIAL_ICONS.FORMAT_QUOTE,
+        icon: MATERIAL_ICONS.FORMAT_QUOTE,
+        name:"Cita"
+    },() =>blockquote());
+
+
+    if(task && task.id){
+        //ATTACH
+        aonTextArea.addToolbarOptionLeft({
+            id: MATERIAL_ICONS.ATTACH_FILE,
+            icon: MATERIAL_ICONS.ATTACH_FILE,
+            name:MSG.ADD_FILE
+        },() =>{});
+
+
+        if(!aonTextArea.isMobile()){
+            const iconSend = aonTextArea.addToolbarOptionRight({
+                id: MATERIAL_ICONS.SEND,
+                icon: MATERIAL_ICONS.SEND,
+                name:MSG.SEND,
+            },() =>aonMessengerChat.saveTaskWorkflow());
+            if(iconSend) iconSend.style.color = CSS.variable(COLORS.MATERIAL_BLACK);
+        }
+    }
 }
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
@@ -288,36 +319,15 @@ const createLink =() =>{
     }
 }
 
-/**
- * 
- * @param {HTMLElement} upload div button and file send
- */
-const addButtonFileSend = (upload)=>{
-    const textArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
-    
-    const highlight = ()   => upload.classList.add('highlight');
-    const unhighlight = () => upload.classList.remove('highlight');
-    [EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => upload.addEventListener(eventName, highlight, false));
-    [EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => upload.addEventListener(eventName, unhighlight, false));
-
-    upload.addEventListener(EVENT.DROP, (ev) => {
-        if(ev && ev.dataTransfer && ev.dataTransfer.files){
-            textArea.addFiles(ev.dataTransfer.files);
-        }
+const blockquote = ()=>{
+    const selection = document.getSelection();
+    const blockquoteEl = setStyles(document.createElement("blockquote"),{
+        margin:"0px 0px 0px 0.8ex",
+        borderLeft: "1px solid rgb(204, 204, 204)",
+        paddingLeft: "1ex"
     });
-    
-    //ADD INPUT
-    let inputFile = setAttributes(document.createElement(TAG.INPUT),{
-        id:MESSENGER_IDS.INPUT_FILES,
-        type:'file',
-        name:'file',
-        multiple:true
-    });        
-    inputFile.style.display = "none";
-    inputFile.addEventListener(EVENT.CHANGE, () => textArea.addFiles(inputFile.files));
-    upload.appendChild(inputFile);
-
-    upload.addEventListener(EVENT.CLICK,()=> inputFile.click());
+    blockquoteEl.textContent = selection;
+    document.execCommand('insertHTML', false, blockquoteEl.outerHTML);
 }
 
 /**
@@ -326,8 +336,8 @@ const addButtonFileSend = (upload)=>{
  * check files and send uploadFile(taskAttach) 
  */
 const checkFilesAndSend = async (textArea)=>{
-    const buttonSend = document.getElementById(MESSENGER_IDS.BUTTON_SEND);
-    buttonSend.disabled = true;
+    const btnSend = document.getElementById(MESSENGER_IDS.BUTTON_SEND);
+    if(btnSend)btnSend.disabled = true;
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const textAreaDiv = textArea.getTextAreaDiv();
@@ -358,5 +368,5 @@ const checkFilesAndSend = async (textArea)=>{
             }
         }
     } catch (error) { console.log(error); }
-    buttonSend.disabled = false;
+    if(btnSend)btnSend.disabled = false;
 }

@@ -1,4 +1,4 @@
-import { WORKFLOW_TYPES } from "./MessengerEnums";
+import { TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
 
 export class Task {
     id;
@@ -11,31 +11,35 @@ export class Task {
     workflow;
     workflowTmp;
     description;
+    status;
     constructor() {
-        this.id          = undefined;
-        this.number      = undefined;
-        this.title       = undefined;
-        this.description = undefined;
-        this.workgroup   = { };
-        this.task_holder = { };
-        this.workflow    = [];
-        this.workflowTmp = {};
+      this.id          = undefined;
+      this.status      = undefined;
+      this.number      = undefined;
+      this.title       = undefined;
+      this.description = undefined;
+      this.workgroup   = { };
+      this.task_holder = { };
+      this.workflow    = [];
+      this.workflowTmp = {};
     }
 
   createTask(task) {
     if(task) {
-        this.id          = task.id || undefined;
-        this.number      = task.number || undefined;
-        this.workgroup   = task.workgroup || {};
-        this.task_holder = task.task_holder || {};
-        this.title       = task.title || "";
-        this.workflow    = task.workflow || [];
-        this.workflowTmp = {
-            domain:this.domain,
-            comment:"",
-            task_holder: this.sender,
-            type: WORKFLOW_TYPES.COMMENT,
-        }
+      this.id          = task.id || undefined;
+      this.status      = task.status || TASK_STATUS.PENDING;
+      this.number      = task.number || undefined;
+      this.workgroup   = task.workgroup || {};
+      this.task_holder = task.task_holder || {};
+      this.title       = task.title || "";
+      this.workflow    = task.workflow || [];
+      this.workflowTmp = {
+        domain:this.domain,
+        comment:"",
+        task_holder: this.sender,
+        type: WORKFLOW_TYPES.COMMENT,
+        task: this.id
+      }
     }   
   }
 
@@ -45,6 +49,7 @@ export class Task {
       if(task.number)                             this.number      = task.number;
       if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
       if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
+      if(task.status) this.status = task.status;
       // if(task.title)                              this.title       = task.title;
       // if(task.domain)                             this.domain      = task.domain;
       // if(task.workflow)                           this.workflow    = task.workflow;
@@ -57,6 +62,14 @@ export class Task {
 
   setId(id) {
     this.id = id;
+  }
+
+  getStatus() {
+    return this.status;
+  }
+
+  setStatus(status) {
+    this.status = status;
   }
 
   getNumber() {
@@ -138,6 +151,5 @@ export class Task {
   deleteWorkflow(id) {
     this.workflow = this.workflow.filter(workflow=> workflow.id!=id);
   }
-  
 }
 

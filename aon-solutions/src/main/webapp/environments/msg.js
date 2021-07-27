@@ -34,8 +34,8 @@ export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
 export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
-export const ACTIVE = 'Activas';
-export const ACTIVITY = 'Actividad';
+export const ACTIVE = 'Activas';//TODO
+export const ACTIVITY = 'Actividad';//TODO
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
@@ -66,6 +66,7 @@ export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
 export const BUDGETS = MSG.BUDGETS;
 export const BUSINESS_NAME = MSG.BUSINESS_NAME;
+export const BOLD = "Negrita"; //TODO
 
 // ----- C
 
@@ -85,6 +86,7 @@ export const COMPONENTS = MSG.COMPONENTS;
 export const COMUNICA = "Comunic@";// TODO
 export const COMMUNICATE = "Comunicar";// TODO
 export const COMMUNICATE_CONFIRM = "Desea comunicar a la seguridad social?";// TODO
+export const CONFIRM = "Confirmar";// TODO
 export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
@@ -179,6 +181,7 @@ export const INVOICES = MSG.INVOICES;
 export const IRPF = MSG.IRPF;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
+export const ISSUE = "Asunto"; //TODO
 
 // ----- J
 
@@ -186,9 +189,9 @@ export const ISSUEDS = MSG.ISSUEDS;
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = "Última ubicación";//TODO
+export const LAST_STATUS = "Último estado";//TODO
+export const LOCATION = "Ubicación";//TODO
 
 // ----- M
 
@@ -198,7 +201,7 @@ export const MODEL_190 = MSG.MODEL_190;
 export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_USER = MSG.MY_USER;
-export const MSG_SENT = "Mensaje enviado";
+export const MSG_SENT = "Mensaje enviado";//TODO
 
 // ----- N
 
@@ -206,27 +209,27 @@ export const NAME = MSG.NAME;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_REQUEST = "Nueva solicitud"; //TODO
 export const NEXT = MSG.NEXT;
-export const NIF = 'NIF';
-export const NOTIFICATIONS = 'Notificaciones';
-export const NOTIFICATION = 'Notificación';
+export const NIF = 'NIF';//TODO
+export const NOTIFICATIONS = 'Notificaciones';//TODO
+export const NOTIFICATION = 'Notificación';//TODO
 export const NUMBER = MSG.NUMBER;
 
 // ----- O
 
-export const OFFICE = 'Despacho';
-export const OPEN_REQUESTS = 'Solicitudes Abiertas';
+export const OFFICE = 'Despacho';//TODO
+export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
 
 // ----- P
 
 export const PAYMETHOD = MSG.PAYMETHOD;
-export const PAYROLL = "Laboral";
+export const PAYROLL = "Laboral";//TODO
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;
 export const PENDING = MSG.PENDING;
 export const PENDING_DOCUMENTS = MSG.PENDING_DOCUMENTS;
 export const PENDING_INVOICES = MSG.PENDING_INVOICES;
-export const PENDING_TASKS = 'Tareas Pendientes';
+export const PENDING_TASKS = 'Tareas Pendientes';//TODO
 export const PENDINGS = MSG.PENDINGS;
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
@@ -236,7 +239,7 @@ export const PRICE = MSG.PRICE;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
 export const PRINTING_INVOICES = MSG.PRINTING_INVOICES;
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
-export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";
+export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO
 export const PRODUCT = MSG.PRODUCT;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
@@ -268,7 +271,7 @@ export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
-export const REQUESTS_FOR_YOU = 'Solicitudes para ti';
+export const REQUESTS_FOR_YOU = 'Solicitudes para ti';//TODO
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
@@ -290,7 +293,7 @@ export const SEPA_FILES = MSG.SEPA_FILES;
 export const SERIE = MSG.SERIE;
 export const SERVICE = MSG.SERVICE;
 export const SETTING = MSG.SETTING;
-export const SHARED = 'Compartidas';
+export const SHARED = 'Compartidas';//TODO
 export const SHOW_FILE = MSG.SHOW_FILE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;

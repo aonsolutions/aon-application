@@ -71,7 +71,7 @@ export const createDivEditable = (title, id, placeholder) => newComponent({
   text: title ? title : null,
   classes : [CSS.TRANSITION_QUICK,CSS.CONTENT_EDITABLE, CSS.NO_FOCUS],
   styles: {
-    fontSize: "1.5em",
+    fontSize: "15px",
     fontWeight: "400",
     padding : "10px",
     background: "transparent",
@@ -87,14 +87,14 @@ export const createDivEditable = (title, id, placeholder) => newComponent({
 
 export const createTitle = (title) => newComponent({
   type: "text",
-  text: title == "" ? "Escriba titulo aquí" : title,
+  text: title ? title : "",
   styles: {
     fontSize: "1.8em",
     fontWeight: "400",
     border: "none",
     width: "100%",
     color: CSS.variable(COLORS.AON_GRAY),
-    paddingTop: "10px"
+    paddingTop: "14px"
   },
 });
 
@@ -124,7 +124,52 @@ export const createReceiverDiv = () => newComponent({
   },
 });
 
+export const createSendButton = (text=null) => {
+  const button = newComponent({
+    type: TAG.BUTTON,
+    text: text || MSG.SEND,
+    id: MESSENGER_IDS.BUTTON_SEND,
+    classes: [
+      "materialButton",
+      CSS.FLEX_ROW,
+      CSS.FLEX_JUSTIFY_CENTER,
+      CSS.FLEX_ALIGN_CENTER,
+      CSS.NO_FOCUS
+    ],
+    styles: {
+      background: CSS.variable(COLORS.AON_BLUE),
+      transition: ".25s",
+      padding: "10px",
+      minWidth: "105px",
+      minHeight: "35px",
+      fontSize: "1.2em",
+      boxShadow: "0px 2px 4px rgb(0 0 0 / 15%)",
+      border: "none",
+      margin: "10px",
+      marginRight:0,
+      borderRadius: "4px",
+      color: "#fff",
+    },
+  }).element;  
+  
+  const sendIcon = createSendIcon();
+  button.appendChild(sendIcon);
 
+  return button;
+}
+
+const createSendIcon = () => newComponent({
+  type: "i",
+  text: "send",
+  classes: ["material-icons"],
+  styles: {
+    fontSize: "1.2em",
+    color: "white",
+    justifySelf: "flex-end",
+    cursor: "pointer",
+    paddingLeft: "15%",
+  },
+}).element;
 
 // ----------------------------------------------------
 // SEND BAR IN DESKTOP VIEW
@@ -138,58 +183,6 @@ export const createSendBar = () => newComponent({
   },
 });
 
-
-const preventDefault = (ev) =>{
-  ev.preventDefault();
-  ev.stopPropagation();
-}
-
-export const createUpload = () => newComponent({
-  type: TAG.DIV,
-  classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER, CSS.DIV_DRAG_OVER],
-  styles: {
-    marginTop: "15px",
-    padding: "0 10px",
-    border:"2px dashed rgba(3,88,216,.3)",
-    cursor: "pointer",
-  },
-  events:{
-    dragenter: preventDefault,
-    dragover:  preventDefault,
-    dragleave: preventDefault,
-    drop:      preventDefault
-  }
-});
-
-export const createUploadIcon = () => newComponent({
-  type: "i",
-  text: MATERIAL_ICONS.FILE_UPLOAD,
-  classes: ["material-icons"],
-  styles: {
-    fontSize: "2.5em",
-    color: CSS.variable(COLORS.AON_BLUE),
-    cursor: "pointer",
-  },
-});
-
-export const createUploadText = () => newComponent({
-  type: "span",
-  text: "Suelta los archivos o haz clic para subirlos.",
-  classes: [
-    CSS.FLEX_ROW,
-    CSS.FLEX_JUSTIFY_END,
-    CSS.FLEX_ALIGN_CENTER
-  ],
-  styles: {
-    fontSize: "1.2em",
-    fontWeight: "300",
-    minWidth: "150px",
-    color: CSS.variable(COLORS.AON_BLUE),
-    paddingLeft: "10px",
-    height: "100%",
-  },
-});
-
 export const createButtonWrapper = () => newComponent({
   type: TAG.DIV,
   classes: [
@@ -198,53 +191,9 @@ export const createButtonWrapper = () => newComponent({
     CSS.FLEX_ALIGN_CENTER
   ],
   styles: {
-    paddingTop: "15px",
     width: "100%",
   },
 });
-
-
-export const createSendButton = (text=null) => newComponent({
-  type: TAG.BUTTON,
-  text: text || MSG.SEND,
-  id: MESSENGER_IDS.BUTTON_SEND,
-  classes: [
-    "materialButton",
-    CSS.FLEX_ROW,
-    CSS.FLEX_JUSTIFY_CENTER,
-    CSS.FLEX_ALIGN_CENTER,
-    CSS.NO_FOCUS
-  ],
-  styles: {
-    transition: ".25s",
-    padding: "13px",
-    minWidth: "105px",
-    minHeight: "35px",
-    fontSize: "1.2em",
-    background: CSS.variable(COLORS.AON_BLUE),
-    boxShadow: "0px 2px 4px rgba(0,0,0,.15)",
-    border: "none",
-    margin: "10px",
-    borderRadius: "1000px",
-    color: "#fff",
-  },
-}).element;
-
-
-
-export const createSendIcon = () => newComponent({
-  type: "i",
-  text: "send",
-  classes: ["material-icons"],
-  styles: {
-    fontSize: "1.2em",
-    color: "white",
-    justifySelf: "flex-end",
-    cursor: "pointer",
-    paddingLeft: "15%",
-  },
-});
-
 
 // ----------------------------------------------------
 // ALL ATTACHMENTS SECTION IN DESKTOP VIEW
