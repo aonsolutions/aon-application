@@ -421,7 +421,7 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeEvents(getCurrentDomainName(), contract, employeeContractVariables, callback);
 	}
 	
-	public void getWorkplaceEmployeesEvents(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+	public void getWorkplaceEmployeesEvents(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getWorkplaceEmployeesEvents(getCurrentDomainName(), workplaceId, callback);
 	}
 	

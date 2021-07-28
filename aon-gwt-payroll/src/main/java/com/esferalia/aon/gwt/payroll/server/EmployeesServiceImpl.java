@@ -1079,6 +1079,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Map<String, String> getWorkplaceEventsVariables(String domain, Integer workplaceId, Integer agreementId,
 			Date startDate, Date endDate) throws IllegalArgumentException {
+		
 		if (agreementId == null)
 			return Collections.emptyMap();
 
@@ -1087,6 +1088,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return getEventsVariables(domain, workplaceId, agreementId, startDate, endDate, domainID, parentDomainID);
+		
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -3354,7 +3356,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Map<String, String> variables = new HashMap<String, String>();
 
 			for (String variable : agreementDraft.getVariables()) {
-				if (!variable.contains("DIAS_"))
+				if (!variable.contains("DIAS_") &&
+					!AonStringUtils.equalsIgnoreCase(variable, "TRUE") && 
+					!AonStringUtils.equalsIgnoreCase(variable, "FALSE"))
+					
 					variables.put(variable, variable);
 			}
 
@@ -5225,20 +5230,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployeesEvents(String domain, Integer workplaceId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+	public WorkplaceEmployees getWorkplaceEmployeesEvents(String domainName, Integer workplaceId) throws IllegalArgumentException {
+		
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			
 			return JooqEvents.getWorkplaceEmployeesEvents(connection, workplaceId);
+			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 

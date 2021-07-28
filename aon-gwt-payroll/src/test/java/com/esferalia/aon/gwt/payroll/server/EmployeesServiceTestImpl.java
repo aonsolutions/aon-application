@@ -621,7 +621,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;

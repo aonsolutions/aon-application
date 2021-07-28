@@ -148,7 +148,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
-					AsyncCallback<WorkplaceEmployees> callback) {
+					AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

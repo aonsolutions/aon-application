@@ -207,8 +207,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
-	void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
-			AsyncCallback<WorkplaceEmployees> callback);
+	void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException;
 
 	void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback);

@@ -625,7 +625,7 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 
 	@Override
 	public void getWorkplaceEmployeesEvents(String domain, Integer workplaceId,
-			AsyncCallback<WorkplaceEmployees> callback) {
+			AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getWorkplaceEmployeesEvents(domain, workplaceId,
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
