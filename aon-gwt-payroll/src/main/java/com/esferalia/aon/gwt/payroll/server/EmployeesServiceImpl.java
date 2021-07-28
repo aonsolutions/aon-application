@@ -3278,8 +3278,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			GenericContractSalaryCalculator<ISalary, ISQLContractSalaryCalculatorContext> salaryCalculator) {
 
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
+		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(
+				salaryDraftBuilder,
+				d -> Math.round(d * 100.00) / 100.00);
 		try {
-			EmployeesServiceHelper.calculate(conn, draft, salaryDraftBuilder, salaryDraftBuilder, salaryCalculator);
+			EmployeesServiceHelper.calculate(conn, draft, roundSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3561,12 +3564,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			deleteAllSettles(conn, draft.getEmployee().getId());
 
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
-		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
+		RoundSalaryBuilder<ISalary> jooqRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 				d -> Math.round(d * 100.00) / 100.00);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
+		RoundSalaryBuilder<ISalary> draftRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(salaryDraftBuilder,
+				d -> Math.round(d * 100.00) / 100.00);
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
-				salaryDraftBuilder, roundSalaryBuilder);
+				draftRoundSalaryBuilder, jooqRoundSalaryBuilder);
 		SmartContractSalaryCalculator<ISalary> salaryCalculator = new SmartContractSalaryCalculator<ISalary>();
 
 		boolean autocommit = false;
