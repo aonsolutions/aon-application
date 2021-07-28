@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -88,7 +90,7 @@ public class CompositePayment extends Payment {
 	public Date getEndDate() {
 		
 		if ( endDate != UNSET_DATE )
-			return getEndDate();
+			return parse(endDate);
 		
 		Date end = new Date(0); // January 1, 1970, 00:00:00
 		for (Payment child : childs)
@@ -99,7 +101,7 @@ public class CompositePayment extends Payment {
 	@Override
 	public Date getStartDate() {
 		if ( startDate != UNSET_DATE )
-			return getStartDate();
+			return parse(startDate);
 
 		Date start = null;
 		for (Payment child : childs)
