@@ -1434,7 +1434,7 @@ public class TrabajadoresTramos {
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		int cccType = getContextData(CCC_TYPE.getName() ,salary, startDate, endDate, 0);
 		
-		double partialFactor = getContextData(PARTIAL_FACTOR.getName() ,salary, startDate, endDate, 0.00);
+		double partialFactor = getContextData(PARTIAL_FACTOR.getName() ,salary, startDate, endDate, 1.00);
 		
 		boolean artistas = CCCType.ARTIST.ordinal() == cccType;
 		
@@ -1483,9 +1483,9 @@ public class TrabajadoresTramos {
 		
 
 		boolean tiempoCompleto = 
-				!ereParcial 
-				&& ( ( fullTime  && ("14".indexOf(tc2.charAt(0)) != -1 ) ) 
-					|| partialFactor == 1.00 )
+				!ereParcial && (partialFactor == 1.00)
+//				&& ( ( fullTime  && ("14".indexOf(tc2.charAt(0)) != -1 ) ) 
+//				|| partialFactor == 1.00 )
 				;
 		
 		

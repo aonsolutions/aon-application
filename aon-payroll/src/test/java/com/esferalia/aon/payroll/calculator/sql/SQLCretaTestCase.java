@@ -2766,6 +2766,50 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTiempoCompletoWithH01()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "01");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.PARTIAL_FACTOR.getName(), "0.75");
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> 
+		tramos = getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+		double _500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500, (1750.00) * 75, DELTA);
+		double _601 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_601, (1750.00) * 75, DELTA);
+
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("01"))
+		.findAny().orElseThrow(() -> new AssertionError("H 01 Dato solicitado no proporcionado"));
+		;
+
+	}
+
+	@Test
 	public void testCretaTiempoParcialWithoutH01I()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
@@ -4425,6 +4469,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		//assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
 		assertDato(tramo0.getDatosTramo().getDato(), "C", "500", Integer.toString((int)Math.round(1750.00 * 10.00 /30.00 * 100)));
 		assertDato(tramo0.getDatosTramo().getDato(), "C", "601", Integer.toString((int)Math.round(1750.00 * 10.00 /30.00 * 100)));
+		tramo0.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("01"))
+		.findAny().ifPresent(d -> org.junit.Assert.fail("H 01 Dato solicitado proporcionado no requerido"));
+		;
 		
 		String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
 		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1); 
@@ -4438,6 +4486,69 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 
+
+	@Test
+	@Ignore("Not fixed yet BRUTO...:-(")
+	public void testCretaEREFZOFFParcialII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		addPayment(aonContext, contract, "BRUTO(1750.00)");
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startERE = startDate;
+		Date endERE = add(startDate, DAY_OF_MONTH, 24);
+		
+		addData(aonContext, contract, startERE, endERE, ContextVariable.ERE_FACTOR_FORCE_OFF, 0.25);
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = monthDays - 25;
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		Utils.marshal(trabajadoresTramos, System.out);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		//Activo
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("25", tramo0.getFechaHasta().getDia());
+		//assertDato(tramo0.getDatosTramo().getDato(), "I", "51", "M");
+		//assertDato(tramo0.getDatosTramo().getDato(), "C", "500", Integer.toString((int)Math.round(1750.00 * 25.00 /30.00 * 0.75 * 100)));
+		//assertDato(tramo0.getDatosTramo().getDato(), "C", "601", Integer.toString((int)Math.round(1750.00 * 25.00 /30.00 * 0.75 * 100)));
+		//assertDato(tramo0.getDatosTramo().getDato(), "C", "536", Integer.toString((int)Math.round(1750.00 * (30 - activeDays) /30.00 * 0.25 * 100)));
+		//assertDato(tramo0.getDatosTramo().getDato(), "C", "636", Integer.toString((int)Math.round(1750.00 * (30 - activeDays ) /30.00 * 0.25 * 100)));
+		assertDato(tramo0.getDatosTramo().getDato(), "H", "05", "750");
+		
+		String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("26", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+		//assertDato(tramo1.getDatosTramo().getDato(), "C", "500", Integer.toString((int)Math.round(1750.00 * activeDays /30.00 * 100)));
+		//assertDato(tramo1.getDatosTramo().getDato(), "C", "601", Integer.toString((int)Math.round(1750.00 * activeDays /30.00 * 100)));
+		tramo1.getDatosTramo().getDato().stream()
+		.filter(d -> !d.getCodigo().equals("500"))
+		.filter(d -> !d.getCodigo().equals("601"))
+		.findAny().ifPresent(d -> org.junit.Assert.fail("Dato solicitado proporcionado no requerido"));
+		;
+		
+	}
 
 	@Test
 	public void testCretaAdditionalHours()
