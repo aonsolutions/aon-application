@@ -101,7 +101,8 @@
 		}
 		
 		.aonCheck{
-			background-position: 0.1rem !important;
+			background-position: 0.8rem !important;
+			padding-right: 0px !important;
 		}
 		
 		.pointer{
