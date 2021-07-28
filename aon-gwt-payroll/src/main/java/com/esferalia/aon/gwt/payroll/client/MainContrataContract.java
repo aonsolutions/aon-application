@@ -668,11 +668,11 @@ public class MainContrataContract extends MainEntryPoint {
 					initEnterpriseSB();
 					initContractTable();
 					setTableHeights();
+					checkStatus(this.mainContrataContractObject);
 				},
 				f -> {}
 		);
 		
-		checkStatus(this.mainContrataContractObject);
 	}
 	
 	private void initWorkplaceLB() {
