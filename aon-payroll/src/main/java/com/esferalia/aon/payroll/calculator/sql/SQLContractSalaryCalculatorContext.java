@@ -99,6 +99,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
@@ -3375,6 +3376,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER; 
 	}
 
+
+	private boolean isWorkingDay(DayType type) {
+		return type == 
+				DayType.WORKING_DAY 
+				|| type == DayType.CONTINUOUS_TIME 
+				|| type == DayType.OTHER; 
+	}
+
+
 	private boolean isHoliday(Calendar day) {
 		Date date = day.getTime();
 		ITimedVariable<?> holidays = this.contractExpressionContext.getVariable(HOLIDAYS, date, date);
@@ -3413,6 +3423,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				return true;
 			
 			return Double.parseDouble(value.toString()) == -1;
+
+		} catch (Error e) {
+			return false;
+		}
+
+	}
+
+	private boolean isWorkingDay(Calendar day) {
+		Date date = day.getTime();
+		
+		ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
+		ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
+		if (hours == null)
+			return false;
+
+		try {
+			Period period = hours.getPeriod();
+			Object value = hours.getValue(period);
+			if ( value == null )
+				return false;
+			
+			return Double.parseDouble(value.toString()) >= 0.00;
 
 		} catch (Error e) {
 			return false;
@@ -3461,6 +3493,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected Long getLeaveDays(Period p) {
 		return leaveLoader.getLeavesDays(p);
+	}
+
+	private double getWorkingDays(Date startDate, Date endDate) {
+		long days = 0;
+
+		ICalendar calendar = getCalendar();
+		Calendar end = Calendar.getInstance();
+		end.setTime(endDate);
+		Calendar day = Calendar.getInstance();
+		day.setTime(startDate);
+		while (end.after(day) || end.equals(day)) {
+			DayType type = calendar.getDayType(day);
+			if (isWorkingDay(type) || isWorkingDay(day)) {
+				days++;
+			}
+			day.add(Calendar.DATE, 1);
+		}
+		return days;
 	}
 
 	protected double getWorkDays(ExpressionContext ctx, Period p) {
@@ -4934,6 +4984,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			} else {
 			}
 			
+			ITimedVariable<Double> workingDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getWorkingDays(p.getStart(), p.getEnd());
+				}
+
+			};
+
+			ITimedVariable<?> userWorkingDays = getExpressionContext().getVariable(WORKING_DAYS, period.getStart(),
+					period.getEnd());
+			
+			if (userWorkingDays == null) {
+				ctx.putVariable(WORKING_DAYS, workingDays);
+			} else {
+			}
+
 			class WeekDays implements ITimedVariable<Double> {
 				private int dayOfWeek;
 				

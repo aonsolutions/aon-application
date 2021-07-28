@@ -69,6 +69,7 @@ public enum ContextVariable implements IResourceable {
 	OFF_DAYS("DIAS_INACTIVIDAD", VariableType.DOUBLE, false),
 	DROP_DAYS("DIAS_AUSENCIA", VariableType.DOUBLE, false),	
 	QUOTE_FACTOR("COEFICIENTE_COTIZADO", VariableType.DOUBLE, false),
+	WORKING_DAYS("DIAS_LABORABLES", VariableType.INTEGER, false),
 	
 	OFF_CAUSE("CAUSA_INACTIVIDAD", VariableType.DOUBLE, false),
 	NOT_PAID_PERMISSION("PERMISO_NO_RETRIBUIDO", VariableType.DOUBLE, false),
