@@ -4,6 +4,7 @@ public class LaboralId {
 	
 	//  MAIN MENU
 	// ----------------------------------------------------------------------------------------------------------
+	public final static String AGREEMENTS = "aonContent:payrollMenu:gwt_agreement"; 
 	public final static String INTEGRAL_DE_NOMINAS = "aonContent:payrollMenu:gwt_employee"; 
 	
 

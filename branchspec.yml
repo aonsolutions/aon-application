@@ -1,0 +1,53 @@
+version: 0.2
+
+phases:
+  install:
+    #runtime-versions:
+      # name: version
+      # name: version
+    commands:
+      - echo Entered the install phase...
+      - /usr/local/bin/docker-entrypoint.sh
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo Building TEST version...
+      - echo Build started on `date`
+      # - mvn --fail-fast -DbuildNumber=666 -Dgwt.working=true clean install
+      - mvn -B --offline --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
+      - echo Building TEST Docker images...
+      - docker build --no-cache -t aonsolutions/aon-application:test .
+      - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
+      # - docker build --no-cache -t aonsolutions/aon-solutions:test -f ./aon-solutions/Dockerfile .
+      - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:test
+      - docker tag aonsolutions/aon-application:test $REPOSITORY_URI/aon-application:test
+      # - docker tag aonsolutions/aon-solutions:snapshot $REPOSITORY_URI/aon-solutions:snapshot
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI/aon-db-up2date:test
+      - docker push $REPOSITORY_URI/aon-application:test
+      # - docker push $REPOSITORY_URI/aon-solutions:test
+      - |
+        printf '[
+        {"name":"TEST","imageUri":"%s/aon-application:test"}
+        ]' $REPOSITORY_URI $REPOSITORY_URI > testimgdef.json
+      - cat testimgdef.json
+      # - |
+      #  printf '[
+      #  {"name":"TEST-SOLUTIONS","imageUri":"%s/aon-solutions:test"}
+      #  ]' $REPOSITORY_URI $REPOSITORY_URI > testsolutionsimgdef.json
+      # - cat testsolutionsimgdef.json
+artifacts:
+  files:
+    - testimgdef.json
+    # - testsolutionsimgdef.json
+    # - location

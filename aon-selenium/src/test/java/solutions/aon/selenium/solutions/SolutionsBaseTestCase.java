@@ -2,6 +2,7 @@ package solutions.aon.selenium.solutions;
 
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import solutions.aon.selenium.AbstractTestCase;
 import solutions.aon.selenium.solutions.TimeControlTestCase;
-
+@Ignore
 public class SolutionsBaseTestCase extends AbstractTestCase{
 
 
