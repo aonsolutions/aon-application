@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
@@ -82,28 +84,44 @@ public class TaskServlet extends AonApiHttpServlet{
 	private Object getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt("page");
 		Integer perPage = api.getParams().optInt("perPage");
+//		Integer workgroup = api.getParams().optInt("workgroup");
+//		String status = api.getParams().optString("status");
+//		
+		return TaskJSON.toJSON(
+				AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> taskFilter(api, f), page, perPage));
+//						f-> 
+//						f.getDomainProperty().eq(api.getDomain().getId())
+//						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
+//						.or(
+//								status.equalsIgnoreCase("pending") ?
+//								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) :
+//								f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()) 
+//						)
+//						.and( 
+//							workgroup > 0 ?  
+//							f.getWorkgroupProperty().eq(workgroup) :
+//							f.getDomainProperty().eq(api.getDomain().getId())
+//						),
+//						page, perPage)
+//		);
+	}
+	
+	
+	private Filter taskFilter(AonApiData api, TaskProperties f) {
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
 		
-		return TaskJSON.toJSON(
-				AON_SOLUTIONS.getTaskList(api.getDomain(), api.getUser(),  
-						f-> 
-						f.getDomainProperty().eq(api.getDomain().getId())
-						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
-						.or(
-								status.equalsIgnoreCase("pending") ?
-								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) :
-								f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()) 
-						)
-						.and( 
-							workgroup > 0 ?  
-							f.getWorkgroupProperty().eq(workgroup) :
-							f.getDomainProperty().eq(api.getDomain().getId())
-						),
-						page, perPage)
-		);
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		if("pending".equalsIgnoreCase(status)) {
+			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		} else filter = filter.and(f.getStatusProperty().eq(TaskStatus.FINISHED.value()));
+		
+		if(workgroup != null && workgroup > 0) {
+			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
+		} 
+		
+		return filter;
 	}
-	
 	private Object getTask(AonApiData api) {
 		Integer taskId = api.getParams().optInt("id");
 		return TaskJSON.toJSON( AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId)));

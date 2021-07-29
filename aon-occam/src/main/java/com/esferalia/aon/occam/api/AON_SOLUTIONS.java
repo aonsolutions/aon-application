@@ -686,7 +686,13 @@ public class AON_SOLUTIONS {
 			return getTask2().getTaskStream(ctx, filter);
 		}
 	}
-
+	
+	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskStream(ctx, filter, page, perPage);
+		}
+	}
+	
 	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskList(ctx, filter);
