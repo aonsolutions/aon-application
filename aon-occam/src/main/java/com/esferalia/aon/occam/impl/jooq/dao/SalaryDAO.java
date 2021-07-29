@@ -62,9 +62,9 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.Settle;
-import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -942,10 +942,13 @@ public class SalaryDAO {
 		record.setTimeUnits(0);	 																					// not null & without default value
 		record.setRegistration(666); 																				// not null & without default value
 		
+
 		record.setStartDate(toSql(salary.getStartDate()));															// not null & without default value
 		record.setEndDate(toSql(salary.getEndDate()));																// not null & without default value
 		record.setIssueDate(toSql(salary.getIssueDate()));															// not null & without default value
 		record.setChargeDate(toSql(salary.getIssueDate()));															// not null & without default value
+
+		record.setTimeUnits(Optional.ofNullable(salary.getSalaryDays()).orElse(0));									// not null & default 0
 
 		record.setCcc(salary.getEnterpriseCCC());																	// default null	
 		record.setEnterpriseName(salary.getEnterpriseName());														// default null
@@ -975,8 +978,10 @@ public class SalaryDAO {
 		record.setTotalPayment(Optional.ofNullable(salary.getTotalPayment()).orElse(0.00));							// not null & default 0	
 		record.setSocialSecurityContributions(Optional.ofNullable(salary.getTotalSSContributions()).orElse(0.00));	// not null & default 0
 
+
 		record.setType(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class));
 		
+
 		return record;
 		
 	}
@@ -1074,13 +1079,13 @@ public class SalaryDAO {
 	}
 	
 
-	private enum SalaryType {
-		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS, L00;
-
-		byte value() {
-			return (byte) ordinal();
-		}
-	}
+//	private enum SalaryType {
+//		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS, L00;
+//
+//		byte value() {
+//			return (byte) ordinal();
+//		}
+//	}
 
 	private static final SalaryPropertiesDAO SALARY_PROPERTIES = new SalaryPropertiesDAO();
 
