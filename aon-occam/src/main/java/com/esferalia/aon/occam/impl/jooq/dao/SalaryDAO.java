@@ -942,10 +942,13 @@ public class SalaryDAO {
 		record.setTimeUnits(0);	 																					// not null & without default value
 		record.setRegistration(666); 																				// not null & without default value
 		
+
 		record.setStartDate(toSql(salary.getStartDate()));															// not null & without default value
 		record.setEndDate(toSql(salary.getEndDate()));																// not null & without default value
 		record.setIssueDate(toSql(salary.getIssueDate()));															// not null & without default value
 		record.setChargeDate(toSql(salary.getIssueDate()));															// not null & without default value
+
+		record.setTimeUnits(Optional.ofNullable(salary.getSalaryDays()).orElse(0));									// not null & default 0
 
 		record.setCcc(salary.getEnterpriseCCC());																	// default null	
 		record.setEnterpriseName(salary.getEnterpriseName());														// default null
@@ -975,8 +978,10 @@ public class SalaryDAO {
 		record.setTotalPayment(Optional.ofNullable(salary.getTotalPayment()).orElse(0.00));							// not null & default 0	
 		record.setSocialSecurityContributions(Optional.ofNullable(salary.getTotalSSContributions()).orElse(0.00));	// not null & default 0
 
+
 		record.setType(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class));
 		
+
 		return record;
 		
 	}

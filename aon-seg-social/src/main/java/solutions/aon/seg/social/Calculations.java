@@ -29,9 +29,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaRED.LiquidationType;
-import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -317,6 +314,14 @@ class Calculations {
 							
 							for (int i=0; i<radios.size(); i++) {
 								DomElement rad = radios.get(i);
+								
+								HtmlTableRow tableRow = getParentHtmlTableRow(rad);
+								Double quoteDays = getDoubleValue(tableRow.getCell(3));
+								Double hours = getDoubleValue(tableRow.getCell(4));
+								Double baseCC = getDoubleValue(tableRow.getCell(5));
+								Double baseAT = getDoubleValue(tableRow.getCell(6));
+								
+								
 								htmlPage = rad.click();
 								htmlPage = htmlPage.getElementById("SPM.ACC.CALCULOS_TRAMO").click();
 								
@@ -343,7 +348,13 @@ class Calculations {
 									} catch (ParseException e1) {}
 								}
 								
-								Period period = new Period(fromDate, toDate);
+								Period period = 
+								new Period(fromDate, toDate)
+								.setHours(hours)
+								.setBaseAT(baseAT)
+								.setBaseCC(baseCC)
+								.setQuoteDays(quoteDays)
+								;
 								
 								firstTable = htmlPage.querySelector("table>tbody");
 								
@@ -442,15 +453,33 @@ class Calculations {
 
 	private static Double getDoubleValue(HtmlTableCell cell) {
 		String regExp = "\\s*(-?(\\d*\\.?)*\\d+\\,?\\d*).*";
-		String baseStr = Toolkit.removeWeirdCharacters(cell.getVisibleText());
-		baseStr = baseStr.replaceAll(regExp, "$1");
-		Double base = baseStr != null && !baseStr.isEmpty() ? Double.parseDouble(baseStr.replaceAll("\\.", "").replaceAll(",", ".")) : null;
-		return base;
+		String str = Toolkit.removeWeirdCharacters(cell.getVisibleText());
+		str = str.replaceAll(regExp, "$1");
+		
+		if ( str == null )
+			return null;
+		if ( str.isEmpty())
+			return null;
+		
+		str = str.replaceAll("\\.", "").replaceAll(",", ".");
+		
+		try {
+			return Double.parseDouble(str);
+		} catch ( NumberFormatException e) {
+			return null;
+		}
 	}
 	
 	
 	
-	
+	private static HtmlTableRow getParentHtmlTableRow(DomElement el) {
+		for ( DomNode parent = el.getParentNode(); parent != null; parent = parent.getParentNode() ) {
+			if ( HtmlTableRow.TAG_NAME.equalsIgnoreCase(parent.getLocalName())) {
+				return (HtmlTableRow) parent;
+			}
+		}
+		return null;
+	}
 	
 	
 	

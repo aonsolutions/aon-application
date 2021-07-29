@@ -12,6 +12,10 @@ public class Period {
 	private Date startDate;
 	private Date endDate;
 	
+	private Double hours;
+	private Double baseCC;
+	private Double baseAT;
+	private Double quoteDays;
 	
 	
 	public Period(Date startDate, Date endDate) {
@@ -22,7 +26,7 @@ public class Period {
 	public Date getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Date startDate) {
+	public Period setStartDate(Date startDate) {
 		if (startDate != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(startDate);
@@ -33,11 +37,12 @@ public class Period {
 			startDate = cal.getTime();
 		}
 		this.startDate = startDate;
+		return this;
 	}
 	public Date getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Date endDate) {
+	public Period setEndDate(Date endDate) {
 		if (endDate != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(endDate);
@@ -48,7 +53,46 @@ public class Period {
 			endDate = cal.getTime();
 		}
 		this.endDate = endDate;
+		return this;
 	}
+	
+	public Double getHours() {
+		return hours;
+	}
+	
+	public Period setHours(Double hours) {
+		this.hours = hours;
+		return this;
+	}
+	
+	
+	public Double getBaseAT() {
+		return baseAT;
+	}
+	
+	public Period setBaseAT(Double baseAT) {
+		this.baseAT = baseAT;
+		return this;
+	}
+
+	public Double getBaseCC() {
+		return baseCC;
+	}
+	
+	public Period setBaseCC(Double baseCC) {
+		this.baseCC = baseCC;
+		return this;
+	}
+	
+	public Double getQuoteDays() {
+		return quoteDays;
+	}
+	
+	public Period setQuoteDays(Double quoteDays) {
+		this.quoteDays = quoteDays;
+		return this;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

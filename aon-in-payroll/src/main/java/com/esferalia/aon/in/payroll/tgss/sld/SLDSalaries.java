@@ -1,6 +1,9 @@
 package com.esferalia.aon.in.payroll.tgss.sld;
 
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -68,6 +71,10 @@ public class SLDSalaries {
 		// Data
 		periodCalcs.forEach((period, calcs) -> {
 			Optional.ofNullable(period).ifPresent( p -> { 
+				
+				getContextVariables(p).forEach((var, value) -> 
+					salary.addContextData(var.getName(), Double.toString(value), p.getStartDate(), p.getEndDate()));
+				
 				getContextVariables(calcs).forEach((var, value) -> 
 					salary.addContextData(var.getName(), Double.toString(value), p.getStartDate(), p.getEndDate()));
 			});
@@ -128,6 +135,8 @@ public class SLDSalaries {
 		// Data
 		periodCalcs.forEach((period, calcs) -> {
 			Optional.ofNullable(period).ifPresent( p -> { 
+				getContextVariables(p).forEach((var, value) -> 
+					salary.addContextData(var.getName(), Double.toString(value), p.getStartDate(), p.getEndDate()));
 				getContextVariables(calcs).forEach((var, value) -> 
 					salary.addContextData(var.getName(), Double.toString(value), p.getStartDate(), p.getEndDate()));
 			});
@@ -138,6 +147,14 @@ public class SLDSalaries {
 		.collect(Collectors.reducing(Collections.emptyMap(), (m1,m2) -> union(m1, m2, (c1,c2) -> union(c1,c2))));
 		
 		fillSalary(salary, calcs );
+		
+		
+		Double baseCC = periodCalcs.keySet().stream().collect(Collectors.summingDouble(p -> Optional.ofNullable(p.getBaseCC()).orElse(0.00)));
+		salary.setCommonContingenciesBase(baseCC);
+		Double baseAT = periodCalcs.keySet().stream().collect(Collectors.summingDouble(p -> Optional.ofNullable(p.getBaseAT()).orElse(0.00)));
+		salary.setProfessionalContingenciesBase(baseAT);
+		Double quoteDays = periodCalcs.keySet().stream().collect(Collectors.summingDouble(p -> Optional.ofNullable(p.getQuoteDays()).orElse(0.00)));
+		salary.setSalaryDays(quoteDays.intValue());
 		
 		return salary;
 	}
@@ -337,6 +354,17 @@ public class SLDSalaries {
 		default:
 			return Optional.of(DeductionType.OTHER);
 		}
+	}
+	
+	
+	private static Map<ContextVariable, Double>  getContextVariables(Period period ) {
+		Map<ContextVariable, Double> contextVaribles = new HashMap<ContextVariable, Double>();
+		
+		Optional.ofNullable(period.getQuoteDays()).ifPresent(value -> contextVaribles.putIfAbsent(QUOTE_DAYS, value));
+		Optional.ofNullable(period.getQuoteDays()).ifPresent(value -> contextVaribles.putIfAbsent(SALARY_HOURS, value));
+
+		return contextVaribles;
+		
 	}
 
 	private static Map<ContextVariable, Double>  getContextVariables(Map<String, Calc> calcs ) {
