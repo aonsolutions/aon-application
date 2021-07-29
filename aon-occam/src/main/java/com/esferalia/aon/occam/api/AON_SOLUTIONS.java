@@ -711,6 +711,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static void deleteTask(Domain domain, User user, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getTask2().deleteTask(ctx, id);
+		}
+	}
+	
 	// TASKWORKFLOW
 	public static TaskWorkflow getTaskWorkflow(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){

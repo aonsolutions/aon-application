@@ -176,6 +176,12 @@ public class TaskDAO {
 		return task.setId(id);
 	}	
 
+	public static void delete(AONContext ctx, Integer id){
+		TaskAttachDAO.delete(ctx, f->f.getTaskProperty().eq(id));
+		TaskWorkflowDAO.delete(ctx, f->f.getTaskProperty().eq(id));
+		delete(ctx, f->f.getIdProperty().eq(id));
+	}
+	
 	public static void delete(AONContext ctx, TaskFilter filter){
 		ctx.getDslContext().delete(TASK)
 		.where(TASK_PROPERTIES.getConditions(filter))

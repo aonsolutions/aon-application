@@ -1,9 +1,11 @@
-import { post, get } from "./request.js";
+import { post, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getTasks = (data) => get(`${API_URL}/task`, data);
 
 export const saveTask = (data) => post(`${API_URL}/task`, data);
+
+export const deleteTask = (data) => remove(`${API_URL}/task`, data);
 
 export const saveTaskAttach = (data) => post(`${API_URL}/task/attach`, data);
 

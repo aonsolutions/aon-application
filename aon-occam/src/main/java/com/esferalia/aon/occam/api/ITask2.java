@@ -18,6 +18,7 @@ public interface ITask2 {
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter);
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Task saveTask(AONContext ctx, Task task);
+	public void deleteTask(AONContext ctx, Integer id);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);

@@ -27,7 +27,8 @@ import {
   saveTask,
   getTaskWorkflow,
   saveTaskWorkflow,
-  saveTaskAttach
+  saveTaskAttach,
+  deleteTask
 } from "../../services/taskService.js";
 import { Task } from "./Task.js";
 import { createMainView, createMobileMainView } from "./createComponents.js";
@@ -35,6 +36,7 @@ import { createMainView, createMobileMainView } from "./createComponents.js";
 export class AonMessengerChat extends AonElement {
   task;
   _data;
+  TOOLBAR;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -77,6 +79,7 @@ export class AonMessengerChat extends AonElement {
 
   initialize() {
     this.id = MESSENGER_VIEWS.AON_MESSENGER_CHAT;
+    this.TOOLBAR = this.id+"Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
@@ -139,7 +142,7 @@ export class AonMessengerChat extends AonElement {
 
   buildToolbarDesktop() {
     const toolbar = setAttributes(new AonToolbar(), {
-      id:"id",
+      id:this.TOOLBAR,
       type:ToolbarType.SECONDARY,
       title:"#" + (this.task.number || "0").toString().padStart(5, 0)
     });
@@ -265,7 +268,13 @@ export class AonMessengerChat extends AonElement {
     getTaskWorkflow({ taskId:this.task.id }).then((workflow) => {
       this.task.setWorkflow(workflow);
       fillChat(workflow);
+      if(workflow.length>0) this.addButtonDelete();
     });
+  }
+
+  addButtonDelete(){
+    if(this.task.status == TASK_STATUS.DELETED) 
+      this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
   }
 
   async save() {
@@ -290,6 +299,18 @@ export class AonMessengerChat extends AonElement {
 
   async uploadFile({file, taskId}) {
     return await saveTaskAttach({file, taskId}).catch(e=>null);
+  }
+
+  deleteTask(){
+    this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+      try {
+          await deleteTask({taskId:this.task.id});
+          this.showToast({message:MSG.DELETED_DATA, type:CONSTANT.ERROR});
+          this.back();
+      } catch (error) {
+        this.showError(error);
+      }
+    });
   }
 
   back(){
