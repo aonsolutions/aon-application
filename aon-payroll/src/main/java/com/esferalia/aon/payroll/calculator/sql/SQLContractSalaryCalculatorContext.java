@@ -3740,6 +3740,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		if (br > 0.00)
 			return br;
+		
+		br = getL00Br(date);
+		if (br > 0.00)
+			return br;
 
 		// No salaries are present.
 		return calculateBr(date.before(contractStartDate) ? contractStartDate: date);
@@ -3791,6 +3795,43 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			br = pair.fst / pair.snd;
 
 			salaries.close();
+
+		}
+		return br;
+	}
+
+	public double getL00Br(Date date) {
+		int contractId = getId();
+		
+		boolean fullTime = true ;
+		try {
+			fullTime = isFullTime();
+		} catch ( Throwable t ) {
+		}
+
+		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
+		Date prevStartMonth = getLastDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
+
+		double br = 0.00;
+
+		try {
+			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
+			AON.getSalaries(new AONContext(connection),
+			p -> p.getIsL00Property().eq(true)
+			.and(p.getContractProperty().eq(contractId))
+			.and(p.getStartDateProperty().le(prevEndMonth))
+			.and(p.getEndDateProperty().ge(prevStartMonth)));
+			
+			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
+			salaries.forEach(s-> {
+				pair.fst += s.getCommonContingenciesBase();
+				pair.snd += s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
+			} )
+			;
+			br = pair.fst / pair.snd;
+			
+			salaries.close();
+		} catch (Throwable t) {
 
 		}
 		return br;
