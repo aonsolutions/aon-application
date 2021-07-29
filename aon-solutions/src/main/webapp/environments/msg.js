@@ -306,6 +306,7 @@ export const SURCHARGE = MSG.SURCHARGE;
 export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
+export const STORE = "Archivar"; //TODO
 
 // ----- T
 

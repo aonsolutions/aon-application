@@ -12,17 +12,16 @@ const AON_MESSENGER_LIST_CLOSE = {
     id: MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
 };
 
-const AON_MESSENGER_LIST_TRASH = {
-    name: 'Papelera',
-    icon: MATERIAL_ICONS.DELETE,
-    id: MATERIAL_ICONS.DELETE
+const AON_MESSENGER_LIST_ARCHIVE = {
+    name: 'Archivadas',
+    icon: MATERIAL_ICONS.ARCHIVE,
+    id: MATERIAL_ICONS.ARCHIVE
 };
-
 
 export const MessengerOptions = {
     AON_MESSENGER_LIST,
     AON_MESSENGER_LIST_CLOSE,
-    AON_MESSENGER_LIST_TRASH
+    AON_MESSENGER_LIST_ARCHIVE
 };
 
 export const MESSENGER_VIEWS = {
@@ -70,7 +69,7 @@ export const WORKFLOW_TYPE = (type)=>{
     if(WORKFLOW_TYPES.REOPEN.indexOf(type)!=-1)    return "Reabierta";//TODO
     if(WORKFLOW_TYPES.DUPLICATE.indexOf(type)!=-1) return "Duplicada";//TODO
     if(WORKFLOW_TYPES.LIBERATE.indexOf(type)!=-1)  return "Liberada";//TODO
-    if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Eliminada";//TODO
+    if(WORKFLOW_TYPES.DELETE.indexOf(type)!=-1)    return "Archivada";//TODO
     if(WORKFLOW_TYPES.RESTORE.indexOf(type)!=-1)   return "Restaurada";//TODO
     if(WORKFLOW_TYPES.ASSIGN.indexOf(type)!=-1)    return "Reasignada";//TODO
     return "Comentada"; //TODO
@@ -89,12 +88,6 @@ export const ICON_TYPES = {
     MATERIAL_OUTLINED : "material_outlined",
     MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
 }
-
-export const REQUEST_FILTER = {
-    ABIERTAS : "abiertas",
-    CERRADAS : "cerradas"
-}
-
 
 export const MessengerSidenav = {
     ADD_COMMENT: {

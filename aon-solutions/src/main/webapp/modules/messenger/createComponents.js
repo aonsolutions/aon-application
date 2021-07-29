@@ -1,4 +1,4 @@
-import { COLORS, CSS, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { COLORS, CSS, MSG, TAG } from "../../environments/environments.js";
 import { newComponent } from "../../services/utils.js";
 import { createMaterialIcon, createOutlinedMaterialIcon, createStartJustifiedRow, createText, RIGHT } from "./shared/creationUtils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "./MessengerEnums.js";
@@ -96,7 +96,7 @@ export const createTitle = (title) => newComponent({
     color: CSS.variable(COLORS.AON_GRAY),
     paddingTop: "14px"
   },
-});
+}).element;
 
 export const createEditIcon = () => newComponent({
   type: "i",
@@ -117,10 +117,10 @@ export const createReceiverDiv = () => newComponent({
     CSS.FLEX_JUSTIFY_START
   ],
   styles: {
-    // marginTop: "15px",
-    // marginBottom: "5px",
     width: "100%",
     maxWidth: "600px",
+    // marginTop: "15px",
+    // marginBottom: "5px",
   },
 });
 
@@ -216,8 +216,7 @@ export const createAttachHistory = () => newComponent({
 
 export const createAttachTitle = () => newComponent({
   type: TAG.DIV,
-  classes:
-  [
+  classes:[
     CSS.FLEX_ROW,
     CSS.FLEX_JUSTIFY_BETWEEN,
     CSS.FLEX_ALIGN_CENTER  
@@ -266,8 +265,7 @@ export const createMessageBox = (properties) => newComponent({
       boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
       borderRadius : '5px',
       maxWidth: '500px',
-      width: '96%',
-     // overflow: 'hidden'
+      width: '96%'
   },
   dataset:{
     id: properties.id
@@ -275,7 +273,7 @@ export const createMessageBox = (properties) => newComponent({
 });
 
 export const createMessageAuthor = (properties) => newComponent({
-  text: "<b>" + properties.name + "</b>",
+  text: `<span style="font-size: 14px;font-weight: 600;">${properties.name}</span>`,
   classes :[CSS.FLEX_ROW,CSS.FLEX_JUSTIFY_BETWEEN,CSS.FLEX_ALIGN_CENTER],
   styles: {
       textAlign : properties.direction == RIGHT ? "right" : "left",

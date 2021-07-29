@@ -19,7 +19,7 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
     const application = aonMessengerChat.applicationEl;
 
     const writter = newComponent({
-      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
+      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
       styles: {
         width: "50%",
         height: "100%",
@@ -29,6 +29,7 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
         paddingRight: "20px",
         paddingLeft: "60px",
         top: 0,
+        overflow:"auto",
       },
     });
     writter.appendTo(mainView);
@@ -47,7 +48,7 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
     titleDiv.appendChild(span);
 
     //TITLE
-    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.ISSUE);
+    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, `Escriba su ${MSG.ISSUE} aquí`);
     titleDiv.appendChild(title);
     titleDiv.appendTo(writter.element);
 
@@ -58,7 +59,6 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
     const workgroupSelect = createWorkgroup();
     workgroupSelect.style.width = "100%";
     receiverDiv.appendChild(workgroupSelect);
-    // document.getElementById(workgroupSelect.INPUT).style.fontSize = "14px";
     fillWorkGroup(task, application);
 
     //-----------------TASK HOLDER
@@ -66,10 +66,11 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
     taskHolderSelect.style.marginLeft = "5px";
     taskHolderSelect.style.width = "100%";
     receiverDiv.appendChild(taskHolderSelect);
-    // document.getElementById(workgroupSelect.INPUT).style.fontSize = "14px";
 
-    const aonTextArea = createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`);
-
+    const aonTextArea = setStyles(createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`), {
+        height: '100%',
+        maxHeight: '300px'
+    });
     writter.appendChild(aonTextArea);
     buildTextareaToolbar(aonTextArea, task);
 
@@ -79,7 +80,6 @@ export const buildDesktopWritter = (mainView, aonMessengerChat) => {
          */
         const sendBar = createSendBar();
         sendBar.appendTo(writter.element);
-
 
         const sendButtonWrapper = createButtonWrapper();
         sendButtonWrapper.appendTo(sendBar.element);
@@ -156,17 +156,11 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
  * Hide writter with animation
  */
 const hideWritter = () => {
-    let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {
-        transition : "0.25s",
-        opacity : "1"
-    });
+    let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {transition : "0.25s", opacity : "1"});
     setTimeout(() => button.style.display = "block", 100);
 
     setTimeout(() => {
-        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{
-          zIndex : -9,
-          opacity : 0,
-        });
+        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{zIndex : -9, opacity : 0});
     }, 100);
 }
 
@@ -222,14 +216,13 @@ export const sendMessage = async (aonTextArea) => {
  * Build standard toolbar options 
  * @param {*} aonTextArea 
  */
- export const buildTextareaToolbar =  (aonTextArea, task) => {
+const buildTextareaToolbar =  (aonTextArea, task) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText){
         setStyles(textAreaText, {
             resize: "none",
-            height: "100%",
-            minHeight: "300px",
-            maxHeight: "300px"
+            // minHeight: "300px",
+            // maxHeight: "300px"
         });
     }
     /**
@@ -307,16 +300,15 @@ const documentExec = (exec) => document.execCommand(exec) ? document.execCommand
 
 const createLink =() =>{
     const selection = document.getSelection();
-    if(selection && selection.toString().trim()){
-        const url = prompt('URL:', 'https://');
-        const aEl = setAttributes(document.createElement("a"),{
-            target:"_blank",
-            class:CSS.AON_LINK,
-            href:url
-        });
-        aEl.textContent = selection;
-        document.execCommand('insertHTML', false, aEl.outerHTML);
-    }
+    const url = prompt('URL:', 'https://');
+    const aEl = setAttributes(document.createElement("a"),{
+        target:"_blank",
+        class:CSS.AON_LINK,
+        href:url,
+        title:url
+    });
+    aEl.textContent = selection.toString() ? selection : url;
+    document.execCommand('insertHTML', false, aEl.outerHTML);
 }
 
 const blockquote = ()=>{

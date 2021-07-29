@@ -126,6 +126,7 @@ export const FORMAT_QUOTE = "format_quote";
 
 export const INBOX = 'inbox';
 export const INFO = 'info';
+export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
 
 // ----- K

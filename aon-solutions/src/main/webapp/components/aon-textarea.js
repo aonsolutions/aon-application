@@ -180,8 +180,6 @@ export class AonTextArea extends AonElement {
 		inputFile.style.display = "none";
 		inputFile.addEventListener(EVENT.CHANGE, () => this.addFiles(inputFile.files));
 		this.appendChild(inputFile);
-
-		this.draggableEnable();
 	}
 
 	getSelection() {
@@ -252,18 +250,19 @@ export class AonTextArea extends AonElement {
 				},
 				events : {click : (ev)=> 
 					properties.id === MATERIAL_ICONS.ATTACH_FILE ? 
-					this.clickFile(ev) : 
+					this.clickFile() : 
 					fn(ev)
 				}
 			});
 			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
 		}
-		if(properties.id === MATERIAL_ICONS.ATTACH_FILE){
-			
+		//ENABLE DRAGGRABLE FILE
+		if(properties.icon === MATERIAL_ICONS.ATTACH_FILE){ 
+			this.draggableEnable(); 
 		}
 	}
 
-	clickFile(ev){
+	clickFile(){
 		this.getElement(this.id+"Files").click();
 	}
 
@@ -286,6 +285,11 @@ export class AonTextArea extends AonElement {
 		}
 	}
 
+	addToolbarRight(element, fn){
+		element.addEventListener(EVENT.CLICK, fn);
+		waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(element));
+	}
+
 	getValue() {return this.value && this.value === 'true';}
 
 	async addFiles(files){
@@ -305,14 +309,22 @@ export class AonTextArea extends AonElement {
 					element = document.createElement(TAG.IMG);
 					element.src = url;
 					element.className = CSS.AON_IMG_COMMENT;
-				} else  {
+				} else if(reader.contentType && reader.contentType.indexOf("mp4")>-1){
+					element = document.createElement("video");
+					element.controls = true;
+					element.style.width = "100%";
+					element.style.minHeight = element.style.maxHeight = "184px";
+					const source = document.createElement("source");
+					source.src = url;
+					source.type = reader.contentType;
+					element.appendChild(source);
+				} else {
 					element = document.createElement("a");
 					element.target = "_blank";
 					element.className = CSS.AON_LINK;
 					element.href = url;
 					element.textContent = reader.name;
 				}
-
 				element.dataset.id = fileId;
 				element.setAttribute(CONSTANT.TYPE, CONSTANT.AON_FILE);
 				element.addEventListener(EVENT.CLICK, ()=> openFileUrl(url));
@@ -337,11 +349,6 @@ export class AonTextArea extends AonElement {
 				this.addFiles(ev.dataTransfer.files);
 			}
 		});
-	}
-
-	addToolbarRight(element, fn){
-		element.addEventListener(EVENT.CLICK, fn);
-		waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(element));
 	}
 }
 if(!window.customElements.get('aon-textarea')){

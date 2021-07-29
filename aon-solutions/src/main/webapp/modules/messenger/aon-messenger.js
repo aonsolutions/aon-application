@@ -7,31 +7,23 @@ import Apps from '../../services/app.js';
 import {getWorkgroups, saveWorkgroup, deleteWorkgroup} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, REQUEST_FILTER, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
 import { setAttributes } from '../../services/utils.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
+// import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
-	FILTER;
 	_workgroups;
 	_filter;
 	SENDER;
 	constructor () {
 		super();
-		this.FILTER = REQUEST_FILTER.ABIERTAS;
-	}
-
-	get filter() {
-		return JSON.parse(this.FILTER);
-	}
-
-	set filter(filter){
-		this.FILTER = JSON.stringify(filter);
 	}
 
 	connectedCallback () {
 		this.initialize();
+		// this.rootPanel(new AonMessengerAyudat());
     	this.build();
  	}
 
@@ -46,14 +38,15 @@ export class AonMessenger extends AonElement {
 		};
 	}
 
- 	build() {
+ 	async build() {
 		this.paintView();
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
-		getTaskHolder({reload:true}).then(task=>this.SENDER = task);
+		const taskH = getTaskHolder({reload:true}).then(task=>this.SENDER = task);
 
 		if(this.data){
+			await taskH;
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else {
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
@@ -86,7 +79,7 @@ export class AonMessenger extends AonElement {
 		}
 		messengerOpts.push(listClose);
 
-		let listTrash = MessengerOptions.AON_MESSENGER_LIST_TRASH;
+		let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
 		listTrash.fn = () => {
 			this._filter.status = TASK_STATUS.DELETED;
 			this._filter.workgroup =  undefined;

@@ -1,6 +1,6 @@
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
 import { setAttributes, setClasses, setStyles } from "../../services/utils.js";
 import {
@@ -81,11 +81,13 @@ export class AonMessengerChat extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
     this.task = new Task();
+
+    if(this.data.id) this.setData(this.data);
+
     const sender = this.applicationParentEl.SENDER;
     this.task.setSender(sender);
     this.task.setDomain(sender.domain.id);
     this.task.createTask(this.data);
-    if(this.data.id) this.setData(this.data);
   }
  
   build() {
@@ -152,10 +154,10 @@ export class AonMessengerChat extends AonElement {
         }, () => this.updateTaskStatus(TASK_STATUS.FINISHED));
       }
       if(this.task.status == TASK_STATUS.DELETED || this.task.status == TASK_STATUS.FINISHED)
-        toolbar.addButton2({...ACTIONS.RESTORE,name:"Reabrir"}, () => this.updateTaskStatus(TASK_STATUS.PENDING));
+        toolbar.addButton2({...ACTIONS.RESTORE, name:"Reabrir"}, () => this.updateTaskStatus(TASK_STATUS.PENDING));
 
       if(this.task.status != TASK_STATUS.DELETED) 
-        toolbar.addButton2(ACTIONS.DELETE, () => this.updateTaskStatus(TASK_STATUS.DELETED));
+        toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE}, () => this.updateTaskStatus(TASK_STATUS.DELETED));
     }
 
     if(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS)
@@ -287,9 +289,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   async uploadFile({file, taskId}) {
-    let taskAttach = null;
-    try { taskAttach = await saveTaskAttach({file, taskId}); } catch (e) {}
-    return taskAttach;
+    return await saveTaskAttach({file, taskId}).catch(e=>null);
   }
 
   back(){
@@ -298,7 +298,7 @@ export class AonMessengerChat extends AonElement {
       transition:".25s"
     });
 
-    setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST), 250);
+    setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter), 250);
   }
 }
 

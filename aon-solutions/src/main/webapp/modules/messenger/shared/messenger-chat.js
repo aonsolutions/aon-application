@@ -25,9 +25,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
           width: "100%",
           height: "100%",
           maxWidth: "600px",
-          padding: "0",
-        //   paddingRight: "20px",
-        //   paddingLeft: "20px",
+          padding: "0"
         },
     });
     firstView.appendTo(mainView);
@@ -37,7 +35,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
      * if some new menus / toolbars needed, here.
      */
     const wrapper = newComponent({
-        type: 'wrapper',
+        type: MESSENGER_COMPONENTS.WRAPPER,
         classes: [CSS.FLEX_COLUMN],
         styles: {
             width: "100%",
@@ -79,7 +77,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
      * The chat itself
      */
     const chat = newComponent({
-        type: 'chat',
+        type: MESSENGER_COMPONENTS.CHAT,
         id: MESSENGER_IDS.MESSENGER_CHAT,
         attributes:{
             title: MSG.COMMENTS
@@ -105,8 +103,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
 
     chat.appendTo(wrapper.element);
 
-    const title = createTitle(task.title);
-    setStyles(title.element,{
+    const title = setStyles(createTitle(task.title),{
         display : 'block',
         fontSize: '1.3em',
         paddingTop: "10px",
@@ -115,16 +112,13 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
         background : "#fff",
         borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
     });
-    title.appendTo(chat.element);
+    chat.appendChild(title);
 
     buildMobileWritter(wrapper, aonMessengerChat);
 
     setTimeout(() => {
-        setStyles(mainView, {
-          opacity: 1,
-          marginTop: 0,
-        });
-      }, 100);
+        setStyles(mainView, { opacity: 1, marginTop: 0});
+    }, 100);
 }
 
 /**
@@ -142,8 +136,8 @@ export const buildDesktopChat = (aonMessengerChat) => {
             minWidth: "400px",
             maxWidth: "600px",
             paddingTop: "5vh",
-            paddingRight: "40px",
-            paddingLeft: "40px",
+            // paddingRight: "40px",
+            // paddingLeft: "40px",
             display: !aonMessengerChat.task.id  ? "none" : null
         },
     }).element;
@@ -164,15 +158,14 @@ export const buildDesktopChat = (aonMessengerChat) => {
     });
     wrapper.appendTo(firstDiv);
 
-    const title = createTitle(MSG.COMMENTS);
-    setStyles(title.element, {
+    const title = setStyles(createTitle(MSG.COMMENTS), {
             maxWidth: '550px',
             alignSelf: 'center',
             paddingBottom: '10px',
             borderBottom: '1px solid #f0f0f0',
         }
     );
-    title.appendTo(wrapper.element);
+    wrapper.appendChild(title);
     
     /**
      * The chat itself
@@ -185,12 +178,12 @@ export const buildDesktopChat = (aonMessengerChat) => {
             position: "relative",
             width: '100%',
             zIndex: "0",
-            "scroll-behavior": "smooth",
             height: '100%',
             padding: "20px",
             paddingTop: "20px",
             overflow: 'auto',
             borderBottom: '1px solid #f0f0f0',
+            "scroll-behavior": "smooth",
         }
     });
     chat.appendTo(wrapper.element);
@@ -213,7 +206,7 @@ export const buildDesktopChat = (aonMessengerChat) => {
         id: "upIcon",
         background: "transparent",
     });
-    upIcon.onclick = () => chat.element.scrollTo(0,0);
+    upIcon.addEventListener(EVENT.CLICK, ()=>chat.element.scrollTo(0,0));
     leftButtonBar.appendChild(upIcon);
 
     const downIcon = setAttributes(new AonIconButton(), {
@@ -221,7 +214,7 @@ export const buildDesktopChat = (aonMessengerChat) => {
         id: "downIcon",
         background: "transparent",
     });
-    downIcon.onclick = () =>  chat.element.scrollTo(0, chat.element.scrollHeight);
+    downIcon.addEventListener(EVENT.CLICK, ()=> chat.element.scrollTo(0, chat.element.scrollHeight))
     leftButtonBar.appendChild(downIcon);
 
      /**
@@ -258,10 +251,7 @@ export const appendChatMessage = (properties) => {
      * Appearing animation
      */
     setTimeout(() => {
-        setStyles(message, {
-            opacity : 1,
-            marginTop : '10px'
-        });
+        setStyles(message, { opacity : 1, marginTop : '10px'});
     }, 100);
 } 
 
@@ -369,7 +359,7 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     /**
      * Creating title input
      */
-    const titleIn = setStyles( createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.ISSUE), {
+    const titleIn = setStyles( createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, `Escriba su ${MSG.ISSUE} aquí`), {
         padding: "10px 20px",
         display : "block",
         width: "100%",
@@ -421,7 +411,6 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
         display : "block",
         width: "100%",
     });
-
     div.appendChild(taskHolderSelect);
     changeStyleSelect(taskHolderSelect);
 
@@ -435,6 +424,8 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
         boxShadow : "none",
     });
     div.appendChild(aonTextArea);
+    let textAreaDiv = document.getElementById(aonTextArea.TEXTAREA);
+    if(textAreaDiv) textAreaDiv.style.padding = "20px";
 
    /**
     * smooth border colors
@@ -555,6 +546,7 @@ const chooseIconMessage = ({type, date, name, comment}) => {
         actionJson.icon = MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE;
         actionJson.color = CSS.variable(COLORS.MATERIAL_RED);
     } else if(WORKFLOW_TYPES.DELETE.indexOf(type)>=0){
+        actionJson.icon = MATERIAL_ICONS.ARCHIVE;
         actionJson.color = CSS.variable(COLORS.GRAYSON);
     } else if(WORKFLOW_TYPES.ASSIGN.indexOf(type)>=0){
         actionJson.comment = `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> a <b>${comment}</b> ${dateParse}`;
