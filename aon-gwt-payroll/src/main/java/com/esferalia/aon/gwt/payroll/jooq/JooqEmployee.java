@@ -570,11 +570,13 @@ public class JooqEmployee {
 		employeeData.setNationality(registryTable.get(REGISTRY.NATIONALITY));
 		
 		//RADDRESS AND GEOZONE TABLE
-		Record raddressTable = dslContext.select().from(RADDRESS)
+		Result<Record> raddressTableRecords = dslContext.select().from(RADDRESS)
 				.where(RADDRESS.REGISTRY.eq(employee_registry))
-				.fetchOne();
+				.fetch();
 		
-		if(null != raddressTable) {
+		if(raddressTableRecords.isNotEmpty()) {
+			
+			Record raddressTable = raddressTableRecords.get(0);
 		
 			employeeData.setRaddressId(raddressTable.get(RADDRESS.ID));
 			employeeData.setStreetType(raddressTable.get(RADDRESS.STREET_TYPE));
