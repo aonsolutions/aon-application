@@ -556,7 +556,7 @@ public class SalarySelect extends Composite {
 
 		int years;
 		int offset;
-		if (start <= firstExtras) {
+		if (start < firstExtras) {
 			years = 0;
 			offset = firstExtra + start;
 		} else {
