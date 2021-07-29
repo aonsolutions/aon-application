@@ -34,7 +34,7 @@ export class AonMessenger extends AonElement {
 			workgroup: undefined,
 			status: TASK_STATUS.PENDING,
 			page:0, 
-			peerPage:30
+			perPage:30
 		};
 	}
 

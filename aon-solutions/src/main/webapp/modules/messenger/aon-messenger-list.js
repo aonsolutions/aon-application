@@ -24,7 +24,7 @@ export class AonMessengerList extends AonElement {
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, peerPage:30, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {

@@ -81,7 +81,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Object getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt("page");
-		Integer peerPage = api.getParams().optInt("peerPage");
+		Integer perPage = api.getParams().optInt("perPage");
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
 		
@@ -98,9 +98,9 @@ public class TaskServlet extends AonApiHttpServlet{
 						.and( 
 							workgroup > 0 ?  
 							f.getWorkgroupProperty().eq(workgroup) :
-							f.getWorkgroupProperty().isNotNull()
+							f.getDomainProperty().eq(api.getDomain().getId())
 						),
-						page, peerPage)
+						page, perPage)
 		);
 	}
 	

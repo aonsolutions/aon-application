@@ -35,7 +35,7 @@ export class AonNotification extends AonElement {
   }
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER)? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, peerPage:10};
+		return this.hasAttribute(CONSTANT.FILTER)? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:10};
 	}
 
 	setFilter(filter) {
