@@ -84,26 +84,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	private Object getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt("page");
 		Integer perPage = api.getParams().optInt("perPage");
-//		Integer workgroup = api.getParams().optInt("workgroup");
-//		String status = api.getParams().optString("status");
-//		
 		return TaskJSON.toJSON(
 				AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> taskFilter(api, f), page, perPage));
-//						f-> 
-//						f.getDomainProperty().eq(api.getDomain().getId())
-//						.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()))
-//						.or(
-//								status.equalsIgnoreCase("pending") ?
-//								f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()) :
-//								f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()) 
-//						)
-//						.and( 
-//							workgroup > 0 ?  
-//							f.getWorkgroupProperty().eq(workgroup) :
-//							f.getDomainProperty().eq(api.getDomain().getId())
-//						),
-//						page, perPage)
-//		);
 	}
 	
 	
@@ -114,7 +96,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		if("pending".equalsIgnoreCase(status)) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
-		} else filter = filter.and(f.getStatusProperty().eq(TaskStatus.FINISHED.value()));
+		} else filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		
 		if(workgroup != null && workgroup > 0) {
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
