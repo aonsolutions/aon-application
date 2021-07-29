@@ -313,7 +313,7 @@ public class JooqEmployeeCalendarNew {
 			if(fullTimeJourney){
 				// Si vale 0 es laborable y si vale 1 es no laborables
 				Result<Record> nonWorkingDaysRecords = dslContext.select().from(CONTRACT_DATA)
-						.where(CONTRACT_DATA.CONTRACT.eq(calendarId))
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
 						.and(CONTRACT_DATA.NAME.in(
 								"LABORABLE_LUNES",
 								"LABORABLE_MARTES",
