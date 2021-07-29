@@ -62,9 +62,9 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.Settle;
-import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -1079,13 +1079,13 @@ public class SalaryDAO {
 	}
 	
 
-	private enum SalaryType {
-		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS, L00;
-
-		byte value() {
-			return (byte) ordinal();
-		}
-	}
+//	private enum SalaryType {
+//		SALARY, EXTRA, SETTLE, DELAY, NOT_ENJOYED_VACATIONS, L00;
+//
+//		byte value() {
+//			return (byte) ordinal();
+//		}
+//	}
 
 	private static final SalaryPropertiesDAO SALARY_PROPERTIES = new SalaryPropertiesDAO();
 
