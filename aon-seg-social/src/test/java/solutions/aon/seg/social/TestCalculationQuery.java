@@ -41,7 +41,7 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaREDI.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.L00_NORMAL, SistemaRED.LiquidationOrigin.TODAS);
 			for (Liquidation liquidation : liq) {
-				System.out.println(liq);
+				System.out.println(liquidation);
 			}
 		} catch (StatusCodeException e) {
 			assertTrue(true);
@@ -50,6 +50,7 @@ public class TestCalculationQuery {
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
+			e.printStackTrace();
 			fail(""+e.getClass());
 		} catch (ParseException e) {
 			fail("Test date fails");

@@ -1,8 +1,22 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -65,8 +79,9 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
+			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementsById("SDFREGCTA_ayuda"));
@@ -79,9 +94,9 @@ class SistemaREDI {
 			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
 			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(ccc1);
 			jacadaform.getInputByName("txt_SDFNUMCTA").setValueAttribute(ccc2);
-
 			// click en 'Continuar'
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			// control de campos
 			String nif = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFEMPRESARIO3");
@@ -182,7 +197,7 @@ class SistemaREDI {
 			// Datos identificativos
 			jacadaform = htmlPage.getFormByName("jacadaform");
 
-			htmlPage = jacadaform.getInputByValue("Datos Iden.").click();
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Datos Iden."));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SDFLOCALIDAD4"));
 
@@ -232,7 +247,7 @@ class SistemaREDI {
 		return null;
 
 	}
-
+    
 	public static byte[] getContributionInformation(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String affiliationNumber, String regime,
 			String ccc, Date fecha) throws SegSocialException {
@@ -290,6 +305,7 @@ class SistemaREDI {
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/" + href);
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -324,12 +340,12 @@ class SistemaREDI {
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
 				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
-					htmlPage = de.click();
+					htmlPage = clickAndCheckCode(de);
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
-			Page page = jacadaform.getInputByValue("Continuar").click();
+			Page page = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			if ( !page.isHtmlPage() ) {
 				WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
 				InputStream is = response.getContentAsStream();
@@ -344,7 +360,7 @@ class SistemaREDI {
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
-			page = labels.get(0).dblClick();
+			page = doubleClickAndCheckCode(labels.get(0));
 			WebResponse response = HtmlUnitToolkit.wait4(page, p -> p.getWebResponse()).orElseGet(null);
 			InputStream is = response.getContentAsStream();
 			byte[] ret = is.readAllBytes();
@@ -429,7 +445,7 @@ class SistemaREDI {
 					if(dn2.get(indTab).getVisibleText().equalsIgnoreCase(strDate)){
 						found=true;
 						HtmlLabel htmlLabel=dn2.get(indTab).querySelector("label");
-						InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
+						InputStream is=doubleClickAndCheckCode(htmlLabel).getWebResponse().getContentAsStream();
 						ret.add(is.readAllBytes());
 						is.close();
 					}
@@ -481,6 +497,7 @@ class SistemaREDI {
 		try{
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/" + href);
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -505,16 +522,16 @@ class SistemaREDI {
 //			ArrayList<byte[]> ret=new ArrayList<byte[]>();
 			for (DomElement de : it) {
 				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
-					htmlPage = de.click();
+					htmlPage = clickAndCheckCode(de);
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			for(int i=0;i<clicks;i++) {
 				List<HtmlInput> htmlInputList=htmlPage.getByXPath("//input[@value='Pág. Sig.']");
-					htmlPage=htmlInputList.get(0).click();
+					htmlPage=clickAndCheckCode(htmlInputList.get(0));
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
 			return htmlPage;
@@ -560,8 +577,8 @@ class SistemaREDI {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
-			htmlPage = htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR")
-					.click();
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
+			htmlPage = clickAndCheckCode(htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Inputting contribution account and regime
@@ -571,15 +588,15 @@ class SistemaREDI {
 			Iterable<DomElement> itOptions = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement option : itOptions) {
 				if (option.getTextContent().equalsIgnoreCase("OnLine")) {
-					htmlPage = option.click();
+					htmlPage = clickAndCheckCode(option);
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
 			// Doing click, first on Continuar button and, then, on confirm button
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			InputStream is = htmlPage.getElementById("Sub2204801005_7").click().getWebResponse().getContentAsStream();
+			InputStream is = clickAndCheckCode(htmlPage.getElementById("Sub2204801005_7")).getWebResponse().getContentAsStream();
 			byte[] ret = is.readAllBytes();
 			is.close();
 			return ret;
@@ -606,6 +623,7 @@ class SistemaREDI {
 				certificateType);) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
@@ -624,12 +642,12 @@ class SistemaREDI {
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
 				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
-					htmlPage = de.click();
+					htmlPage = clickAndCheckCode(de);
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			boolean end = false;
 			ArrayList<Idc> ret = new ArrayList<Idc>();
@@ -656,7 +674,7 @@ class SistemaREDI {
 						ret.add(new Idc("BAJA", d));
 					}
 				}
-				htmlPage = htmlPage.getElementById("Sub2206501001").click();
+				htmlPage = clickAndCheckCode(htmlPage.getElementById("Sub2206501001"));
 
 				try {
 					HtmlUnitToolkit.getSSCode(htmlPage);
@@ -687,7 +705,8 @@ class SistemaREDI {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
-			HtmlUnitToolkit.getSSCode(htmlPage);
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
 			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
@@ -700,12 +719,12 @@ class SistemaREDI {
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
 				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
-					htmlPage = de.click();
+					htmlPage = clickAndCheckCode(de);
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			htmlPage = clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			boolean end = false;
@@ -725,7 +744,7 @@ class SistemaREDI {
 						ret.add(gc.getTime());
 					}
 				}
-				htmlPage = htmlPage.getElementById("Sub2206301003").click();
+				htmlPage = clickAndCheckCode(htmlPage.getElementById("Sub2206301003"));
 				//System.out.println(htmlPage.asText());
 				try {
 					HtmlUnitToolkit.getSSCode(htmlPage);
@@ -756,6 +775,7 @@ class SistemaREDI {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//NSS
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
@@ -778,14 +798,14 @@ class SistemaREDI {
 			HtmlSelect printSelect=jacadaform.getSelectByName("cbo_ListaTipoImpresion");
 			printSelect.getOptionByText("OnLine").setSelected(true);
 			//GETTING THE PDF
-			if(jacadaform.getInputByValue("Continuar").click() instanceof com.gargoylesoftware.htmlunit.UnexpectedPage) {
-				InputStream is=jacadaform.getInputByValue("Continuar").click().getWebResponse().getContentAsStream();
+			if(clickAndCheckCode(jacadaform.getInputByValue("Continuar")) instanceof com.gargoylesoftware.htmlunit.UnexpectedPage) {
+				InputStream is=clickAndCheckCode(jacadaform.getInputByValue("Continuar")).getWebResponse().getContentAsStream();
 				byte[] ret=is.readAllBytes();
 				is.close();
 				return ret;
 			}
 			else {
-				htmlPage=jacadaform.getInputByValue("Continuar").click();
+				htmlPage=clickAndCheckCode(jacadaform.getInputByValue("Continuar"));
 				try {
 					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					return null;
@@ -809,7 +829,7 @@ class SistemaREDI {
 	
 	static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
-			final SistemaRED.LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, OutOfServiceException {
+			final SistemaRED.LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, SegSocialException {
 //		CCC
 			{
 				HtmlInput inputCcc = (HtmlInput) htmlPage.getElementById("idCCC");
@@ -857,11 +877,11 @@ class SistemaREDI {
 				DomNodeList<DomNode> liquidationOrigins = htmlPage.querySelectorAll("input[name='ORIGEN_LIQUIDACION']");
 				HtmlInput liquidationOriginInput = (HtmlInput) liquidationOrigins.stream()
 						.filter(origin -> ((HtmlInput)origin).getValueAttribute().equalsIgnoreCase(liqOrigin.getValue())).findFirst().get();
-				liquidationOriginInput.click();
+				clickAndCheckCode(liquidationOriginInput);
 			}
 //		ACCEPT
 			{
-				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+				htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ACEPTAR"));
 			}
 
 		return htmlPage;
@@ -878,6 +898,7 @@ class SistemaREDI {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {
 				checkLiquidationExceptions(htmlPage);
@@ -889,14 +910,14 @@ class SistemaREDI {
 					HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(i);
 					radio.click();
 					formDatos.getInputByValue("Continuar").setChecked(true);
-					htmlPage=formDatos.getInputByValue("Continuar").click();
+					htmlPage=clickAndCheckCode(formDatos.getInputByValue("Continuar"));
 					LiquidationBuilder lb=new LiquidationBuilder();
 					for (DomNode domNode : htmlPage.querySelectorAll("table>tbody>tr")) {
 						HtmlTableRow tr=(HtmlTableRow)domNode;
 						liquidationDataType(tr, lb);
 					}
 					ret.add(lb.build());
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 					liqList=formDatos.querySelectorAll("input[type='radio']");
 				}
@@ -925,6 +946,7 @@ class SistemaREDI {
 			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+				HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 				htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 
 				try {
@@ -937,8 +959,8 @@ class SistemaREDI {
 						
 						HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(h);
 						radio.click();
-						htmlPage=formDatos.getInputByValue("Continuar").click();
-						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+						htmlPage=clickAndCheckCode(formDatos.getInputByValue("Continuar"));
+						htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES"));
 						formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 						DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidación ']").getNextSibling();
 						String liq=Toolkit.removeWeirdCharacters(liqNode.getVisibleText());
@@ -947,7 +969,7 @@ class SistemaREDI {
 						for (int i=0;i<listRadiosWorkers.size();i++) {
 							
 							htmlPage=listRadiosWorkers.get(i).click();
-							htmlPage=formDatos.getInputByValue("Consultar").click();
+							htmlPage=clickAndCheckCode(formDatos.getInputByValue("Consultar"));
 							DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 							caf=caf.substring(caf.indexOf(":")+1).trim();
@@ -963,12 +985,12 @@ class SistemaREDI {
 								workerLiquidationDataType((HtmlTableRow)row, wlb);
 							}
 							map.put(key, wlb.build());
-							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 							listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
 						}
 						ret.put(liq,map);
-						htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+						htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 						liqList=formDatos.querySelectorAll("input[type='radio']");
 					}	
@@ -1015,15 +1037,16 @@ class SistemaREDI {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			try {
 				htmlPage.getElementById("autorizacion0").click();
-				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+				htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ACEPTAR"));
 			} catch (NullPointerException e) {}
 //		FILLING THE FIELDS TO GET THE QUERY	
 			htmlPage = liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {
 				if(((HtmlInput)htmlPage.getElementById("idCCC")).isDisabled()) {
-					htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+					htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ACEPTAR"));
 				}
 			} catch (NullPointerException e) {}
 			try {
@@ -1036,8 +1059,8 @@ class SistemaREDI {
 					HashMap<String, WorkerLiquidation> map = new HashMap<String, WorkerLiquidation>();
 					HtmlRadioButtonInput radio = (HtmlRadioButtonInput) listOfLiquidationTypes.get(i);
 					radio.click();
-					htmlPage = htmlPage.getElementById("SPM.ACC.CONTINUAR").click();
-					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONTINUAR"));
+					htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES"));
 					for(String naf : nafs) {
 						
 						DomNodeList<DomNode> rowNodes = htmlPage.querySelectorAll("tbody tr:not([class='cabecera'])");
@@ -1053,7 +1076,7 @@ class SistemaREDI {
 							HtmlInput nafInput = (HtmlInput) htmlPage.getElementById("NAF_TRABAJADOR");
 							nafInput.setValueAttribute(naf);
 						}
-						htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+						htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTAR"));
 						try {
 						//Taking the CAF
 							DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
@@ -1071,16 +1094,16 @@ class SistemaREDI {
 								workerLiquidationDataType((HtmlTableRow)row, wlb);
 							}
 							map.put(naf, wlb.build());
-							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 						
 						} catch (NullPointerException e1) {}
 					}
 					DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidación ']").getNextSibling();
 					String liq=Toolkit.removeWeirdCharacters(liqNode.getVisibleText());	
-					htmlPage = htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage = clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 					if(!map.isEmpty())
 						ret.put(liq, map);
-					htmlPage= htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage= clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 					listOfLiquidationTypes = htmlPage.querySelectorAll("input[type='radio']");
 				}
 				return ret;
@@ -1135,13 +1158,14 @@ class SistemaREDI {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {
 				checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
 				htmlPage=htmlPage.getElementById("liquidacion0").click();
-				htmlPage=htmlPage.getElementById("SPM.ACC.CONTINUAR").click();
-				htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+				htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONTINUAR"));
+				htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES"));
 				DomNodeList<DomNode> workerRows=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
 				for (DomNode rowNode : workerRows) {
 					HtmlTableRow row=(HtmlTableRow)rowNode;
@@ -1150,7 +1174,7 @@ class SistemaREDI {
 						DomNode radNode=row.getCell(0).querySelector("input");
 						HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
 						htmlPage=rad.click();
-						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+						htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTAR"));
 						DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 						String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 						caf=caf.substring(caf.indexOf(":")+1).trim();
@@ -1207,6 +1231,7 @@ class SistemaREDI {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			HtmlUnitToolkit.checkStatusAndDown(htmlPage);
 			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {
 				checkLiquidationExceptions(htmlPage);
@@ -1223,8 +1248,8 @@ class SistemaREDI {
 					HtmlRadioButtonInput radLiq=(HtmlRadioButtonInput)radLiqNode;
 					htmlPage=radLiq.click();
 					
-					htmlPage=htmlPage.getElementById("SPM.ACC.CONTINUAR").click();
-					htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONTINUAR"));
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES"));
 					DomNodeList<DomNode> workerRows=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
 					for (DomNode rowNode : workerRows) {
 						HtmlTableRow row=(HtmlTableRow)rowNode;
@@ -1233,7 +1258,7 @@ class SistemaREDI {
 							DomNode radNode=row.getCell(0).querySelector("input");
 							HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
 							htmlPage=rad.click();
-							htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+							htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.CONSULTAR"));
 							DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
 							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
 							caf=caf.substring(caf.indexOf(":")+1).trim();
@@ -1251,9 +1276,9 @@ class SistemaREDI {
 							ret.add(wlb.build());
 						}
 					}
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
+					htmlPage=clickAndCheckCode(htmlPage.getElementById("SPM.ACC.ATRAS"));
 					liquidationNodes=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
 				}
 				

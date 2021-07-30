@@ -7,19 +7,32 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.KeyStore;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 
@@ -104,12 +117,12 @@ public class Toolkit {
 
 	// RETURNS BOOLEAN FROM A STRING
 	public static Boolean toBoolean(String bool) {
-		if ((bool.equalsIgnoreCase("SI")) || (bool.equalsIgnoreCase("SÍ"))) {
+		if (bool != null && ((bool.equalsIgnoreCase("SI")) || (bool.equalsIgnoreCase("SÍ")))) {
 			return true;
-		} else if (bool.equalsIgnoreCase("NO")) {
+		} else if (bool != null && bool.equalsIgnoreCase("NO")) {
 			return false;
-		}
-		return null;
+		} else
+			return null;
 	}
 
 	// SPLITS AN STRING BY 2 AND RETURNS AN ARRAY
@@ -248,12 +261,14 @@ public class Toolkit {
 												, "SERVICIO APAGADO"
 												, "TEMPORALMENTE"
 												, "NO DISPONIBLE"
-												, "EN MANTENIMIENTO"};
+												, "EN MANTENIMIENTO"
+												, "NO SE PUEDE ATENDER"};
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			HtmlPage htmlPage = webClient.getPage(url);
-			
+			if (htmlPage.getWebResponse().getStatusCode() >= 300)
+				return false;
 			String pageText = htmlPage.asXml().toUpperCase();
 			
 			for (String keyWord : possibleFailKeyWords) {
@@ -265,6 +280,114 @@ public class Toolkit {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+    public static KeyStore readStore(InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws Exception {
+        try (InputStream keyStoreStream = certificateInputStream) {
+            KeyStore keyStore = KeyStore.getInstance(certificateType);
+            keyStore.load(keyStoreStream, certificatePassword.toCharArray());
+            return keyStore;
+        }
+    }
+    
+    public static String getValue(String body, String id) {
+    	Pattern pattern = Pattern.compile("\\<\\w+?\\s*.*?id=('|\")" + id + "('|\").*?\\>", Pattern.CASE_INSENSITIVE);
+    	Matcher matcher = pattern.matcher(body);
+    	if (matcher.find()) {
+    		String element = matcher.group();
+    		pattern = Pattern.compile(".*?value=('|\")(?<value>.*?)('|\").*");
+    		matcher = pattern.matcher(element);
+    		if (matcher.find()) {
+    			return matcher.group("value");
+    		}
+    	}
+    	return null;
+    }
+    
+    public static String getDIL(String body) {
+    	Pattern pattern = Pattern.compile("\\<\\w+\\s*.*?id=('|\")DIL('|\").*?\\>(?<innertext>.*?)\\<\\/\\w+\\>", Pattern.CASE_INSENSITIVE);
+		
+		Matcher m = pattern.matcher(body);
+		
+		if (m.find()) {
+			String match = m.group("innertext");
+			return match != null ? match.trim() : null;
+		} else
+			return null;
+    	
+    }
+    
+    public static Integer getErrCode (final String DIL) {
+    	if (DIL != null) {    		
+    		Pattern pattern = Pattern.compile("\\**\\s*(?<code>\\d+)\\s*?\\**\\s*.*", Pattern.CASE_INSENSITIVE);
+    		Matcher matcher = pattern.matcher(DIL);
+    		if (matcher.matches()) {
+    			String errStr = matcher.group("code");
+    			try {
+    				return Integer.parseInt(errStr);
+    			} catch (NumberFormatException e) {
+    				return null;
+    			}
+    		} else
+    			return null;
+    	} else
+    		return null;
+    }
+    
+    public static String getErrMsg (final String DIL) {
+    	if (DIL != null) {    		
+    		Pattern pattern = Pattern.compile("\\**\\s*(\\d+)\\s*?\\**\\s*(?<msg>.*)", Pattern.CASE_INSENSITIVE);
+    		Matcher matcher = pattern.matcher(DIL);
+    		if (matcher.matches()) {
+    			return matcher.group("msg");
+    		} else
+    			return null;
+    	} else
+    		return null;
+    }
+    
+    public static HttpPost reportGenerationForm (String body) throws UnsupportedEncodingException {
+		String link = "https://w2.seg-social.es/ImprPDF/InSeNaCoder";
+		
+		HttpPost httpPost = new HttpPost(link);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		
+		params.add(new BasicNameValuePair("param", Toolkit.getValue(body, "SDFFICHERO")));
+		params.add(new BasicNameValuePair("trans",
+				Toolkit.getValue(body, "SDFINFORMEA601")
+			+ Toolkit.getValue(body, "SDFINFORMEA602")
+			+ Toolkit.getValue(body, "SDFINFORMEA603")
+			+ Toolkit.getValue(body, "SDFINFORMEA604")
+		));
+//		System.out.println(Toolkit.getValue(body, "SDFINFORMEA601"));
+		params.add(new BasicNameValuePair("aplicacion", Toolkit.getValue(body, "SDFAPLICACION")));
+		params.add(new BasicNameValuePair("usuario", Toolkit.getValue(body, "SDFUSUARIO")));
+		params.add(new BasicNameValuePair("idioma", Toolkit.getValue(body, "SDFIDIOMA")));
+		params.add(new BasicNameValuePair("fecha", Toolkit.getValue(body, "SDFFECHA") + " " + Toolkit.getValue(body, "SDFHORA")));
+		params.add(new BasicNameValuePair("tipo", Toolkit.getValue(body, "SDFTIPO")));
+		
+		httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+		return httpPost;
+    }
+	
+	public static void checkResponseStatus (CloseableHttpResponse resp) throws SegSocialException {
+		if (resp.getStatusLine().getStatusCode() != 200)
+			throw new StatusCodeException(resp.getStatusLine().getStatusCode());
+	}
+	
+	public static String getButtonNameByValue (String body, String value) {
+		Pattern pattern = Pattern.compile("\\<input\\s*[^>]*?value=(\"|')" + value + "(\"|')[^>]*?\\/\\>", Pattern.CASE_INSENSITIVE);
+		
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			String element = matcher.group();
+			Pattern namePattern = Pattern.compile("\\<input\\s*.*?name=(\"|')(?<name>.+?)(\"|').*?\\/\\>", Pattern.CASE_INSENSITIVE);
+			matcher = namePattern.matcher(element);
+			if (matcher.matches()) {
+				return matcher.group("name");
+			}
+		}
+		return null;
 	}
 
 }

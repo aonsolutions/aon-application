@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.LogFactory;
 
@@ -19,12 +21,14 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.IncorrectnessListener;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebResponseData;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -36,7 +40,9 @@ import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import solutions.aon.seg.social.exception.CSSParseException;
 import solutions.aon.seg.social.exception.InternalException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.OutOfServiceException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 
 public class HtmlUnitToolkit {
@@ -289,6 +295,25 @@ public class HtmlUnitToolkit {
 
 	}
 	
+	public static <P extends Page> void checkStatusAndDown(P page) throws SegSocialException {
+		int statusCode = page.getWebResponse().getStatusCode();
+		if (statusCode >= 300)
+			throw new StatusCodeException(statusCode);
+		isSiteDown(page);
+	}
+	
+	public static <P extends Page> P clickAndCheckCode (DomElement element) throws IOException, SegSocialException {
+		P page = element.click();
+		checkStatusAndDown(page);
+		return page;
+	}
+	
+	public static <P extends Page> P doubleClickAndCheckCode (DomElement element) throws IOException, SegSocialException {
+		P page = element.dblClick();
+		checkStatusAndDown(page);
+		return page;
+	}
+	
 	//Method to disable all the HtmlUnit web client logs
 	public static void disableLogging (WebClient webClient) {
 		LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
@@ -375,5 +400,20 @@ public class HtmlUnitToolkit {
 
 		options.setThrowExceptionOnFailingStatusCode(false);
 		options.setThrowExceptionOnScriptError(false);
+	}
+	
+	public static void isSiteDown (Page page) throws SegSocialException {
+		if (page.isHtmlPage()) {
+			HtmlPage htmlPage= (HtmlPage) page;
+			Pattern pattern = Pattern.compile("\\s*PÁGINA\\s*NO\\s*DISPONIBLE\\s*", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(htmlPage.asXml());
+			if (matcher.find()) {
+				throw new OutOfServiceException("Página no disponible");
+			}
+			pattern = Pattern.compile("\\s*NO\\s*SE\\s*PUEDE\\s*ATENDER\\s*EN\\s*ESTE\\s*MOMENTO\\s*", Pattern.CASE_INSENSITIVE);
+			if (matcher.find()) {
+				throw new OutOfServiceException("Página no disponible");
+			}
+		}
 	}
 }
