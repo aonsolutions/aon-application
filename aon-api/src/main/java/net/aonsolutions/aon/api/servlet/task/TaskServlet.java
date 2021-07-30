@@ -2,13 +2,10 @@ package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.Base64;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
@@ -20,7 +17,6 @@ import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -77,6 +73,23 @@ public class TaskServlet extends AonApiHttpServlet{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
+	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API TASK SERVLET - DELETE METHOD");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+			case "/":
+				response(req, resp, deleteTask(api));
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
@@ -156,6 +169,12 @@ public class TaskServlet extends AonApiHttpServlet{
 			
 			return TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
 		}
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteTask(AonApiData api) {
+		Integer taskId = api.getData().optInt("taskId");
+		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), taskId);
 		return new JSONObject();
 	}
 }
