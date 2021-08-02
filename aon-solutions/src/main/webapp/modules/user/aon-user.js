@@ -214,7 +214,7 @@ export class AonUser extends AonElement {
 	buildPermissionButtons() {
 		let card2 = this.getElement('aonConfigurationUserSecurityCard');
 		card2.cleanSection2();
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 		if(this.getDur().checkUsers() || !user.portal || user.shared){
 			card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
 				let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
@@ -229,7 +229,7 @@ export class AonUser extends AonElement {
 		}
 
 		card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 
 			let roles = [{ role: 'ENTERPRISE', active: true, user: user.id}];
 			this.apps.forEach((app, i) => {
@@ -249,7 +249,7 @@ export class AonUser extends AonElement {
 		});
 
 		card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 
 			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
 			let employee = { role: 'EMPLOYEE', active: true, user: user.id};
@@ -290,9 +290,6 @@ export class AonUser extends AonElement {
 	}
 
 	build() {
-		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-
 		let card = document.getElementById('aonConfigurationUserCard');
 		let html = `<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
@@ -552,6 +549,7 @@ export class AonUser extends AonElement {
 			let aonSwitch = this.getElement(id);
 			let active = this.isAdmin() || this.isApp(app ? app.app : 'ADMIN');
 			aonSwitch.checked = active;
+			if(this.isAdmin() && app) aonSwitch.disabled = true;
 
 			let td4 = document.createElement('td');
 			tr.appendChild(td4);
@@ -599,6 +597,7 @@ export class AonUser extends AonElement {
 
 				select.options = JSON.stringify(app.access);
 				select.value = this.getAccess(app);
+				if(this.isAdmin()) select.disabled = true;
 				select.addEventListener('change', () => {
 					this.accessAction(app, select.value);
 				});
@@ -607,12 +606,12 @@ export class AonUser extends AonElement {
 	}
 
 	isApp(app) {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 		return user && user.roles && user.roles.includes(app.toUpperCase())
 	}
 
 	getAccess(app) {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 		let manager = app.app.toUpperCase() + '_MANAGER';
 		let portal = app.app.toUpperCase() + '_PORTAL';
 		if(this.isAdmin() || (user.roles && user.roles.includes(manager))){
@@ -626,7 +625,7 @@ export class AonUser extends AonElement {
 
 	accessAction(app, value) {
 		if(app) {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 			let roles = [];
 			let rol = app.app.toUpperCase()
 			let manager = app.app.toUpperCase() + '_MANAGER';
@@ -729,7 +728,7 @@ export class AonUser extends AonElement {
 	}
 
 	updateRoles(roles) {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 		this._user.roles = user && user.roles ? user.roles : [];
 		roles.forEach(role => this.updateRole(role));
 		console.log(roles);

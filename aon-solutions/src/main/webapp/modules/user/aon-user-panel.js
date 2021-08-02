@@ -82,8 +82,8 @@ export class AonUserPanel extends AonElement {
 		let userList = new AonUserList();
 		userList.setFilter({filter});
 		aonUserPanel.setContent(userList);
-		
-		aonUserPanel.setContent(`<aon-user-list filter="${filter}"> </aon-user-list>`);
+		userList.init();
+		// aonUserPanel.setContent(`<aon-user-list filter="${filter}"> </aon-user-list>`);
 	}
 
 	buildCreateUser(share) {

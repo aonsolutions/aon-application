@@ -48,7 +48,7 @@ export class AonUserList extends AonElement {
 
 
 	setFilter(filter) {
-		this.filter = filter;
+		this.filter = {filter};
 	}
 
 	search(value) {
@@ -64,9 +64,7 @@ export class AonUserList extends AonElement {
 	}
 
 	init() {
-		let filter = {
-			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
-		};
+		let filter = this.filter.filter || 'company';
 		let table = document.getElementById('aonUserTable');
 		if(table) {
 			getUsers(filter).then(users => {
