@@ -137,21 +137,6 @@ export class AonPayrollList extends AonElement {
     this.applicationEl.stopLoader();
   }
 
-
-  buildToolbarMobile(){
-    let parentEl = this.applicationParentEl;
-    if(!parentEl.isEmployee()){
-      const toolbarEl = new AonToolbar();
-      const filterEl = this.getElement(`${this.id}Filter`);
-      toolbarEl.type = ToolbarType.SECONDARY;
-      this.insertBefore(toolbarEl, filterEl);
-      toolbarEl.removeButtons();
-      toolbarEl.addButton2(ACTION.BACK, () =>parentEl.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST))
-      toolbarEl.title = MSG.PAYSHEETS;
-    }
-  }
-
-
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {

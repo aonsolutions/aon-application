@@ -57,6 +57,8 @@ export class AonDocumentalAyudat extends AonElement {
                     await this.getTags();
                     this.showView(DOCUMENTAL_VIEWS.AON_DOCUMENTAL_LIST_AYUDAT);
                 }
+            } else {
+                this.showError({message, type:CONSTANT.ERROR});
             }
         }).catch(e=>{
             console.error(e);

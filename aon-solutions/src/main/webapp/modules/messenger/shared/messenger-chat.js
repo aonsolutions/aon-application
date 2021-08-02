@@ -67,9 +67,7 @@ export const buildMobileChat = (mainView, aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.BACK,() => {
         wrapper.element.style.transition = ".25s";
         wrapper.element.style.opacity = "0";
-        setTimeout(() => {
-            aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
-        }, 250);
+        setTimeout(() =>  aonMessengerChat.back(), 250);
     });
 
     
@@ -312,7 +310,7 @@ const changeStyleSelect = (aonSelect) => {
     }
     const aonSelectGroup = aonSelect.querySelector(".aonInputGroup");
     if(aonSelectGroup)
-        aonSelectGroup.style.marginBottom = "0px"
+        aonSelectGroup.style.marginBottom = "0px";
 }
 
 /**

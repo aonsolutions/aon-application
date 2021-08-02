@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
@@ -146,32 +147,34 @@ public class TaskDAO {
 	}
 	
 	public static Task insert(AONContext ctx, Task task) {
-		task.setNumber(getLastTaskNumber(ctx,task));
-		Integer id = ctx.getDslContext().insertInto(TASK)
-			.set(TASK.ACTIVITY_TYPE, task.getActivityType())
-			.set(TASK.COMMENTS, task.getDescription())
-			.set(TASK.DESCRIPTION, task.getTitle())
-			.set(TASK.DOMAIN, task.getDomain())
-			.set(TASK.DUE_DATE,  AonDateUtils.toTimestamp(new Date()))
-			.set(TASK.END_DATE,  AonDateUtils.toTimestamp(new Date()))
-			.set(TASK.GTASK_ID, task.getGtaskId())
-			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
-			.set(TASK.NUMBER, task.getNumber())
-			.set(TASK.PERCENT, task.getPercent())
-			.set(TASK.PRIORITY, task.getPriority().value())
-			.set(TASK.PROJECT, task.getProject().getId())
-			.set(TASK.REGISTRY, task.getRegistry().getId())
-			.set(TASK.REPEAT_PERIOD, task.getRepeatPeriod().value())
-			.set(TASK.SENDER, task.getSender().getId())
-			.set(TASK.SOURCE, task.getSource().value())
-			.set(TASK.START_DATE,  AonDateUtils.toTimestamp(new Date()))
-			.set(TASK.STATUS, task.getStatus().value())
-			.set(TASK.TASK_HOLDER, task.getTaskHolder().getId())
-			.set(TASK.WORKGROUP, task.getWorkgroup().getId())
-			.set(TASK.CREATION_USER, ctx.getUser())
-			.set(TASK.CREATION_DATE,  AonDateUtils.toTimestamp(new Date()))
-			.set(TASK.MODIFICATION_USER, ctx.getUser())
-			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+		Integer id = ctx.getDslContext().insertInto(
+					 TASK,
+					 TASK.ACTIVITY_TYPE, 
+					 TASK.COMMENTS, 
+					 TASK.DESCRIPTION, 
+					 TASK.DOMAIN, 
+					 TASK.DUE_DATE, 
+					 TASK.END_DATE, 
+					 TASK.GTASK_ID, 
+					 TASK.GTASKLIST_ID, 
+					 TASK.PERCENT, 
+					 TASK.PRIORITY,
+					 TASK.PROJECT,
+					 TASK.REGISTRY,
+					 TASK.REPEAT_PERIOD,
+					 TASK.SENDER,
+					 TASK.SOURCE,
+					 TASK.START_DATE,
+					 TASK.STATUS,
+					 TASK.TASK_HOLDER,
+					 TASK.WORKGROUP,
+					 TASK.CREATION_USER,
+					 TASK.CREATION_DATE,
+					 TASK.MODIFICATION_USER,
+					 TASK.MODIFICATION_DATE,
+					 TASK.NUMBER
+				 ).select(getLastTaskNumber(task, ctx))
+	
 			.returning(TASK.ID).fetchOne().getId();
 		return task.setId(id);
 	}	
@@ -188,13 +191,38 @@ public class TaskDAO {
 		.execute();
 	}
 	
-	private static Integer getLastTaskNumber(AONContext ctx, Task task) {
-		Integer number = ctx.getDslContext()
-				.select(DSL.max(TASK.NUMBER))
-				.from(TASK)
-				.where(TASK.DOMAIN.eq(ctx.getDomainId()))
-				.fetchOne().value1();
-		return (number!=null ? number : 0) + 1;
+	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
+		 return 
+				 DSL.select( 
+						DSL.val(task.getActivityType()),
+						DSL.val(task.getDescription()),
+						DSL.val(task.getTitle()),
+						DSL.val(task.getDomain()),
+						DSL.val(AonDateUtils.toTimestamp(new Date())),
+						DSL.val(AonDateUtils.toTimestamp(new Date())),
+						DSL.val(task.getGtaskId()),
+						DSL.val(task.getGtasklistId()),
+						DSL.val(task.getPercent()),
+						DSL.val(task.getPriority().value()),
+						DSL.val(task.getProject().getId()),
+						DSL.val(task.getRegistry().getId()),
+						DSL.val(task.getRepeatPeriod().value()),
+						DSL.val(task.getSender().getId()),
+						DSL.val(task.getSource().value()),
+						DSL.val(AonDateUtils.toTimestamp(new Date())),
+						DSL.val(task.getStatus().value()),
+						DSL.val(task.getTaskHolder().getId()),
+						DSL.val(task.getWorkgroup().getId()),
+						DSL.val(ctx.getUser()),
+						DSL.val( AonDateUtils.toTimestamp(new Date())),
+						DSL.val(ctx.getUser()),
+						DSL.val(AonDateUtils.toTimestamp(new Date())),
+					   	DSL.coalesce(
+							DSL.max(TASK.NUMBER), DSL.inline(0)
+						).plus(DSL.inline(1))
+				  )
+				 .from(TASK)
+				 .where(TASK.DOMAIN.eq(task.getDomain()));
 	}
 	
 	public static class TaskFiller implements Function<Record, Task> {

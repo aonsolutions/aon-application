@@ -244,6 +244,7 @@ export class AonMovementsList extends AonElement {
       ...res,
       fra,
       dni,
+      ipf:dni,
       fechaParse,
       prev,
       status: span.outerHTML,

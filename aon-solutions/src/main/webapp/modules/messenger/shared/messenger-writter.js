@@ -126,9 +126,7 @@ export const buildMobileWritter = (wrapper, aonMessengerChat) => {
         aonMessengerChat.saveTaskWorkflow();
         hideWritter();
     });
-    bar.addButton2(ACTIONS.BACK,() => {
-        hideWritter();
-    });
+    bar.addButton2(ACTIONS.BACK,() =>  hideWritter());
 
     const textarea = setStyles(createAonTextArea(), {
         flexDirection: 'column',

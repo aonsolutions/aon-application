@@ -15,9 +15,11 @@ export class AonMessengerList extends AonElement {
   TABLE_ID;
   _list;
   MORE;
+  KEY_VIEW;
   static get observedAttributes() {
-    return [""];
+    return [];
   }
+
 
   setFilter(filter) {
 		return this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
@@ -55,6 +57,8 @@ export class AonMessengerList extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this._list = [];
     this.MORE = true;
+    this.KEY_VIEW = Math.random();
+    this.applicationEl.setKeyView(this.KEY_VIEW);
   }
 
   async build() {
@@ -80,7 +84,12 @@ export class AonMessengerList extends AonElement {
       aonTable.addColumn("Titulo", "string", "titleDescription", "30%");
       aonTable.addColumn("Fecha", "string", "dateParse", "20%");
     } 
-    aonTable.addEventListener(EVENT.MORE, ()=>{ if(this.MORE) this.loadMore(); })
+
+    aonTable.addEventListener(EVENT.MORE, ()=>{ 
+      if(this.KEY_VIEW === this.applicationEl.getKeyView()){
+        if(this.MORE) this.loadMore(); 
+      }
+    });
 
     this.loadMore();
   

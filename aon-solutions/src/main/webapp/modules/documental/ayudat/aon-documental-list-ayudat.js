@@ -163,7 +163,7 @@ export class AonDocumentalListAyudat extends AonElement {
                     dateParse: formatDate(new Date(resp.date * 1000)),
                     size: formatBytes(resp.size)
                 }));
-            }
+            } 
         } catch (error) {
             console.log(error);
         }
