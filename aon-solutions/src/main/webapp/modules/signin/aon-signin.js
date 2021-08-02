@@ -60,7 +60,8 @@ export class AonSignin extends AonElement {
       group:"DAY",
       period: period.value,
       startDate: period.startDate,
-      endDate: period.endDate
+      endDate: period.endDate,
+      active:true
     }
   }
   paintView() {
