@@ -3054,6 +3054,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void checkStatus(EnterpriseDraftObject enterpriseDraftObject) {
 		enterpriseDraftObject.checkStatus(enterpiseStatus -> {
+		
+			EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
+				getCCCCretaDetail().setSLDButtonsVisible(true);
+				showFootPanel();
+			}, () -> {
+				cost = new Cost() {
+					protected void getSLDAsHTML() {}
+				};
+				getCCCCretaDetail().setSLDButtonsVisible(false);
+			});
+			
+			EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
+					this::showFootPanel, 
+					this::closeFootPanel);
+			
 			SistemaREDResults saltraResults = new SistemaREDResults() {
 
 				@Override
@@ -3067,6 +3082,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void up2Date() {
+					selectResultsPanel();
 				}
 
 				@Override
@@ -3110,21 +3126,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			enterpiseStatus.visit(saltraResults);
 			resultsPanel.setWidget(saltraResults);
 			selectResultsPanel();
-
-			EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
-				getCCCCretaDetail().setSLDButtonsVisible(true);
-			}, () -> {
-				cost = new Cost() {
-					protected void getSLDAsHTML() {}
-				};
-				getCCCCretaDetail().setSLDButtonsVisible(false);
-			});
 			
-			EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
-					this::showFootPanel, 
-					this::closeFootPanel);
-			
-
 		}, throwable -> {
 			closeFootPanel();
 			getCCCCretaDetail().setSLDButtonsVisible(false);

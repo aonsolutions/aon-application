@@ -21,8 +21,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1000,12 +1000,27 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private void checkStatus(MainContrataContractObject mainContrataContractObject) {
 		mainContrataContractObject.checkStatus(enterpriseStatus -> {
+		
+			ifSistemaREDEnabled(enterpriseStatus, () -> {
+				showFootPanel();
+				MainContrataContract.this.setSistemaREDVisible(true);
+				//ContrataEmployee.this.setOnSaved(e -> sistemaREDResults.run());
+			}, () -> {
+				closeFootPanel();
+				MainContrataContract.this.setSistemaREDVisible(false);
+			});
+			
 			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
 				
 				Task syncTask ;
 				
 				@Override
-				public void up2Date() {
+				public void up2Date() {}
+				
+				@Override
+				public void up2DateEnterprise() {
+					this.setUp2DateEnterprise();
+					closeFootPanel();
 				}
 
 				@Override
@@ -1091,15 +1106,6 @@ public class MainContrataContract extends MainEntryPoint {
 			enterpriseStatus.visit(sistemaREDResults);
 			resultsPanel.setWidget(sistemaREDResults);
 			selectResultsPanel();
-
-			ifSistemaREDEnabled(enterpriseStatus, () -> {
-				showFootPanel();
-				MainContrataContract.this.setSistemaREDVisible(true);
-				//ContrataEmployee.this.setOnSaved(e -> sistemaREDResults.run());
-			}, () -> {
-				closeFootPanel();
-				MainContrataContract.this.setSistemaREDVisible(false);
-			});
 
 		}, throwable -> {
 			closeFootPanel();

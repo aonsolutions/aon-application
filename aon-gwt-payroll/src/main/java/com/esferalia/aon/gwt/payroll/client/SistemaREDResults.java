@@ -552,6 +552,17 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	// ------------------------------------------------------ EnterprisesStatus
 	
 	@Override
+	public void up2DateEnterprise() {
+		addInfo("Empresa actualizada, no existen movimientos y/o cambios nuevos.");
+		syncMessages();
+	}
+	
+	protected void setUp2DateEnterprise() {
+		addInfo("Empresa actualizada, no existen movimientos y/o cambios nuevos.");
+		syncMessages();
+	}
+	
+	@Override
 	public void affiliatedNotFound(AffiliatedNotFound status) {
 		
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
