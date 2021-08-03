@@ -17,10 +17,11 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AEAT_2021_Declaration extends Mod303Declaration {
+public class AEAT_2021_2_Declaration extends Mod303Declaration {
 
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -32,7 +33,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		void populate(Mod303 mod);
 	}
 
-	protected AEAT_2021_Declaration() {
+	protected AEAT_2021_2_Declaration() {
 
 	}
 
@@ -44,7 +45,8 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && (mod.getYear() == 2021 && mod.getPeriod().isFirstSemester()); 
+		return mod.isAEAT() && 
+				(mod.getYear() > 2021 || (mod.getYear() == 2021 && mod.getPeriod().isLastSemester())); 
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { Mod303Key.CT_C29, Mod303Key.CT_C31,
@@ -1458,29 +1460,39 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 
 		// Entregas intracomunitarias de bienes y servicios
 		, CT_C59(Mod303Key.CT_C59, (mod, vat) -> ventasIntracomunitarias( vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C59, mod, vat.getBase()), null, null, null)
+			(ctx, mod, vat) -> add(Mod303Key.CT_C59, mod, vat.getBase()), null, null, null)
 
 		// Exportaciones y operaciones asimiladas
-		,
-		CT_C60(Mod303Key.CT_C60,
-				(mod, vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C60, mod, vat.getBase()), null, null, null)
+		, CT_C60(Mod303Key.CT_C60,
+			(mod, vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod),
+			(ctx, mod, vat) -> add(Mod303Key.CT_C60, mod, vat.getBase()), null, null, null)
+		//Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 123).
+		,CT_C120(Mod303Key.CT_C120, (mod, vat) -> ventasExtraComunitariasCanCeuServicios( vat, mod),
+			(ctx, mod, vat) -> add(Mod303Key.CT_C120, mod, vat.getBase()), null, null, null)
+		// Operaciones sujetas con inversi\u00F3n del sujeto pasivo
+		,CT_C122(Mod303Key.CT_C122, (mod, vat) -> ventasISP( vat, mod),
+			(ctx, mod, vat) -> add(Mod303Key.CT_C122, mod, vat.getBase()), null, null, null)
+		//Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla única.
+		,CT_C123(Mod303Key.CT_C123)
+		//Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla única.
+		,CT_C124(Mod303Key.CT_C124)
+/*
 
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el
 		// derecho a deducción
 		, CT_C61(Mod303Key.CT_C61, (mod, vat) -> ventasISPExtraComunitariasCanCeuServicios( vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C61, mod, vat.getBase()), null, null, null)
+ */		
 
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen
 		// especial del criterio de caja hubieran
 		// resultado devengadas conforme a la regla general de devengo contenida en el
 		// art. 75 LIVA
-		,
-		CT_C62(Mod303Key.CT_C62, null, null,
+		,CT_C62(Mod303Key.CT_C62, null, null,
 				(ctx, mod) -> add(Mod303Key.CT_C62, mod, Mod303DAO.getVatAccrualPaymentOutputBase(ctx, mod)), null,
 				null)
 
-		, CT_C63(Mod303Key.CT_C63, null, null, (ctx, mod) -> {
+		,CT_C63(Mod303Key.CT_C63, null, null, (ctx, mod) -> {
 			double quota = Mod303DAO.getVatAccrualPaymentOutputQuota(ctx, mod);
 			add(Mod303Key.CT_C63, mod, quota);
 		}, null, null)
@@ -1901,10 +1913,20 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
 	}
-	public static boolean  ventasISPExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
-		return !vat.isVatSurchargeRegime() 
-				&& (vat.isOtherISPSales()
-				|| (vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+	public static boolean  ventasExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
+		boolean add = !vat.isVatSurchargeRegime() 
+			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+		if ( add && mod.getYear() == 2021) {
+			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
+		} 
+		return add;
+	}
+	public static boolean  ventasISP(VatContext vat, Mod303 mod) {
+		boolean add = !vat.isVatSurchargeRegime() && vat.isOtherISPSales();
+		if ( add && mod.getYear() == 2021) {
+			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
+		} 
+		return add;
 	}
 
 	private static Mod303ActivityFarmer ensureFarmerActivity(Mod303 mod, int idx) {

@@ -284,11 +284,13 @@ public class Model303 extends MainEntryPoint {
 	private void select(Mod303 selected) {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
-			
-			if (selected.getYear() >= 2021) {
+			if (selected.getYear() > 2021) {
+				declarationContainer.setWidget( new Model3032021_2AEAT(selected,new Model303Callback(), getOptions()));
+			} else if (selected.getYear() == 2021 && (selected.getPeriod().isLastSemester())) {
+				declarationContainer.setWidget( new Model3032021_2AEAT(selected,new Model303Callback(), getOptions()));
+			} else if (selected.getYear() == 2021 && (selected.getPeriod().isFirstSemester())) {	
 				declarationContainer.setWidget( new Model3032021AEAT(selected,new Model303Callback(), getOptions()));
-			}
-			else if (selected.getYear() < 2018) {
+			} else if (selected.getYear() < 2018) {
 				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getOptions()));
 			} else if ((selected.getYear() >= 2018 && selected.getYear() < 2020) 
 				|| (selected.getYear() == 2020 && !selected.isLastPeriod()))  {

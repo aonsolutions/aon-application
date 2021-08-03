@@ -375,8 +375,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 
 	,CT_C59("303-CTA59",true ,"59", "Entregas intracomunitarias de bienes y servicios")
+	,CT_C120("303-CTA120",true ,"120","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 123).")
+	,CT_C122("303-CTA122",true ,"122","Operaciones sujetas con inversi\u00F3n del sujeto pasivo.")
+	,CT_C123("303-CTA123",true ,"123","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
+	,CT_C124("303-CTA124",true ,"124","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla única.")
 	,CT_C60("303-CTA60",true ,"60","Exportaciones y operaciones asimiladas")
-	,CT_C61("303-CTA61",true ,"61","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n") 
+	,CT_C61("303-CTA61",true ,"61","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
 	,CT_C62("303-CTA62",true ,"62","Criterio de Caja. Importes devengados en per\u00EDodo de liquidaci\u00F3n seg\u00FAn art. 75 LIVA. - Base Imponible")
 	,CT_C63("303-CTA63",true ,"63","Criterio de Caja. Importes devengados en per\u00EDodo de liquidaci\u00F3n seg\u00FAn art. 75 LIVA. - Cuota")
 	,CT_C74("303-CTA74",true ,"74","Criterio de Caja. Cuotas de IVA soportados conforme a la regla general de devengo seg\u00FAn art. 75 LIVA. - Base Imponible")
