@@ -131,6 +131,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertTrue(wait.until(ExpectedConditions.attributeContains(byid, "innerText", "CONCEPTO ANTIGUEDAD, DESCRIPCION")));
 	}
 	
+	@Ignore
 	@Test
 	public void testAtrasos() throws Exception {
 		
@@ -149,7 +150,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 			calendar.set(Calendar.MONTH, month);
 			switchSalaryMonth(driver, calendar);
 			retryingFindClick(driver, By.id(GWT_ID_PROFIX + "salaryButton"));
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
+			wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
 		}
 		
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
