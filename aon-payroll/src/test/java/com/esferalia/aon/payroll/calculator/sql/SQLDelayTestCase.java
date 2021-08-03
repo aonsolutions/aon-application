@@ -3142,6 +3142,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 		setData(aonContext, contract, "SALARIO_MENSUAL", "1600.00");
 		
+		
+		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
 		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
@@ -3171,7 +3173,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
-		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int workedDays = monthDays - 2;
 		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
@@ -3284,7 +3286,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
-		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int workedDays = monthDays - 2;
 		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(100.00 * workedDays / 30.00 , salary.getTotalPayment(), DELTA);
@@ -3400,7 +3402,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//
 		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Remember adjust monthly last IT period 
-		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = AonDateUtils.getMax(endITDate, Calendar.DAY_OF_MONTH);
 		int activeDays = monthDays - 2;
 		org.junit.Assert.assertEquals(100.00 * activeDays / 30.00 , salary.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(100.00 * activeDays / 30.00 , salary.getTotalPayment(), DELTA);
@@ -3500,6 +3502,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		
+		
+		
 		SalaryBuilder salaryBuilder = new SalaryBuilder() {
 			@Override
 			public void addPayment(Double amount, Double quote, Double tax, String description,
@@ -3519,7 +3523,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Not monthly adjust for payment ... so 
-		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays_4_15 = ( monthDays - 27 );
 		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
@@ -3642,7 +3646,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//
 		org.junit.Assert.assertEquals(100.00   , salary.getCommonBase(), DELTA);
 		// Not monthly adjust for payment ... so 
-		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = AonDateUtils.getMax(startITDate, Calendar.DAY_OF_MONTH);
 		int itDays_4_15 = ( monthDays - 27 );
 		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60 , salary.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(100.00 * 24 / 30.00  + 100.00 * itDays_4_15 / 30.00 * 0.60, salary.getTotalPayment(), DELTA);
