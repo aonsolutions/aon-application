@@ -54,6 +54,7 @@
 		function getSubEntryPoint() {
         	return "#{subEntryPoint}";
         }
+		
 		function isTediSnapshot() {
 	       	return false;
 	  	}
@@ -81,6 +82,7 @@
 
 	    	 
 		function startModule() {
+			localStorage.removeItem('rootPanel');
 			if (window.document.createElement && window.document.getElementsByTagName) {
 				var script = window.document.createElement("script");
 				script.type = "text/javascript";

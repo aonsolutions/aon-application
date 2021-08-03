@@ -10,7 +10,7 @@
 
 	<meta name="gwt:property" content="locale=es_ES" />
 	
-	<aon:valueParam name="entryPoint" default="documents" />
+	<aon:valueParam name="entryPoint" default="" />
 	<aon:valueParam name="subEntryPoint" default="" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
@@ -24,9 +24,6 @@
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-
-	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="#{module}/bower_components/webcomponentsjs/webcomponents-lite.js" />
 	
 	<div id="rootPanel"
 		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
@@ -34,25 +31,21 @@
 
 	<script type="text/javascript">
 	<![CDATA[
-		
-		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
-	
-		function drawChartsCallback(){
-		
-		}
-		
 	 	function getCurrentDomain() {
 			return #{gwtDomain};
 		}
-		function getCurrentDomainName() {
+		
+	 	function getCurrentDomainName() {
 	       	return "#{gwtDomainName}"
 	  	}
+		
 		function getCurrentUser() {
 	       	return "#{gwtUser}"
 	  	}
-		function isTediSnapshot() {
-	       	return false;
-	  	}
+		
+		function getSubEntryPoint() {
+        	return "#{subEntryPoint}";
+        }
 
 		var search = "/#{module}.nocache.js";
 		var scripts = window.document.getElementsByTagName("script");
@@ -77,6 +70,7 @@
 
 	    	 
 		function startModule() {
+			localStorage.removeItem('rootPanel');
 			if (window.document.createElement && window.document.getElementsByTagName) {
 				var script = window.document.createElement("script");
 				script.type = "text/javascript";
