@@ -960,8 +960,7 @@ public class EmployeesServiceHelper {
 				super(connection, startDate, endDate, issueDate, criteria);
 			}
 
-			@Override
-			public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
+			public Object __br(Date date) throws ExpressionException, SQLException, SalaryException {
 				
 				Date today = resetTime(Calendar.getInstance().getTime());
 				Date endDate = AonDateUtils.add(getEndDate(), Calendar.DAY_OF_MONTH,1); // TODO: +1?
@@ -981,7 +980,7 @@ public class EmployeesServiceHelper {
 				if ( !salary.isPresent() )
 					return super.br(date);
 				
-				// DELAYs
+				// DELAYs ?
 				
 				Date contractStart = super.getDate(CONTRACT, ContractColumns.START_DATE);
 				if ( contractStart.before(getFirstDayOfMonth(date)))
