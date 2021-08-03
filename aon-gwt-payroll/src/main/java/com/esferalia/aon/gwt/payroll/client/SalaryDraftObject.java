@@ -925,8 +925,16 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getDbGgcBase();
 	}
 
+	public Double getSsCgcBase() {
+		return salaryDraft.getSsGgcBase();
+	}
+
 	public Double getDbCgpBase() {
 		return salaryDraft.getDbGgpBase();
+	}
+
+	public Double getSsCgpBase() {
+		return salaryDraft.getSsGgpBase();
 	}
 
 	public Double getDbIrpfBase() {
@@ -937,8 +945,16 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getDbHExtraBase();
 	}
 
+	public Double getSsHExtraBase() {
+		return salaryDraft.getSsHExtraBase();
+	}
+
 	public Double getDbNonHExtraBase() {
 		return salaryDraft.getDbNonHExtraBase();
+	}
+
+	public Double getSsNonHExtraBase() {
+		return salaryDraft.getSsNonHExtraBase();
 	}
 
 	public Double getDbProrationBase() {
@@ -963,6 +979,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 
 	public boolean hasDbSalary() {
 		return salaryDraft.hasDbSalary();
+	}
+
+	public boolean hasSsSalary() {
+		return salaryDraft.hasSsSalary();
 	}
 
 	public boolean hasEvents() {

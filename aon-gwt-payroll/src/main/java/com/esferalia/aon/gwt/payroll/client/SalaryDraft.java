@@ -62,6 +62,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -360,8 +361,12 @@ public class SalaryDraft extends ResizeComposite
 	};
 
 	// @formatter:on
+	static interface HasStyleName  extends  HasVisibility{
+		
+		String getStyleName();
+	}
 
-	static class VisibilityImpl implements HasVisibility {
+	static class VisibilityImpl implements HasVisibility , HasStyleName{
 
 		private com.google.gwt.dom.client.Element elem;
 
@@ -377,6 +382,23 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		public void setVisible(boolean visible) {
 			UIObject.setVisible(elem, visible);
+		}
+		
+		@Override
+		public String getStyleName() {
+			return getStyleName(elem);
+		}
+		
+		private static String getStyleName(com.google.gwt.dom.client.Element elem) {
+			StringBuffer styleName = new StringBuffer();
+			
+			styleName.append(UIObject.getStyleName(elem));
+			for ( int i = 0 ; i < elem.getChildCount(); i++)
+				if ( (com.google.gwt.dom.client.Element.is(elem.getChild(i))) )
+					styleName.append(getStyleName((com.google.gwt.dom.client.Element.as(elem.getChild(i)))));
+			
+			
+			return styleName.toString();
 		}
 
 	}
@@ -2492,9 +2514,13 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label dbCgcBaseLabel;
 	@UiField
+	Label ssCgcBaseLabel;
+	@UiField
 	ValueTextBox cgpBaseLabel;
 	@UiField
 	Label dbCgpBaseLabel;
+	@UiField
+	Label ssCgpBaseLabel;
 	@UiField
 	ValueLabel irpfBaseLabel;
 	@UiField
@@ -2504,9 +2530,13 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label dbHExtraBaseLabel;
 	@UiField
+	Label ssHExtraBaseLabel;
+	@UiField
 	ValueLabel nonHExtraBaseLabel;
 	@UiField
 	Label dbNonHExtraBaseLabel;
+	@UiField
+	Label ssNonHExtraBaseLabel;
 	@UiField
 	ValueLabel prorationBaseLabel;
 	@UiField
@@ -2581,6 +2611,7 @@ public class SalaryDraft extends ResizeComposite
 	private int zoom;
 	private Scope scope;
 	private List<HasVisibility> dbUIObjects;
+	private List<HasStyleName> ssUIObjects;
 	private SalaryDraftObject salaryDraftObject;
 	private Map<Event.Type, String[]> eventStyles;
 	private List<Bonus> availableBonus = new ArrayList<Bonus>();
@@ -2630,6 +2661,7 @@ public class SalaryDraft extends ResizeComposite
 		initEvents();
 		initEventsStyles(style);
 		initSalaryDb();
+		initSalarySs();
 		export2JS(this);
 	}
 	
@@ -2935,6 +2967,18 @@ public class SalaryDraft extends ResizeComposite
 		showDbTimeRulePanel();
 	}
 
+	private void setSsVisible(boolean visible) {
+		ssCgcBaseLabel.setVisible(visible);
+		ssCgpBaseLabel.setVisible(visible);
+		ssHExtraBaseLabel.setVisible(visible);
+		ssNonHExtraBaseLabel.setVisible(visible);
+
+		for (HasVisibility obj : ssUIObjects)
+			obj.setVisible(visible);
+		
+		//showSsTimeRulePanel();
+	}
+
 	private void showDraft() {
 		showWidget(draftPanel);
 
@@ -3104,11 +3148,15 @@ public class SalaryDraft extends ResizeComposite
 		cgcBaseLabel.setText(format(cgcBase), displayChanges);
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
+		ssCgcBaseLabel.setText(format(salaryDraftObject.getSsCgcBase()));
+		setDbStyleName(ssCgcBaseLabel, cgcBaseLabel);
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
-		dbCgpBaseLabel.setText(format(cgpBase));
+		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
+		ssCgpBaseLabel.setText(format(salaryDraftObject.getSsCgcBase()));
+		setDbStyleName(ssCgpBaseLabel, cgpBaseLabel);
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()), displayChanges);
 		dbIrpfBaseLabel.setText(format(salaryDraftObject.getDbIrpfBase()));
@@ -3116,9 +3164,13 @@ public class SalaryDraft extends ResizeComposite
 		hExtraBaseLabel.setText(format(salaryDraftObject.gethExtraBase()), displayChanges);
 		dbHExtraBaseLabel.setText(format(salaryDraftObject.getDbHExtraBase()));
 		setDbStyleName(dbHExtraBaseLabel, hExtraBaseLabel);
+		ssHExtraBaseLabel.setText(format(salaryDraftObject.getSsHExtraBase()));
+		setDbStyleName(ssHExtraBaseLabel, hExtraBaseLabel);
 		nonHExtraBaseLabel.setText(format(salaryDraftObject.getNonHExtraBase()), displayChanges);
 		dbNonHExtraBaseLabel.setText(format(salaryDraftObject.getDbNonHExtraBase()));
 		setDbStyleName(dbNonHExtraBaseLabel, nonHExtraBaseLabel);
+		ssNonHExtraBaseLabel.setText(format(salaryDraftObject.getSsNonHExtraBase()));
+		setDbStyleName(ssNonHExtraBaseLabel, nonHExtraBaseLabel);
 		prorationBaseLabel.setText(format(salaryDraftObject.getProrationBase()), displayChanges);
 		dbProrationBaseLabel.setText(format(salaryDraftObject.getDbProrationBase()));
 		setDbStyleName(dbProrationBaseLabel, prorationBaseLabel);
@@ -3140,6 +3192,7 @@ public class SalaryDraft extends ResizeComposite
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
 
 		clearDbWidgets();
+		clearSsWidgets();
 		clearEventsTable();
 		clearContextTable();
 		clearPaymentsTable();
@@ -3206,7 +3259,23 @@ public class SalaryDraft extends ResizeComposite
 	
 
 	private void initTgssCheck(){
+		// clean old styles 
+		tgssCheck.removeStyleName(style.textOk());
+		tgssCheck.removeStyleName(style.textWarn());
+		tgssCheck.removeStyleName(style.textError());
+		
 		tgssCheck.setVisible(isSalary());
+		
+		Double diffs = getDiffsWithSsSalary();
+		if ( diffs == null )
+			; 
+		else if ( diffs == 0.00 )
+			tgssCheck.addStyleName(style.textOk());
+		else if (diffs < 0.20)
+			tgssCheck.addStyleName(style.textWarn());
+		else 
+			tgssCheck.addStyleName(style.textError());
+		
 	}
 
 
@@ -3224,8 +3293,8 @@ public class SalaryDraft extends ResizeComposite
 		//dbSalaryCheck.setValue(hasDiffsWithDbSalary, false);
 		dbSalaryCheck.addStyleName(hasDiffsWithDbSalary ? style.textError() : style.textOk());
 		dbSalaryCheck.removeStyleName(hasDiffsWithDbSalary ? style.textOk() : style.textError());
-		if ( hasDiffsWithDbSalary )
-			scrollPanel.ensureVisible(dbDiffWidget);
+		//if ( hasDiffsWithDbSalary )
+		//	scrollPanel.ensureVisible(dbDiffWidget);
 		
 	}
 
@@ -3412,8 +3481,9 @@ public class SalaryDraft extends ResizeComposite
 	void onTgssCheckChanged(ValueChangeEvent<Boolean> event) {
 		showTimeRulePanel();
 		showDbTimeRulePanel();
+		setSsVisible(hasSsSalary() && event.getValue());
 	}
-
+	
 	private void syncSalarySelect() {
 		salaryDraftObject.getExtras(new AsyncCallback<List<Extra>>() {
 			@Override
@@ -3435,6 +3505,9 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 		dbUIObjects = new LinkedList<HasVisibility>();
+	}
+	private void initSalarySs() {
+		ssUIObjects = new LinkedList<HasStyleName>();
 	}
 
 	private void initEvents() {
@@ -3558,6 +3631,10 @@ public class SalaryDraft extends ResizeComposite
 		dbUIObjects.clear();
 	}
 
+	private void clearSsWidgets() {
+		ssUIObjects.clear();
+	}
+
 	private void clearEventsTable() {
 		eventsTable.removeAllRows();
 	}
@@ -3573,6 +3650,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void addDbWidget(HasVisibility widget) {
 		dbUIObjects.add(widget);
+	}
+
+	private void addSsWidget(HasStyleName widget) {
+		ssUIObjects.add(widget);
 	}
 
 	private void dumpEvents(List<Event> events) {
@@ -4159,11 +4240,22 @@ public class SalaryDraft extends ResizeComposite
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
+
 		VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
-
 		dbWidget.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
-
 		addDbWidget(dbWidget);
+
+//		InlineLabel ssAmountLabel = new InlineLabel();
+//		ssAmountLabel.setText(format(item.getSsAmount()));
+//		ssAmountLabel.setVisible(salaryDraftObject.hasSsSalary());
+//		ssAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
+//		setDbStyleName(ssAmountLabel, amountBox.getText(), ssAmountLabel.getText());
+//		amountBox.ensureDebugId("ss-amount-label-" + row );
+//		amountsPanel.add(ssAmountLabel);
+//		amountsPanel.setCellWidth(ssAmountLabel, "50%");
+//		VisibilityImpl ssWidget = new VisibilityImpl(ssAmountLabel.getElement().getParentElement());
+//		ssWidget.setVisible(salaryDraftObject.hasSsSalary() && tgssCheck.getValue());
+//		addSsWidget(ssWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
 		paymentsTable.getCellFormatter().addStyleName(row, isDeduction ? 4 : 3, AON.AON_TEXT_RIGHT);
@@ -4442,22 +4534,40 @@ public class SalaryDraft extends ResizeComposite
 		for ( String style: iconStyles ) 
 			isCost |= "_cost".equals(style);
 		
-		amountLabel.ensureDebugId(deduction.getType().name().toLowerCase() + ( isCost ? "_cost"  : "" ) );
+		String name =  deduction.getType() == null ? "unknown" : deduction.getType().name().toLowerCase();
+		
+		amountLabel.ensureDebugId(name + ( isCost ? "_cost"  : "" ) );
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));
 		setDbStyleName(dbAmountLabel, amountLabel);
+
+		InlineLabel ssAmountLabel = new InlineLabel();
+		ssAmountLabel.setText(format(deduction.getSsAmount()));
+		setDbStyleName(ssAmountLabel, amountLabel);
+
 		amountsPanel.add(amountLabel);
 		amountsPanel.add(dbAmountLabel);
+		amountsPanel.add(ssAmountLabel);
 
 		amountsPanel.setWidth("100%");
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
+		amountsPanel.setCellWidth(ssAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(amountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
+		amountsPanel.setCellHorizontalAlignment(ssAmountLabel, HorizontalAlignmentConstant.startOf(Direction.RTL));
 
-		VisibilityImpl visibilityImpl = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
-		addDbWidget(visibilityImpl);
-		visibilityImpl.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
+		VisibilityImpl dbVisibilityImpl = new VisibilityImpl(dbAmountLabel.getElement().getParentElement());
+		addDbWidget(dbVisibilityImpl);
+		dbVisibilityImpl.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
+		
+		VisibilityImpl ssVisibilityImpl = new VisibilityImpl(ssAmountLabel.getElement().getParentElement());
+		if ( isSSDeduction(deduction) || isSSBonus(deduction)) {
+			addSsWidget(ssVisibilityImpl);
+			ssVisibilityImpl.setVisible(salaryDraftObject.hasSsSalary() && tgssCheck.getValue());
+		} else {
+			ssVisibilityImpl.setVisible(false);
+		}
 
 		paymentsTable.setWidget(row, 4, amountsPanel);
 
@@ -5360,6 +5470,11 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private Widget newPercentWidget(Bonus bonus, Double percent) {
+		if ( percent == null )
+			return null;
+		if ( bonus.getType() == null )
+			return null; //newPercentLabel(bonus, percent, null);
+		
 		switch (bonus.getType()) {
 		case ERE:
 			return newPercentBox(getPercentName(bonus), bonus, percent);
@@ -5675,6 +5790,10 @@ public class SalaryDraft extends ResizeComposite
 		return salaryDraftObject != null  && salaryDraftObject.hasDbSalary();
 	}
 	
+	private boolean hasSsSalary(){
+		return salaryDraftObject != null  && salaryDraftObject.hasSsSalary();
+	}
+
 	private boolean hasEvents() {
 		return salaryDraftObject != null && salaryDraftObject.hasEvents();
 	}
@@ -5727,6 +5846,58 @@ public class SalaryDraft extends ResizeComposite
 		return null;
 	}
 	
+	private Double getDiffsWithSsSalary(){
+		if ( salaryDraftObject == null ) 
+			return null;
+		
+		if ( !salaryDraftObject.hasSsSalary() )	
+			return null;
+		
+		double diffs = 0.00;
+		
+		double cgcBase = parse(format(salaryDraftObject.getCgcBase()));
+		double ssCgcBase = parse(format(salaryDraftObject.getSsCgcBase()));
+		double cgpBase = parse(format(salaryDraftObject.getCgpBase()));
+		double ssCgpBase = parse(format(salaryDraftObject.getSsCgpBase()));
+		double hExtraBase = parse(format(salaryDraftObject.gethExtraBase()));
+		double ssHExtraBase = parse(format(salaryDraftObject.getSsHExtraBase()));
+		double nonHExtraBase = parse(format(salaryDraftObject.getNonHExtraBase()));
+		double ssnonHExtraBase = parse(format(salaryDraftObject.getNonHExtraBase()));
+		
+		diffs  +=  Math.abs( cgcBase - ssCgcBase );
+		diffs  +=  Math.abs( cgpBase - ssCgpBase );
+		diffs  +=  Math.abs( hExtraBase - ssHExtraBase );
+		diffs  +=  Math.abs( nonHExtraBase - ssnonHExtraBase );
+		
+		Deduction[] ssDeductions = salaryDraftObject.getDeductions()
+		.stream().filter(SalaryDraft::isSSDeduction).toArray(Deduction[]::new);
+		
+		for (Deduction deduction : ssDeductions ) {
+			double amount = parse(format(deduction.getAmount()));
+			double ssAomunt = parse(format(deduction.getSsAmount()));
+			diffs  +=  Math.abs( amount - ssAomunt );
+		}
+
+		Deduction[] ssCosts = salaryDraftObject.getCosts()
+		.stream().filter(SalaryDraft::isSSDeduction).toArray(Deduction[]::new);
+
+		for (Deduction cost : ssCosts) {
+			double amount = parse(format(cost.getAmount()));
+			double ssAomunt = parse(format(cost.getSsAmount()));
+			diffs  +=  Math.abs( amount - ssAomunt );
+		}
+
+		Bonus[] ssBonuses = salaryDraftObject.getBonuses()
+		.stream().filter(SalaryDraft::isSSBonus).toArray(Bonus[]::new);
+		for (Bonus bonus : ssBonuses) {
+			double amount = parse(format(bonus.getAmount()));
+			double ssAomunt = parse(format(bonus.getSsAmount()));
+			diffs  +=  Math.abs( amount - ssAomunt );
+		}
+
+		return diffs;
+	}
+
 	private List<Variable> getConstants(List<Variable> context) {
 		List<Variable> summingConstants = new ArrayList<Variable>();
 
@@ -6059,7 +6230,15 @@ public class SalaryDraft extends ResizeComposite
 	// ------------------------------------------------------- Static 'Library'
 
 	private static boolean isSystemBonus(Bonus bonus) {
-		return bonus.getScope() == Scope.SYSTEM;
+		if (bonus.getScope() == Scope.SYSTEM)
+			return true;
+
+		String expression = bonus.getExpression();
+
+		if (StringUtils.isBlank(expression))
+			return false;
+
+		return expression.startsWith("/*epoch:");
 	}
 	
 	private static boolean isSystemDeduction(Deduction deduction) {
@@ -6068,6 +6247,12 @@ public class SalaryDraft extends ResizeComposite
 				return true;
 		
 		return deduction.getScope() == Scope.SYSTEM;
+	}
+
+	private static Double getSsPercent(Deduction deduction, SalaryDraftObject draftObject) {
+		return getPercent(deduction.getType(), deduction.getSsAmount(), Double.NaN,
+				draftObject.getSsCgcBase(), draftObject.getSsCgpBase(), draftObject.getSsHExtraBase(),
+				draftObject.getSsNonHExtraBase());
 	}
 
 	private static Double getDbPercent(Deduction deduction, SalaryDraftObject draftObject) {
@@ -6171,21 +6356,11 @@ public class SalaryDraft extends ResizeComposite
 	private static Double getPercent(Bonus bonus, SalaryDraftObject draftObject) {
 		
 		try {
-			
-			String name = getPercentName(bonus);
-			
-			return 
-			draftObject.getContext().stream()
-			.filter( v -> v.getName().equals(name))
-			.filter( v -> v.getStartDate().compareTo(bonus.getEndDate()) <= 0)
-			.filter( v -> v.getEndDate().compareTo(bonus.getStartDate()) >= 0)
-			.map(v -> Double.parseDouble(v.getValue().toString()))
-			.findFirst()
-			.orElse(100.00)
-			;
-
-		} catch ( Exception e ) {
-			return 100.00;
+			RegExp percentage = RegExp.compile("\\((.*)%\\)","i");
+			MatchResult result = percentage.exec(bonus.getDescription());
+			return Double.parseDouble(result.getGroup(1).replace(',', '.'));
+		} catch ( Throwable t ) {
+			return null;
 		}
 		
 	}
@@ -6554,6 +6729,29 @@ public class SalaryDraft extends ResizeComposite
 	private static void info(String message) {
 		if ( LogConfiguration.loggingIsEnabled())
 			LOGGER.log(Level.INFO, message);
+	}
+	
+	private static boolean isSSBonus(Item<?> item) {
+		return
+		(item instanceof Bonus) && 
+		isSystemBonus((Bonus)item);
+	}
+
+	private static boolean isSSDeduction(Item<?> item) {
+		Enum<?> type = item.getType();
+		if (
+			type == Deduction.Type.BONUS
+			|| type == Deduction.Type.FOGASA
+			|| type == Deduction.Type.JOB_TRAINING
+			|| type == Deduction.Type.UNEMPLOYMENT
+			|| type == Deduction.Type.COMMON_CONTINGENCY
+			|| type == Deduction.Type.STRUCTURAL_OVERTIME
+			|| type == Deduction.Type.NON_STRUCTURAL_OVERTIME
+			|| type == Deduction.Type.PROFESSIONAL_CONTINGENCY
+			)
+			return true;
+		
+		return false;
 	}
 
 	// -------------------------------------------------- ContrataEmployee.Init & Setters

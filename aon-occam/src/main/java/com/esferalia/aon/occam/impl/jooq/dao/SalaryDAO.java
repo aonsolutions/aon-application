@@ -355,6 +355,7 @@ public class SalaryDAO {
 				.forEachOrdered(deductionRecord->{
 					salary.addDeduction(
 							deductionRecord.get(SALARY_DEDUCTION.TYPE), 
+							deductionRecord.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), 
 							deductionRecord.get(SALARY_DEDUCTION.DESCRIPTION), 
 							deductionRecord.get(SALARY_DEDUCTION.AMOUNT),
 							deductionRecord.get(SALARY_DEDUCTION.TYPE)
@@ -573,6 +574,7 @@ public class SalaryDAO {
 				.forEachOrdered(deductionRecord->{
 					salary.addDeduction(
 							deductionRecord.get(SALARY_DEDUCTION.TYPE), 
+							deductionRecord.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), 
 							deductionRecord.get(SALARY_DEDUCTION.DESCRIPTION), 
 							deductionRecord.get(SALARY_DEDUCTION.AMOUNT),
 							deductionRecord.get(SALARY_DEDUCTION.TYPE)
@@ -1018,6 +1020,7 @@ public class SalaryDAO {
 		record.setDomain(domain);
 		record.setSalary(salary);
 		record.setAmount(cost.getAmount());
+		record.setCostConcept(cost.getName());
 		record.setDescription(cost.getDescription());
 		record.setType(value(cost.getCostType(), DeductionType.class));
 		
@@ -1030,6 +1033,7 @@ public class SalaryDAO {
 		record.setDomain(domain);
 		record.setSalary(salary);
 		record.setAmount(deduction.getAmount());
+		record.setDeductionConcept(deduction.getName());
 		record.setDescription(deduction.getDescription());
 		record.setType(value(deduction.getDeductionType(), DeductionType.class));
 		

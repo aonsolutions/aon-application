@@ -3176,7 +3176,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
-	private static ISalary getDBSalary(String domain, SalaryDraft salaryDraft) throws ManagerBeanException {
+	private static com.esferalia.aon.payroll.Salary getDBSalary(String domain, SalaryDraft salaryDraft) throws ManagerBeanException {
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
@@ -3193,7 +3193,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
-	private static ISalary getDBSalary(Connection connection, SalaryDraft salaryDraft) throws ManagerBeanException {
+	private static com.esferalia.aon.payroll.Salary getSSSalary(String domain, SalaryDraft salaryDraft) throws ManagerBeanException {
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+			return getSSSalary(conn, salaryDraft);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private static com.esferalia.aon.payroll.Salary getDBSalary(Connection connection, SalaryDraft salaryDraft) throws ManagerBeanException {
 
 		byte type = (byte) salaryDraft.getType().ordinal();
 		Integer contract = salaryDraft.getEmployee().getId();
@@ -3210,7 +3227,37 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if (salaryDraft.getType() == Salary.Type.EXTRA)
 			condition = condition.and(com.esferalia.aon.jooq.tables.Salary.SALARY.ISSUE_DATE.eq(sqlIssueDate));
 
-		for (ISalary salary : PayrollServletUtils.getSalary(connection, condition))
+		for (com.esferalia.aon.payroll.Salary salary : PayrollServletUtils.getSalary(connection, condition))
+			return salary;
+
+		return null;
+	}
+
+	private static com.esferalia.aon.payroll.Salary getSSSalary(Connection connection, SalaryDraft salaryDraft) throws ManagerBeanException {
+
+		Type salaryDraftType = salaryDraft.getType();
+		if ( salaryDraftType == Type.EXTRA )
+			return null;
+
+		byte type ;
+		switch (salaryDraftType) {
+		case L13:
+			type = (byte) Type.L13.ordinal();
+		default:
+			type = (byte) Type.L00.ordinal();
+		}
+		
+		
+		Integer contract = salaryDraft.getEmployee().getId();
+		java.sql.Date sqlStartDate = new java.sql.Date(salaryDraft.getStartDate().getTime());
+		java.sql.Date sqlEndDate = new java.sql.Date(salaryDraft.getEndDate().getTime());
+
+		Condition condition = com.esferalia.aon.jooq.tables.Salary.SALARY.CONTRACT.eq(contract)
+				.and(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq(type))
+				.and(com.esferalia.aon.jooq.tables.Salary.SALARY.START_DATE.eq(sqlStartDate))
+				.and(com.esferalia.aon.jooq.tables.Salary.SALARY.END_DATE.eq(sqlEndDate));
+
+		for (com.esferalia.aon.payroll.Salary salary : PayrollServletUtils.getSalary(connection, condition))
 			return salary;
 
 		return null;
@@ -3289,7 +3336,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(conn, draft);
+			com.esferalia.aon.payroll.Salary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
@@ -3298,6 +3345,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (ManagerBeanException e) {
 		}
 
+		try {
+			salaryDraftBuilder.clearSs();
+			com.esferalia.aon.payroll.Salary ssSalary = getSSSalary(conn, draft);
+			if (ssSalary != null) {
+				salaryDraftBuilder.setSsSalary(ssSalary);
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
 	}
 
 	private static void calculate(String domain, SalaryDraft draft,
@@ -3328,7 +3384,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(domain, draft);
+			com.esferalia.aon.payroll.Salary dbSalary = getDBSalary(domain, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(domain, dbSalary));
@@ -3337,6 +3393,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (ManagerBeanException e) {
 		}
 
+		try {
+			salaryDraftBuilder.clearSs();
+			com.esferalia.aon.payroll.Salary ssSalary = getSSSalary(domain, draft);
+			if (ssSalary != null) {
+				salaryDraftBuilder.setSsSalary(ssSalary);
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
 	}
 
 	private static Map<String, String> getEventsVariables(String domain, Integer workplaceId, Integer agreementId,
@@ -3587,7 +3652,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(conn, draft);
+			com.esferalia.aon.payroll.Salary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
@@ -3596,6 +3661,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (ManagerBeanException e) {
 		}
 
+		try {
+			salaryDraftBuilder.clearSs();
+			com.esferalia.aon.payroll.Salary ssSalary = getSSSalary(conn, draft);
+			if (ssSalary != null) {
+				salaryDraftBuilder.setSsSalary(ssSalary);
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3645,7 +3719,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			salaryDraftBuilder.clearDb();
-			ISalary dbSalary = getDBSalary(conn, draft);
+			com.esferalia.aon.payroll.Salary dbSalary = getDBSalary(conn, draft);
 			if (dbSalary != null) {
 				salaryDraftBuilder.setDbSalary(dbSalary);
 				salaryDraftBuilder.setDbSalaryData(getDBSalaryData(conn, dbSalary));
@@ -3656,6 +3730,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (ManagerBeanException e) {
 		}
 
+		try {
+			salaryDraftBuilder.clearSs();
+			com.esferalia.aon.payroll.Salary ssSalary = getSSSalary(conn, draft);
+			if (ssSalary != null) {
+				salaryDraftBuilder.setSsSalary(ssSalary);
+			}
+		} catch (SalaryException e) {
+		} catch (ManagerBeanException e) {
+		}
 	}
 
 	private static NumberVariable getActiveDaysVar(CollectSalaryBuilder<?> builder) {
@@ -4386,9 +4469,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 			for (IDeduction deduction : salary.getDeductionS()) {
 
+				String name = deduction.getName();
 				byte type = (byte) deduction.getType().ordinal();
 				String description = deduction.getDescription();
-				settle.addDeduction(type, description, deduction.getAmount(), type);
+				settle.addDeduction(type, name, description, deduction.getAmount(), type);
 			}
 		} catch (SalaryException ignored) {
 		}

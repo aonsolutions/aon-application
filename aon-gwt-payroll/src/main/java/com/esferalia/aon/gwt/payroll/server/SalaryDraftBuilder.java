@@ -50,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -118,6 +119,10 @@ public class SalaryDraftBuilder
 		salaryDraft.clearDb();
 	}
 	
+	public void clearSs() {
+		salaryDraft.clearSs();
+	}
+
 	private static String formatItemDescription(Item<?> item, Date draftStart, Date draftEnd) {
 
 		Date itemStart = item.getStartDate();
@@ -151,7 +156,7 @@ public class SalaryDraftBuilder
 		return formatted;
 	}
 
-	public void setDbSalary(ISalary dbSalary) throws SalaryException {
+	public void setDbSalary(com.esferalia.aon.payroll.Salary dbSalary) throws SalaryException {
 
 		salaryDraft.setDbId(dbSalary.getId());
 
@@ -299,6 +304,108 @@ public class SalaryDraftBuilder
 			embargo.setDescription(dbEmbargo.getDescription());
 			salaryDraft.addDeduction(embargo);
 		}		
+		
+
+		// match up draft bonuses & db bonuses
+		LinkedList<ISalaryItem<BonusType>> dbBonuses = new LinkedList<ISalaryItem<BonusType>>(dbSalary.getBonus());
+		Collections.sort(dbBonuses, (b1,b2) -> AonNumberUtils.compare(b1.getAmount() ,b2.getAmount()));
+		LinkedList<Bonus> bonuses = new LinkedList<Bonus>( salaryDraft.getBonuses() );
+		Collections.sort(bonuses, (b1,b2) -> AonNumberUtils.compare(b1.getAmount() ,b2.getAmount()));
+
+		for( int i = 0 ; dbBonuses.size() > 0 && i < bonuses.size(); i++ ) {
+			ISalaryItem<BonusType> dbCounterPart = dbBonuses.pop();
+			bonuses.get(i).setDbAmount(dbCounterPart.getAmount());
+		}
+		
+		for (ISalaryItem<BonusType> ssBonus : dbBonuses) {
+			Bonus bonus = new Bonus();
+			bonus.setName(ssBonus.getName());
+			bonus.setDbAmount(ssBonus.getAmount());
+			bonus.setDescription(ssBonus.getDescription());
+			//salaryDraft.addBonus(bonus);
+		}
+	}
+
+	public void setSsSalary(com.esferalia.aon.payroll.Salary ssSalary) throws SalaryException {
+
+		salaryDraft.setSsId(ssSalary.getId());
+
+		salaryDraft.setSsGgcBase(ssSalary.getCommonBase());
+		salaryDraft.setSsGgpBase(ssSalary.getProfessionalBase());
+		salaryDraft.setSsHExtraBase(ssSalary.getOvertimeBase());
+		salaryDraft
+				.setSsNonHExtraBase(ssSalary.getNonEstructuralOvertimeBase());
+		salaryDraft.setSsProrationBase(ssSalary.getExtraPayProration());
+
+
+		// match up draft deductions & ss deductions
+		List<IDeduction> ssDeductions;
+		ssDeductions = new ArrayList<IDeduction>(ssSalary.getDeductionS());
+		for (Deduction deduction : salaryDraft.getDeductions()) {
+			List<IDeduction> ssCounterParts = getDbDeductionCounterParts(
+					ssDeductions, deduction);
+			
+			if (ssCounterParts.size() == 0)
+				continue;
+			double amount = 0.00;
+			for ( IDeduction ssDeduction: ssCounterParts )
+				amount += ssDeduction.getAmount();
+			deduction.setSsAmount(amount);
+			ssDeductions.removeAll(ssCounterParts);
+		}
+
+		for (IDeduction ssDeduction : ssDeductions) {
+			Deduction deduction = new Deduction();
+			deduction.setName(ssDeduction.getName());
+			deduction.setDbAmount(ssDeduction.getAmount());
+			deduction.setExpression(ssDeduction.getExpression());
+			deduction.setDescription(ssDeduction.getDescription());
+			salaryDraft.addDeduction(deduction);
+		}
+
+		// match up draft costs & ss costs
+		List<IDeduction> ssCosts;
+		ssCosts = new ArrayList<IDeduction>(ssSalary.getCostS());
+		for (Deduction cost : salaryDraft.getCosts()) {
+			List<IDeduction> ssCounterParts = getDbDeductionCounterParts(
+					ssCosts, cost);
+			if (ssCounterParts.size() == 0)
+				continue;
+			double amount = 0.00;
+			for ( IDeduction sscost: ssCounterParts )
+				amount += sscost.getAmount();
+
+			cost.setSsAmount(amount);
+			ssCosts.removeAll(ssCounterParts);
+		}
+		
+		for (IDeduction ssCost : ssCosts) {
+			Deduction cost = new Deduction();
+			cost.setName(ssCost.getName());
+			cost.setDbAmount(ssCost.getAmount());
+			cost.setExpression(ssCost.getExpression());
+			cost.setDescription(ssCost.getDescription());
+			salaryDraft.addCost(cost);
+		}
+		
+		// match up draft bonuses & ss bonuses
+		LinkedList<ISalaryItem<BonusType>> ssBonuses = new LinkedList<ISalaryItem<BonusType>>(ssSalary.getBonus());
+		Collections.sort(ssBonuses, (b1,b2) -> AonNumberUtils.compare(b1.getAmount() ,b2.getAmount()));
+		LinkedList<Bonus> bonuses = new LinkedList<Bonus>( salaryDraft.getBonuses() );
+		Collections.sort(bonuses, (b1,b2) -> AonNumberUtils.compare(b1.getAmount() ,b2.getAmount()));
+
+		for( int i = 0 ; ssBonuses.size() > 0 && i < bonuses.size(); i++ ) {
+			ISalaryItem<BonusType> ssCounterPart = ssBonuses.pop();
+			bonuses.get(i).setSsAmount(ssCounterPart.getAmount());
+		}
+		
+		for (ISalaryItem<BonusType> ssBonus : ssBonuses) {
+			Bonus bonus = new Bonus();
+			bonus.setName(ssBonus.getName());
+			bonus.setSsAmount(ssBonus.getAmount());
+			bonus.setDescription(ssBonus.getDescription());
+			//salaryDraft.addBonus(bonus);
+		}
 		
 	}
 
@@ -1359,7 +1466,7 @@ public class SalaryDraftBuilder
 				: nameMatchDbItems;
 	}
 
-	private static <T extends ISalaryItem<DeductionType>> List<T> getDbDeductionCounterParts(
+	private static <T extends ISalaryItem<?>> List<T> getDbDeductionCounterParts(
 			Collection<T> dbDeductions, Item<?> deduction) {
 		List<T> matchDbItems = getDbItemCounterParts(dbDeductions, deduction);
 		if (matchDbItems.size() > 0)

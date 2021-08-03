@@ -26,6 +26,7 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	String description;
 	Salary.Type salaryType;
 	Double dbAmount;
+	Double ssAmount;
 	Integer conceptId;
 	String descriptionTemplate;
 
@@ -146,6 +147,15 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	public void setDbAmount(Double dbAmount) {
 		this.dbAmount = dbAmount;
 	}
+
+	public Double getSsAmount() {
+		return ssAmount;
+	}
+
+	public void setSsAmount(Double ssAmount) {
+		this.ssAmount = ssAmount;
+	}
+
 
 	public Integer getConceptId() {
 		return conceptId;
