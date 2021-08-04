@@ -65,8 +65,8 @@ public class UtilsExcel {
 		if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
 		else mes=""+(calendar.get(Calendar.MONTH)+1);
 		
-		if(calendar.get(Calendar.HOUR)<10) hour="0"+calendar.get(Calendar.HOUR);
-		else hour=""+calendar.get(Calendar.HOUR);
+		if(calendar.get(Calendar.HOUR_OF_DAY)<10) hour="0"+calendar.get(Calendar.HOUR_OF_DAY);
+		else hour=""+calendar.get(Calendar.HOUR_OF_DAY);
 		
 		if(calendar.get(Calendar.MINUTE)<10) min="0"+calendar.get(Calendar.MINUTE);
 		else min=""+calendar.get(Calendar.MINUTE);

@@ -101,7 +101,6 @@ public class TaskServlet extends AonApiHttpServlet{
 				AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> taskFilter(api, f), page, perPage));
 	}
 	
-	
 	private Filter taskFilter(AonApiData api, TaskProperties f) {
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
@@ -117,6 +116,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		return filter;
 	}
+	
 	private Object getTask(AonApiData api) {
 		Integer taskId = api.getParams().optInt("id");
 		return TaskJSON.toJSON( AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId)));
