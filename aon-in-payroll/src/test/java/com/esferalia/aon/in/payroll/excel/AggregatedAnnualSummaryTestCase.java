@@ -58,8 +58,10 @@ public class AggregatedAnnualSummaryTestCase {
 				
 				LinkedList<Deduction> deductions = new LinkedList<Salary.Deduction>();
 				for (int j=0; j< faker.number().numberBetween(0, 10); j++) {
-					Deduction ded = new Deduction(getAmount(faker)
+					Deduction ded = new Deduction(
+						getAmount(faker)
 						, faker.ancient().god()
+						, null
 						, eightyPercent(faker) ? DeductionType.values()[faker.number().numberBetween(0, DeductionType.values().length-1)] : null);
 					deductions.add(eightyPercent(faker) ? ded : null);
 				}
