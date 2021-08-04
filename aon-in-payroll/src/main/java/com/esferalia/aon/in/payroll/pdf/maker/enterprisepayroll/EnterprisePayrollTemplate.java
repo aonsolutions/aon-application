@@ -422,11 +422,13 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			return BLACK;
 		if (aon ==  null ) 
 			return RED;
-		if (aon ==  ss ) 
+		if (aon.equals(ss) ) 
 			return GREEN;
-		if ( Math.abs(aon-ss) < 0.01)
+		ss = Math.round(ss * 100.00) / 100.00;
+		aon = Math.round(aon * 100.00) / 100.00;
+		if ( Math.abs(aon-ss) < 0.009)
 			return GREEN;
-		if ( Math.abs(aon-ss) < 0.02)
+		if ( Math.abs(aon-ss) < 0.019)
 			return ORANGE;
 		return RED;
 	}

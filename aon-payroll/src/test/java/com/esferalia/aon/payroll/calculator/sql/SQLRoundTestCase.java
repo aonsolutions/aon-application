@@ -46,8 +46,11 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 	@Test
-	public void testRoundDeductionsAndCosts()
+	public void testRoundDeductionsAndCostsI()
 			throws ExpressionException, SQLException, SalaryException {
+		
+		Double base = 1562.19;
+		
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
@@ -55,61 +58,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
 		
-		ContractRecord contract = newContract(aonContext,
-				new String[] {
-						"1562.19"
-				},
-				new String[] {
-				}
-		);
-		
-		Date firstDayOfYear = AonDateUtils.getFirstDayOfYear(contract.getStartDate());
-		
-		addSSRegimeData(aonContext, GENERAL, firstDayOfYear, null , new HashMap<String, String>(){
-			{
-				put("PORCENTAJE_CGC", "4.70");
-				put("PORCENTAJE_EXTR", "2.00");
-				put("PORCENTAJE_NEXTR", "4.70");
-				put("PORCENTAJE_DESMPL", "1.55");
-				put("PORCENTAJE_FP", "0.10");
-
-				put("PORCENTAJE_CGC_E", "23.60");
-				put("PORCENTAJE_EXTR_E", "12.00");
-				put("PORCENTAJE_NEXTR_E", "23.60");
-				put("PORCENTAJE_DESMPL_E", "5.50");
-				put("PORCENTAJE_FP_E", "0.60");
-				put("PORCENTAJE_IT", "0.80");
-				put("PORCENTAJE_IMS", "0.70");
-				put("PORCENTAJE_FOGASA", "0.20");
-
-				put("PORCENTAJE_IRPF", "1.10");
-			}
-		});
-		
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "CGC", COMMON_CONTINGENCY, "BASE_CGC * PORCENTAJE_CGC/100");
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "EXTR", STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_EXTR/100");
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "NEXTR", NON_STRUCTURAL_OVERTIME, "BASE_NESTR * PORCENTAJE_NEXTR/100");
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "DESMPL", UNEMPLOYMENT, "BASE_CGP * ( isdef PORCENTAJE_DESMPL ? PORCENTAJE_DESMPL : PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100 ");
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "FP", JOB_TRAINING, "BASE_CGP * PORCENTAJE_FP/100");
-
-		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "IRPF", IRPF, "BASE_IRPF * PORCENTAJE_IRPF/100");
-
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "CGC_E", COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_CGC_E/100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "EXTR_E", STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_EXTR_E/100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "NEXT_E", NON_STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_NEXTR_E/100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "IT_E", PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IT ? PORCENTAJE_IT : (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT)))/100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "IMS_E", PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IMS ? PORCENTAJE_IMS : (PORCENTAJE_IMS=( isdef OCUPACION ? OCUPACION_IMS[OCUPACION] : TARIFA_IMS)))/100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "DESMPL_E", UNEMPLOYMENT, "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FOGASA_E", FOGASA, "BASE_CGP_E * PORCENTAJE_FOGASA / 100");
-		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FP_E", JOB_TRAINING, "BASE_CGP_E * PORCENTAJE_FP_E/100");
-		
-		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
-		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
-		
-		Salary salary = 
-		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> Math.round(d * 100.00) / 100.00 ))
-		.calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract))
-		;
+		Salary salary = calculate(base, connection, aonContext);
 		
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
@@ -165,6 +114,139 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		cleanSystemDeductions(aonContext);
 	}
 
+	@Test
+	public void testRoundDeductionsAndCostsII()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Double base =  2455.354345238095;
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		Salary salary = calculate(base, connection, aonContext);
+		
+		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		
+		salary.getSalaryDeductions().forEach(d -> {
+			switch (d.getType()) {
+			case COMMON_CONTINGENCY:
+				Assert.assertEquals(115.40, d.getAmount(),0.00);
+				break;
+			case UNEMPLOYMENT:
+				Assert.assertEquals(38.06, d.getAmount(),0.00);
+				break;
+			case JOB_TRAINING:
+				Assert.assertEquals(2.46, d.getAmount(),0.00);
+				break;
+			case IRPF:
+				break;
+			default:
+				Assert.fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
+			}
+		});
+
+		salary.getSalaryCosts().forEach(c -> {
+			switch (c.getType()) {
+			case COMMON_CONTINGENCY:
+				Assert.assertEquals(579.46, c.getAmount(),0.00);
+				break;
+			case UNEMPLOYMENT:
+				Assert.assertEquals(135.04, c.getAmount(),0.00);
+				break;
+			case JOB_TRAINING:
+				Assert.assertEquals(14.73, c.getAmount(),0.00);
+				break;
+			case FOGASA:
+				Assert.assertEquals(4.91, c.getAmount(),0.00);
+				break;
+			case PROFESSIONAL_CONTINGENCY:
+				if ( c.getName().equals("IT_E"))
+					Assert.assertEquals(19.64, c.getAmount(),0.00);
+				else if ( c.getName().equals("IMS_E"))
+					Assert.assertEquals(17.19, c.getAmount(),0.00);
+				break;
+			default:
+				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
+			}
+		});
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+	}
+
+	private Salary calculate(Double base, Connection connection, AONContext aonContext)
+			throws SalaryException, ExpressionException, SQLException {
+		ContractRecord contract = newContract(aonContext,
+				new String[] {
+						Double.toString(base)
+				},
+				new String[] {
+				}
+		);
+		
+		Date firstDayOfYear = AonDateUtils.getFirstDayOfYear(contract.getStartDate());
+		
+		addSSRegimeData(aonContext, GENERAL, firstDayOfYear, null , new HashMap<String, String>(){
+			{
+				put("PORCENTAJE_CGC", "4.70");
+				put("PORCENTAJE_EXTR", "2.00");
+				put("PORCENTAJE_NEXTR", "4.70");
+				put("PORCENTAJE_DESMPL", "1.55");
+				put("PORCENTAJE_FP", "0.10");
+
+				put("PORCENTAJE_CGC_E", "23.60");
+				put("PORCENTAJE_EXTR_E", "12.00");
+				put("PORCENTAJE_NEXTR_E", "23.60");
+				put("PORCENTAJE_DESMPL_E", "5.50");
+				put("PORCENTAJE_FP_E", "0.60");
+				put("PORCENTAJE_IT", "0.80");
+				put("PORCENTAJE_IMS", "0.70");
+				put("PORCENTAJE_FOGASA", "0.20");
+
+				put("PORCENTAJE_IRPF", "1.10");
+			}
+		});
+		
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "CGC", COMMON_CONTINGENCY, "BASE_CGC * PORCENTAJE_CGC/100");
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "EXTR", STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_EXTR/100");
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "NEXTR", NON_STRUCTURAL_OVERTIME, "BASE_NESTR * PORCENTAJE_NEXTR/100");
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "DESMPL", UNEMPLOYMENT, "BASE_CGP * ( isdef PORCENTAJE_DESMPL ? PORCENTAJE_DESMPL : PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100 ");
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "FP", JOB_TRAINING, "BASE_CGP * PORCENTAJE_FP/100");
+
+		addSSRegimeDeduction(aonContext, GENERAL, firstDayOfYear, "IRPF", IRPF, "BASE_IRPF * PORCENTAJE_IRPF/100");
+
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "CGC_E", COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "EXTR_E", STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_EXTR_E/100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "NEXT_E", NON_STRUCTURAL_OVERTIME, "BASE_ESTR * PORCENTAJE_NEXTR_E/100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "IT_E", PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IT ? PORCENTAJE_IT : (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT)))/100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "IMS_E", PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IMS ? PORCENTAJE_IMS : (PORCENTAJE_IMS=( isdef OCUPACION ? OCUPACION_IMS[OCUPACION] : TARIFA_IMS)))/100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "DESMPL_E", UNEMPLOYMENT, "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FOGASA_E", FOGASA, "BASE_CGP_E * PORCENTAJE_FOGASA / 100");
+		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FP_E", JOB_TRAINING, "BASE_CGP_E * PORCENTAJE_FP_E/100");
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
+		
+		Salary salary = 
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> Math.round(d * 100.00) / 100.00 ))
+		.calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract))
+		;
+		return salary;
+	}
+
+	
+	// 2.455,35
+	
+	
 	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
 			String code, DeductionType deductionType, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
