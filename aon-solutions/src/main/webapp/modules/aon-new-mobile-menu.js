@@ -71,10 +71,14 @@ export class AonNewMobileMenu extends AonElement {
       <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
       <input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
     `;
+    let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+		inputInvoiceFile.addEventListener('change', ({target}) => uploadInvoices(inputInvoiceFile, target.files));
 
-		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
-    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files, this.getDur()));
-  	this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => uploadInvoices(target.files));
+    let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+    inputDocumentFile.addEventListener('change', ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
+  	
+    let inputCamera = this.getElement(this.INPUT_CAMERA);
+    inputCamera.addEventListener('change',  ({target}) => uploadInvoices(inputCamera, target.files));
 
     const id = this.id + 'Sidenav';
     const sidEl = this.getElement(id);

@@ -195,11 +195,12 @@ export class AonHeader extends AonElement {
 		}
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
+			const top  = aonHeaderUserButton.getBoundingClientRect().top;
+			const left = aonHeaderUserButton.getBoundingClientRect().left;
 			if(this.activeTimecontrol) {
 				getTimeControl().then(r => {
 					this.timeControlStatus(r);
-					const top  = aonHeaderUserButton.getBoundingClientRect().top;
-					const left = aonHeaderUserButton.getBoundingClientRect().left;
+
 					let d = this.getElement('aonHeaderDialogUserOption');
 
 					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
@@ -225,12 +226,24 @@ export class AonHeader extends AonElement {
 						}];
 						d.setMenuOptions(options, top, left);
 						d.open();
+					}).catch(e => {
+						let d = this.getElement('aonHeaderDialogUserOption');
+						let options = [{
+							name: 'Configuración',
+							icon: 'settings',
+							id: 'dialogSettings',
+							fn: () => this.aonConfiguration()
+						}, {
+							name: 'Cerrar Sesión',
+							icon: 'input',
+							id: 'dialogLogout',
+							fn: () => closeSession()
+						}];
+						d.setMenuOptions(options, top, left);
+						d.open();
 					});
 				} else {
-					const top  = aonHeaderUserButton.getBoundingClientRect().top;
-					const left = aonHeaderUserButton.getBoundingClientRect().left;
 					let d = this.getElement('aonHeaderDialogUserOption');
-
 					let options = [{
 							name: 'Configuración',
 							icon: 'settings',

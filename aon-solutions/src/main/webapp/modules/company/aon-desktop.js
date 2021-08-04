@@ -74,9 +74,11 @@ export class AonDesktop extends AonElement {
 			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
+		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+		inputInvoiceFile.addEventListener('change', ({target}) => uploadInvoices(inputInvoiceFile, target.files));
 		
-		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
-	    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files, this.getDur()));
+		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+		inputDocumentFile.addEventListener('change', ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
 		let sidenav = this.getElement(this.getApplication().SIDENAV);
 		sidenav.innerHTML = `

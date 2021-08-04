@@ -4,12 +4,13 @@ import { getReader } from "../../services/utils.js";
 import { Invoice } from "./Invoice.js";
 
 
-export const uploadInvoices = (files) => {
+export const uploadInvoices = (el, files) => {
     for(let i = 0; i < files.length; i++) {
         getReader(files[i]).then(f=>{
             uploadInvoice(f);
         });
     }
+    el.value = null;
 }
 
 export const uploadInvoice = (file) => {

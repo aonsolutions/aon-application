@@ -450,6 +450,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		rawdoc = AON.rawdocSave(domain.getName(), domain.getId(), login, rawdoc);
 		json.put("id", rawdoc.getId()); 
+		if(rawdoc.getMimeType() != null){
+			JSONObject data = new JSONObject();
+			data.put("domain_name", domain.getName());
+			data.put("domain_id", domain.getId());
+			data.put("id", rawdoc.getId());
+			data.put("attach_type", AttachType.RAWDOC.getName());
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			String url =  "ms/api/file/" +  result;
+								
+			JSONObject f = new JSONObject();
+		    f.put("url", url);
+		    f.put("content_type", rawdoc.getMimeType().getName());
+		    json.put("file", f);
+		}
 		return json;
 	}
 	

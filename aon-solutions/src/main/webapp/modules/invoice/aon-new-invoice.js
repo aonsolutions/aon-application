@@ -109,6 +109,7 @@ export class AonNewInvoice extends AonElement {
 		this.GENERAL_CARD_TABLE = this.GENERAL_CARD + CONSTANT.TABLE.initCap();
 		this.COMMENT_CARD = this.DATA + 'CommentsCard';
 		this.FILE = this.id + 'File';
+		this.INPUT_FILE = this.id + 'InputFile'
 		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
@@ -195,6 +196,7 @@ export class AonNewInvoice extends AonElement {
 
 	build() {
 		this.clear();
+		this.buildInputFile();
 		this.buildToolbar();
 		this.buildContent();
 		this.focus();
@@ -235,6 +237,49 @@ export class AonNewInvoice extends AonElement {
 		console.log(this.focusId);
 		if(this.focusId)
 			this.getElement(this.focusId).focus();
+	}
+
+	buildInputFile() {
+		let inputFile = this.createElement(TAG.INPUT);
+		inputFile.id = this.INPUT_FILE;
+		inputFile.style.display = 'none';
+		inputFile.type = 'file';
+		inputFile.name = 'file';
+		this.appendChild(inputFile);
+		inputFile.addEventListener('change', ({target}) => this.preview());
+	} 
+
+	preview() {
+		let fileDiv = this.getElement(this.FILE);
+		let fileInput = this.getElement(this.INPUT_FILE);
+		const file = fileInput.files[0];
+
+		const READER = new FileReader();
+		READER.readAsDataURL(file);
+		READER.onload = (_event) => {
+			this.attach(READER.result, file.type);
+		};
+	}
+
+	attach(fileDataUri,  mimetype){
+		if (fileDataUri.length > 0) {
+			const base64File = fileDataUri.split(',')[1];
+			const data = {
+				file: {
+					content: base64File,
+					contentType: mimetype,
+					contentEncoding: 'base64'
+				},
+				invoice: this.getInvoice()
+			};
+			let aonInvoice = document.getElementById('aonInvoice');
+			aonInvoice.startLoader();
+			insertInvoice(data).then((r) => {
+				aonInvoice.stopLoader();
+				this.invoice.createInvoice(r);
+				this.reload();
+			});
+		}
 	}
 
 	buildToolbar() {
@@ -1499,6 +1544,10 @@ export class AonNewInvoice extends AonElement {
 		d.open();
 	}
 
+	addInvoiceFile() {
+		this.getElement(this.INPUT_FILE).click();
+	}
+	
 	changeType() {
 		let types = [{
 			name: 'Emitida',

@@ -227,8 +227,21 @@ public class RawdocDAO {
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))
 			.execute();
+		if(rawdoc.getData() != null && rawdoc.getMimeType() != null) {
+			updateFile(ctx, rawdoc);
+		}
 		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());
 		return get(ctx, rawdoc.getId());
+	}
+	
+	private static void updateFile(AONContext ctx, Rawdoc rawdoc) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
+			.set(RAWDOC.DATA,rawdoc.getData())
+			.where(RAWDOC.ID.eq(rawdoc.getId()))
+			.execute();
 	}
 	
 	public static Rawdoc save(AONContext ctx, Rawdoc rawdoc) {
