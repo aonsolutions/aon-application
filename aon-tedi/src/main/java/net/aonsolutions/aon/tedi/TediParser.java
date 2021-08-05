@@ -742,7 +742,8 @@ public class TediParser {
 			TediFinance tfin = new TediFinance()
 					.setDueDate(result.getInvoice().getIssueDate())
 					.setAmount( result.getInvoice().getTotal())
-					.setPayMethod(TediPayMethod.CASH);
+//					.setPayMethod(TediPayMethod.CASH)
+					;
 				Finance fin = new Finance();
 				result.getAccountingInvoice().getInvoice().addFinance(fin);
 				TediFinanceTransfer.toAon(ctx.getAonConfiguration(),result,tfin,fin);
