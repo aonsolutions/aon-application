@@ -225,7 +225,7 @@ public class Mod303WriterAEAT2021_2 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C110),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C78),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C87),17,2))  
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C68),17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C68),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C69),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C70),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C71),17,2))
@@ -240,7 +240,13 @@ public class Mod303WriterAEAT2021_2 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),34)) // Domiciliacion/Devolucion - IBAN
 			   
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 17))  // Reservado para la AEAT
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 583)) // Reservado para la AEAT
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 70))          // Devolución - Banco/Bank name
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 35))			// Devolución - Dirección del Banco/ Bank address
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 30))			// Devolución - Ciudad/City
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 2))			// Devolución - Código País/Country code
+			   ,(wr, mod) -> wr.append(mod.isToPayback()?"1":" ")				// Devolución - Marca SEPA
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 445)) // Reservado para la AEAT
+			   
 			   ,(wr, mod) -> wr.append("</T30303000>")
 		})
 		
