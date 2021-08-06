@@ -212,6 +212,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback);
 
+	void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback);
+	
 	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
 			AsyncCallback<String> callback);

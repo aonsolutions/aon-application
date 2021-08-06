@@ -910,4 +910,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public EmployeeEventsData setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

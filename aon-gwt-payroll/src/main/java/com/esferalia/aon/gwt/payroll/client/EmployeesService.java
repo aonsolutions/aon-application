@@ -191,6 +191,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB);
 
+	EmployeeEventsData setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData);
+	
+	
 	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract,
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
 
@@ -288,5 +292,5 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	// ------------------------------------------------- SEPE Methods
 	
 	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
-	
+
 }

@@ -466,6 +466,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+					EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

@@ -428,7 +428,10 @@ public class DomainEmployeesServiceAsync {
 	public void getEmployeeEventsByContract(Integer contractId, ArrayList<String> employeeContractVariablesDB,
 			AsyncCallback<EmployeeEventsData> callback) {
 		employeesServiceAsync.getEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeContractVariablesDB, callback);
-		
+	}
+	
+	public void setEmployeeEventsByContract(Integer contractId, EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
+		employeesServiceAsync.setEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeEventsData, callback);
 	}
 	
 	public void setEmployeeAFIChanges(Integer contractId, Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
