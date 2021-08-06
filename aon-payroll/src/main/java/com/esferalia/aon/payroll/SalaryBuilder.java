@@ -10,6 +10,7 @@ import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -399,10 +400,17 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		this.listener = listener;
 	}
 
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public ISalaryBuilderListener getListener() {
 		return listener;
 	}
 
+	
 	// ------------------------------------------------------------------------
 
 	private ContractEmbargo getContractEmbargo(Integer id) {

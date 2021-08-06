@@ -31,13 +31,17 @@ import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.sun.xml.ws.api.addressing.WSEndpointReference.EPRExtension;
 
 /**
  * @author rtrepiana
@@ -49,16 +53,14 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 	public void testRoundDeductionsAndCostsI()
 			throws ExpressionException, SQLException, SalaryException {
 		
-		Double base = 1562.19;
-		
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		try {
 
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
-		
-		Salary salary = calculate(base, connection, aonContext);
+		Salary salary = calculate(new String[] { "1562.19" }, connection, aonContext);
 		
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
@@ -108,26 +110,25 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
 			}
 		});
-
+		} finally {
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
+		}
 	}
 
 	@Test
 	public void testRoundDeductionsAndCostsII()
 			throws ExpressionException, SQLException, SalaryException {
-		
-		Double base =  2455.354345238095;
-		
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		try {
 
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
 		
-		Salary salary = calculate(base, connection, aonContext);
+		Salary salary = calculate(new String[] {"2455.354345238095"}, connection, aonContext);
 		
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
@@ -177,18 +178,91 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
 			}
 		});
+		} 
+		finally {
+			cleanSystemData(aonContext);
+			cleanSystemCosts(aonContext);
+			cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundDeductionsAndCostsIII()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
 
 		cleanSystemData(aonContext);
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
+		
+		Salary salary = calculate(new String[] {
+				"2000.306000000000",
+				 "455.048345238095"
+		}, connection, aonContext);
+		
+		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		
+		salary.getSalaryDeductions().forEach(d -> {
+			switch (d.getType()) {
+			case COMMON_CONTINGENCY:
+				Assert.assertEquals(115.40, d.getAmount(),0.00);
+				break;
+			case UNEMPLOYMENT:
+				Assert.assertEquals(38.06, d.getAmount(),0.00);
+				break;
+			case JOB_TRAINING:
+				Assert.assertEquals(2.46, d.getAmount(),0.00);
+				break;
+			case IRPF:
+				break;
+			default:
+				Assert.fail("Unknown deduction " + d.getType() + ", " + d.getDescription());
+			}
+		});
+
+		salary.getSalaryCosts().forEach(c -> {
+			switch (c.getType()) {
+			case COMMON_CONTINGENCY:
+				Assert.assertEquals(579.46, c.getAmount(),0.00);
+				break;
+			case UNEMPLOYMENT:
+				Assert.assertEquals(135.04, c.getAmount(),0.00);
+				break;
+			case JOB_TRAINING:
+				Assert.assertEquals(14.73, c.getAmount(),0.00);
+				break;
+			case FOGASA:
+				Assert.assertEquals(4.91, c.getAmount(),0.00);
+				break;
+			case PROFESSIONAL_CONTINGENCY:
+				if ( c.getName().equals("IT_E"))
+					Assert.assertEquals(19.64, c.getAmount(),0.00);
+				else if ( c.getName().equals("IMS_E"))
+					Assert.assertEquals(17.19, c.getAmount(),0.00);
+				break;
+			default:
+				Assert.fail("Unknown deduction " + c.getType() + ", " + c.getDescription());
+			}
+		});
+		} finally {
+			cleanSystemData(aonContext);
+			cleanSystemCosts(aonContext);
+			cleanSystemDeductions(aonContext);
+		}
 	}
 
-	private Salary calculate(Double base, Connection connection, AONContext aonContext)
+	private Salary calculate(String[] payments, Connection connection, AONContext aonContext)
 			throws SalaryException, ExpressionException, SQLException {
 		ContractRecord contract = newContract(aonContext,
-				new String[] {
-						Double.toString(base)
-				},
+				payments,
 				new String[] {
 				}
 		);
@@ -235,6 +309,11 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
 		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
+		
+		IContractSalaryCalculatorContext contractSalaryCalculatorContext = 
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract);
+		
+		ExpressionContext expressionContext = contractSalaryCalculatorContext.getExpressionContext();
 		
 		Salary salary = 
 		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> Math.round(d * 100.00) / 100.00 ))

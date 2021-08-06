@@ -9,6 +9,7 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -322,6 +323,11 @@ public class CheckSalaryPDFBuilder<T extends ISalary> implements SalaryPDFBuilde
 	public void setListener(ISalaryBuilderListener listener) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override

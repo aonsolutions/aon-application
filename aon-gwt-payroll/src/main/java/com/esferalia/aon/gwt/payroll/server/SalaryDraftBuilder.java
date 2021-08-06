@@ -788,6 +788,12 @@ public class SalaryDraftBuilder
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	// ContractSalaryCalculator.IListener methods
 

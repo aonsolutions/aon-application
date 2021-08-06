@@ -2,11 +2,15 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -15,6 +19,7 @@ import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -34,7 +39,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		private ArrayList<Deduction> deductions = new ArrayList<Deduction>();
 		
-		private double getTotalSS(Function<Double, Double> f) {
+		private double getTotalSS(UnaryOperator<Double> f) {
 			return deductions.stream()
 			.filter(d -> d.type != null && d.type.isSsDeduction())
 			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
@@ -75,7 +80,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private static class Costs extends Deductions {
 		
-		private double getTotalEnterprise(Function<Double, Double> f) {
+		private double getTotalEnterprise(UnaryOperator<Double> f) {
 			return super.getTotalSS(f);
 		}
 
@@ -85,10 +90,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 	
 
-	protected Function<Double, Double> f;
+	protected UnaryOperator<Double> f;
 	protected ISalaryBuilder<T> salaryBuilder;
 
-	public RoundSalaryBuilder(ISalaryBuilder<T> salaryBuilder, Function<Double, Double> f) {
+	public RoundSalaryBuilder(ISalaryBuilder<T> salaryBuilder, UnaryOperator<Double> f) {
 		this.f = f;
 		this.salaryBuilder = salaryBuilder;
 	}
@@ -202,6 +207,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private Costs costs;
 	private Deductions deductions;
 	
+	private ExpressionContext expressionContext;
+	
 	
 	public void createNewSalary() {
 
@@ -238,12 +245,28 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			this.cgcBase = cgcBase;
 		} catch (NullPointerException e) {
 		}
+		try {
+			this.cgcBase = round(ContextVariable.CGC_BASE);			
+		} catch ( Exception e ) {
+		}
+		try {
+			round(ContextVariable.CGC_BASE_ENTERPRISE);			
+		} catch ( Exception e ) {
+		}
 	}
 
 	public void setCgpBase(Double cgpBase) {
 		try {
 			this.cgpBase = cgpBase;
 		} catch (NullPointerException e) {
+		}
+		try {
+			this.cgpBase = round(ContextVariable.CGP_BASE);			
+		} catch ( Exception e ) {
+		}
+		try {
+			round(ContextVariable.CGP_BASE_ENTERPRISE);			
+		} catch ( Exception e ) {
 		}
 	}
 
@@ -343,6 +366,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			this.totalEnterprise = totalEnterprise;
 		} catch (NullPointerException e) {
 		}
+	}
+	
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
 	}
 
 	// ------------------------------------------------------------------------
@@ -458,5 +485,16 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
 
 	}
+	
+	private double round(ContextVariable contextVariable ) {
+		double sum = 0.00;
+		for (ITimedVariable<Object> v : expressionContext.getVariables(contextVariable.getName())) {
+			RoundVarible roundVarible = new RoundVarible(v, f);
+			sum += roundVarible.getValue(roundVarible.getPeriod());
+			expressionContext.putVariable(contextVariable.getName(), roundVarible);
+		}
+		return sum;
+	}
+	
 
 }

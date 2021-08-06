@@ -11,6 +11,7 @@ import com.esferalia.aon.payroll.sql.SQLReader;
 import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
@@ -152,6 +153,10 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		this.listener = listener;		
 	}
 	
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
+	}
 	
 	
 	// ------------------------------------------------------------------------

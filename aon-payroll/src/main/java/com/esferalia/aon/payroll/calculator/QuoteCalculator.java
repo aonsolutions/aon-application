@@ -175,7 +175,7 @@ public abstract class QuoteCalculator {
 		
 		@Override
 		public Double getValue(Period period) {
-			return Math.round ( value / getValueDays() * getPeriodDays(period) * 100.00 ) / 100.00;
+			return value / getValueDays() * getPeriodDays(period);
 		}
 		
 		private long getValueDays() {
