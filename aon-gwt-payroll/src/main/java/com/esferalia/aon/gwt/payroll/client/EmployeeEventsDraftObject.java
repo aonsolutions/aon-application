@@ -148,6 +148,34 @@ public class EmployeeEventsDraftObject {
 		return result;
 	}
 	
+	public Double getAcumulateYear(String var) {
+		ArrayList<EmployeeEventsVariable> employeeEventsVariables = this.mapEventsVar.get(var);
+		Date startDate = DateUtils.getFirstDayOfYear();
+		Date endDate = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfMonth());
+		Double accumulateYear = 0.0;
+		
+		if(null == employeeEventsVariables)
+			return accumulateYear;
+		
+		for(EmployeeEventsVariable employeeEventsVariable : employeeEventsVariables) {
+			if(DateUtils.isAfterOrEquals(employeeEventsVariable.getStartDate(), startDate) &&
+				(null == employeeEventsVariable.getEndDate() || DateUtils.isBeforeOrEquals(employeeEventsVariable.getEndDate(), endDate))) {
+				
+				Double value = employeeEventsVariable.getValue();
+				accumulateYear += value;
+			}
+		}
+		
+		return accumulateYear;
+	}
+	
+	public EmployeeEventsVariable getEmployeeEventsVariable(String variableName) {
+		ArrayList<EmployeeEventsVariable> employeeEventsVariables = this.mapEventsVar.get(variableName);
+		if(employeeEventsVariables.isEmpty())
+			return null;
+		return employeeEventsVariables.get(0);
+	}
+	
 	public Boolean isCalendarVariable(String var) {
 		return calendarVariables.contains(var);
 	}
@@ -202,6 +230,7 @@ public class EmployeeEventsDraftObject {
 				allStaticVariables.add("HORAS_TUTORIA");
 				allStaticVariables.add("BONIFICACION_TUTORIA");
 				allStaticVariables.add("BONIFICACION_FORMACION_CONTINUA");
+				allStaticVariables.add("DIAS_VACACIONES_NO_DISFRUTADOS");
 				
 				employeeContractVariables.clear();
 				employeeContractVariables.addAll(allStaticVariables);
@@ -240,14 +269,17 @@ public class EmployeeEventsDraftObject {
 				employeeEventsData = resultEmployeeEventsData;
 				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
+				if(resultEmployeeEventsData.hasSettle())
+					calendarVariables.add("DIAS_VACACIONES_NO_DISFRUTADOS");
+				employeeContractVariables.remove("DIAS_VACACIONES_NO_DISFRUTADOS");
+			
 				success.accept(resultEmployeeEventsData);
 			}
 		});
 	}
 	
 	public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
-		
-		employeesService.setEmployeeEvents(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
+		employeesService.setEmployeeEventsByContract(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -300,22 +332,34 @@ public class EmployeeEventsDraftObject {
 		return this.mapEventsVar.getOrDefault(varName, null);
 	}
 	
-	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
+	public Double getAcumulateVariableByMonth (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
+		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
+		Date lastDayMonth = DateUtils.getLastDayOfMonth(DateUtils.getDate(month, year));
+		Double acumulateMonth = 0.0;
 		
 		if(null != varList) {
-			for (EmployeeEventsVariable e : this.mapEventsVar.get(varName)){
+			for (EmployeeEventsVariable e : varList){
 				if(year != DateUtils.getYear(e.getStartDate()))
 					continue;
-				if (month == DateUtils.getMonth(e.getStartDate()))
-					return e;
+				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) &&
+						null != e.getValue()) {
+					Double value = e.getValue();
+					acumulateMonth += value;
+				}	
 			}
 		}
 		
-		return null;
+		return acumulateMonth;
 	}
 
 	public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+		employeeEventsData.addEventData(variableName, startDate, endDate, value);
+		mapEventsVar = employeeEventsData.getEventDateVarList();
+	}
+	
+	public void setSettleHolidayValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+		employeeEventsData.removeEventData(variableName);
 		employeeEventsData.addEventData(variableName, startDate, endDate, value);
 		mapEventsVar = employeeEventsData.getEventDateVarList();
 	}
