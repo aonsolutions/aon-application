@@ -19,6 +19,7 @@ import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
@@ -902,6 +903,11 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	// ------------------------------------------------------------------------
 	

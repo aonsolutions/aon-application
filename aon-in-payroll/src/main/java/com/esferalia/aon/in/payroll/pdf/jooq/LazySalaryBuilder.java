@@ -12,6 +12,7 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -301,6 +302,11 @@ public class LazySalaryBuilder<S extends ISalaryBuilder<T>, T extends ISalary> i
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		calls.add( () -> salaryBuilder.setListener(listener) );
+	}
+	
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		calls.add( () -> salaryBuilder.setExpressionContext(context) );
 	}
 
 }

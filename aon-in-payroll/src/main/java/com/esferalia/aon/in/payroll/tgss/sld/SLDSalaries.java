@@ -166,7 +166,7 @@ public class SLDSalaries {
 		calcs.forEach((description, calc) -> {
 			Optional.ofNullable(calc.getEmployee()).ifPresent(amount -> {
 				getDeductionType(description).ifPresent(deductionType -> 
-					salary.addDeduction(deductionType, amount, description));
+					salary.addDeduction(deductionType, amount, getEmployeeContextVariable(description).map(v -> v.getName()).orElse(""), description));
 			});
 		});
 
@@ -191,7 +191,7 @@ public class SLDSalaries {
 		.ifPresent(calc -> {
 			Optional.ofNullable(calc.getEmployee())
 			.ifPresent( employee -> 
-				salary.addDeduction(BONIF_Y_SUBVENC_CON_CARGO_AL_INEM, -employee));
+				salary.addDeduction(DeductionType.BONUS, BONIF_Y_SUBVENC_CON_CARGO_AL_INEM, -employee));
 			Optional.ofNullable(calc.getEnterprise())
 			.ifPresent( enterprise -> 
 				salary.addBonus(null, BONIF_Y_SUBVENC_CON_CARGO_AL_INEM, enterprise));
@@ -607,7 +607,7 @@ public class SLDSalaries {
 
 			@Override
 			public void visitCcWorkerFee(Float ccLiquidWorkerFee) {
-				salary.addDeduction(DeductionType.COMMON_CONTINGENCY, ccLiquidWorkerFee.doubleValue(), "CONTINGENCIAS COMUNES");
+				salary.addDeduction(DeductionType.COMMON_CONTINGENCY, ccLiquidWorkerFee.doubleValue(), ContextVariable.CGC_EMPLOYEE.getName(),"CONTINGENCIAS COMUNES");
 				salary.setContextData(ContextVariable.CGC_EMPLOYEE.getName(), ccLiquidWorkerFee.toString(), from, to);
 			}
 
@@ -648,7 +648,7 @@ public class SLDSalaries {
 
 			@Override
 			public void visitUnemploymentWorkerFee(Float unemploymentWorkerFee) {
-				salary.addDeduction(DeductionType.UNEMPLOYMENT, unemploymentWorkerFee.doubleValue(), "DESEMPLEO");
+				salary.addDeduction(DeductionType.UNEMPLOYMENT, unemploymentWorkerFee.doubleValue(), ContextVariable.UNEMPLOY_EMPLOYEE.getName(),"DESEMPLEO");
 				salary.setContextData(ContextVariable.UNEMPLOY_EMPLOYEE.getName(), unemploymentWorkerFee.toString(), from, to);
 			}
 
@@ -676,7 +676,7 @@ public class SLDSalaries {
 
 			@Override
 			public void visitJobTrainingWorkerFee(Float jobTrainingWorkerFee) {
-				salary.addDeduction(DeductionType.JOB_TRAINING, jobTrainingWorkerFee.doubleValue(), "FORMACIÓN PROFESIONAL");
+				salary.addDeduction(DeductionType.JOB_TRAINING, jobTrainingWorkerFee.doubleValue(), ContextVariable.FP_EMPLOYEE.getName(), "FORMACIÓN PROFESIONAL");
 				salary.setContextData(ContextVariable.FP_EMPLOYEE.getName(), jobTrainingWorkerFee.toString(), from, to);
 			}
 
@@ -687,7 +687,7 @@ public class SLDSalaries {
 
 			@Override
 			public void visitGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee) {
-				salary.addDeduction("BONIFICACIONES", grantsAndBonusesWorkerFee.doubleValue());
+				salary.addDeduction(DeductionType.BONUS, "BONIFICACIONES", grantsAndBonusesWorkerFee.doubleValue());
 			}
 
 			@Override

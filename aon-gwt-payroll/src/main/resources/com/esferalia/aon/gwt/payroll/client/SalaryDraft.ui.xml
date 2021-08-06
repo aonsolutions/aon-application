@@ -564,6 +564,8 @@
 														changeDisplayStyleName="{style.value-changed}" debugId="cgcBaseLabel" ui:field="cgcBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgcBaseLabel"
 														visible="false" />
+													<g:InlineHTML ui:field="ssCgcBaseLabel"
+														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
@@ -583,6 +585,8 @@
 														changeDisplayStyleName="{style.value-changed}" debugId="hExtraBaseLabel" ui:field="hExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbHExtraBaseLabel"
 														visible="false" />
+													<g:InlineHTML ui:field="ssHExtraBaseLabel"
+														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
 										</g:customCell>
@@ -593,6 +597,8 @@
 													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center {style.textbox-readonly}" visibleLength="9"
 														changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML debugId="dbCgpBaseLabel" ui:field="dbCgpBaseLabel"
+														visible="false" />
+													<g:InlineHTML debugId="ssCgpBaseLabel" ui:field="ssCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
@@ -618,6 +624,8 @@
 													<e:ValueInlineHTML
 														changeDisplayStyleName="{style.value-changed}" ui:field="nonHExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbNonHExtraBaseLabel"
+														visible="false" />
+													<g:InlineHTML ui:field="ssNonHExtraBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>

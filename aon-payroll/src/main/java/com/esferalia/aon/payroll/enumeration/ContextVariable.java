@@ -132,6 +132,7 @@ public enum ContextVariable implements IResourceable {
 	FP_EMPLOYEE("FP", VariableType.DOUBLE), FP_ENTERPRISE("FP_E", VariableType.DOUBLE),
 	UNEMPLOY_EMPLOYEE("DESMPL", VariableType.DOUBLE), UNEMPLOY_ENTERPRISE("DESMPL_E", VariableType.DOUBLE),
 	FOGASA_ENTERPRISE("FOGASA_E", VariableType.DOUBLE), ENTERPRISE_QUOTA("CUOTA_EMPRESARIAL", VariableType.DOUBLE),
+	BONUS_EMPLOYEE("BONIF", VariableType.DOUBLE),
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR", VariableType.DOUBLE),
 
 	// Datos 'temporales' del contrato

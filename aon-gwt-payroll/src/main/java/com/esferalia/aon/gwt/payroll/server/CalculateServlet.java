@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -165,7 +166,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		static class RoundSalaryBuilderExtended<T extends ISalary> extends RoundSalaryBuilder<T>
 				implements ISalaryBuilderExtended<T> {
 
-			public RoundSalaryBuilderExtended(ISalaryBuilderExtended<T> salaryBuilder, Function<Double, Double> f) {
+			public RoundSalaryBuilderExtended(ISalaryBuilderExtended<T> salaryBuilder, UnaryOperator<Double> f) {
 				super(salaryBuilder, f);
 			}
 

@@ -138,6 +138,8 @@ import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
@@ -2563,7 +2565,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 							bonus.getType(), 
 							bonus.getStartDate(), 
 							bonus.getEndDate(), 
-							bonus.getDescription(), 
+							String.format("%s. %s %s", bonus.getDescription(), "CUOTA EMPRESARIAL", getName(bonus.getExpression())), 
 							bonus.getExpression()));
 			
 			com.esferalia.aon.occam.api.model.Deduction deductions [] = 
@@ -2598,7 +2600,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			@Override
 			public String visitJobTraining(DeductionType deductionType) {
-				return "FP";
+				return "FORMACI\u00D3N PROFESIONAL";
 			}
 
 			@Override
@@ -2628,6 +2630,179 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 		});
 	}
+
+	private static String getName(String expression) {
+		MatchResult matchResult = 
+		RegExp.compile("quota:([0-9]+)").exec(expression);
+		if ( matchResult == null ) 
+			return "";
+		
+		String quota = matchResult.getGroup(1);
+
+		switch (quota) {
+			case "01":
+				return "AT Y EP, CUOTAS DE RECAUDACI\u00D3N";
+			case "02":
+				return "DESEMPLEO";
+			case "03":
+				return "CONTINGENCIAS COMUNES";
+			case "04":
+				return "DESEMPLEO";
+			case "05":
+				return "POR DESEMPLEO";
+			case "06":
+				return "DESEMPLEO, FORMACI\u00D3N PROFESIONAL Y FOGASA";
+			case "07":
+				return "CONTINGENCIAS COMUNES, DESEMPLEO,";
+			case "08":
+				return "TOTALIDAD";
+			case "09":
+				return "CONTINGENCIAS COMUNES, EXCEPTO IT";
+			case "10":
+				return "CONTINGENCIAS COMUNES EXCEPTO IT,  DESEMPLEO,";
+			case "11":
+				return "PROTECCI\u00D3N FAMILIAR Y FOGASA CUOTA TOTAL";
+			case "12":
+				return "DESEMPLEO Y FOGASA CUOTA TOTAL";
+			case "13":
+				return "FOGASA CUOTA TOTAL";
+			case "14":
+				return "CONTINGENCIAS COMUNES Y OTRAS COTIZACIONES";
+			case "15":
+				return "IT CONTINGENCIAS COMUNES, ASISTENCIA SANITARIA,";
+			case "16":
+				return "IT CONTINGENCIAS COMUNES, ASISTENCIA SANITARIA,";
+			case "17":
+				return "CUOTA OBRERA CONTINGENCIAS COMUNES. AT Y EP Y";
+			case "18":
+				return "CUOTA OBRERA CONTINGENCIAS COMUNES. AT Y EP Y";
+			case "19":
+				return "AT Y EP Y OTRAS COTIZACIONES";
+			case "20":
+				return "ASISTENCIA SANITARIA Y PRESTACI\u00D3N FARMACE\u00DATICA";
+			case "21":
+				return "CONTINGENCIAS COMUNES, ASISTENCIA SANITARIA Y";
+			case "22":
+				return "JUBILACI\u00D3N";
+			case "23":
+				return "IT CONTINGENCIAS COMUNES, MATERNIDAD, PROTECCI\u00D3N";
+			case "24":
+				return "IT CONTINGENCIAS COMUNES";
+			case "25":
+				return "IT, PROTECCI\u00D3N A LA FAMILIA, ASISTENCIA SANITARIA,";
+			case "26":
+				return "PRESTACI\u00D3N FARMACE\u00DATICA";
+			case "27":
+				return "IT DE AT, DESEMPLEO, FOGASA";
+			case "28":
+				return "IT DE AT, FOGASA";
+			case "29":
+				return "IT, MATERNIDAD, AT Y EP, PRESTACI\u00D3N A LA FAMILIA,";
+			case "30":
+				return "IT, MATERNIDAD, AT Y EP, OTRAS COTIZACIONES";
+			case "31":
+				return "IT, INCAPACIDAD PERMANENTE, MUERTE Y";
+			case "32":
+				return "JUBILACI\u00D3N, IT, INCAPACIDAD PERMANENTE, MUERTE Y";
+			case "33":
+				return "JUBILACI\u00D3N, IT, INCAPACIDAD PERMANENTE, MUERTE Y";
+			case "34":
+				return "JUBILACI\u00D3N, IT, INCAPACIDAD PERMANENTE, MUERTE Y";
+			case "35":
+				return "IT CONTINGENCIAS COMUNES, PRESTACI\u00D3N A LA FAMILIA,";
+			case "36":
+				return "PRESTACI\u00D3N A LA FAMILIA, DESEMPLEO";
+			case "37":
+				return "JUBILACI\u00D3N, INCAPACIDAD PERMANENTE CONTINGENCIAS";
+			case "38":
+				return "IT, AT Y EP";
+			case "39":
+				return "IT";
+			case "40":
+				return "CONTINGENCIAS COMUNES, DESEMPLEO";
+			case "41":
+				return "AT Y EP";
+			case "42":
+				return "SISTEMA ESPECIAL DEL TOMATE FRESCO";
+			case "43":
+				return "CONTINGENCIAS COMUNES";
+			case "44":
+				return "IT CONTINGENCIAS COMUNES, DESEMPLEO Y FOGASA";
+			case "45":
+				return "IT CONTINGENCIAS COMUNES Y FOGASA";
+			case "46":
+				return "CONTINGENCIAS COMUNES IT";
+			case "47":
+				return "CONTINGENCIAS COMUNES/BASE MÍNIMA RETA";
+			case "48":
+				return "CONTINGENCIAS COMUNES OBLIGATORIA-IT/REA";
+			case "49":
+				return "APORTACI\u00D3N EMPRESARIAL CC/HOGAR";
+			case "50":
+				return "CONTINGENCIAS COMUNES -IT/CUENTA PROPIA";
+			case "51":
+				return "HORAS EXTRAS";
+			case "52":
+				return "CONTINGENCIAS OBLIGATORIAS/BASE MÍNIMA";
+			case "53":
+				return "P.F. DESEMPLEO, FOGASA, FORMACI\u00D3N PROFESIONAL";
+			case "54":
+				return "CONTINGENCIAS COMUNES -CUOTA TRABAJADOR";
+			case "55":
+				return "CONTINGENCIAS COMUNES - CUOTA OBRERA, AT Y EP, OC";
+			case "56":
+				return "CONTINGENCIAS COMUNES - DIFERENCIAS BASE";
+			case "57":
+				return "";
+			case "58":
+				return "CONTINGENCIA COM\u00DAN - ERE";
+			case "59":
+				return "CONTRATO FORMACI\u00D3N - SIN EXCLUSIONES";
+			case "60":
+				return "AS, PF, IT, MA, DE, FGS Y FP ";
+			case "61":
+				return "- JUBILACI\u00D3N, INCAPACIDAD PERMANENTE,";
+			case "62":
+				return "FOGASA, FORMACI\u00D3N PROFESIONAL";
+			case "63":
+				return "S.E.A. - PRESTACIONES DE CORTA DURACI\u00D3N";
+			case "64":
+				return "CONTINGENCIAS COMUNES, INCAPACIDAD TEMPORAL, OTRAS";
+			case "65":
+				return "FOGASA - CESE ACTIVIDAD - OBLIGACI\u00D3N";
+			case "68":
+				return "CONTINGENCIAS COMUNES Y PROFESIONALES";
+			case "69":
+				return "FOGASA/CESE ACTIVIDAD";
+			case "70":
+				return "C.C. S./ HORAS COMPLEMENTARIAS";
+			case "71":
+				return "CONTINGENCIAS COMUNES -IT/BASE MÍNIMA RET";
+			case "72":
+				return "MATERNIDAD/PATERNIDAD TIEMPO PARCIAL";
+			case "73":
+				return "C.EMP.C.C. T.PLANA 3A-MAT/PAT T.PARC.";
+			case "74":
+				return "JUB, IPCC, MSCC, D.-CUOTA TOTAL";
+			case "75":
+				return "SIN HORAS EXTRAS";
+			case "76":
+				return "TIPO COTIZACI\u00D3N IT AT";
+			case "77":
+				return "TIPO COTIZACI\u00D3N ISM AT";
+			case "78":
+				return "FORMACI\u00D3N PROFESIONAL";
+			case "79":
+				return "DESEMPLEO Y FORMACI\u00D3N PROFESIONAL";
+			case "80":
+				return "DECREMENTO BBCC SOBRE TIEMPO COMPLETO";
+			case "81":
+				return "CONTINGENCIAS COMUNES Y PROFESIONALES - BBCC MEDIA 12";
+			default : 
+				return "";
+		}
+	}
+	
 	
 	private static <T extends Enum<?>> SSPECData newSSPECData(T type, java.util.Date startDate, java.util.Date endDate, String description, String expression) {
 		Boolean isSystem = true;

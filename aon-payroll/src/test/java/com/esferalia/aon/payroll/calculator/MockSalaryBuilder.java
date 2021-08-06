@@ -9,6 +9,7 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -334,4 +335,9 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	}
 
+	@Override
+	public void setExpressionContext(ExpressionContext context) {
+		// TODO Auto-generated method stub
+		
+	}
 }

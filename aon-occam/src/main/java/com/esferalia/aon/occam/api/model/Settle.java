@@ -36,6 +36,7 @@ public class Settle extends Salary {
 		for (Deduction deduction : salary.getDeductions()) {
 			this.addDeduction(
 				(byte) deduction.getDeductionType().ordinal(), 
+				deduction.getName(),
 				deduction.getDescription(),
 				deduction.getAmount(), 
 				(byte) deduction.getDeductionType().ordinal()

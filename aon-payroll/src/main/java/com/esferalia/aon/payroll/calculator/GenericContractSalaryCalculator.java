@@ -465,6 +465,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 
 		salaryBuilder.createNewSalary();
+		salaryBuilder.setExpressionContext(expressionContext);
 		salaryBuilder.setContract(contractSalaryCalculatorContext.getSalaryProxy());
 
 		expressionContext.setVariable(BUILDER_VARIABLE, salaryBuilder, start, end);

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 class PECListener  implements IdcListener {
@@ -351,6 +352,8 @@ class PECListener  implements IdcListener {
 				var.getName()
 				));
 		t.setDescription(String.format(new Locale("es", "ES"),"%s (%s)", description, portTipo));
+		//t.setName(getDeductionType(var).name());
+		t.setName(ContextVariable.BONUS_EMPLOYEE.getName());
 		
 		return t;
 	}
@@ -362,6 +365,28 @@ class PECListener  implements IdcListener {
 			list.add(t);
 
 		return list;
+	}
+	
+	private static DeductionType getDeductionType(ContextVariable var) {
+		switch (var) {
+		case FP_EMPLOYEE:
+		case FP_ENTERPRISE:
+			return DeductionType.JOB_TRAINING;
+		case UNEMPLOY_EMPLOYEE:
+		case UNEMPLOY_ENTERPRISE:
+			return DeductionType.UNEMPLOYMENT;
+		case CGC_EMPLOYEE:
+		case CGC_ENTERPRISE:
+			return DeductionType.COMMON_CONTINGENCY;
+		case IT_ENTERPRISE:
+			return DeductionType.IT;
+		case IMS_ENTERPRISE:
+			return DeductionType.IMS;
+		case FOGASA_ENTERPRISE:
+			return DeductionType.FOGASA;
+		default:
+			return DeductionType.BONUS;
+		}
 	}
 
 }
