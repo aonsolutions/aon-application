@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 public class EmployeeEventsData implements Serializable {
@@ -69,6 +70,7 @@ public class EmployeeEventsData implements Serializable {
 	
 	private boolean fullTimeJourney;
 	private String tc2;
+	private boolean hasSettle = false;
 	
 	private String contractStartDate;
 	private String contractEndDate;
@@ -109,6 +111,15 @@ public class EmployeeEventsData implements Serializable {
 
 	public EmployeeEventsData setFullTimeJourney(boolean fullTimeJourney) {
 		this.fullTimeJourney = fullTimeJourney;
+		return this;
+	}
+	
+	public boolean hasSettle() {
+		return hasSettle;
+	}
+
+	public EmployeeEventsData setHasSettle(boolean hasSettle) {
+		this.hasSettle = hasSettle;
 		return this;
 	}
 	
@@ -349,6 +360,17 @@ public class EmployeeEventsData implements Serializable {
 			String varName = entry.getKey();
 			ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 			
+			if(AonStringUtils.equalsIgnoreCase(varName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+				if(null == entry.getValue() || entry.getValue().isEmpty())
+					continue;
+				
+				Quartet<Date, Date, String, String> settleHolidaysQuarter = entry.getValue().get(0);
+				EmployeeEventsVariable eVar = new EmployeeEventsVariable(settleHolidaysQuarter.getStartDate(), settleHolidaysQuarter.getEndDate(), Double.parseDouble(settleHolidaysQuarter.getExpression()));
+				varList.add(eVar);
+				mapEventsVar.put(varName, varList);
+				continue;
+			}
+			
 			if(!entry.getValue().isEmpty()){
 				for(Quartet<Date, Date, String, String> quarter : entry.getValue()){
 					if(null != quarter.getExpression()) {
@@ -375,7 +397,7 @@ public class EmployeeEventsData implements Serializable {
 						// Add to var list
 						if(null != endDate) {
 							Date itDate = DateUtils.copyDateOnly(startDate);
-							while(itDate.before(endDate)) {
+							while(DateUtils.isBeforeOrEquals(itDate, endDate)) {
 								Date actualDate = DateUtils.copyDateOnly(itDate);
 								DateUtils.resetTime(actualDate);
 								
@@ -543,6 +565,11 @@ public class EmployeeEventsData implements Serializable {
 		//TODO: GET FIXED MAP FOR CONTINUES MONTHS WIHT SAME VALUE
 		
 		return fixedMap;
+	}
+
+	public void removeEventData(String variableName) {
+		ArrayList<Quartet<Date, Date, String, String>> emptyList = new ArrayList<Quartet<Date,Date,String,String>>();
+		this.contractEventsList.put(variableName, emptyList);
 	}
 	
 }

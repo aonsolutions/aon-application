@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -332,7 +333,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Descargar Variables actualizadas
 		Integer actualYear = DateUtils.getYear();
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,
-				r -> { 
+				r -> {
 					initializeYearLB(this.yearLB);
 					hideYearLBOptions();
 					setSelectedValueLB(yearLB, (year+1900)+"");
@@ -437,6 +438,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		HorizontalPanel headPanel = new HorizontalPanel();
 		Label headLabel = new Label(var);
 		headLabel.addStyleName(style.firstHeadStyle());
+		headLabel.getElement().getStyle().setWidth(270, Unit.PX);
+		
+		if (employeeEventsDraft.isCalendarVariable(var)){
+			Double acumulateYaer = employeeEventsDraft.getAcumulateYear(var);
+			if(AonNumberUtils.notEquals(acumulateYaer, 0.0))
+				headLabel.setText(var + " (" + acumulateYaer + " dias)");
+		}
 		
 		headLabel.ensureDebugId(var.toLowerCase());
 		
@@ -445,7 +453,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		if (employeeEventsDraft.isCalendarVariable(var)){
 			Button calendarButton = new Button();
 			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
-			calendarButton.addStyleName(style.calendarPosition());
 			calendarButton.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -527,7 +534,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			}
 			
-			EmployeeEventsVariable varMonth = this.employeeEventsDraft.getEmployeeEventsVariableByMonth(var, actualMonth, Integer.parseInt(yearLB.getSelectedItemText()));
+			Double accumulateMonth = this.employeeEventsDraft.getAcumulateVariableByMonth(var, actualMonth, Integer.parseInt(yearLB.getSelectedItemText()));
 			
 			if (newRow % 2 == 1) {
 				eventCell.removeStyleName(style.bgcWhite());
@@ -535,7 +542,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				eventCell.addStyleName(style.bgcWhite());
 			}
 			
-			if (null == varMonth){
+			if (AonNumberUtils.equals(accumulateMonth, 0.0)){
 				eventCell.setTextBoxValue("-");
 				eventsGrid.setWidget(newRow, col, eventCell);
 				if (newRow % 2 != 1)
@@ -544,7 +551,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			}
 			
-			eventCell.setTextBoxValue(varMonth.getValue().toString());
+			eventCell.setTextBoxValue(accumulateMonth.toString());
 			eventsGrid.setWidget(newRow, col, eventCell);
 			if (newRow % 2 != 1)
 				eventsGrid.getWidget(newRow, col).addStyleName(style.bgcWhite());
@@ -561,11 +568,18 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			return false;
 		
 		String variableName = element.getInnerText();
-		return employeeEventsDraft.isCalendarVariable(variableName);
+		return employeeEventsDraft.isCalendarVariable(variableName) && !AonStringUtils.equalsIgnoreCase(variableName, "DIAS_VACACIONES_NO_DISFRUTADOS");
 	}
 
 	private void addEventVar(String variable, String value, Date startDate, Date endDate) {
 		employeeEventsDraft.setValueByMonth(variable, value, startDate, endDate);
+		changeYear();
+		saveButton.setEnabled(true);
+		undoAllButton.setEnabled(true);
+	}
+	
+	private void addSettleHolidayEventVar(String variable, String value, Date startDate, Date endDate) {
+		employeeEventsDraft.setSettleHolidayValueByMonth(variable, value, startDate, endDate);
 		changeYear();
 		saveButton.setEnabled(true);
 		undoAllButton.setEnabled(true);
@@ -794,23 +808,51 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			variableName = "Nuevo valor";
 		
 		ArrayList<String> filterVariables = getVariablesWithOutContract();
+		EmployeeInputDialog inputDialog = null;
 		
-		EmployeeInputDialog inputDialog = new EmployeeInputDialog(
-				variableName, 
-				employeeEventsDraft.getContractStartDate(),
-				employeeEventsDraft.getContractEndDate(),
-				filterVariables,
-				null){
-			@Override
-			protected void onAccept() {
-				Date startDate = getStartDate();
-				Date endDate = getEndDate();
-				String value = getValue();
-				String variable = getVariableName();
-				
-				addEventVar(variable, value, startDate, endDate);
-			}
-		};
+		if(AonStringUtils.containsIgnoreCase(variableName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+			// Fix variable name, remove (x dias)
+			variableName = "DIAS_VACACIONES_NO_DISFRUTADOS";
+			
+			EmployeeEventsVariable employeeEventsVariable = this.employeeEventsDraft.getEmployeeEventsVariable(variableName);
+			
+//			Window.alert(variableName + " = " + employeeEventsVariable.getValue()+ " (" + employeeEventsVariable.getStartDate() + " - " + employeeEventsVariable.getEndDate() + ")");
+			
+			inputDialog = new EmployeeInputDialog(
+					variableName,
+					employeeEventsVariable.getValue(),
+					employeeEventsVariable.getStartDate(),
+					employeeEventsVariable.getEndDate(),
+					filterVariables
+					){
+				@Override
+				protected void onAccept() {
+					Date startDate = getStartDate();
+					Date endDate = getEndDate();
+					String value = getValue();
+					String variable = getVariableName();
+					
+					addSettleHolidayEventVar(variable, value, startDate, endDate);
+				}
+			};
+		} else {
+			inputDialog = new EmployeeInputDialog(
+					variableName, 
+					employeeEventsDraft.getContractStartDate(),
+					employeeEventsDraft.getContractEndDate(),
+					filterVariables,
+					null){
+				@Override
+				protected void onAccept() {
+					Date startDate = getStartDate();
+					Date endDate = getEndDate();
+					String value = getValue();
+					String variable = getVariableName();
+					
+					addEventVar(variable, value, startDate, endDate);
+				}
+			};
+		}
 		
 		inputDialog.show();
 		inputDialog.center();
