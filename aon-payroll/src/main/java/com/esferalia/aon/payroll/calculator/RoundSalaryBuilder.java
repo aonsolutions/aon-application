@@ -2,11 +2,8 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -245,10 +242,23 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			this.cgcBase = cgcBase;
 		} catch (NullPointerException e) {
 		}
+		
 		try {
 			this.cgcBase = round(ContextVariable.CGC_BASE);			
 		} catch ( Exception e ) {
 		}
+		
+		for ( ContextVariable v : ContextVariable.ERE_BASES ) { 
+			try {
+				this.cgcBase += round(v);			
+			} catch ( Exception e ) {
+			}
+		}
+		try {
+			this.cgcBase += round(ContextVariable.MATERNITY_BASE);			
+		} catch ( Exception e ) {
+		}
+		
 		try {
 			round(ContextVariable.CGC_BASE_ENTERPRISE);			
 		} catch ( Exception e ) {
@@ -264,6 +274,18 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			this.cgpBase = round(ContextVariable.CGP_BASE);			
 		} catch ( Exception e ) {
 		}
+		// sum ERE & MATERNIDAD
+		for ( ContextVariable v : ContextVariable.ERE_BASES ) { 
+			try {
+				this.cgpBase += round(v);			
+			} catch ( Exception e ) {
+			}
+		}
+		try {
+			this.cgpBase += round(ContextVariable.MATERNITY_BASE);			
+		} catch ( Exception e ) {
+		}
+		
 		try {
 			round(ContextVariable.CGP_BASE_ENTERPRISE);			
 		} catch ( Exception e ) {

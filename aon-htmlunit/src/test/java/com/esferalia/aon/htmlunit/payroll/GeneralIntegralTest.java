@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
 
+	private static final double DELTA = 0.01;
 	public static final String INTEGRATION_PAYROLL_URL = "integration.test.general.payroll.url";
 
 	@BeforeClass
@@ -603,9 +604,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL,2018);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.MAY,2018);
-		assertValue("cgcBaseLabel", cgcBase );
+		assertValue("cgcBaseLabel", cgcBase , DELTA);
 		calculate(Calendar.JUNE,2018);
-		assertValue("cgcBaseLabel", cgcBase );
+		assertValue("cgcBaseLabel", cgcBase , DELTA);
 		assertValue("totalPaymentsLabel", 0.00 );
 
 		draft("BASE MÍNIMA DIARIA, I.T");
@@ -1250,7 +1251,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL, 2018);
 		sonnyCgcBase = getValue("cgcBaseLabel");
 		sonnytotalPayment = getValue("totalPaymentsLabel");
-		Assert.assertEquals(cgcBase, sonnyCgcBase);
+		Assert.assertEquals(cgcBase, sonnyCgcBase, DELTA);
 		//Assert.assertEquals(totalPayment, sonnytotalPayment);
 		eventsTable = getElementById("eventsTable");
 		Assert.assertEquals(0, eventsTable.getRowCount());
