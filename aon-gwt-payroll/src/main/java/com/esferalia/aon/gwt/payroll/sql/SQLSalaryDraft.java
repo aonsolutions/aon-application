@@ -43,12 +43,20 @@ public class SQLSalaryDraft {
 		Integer contract = draft.getEmployee().getId();
 
 		for (Variable variable : draft.getDraftContext()) {
+			
+			if(AonStringUtils.equalsIgnoreCase(variable.getName(), "DIAS_VACACIONES_NO_DISFRUTADOS"))
+				continue;
+			
 			makeRoom(conn, variable, contract);
 			String expression = variable.getExpression();
+			
 			if (!"REMOVE_VARIABLE()".equals(expression)
 					|| inAgreement(conn, variable, contract)
 					|| inSystem(conn, variable, domain, parentDomain)) {
+				
+				
 				insertData(conn, variable, contract, domain);
+				
 			} // end-if : If it's not REMOVE() or is at agreement or system.
 		}
 

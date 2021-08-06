@@ -269,7 +269,7 @@ public class EmployeeEventsDraftObject {
 				employeeEventsData = resultEmployeeEventsData;
 				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
-				if(resultEmployeeEventsData.hasSettle())
+				if(resultEmployeeEventsData.hasSettle() || employeeContractVariables.contains("DIAS_VACACIONES_NO_DISFRUTADOS"))
 					calendarVariables.add("DIAS_VACACIONES_NO_DISFRUTADOS");
 				employeeContractVariables.remove("DIAS_VACACIONES_NO_DISFRUTADOS");
 			
