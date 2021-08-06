@@ -553,12 +553,12 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	
 	@Override
 	public void up2DateEnterprise() {
-		addInfo("Empresa actualizada, no existen movimientos y/o cambios nuevos.");
+		addInfo("Contratos actualizados, no existen movimientos y/o cambios nuevos.");
 		syncMessages();
 	}
 	
 	protected void setUp2DateEnterprise() {
-		addInfo("Empresa actualizada, no existen movimientos y/o cambios nuevos.");
+		addInfo("Contratos actualizados, no existen movimientos y/o cambios nuevos.");
 		syncMessages();
 	}
 	
