@@ -111,6 +111,15 @@ public class MainContrataContract extends MainEntryPoint {
 		
 	}
 	
+	private class EnterpriseSalaryImpl extends EnterpriseSalary{
+
+		@Override
+		protected void onBackClick() {
+			deckPanel.showWidget(0);
+		}
+		
+	}
+	
 	interface Binder extends UiBinder<Widget, MainContrataContract> {}
 	
 	private static final Binder binder = GWT.create(Binder.class);
@@ -181,6 +190,11 @@ public class MainContrataContract extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<EmployeeContractInfo> trashEmployeeDataGrid;
 	
+	// Enterprise Salary
+	
+	@UiField(provided = true)
+	EnterpriseSalary enterpriseSalary;
+	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
@@ -191,6 +205,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
 	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
+	private EnterpriseSalaryObject enterpriseSalaryObject;
 	
 	private AonToolbar toolbar;
 	private AonToolbar trashToolbar;
@@ -198,6 +213,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private AonToolbarButton newContract;
 	private AonToolbarButton trashListBtn;
 	private AonToolbarButton up2DateSS;
+	private AonToolbarButton salariesBtn;
 	
 	private SuggestBox employeeSB;
 	private CheckBox inactiveContractsCB;
@@ -205,6 +221,8 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
+		enterpriseSalary = new EnterpriseSalaryImpl();
+		enterpriseSalary.setBackButtonVisible();
 		
 		provideEmployeesDataGrid();
 		provideTrashEmployeesDataGrid();
@@ -939,6 +957,19 @@ public class MainContrataContract extends MainEntryPoint {
 		deckPanel.showWidget(3);
 	}
 	
+	protected void showEnterpriseSalary() {
+		if(null == enterpriseSalaryObject) {
+			mainContrataContractObject.getEnterprise(
+					enterprise -> {
+						enterpriseSalaryObject = new EnterpriseSalaryObject(enterprise);
+						enterpriseSalary.setEnterpriseSalaryObject(enterpriseSalaryObject);
+					}, 
+					f -> {});
+		}
+		
+		deckPanel.showWidget(4);
+	}
+	
 	private void redrawTable() {
 		this.employeeSB.setValue("");
 		this.inactiveContractsCB.setValue(false);
@@ -1182,11 +1213,20 @@ public class MainContrataContract extends MainEntryPoint {
 		});
 		toolbar.add(up2DateSS);
 		
+		salariesBtn = new AonToolbarButton( "N\u00F3minas Empresa", AON.CSS.aonIconReceipt());
+		salariesBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showEnterpriseSalary();
+			}
+		});
+		toolbar.add(salariesBtn);
+		
 		return toolbar;
 	}
 	
 	private AonToolbar getTrashToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Papelera contratos");
+		AonToolbar toolbar = new AonToolbar("Papelera Contratos");
 		
 		backListBtn = new AonToolbarButton( AON.MSG.backAction(), AON.CSS.aonIconBack());
 		backListBtn.addClickHandler(new ClickHandler() {

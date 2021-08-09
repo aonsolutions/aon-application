@@ -240,6 +240,26 @@ public class MainContrataContractObject {
 	public boolean hasCertificateSEPE() {
 		return this.hasCertificateSEPE;
 	}
+	
+	// ------------------------------------------------------------------------------------
+	//									ENTERPRISE SALARY
+	// ------------------------------------------------------------------------------------
+
+	public void getEnterprise(Consumer<com.esferalia.aon.gwt.payroll.shared.Enterprise> success, Consumer<Throwable> failure) {
+		employeesService.getEnterprise(new AsyncCallback<com.esferalia.aon.gwt.payroll.shared.Enterprise>() {
+			
+			@Override
+			public void onSuccess(com.esferalia.aon.gwt.payroll.shared.Enterprise enterprise) {
+				success.accept(enterprise);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
 
 }
 		
