@@ -183,6 +183,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconReceipt aonIconReceipt;
+.aon_icon_receipt { background-image: iconReceipt;}
 @url iconMoveTo aonIconMoveTo;
 .aon_icon_move_to { background-image: iconMoveTo;}
 @url iconUpgrade aonIconUpgrade;
