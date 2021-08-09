@@ -2676,7 +2676,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EnterpriseSalary getEnterpriseSalary() {
 		if (enterpriseSalary == null)
-			(enterpriseSalary = new EnterpriseSalary()).addListener(this);
+			(enterpriseSalary = new EnterpriseSalary(){
+				@Override
+				protected void onBackClick() {}
+			}).addListener(this);
+		
 		return enterpriseSalary;
 	}
 	

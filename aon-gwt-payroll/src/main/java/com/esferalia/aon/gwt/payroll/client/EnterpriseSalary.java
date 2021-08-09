@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EnterpriseSalary extends Composite {
+public abstract class EnterpriseSalary extends Composite {
 	
 	// --------------------------------------------- Salary Table Impl ----------------------------------------------
 	
@@ -164,6 +164,7 @@ public class EnterpriseSalary extends Composite {
 	private NewContextMenu contextMenu;
 	
 	private AonToolbar toolbar;
+	private AonToolbarButton backButton;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton pdfButton;
 	private AonToolbarButton publishButton;
@@ -263,8 +264,17 @@ public class EnterpriseSalary extends Composite {
 		Integer firstPayroll = (null == workplaceSalaries || workplaceSalaries.isEmpty()) ? DateUtils.getYear() : DateUtils.getYear(workplaceSalaries.get(workplaceSalaries.size()-1).getStartDate());
 		Integer diffYears = actualYear - firstPayroll;
 		
+		Integer year = null;
+		
 		for(int i = 0; i <= diffYears; i++) {
-			Integer year = actualYear - i;
+			year = actualYear - i;
+			String yearStr = year.toString();
+			yearTillT.addItem(yearStr, yearStr);
+			yearTTo.addItem(yearStr, yearStr);
+		}
+		
+		if(null != year && yearTillT.getItemCount() == 1) {
+			year--;
 			String yearStr = year.toString();
 			yearTillT.addItem(yearStr, yearStr);
 			yearTTo.addItem(yearStr, yearStr);
@@ -544,7 +554,14 @@ public class EnterpriseSalary extends Composite {
 	private AonToolbar getToolbarPanel() {
 
 		AonToolbar toolbar = new AonToolbar("N" + String.valueOf("\u00F3") + "minas");
-
+		
+		backButton = new AonToolbarButton( "Atras", AON.CSS.aonIconBack() );
+		backButton.addClickHandler(e -> {
+			onBackClick();
+		});	
+		backButton.setVisible(false);
+		toolbar.add(backButton);
+		
 		deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		deleteButton.addClickHandler(e -> {
 			onDelete(e);
@@ -578,6 +595,12 @@ public class EnterpriseSalary extends Composite {
 		
 		return toolbar;
 
+	}
+
+	protected abstract void onBackClick();
+	
+	public void setBackButtonVisible() {
+		this.backButton.setVisible(true);
 	}
 
 	private void onDelete(ClickEvent e) {
