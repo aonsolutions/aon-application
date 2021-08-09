@@ -230,7 +230,6 @@ public class EmployeeEventsDraftObject {
 				allStaticVariables.add("HORAS_TUTORIA");
 				allStaticVariables.add("BONIFICACION_TUTORIA");
 				allStaticVariables.add("BONIFICACION_FORMACION_CONTINUA");
-				allStaticVariables.add("DIAS_VACACIONES_NO_DISFRUTADOS");
 				
 				employeeContractVariables.clear();
 				employeeContractVariables.addAll(allStaticVariables);
@@ -269,10 +268,7 @@ public class EmployeeEventsDraftObject {
 				employeeEventsData = resultEmployeeEventsData;
 				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
-				if(resultEmployeeEventsData.hasSettle() || employeeContractVariables.contains("DIAS_VACACIONES_NO_DISFRUTADOS"))
-					calendarVariables.add("DIAS_VACACIONES_NO_DISFRUTADOS");
-				employeeContractVariables.remove("DIAS_VACACIONES_NO_DISFRUTADOS");
-			
+				
 				success.accept(resultEmployeeEventsData);
 			}
 		});

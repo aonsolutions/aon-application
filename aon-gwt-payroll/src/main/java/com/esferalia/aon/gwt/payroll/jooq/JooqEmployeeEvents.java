@@ -248,13 +248,6 @@ public class JooqEmployeeEvents {
 			employeeFilterContractVariables.add(name);
 		}
 		
-		// --------------------------------------------- VACACIONES NO DISFRUTADAS ---------------------------------------------------------
-		
-		Integer settleId = dslContext.select(SALARY.ID).from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.TYPE.eq((byte)2)).fetchOne(SALARY.ID);
-
-		if(null != settleId)	
-				employeeInfoVariablesEvents.setHasSettle(true);
-		
 		// ------------------------------------------------- SOLUCION ---------------------------------------------------------		
 		
 		employeeInfoVariablesEvents.setContractEventsList(employeeVariablesEvents);
@@ -377,26 +370,12 @@ public class JooqEmployeeEvents {
 		for(Entry<String, ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> entry : employeeEventsData.getContractEventsList().entrySet()){
 			if(varsToUpdate.contains(entry.getKey())) {
 				for(Quartet<java.util.Date, java.util.Date, String, String> quartet : entry.getValue()) {
-//					if(AonStringUtils.equalsIgnoreCase(quartet.getName(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
-//						Integer settleId = dslContext.select(SALARY.ID).from(SALARY).where(SALARY.CONTRACT.eq(idEmployee)).and(SALARY.TYPE.eq((byte)2)).fetchOne(SALARY.ID);
-//						Record holidyasRecord = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).and(SALARY_DATA.SALARY.eq(settleId)).fetchOne();
-//						
-//						if(null == quartet.getExpression() || AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0"))
-//							dslContext.delete(SALARY_DATA).where(SALARY_DATA.ID.eq(holidyasRecord.get(SALARY_DATA.ID))).execute();
-//						else
-//							dslContext.update(SALARY_DATA)
-//								.set(SALARY_DATA.EXPRESSION, quartet.getExpression())
-//								.set(SALARY_DATA.START_DATE, parseToSQLDate(quartet.getStartDate()))
-//								.set(SALARY_DATA.END_DATE, parseToSQLDate(quartet.getEndDate()))
-//								.where(SALARY_DATA.ID.eq(holidyasRecord.get(SALARY_DATA.ID)))
-//								.execute();
-//					} else
-						if(null != quartet.getExpression() && !AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0"))
-							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
-									CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-									.values(domain, quartet.getName(), idEmployee, quartet.getExpression(), 
-											parseToSQLDate(quartet.getStartDate()), parseToSQLDate(quartet.getEndDate()))
-									.execute();
+					if(null != quartet.getExpression() && !AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0"))
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+								CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, quartet.getName(), idEmployee, quartet.getExpression(), 
+										parseToSQLDate(quartet.getStartDate()), parseToSQLDate(quartet.getEndDate()))
+								.execute();
 				}
 			}
 		}

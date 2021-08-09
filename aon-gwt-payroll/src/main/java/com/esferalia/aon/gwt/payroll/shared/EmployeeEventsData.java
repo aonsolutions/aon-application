@@ -70,7 +70,6 @@ public class EmployeeEventsData implements Serializable {
 	
 	private boolean fullTimeJourney;
 	private String tc2;
-	private boolean hasSettle = false;
 	
 	private String contractStartDate;
 	private String contractEndDate;
@@ -111,15 +110,6 @@ public class EmployeeEventsData implements Serializable {
 
 	public EmployeeEventsData setFullTimeJourney(boolean fullTimeJourney) {
 		this.fullTimeJourney = fullTimeJourney;
-		return this;
-	}
-	
-	public boolean hasSettle() {
-		return hasSettle;
-	}
-
-	public EmployeeEventsData setHasSettle(boolean hasSettle) {
-		this.hasSettle = hasSettle;
 		return this;
 	}
 	

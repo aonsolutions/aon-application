@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -36,6 +37,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -213,10 +215,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		String widthMenuItem();
 		String cmd_btn();
 		String container();
+		String loadingPanel();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
+	HTMLPanel loadingPanel;
 	
 	@UiField
 	HTMLPanel mainPanel;
@@ -259,14 +268,28 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		initializeTable();
 		
+		initLoadingPanel();
+		showLoading();
+		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
 		
 		saveButton.setEnabled(false);
 		undoAllButton.setEnabled(false);
 	}
-	
+
 	// ----------------------------------------------- Constructor.Methods
+	
+	private void initLoadingPanel() {
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
+		loadingBtn.addStyleName(style.loadingPanel());
+		
+		Label loadingL = new Label("Obteniendo incidencias del trabajador ...");
+		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		
+		loadingPanel.add(loadingBtn);
+		loadingPanel.add(loadingL);
+	}
 	
 	private void initializeTable() {
 		Label blankLabel = new Label();
@@ -338,6 +361,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 					hideYearLBOptions();
 					setSelectedValueLB(yearLB, (year+1900)+"");
 					initializeVariablesToShow();
+					showEvents();
 				},t -> {});
 	}
 	
@@ -568,18 +592,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			return false;
 		
 		String variableName = element.getInnerText();
-		return employeeEventsDraft.isCalendarVariable(variableName) && !AonStringUtils.equalsIgnoreCase(variableName, "DIAS_VACACIONES_NO_DISFRUTADOS");
+		return employeeEventsDraft.isCalendarVariable(variableName);
 	}
 
 	private void addEventVar(String variable, String value, Date startDate, Date endDate) {
 		employeeEventsDraft.setValueByMonth(variable, value, startDate, endDate);
-		changeYear();
-		saveButton.setEnabled(true);
-		undoAllButton.setEnabled(true);
-	}
-	
-	private void addSettleHolidayEventVar(String variable, String value, Date startDate, Date endDate) {
-		employeeEventsDraft.setSettleHolidayValueByMonth(variable, value, startDate, endDate);
 		changeYear();
 		saveButton.setEnabled(true);
 		undoAllButton.setEnabled(true);
@@ -681,17 +698,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	private int calculateRow(Integer position) {
 		return position / eventsGrid.getCellCount(0);
-	}
-	
-	private boolean isOutOfContractView(Date date) {
-		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
-		if(null == newEndDate) {
-			Integer nextYear = DateUtils.getYear() + 1;
-			newEndDate = DateUtils.getLastDayOfMonth(DateUtils.getDate(11, nextYear));
-		}
-		return (date.before(this.employeeEventsDraft.getContractStartDate()) && 
-				DateUtils.getYear(date) !=  DateUtils.getYear(this.employeeEventsDraft.getContractStartDate())) || 
-				(date.after(newEndDate) && DateUtils.getYear(date) != DateUtils.getYear(newEndDate));
 	}
 	
 	// ----------------------------------------------- DataGrid.ContextMenu
@@ -810,49 +816,22 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		ArrayList<String> filterVariables = getVariablesWithOutContract();
 		EmployeeInputDialog inputDialog = null;
 		
-		if(AonStringUtils.containsIgnoreCase(variableName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
-			// Fix variable name, remove (x dias)
-			variableName = "DIAS_VACACIONES_NO_DISFRUTADOS";
-			
-			EmployeeEventsVariable employeeEventsVariable = this.employeeEventsDraft.getEmployeeEventsVariable(variableName);
-			
-//			Window.alert(variableName + " = " + employeeEventsVariable.getValue()+ " (" + employeeEventsVariable.getStartDate() + " - " + employeeEventsVariable.getEndDate() + ")");
-			
-			inputDialog = new EmployeeInputDialog(
-					variableName,
-					employeeEventsVariable.getValue(),
-					employeeEventsVariable.getStartDate(),
-					employeeEventsVariable.getEndDate(),
-					filterVariables
-					){
-				@Override
-				protected void onAccept() {
-					Date startDate = getStartDate();
-					Date endDate = getEndDate();
-					String value = getValue();
-					String variable = getVariableName();
-					
-					addSettleHolidayEventVar(variable, value, startDate, endDate);
-				}
-			};
-		} else {
-			inputDialog = new EmployeeInputDialog(
-					variableName, 
-					employeeEventsDraft.getContractStartDate(),
-					employeeEventsDraft.getContractEndDate(),
-					filterVariables,
-					null){
-				@Override
-				protected void onAccept() {
-					Date startDate = getStartDate();
-					Date endDate = getEndDate();
-					String value = getValue();
-					String variable = getVariableName();
-					
-					addEventVar(variable, value, startDate, endDate);
-				}
-			};
-		}
+		inputDialog = new EmployeeInputDialog(
+				variableName, 
+				employeeEventsDraft.getContractStartDate(),
+				employeeEventsDraft.getContractEndDate(),
+				filterVariables,
+				null){
+			@Override
+			protected void onAccept() {
+				Date startDate = getStartDate();
+				Date endDate = getEndDate();
+				String value = getValue();
+				String variable = getVariableName();
+				
+				addEventVar(variable, value, startDate, endDate);
+			}
+		};
 		
 		inputDialog.show();
 		inputDialog.center();
@@ -863,7 +842,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		seeMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		seeMenu.show();
 	}
+	
+	// -------------------------------------------------- DeckPanel.Methods
 
+	private void showLoading() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showEvents() {
+		deckPanel.showWidget(1);
+	}
+	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
 	public void hideToolbar(){
