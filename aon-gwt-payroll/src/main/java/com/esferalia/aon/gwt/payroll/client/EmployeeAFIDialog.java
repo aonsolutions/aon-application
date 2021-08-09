@@ -505,11 +505,16 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Peculariaties Table
 	
 	private void initPeculiaritiesTable(Date date) {
-		if(null != payrollDate && date.before(payrollDate)) {
-			blockListbox();
-		}else {
-			unblockListbox();
-		}
+		
+		// Comment payrollDate check
+		
+//		if(null != payrollDate && date.before(payrollDate)) {
+//			blockListbox();
+//		}else {
+//			unblockListbox();
+//		}
+		
+		unblockListbox();
 		
 		if(this.dateList.size() != 0) {
 			ArrayList<AFIChange> afiChangeList = afiChangesMap.getAFIChangessByDate(date);
@@ -596,13 +601,16 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	@UiHandler("newDate")
 	void onDateChange(ValueChangeEvent<Date> event) {
 		if(null != event.getValue()) {
-			Date payroll = null;
-			if(null == payrollDate)
-				payroll = DateUtils.copyDateOnly(contractStartDate);
-			else
-				payroll = DateUtils.copyDateOnly(payrollDate);
 			
-			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate)) && event.getValue().after(payroll)) {
+			// Comment payrollDate check
+			
+//			Date payroll = null;
+//			if(null == payrollDate)
+//				payroll = DateUtils.copyDateOnly(contractStartDate);
+//			else
+//				payroll = DateUtils.copyDateOnly(payrollDate);
+			
+			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate))/* && event.getValue().after(payroll)*/) {
 				if(!dateList.contains(event.getValue())) {
 					dateList.add(event.getValue());
 					afiChangesMap.addAFIChange(event.getValue());
@@ -611,7 +619,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					newDate.setValue(null);
 				}
 			}else {
-				AonDialog dialog = new AonDialog("AVISO: Error fecha", new HTML("La fecha seleccionada es anterior a la fecha de inicio de contrato (" + formatFullDate.format(contractStartDate) + ") o anterior a la ultima nomina (" + formatFullDate.format(payroll) + ")"));
+				AonDialog dialog = new AonDialog("AVISO: Error fecha", new HTML("La fecha seleccionada es anterior a la fecha de inicio de contrato (" + formatFullDate.format(contractStartDate) + ")"/* + "o anterior a la ultima nomina (" + formatFullDate.format(payroll) + ")"*/));
 				dialog.warning();
 			}
 		}
