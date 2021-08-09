@@ -767,7 +767,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					int rowIdx = calculatePositionRow(initialPosition);
 					int colIdx = calculatePositionCol(initialPosition);
 					
-					cellsType[rowIdx][colIdx].select(rowIdx, colIdx);
+					DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[rowIdx][colIdx]);
+					if(null != dayType && dayType != DayType.BAJAIT)
+						cellsType[rowIdx][colIdx].select(rowIdx, colIdx);
+					
 					initialPosition++;	
 				}
 			}
@@ -779,11 +782,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			
 			if (isMonthSelected(row, col)){
 				for(int i = 1; i<totalCols; i++) {
-					if(null != cellsType[row][i])
-						cellsType[row][i].select(row, i);
+					if(null != cellsType[row][i] && null != cellsDates[row][i]) {
+						DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[row][i]);
+						if(null != dayType && dayType != DayType.BAJAIT)
+							cellsType[row][i].select(row, i);
+					}
 				}
 			}else {
-				cellsType[row][col].select(row, col);
+				DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[row][col]);
+				if(null != dayType && dayType != DayType.BAJAIT)
+					cellsType[row][col].select(row, col);
 			}
 			
 		}
@@ -1637,6 +1645,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private void setTittleOfDayType(DayType dayType, Date currentDay, Label labelDay) {
+		// Si es un dia de baja IT
+		if(dayType == DayType.BAJAIT) {
+			labelDay.setTitle("Baja IT");
+		}
+		
 		// Si es un dia sin tipo y es un dia con parcialidad
 		if(dayType == DayType.PARTIALITY) {
 			labelDay.setTitle("Parcialidad : " + this.employeeCalendarDraftObject.getPartialityCoefficientByDate(currentDay));
@@ -1881,8 +1894,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public void onSave(ClickEvent e) {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s -> {
-					onSaved();
-					changeYear();
+					this.employeeCalendarDraftObject.initCalendarInfo(t -> {
+						// Init save and undo all
+						onSaved();
+						changeYear();
+					}, f -> {});
 				},
 				f -> {}
 		);
