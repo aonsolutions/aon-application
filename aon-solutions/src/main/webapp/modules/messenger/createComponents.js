@@ -49,7 +49,7 @@ export const createMobileMainView = () => newComponent({
     height: "100%",
     overflow: 'hidden'
   },
-});
+}).element;
 
 // ----------------------------------------------------
 // TITLE AND INPUTS IN WRITTER SECTION IN DESKTOP VIEW

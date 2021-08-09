@@ -8,7 +8,7 @@ import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MESSENGER_VIEWS, TASK_STATUS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 
 export class AonMessengerList extends AonElement {
@@ -99,9 +99,9 @@ export class AonMessengerList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     if(this.isBeta()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, ({target}) =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{source:TASK_SOURCE.CAU}));
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, ({target}) => this.addTask(target));
       }
     }
     this.buildToolbarSearch();
@@ -176,6 +176,26 @@ export class AonMessengerList extends AonElement {
       });
     }
 	}
+
+  addTask(button){
+		const left = button.getBoundingClientRect().left;
+    let top  = button.getBoundingClientRect().top;
+    if(this.isMobile()) top = top - 50;
+
+    let options = [{
+      name: 'Solicitud',
+      icon: 'assignment',
+      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
+    }, {
+      name: 'Trámite',
+      icon: 'archive',
+      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.GITHUB})
+    }];
+
+    const d = this.applicationEl.getOptionDialog();
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
 
   goMessengerChat(res){
     if(!this.applicationParentEl){

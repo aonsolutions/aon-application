@@ -147,7 +147,7 @@ public class TaskDAO {
 	}
 	
 	public static Task insert(AONContext ctx, Task task) {
-		Integer id = ctx.getDslContext().insertInto(
+		Record r  = ctx.getDslContext().insertInto(
 					 TASK,
 					 TASK.ACTIVITY_TYPE, 
 					 TASK.COMMENTS, 
@@ -164,6 +164,7 @@ public class TaskDAO {
 					 TASK.REPEAT_PERIOD,
 					 TASK.SENDER,
 					 TASK.SOURCE,
+					 TASK.SOURCE_ID,
 					 TASK.START_DATE,
 					 TASK.STATUS,
 					 TASK.TASK_HOLDER,
@@ -174,9 +175,11 @@ public class TaskDAO {
 					 TASK.MODIFICATION_DATE,
 					 TASK.NUMBER
 				 ).select(getLastTaskNumber(task, ctx))
-	
-			.returning(TASK.ID).fetchOne().getId();
-		return task.setId(id);
+			.returning(TASK.ID, TASK.SOURCE, TASK.NUMBER).fetchOne();
+		task.setId(r.getValue(TASK.ID));
+		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
+		task.setNumber(r.getValue(TASK.NUMBER));
+		return task;
 	}	
 
 	public static void delete(AONContext ctx, Integer id){
@@ -209,6 +212,7 @@ public class TaskDAO {
 						DSL.val(task.getRepeatPeriod().value()),
 						DSL.val(task.getSender().getId()),
 						DSL.val(task.getSource().value()),
+						DSL.val(task.getSourceId()),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
 						DSL.val(task.getStatus().value()),
 						DSL.val(task.getTaskHolder().getId()),

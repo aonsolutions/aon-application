@@ -278,7 +278,6 @@ export const USERS = 'Usuarios';
 export const VAT = 'IVA';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
-
 // ----- W
 
 export const WEB = 'Web';

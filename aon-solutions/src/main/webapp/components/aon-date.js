@@ -148,7 +148,7 @@ export class AonDate extends AonElement {
     
     date.addEventListener(EVENT.BLUR, ({target}) =>{
       const input = target.value;
-      const values = input.split('/').map((v)  => v.replace(/\D/g, ''));
+      const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
       let output = '';
       if (values.length === 3) {
         let year = parseInt(values[2]);

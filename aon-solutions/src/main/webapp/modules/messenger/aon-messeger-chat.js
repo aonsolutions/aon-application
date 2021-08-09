@@ -1,28 +1,7 @@
-import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
-import { ToolbarType } from "../../models/enums.js";
-import { setAttributes, setClasses, setStyles } from "../../services/utils.js";
-import {
-  buildDesktopChat,
-  buildMobileChat,
-  fillChat,
-} from "./shared/messenger-chat.js";
-import {
-  buildDesktopWritter,
-  sendMessage,
-} from "./shared/messenger-writter.js";
-import {
-  MessengerOptions,
-  MessengerSidenav,
-  MESSENGER_COMPONENTS,
-  MESSENGER_IDS,
-  MESSENGER_VIEWS,
-  TASK_STATUS,
-  WORKFLOW_TYPES,
-} from "./MessengerEnums.js";
-import { createOutlinedMaterialIcon } from "./shared/creationUtils.js";
-import * as ACTIONS from "../actions.js";
+import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
+import { setStyles } from "../../services/utils.js";
+import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
 import {
   saveTask,
   getTaskWorkflow,
@@ -31,7 +10,11 @@ import {
   deleteTask
 } from "../../services/taskService.js";
 import { Task } from "./Task.js";
-import { createMainView, createMobileMainView } from "./createComponents.js";
+import { buildDesktop } from "./shared/MessengerChat.js";
+import { fillChat, sendMessage } from "./shared/utils.js";
+import { buildMobile } from "./shared/MessengerChatMobile.js";
+import * as ACTIONS from "../actions.js";
+import { getFormVacationJson } from "./forms/vacation.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -92,19 +75,9 @@ export class AonMessengerChat extends AonElement {
     this.task.setDomain(sender.domain.id);
     this.task.createTask(this.data);
   }
- 
+
   build() {
     this.paintView();
-  }
-
-  paintView() {
-    /*Base font-size*/
-    this.style.fontSize = "12px";
-    
-    if (this.isMobile()) 
-      this.paintMobile();
-    else 
-      this.paintDesktop();
 
     if (this.task.id)   //FILL CHATS WORKFLOW
       this.getTaskWorkflow();
@@ -112,76 +85,23 @@ export class AonMessengerChat extends AonElement {
     this.eventListenerAll();
   }
 
+  paintView() {
+    this.style.fontSize = "12px";
+    if (this.isMobile()) 
+      this.paintMobile();
+    else 
+      this.paintDesktop();
+  }
+
   paintDesktop() {
-    this.buildToolbarDesktop();
-
-    const mainView = createMainView(this);
-
-    buildDesktopWritter(mainView, this);
-
-    buildDesktopChat(this);
+    buildDesktop(this);
   }
 
   paintMobile() {
-    if (this.task.id) {
-      let span = this.applicationEl.addFloatOption(MessengerSidenav.ADD_COMMENT, () => {
-          //Hidding float button
-          setStyles(span.querySelector("button"), { transition: "0.25s", opacity: 0});
-          // show writter
-          let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER), { display: "flex" });
-          setTimeout(() => setStyles(componentWrite, {zIndex: 9,opacity: 1,left: 0}), 100);
-        }
-      );
-    }
-    
-    const mainView = createMobileMainView().element;
-    this.appendChild(mainView);
-
-    buildMobileChat(mainView, this);
+    buildMobile(this);
   }
 
-  buildToolbarDesktop() {
-    const toolbar = setAttributes(new AonToolbar(), {
-      id:this.TOOLBAR,
-      type:ToolbarType.SECONDARY,
-      title:"#" + (this.task.number || "0").toString().padStart(5, 0)
-    });
-
-    this.appendChild(toolbar);
-
-    if(this.task.id){
-      if(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS){
-        toolbar.addButton2({
-          ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-          name: 'Cerrar',
-        }, () => this.updateTaskStatus(TASK_STATUS.FINISHED));
-      }
-      if(this.task.status == TASK_STATUS.DELETED || this.task.status == TASK_STATUS.FINISHED)
-        toolbar.addButton2({...ACTIONS.RESTORE, name:"Reabrir"}, () => this.updateTaskStatus(TASK_STATUS.PENDING));
-
-      if(this.task.status != TASK_STATUS.DELETED) 
-        toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE}, () => this.updateTaskStatus(TASK_STATUS.DELETED));
-    }
-
-    if(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS)
-      toolbar.addButton2(ACTIONS.SAVE, () => this.save());
-
-    toolbar.addButton2(ACTIONS.BACK, () => this.back());
-
-    const titleSpan = toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` );
-
-    setClasses(titleSpan, [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
-
-    const status = createOutlinedMaterialIcon({
-      color: CSS.variable(this.task.status == TASK_STATUS.PENDING || this.task.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
-      name: "info",
-      size: "20px",
-    });
-    status.element.style.marginLeft = "10px";
-    status.appendTo(titleSpan);
-  }
-
-  buildData(){
+  buildTaskWorkflow(){
     if (this.task.id) { //UPDATE
       this.task.setWorkflow([]);
       if( this.getData().workgroup && this.getData().workgroup.id!= this.task.getWorkgroup().id){
@@ -204,7 +124,7 @@ export class AonMessengerChat extends AonElement {
       }
     } else {
       this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
-      this.task.addWorkflow({...this.task.getWorkflowTmp(), comment:this.task.getDescription()}); // ADD COMMENT
+      if(this.task.getDescription()) this.task.addWorkflow({...this.task.getWorkflowTmp(), comment:this.task.getDescription()}); // ADD COMMENT
     }
   }
   
@@ -225,6 +145,11 @@ export class AonMessengerChat extends AonElement {
     let commentTaskEl = this.getElement(MESSENGER_IDS.COMMENT_TASK);
     if(commentTaskEl) commentTaskEl.addEventListener(EVENT.KEYUP, ()=>{
       if(commentTaskEl.value) this.task.setDescription(commentTaskEl.value)
+    });
+
+    let processTypeEl = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
+    if(processTypeEl) processTypeEl.addEventListener(EVENT.CHANGE, ({detail})=>{
+      if(detail && detail.value) this.task.setSourceId(detail.value)
     });
   }
 
@@ -259,7 +184,7 @@ export class AonMessengerChat extends AonElement {
         break;
       }
       await saveTaskWorkflow({...this.task.getWorkflowTmp(), type});
-      await this.save();
+      this.save();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
   }
@@ -277,8 +202,16 @@ export class AonMessengerChat extends AonElement {
       this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
   }
 
-  async save() {
-    this.buildData();
+  save() {
+    this.buildTaskWorkflow();
+    if(this.task.source ===TASK_SOURCE.GITHUB)
+      this.saveSourceProcess();
+    else 
+      this.saveSourceManual();
+  }
+
+
+  async saveSourceManual(){
     this.applicationEl.startLoading();
     try {
       if (this.task.getTitle()) {
@@ -291,6 +224,26 @@ export class AonMessengerChat extends AonElement {
           this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
         }
       }
+    } catch (error) {
+      this.showError(error);
+    }
+    this.applicationEl.stopLoading();
+  }
+
+
+  async saveSourceProcess(){
+    this.applicationEl.startLoading();
+    try {
+        this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
+        this.task.description = getFormVacationJson();
+        const data = await saveTask(this.task);
+        this.task.editTask(data);
+        if(this.getData().id){
+          this.setData(data);
+          if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+        } else {
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+        }
     } catch (error) {
       this.showError(error);
     }
@@ -314,10 +267,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   back(){
-    setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{
-      opacity:"0",
-      transition:".25s"
-    });
+    setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{ opacity:"0", transition:".25s" });
 
     setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter), 250);
   }

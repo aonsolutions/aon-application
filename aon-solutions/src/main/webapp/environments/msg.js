@@ -144,6 +144,7 @@ export const ENTERPRISE = MSG.ENTERPRISE;
 export const ENVIRONMENT = 'Entorno';
 export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
+export const END_DATE = "Fecha fin";//TODO
 
 // ----- F
 
@@ -243,7 +244,7 @@ export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//T
 export const PRODUCT = MSG.PRODUCT;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
-
+export const PROCESS_TYPE = "Tipo de trámite"; //TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
@@ -307,7 +308,7 @@ export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STORE = "Archivar"; //TODO
-
+export const START_DATE = "Fecha inicio";//TODO
 // ----- T
 
 export const TAG = MSG.TAG;
@@ -345,9 +346,9 @@ export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
+export const VIEW = "Ver"; // TODO
 
 // ----- W
-
 export const WEB = MSG.WEB;
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO

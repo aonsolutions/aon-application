@@ -42,7 +42,12 @@ export const MESSENGER_IDS = {
     ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
     MESSENGER_CHAT: "messengerChat",
     MAIN_DIV: "mainDiv",
+    FORM_DINAMIC:"formDinamic",
+    PROCESS_DIV: "processDiv",
+    FIRST_DIV: "firstDiv",
+    SECOND_DIV: "secondDiv",
     NO_MESSAGES : "noMessages",
+    PROCESS_TYPE: "processType",
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
@@ -82,6 +87,15 @@ export const TASK_STATUS = {
 	FINISHED:"finished",
 	FAQ:"faq"
 } 
+
+export const TASK_SOURCE = {
+	MANUAL:"manual",
+	ASSIGNED:"assigned",
+	PROCESS:"process",
+	CAU:"cau",
+	GITHUB:"github"
+} 
+
 
 export const ICON_TYPES = {
     MATERIAL : "material",

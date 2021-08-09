@@ -1,4 +1,4 @@
-import { TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
+import { TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
 
 export class Task {
     id;
@@ -12,14 +12,18 @@ export class Task {
     workflowTmp;
     description;
     status;
+    source;
+    source_id;
     constructor() {
       this.id          = undefined;
       this.status      = undefined;
       this.number      = undefined;
       this.title       = undefined;
       this.description = undefined;
-      this.workgroup   = { };
-      this.task_holder = { };
+      this.source      = TASK_SOURCE.CAU;
+      this.source_id   = undefined;
+      this.workgroup   = {};
+      this.task_holder = {};
       this.workflow    = [];
       this.workflowTmp = {};
     }
@@ -32,6 +36,9 @@ export class Task {
       this.workgroup   = task.workgroup || {};
       this.task_holder = task.task_holder || {};
       this.title       = task.title || "";
+      this.description = task.description || "";
+      this.source      = task.source || TASK_SOURCE.CAU;
+      this.source_id   = task.source_id || undefined;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
         domain:this.domain,
@@ -50,6 +57,7 @@ export class Task {
       if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
       if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
       if(task.status) this.status = task.status;
+      if(task.source_id) this.source_id = task.source_id;
       // if(task.title)                              this.title       = task.title;
       // if(task.domain)                             this.domain      = task.domain;
       // if(task.workflow)                           this.workflow    = task.workflow;
@@ -94,6 +102,22 @@ export class Task {
 
   setSender(sender) {
     this.sender = sender;
+  }
+
+  getSource() {
+    return this.source;
+  }
+
+  setSource(source) {
+    this.source = source;
+  }
+
+  getSourceId() {
+    return this.source_id;
+  }
+
+  setSourceId(source_id) {
+    this.source_id = source_id;
   }
 
   getWorkgroup() {

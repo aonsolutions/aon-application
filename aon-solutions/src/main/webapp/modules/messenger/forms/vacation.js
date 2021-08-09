@@ -1,0 +1,108 @@
+
+import { AonBasicTable } from "../../../components/aon-basic-table";
+import { AonDate } from "../../../components/aon-date";
+import { AonIconButton } from "../../../components/aon-icon-button";
+import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
+import { formatDateOrigin, setAttributes } from "../../../services/utils";
+import { MESSENGER_IDS } from "../MessengerEnums";
+
+/**
+ * 
+ * @param {HTMLElement} card 
+ */
+ export const createFormVacation = (card, data= {}) =>{
+    const form  = setAttributes(document.createElement(TAG.FORM),{
+        id:MESSENGER_IDS.FORM_DINAMIC,
+        action:"#"
+    });
+    form.onsubmit = () => false;
+    form.style.width = "100%";
+    card.setContent(form);
+
+    let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
+    form.appendChild(table);
+ 
+    const div = document.createElement(TAG.DIV);
+    form.appendChild(div);
+    
+    let i = 0;
+    if(data.dates && data.dates.length){
+        data.dates.forEach(dt=> addDates(table, dt, i++) );
+    } else {
+        addDates(table, undefined, i++);
+    }
+
+    //ADD BUTTON 
+    let addButton  = setAttributes(new AonIconButton(),{
+        id:"addButton",
+        title:MSG.ADD_DETAIL,
+        icon:MATERIAL_ICONS.ADD
+    });
+    addButton.addEventListener(EVENT.CLICK, () => addDates(table, undefined, i++) );
+    div.appendChild(addButton);
+}
+
+/**
+ * 
+ * @param {HTMLElement} table html table
+ * @param {Object} data data object default
+ * @param {Number} i row numeric
+ */
+const addDates = (table, data={}, i) =>{
+    const rowIndex = table.addRow(); // ----- RETURN ROW INDEX
+    
+    //DATE INI
+    let startDate = setAttributes(new AonDate(),{
+        name:`startDate[]`,
+        id:"startDate" + i,
+        title:MSG.START_DATE,
+    });
+
+    table.addCell(startDate);
+    startDate.value = data.startDate || formatDateOrigin(new Date());
+
+    //DATE END
+    let endDate = setAttributes(new AonDate(),{
+        id: "endDate" + i,
+        name:`endDate[]`,
+        title:MSG.END_DATE
+    });
+
+    table.addCell(endDate);
+    if(data.endDate) endDate.value = data.endDate;
+
+    // ----- BUTTON DELETE
+    let dataDelete = setAttributes(new AonIconButton(),{
+        id:"Delete" + i,
+        title:MSG.DELETE,
+        icon:MATERIAL_ICONS.REMOVE_CIRCLE
+    });
+
+    dataDelete.addEventListener(EVENT.CLICK, () => {
+        table.removeRow(rowIndex);
+    });
+    table.addCell(dataDelete);
+}
+
+/**
+ * 
+ * @returns json form vacacion json
+ */
+export const getFormVacationJson = ()=>{
+    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    let dates = [];
+    //DATES
+    [...form.querySelectorAll("table tr")].map(tr=>{
+        let startDate = tr.querySelector("[name*=startDate]");
+        let endDate = tr.querySelector("[name*=endDate]");
+        if(startDate && endDate && startDate.value && endDate.value)
+            dates.push({startDate: startDate.value, endDate: endDate.value});
+    })
+
+    let json = {
+        dates
+    }
+
+    console.log("json form vacation->", json);
+    return JSON.stringify(json);
+}
