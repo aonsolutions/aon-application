@@ -964,12 +964,12 @@ public class JooqEmployee {
 		if(certifca2BatachIds.isEmpty()) {
 			contractData.setHasCertifica2(false);
 		} else {
-			Record1<Integer> sepeBatchAttachRecord = dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
+			Result<Record1<Integer>> sepeBatchAttachRecords = dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
 				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(certifca2BatachIds.get(0)))
 				.and(SEPE_BATCH_ATTACH.MIMETYPE.eq((byte)5))
-				.fetchOne();
+				.fetch();
 			
-			contractData.setHasCertifica2(sepeBatchAttachRecord != null);
+			contractData.setHasCertifica2(sepeBatchAttachRecords.isNotEmpty());
 		}
 		
 		// ---------------------------------------------- Sepe Id
