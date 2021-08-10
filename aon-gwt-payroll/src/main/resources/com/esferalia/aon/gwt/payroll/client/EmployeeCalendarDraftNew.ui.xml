@@ -91,6 +91,10 @@
 			background-color: green;
 		}
 		
+		.leaveColor{
+			background-color: red;
+		}
+		
 		.partialityColor{
 			background-color: #9c85ee;
 		}
@@ -290,6 +294,7 @@
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">Inactividad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.dropColor}" ui:field="dropDayButton">Ausencia</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.holidayColor}" ui:field="holidayDayButton">Vacaciones</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton">Baja IT</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton">Parcialidad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton">Peonadas</g:Button>
 						<g:Button styleName="{style.aonButtonStyle} aon-icon-time" ui:field="hourButton">Horas</g:Button>
