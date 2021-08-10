@@ -519,6 +519,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getWorkplaceEmployeeITInfo(currentDomainName, allEmployees, workplaceId, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
 	}
+	
+	@Override
+	public void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeITInfo(currentDomainName, contractId, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+	}
 
 	@Override
 	public void getEmployeesITInfo(String currentDomainName, Integer ids [], AsyncCallback<List<ITEmployee>> callback) {

@@ -300,6 +300,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType) throws IllegalArgumentException;
 
+	List<ITEmployee> getEmployeeITInfo(String currentDomainName, Integer contractId);
+
 	
 	
 }
