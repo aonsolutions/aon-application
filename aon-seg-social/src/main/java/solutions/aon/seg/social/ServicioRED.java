@@ -1322,24 +1322,99 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 		
 	}
+
+	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
+		
+		SSLContext sslContext = null;
+		
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			try (CloseableHttpResponse resp = httpClient.execute(new HttpGet("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR71&E=I&AP=AFIR"))) {
+				Toolkit.checkResponseStatus(resp);
+				String body = EntityUtils.toString(resp.getEntity(), "UTF-8");
+				
+				Matcher matcher = FORM_PATTERN.matcher(body);
+				if (matcher.find()) {
+					
+					String params = matcher.group("link").replaceAll("&amp;", "&");
+					
+					link = "https://w2.seg-social.es/" + params;
+					sessionId = matcher.group("session");
+				}
+			}
+			
+			HttpPost httpPost = new HttpPost(link);
+
+			String txtSDFTESCCO = ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFNYCCCO = ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("Applname", "LIBAFCON"));
+			params.add(new BasicNameValuePair("Formname", "ACRM7101"));
+			params.add(new BasicNameValuePair("sessionId", sessionId));
+			params.add(new BasicNameValuePair("focusedControl", "Sub2207001009"));
+//			params.add(new BasicNameValuePair("keepAliveURL", "/KeepAlive?"));
+//			params.add(new BasicNameValuePair("keepAliveInterval", "180000"));
+//			params.add(new BasicNameValuePair("clientDebugLevel", "0"));
+			params.add(new BasicNameValuePair("default_null", "1"));
+			params.add(new BasicNameValuePair("txt_EntornoPr", "0"));
+			params.add(new BasicNameValuePair("txt_Transac", "Acr71"));
+			params.add(new BasicNameValuePair("txt_MenuPracticas", "I"));
+			params.add(new BasicNameValuePair("txt_CommandEdit", "Acr71"));
+			params.add(new BasicNameValuePair("txt_SDFREGCCO", regime));
+			params.add(new BasicNameValuePair("txt_SDFTESCCO", txtSDFTESCCO));
+			params.add(new BasicNameValuePair("txt_SDFNYCCCO", txtSDFNYCCCO));
+			params.add(new BasicNameValuePair("txt_SDFDIADESDEM", String.format("%td", from)));
+			params.add(new BasicNameValuePair("txt_SDFMESDESDEM", String.format("%tm", from)));
+			params.add(new BasicNameValuePair("txt_SDFAODESDEM", String.format("%tY", from)));
+			params.add(new BasicNameValuePair("txt_SDFDIAHASTAM", String.format("%td", to)));
+			params.add(new BasicNameValuePair("txt_SDFMESHASTAM", String.format("%tm", to)));
+			params.add(new BasicNameValuePair("txt_SDFAOHASTAM", String.format("%tY", to)));
+			params.add(new BasicNameValuePair("cbo_ListaTipoImpresion", "OnLine"));
+			params.add(new BasicNameValuePair("btn_Sub2207001009", "Continuar"));
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				Toolkit.checkResponseStatus(resp);
+				HttpEntity entity = resp.getEntity();
+				
+				if (entity != null) {
+					String body = EntityUtils.toString(entity, "UTF-8");
+					String error = Toolkit.getDIL(body);
+					
+					if (Toolkit.getErrCode(error) != null)
+						InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+					
+					Toolkit.checkTooLong(body);
+					
+					httpPost = Toolkit.reportGenerationForm(body);
+				}
+			}
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				Toolkit.checkResponseStatus(resp);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				resp.getEntity().writeTo(baos);
+				return baos.toByteArray();
+			}
+			
+		} catch (IOException e) {
+			throw new InvalidCertificateException();
+		}
+		
+	}
 	
 	
-//	public static void main(String[] args) throws IOException {
-//		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-//			HttpPost httpPost = new HttpPost("https://www.checkitbancario.com/openapi/empresas");
-//			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-//			params.add(new BasicNameValuePair("claveApi", "84d9ee44e457ddef7f2c4f25dc8fa865"));
-////			params.add(new BasicNameValuePair("empresa_id", "1"));
-////			params.add(new BasicNameValuePair("banco_id", "30"));
-////			params.add(new BasicNameValuePair("tipo_login_banco_id", "102"));
-////			params.add(new BasicNameValuePair("iban", "ES5901380002610102017928"));
-//			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-//			CloseableHttpResponse response = httpClient.execute(httpPost);
-//			if (response.getEntity() != null) {
-//				String body = EntityUtils.toString(response.getEntity(), "UTF-8");
-//				System.out.println(body);
-//			}
-//		}
-//	}
+	
 	
 }

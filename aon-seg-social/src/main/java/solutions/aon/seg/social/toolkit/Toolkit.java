@@ -45,6 +45,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
@@ -613,6 +614,14 @@ public class Toolkit {
 		if (matcher.find()) {
 			errText = matcher.group("error");
 			checkLiquidationExceptions(errText);
+		}
+	}
+
+	public static void checkTooLong(String body) throws SegSocialException {
+		Pattern pattern = Pattern.compile("informe\\s*requerido\\s*excede\\s*el\\s*l.mite", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			throw new ReportTooLongException("El informe requerido excede el límite de información de transmisión permitido. Solicítelo en diferido o en su Administración habitual.");
 		}
 	}
 	

@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
@@ -1474,4 +1475,57 @@ public class TestServicioRED extends SegSocialTest {
 		
 //---------------------------------------------------------------------------------------------------------------
 		
+//-----------------------------------------------CCC LABORAL LIFE------------------------------------------------
+		
+		@Test
+		public void getCccLaboralLifeTest() throws IOException {
+			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+				byte[] pdf = ServicioRED.getCccLaboralLife(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"0111",
+						"01105360062",
+						new Date(),
+						new Date()
+				);
+				assertTrue(pdf.length > 130000);
+			} catch (StatusCodeException ignored) {
+				ignored.printStackTrace();
+			} catch (SegSocialException e) {
+				fail("unexpected SegSocialException");
+			}
+
+		}
+		
+		@Test
+		public void getCccLaboralLifeTestTooLong() throws IOException {
+			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.DAY_OF_MONTH, 10);
+				cal.set(Calendar.MONTH, Calendar.AUGUST);
+				cal.set(Calendar.YEAR, 2020);
+				Date from = cal.getTime();
+				cal.set(Calendar.YEAR, 2021);
+				ServicioRED.getCccLaboralLife(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"0111",
+						"11122534302",
+						from,
+						cal.getTime()
+				);
+				fail();
+			} catch (ReportTooLongException e) {
+				System.err.println(e.getMessage());
+			} catch (StatusCodeException e) {
+				e.printStackTrace();
+			} catch (SegSocialException e) {
+				fail("unexpected SegSocialException");
+			}
+			
+		}
+
+//---------------------------------------------------------------------------------------------------------------
 }
