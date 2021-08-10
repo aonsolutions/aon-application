@@ -2,23 +2,35 @@ package solutions.aon.seg.social.toolkit;
 
 import static java.lang.Float.parseFloat;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -26,15 +38,22 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
+import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Idc;
 
 public class Toolkit {
 
@@ -220,6 +239,15 @@ public class Toolkit {
 		str = removeNBSP(str.replaceAll("" + ((char) 32), " ").trim());
 		return str;
 	}
+	
+	public static String safeRemoveWeirdCharacters(String str) {
+		try {
+			str = removeNBSP(str.replaceAll("" + ((char) 32), " ").trim());
+			return str;			
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
 
 	// REMOVE SPACES, ACTUALLY
 	public static String noSpaces(String str) {
@@ -290,6 +318,18 @@ public class Toolkit {
         }
     }
     
+    public static SSLContext getSSLContext (InputStream certificateInputStream, String certificatePassword, String certificateType) throws KeyStoreException, Exception {
+		KeyStore keyStore = Toolkit.readStore(certificateInputStream, certificatePassword, certificateType);
+//    	TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//		tmf.init((KeyStore)null);
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		char[] pass = certificatePassword.toCharArray();
+		kmf.init(keyStore, pass);
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kmf.getKeyManagers(), null, null);
+		return sslContext;
+    }
+    
     public static String getValue(String body, String id) {
     	Pattern pattern = Pattern.compile("\\<\\w+?\\s*.*?id=('|\")" + id + "('|\").*?\\>", Pattern.CASE_INSENSITIVE);
     	Matcher matcher = pattern.matcher(body);
@@ -300,6 +340,15 @@ public class Toolkit {
     		if (matcher.find()) {
     			return matcher.group("value");
     		}
+    	}
+    	return null;
+    }
+    
+    public static String getInnerText(String body, String id) {
+    	Pattern pattern = Pattern.compile("\\<\\w+?\\s*.*?id=('|\")" + id + "('|\").*?\\>(?<innertext>[^<>]*)\\<\\/\\w*?\\>", Pattern.CASE_INSENSITIVE);
+    	Matcher matcher = pattern.matcher(body);
+    	if (matcher.find()) {
+    		return matcher.group("innertext") != null ? matcher.group("innertext").trim() : null;
     	}
     	return null;
     }
@@ -389,5 +438,200 @@ public class Toolkit {
 		}
 		return null;
 	}
+	
+	public static Map<String, String> getEverythingWithId(String body) {
+		BufferedReader buffer = new BufferedReader(new StringReader(body));
+		String line = null;
+		Map<String, String> map = new HashMap<String, String>();
+		Pattern pattern = Pattern.compile("\\<[^<>]*?id=(\"|')(?<id>[^\"<>']+?)(\"|')[^<>]*\\>(?<innertext>[^<>]*)\\<[^<>]+\\>", Pattern.CASE_INSENSITIVE);
+		
+		try {
+			while((line = buffer.readLine()) != null) {
+				Matcher matcher = pattern.matcher(line);
+				if (matcher.matches()) {
+					String id = matcher.group("id") != null ? Toolkit.removeNBSP(matcher.group("id")).trim() : null;
+					String value = matcher.group("innertext") != null ? Toolkit.removeNBSP(matcher.group("innertext")).trim() : null;
+					map.put(id, value);
+				}
+			}
+			return map;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public static Collection<Idc> getIDCDatesByRegex(String body) {
+		DateFormat df = new SimpleDateFormat("dd MM yyyy", new Locale("es", "ES"));
+		BufferedReader buffer = new BufferedReader(new StringReader(body));
+		String line = null;
+		Collection<Idc> idcs = new ArrayList<Idc>();
+		Pattern pattern = Pattern.compile("\\<label\\s*.*?id=(\"|')(?<id>Sub0900112078_(?<col>\\d+)_\\d+)(\"|')[^<>]*\\>(?<date>\\s*\\d+\\s*\\d+\\s*\\d+\\s*)\\<\\/label\\>", Pattern.CASE_INSENSITIVE);
+		
+		try {
+			while((line = buffer.readLine()) != null) {
+				Matcher matcher = pattern.matcher(line);
+				if (matcher.matches()) {
+					String col = matcher.group("col") != null ? Toolkit.removeNBSP(matcher.group("col")).trim() : null;
+					String dateStr = matcher.group("date") != null ? Toolkit.removeNBSP(matcher.group("date")).trim() : null;
+					String description = null;
+					if (col.equals("1")) {
+						description = "ALTA";
+					} else if (col.equals("2")) {
+						description = "BAJA";
+					}
+					
+					try {
+						Date date = df.parse(dateStr);
+						idcs.add(new Idc(description, date));
+					} catch (ParseException e) {
+					}
+					
+				}
+			}
+			return idcs;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public static int getNumberOfLiquidations(String body) {
+		Pattern pattern = Pattern.compile("\\<input.*?name=(\"|')LIQUIDACION(\"|')", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		int counter = 0;
+		while (matcher.find()) {
+			counter++;
+		}
+		return counter;
+		
+	}
+	
+	public static String getCalculationTable (String body) {
+		Pattern pattern = Pattern.compile("\\<table\\>.+?(\\<th.*?\\>Base\\<\\/th\\>).+?\\<\\/table>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		try {			
+			return matcher.find() ? matcher.group().replaceAll("\\&nbsp;", "").replaceAll("\\&euro;", "") : null;
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public static Collection<String> getTrs (String html) {
+		Pattern pattern = Pattern.compile("\\<tr\\>.*?\\<\\/tr\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(html);
+		
+		Collection<String> collection = new ArrayList<String>();
+		
+		while (matcher.find()) {
+			collection.add(matcher.group());
+		}
+		return collection;
+	}
 
+	public static Collection<String> getTds (String html) {
+		Pattern pattern = Pattern.compile("\\<td\\>.*?\\<\\/td\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(html);
+		
+		Collection<String> collection = new ArrayList<String>();
+		
+		while (matcher.find()) {
+			collection.add(matcher.group());
+		}
+		return collection;
+	}
+	
+	public static LinkedList<String> getTdsTexts (String html) {
+		Pattern pattern = Pattern.compile("\\<td[^<>]*\\>(?<inner>.*?)\\<\\/td\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(html);
+		
+		LinkedList<String> collection = new LinkedList<String>();
+		
+		while (matcher.find()) {
+			
+			String inner = matcher.group("inner");
+			inner = Toolkit.removeTags(inner);
+			inner = inner != null ? Toolkit.removeNBSP(inner).trim() : inner;
+			
+			collection.add(inner);
+		}
+		return collection;
+	}
+	
+	public static String removeTags (String text) {
+		if (text != null) {
+			String str = text.replaceAll("\\<[^<>]*?\\>", "");
+			return str;
+		}
+		return null;
+	}
+	
+	public static Integer strToInteger(String str) {
+		try {
+			return Integer.parseInt(str);
+		} catch (NullPointerException | NumberFormatException e) {
+			return null;
+		}
+	}
+	
+	public static Float strToFloat(String str) {
+		try {
+			return Float.parseFloat(str.replaceAll("\\.", "").replaceAll(",", "."));
+		} catch (NullPointerException | NumberFormatException e) {
+			return null;
+		}
+	}
+	
+	public static <E> E safeGet(List<E> list, int index) {
+		try {
+			return list.get(index);			
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+	
+	static void checkLiquidationExceptions(String errText) throws LiquidationDoesNotExist, DataDoesNotExist,
+	WrongRegimeException, invalidCccException, UnfilledMandatory, NullPointerException, ElementNotFoundException {
+		if (errText != null) {
+			if(errText.toUpperCase().contains("NO EXISTE LIQUIDACI"))
+				throw new LiquidationDoesNotExist();
+			else if(errText.toUpperCase().contains("NO EXISTEN DATOS"))
+				throw new DataDoesNotExist();
+			else if(errText.toUpperCase().contains("CUENTA DE COTIZACI") && errText.toUpperCase().contains("N NO EXISTE"))
+				throw new WrongRegimeException();
+			else if(errText.toUpperCase().contains("C.C.C. ERR"))
+				throw new invalidCccException();
+			else if(errText.toUpperCase().contains("DEBE TENER CONTENIDO"))
+				throw new UnfilledMandatory();
+			else if(errText.toUpperCase().contains("EL CCC NO PERTENECE AL COLECTIVO DE CLEGIOS CONCERTADOS"))
+				throw new UnfilledMandatory();
+		}
+	}
+	
+	public static void checkProsaError(String body) throws SegSocialException{
+		Pattern pattern = Pattern.compile("\\<div[^<>]*?id=(\"|')ARQContenMensaje(\"|')[^<>]*\\>.*?\\<li[^<>]*?class=(\"|')mensajeError(\"|')[^<>]*\\>(?<error>[^<>]*?)\\<\\/li\\>.*?\\<\\/div\\>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		String errText = null;
+		if (matcher.find()) {
+			errText = matcher.group("error");
+			checkLiquidationExceptions(errText);
+		}
+	}
+	
+//	public static void findInfoFromElem(String line, String attribute, String tagName, String refAttr, String refAttrValue) {
+//		tagName = tagName != null ? tagName : "\\w*?";
+//		refAttrValue = refAttrValue != null ? refAttrValue : "";
+//		
+//		String attrMatch = "";
+//		
+//		if (refAttr != null && !refAttr.isEmpty()) {
+//			attrMatch += refAttr + "=(\"|')" + refAttrValue + "(\"|')";
+//		}
+//		
+//		
+//		Pattern pattern = Pattern.compile(
+//				"\\<" + tagName + "\\s*" + ".*?" + attrMatch + ".*?\\>"
+//				, Pattern.CASE_INSENSITIVE);
+//		
+//		
+//	}
+	
 }

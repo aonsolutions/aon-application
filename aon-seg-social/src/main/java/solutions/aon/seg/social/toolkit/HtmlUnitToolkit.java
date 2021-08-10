@@ -138,9 +138,10 @@ public class HtmlUnitToolkit {
 
 	// GET TRIMMED STRING FROM HTML ELEMENT
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {
-		if (htmlPage.getElementById(id) != null)
-			return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
-		else
+		if (htmlPage.getElementById(id) != null) {
+			String text = Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
+			return text != null ? text.trim() : text;
+		} else
 			return null;
 	}
 	public static String getTrimmedBySelector(HtmlPage htmlPage, String selector) {
