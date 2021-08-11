@@ -1659,7 +1659,7 @@ public class EnterprisePayrollExcel {
 
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
-		return salaries.map(s -> {
+		return salaries.filter(s -> s.getSalaryType()!= SalaryType.L00 && s.getSalaryType()!= SalaryType.L03 && s.getSalaryType()!= SalaryType.L13).map(s -> {
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 			enterprisePayroll.employee = s.getEmployeeName();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
