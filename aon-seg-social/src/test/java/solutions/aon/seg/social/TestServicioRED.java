@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -34,6 +35,7 @@ import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Liquidation;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 
 //@Ignore
 public class TestServicioRED extends SegSocialTest {
@@ -1307,7 +1309,62 @@ public class TestServicioRED extends SegSocialTest {
 		
 //---------------------------------------------------------------------------------------------------------------
 		
-//----------------------------------------------CALCULATION BY CCC-----------------------------------------------		
+		
+//-----------------------------------------------CCC LABORAL LIFE------------------------------------------------
+		
+		@Test
+		public void getCccLaboralLifeTest() throws IOException {
+			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+				byte[] pdf = ServicioRED.getCccLaboralLife(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"0111",
+						"01105360062",
+						new Date(),
+						new Date()
+				);
+				assertTrue(pdf.length > 130000);
+			} catch (StatusCodeException ignored) {
+				ignored.printStackTrace();
+			} catch (SegSocialException e) {
+				fail("unexpected SegSocialException");
+			}
+
+		}
+		
+		@Test
+		public void getCccLaboralLifeTestTooLong() throws IOException {
+			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.DAY_OF_MONTH, 10);
+				cal.set(Calendar.MONTH, Calendar.AUGUST);
+				cal.set(Calendar.YEAR, 2020);
+				Date from = cal.getTime();
+				cal.set(Calendar.YEAR, 2021);
+				ServicioRED.getCccLaboralLife(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"0111",
+						"11122534302",
+						from,
+						cal.getTime()
+				);
+				fail();
+			} catch (ReportTooLongException e) {
+				System.err.println(e.getMessage());
+			} catch (StatusCodeException e) {
+				e.printStackTrace();
+			} catch (SegSocialException e) {
+				fail("unexpected SegSocialException");
+			}
+			
+		}
+
+//---------------------------------------------------------------------------------------------------------------
+		
+//----------------------------------------------CALCULATION BY CCC-----------------------------------------------
 		
 		@Test
 		public void testCalculationByCCCPOST() throws IOException, ParseException {
@@ -1326,9 +1383,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationOrigin.TODAS
 						);
 				
-				for (Liquidation liquidation : liq) {
-					System.out.println(liquidation);
-				}
+//				for (Liquidation liquidation : liq) {
+//					System.out.println(liquidation);
+//				}
 			} catch (StatusCodeException e) {
 				System.err.println(e.getMessage());
 			} catch (SegSocialException e) {
@@ -1354,9 +1411,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationOrigin.TODAS
 						);
 				
-				for (Liquidation liquidation : liq) {
-					System.out.println(liquidation);
-				}
+//				for (Liquidation liquidation : liq) {
+//					System.out.println(liquidation);
+//				}
 			} catch (StatusCodeException e) {
 				System.err.println(e.getMessage());
 			} catch (SegSocialException e) {
@@ -1474,58 +1531,165 @@ public class TestServicioRED extends SegSocialTest {
 		}
 		
 //---------------------------------------------------------------------------------------------------------------
-		
-//-----------------------------------------------CCC LABORAL LIFE------------------------------------------------
-		
+
+//-----------------------------------------WORKERS' CALCULATION BY CCC-------------------------------------------
+
 		@Test
-		public void getCccLaboralLifeTest() throws IOException {
-			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-				byte[] pdf = ServicioRED.getCccLaboralLife(
+		public void testWorkersCalculationByCCCPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+				Map<String, Map<String, WorkerLiquidation>> liqs = ServicioRED.workersCalculationByCCC(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
-						"0111",
 						"01105360062",
-						new Date(),
-						new Date()
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.TODAS
 				);
-				assertTrue(pdf.length > 130000);
-			} catch (StatusCodeException ignored) {
-				ignored.printStackTrace();
+			} catch (StatusCodeException e) {
+				System.err.println(e.getMessage());
 			} catch (SegSocialException e) {
-				fail("unexpected SegSocialException");
+				e.printStackTrace();
+				fail();
 			}
-
 		}
 		
 		@Test
-		public void getCccLaboralLifeTestTooLong() throws IOException {
-			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")) {
-				Calendar cal = Calendar.getInstance();
-				cal.set(Calendar.DAY_OF_MONTH, 10);
-				cal.set(Calendar.MONTH, Calendar.AUGUST);
-				cal.set(Calendar.YEAR, 2020);
-				Date from = cal.getTime();
-				cal.set(Calendar.YEAR, 2021);
-				ServicioRED.getCccLaboralLife(
+		public void testWorkersCalculationQueryGrantsAndBonuses() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+				Map<String, Map<String, WorkerLiquidation>> liq = ServicioRED.workersCalculationByCCC(
 						certificateInputStream,
-						"123456",
+						"jg@FNMT",
 						"pkcs12",
-						"0111",
-						"11122534302",
-						from,
-						cal.getTime()
+						"01105577910",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.TODAS
+						);
+			} catch (StatusCodeException e) {
+				System.err.println(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationQueryDateNotFound() throws IOException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Calendar c=Calendar.getInstance();
+				c.add(Calendar.MONTH, 1);
+				Date d=c.getTime();
+				ServicioRED.workersCalculationByCCC(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"01105360062",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.TODAS
+						);
+				
+				fail();
+			} catch (DataDoesNotExist e) {
+				
+			} catch (StatusCodeException e) {
+				System.err.println(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationOriginNoData() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+				ServicioRED.workersCalculationByCCC(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"01105360062",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.GENERADAS_POR_LA_TGSS
+						);
+				
+				fail();
+			} catch (LiquidationDoesNotExist e) {
+				
+			} catch (StatusCodeException e) {
+				System.err.println(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationQueryRegimeCCCNotFound() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
+				ServicioRED.workersCalculationByCCC(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"01105360062",
+						SistemaRED.Regime.GENERAL_ARTISTAS,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.TODAS
+						);
+				fail();
+			} catch (WrongRegimeException e) {
+				
+			} catch (StatusCodeException e) {
+				System.err.println(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationQueryNullCCC() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
+				ServicioRED.workersCalculationByCCC(
+						certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.L00_NORMAL,
+						SistemaRED.LiquidationOrigin.TODAS
 				);
 				fail();
-			} catch (ReportTooLongException e) {
-				System.err.println(e.getMessage());
+			} catch (UnfilledMandatory e) {
+				
 			} catch (StatusCodeException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			} catch (SegSocialException e) {
-				fail("unexpected SegSocialException");
+				e.printStackTrace();
+				fail();
 			}
-			
 		}
+		
 
 //---------------------------------------------------------------------------------------------------------------
 }

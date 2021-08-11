@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import solutions.aon.seg.social.object.Liquidation;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.SituacionEmpresa;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.toolkit.Toolkit;
 /**
  * Class to obtain resources from Social Security just sending POST/GET requests
@@ -1100,6 +1102,17 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 	}
 	
+	/**
+	 * INFORME DE DATOS DE COTIZACIÓN (IDC)
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param affiliationNumber
+	 * @param regime
+	 * @param ccc
+	 * @return A collection with the IDCs
+	 * @throws SegSocialException
+	 */
 	public static Collection<Idc> getIDCDatesPOST(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
@@ -1189,6 +1202,17 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 	}
 	
+	/**
+	 * INFORME DE DATOS DE COTIZACIÓN (IDC) - Fechas de alta
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param affiliationNumber
+	 * @param regime
+	 * @param ccc
+	 * @return A collection with all the discharge dates
+	 * @throws SegSocialException
+	 */
 	public static Collection<Date> getDischargeDatesPOST(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
@@ -1201,6 +1225,20 @@ public class ServicioRED extends ServicioREDRegeXML {
 		
 	}
 	
+	/**
+	 * Servicio Consulta de Cálculos
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param ccc
+	 * @param regime
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param liqType
+	 * @param liqOrigin
+	 * @return A collection with the requested liquidations
+	 * @throws SegSocialException
+	 */
 	public static Collection<Liquidation> calculationByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
@@ -1262,10 +1300,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 
 					Toolkit.checkProsaError(body);
 					
-					String error = Toolkit.getDIL(body);
-					if (Toolkit.getErrCode(error) != null)
-						InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
-					
 					Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
 					if (matcher.find()) {
 						link = "https://w2.seg-social.es/" + matcher.group("link").replaceAll("&amp;", "&");
@@ -1297,9 +1331,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 					if (entity != null) {
 						String body = EntityUtils.toString(entity, "UTF-8");
 						
-						String error = Toolkit.getDIL(body);
-						if (Toolkit.getErrCode(error) != null)
-							InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+						Toolkit.checkProsaError(body);
 						
 						String table = Toolkit.getCalculationTable(body);
 						
@@ -1312,7 +1344,8 @@ public class ServicioRED extends ServicioREDRegeXML {
 						liquidations.add(lb.build());
 					}
 				}
-
+				if (liq < liqs-1)
+					Toolkit.goBack(httpClient, link, ticket);
 			}
 			
 			return liquidations;
@@ -1322,7 +1355,214 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 		
 	}
+	
+	public static Map<String,Map<String, WorkerLiquidation>> workersCalculationByCCC(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,
+			final SistemaRED.LiquidationOrigin liqOrigin) throws SegSocialException{
+		
+		SSLContext sslContext = null;
 
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String ticket = "";
+		int liqs = 0;
+		Map<String,Map<String, WorkerLiquidation>> liquidations = new HashMap<String, Map<String, WorkerLiquidation>>();
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			try (CloseableHttpResponse resp = httpClient.execute(new HttpGet("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200"))) {
+				Toolkit.checkResponseStatus(resp);
+				String body = EntityUtils.toString(resp.getEntity(), "UTF-8");
+				Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+				if (matcher.find()) {
+					
+					String params = matcher.group("link").replaceAll("&amp;", "&");
+					link = "https://w2.seg-social.es/" + params;
+					ticket = matcher.group("ticket");
+				}
+			}
+			HttpPost httpPost = new HttpPost(link);
+			
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+//			params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
+			params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
+//			params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+//			params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+			params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));
+			params.add(new BasicNameValuePair("MODO_BUSQUEDA", "CCC"));
+			params.add(new BasicNameValuePair("CCC", ccc));
+			params.add(new BasicNameValuePair("REGIMEN", regime.getValue()));
+			params.add(new BasicNameValuePair("MES_DESDE", String.format("%tm", dateFrom)));
+			params.add(new BasicNameValuePair("ANNIO_DESDE", String.format("%tY", dateFrom)));
+			params.add(new BasicNameValuePair("MES_HASTA", String.format("%tm", dateTo)));
+			params.add(new BasicNameValuePair("ANNIO_HASTA", String.format("%tY", dateTo)));
+			params.add(new BasicNameValuePair("TIPO_LIQUIDACION", liqType.getValue()));
+			params.add(new BasicNameValuePair("ORIGEN_LIQUIDACION", liqOrigin.getValue()));
+			params.add(new BasicNameValuePair("SPM.ACC.ACEPTAR", "Aceptar"));
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				
+				
+				
+				Toolkit.checkResponseStatus(resp);
+				HttpEntity entity = resp.getEntity();
+			
+				if (entity != null) {
+					String body = EntityUtils.toString(entity, "UTF-8");
+
+					Toolkit.checkProsaError(body);
+					
+					Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+					if (matcher.find()) {
+						link = "https://w2.seg-social.es/" + matcher.group("link").replaceAll("&amp;", "&");
+						ticket = matcher.group("ticket");
+					}
+					liqs = Toolkit.getNumberOfLiquidations(body);
+					
+				}
+			}
+			
+			for (int liq=0; liq<liqs; liq++) {
+				String type = null;
+				httpPost = new HttpPost(link);
+				
+				String inLink = link;
+				
+				int nafs = 0;
+				
+				params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
+				params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
+//				params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+//				params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+				params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));
+				params.add(new BasicNameValuePair("LIQUIDACION", String.valueOf(liq)));
+				params.add(new BasicNameValuePair("SPM.ACC.CONTINUAR", "Continuar"));
+				
+				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+				
+				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+					Toolkit.checkResponseStatus(resp);
+					HttpEntity entity = resp.getEntity();
+				
+					if (entity != null) {
+						String body = EntityUtils.toString(entity, "UTF-8");
+						
+						Toolkit.checkProsaError(body);
+						
+						Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+						if (matcher.find()) {
+							
+							String linkParams = matcher.group("link").replaceAll("&amp;", "&");
+							inLink = "https://w2.seg-social.es/" + linkParams;
+							ticket = matcher.group("ticket");
+						}
+						type = Toolkit.getLiqType(body);
+					}
+				}
+				
+				httpPost = new HttpPost(inLink);
+				
+				params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
+				params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
+//				params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+//				params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+				params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));
+				params.add(new BasicNameValuePair("SPM.ACC.CONSULTA_TRABAJADORES", "Consulta+de+Trabajadores"));
+				
+				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+				
+				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+					Toolkit.checkResponseStatus(resp);
+					HttpEntity entity = resp.getEntity();
+				
+					if (entity != null) {
+						String body = EntityUtils.toString(entity, "UTF-8");
+						
+						Toolkit.checkProsaError(body);
+						
+						Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+						if (matcher.find()) {
+							
+							String linkParams = matcher.group("link").replaceAll("&amp;", "&");
+							inLink = "https://w2.seg-social.es/" + linkParams;
+							ticket = matcher.group("ticket");
+						}
+						
+						nafs = Toolkit.howManyNafs(body);
+					}
+				}
+				Map<String, WorkerLiquidation> nafLiq = new HashMap<String, WorkerLiquidation>(); 
+				for (int naf=0; naf<nafs; naf++) {
+					httpPost = new HttpPost(inLink);
+					
+					params = new ArrayList<NameValuePair>();
+					params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
+					params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
+//					params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+//					params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+					params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));
+					params.add(new BasicNameValuePair("NAF", String.valueOf(naf)));
+					params.add(new BasicNameValuePair("SPM.ACC.CONSULTAR", "Consultar"));
+					
+					httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+					
+					try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+						Toolkit.checkResponseStatus(resp);
+						HttpEntity entity = resp.getEntity();
+					
+						if (entity != null) {
+							String body = EntityUtils.toString(entity, "UTF-8");
+							
+							Toolkit.checkProsaError(body);
+							
+							Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+							if (matcher.find()) {
+								
+								String linkParams = matcher.group("link").replaceAll("&amp;", "&");
+								inLink = "https://w2.seg-social.es/" + linkParams;
+								ticket = matcher.group("ticket");
+							}
+							
+							WorkerLiquidation wl = Toolkit.getWorkerLiquidation(body);
+							nafLiq.put(wl.getNss(), wl);
+						}
+					}
+					Toolkit.goBack(httpClient, inLink, ticket);
+					liquidations.put(type, nafLiq);
+				}
+				
+				if (liq < liqs-1)
+					Toolkit.goBack(httpClient, link, ticket);
+			}
+			
+			return liquidations;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidCertificateException();
+		}
+		
+	}
+	
+	/**
+	 * INFORME DE VIDA LABORAL DE UN C. C. C.
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param regime
+	 * @param ccc
+	 * @param from
+	 * @param to
+	 * @return a PDF file
+	 * @throws SegSocialException
+	 */
 	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
 		

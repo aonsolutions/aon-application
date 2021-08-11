@@ -32,19 +32,23 @@ import java.util.regex.Pattern;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import solutions.aon.seg.social.ServicioREDRegeXML;
 import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
@@ -55,6 +59,8 @@ import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.object.Idc;
+import solutions.aon.seg.social.object.WorkerLiquidation;
+import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
 
 public class Toolkit {
 
@@ -506,6 +512,16 @@ public class Toolkit {
 		
 	}
 	
+	public static String getLiqType(String body) {
+		Pattern pattern = Pattern.compile("T\\.\\s*LIQ:\\s*\\<\\/strong\\>[^<>]*\\<\\/abbr\\>(?<liqtype>[^<>]*)\\<\\/p\\>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			String ret = matcher.group("liqtype");
+			return safeRemoveWeirdCharacters(ret);
+		}
+		return null;
+	}
+	
 	public static String getCalculationTable (String body) {
 		Pattern pattern = Pattern.compile("\\<table\\>.+?(\\<th.*?\\>Base\\<\\/th\\>).+?\\<\\/table>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(body);
@@ -623,6 +639,98 @@ public class Toolkit {
 		if (matcher.find()) {
 			throw new ReportTooLongException("El informe requerido excede el límite de información de transmisión permitido. Solicítelo en diferido o en su Administración habitual.");
 		}
+	}
+	
+	public static int howManyNafs (String body) {
+		if (body == null)
+			return 0;
+		Pattern pattern = Pattern.compile("\\<input[^<>]*?name=(\"|')NAF(\"|')[^<>]*\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(body);
+		int count = 0;
+		while (matcher.find()) {
+			count++;
+		}
+		return count;
+	}
+	
+	public static String goBack(CloseableHttpClient httpClient, String link, String ticket) throws ClientProtocolException, IOException, SegSocialException {
+		HttpPost httpPost = new HttpPost(link);
+		
+		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
+		params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
+		params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));
+		params.add(new BasicNameValuePair("SPM.ACC.ATRAS", "Atr%E1s"));
+		
+		httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+		
+		try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+			Toolkit.checkResponseStatus(resp);
+			HttpEntity entity = resp.getEntity();
+		
+			if (entity != null) {
+				String body = EntityUtils.toString(entity, "UTF-8");
+				
+				String error = Toolkit.getDIL(body);
+				if (Toolkit.getErrCode(error) != null)
+					InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+				return body;
+			}
+		}
+		return null;
+	}
+	
+	public static String getNaf (String body) {
+		Pattern pattern = Pattern.compile("NAF:\\s*[^\\d]*(?<naf>\\d*)\\<", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(body);
+		if(matcher.find()) {
+			return matcher.group("naf");
+		}
+		return null;
+	}
+	
+	public static Matcher find(BufferedReader reader, Pattern pattern) throws IOException, SegSocialException {
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			Matcher matcher = pattern.matcher(line);
+			if (!matcher.matches()) {
+				// System.out.println(line);
+				continue;
+			}
+
+			return matcher;
+		}
+
+		throw new SegSocialException("Error parsing page");
+
+	}
+	
+	public static WorkerLiquidation getWorkerLiquidation (String body) throws IOException, SegSocialException {
+		WorkerLiquidationBuilder wlb = new WorkerLiquidationBuilder();
+		if (body != null) {			
+			//<abbr title="N?mero de afiliaci?n a la Seguridad Social">NAF: </abbr>010019805355</div>
+			String nafcaf = "\\s*\\<abbr[^<>]*\\>\\s*(?<type>\\wAF):\\s*\\<[^<>]*\\>(?<nafcaf>[^<>]*)\\<[^<>]*\\>\\s*";
+			
+			Pattern pattern = Pattern.compile(nafcaf, Pattern.CASE_INSENSITIVE);
+			
+			Matcher matcher = pattern.matcher(body);
+			
+			while (matcher.find()) {
+				if (matcher.group("type") != null) {
+					if (matcher.group("type").equalsIgnoreCase("naf")) {
+						wlb.setNss(Toolkit.removeExtraZeros(Toolkit.safeRemoveWeirdCharacters(matcher.group("nafcaf"))));
+					} else if (matcher.group("type").equalsIgnoreCase("caf")) {
+						wlb.setCaf(Toolkit.safeRemoveWeirdCharacters(matcher.group("nafcaf")));
+					}
+				}
+			}
+			String table = Toolkit.getCalculationTable(body);
+			
+			Collection<String> trs = Toolkit.getTrs(table);
+			ServicioREDRegeXML.workerLiquidationDataType(wlb, trs);
+		}
+		return wlb.build();
 	}
 	
 //	public static void findInfoFromElem(String line, String attribute, String tagName, String refAttr, String refAttrValue) {

@@ -16,11 +16,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
+import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public abstract class ServicioREDRegeXML {
@@ -260,5 +259,157 @@ public abstract class ServicioREDRegeXML {
 		}
 		
 	}
+	
+	
+	
+	
+	public static void workerLiquidationDataType(WorkerLiquidationBuilder wlb, Collection<String> trs) throws SegSocialException {
+		
+		for (String tr : trs) {
+			LinkedList<String> rows = Toolkit.getTdsTexts(tr);
+			String rowConcept=Toolkit.safeRemoveWeirdCharacters(Toolkit.safeGet(rows, 0));
+			if (rowConcept != null) {
+				
+				if(rowConcept.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setCcDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setCcBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setCcBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setCcWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setCcTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("LIQUIDO CONTINGENCIAS COMUNES")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setCcLiquidDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setCcLiquidBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setCcLiquidBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setCcLiquidWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setCcLiquidTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("IT DE ACCIDENTES DE TRABAJO")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setItWorkAccidentDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setItWorkAccidentBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setItWorkAccidentusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setItWorkAccidentWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setItWorkAccidentTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("IMS DE ACCIDENTES DE TRABAJO")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setImsWorkAccidentDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setImsWorkAccidentBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setImsWorkAccidentBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setImsWorkAccidentWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setImsWorkAccidentTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("LIQUIDO DE ACCIDENTES DE TRABAJO")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setWorkAccidentLiquidDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setWorkAccidentLiquidBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setWorkAccidentLiquidBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setWorkAccidentLiquidWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setWorkAccidentLiquidTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("DESEMPLEO")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setUnemploymentDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setUnemploymentBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setUnemploymentBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setUnemploymentWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setUnemploymentTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("FOGASA")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setFogasaDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setFogasaBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setFogasaBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setFogasaWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setFogasaTotalFee(nmbr4);
+				}
+				else if(rowConcept.toUpperCase().contains("FORMACI") && rowConcept.toUpperCase().contains("N PROFESIONAL")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setJobTrainingDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setJobTrainingBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setJobTrainingBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setJobTrainingWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setJobTrainingTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("LIQUIDO DE OTRAS COTIZACIONES")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setOtherContributionsLiquidDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setOtherContributionsLiquidBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setOtherContributionsLiquidBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setOtherContributionsLiquidWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setOtherContributionsLiquidTotalFee(nmbr4);
+				}
+				else if(rowConcept.equalsIgnoreCase("LIQUIDO DE TOTALES")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setTotalLiquidDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setTotalLiquidBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setTotalLiquidBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setTotalLiquidWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setTotalLiquidTotalFee(nmbr4);
+				}
+				else if(rowConcept.contains("BONIF")) {
+					String desc = Toolkit.removeWeirdCharacters(rowConcept);
+					wlb.setGrantsAndBonusesDescription(desc);
+					Float nmbr1 = Toolkit.strToFloat(Toolkit.safeGet(rows,1));
+					wlb.setGrantsAndBonusesBase(nmbr1);
+					Float nmbr2 = Toolkit.strToFloat(Toolkit.safeGet(rows,2));
+					wlb.setGrantsAndBonusesBusinessFee(nmbr2);
+					Float nmbr3 = Toolkit.strToFloat(Toolkit.safeGet(rows,3));
+					wlb.setGrantsAndBonusesWorkerFee(nmbr3);
+					Float nmbr4 = Toolkit.strToFloat(Toolkit.safeGet(rows,4));
+					wlb.setGrantsAndBonusesTotalFee(nmbr4);
+				}
+				
+				
+			}
+		}
+		
+	}
+	
+	
+	
 	
 }
