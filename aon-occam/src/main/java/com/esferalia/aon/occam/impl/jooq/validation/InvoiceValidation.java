@@ -250,6 +250,15 @@ public class InvoiceValidation {
 
 	}
 
+	public static void validateUpdateSpecialInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
+		EMPTY_DOMAIN
+			.andThen(EMPTY_TAX_DATE)
+			.andThen(OPERATIONS_DEADLINE)
+			.andThen(CHECK_TEN_YEARS)
+			.accept(inv, new AonConfigurationContext(ctx,config));
+
+	}
+
 	public static void validateDetail(AONContext ctx, AonConfiguration config, InvoiceDetail detail) {
 		EMPTY_SOURCE
 		.andThen(EMPTY_WORKPLACE)

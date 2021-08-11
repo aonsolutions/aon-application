@@ -444,6 +444,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cancelar")
 	String cancelAction();
 	
+	@DefaultMessage("Cerrar")
+	String close();
+
 	@DefaultMessage("Envio a cliente")
 	String customerCheckAction();
 
@@ -3631,6 +3634,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Fecha factura rectificativa")
 	String rectifyInvoiceDate();
+
+	@DefaultMessage("Modificaci\u00F3n especial")
+	String specialUpdate();
 
 	@DefaultMessage("Motivo")
 	String reason();

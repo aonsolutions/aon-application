@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -600,6 +601,28 @@ public class ACCOUNTING {
 	}
 
 
+	public static IAccountEntryWrapper updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().updateSpecial(ctx, operation, wrapper);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAvailableAccountEntryUpdates(ctx, wrapper);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static LinkedList<SalaryEntry> getSalaryEntries(String domainName, int domain, String userLogin, Date from, Date to) {
 		AONContext ctx = null;
 		try {
@@ -999,5 +1022,6 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
 
 }

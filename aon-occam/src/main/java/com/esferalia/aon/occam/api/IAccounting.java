@@ -28,15 +28,16 @@ import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountChangeParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
@@ -88,6 +89,9 @@ public interface IAccounting {
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData);	
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data);
+	public IAccountEntryWrapper  updateSpecial(AONContext ctx, AccountEntryUpdate operation, IAccountEntryWrapper wrapper);
+	public LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(AONContext ctx, IAccountEntryWrapper wrapper);
+	
 	public LinkedList<SalaryEntry> getSalaryEntries(AONContext ctx, Date from, Date to);
 	public String getSalaryFormatted(AONContext ctx, Date from, Date to);
 	

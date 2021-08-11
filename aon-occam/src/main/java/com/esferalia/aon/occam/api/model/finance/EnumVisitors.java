@@ -1,6 +1,20 @@
 package com.esferalia.aon.occam.api.model.finance;
 
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+
 public class EnumVisitors {
+
+	public static interface IAccountEntryUpdateVisitor {
+		IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper);
+		IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper);
+	}
 
 	public static interface IInvoiceTransactionTypeVisitor {
 		void visitNational();

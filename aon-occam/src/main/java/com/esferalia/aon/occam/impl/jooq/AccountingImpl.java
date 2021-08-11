@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountBalanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
@@ -312,8 +313,21 @@ public class AccountingImpl implements IAccounting {
 		 );
 	}
 
-	
-	
+
+	@Override
+	public IAccountEntryWrapper  updateSpecial(AONContext ctx, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountEntryDAO.updateSpecial(ctx, operation, wrapper) 
+		 );
+	}
+
+	@Override
+	public LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(AONContext ctx, IAccountEntryWrapper wrapper) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountEntryDAO.getAvailableAccountEntryUpdates(ctx, wrapper) 
+		 );
+	}
+
 	@Override
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry) {
 		AccountEntry entry = getAccountEntry(ctx, accountEntry);
@@ -571,4 +585,5 @@ public class AccountingImpl implements IAccounting {
 				configuration -> AnalyticalAccountingDAO.save(ctx,analytical)
 		 );		
 	}
+	
 }

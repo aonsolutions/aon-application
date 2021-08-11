@@ -485,6 +485,7 @@ public class InvoiceDAO {
 		@Override
 		public InvoiceTax apply(Record record) {
 			return new InvoiceTax()
+					.setId(record.getValue(INVOICE_TAX.ID))
 					.setTaxType(TaxType.values()[record.getValue(INVOICE_TAX.TAX_TYPE)])
 					.setPercentage(record.getValue(INVOICE_TAX.PERCENTAGE))
 					.setBase(record.getValue(INVOICE_TAX.BASE))

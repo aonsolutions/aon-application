@@ -429,6 +429,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_letter-s")
 	String aonIconLetterS();
 
+	@ClassName("aon_icon_wrench")
+	String aonIconWrench();
+	
+	@ClassName("aon_icon_toggle_on")
+	String aonIconToggleOn();
+	
+	@ClassName("aon_icon_toggle_off")
+	String aonIconToggleOff();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();

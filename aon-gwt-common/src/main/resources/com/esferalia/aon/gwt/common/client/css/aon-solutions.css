@@ -285,6 +285,13 @@
 .aon_icon_letter-r { background-image: iconLetterR;}
 @url iconLetterS aonIconLetterS;
 .aon_icon_letter-s { background-image: iconLetterS;}
+@url iconWrench aonIconWrench;
+.aon_icon_wrench { background-image: iconWrench;}
+@url iconToggleOn aonIconToggleOn;
+.aon_icon_toggle_on { background-image: iconToggleOn;}
+@url iconToggleOff aonIconToggleOff;
+.aon_icon_toggle_off { background-image: iconToggleOff;}
+
 
 /* BASICS */
 .aon_selector {
