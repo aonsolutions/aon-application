@@ -94,7 +94,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	DateBoxEx newDate;
 	
 	@UiField
-	HorizontalPanel tabsPanel;
+	HTMLPanel tabsPanel;
 	
 	@UiField
 	ListBox tc2;
@@ -546,7 +546,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 			
-			if(contractType == 0 || (contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600)) {
+			if(null != contractType && (contractType == 0 || (contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600))) {
 				partialityCoefL.getElement().getStyle().clearDisplay();
 				partialityCoef.getElement().getStyle().clearDisplay();
 			} else {

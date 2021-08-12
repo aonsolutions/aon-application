@@ -171,6 +171,8 @@
 		
 		.tabsPanel{
 			margin-left: 10px;
+			display: flex;
+			gap: 5px;
 		}
 		
 		.tabSelectedStyle{
@@ -248,7 +250,7 @@
 					<g:Label styleName="{style.bold}">Modificar datos de afiliación con fecha: </g:Label>
 					<a:DateBoxEx ui:field="newDate" styleName="{style.dateStyle}"></a:DateBoxEx>
 				</g:HTMLPanel>
-				<g:HorizontalPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HorizontalPanel>
+				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HTMLPanel>
 				<g:Label styleName="{style.bold}">Tipo contrato</g:Label>
 				<g:ListBox ui:field="tc2" styleName="{style.width100}" />
 				<g:Label styleName="{style.bold}">Grupo cotización</g:Label>
