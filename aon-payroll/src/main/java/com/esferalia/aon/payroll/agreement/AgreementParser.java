@@ -1242,10 +1242,10 @@ public class AgreementParser {
 				String realName = variablesNameMap.getOrDefault(lvlData.getName(), null);
 				
 				if(null != realName) {
-					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && (AonStringUtils.containsIgnoreCase(realName, "VERANO") || AonStringUtils.containsIgnoreCase(realName, "JUNIO")))
+					if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "VERANO") || AonStringUtils.containsIgnoreCase(realName, "JUNIO")))
 						hasSummerPay = true;
 					
-					if(AonStringUtils.containsIgnoreCase(realName, "PAGA") && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
+					if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
 						hasWinterPay = true;
 					
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
@@ -1319,38 +1319,41 @@ public class AgreementParser {
 				
 				Integer agreementPaymentId = agreementPaymentRecord.getId();
 				
-				// Summen agreement extra
-				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "JUNIO"))) {
-					dslContext.insertInto(AGREEMENT_EXTRA)
-						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
-						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
-						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-						.set(AGREEMENT_EXTRA.START_DATE, "01/07 -1")
-						.set(AGREEMENT_EXTRA.END_DATE, "30/06")
-						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
-						.execute();
+				// Summer agreement extra
+				if(!(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD"))) {
 					
-					dslContext.update(AGREEMENT_PAYMENT)
-						.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
-						.execute();
-				}
-				
-				// Winter agreement extra
-				if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
-					dslContext.insertInto(AGREEMENT_EXTRA)
-						.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
-						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
-						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
-						.set(AGREEMENT_EXTRA.START_DATE, "01/01")
-						.set(AGREEMENT_EXTRA.END_DATE, "31/12")
-						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
-						.execute();
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "JUNIO"))) {
+						dslContext.insertInto(AGREEMENT_EXTRA)
+							.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+							.set(AGREEMENT_EXTRA.START_DATE, "01/07 -1")
+							.set(AGREEMENT_EXTRA.END_DATE, "30/06")
+							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
+							.execute();
+						
+						dslContext.update(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+							.execute();
+					}
 					
-					dslContext.update(AGREEMENT_PAYMENT)
-						.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-						.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
-						.execute();
+					// Winter agreement extra
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
+						dslContext.insertInto(AGREEMENT_EXTRA)
+							.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
+							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+							.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
+							.set(AGREEMENT_EXTRA.START_DATE, "01/01")
+							.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+							.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
+							.execute();
+						
+						dslContext.update(AGREEMENT_PAYMENT)
+							.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
+							.execute();
+					}
 				}
 				
 				// BenefitsPLUS_FIESTAS_PATRONALES_ANUAL agreement extra
