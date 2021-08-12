@@ -1229,18 +1229,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				contextDescriptorPayments.mixAll(contextDescriptor);
 
 				for (String key : contextDescriptorPayments.getVariables()) {
+					System.out.println("CTX PAYMENTS  : " + key + " == " + contextDescriptorPayments.getList(key).isEmpty());
 					if (!contextDescriptorPayments.getList(key).isEmpty()) {
 						for (VariableDescriptor variable : contextDescriptorPayments.getList(key)) {
 
-							System.out.println("CTX Payments  : " + key + ", Type : " + variable.getType()
-									+ ", Scope : " + variable.getScope());
+							System.out.println("CTX VARIABLES  : " + variable.getDescription() + " = " + variable.getExpression() + ", Type : " 
+									+ variable.getType() + ", Scope : " + variable.getScope());
 
 							if (Number.class != variable.getType())
 								continue;
 							if (null == variable.getScope())
 								continue;
-							if (Scope.AGREEMENT == variable.getScope())
-								continue;
+//							if (Scope.AGREEMENT == variable.getScope())
+//								continue;
 							if (Scope.APPLICATION == variable.getScope())
 								continue;
 							if (Scope.SYSTEM == variable.getScope())
@@ -1251,6 +1252,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 							contextResult.add(key, variable);
 						}
 					} else {
+						System.out.println("CTX VARIABLES ADD  : " + key);
 						contextResult.add(key);
 						continue;
 					}
@@ -1259,16 +1261,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			System.out.println("Context Variables Size : " + contextResult.getVariables().size());
 
-			for (String key : contextResult.getVariables()) {
-				if (contextResult.getList(key).isEmpty()) {
-					System.out.println("RESULT :" + key + ", value : null, type :null, startDate :null, endDate :null");
-					continue;
-				}
-				for (VariableDescriptor var : contextResult.getList(key))
-					System.out.println("RESULT :" + key + ", Scope : " + var.getScope() + ", value :" + var.getValue()
-							+ ", type :" + var.getType() + ", startDate :" + var.getStartDate() + ", endDate :"
-							+ var.getEndDate());
-			}
+//			for (String key : contextResult.getVariables()) {
+//				if (contextResult.getList(key).isEmpty()) {
+//					System.out.println("RESULT :" + key + ", value : null, type :null, startDate :null, endDate :null");
+//					continue;
+//				}
+//				for (VariableDescriptor var : contextResult.getList(key))
+//					System.out.println("RESULT :" + key + ", Scope : " + var.getScope() + ", value :" + var.getValue()
+//							+ ", type :" + var.getType() + ", startDate :" + var.getStartDate() + ", endDate :"
+//							+ var.getEndDate());
+//			}
 
 			return contextResult;
 
