@@ -1298,12 +1298,12 @@ public class AccountingInvoiceDAO {
 		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
 		ai = save(ctx, config, ai);
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
-//		for (Finance finance : ai.getInvoice().getFinances()) {
-//			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-//				FinanceTrackingDAO.settle(ctx, finance.getId());
-//				finance.setFinanceStatus(FinanceStatus.SETTLED);
-//			} 
-//		}
+		for (Finance finance : ai.getInvoice().getFinances()) {
+			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				FinanceTrackingDAO.settle(ctx, finance.getId());
+				finance.setFinanceStatus(FinanceStatus.SETTLED);
+			} 
+		}
 		return ai;
 	}
 
