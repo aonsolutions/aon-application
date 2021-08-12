@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -12,6 +13,8 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -30,6 +33,7 @@ public class EmployeeEventsDraftObject {
 	private ArrayList<String> employeeContractVariables;
 	
 	private ArrayList<String> calendarVariables;
+	private ArrayList<String> agreementVariables;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -38,6 +42,7 @@ public class EmployeeEventsDraftObject {
 		this.idEmployee = idEmployee;
 		this.employeeContractVariables = new ArrayList<String>();
 		this.calendarVariables = new ArrayList<String>();
+		this.agreementVariables = new ArrayList<String>();
 	}
 	
 	// ----------------------------------------------- initCalendarVariables 
@@ -58,6 +63,10 @@ public class EmployeeEventsDraftObject {
 	
 	public ArrayList<String> getCalendarVariables() {
 		return this.calendarVariables;
+	}
+	
+	public ArrayList<String> getAgreementOnlyVariables() {
+		return this.agreementVariables;
 	}
 	
 	public ArrayList<String> getAllVariables() {
@@ -240,6 +249,19 @@ public class EmployeeEventsDraftObject {
 					employeeContractVariables.add(varName);
 				}
 				
+				// Check agreement only variables
+				for(Entry<String, ArrayList<VariableDescriptor>> entry : context.getVariableDescriptors().entrySet()) {
+					String variableName = entry.getKey();
+					ArrayList<VariableDescriptor> variables = entry.getValue();
+					if(null == variables || variables.isEmpty())
+						continue;
+					
+					for(VariableDescriptor variableDescriptor : variables) {
+						if(variableDescriptor.getScope() == Scope.AGREEMENT && !agreementVariables.contains(variableName))
+							agreementVariables.add(variableName);
+					}
+				}
+				
 				initializeDBCalendar(
 						s -> { success.accept(context);}, 
 						f -> {}
@@ -268,6 +290,9 @@ public class EmployeeEventsDraftObject {
 				employeeEventsData = resultEmployeeEventsData;
 				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
+				
+				for(String agreementVariable : agreementVariables)
+					employeeContractVariables.remove(agreementVariable);
 				
 				success.accept(resultEmployeeEventsData);
 			}

@@ -113,6 +113,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
 			
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
+			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
@@ -131,6 +134,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
@@ -151,6 +157,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
 			
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
+			
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
@@ -160,10 +169,33 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 	}
 	
+	class AgreementVariablesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			seeMenu.getAgreementVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAgreementVariablesMenuItem().addStyleName(style.aonCheck());
+			
+			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			variablesToShow = 3;
+			
+			fillCellsEvents(); 
+		}
+	}
+	
 	class SeeMenu extends ContextMenu {
 				
 		private MenuItem calendarVariablesMenuItem = null;
 		private MenuItem editableVariablesMenuItem = null;
+		private MenuItem agreementVariablesMenuItem = null;
 		private MenuItem allVariablesMenuItem = null;
 		
 		public SeeMenu() {
@@ -173,6 +205,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
+			
+			agreementVariablesMenuItem = addItem("Variables convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			agreementVariablesMenuItem.ensureDebugId("agreementVariablesMenuItem");
 			
 			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
@@ -185,6 +220,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 		public MenuItem getEditableVariablesMenuItem() {
 			return editableVariablesMenuItem;
+		}
+		
+		public MenuItem getAgreementVariablesMenuItem() {
+			return agreementVariablesMenuItem;
 		}
 
 		public MenuItem getAllVariablesMenuItem() {
@@ -241,7 +280,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
 	
-	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS
+	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS -- 3 = AGREEMENT_VARS
 	
 	private int year = DateUtils.getYear();
 	
@@ -662,6 +701,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				return employeeEventsDraft.getAgreementVariables();
 			case 2:
 				return employeeEventsDraft.getCalendarVariables();
+			case 3:
+				return employeeEventsDraft.getAgreementOnlyVariables();
 			default:
 				return new ArrayList<String>();
 		}
