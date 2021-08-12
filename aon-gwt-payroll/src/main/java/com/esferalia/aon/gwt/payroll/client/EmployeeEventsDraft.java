@@ -18,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -206,7 +207,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
 			
-			agreementVariablesMenuItem = addItem("Variables convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			agreementVariablesMenuItem = addItem("Variables con datos en convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			agreementVariablesMenuItem.ensureDebugId("agreementVariablesMenuItem");
 			
 			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
@@ -228,6 +229,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 		public MenuItem getAllVariablesMenuItem() {
 			return allVariablesMenuItem;
+		}
+		
+		public void hideAgreementMenuItem() {
+			this.agreementVariablesMenuItem.getElement().getStyle().setDisplay(Display.NONE);
+		}
+		
+		public void showAgreementMenuItem() {
+			this.agreementVariablesMenuItem.getElement().getStyle().clearDisplay();
 		}
 		
 	}
@@ -475,6 +484,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 
 	private void initializeVariablesToShow() {
+		if(employeeEventsDraft.getAgreementOnlyVariables().isEmpty())
+			seeMenu.hideAgreementMenuItem();
+		
 		this.variablesToShow = 1;
 		seeMenu.getEditableVariablesMenuItem().getScheduledCommand().execute();
 	}
