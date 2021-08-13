@@ -80,16 +80,25 @@ public class CheckItJooq {
 				lastOperationDate = Utilities.cleanDate(1, Calendar.JANUARY, Calendar.getInstance().get(Calendar.YEAR));
 			}
 
-			requestParams.put("fecha_desde", Utilities.formatDateForTransactions(lastOperationDate)); // REQUEST PARAMS
-																										// COMPLETED
+			requestParams.put("fecha_desde", Utilities.formatDateForTransactions(lastOperationDate)); // REQUEST PARAMS COMPLETED
 
 			JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
 
-			InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query = aonContext
-					.getDslContext().insertInto(BANK_STATEMENT, BANK_STATEMENT.DOMAIN, BANK_STATEMENT.RBANK,
-							BANK_STATEMENT.LOT_NUMBER, BANK_STATEMENT.OPERATION_DATE, BANK_STATEMENT.COMMON_CONCEPT,
-							BANK_STATEMENT.PAYMENT, BANK_STATEMENT.AMOUNT, BANK_STATEMENT.DESCRIPTION,
-							BANK_STATEMENT.STATUS, BANK_STATEMENT.REFERENCE1, BANK_STATEMENT.REFERENCE2);
+			InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
+					aonContext.getDslContext()
+					.insertInto(BANK_STATEMENT
+							, BANK_STATEMENT.DOMAIN
+							, BANK_STATEMENT.RBANK
+							, BANK_STATEMENT.LOT_NUMBER
+							, BANK_STATEMENT.OPERATION_DATE
+							, BANK_STATEMENT.COMMON_CONCEPT
+							, BANK_STATEMENT.PAYMENT
+							, BANK_STATEMENT.AMOUNT
+							, BANK_STATEMENT.DESCRIPTION
+							, BANK_STATEMENT.STATUS
+							, BANK_STATEMENT.REFERENCE1
+							, BANK_STATEMENT.REFERENCE2
+						);
 
 			Integer maximumId = maxId != null ? Integer.parseInt(maxId) : 0;
 
@@ -113,8 +122,17 @@ public class CheckItJooq {
 
 					Byte payment = (byte) (amount < 0 ? 1 : 0);
 
-					query = query.values(aonContext.getDomainId(), rbank.getId(), lotNumber, operationDate, (byte) 0,
-							payment, Math.abs(amount), description, (byte) 0, CHECKIT_R1,
+					query = query.values(
+							aonContext.getDomainId()
+							, rbank.getId()
+							, lotNumber
+							, operationDate
+							, (byte) 0
+							, payment
+							, Math.abs(amount)
+							, description
+							, (byte) 0
+							, CHECKIT_R1,
 							Utilities.leadingZeros(movementId, 16));
 				}
 
