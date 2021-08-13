@@ -69,6 +69,15 @@ public class CheckItTestCase {
 		}
 	}
 	
+	@Test
+	public void testGetTranslogiaAccounts() {
+		try {
+			System.out.println(CheckItAPI.getAccounts(API_KEY, 11423, 1, null));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
 	@Ignore //Ignored because it inserts a new account each time is called and they cannot be deleted for now
 	@Test
 	public void testAddAccount() {
@@ -115,6 +124,27 @@ public class CheckItTestCase {
 		Date to = calendar.getTime();
 		try {
 			CheckItAPI.getTransactions(API_KEY, AON_ID, from, to, "33631");
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testGetTranslogiaTransactions() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.YEAR, 2021);
+		Date from = calendar.getTime();
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		calendar.set(Calendar.DAY_OF_MONTH, 31);
+		Date to = calendar.getTime();
+		try {
+			System.out.println(CheckItAPI.getTransactions(API_KEY, 11423, from, to, "33661"));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
