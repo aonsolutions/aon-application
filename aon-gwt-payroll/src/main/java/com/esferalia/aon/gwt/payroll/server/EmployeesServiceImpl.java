@@ -1233,8 +1233,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					if (!contextDescriptorPayments.getList(key).isEmpty()) {
 						for (VariableDescriptor variable : contextDescriptorPayments.getList(key)) {
 
-							System.out.println("CTX VARIABLES  : " + key + " = " + variable.getExpression() + ", Type : " 
-									+ variable.getType() + ", Scope : " + variable.getScope());
+//							System.out.println("CTX VARIABLES  : " + key + " = " + variable.getExpression() + ", Type : " 
+//									+ variable.getType() + ", Scope : " + variable.getScope());
 
 							if (Number.class != variable.getType())
 								continue;
@@ -1249,11 +1249,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 							if (Scope.CONTRACT == variable.getScope())
 								continue;
 
-							System.out.println("CTX VARIABLES ADD  : " + key);
+//							System.out.println("CTX VARIABLES ADD  : " + key);
 							contextResult.add(key, variable);
 						}
 					} else {
-						System.out.println("CTX VARIABLES ADD  : " + key);
+//						System.out.println("CTX VARIABLES ADD  : " + key);
 						contextResult.add(key);
 						continue;
 					}

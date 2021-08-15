@@ -16,12 +16,13 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVar
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -96,10 +97,6 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 		initErrorPanel();
 		getButtonsPanel();
 		
-		this.employeeEventsVariables.forEach(var -> {
-			Window.alert(variableName + " : " + var.getValue() + " (" + var.getStartDate() + " - " + var.getEndDate() + ")");
-		});
-		
 		createHeader();
 		createNewEmptyRow();
 		sortEmployeeEventsVariablesDesc();
@@ -138,10 +135,13 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 		
 		Label startDateL = new Label("Fecha Inicio");
 		startDateL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		startDateL.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
 		Label endDateL = new Label("Fecha Fin");
 		endDateL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		endDateL.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
 		Label valueL = new Label("Valor");
 		valueL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		valueL.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
 		Label optionL = new Label("");
 		
 		rowPanel.add(startDateL);
@@ -161,16 +161,21 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 		EmployeeEventsVariable newEmployeeEventsVariable = new EmployeeEventsVariable();
 		
 		DateBoxEx startDateTB = new DateBoxEx();
+		startDateTB.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		startDateTB.getElement().getStyle().setWidth(100, Unit.PCT);
 		startDateTB.addValueChangeHandler(e -> {
 			newEmployeeEventsVariable.setStartDate(e.getValue());
 		});
 		
 		DateBoxEx endDateTB = new DateBoxEx();
+		endDateTB.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		endDateTB.getElement().getStyle().setWidth(100, Unit.PCT);
 		endDateTB.addValueChangeHandler(e -> {
 			newEmployeeEventsVariable.setEndDate(e.getValue());
 		});
 		
 		DoubleBox valueTB = new DoubleBox();
+		valueTB.getElement().getStyle().setWidth(100, Unit.PCT);
 		valueTB.addBlurHandler(e -> {
 			try {
 				Double value = valueTB.getValueOrThrow();
@@ -217,6 +222,8 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 			rowPanel.addStyleName(style.rowPanel());
 			
 			DateBoxEx startDateTB = new DateBoxEx();
+			startDateTB.getElement().getStyle().setWidth(100, Unit.PCT);
+			startDateTB.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			startDateTB.setValue(employeeEventsVariable.getStartDate());
 			startDateTB.addValueChangeHandler(e -> {
 				if(checkIfStartDateCanBeChange(e.getValue(), employeeEventsVariable)) {
@@ -229,6 +236,8 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 			});
 			
 			DateBoxEx endDateTB = new DateBoxEx();
+			endDateTB.getElement().getStyle().setWidth(100, Unit.PCT);
+			endDateTB.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			endDateTB.setValue(employeeEventsVariable.getEndDate());
 			endDateTB.addValueChangeHandler(e -> {
 				if(checkIfEndDateCanBeChange(e.getValue(), employeeEventsVariable)) {
@@ -241,6 +250,7 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 			});
 			
 			DoubleBox valueTB = new DoubleBox();
+			valueTB.getElement().getStyle().setWidth(100, Unit.PCT);
 			valueTB.setValue(employeeEventsVariable.getValue());
 			valueTB.addBlurHandler(e -> {
 				try {
