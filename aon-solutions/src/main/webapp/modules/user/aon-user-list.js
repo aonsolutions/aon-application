@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUsers} from  '../../services/service.js';
+import {getUserList} from  '../../services/service.js';
 import {setUsers, setIndex} from './UserCache.js';
 
 
@@ -67,7 +67,7 @@ export class AonUserList extends AonElement {
 		let filter = this.filter.filter || 'company';
 		let table = document.getElementById('aonUserTable');
 		if(table) {
-			getUsers(filter).then(users => {
+			getUserList({filter}).then(users => {
 				setUsers(users);
 				this.users = users;
 				table.removeRows();

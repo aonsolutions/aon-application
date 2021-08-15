@@ -1,6 +1,6 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS } from '../../environments/environments.js';
-import {getUsers} from '../../services/service.js';
+import {getUserList} from '../../services/service.js';
 
 export class AonMobileUserList extends AonMobileList {
 
@@ -28,7 +28,7 @@ export class AonMobileUserList extends AonMobileList {
         if(filter.page) {
             filter.page = filter.page + 1;
             this.setFilter(filter);
-            getUsers(filter).then(users => {
+            getUserList(filter).then(users => {
                 if(users.length == 0)
                     this.more = false;
                 users.forEach((user, i) => this.addRow(user, i));
@@ -38,7 +38,7 @@ export class AonMobileUserList extends AonMobileList {
 
     init() {
         this.build();
-        getUsers(this.getFilter()).then(users => {
+        getUserList(this.getFilter()).then(users => {
             users.forEach((user, i) => this.addRow(user, i));
         });
     }
@@ -60,7 +60,7 @@ export class AonMobileUserList extends AonMobileList {
 	}
 
     setValue(value) {
-        getUsers(this.getFilter()).then(users => {
+        getUserList(this.getFilter()).then(users => {
             this.build();
             users.filter(f => 
                 f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 

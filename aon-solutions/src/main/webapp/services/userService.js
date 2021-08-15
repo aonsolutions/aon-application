@@ -1,7 +1,7 @@
 import {  post, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-export const getUsers = (data) => get(`${API_URL}/user`, data);
+export const getUserList = (data) => get(`${API_URL}/user`, data);
 
 export const setUser = (data) => post(`${API_URL}/user`, data);
 
