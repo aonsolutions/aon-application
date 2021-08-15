@@ -13,8 +13,6 @@
 			display: flex;
 			flex-direction: column;
 			padding: 5px;
-			/*border: 1px solid #e1e1e1;*/
-			margin-bottom: 10px;
 		}
 		
 		.rowPanel{
