@@ -29,7 +29,7 @@ public class EmployeeEventsData implements Serializable {
 
 	}
 	
-	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
+	public static class EmployeeEventsVariable implements EVENTimedVariable<Double>, Comparator<EmployeeEventsVariable>{
 
 		private String startDate;
 		private String endDate;
@@ -60,6 +60,23 @@ public class EmployeeEventsData implements Serializable {
 		@Override
 		public Double getValue() {
 			return this.value;
+		}
+
+		public void setStartDate(Date startDate) {
+			this.startDate = Shared.format(startDate);
+		}
+
+		public void setEndDate(Date endDate) {
+			this.endDate = format(endDate);
+		}
+
+		public void setValue(Double value) {
+			this.value = value;
+		}
+
+		@Override
+		public int compare(EmployeeEventsVariable o1, EmployeeEventsVariable o2) {
+			return o1.getStartDate().compareTo(o2.getStartDate());
 		}
 		
 	}
@@ -386,18 +403,23 @@ public class EmployeeEventsData implements Serializable {
 						
 						// Add to var list
 						if(null != endDate) {
-							Date itDate = DateUtils.copyDateOnly(startDate);
-							while(DateUtils.isBeforeOrEquals(itDate, endDate)) {
-								Date actualDate = DateUtils.copyDateOnly(itDate);
-								DateUtils.resetTime(actualDate);
-								
-								Date auxStartDate = DateUtils.getFirstDayOfMonth(actualDate);
-								Date auxEndDate = DateUtils.getLastDayOfMonth(actualDate);
-								
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+							if(DateUtils.getMonth(startDate) == DateUtils.getMonth(endDate)) {
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
 								varList.add(eVar);
-								
-								DateUtils.addMonths2Date(itDate, 1);
+							} else {
+								Date itDate = DateUtils.copyDateOnly(startDate);
+								while(DateUtils.isBeforeOrEquals(itDate, endDate)) {
+									Date actualDate = DateUtils.copyDateOnly(itDate);
+									DateUtils.resetTime(actualDate);
+									
+									Date auxStartDate = DateUtils.getFirstDayOfMonth(actualDate);
+									Date auxEndDate = DateUtils.getLastDayOfMonth(actualDate);
+									
+									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+									varList.add(eVar);
+									
+									DateUtils.addMonths2Date(itDate, 1);
+								}
 							}
 						}
 					}
@@ -560,6 +582,19 @@ public class EmployeeEventsData implements Serializable {
 	public void removeEventData(String variableName) {
 		ArrayList<Quartet<Date, Date, String, String>> emptyList = new ArrayList<Quartet<Date,Date,String,String>>();
 		this.contractEventsList.put(variableName, emptyList);
+	}
+
+	public void setEventData(String varName, ArrayList<EmployeeEventsVariable> employeeEventsVariables) {
+		removeEventData(varName);
+		
+		ArrayList<Quartet<Date, Date, String, String>> newVarList = new ArrayList<Quartet<Date,Date,String,String>>();
+		
+		employeeEventsVariables.forEach(employeeEventsVariable -> {
+			newVarList.add(new Quartet<Date, Date, String, String>(employeeEventsVariable.getStartDate(), employeeEventsVariable.getEndDate(), varName, employeeEventsVariable.getValue()+""));
+		});
+		
+		contractEventsList.put(varName, newVarList);
+		
 	}
 	
 }

@@ -159,11 +159,11 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 		if(null != date) {
 			if(date.before(contractStartDate))
 				startDate.setValue(contractStartDate);
-			else {
-				Date firstDayOfMoth = DateUtils.getFirstDayOfMonth(date);
-				DateUtils.resetTime(firstDayOfMoth);
-				startDate.setValue(firstDayOfMoth);
-			}
+//			else {
+//				Date firstDayOfMoth = DateUtils.getFirstDayOfMonth(date);
+//				DateUtils.resetTime(firstDayOfMoth);
+//				startDate.setValue(firstDayOfMoth);
+//			}
 		}
 	}
 	
@@ -174,11 +174,12 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 			if(null != contractEndDate) {
 				if(date.after(contractEndDate))
 					endDate.setValue(contractEndDate);
-			} else if (!AonStringUtils.equalsIgnoreCase(variablesList.getSelectedValue(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
-				Date lastDayOfMoth = DateUtils.getLastDayOfMonth(date);
-				DateUtils.resetTime(lastDayOfMoth);
-				endDate.setValue(lastDayOfMoth);
-			}
+			} 
+//			else if (!AonStringUtils.equalsIgnoreCase(variablesList.getSelectedValue(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+//				Date lastDayOfMoth = DateUtils.getLastDayOfMonth(date);
+//				DateUtils.resetTime(lastDayOfMoth);
+//				endDate.setValue(lastDayOfMoth);
+//			}
 		}
 	}
 	

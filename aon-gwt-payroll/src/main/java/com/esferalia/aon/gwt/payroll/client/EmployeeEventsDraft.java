@@ -388,7 +388,13 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			eraseSelectedPositions();
 			
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-			openNewValueDialog(variableName);
+			
+			ArrayList<EmployeeEventsVariable> employeeEventsVariables = employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
+			
+			if(null != employeeEventsVariables && !employeeEventsVariables.isEmpty())
+				openEventsDialog(variableName, employeeEventsVariables);
+			else
+				openNewValueDialog(variableName);
 		}
 		
 	}
@@ -596,7 +602,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				}
 			});
 			
-			if (employeeEventsDraft.isCalendarVariable(var)){
+			if (employeeEventsDraft.isCalendarVariable(var) || (null != varList && !varList.isEmpty())){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
 			}else{
@@ -860,6 +866,28 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 						t -> {});
 			}
 		});
+	}
+	
+	private void openEventsDialog(String variableName, ArrayList<EmployeeEventsVariable> employeeEventsVariables) {
+		EmployeeEventsDialog employeeEventsDialog = new EmployeeEventsDialog(
+				variableName, 
+				employeeEventsVariables,
+				employeeEventsDraft.getContractStartDate(),
+				employeeEventsDraft.getContractEndDate()
+		) {
+			@Override
+			protected void onAccept() {
+				ArrayList<EmployeeEventsVariable> newEmployeeEventsVariables = getEmployeeEventsVariables();
+				employeeEventsDraft.setListEmployeeEventsVaribales(variableName, newEmployeeEventsVariables);
+				
+				changeYear();
+				saveButton.setEnabled(true);
+				undoAllButton.setEnabled(true);
+			}
+		};
+		
+		employeeEventsDialog.show();
+		employeeEventsDialog.center();
 	}
 	
 	private void openNewValueDialog(String variableName){

@@ -352,6 +352,13 @@ public class EmployeeEventsDraftObject {
 	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
 		return this.mapEventsVar.getOrDefault(varName, null);
 	}
+
+	public void setListEmployeeEventsVaribales (String varName, ArrayList<EmployeeEventsVariable> employeeEventsVariables){
+		//TODO: REVISAR ESTO PARA QUE NO SE GUARDE POR MESES
+		employeeEventsData.setEventData(varName, employeeEventsVariables);
+		mapEventsVar.put(varName, employeeEventsVariables);
+//		mapEventsVar = employeeEventsData.getEventDateVarList();
+	}
 	
 	public Double getAcumulateVariableByMonth (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
