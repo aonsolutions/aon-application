@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -116,7 +116,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
-			
+
+			seeMenu.getContractVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getContractVariablesMenuItem().removeStyleName(style.aonCheck());
+
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
@@ -138,6 +141,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getContractVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getContractVariablesMenuItem().removeStyleName(style.aonCheck());
 			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
@@ -161,6 +167,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
 			
+			seeMenu.getContractVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getContractVariablesMenuItem().removeStyleName(style.aonCheck());
+			
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
 			
@@ -180,6 +189,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
 			
+			seeMenu.getContractVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getContractVariablesMenuItem().removeStyleName(style.aonCheck());
+			
 			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
 			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
 			
@@ -192,11 +204,37 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 	}
 	
+	class ContractVariablesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			seeMenu.getContractVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
+			seeMenu.getContractVariablesMenuItem().addStyleName(style.aonCheck());
+			
+			seeMenu.getEditableVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getEditableVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAgreementVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getAllVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getAllVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName("aon-MenuItemCheckYes");
+			seeMenu.getCalendarVariablesMenuItem().removeStyleName(style.aonCheck());
+			
+			variablesToShow = 4;
+			
+			fillCellsEvents(); 
+		}
+	}
+	
 	class SeeMenu extends ContextMenu {
 				
 		private MenuItem calendarVariablesMenuItem = null;
 		private MenuItem editableVariablesMenuItem = null;
 		private MenuItem agreementVariablesMenuItem = null;
+		private MenuItem contractVariablesMenuItem = null;
 		private MenuItem allVariablesMenuItem = null;
 		
 		public SeeMenu() {
@@ -209,6 +247,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			agreementVariablesMenuItem = addItem("Variables con datos en convenio", new AgreementVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			agreementVariablesMenuItem.ensureDebugId("agreementVariablesMenuItem");
+			
+			contractVariablesMenuItem = addItem("Variables con datos en contrato", new ContractVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			contractVariablesMenuItem.ensureDebugId("contractVariablesMenuItem");
 			
 			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			allVariablesMenuItem.ensureDebugId("allVariablesMenuItem");
@@ -226,6 +267,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		public MenuItem getAgreementVariablesMenuItem() {
 			return agreementVariablesMenuItem;
 		}
+		
+		public MenuItem getContractVariablesMenuItem() {
+			return contractVariablesMenuItem;
+		}
 
 		public MenuItem getAllVariablesMenuItem() {
 			return allVariablesMenuItem;
@@ -237,6 +282,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		public void showAgreementMenuItem() {
 			this.agreementVariablesMenuItem.getElement().getStyle().clearDisplay();
+		}
+		
+		public void hideContractMenuItem() {
+			this.contractVariablesMenuItem.getElement().getStyle().setDisplay(Display.NONE);
+		}
+		
+		public void showContractMenuItem() {
+			this.contractVariablesMenuItem.getElement().getStyle().clearDisplay();
 		}
 		
 	}
@@ -289,7 +342,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
 	
-	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS -- 3 = AGREEMENT_VARS
+	private Integer variablesToShow = 1; // 0 = ALL_VARIABLES -- 1 = EDITABLE_VARS -- 2 = CALENDAR_VARS -- 3 = AGREEMENT_VARS -- 4 = CONTRACT_VARS
 	
 	private int year = DateUtils.getYear();
 	
@@ -468,8 +521,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	private boolean isOutOfContractPeriod(Date date) {
 		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
 		if(null == newEndDate) {
-			Integer nextYear = new Date().getYear() + 2;
-			newEndDate = new Date(nextYear, 11, 31);
+			Integer nextYear = DateUtils.getYear() + 1;
+			newEndDate = DateUtils.getLastDayOfYear(nextYear);
 		}
 		
 		Date startDate = DateUtils.copyDateOnly(this.employeeEventsDraft.getContractStartDate());
@@ -493,6 +546,9 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		if(employeeEventsDraft.getAgreementOnlyVariables().isEmpty())
 			seeMenu.hideAgreementMenuItem();
 		
+		if(employeeEventsDraft.getContractVariables().isEmpty())
+			seeMenu.hideContractMenuItem();
+		
 		this.variablesToShow = 1;
 		seeMenu.getEditableVariablesMenuItem().getScheduledCommand().execute();
 	}
@@ -507,7 +563,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
     private void createVariableRow(String var) {
-//    	Integer actualYear = Integer.parseInt(yearLabel.getText());
     	Integer actualMonth = 0;
     	
     	int newRow = eventsGrid.insertRow(eventsGrid.getRowCount());
@@ -616,6 +671,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			}
 			
 			Double accumulateMonth = this.employeeEventsDraft.getAcumulateVariableByMonth(var, actualMonth, Integer.parseInt(yearLB.getSelectedItemText()));
+			boolean hasMoreThanOneValue = this.employeeEventsDraft.hasMoreThanOneValue(var, actualMonth, Integer.parseInt(yearLB.getSelectedItemText()));
 			
 			if (newRow % 2 == 1) {
 				eventCell.removeStyleName(style.bgcWhite());
@@ -632,7 +688,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			}
 			
-			eventCell.setTextBoxValue(accumulateMonth.toString());
+			if (hasMoreThanOneValue) {
+				eventCell.setTextBoxValue("[+1]");
+				eventCell.setTitle("Este mes tiene varios tramos");
+				eventCell.setEnabled(true);
+				eventCell.addClickHandler(e -> {
+					ArrayList<EmployeeEventsVariable> employeeEventsVariables = employeeEventsDraft.getListEmployeeEventsVaribales(var);
+					openEventsDialog(var, employeeEventsVariables);
+				});
+			} else
+				eventCell.setTextBoxValue(accumulateMonth.toString());
+			
 			eventsGrid.setWidget(newRow, col, eventCell);
 			if (newRow % 2 != 1)
 				eventsGrid.getWidget(newRow, col).addStyleName(style.bgcWhite());
@@ -678,8 +744,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
 		String variable = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
 		
-//		Integer actualYear = Integer.parseInt(yearLabel.getText());
-		
 		int colStart = calculateCol(selectedPositions.getSelectedList().get(0));
 		Integer monthStart = calculateMonthByColumn(colStart);
 		
@@ -721,6 +785,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				return employeeEventsDraft.getCalendarVariables();
 			case 3:
 				return employeeEventsDraft.getAgreementOnlyVariables();
+			case 4:
+				return employeeEventsDraft.getContractVariables();
 			default:
 				return new ArrayList<String>();
 		}
@@ -840,10 +906,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	public void onNewValue(ClickEvent e) {
 		openNewValueDialog(null);
 	}
-	
-//	private void onVisibility(ClickEvent e) {
-//		createEmployeeCheckBoxDialog();	
-//	}
 	
 	private void initUndoAllDialog() {
 		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));

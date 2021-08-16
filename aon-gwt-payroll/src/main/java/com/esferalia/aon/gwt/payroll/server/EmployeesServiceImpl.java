@@ -1246,8 +1246,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 								continue;
 							if (Scope.SYSTEM == variable.getScope())
 								continue;
-							if (Scope.CONTRACT == variable.getScope())
-								continue;
+//							if (Scope.CONTRACT == variable.getScope())
+//								continue;
 
 //							System.out.println("CTX VARIABLES ADD  : " + key);
 							contextResult.add(key, variable);

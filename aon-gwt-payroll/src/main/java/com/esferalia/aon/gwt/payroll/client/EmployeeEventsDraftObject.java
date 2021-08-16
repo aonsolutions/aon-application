@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -34,6 +35,7 @@ public class EmployeeEventsDraftObject {
 	
 	private ArrayList<String> calendarVariables;
 	private ArrayList<String> agreementVariables;
+	private ArrayList<String> contractVariables;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -43,6 +45,7 @@ public class EmployeeEventsDraftObject {
 		this.employeeContractVariables = new ArrayList<String>();
 		this.calendarVariables = new ArrayList<String>();
 		this.agreementVariables = new ArrayList<String>();
+		this.contractVariables = new ArrayList<String>();
 	}
 	
 	// ----------------------------------------------- initCalendarVariables 
@@ -67,6 +70,10 @@ public class EmployeeEventsDraftObject {
 	
 	public ArrayList<String> getAgreementOnlyVariables() {
 		return this.agreementVariables;
+	}
+	
+	public ArrayList<String> getContractVariables() {
+		return this.contractVariables;
 	}
 	
 	public ArrayList<String> getAllVariables() {
@@ -260,6 +267,11 @@ public class EmployeeEventsDraftObject {
 						if(variableDescriptor.getScope() == Scope.AGREEMENT && !agreementVariables.contains(variableName))
 							agreementVariables.add(variableName);
 					}
+					
+					for(VariableDescriptor variableDescriptor : variables) {
+						if(variableDescriptor.getScope() == Scope.CONTRACT && !contractVariables.contains(variableName) && !continueVariable(variableName))
+							contractVariables.add(variableName);
+					}
 				}
 				
 				initializeDBCalendar(
@@ -294,6 +306,9 @@ public class EmployeeEventsDraftObject {
 				for(String agreementVariable : agreementVariables)
 					employeeContractVariables.remove(agreementVariable);
 				
+				for(String contractVariable : contractVariables)
+					employeeContractVariables.remove(contractVariable);
+				
 				success.accept(resultEmployeeEventsData);
 			}
 		});
@@ -326,6 +341,11 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("GRUPO_COTIZACION");
 		filterSet.add("ANTIGUEDAD_HELP");
 		filterSet.add("GET_VARIABLE");
+		filterSet.add("LABORABLE");
+		filterSet.add("OS_TRABAJADOS");
+		filterSet.add("DIAS_");
+		filterSet.add("OCUPACI");
+		filterSet.add("COEFICIENTE_PARCIALIDAD");
 		
 		filterSet.addAll(allStaticVariables);
 		
@@ -339,9 +359,33 @@ public class EmployeeEventsDraftObject {
 		return resultSet;
 	}
 	
+	private boolean continueVariable(String variableName) {
+		// Filter set
+		Set<String> filterSet = new LinkedHashSet<String>();
+		filterSet.add("PAGA_EXTRA_HELP");
+		filterSet.add("TC2");
+		filterSet.add("SALARIO_VARIABLE_DIA");
+		filterSet.add("AÑOS_TRABAJADOS");
+		filterSet.add("GRUPO_COTIZACION");
+		filterSet.add("ANTIGUEDAD_HELP");
+		filterSet.add("GET_VARIABLE");
+		filterSet.add("LABORABLE");
+		filterSet.add("OS_TRABAJADOS");
+		filterSet.add("DIAS_");
+		filterSet.add("OCUPACI");
+		filterSet.add("COEFICIENTE_PARCIALIDAD");
+		
+		for(String filterVar : filterSet){
+			if(AonStringUtils.equalsIgnoreCase(filterVar, variableName) || AonStringUtils.containsIgnoreCase(variableName, filterVar))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	private boolean contains(Set<String> filterSet, String var) {
 		for(String filterVar : filterSet) {
-			if(filterVar.equals(var) || filterVar == var || var.contains("OS_TRABAJADOS")) // AÑOS_TRABAJADOS
+			if(AonStringUtils.equalsIgnoreCase(filterVar, var) || AonStringUtils.containsIgnoreCase(var, filterVar))
 				return true;
 		}
 		return false;
@@ -379,6 +423,26 @@ public class EmployeeEventsDraftObject {
 		}
 		
 		return acumulateMonth;
+	}
+	
+	public boolean hasMoreThanOneValue (String varName, int month, Integer year){
+		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
+		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
+		Date lastDayMonth = DateUtils.getLastDayOfMonth(DateUtils.getDate(month, year));
+		Integer values = 0;
+		
+		if(null != varList) {
+			for (EmployeeEventsVariable e : varList){
+				if(year != DateUtils.getYear(e.getStartDate()))
+					continue;
+				
+				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) 
+						&& null != e.getValue())
+					values++;	
+			}
+		}
+		
+		return values > 1;
 	}
 
 	public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
