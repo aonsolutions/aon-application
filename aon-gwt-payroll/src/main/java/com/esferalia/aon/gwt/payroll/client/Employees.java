@@ -772,7 +772,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		if (extended) {
 
-			final TreeItem eventsItem = addImageItem(workplaceItem, "Incidencias", images.data());
+			final TreeItem eventsItem = addImageItem(workplaceItem, "Variables C\u00E1lculo", images.data());
 			// final TreeItem eventsItem = new TreeItem();
 
 			// --------------------------------------------------------------
@@ -1506,7 +1506,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
 			salaryDraftItem.setUserObject(draftObject);
 
-			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Incidencias", images.data());
+			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Variables C\u00E1lculo", images.data());
 			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId());
 			
 			employeeEventsItem.setUserObject(employeeEventsDraftObject);

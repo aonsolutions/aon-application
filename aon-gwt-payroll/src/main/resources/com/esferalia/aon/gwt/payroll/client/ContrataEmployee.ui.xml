@@ -172,7 +172,7 @@
 							  	</g:tab>
 							  	<g:tab>
 							    	<g:customHeader size='7'>
-							      		<g:Label>Incidencias</g:Label>
+							      		<g:Label>Variables Cálculo</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
 							    		<a:EmployeeEventsDraft ui:field="employeeEvents" />
