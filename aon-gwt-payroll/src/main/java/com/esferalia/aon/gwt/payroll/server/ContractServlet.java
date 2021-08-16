@@ -50,9 +50,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -383,10 +384,15 @@ public class ContractServlet extends AonApiHttpServlet {
 		  String cti     = ccc.getCccAccount();
 		  String regimen = ccc.getCccRegimeCode();
 		  try {
-			byte[] pdf = SistemaRED.getCccLaboralLife(
-						new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), 
-						certificate.getType(), regimen, cti, startDate, endDate
-					);
+			  byte[] pdf = ServicioRED.getCccLaboralLife(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regimen, 
+					cti, 
+					startDate, 
+					endDate
+			  );
 		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
 		  } catch(InvalidCertificateException e) {
 		      e.printStackTrace();

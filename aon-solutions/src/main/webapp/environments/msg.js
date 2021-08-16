@@ -99,6 +99,7 @@ export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
+export const CLOSE = "Cerrar";// TODO
 
 // ----- D
 
@@ -165,11 +166,11 @@ export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 export const HEADER = MSG.HEADER;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
-export const HOURS = "Horas";
-
+export const HOURS = "Horas";//TODO
+export const HISTORIC = "Historial"; //TODO
 // ----- I
 
-export const INACTIVE = 'Inactivas';
+export const INACTIVE = 'Inactivas';//TODO
 export const INBOX = MSG.INBOX;
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
@@ -203,6 +204,8 @@ export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_USER = MSG.MY_USER;
 export const MSG_SENT = "Mensaje enviado";//TODO
+export const MAXIMIZE = "Maximizar";//TODO
+export const MINIMIZE = "Minimizar";//TODO
 
 // ----- N
 
@@ -220,7 +223,7 @@ export const NUMBER = MSG.NUMBER;
 export const OFFICE = 'Despacho';//TODO
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
-
+export const OBSERVATION = "Observación"; //TODO
 // ----- P
 
 export const PAYMETHOD = MSG.PAYMETHOD;

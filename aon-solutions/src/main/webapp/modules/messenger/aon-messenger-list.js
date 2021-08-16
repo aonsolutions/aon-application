@@ -10,6 +10,7 @@ import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { ICON_TYPES, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
+import { addTasks, setIndexTask } from "./TaskCache.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -56,6 +57,7 @@ export class AonMessengerList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this._list = [];
+    this.INDEX = 0;
     this.MORE = true;
     this.KEY_VIEW = Math.random();
     this.applicationEl.setKeyView(this.KEY_VIEW);
@@ -153,6 +155,7 @@ export class AonMessengerList extends AonElement {
   async loadMore() {
 		let aonTable = this.getElement(this.TABLE_ID);
     const datos = await this.getData();
+    addTasks(datos);
     if(this.isMobile()){
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
@@ -163,16 +166,16 @@ export class AonMessengerList extends AonElement {
           title: res.newTitle,
           subtitle: dateParse, 
         };
-        aonTable.addLi(options, idx, () => this.goMessengerChat(res));
+        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
       });
     } else {
-      datos.map((res) => {
+      datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         res.icon = MATERIAL_ICONS.INFO;
         res.icon_title = "status";
         res.icon_color = CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON);
         res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-        aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res));
+        aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res, idx));
       });
     }
 	}
@@ -197,7 +200,8 @@ export class AonMessengerList extends AonElement {
     d.open();
   }
 
-  goMessengerChat(res){
+  goMessengerChat(res, idx){
+    setIndexTask(idx);
     if(!this.applicationParentEl){
       let aonMessenger = new AonMessenger();
       aonMessenger.data = res;

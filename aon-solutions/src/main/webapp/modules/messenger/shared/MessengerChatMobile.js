@@ -26,14 +26,14 @@ import { buildTextareaToolbar, fillWorkGroup } from "./utils.js";
         );
       }
   
-    buildMobileChat(aonMessengerChat);
+    buildChat(aonMessengerChat);
 }
 
 /**
  * Create desktop chat for messenger (mobile)
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-const buildMobileChat = (aonMessengerChat) => {
+const buildChat = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const mainView = createMobileMainView();
     aonMessengerChat.appendChild(mainView);
@@ -75,7 +75,7 @@ const buildMobileChat = (aonMessengerChat) => {
     if(aonMessengerChat.task.id){
         wrapper.appendChild(toolbar);
     } else {
-        buildMobileChatCreate(wrapper, toolbar, aonMessengerChat);
+        buildCreate(wrapper, toolbar, aonMessengerChat);
     }
 
     //TOOLBAR BOTONS  
@@ -84,8 +84,7 @@ const buildMobileChat = (aonMessengerChat) => {
         toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
     }    
     toolbar.addButton2(ACTIONS.BACK,() => {
-        wrapper.element.style.transition = ".25s";
-        wrapper.element.style.opacity = "0";
+        setStyles(wrapper.element,{transition: ".25s", opacity: 0});
         setTimeout(() =>  aonMessengerChat.back(), 250);
     });
 
@@ -173,7 +172,7 @@ const changeStyleSelect = (aonSelect) => {
  * @param {*} toolbar 
  * @param {*} aonMessengerChat 
  */
-const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
+const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
     const application = aonMessengerChat.applicationEl;
     const task = aonMessengerChat.task;
     const newRequestPanel = newComponent({
@@ -269,13 +268,15 @@ const buildMobileChatCreate = (wrapper, toolbar, aonMessengerChat)=>{
     // /**
     //  * Creating text area
     //  */
-    const aonTextArea = setStyles(createAonTextArea(aonMessengerChat.task.id ? `${MSG.WRITE_A_COMMENT}...` : `${MSG.WRITE_A_DESCRIPTION}...`),{
+    const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`),{
         height: "100%",
         width: "100%",
         marginTop : 0,
         boxShadow : "none",
     });
+    aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     div.appendChild(aonTextArea);
+    buildTextareaToolbar(aonTextArea, aonMessengerChat.task);
     let textAreaDiv = document.getElementById(aonTextArea.TEXTAREA);
     if(textAreaDiv) textAreaDiv.style.padding = "20px";
 
@@ -319,7 +320,7 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
 
     const bar = setAttributes(new AonToolbar(),{
        type:ToolbarType.SECONDARY,
-       title:MSG.COMMENT
+       title:MSG.HISTORIC
     });
 
     bar.style.background = "#fff";
@@ -332,7 +333,7 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
     });
     bar.addButton2(ACTIONS.BACK,() => hideWritter());
 
-    const textarea = setStyles(createAonTextArea(), {
+    const aonTextArea = setStyles(createAonTextArea(), {
         flexDirection: 'column',
         height: '100%',
         width: '100%',
@@ -340,10 +341,11 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
         background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
-    writter.element.appendChild(textarea);
-    buildTextareaToolbar(textarea, aonMessengerChat.task);
+    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+    writter.element.appendChild(aonTextArea);
+    buildTextareaToolbar(aonTextArea, aonMessengerChat.task);
 
-    const textAreaToolbar = textarea.querySelector("toolbar");
+    const textAreaToolbar = aonTextArea.querySelector("toolbar");
     if(textAreaToolbar){
         setStyles(textAreaToolbar, {
             background: CSS.variable(COLORS.AON_LIGHT_GRAY),
@@ -353,7 +355,6 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
         });
     }
 }
-
 
 
 /**

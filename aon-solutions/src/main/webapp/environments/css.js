@@ -270,6 +270,7 @@ export const NO_COPY = "noCopy";
 export const NO_SCROLLBAR = "noScrollbar";
 export const NO_FOCUS = "noFocus";
 export const CONTENT_EDITABLE = "contentEditable";
+export const FOCUS_COLOR_MINUS = "focusColorMinus";
 export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";

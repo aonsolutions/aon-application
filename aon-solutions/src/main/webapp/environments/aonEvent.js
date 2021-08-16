@@ -2,6 +2,7 @@ export const BLUR = 'blur';
 export const INPUT = 'input';
 export const CHANGE = 'change';
 export const CLICK = 'click';
+export const CLOSE = 'close';
 export const DRAGOVER = 'dragover';
 export const DRAGENTER = 'dragenter';
 export const DRAGLEAVE = 'dragleave';

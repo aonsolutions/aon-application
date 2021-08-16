@@ -79,10 +79,10 @@ export class AonMessengerChat extends AonElement {
   build() {
     this.paintView();
 
-    if (this.task.id)   //FILL CHATS WORKFLOW
-      this.getTaskWorkflow();
-
     this.eventListenerAll();
+
+    //FILL CHATS WORKFLOW
+    if (this.task.id) this.getTaskWorkflow();
   }
 
   paintView() {
@@ -102,15 +102,15 @@ export class AonMessengerChat extends AonElement {
   }
 
   buildTaskWorkflow(){
+    this.task.setWorkflow([]);
     if (this.task.id) { //UPDATE
-      this.task.setWorkflow([]);
       if( this.getData().workgroup && this.getData().workgroup.id!= this.task.getWorkgroup().id){
         this.task.addWorkflow({
-            comment: this.task.getWorkgroup().description,
-            domain:this.task.getDomain(),
-            modification_date:new Date().getTime(),
-            task_holder: this.task.getSender(),
-            type: WORKFLOW_TYPES.ASSIGN,
+          comment: this.task.getWorkgroup().description,
+          domain:this.task.getDomain(),
+          modification_date:new Date().getTime(),
+          task_holder: this.task.getSender(),
+          type: WORKFLOW_TYPES.ASSIGN,
         });
       }
       if( this.getData().task_holder && this.getData().task_holder.id!= this.task.getTaskHolder().id){
@@ -124,7 +124,6 @@ export class AonMessengerChat extends AonElement {
       }
     } else {
       this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
-      if(this.task.getDescription()) this.task.addWorkflow({...this.task.getWorkflowTmp(), comment:this.task.getDescription()}); // ADD COMMENT
     }
   }
   
@@ -142,9 +141,9 @@ export class AonMessengerChat extends AonElement {
       if(detail) this.task.setTaskHolder(detail)
     });
 
-    let commentTaskEl = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    if(commentTaskEl) commentTaskEl.addEventListener(EVENT.KEYUP, ()=>{
-      if(commentTaskEl.value) this.task.setDescription(commentTaskEl.value)
+    let descriptionTask = this.getElement(MESSENGER_IDS.DESCRIPTION_TASK);
+    if(descriptionTask) descriptionTask.addEventListener(EVENT.INPUT, ()=>{
+      if(descriptionTask.value) this.task.setDescription(descriptionTask.value)
     });
 
     let processTypeEl = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
@@ -189,12 +188,15 @@ export class AonMessengerChat extends AonElement {
     // });
   }
 
-  getTaskWorkflow() {
-    getTaskWorkflow({ taskId:this.task.id }).then((workflow) => {
+  async getTaskWorkflow() {
+    this.applicationEl.startLoading();
+    try {
+      let workflow = await getTaskWorkflow({ taskId:this.task.id });
       this.task.setWorkflow(workflow);
       fillChat(workflow);
       if(workflow.length>0) this.addButtonDelete();
-    });
+    } catch (error) {}
+    this.applicationEl.stopLoading();
   }
 
   addButtonDelete(){
@@ -202,17 +204,22 @@ export class AonMessengerChat extends AonElement {
       this.getElement(this.TOOLBAR).addButtonAfter(ACTIONS.DELETE, () => this.deleteTask())
   }
 
-  save() {
+  async save() {
+    this.applicationEl.startLoading();
+    
     this.buildTaskWorkflow();
-    if(this.task.source ===TASK_SOURCE.GITHUB)
-      this.saveSourceProcess();
+    if(this.task.source === TASK_SOURCE.GITHUB)
+      await this.saveSourceProcess();
     else 
-      this.saveSourceManual();
+      await this.saveSourceManual();
+
+    this.applicationEl.stopLoading();
+
+    console.log(this.task);
+    
   }
 
-
   async saveSourceManual(){
-    this.applicationEl.startLoading();
     try {
       if (this.task.getTitle()) {
         const data = await saveTask(this.task);
@@ -227,12 +234,10 @@ export class AonMessengerChat extends AonElement {
     } catch (error) {
       this.showError(error);
     }
-    this.applicationEl.stopLoading();
   }
 
 
   async saveSourceProcess(){
-    this.applicationEl.startLoading();
     try {
         this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
         this.task.description = getFormVacationJson();
@@ -247,7 +252,6 @@ export class AonMessengerChat extends AonElement {
     } catch (error) {
       this.showError(error);
     }
-    this.applicationEl.stopLoading();
   }
 
   async uploadFile({file, taskId}) {
@@ -257,9 +261,9 @@ export class AonMessengerChat extends AonElement {
   deleteTask(){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-          await deleteTask({taskId:this.task.id});
-          this.showToast({message:MSG.DELETED_DATA, type:CONSTANT.ERROR});
-          this.back();
+        await deleteTask({taskId:this.task.id});
+        this.showToast({message:MSG.DELETED_DATA, type:CONSTANT.ERROR});
+        this.back();
       } catch (error) {
         this.showError(error);
       }

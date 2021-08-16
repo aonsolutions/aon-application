@@ -1,6 +1,6 @@
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
-import { CSS, MSG, TAG, COLORS } from "../../../environments/environments.js";
+import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { createCommentContent, createMessageAuthor, createMessageBox } from "../createComponents.js";
 import { ICON_TYPES, MESSENGER_IDS } from "../MessengerEnums.js";
@@ -145,10 +145,31 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
 
 //-------------TEXT AREA COMMENT
 export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
-    id:MESSENGER_IDS.COMMENT_TASK,
     name:MESSENGER_IDS.COMMENT_TASK,
     placeholder: placeholder || MSG.COMMENT+"..."
 });
+
+export const iconComment = (icon) => {
+    const a = setStyles(document.createElement("a"),{
+        boxShadow: "none",
+        margin: "5px",
+        visibility: "visible",
+        float: "right",
+        background: "rgba(0, 0, 0, 0)",
+        cursor: "pointer"
+    });
+
+    let iconSend = setStyles(document.createElement("i"),{
+        fontSize: "1.6em",
+        lineHeight: "35px",
+        color: "#42a5f5"
+    });
+    iconSend.className   = "material-icons";
+    iconSend.textContent = icon;
+    a.appendChild(iconSend);
+
+    return a;
+}
 
 
 /**

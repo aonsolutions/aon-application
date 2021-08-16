@@ -69,7 +69,7 @@ export const createDivEditable = (title, id, placeholder) => newComponent({
   type: "text",
   id,
   text: title ? title : null,
-  classes : [CSS.TRANSITION_QUICK,CSS.CONTENT_EDITABLE, CSS.NO_FOCUS],
+  classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
   styles: {
     fontSize: "15px",
     fontWeight: "400",
@@ -95,7 +95,7 @@ export const createTitle = (title) => newComponent({
     width: "100%",
     color: CSS.variable(COLORS.AON_GRAY),
     paddingTop: "14px"
-  },
+  }
 }).element;
 
 export const createEditIcon = () => newComponent({
@@ -118,80 +118,7 @@ export const createReceiverDiv = () => newComponent({
   ],
   styles: {
     width: "100%",
-    maxWidth: "600px",
-    // marginTop: "15px",
-    // marginBottom: "5px",
-  },
-});
-
-export const createSendButton = (text=null) => {
-  const button = newComponent({
-    type: TAG.BUTTON,
-    text: text || MSG.SEND,
-    id: MESSENGER_IDS.BUTTON_SEND,
-    classes: [
-      "materialButton",
-      CSS.FLEX_ROW,
-      CSS.FLEX_JUSTIFY_CENTER,
-      CSS.FLEX_ALIGN_CENTER,
-      CSS.NO_FOCUS
-    ],
-    styles: {
-      background: CSS.variable(COLORS.AON_BLUE),
-      transition: ".25s",
-      padding: "10px",
-      minWidth: "105px",
-      minHeight: "35px",
-      fontSize: "1.2em",
-      boxShadow: "0px 2px 4px rgb(0 0 0 / 15%)",
-      border: "none",
-      margin: "10px",
-      marginRight:0,
-      borderRadius: "4px",
-      color: "#fff",
-    },
-  }).element;  
-  
-  const sendIcon = createSendIcon();
-  button.appendChild(sendIcon);
-
-  return button;
-}
-
-const createSendIcon = () => newComponent({
-  type: "i",
-  text: "send",
-  classes: ["material-icons"],
-  styles: {
-    fontSize: "1.2em",
-    color: "white",
-    justifySelf: "flex-end",
-    cursor: "pointer",
-    paddingLeft: "15%",
-  },
-}).element;
-
-// ----------------------------------------------------
-// SEND BAR IN DESKTOP VIEW
-// ----------------------------------------------------
-export const createSendBar = () => newComponent({
-  type: TAG.DIV,
-  classes: [CSS.FLEX_ROW, CSS.NO_COPY, CSS.FLEX_JUSTIFY_START],
-  styles: {
-    maxWidth: "600px",
-    width: "100%"
-  },
-});
-
-export const createButtonWrapper = () => newComponent({
-  type: TAG.DIV,
-  classes: [
-    CSS.FLEX_ROW,
-    CSS.FLEX_JUSTIFY_END,
-    CSS.FLEX_ALIGN_CENTER
-  ],
-  styles: {
-    width: "100%",
+    maxWidth: "600px"
   },
 });
 

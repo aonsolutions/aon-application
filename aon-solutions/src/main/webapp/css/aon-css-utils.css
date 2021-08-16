@@ -76,7 +76,6 @@
 
 .contentEditable:hover { 
     border-radius: 2px;
-    background : var(--aon-color-interaction-minus-two) !important; 
 }
 
 .contentEditable:focus { 
@@ -86,15 +85,19 @@
     -ms-user-select: text;     
     user-select: text;
     border-radius: 2px;
-    background : var(--aon-color-interaction-minus-two) !important; 
 }
 
 .contentEditable:empty:before{ 
     content: attr(placeholder);
     color: #555; 
 }
+
 .contentEditable:empty:focus::before {
     content: "";
+}
+
+.focusColorMinus:hover, .focusColorMinus:focus-within {
+    background : var(--aon-color-interaction-minus-two) !important; 
 }
 
 .firstLetterUpper:first-letter {

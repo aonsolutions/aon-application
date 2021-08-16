@@ -15,9 +15,7 @@ import { createChatMessage, LEFT, RIGHT } from "./creationUtils";
  */
 export const buildTextareaToolbar =  (aonTextArea, task) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
-    if(textAreaText){
-        setStyles(textAreaText, {resize: "none"});
-    }
+    if(textAreaText) setStyles(textAreaText, {resize: "none"});
     /**
      * Bold format button **bold**
      */
@@ -76,16 +74,6 @@ export const buildTextareaToolbar =  (aonTextArea, task) => {
             icon: MATERIAL_ICONS.ATTACH_FILE,
             name:MSG.ADD_FILE
         },() =>{});
-
-
-        if(!aonTextArea.isMobile()){
-            const iconSend = aonTextArea.addToolbarOptionRight({
-                id: MATERIAL_ICONS.SEND,
-                icon: MATERIAL_ICONS.SEND,
-                name:MSG.SEND,
-            },() => aonMessengerChat.saveTaskWorkflow());
-            if(iconSend) iconSend.style.color = CSS.variable(COLORS.MATERIAL_BLACK);
-        }
     }
 }
 
@@ -422,7 +410,8 @@ const jsonDiv = ()=> {
         backgroundColor: "ghostwhite",
         border: "1px solid silver",
         padding: "10px 20px",
-        margin: "20px"
+        margin: "20px",
+        whiteSpace: "pre-wrap"
     });
     const code = document.createElement("code");
     code.style.color = "brown";

@@ -2,6 +2,7 @@
 import { AonBasicTable } from "../../../components/aon-basic-table";
 import { AonDate } from "../../../components/aon-date";
 import { AonIconButton } from "../../../components/aon-icon-button";
+import { AonInput } from "../../../components/aon-input";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
 import { formatDateOrigin, setAttributes } from "../../../services/utils";
 import { MESSENGER_IDS } from "../MessengerEnums";
@@ -18,6 +19,9 @@ import { MESSENGER_IDS } from "../MessengerEnums";
     form.onsubmit = () => false;
     form.style.width = "100%";
     card.setContent(form);
+
+    let textarea = setAttributes(new AonInput(),{ description: MSG.OBSERVATION, autocomplete : "off", id:form.id+"Observation", value: data.observation || "" });
+    form.appendChild(textarea);
 
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
@@ -90,6 +94,7 @@ const addDates = (table, data={}, i) =>{
  */
 export const getFormVacationJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    const observation = document.getElementById(form.id+"Observation").value;
     let dates = [];
     //DATES
     [...form.querySelectorAll("table tr")].map(tr=>{
@@ -100,9 +105,8 @@ export const getFormVacationJson = ()=>{
     })
 
     let json = {
+        observation,
         dates
     }
-
-    console.log("json form vacation->", json);
     return JSON.stringify(json);
 }

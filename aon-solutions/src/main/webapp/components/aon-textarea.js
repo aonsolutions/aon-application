@@ -13,7 +13,7 @@ export class AonTextArea extends AonElement {
 	// COMPILE;
 
 	static get observedAttributes() {
-		return [CONSTANT.VALUE];
+		return [CONSTANT.VALUE, "height"];
 	}
 
 	// get compile(){
@@ -23,6 +23,14 @@ export class AonTextArea extends AonElement {
 	// set compile(fn){
 	// 	this.COMPILE = () => fn(this);
 	// }
+
+	get height() {
+		return this.getAttribute("height");
+	}
+
+	set height(height) {
+		this.setAttribute("height", height);
+	}
 
 	get left(){
 		return this.LEFT;
@@ -110,11 +118,14 @@ export class AonTextArea extends AonElement {
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
-			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
-			if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
-				input.setAttribute(CONSTANT.CHECKED, CONSTANT.CHECKED);
-			} else 
-				input.removeAttribute(CONSTANT.CHECKED);
+			let textAreaDiv = this.getTextAreaDiv();
+			if(textAreaDiv)
+				textAreaDiv.innerHTML = newValue;
+		} else if("height" === name){
+			let textAreaDiv = this.getTextAreaDiv();
+			if(textAreaDiv){
+				this.style.minHeight = textAreaDiv.style.minHeight = newValue;
+			}
 		}
 	}
 
@@ -170,7 +181,7 @@ export class AonTextArea extends AonElement {
 		const textarea = this.generateTextArea();
 		textarea.appendTo(this);
 
-  	 //ADD INPUT
+  	 	//ADD INPUT FILE
 		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
 			id:this.id+"Files",
 			type:'file',
@@ -199,7 +210,7 @@ export class AonTextArea extends AonElement {
 		}  
 		return  newComponent({
 			type: TAG.DIV,
-			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
+			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE, CSS.FOCUS_COLOR_MINUS],
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
@@ -211,13 +222,16 @@ export class AonTextArea extends AonElement {
 				dragenter: preventDefault,
 				dragover:  preventDefault,
 				dragleave: preventDefault,
-				drop:      preventDefault
+				drop:      preventDefault,
+				input: (ev)=>{
+					preventDefault(ev);
+					this.dispatchEvent(new CustomEvent(EVENT.INPUT, {target:ev.target}))
+				}
 			},
 			styles : {
 				userSelect : 'text',
 				height: '100%',
-				padding: '10px',
-				background: '#fff'
+				padding: '10px'
 			}
 		});
 	}
@@ -229,7 +243,8 @@ export class AonTextArea extends AonElement {
 	}
 
 	removeToolbar(){
-		this.getElement(this.TOOLBAR).remove();
+		let toolbar = this.getElement(this.TOOLBAR);
+		if(toolbar) toolbar.remove();
 	}
 
 	getTextAreaDiv(){
@@ -248,10 +263,8 @@ export class AonTextArea extends AonElement {
 				attributes:{
 					title: properties.name ? properties.name : "",
 				},
-				events : {click : (ev)=> 
-					properties.id === MATERIAL_ICONS.ATTACH_FILE ? 
-					this.clickFile() : 
-					fn(ev)
+				events : {
+					click : (ev)=> properties.id === MATERIAL_ICONS.ATTACH_FILE ? this.clickFile() : fn(ev)
 				}
 			});
 			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
@@ -332,6 +345,7 @@ export class AonTextArea extends AonElement {
 				textAreaDiv.appendChild(document.createElement("br"));
 			}
 		}
+		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 	}
 
 	draggableEnable(){
@@ -349,6 +363,10 @@ export class AonTextArea extends AonElement {
 				this.addFiles(ev.dataTransfer.files);
 			}
 		});
+	}
+
+	removeBackground(){
+		this.getTextAreaDiv().classList.remove(CSS.FOCUS_COLOR_MINUS);
 	}
 }
 if(!window.customElements.get('aon-textarea')){

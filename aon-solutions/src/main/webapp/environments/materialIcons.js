@@ -177,3 +177,6 @@ export const UNARCHIVE = 'unarchive';
 
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
+
+
+export const OPEN_IN_FULL = "open_in_full";

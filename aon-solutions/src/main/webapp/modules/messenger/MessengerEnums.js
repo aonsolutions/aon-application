@@ -51,6 +51,7 @@ export const MESSENGER_IDS = {
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
+    DESCRIPTION_TASK: "descriptionTask",
     TITLE_TASK: "titleTask",
     BUTTON_SEND: "buttonSend"
 }
