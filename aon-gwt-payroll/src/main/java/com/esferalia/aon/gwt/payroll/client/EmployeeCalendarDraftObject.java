@@ -579,7 +579,7 @@ public class EmployeeCalendarDraftObject {
 	}
 	
 	public boolean isDefaultNonWorkongDay(Date date) {
-		return employeeCalendarInfo.getCalendarHours().isEmpty() && employeeCalendarInfo.getNonWorkingDays()[date.getDay()] == (byte)1;
+		return null != date && employeeCalendarInfo.getCalendarHours().isEmpty() && null != employeeCalendarInfo.getNonWorkingDays()[date.getDay()] && employeeCalendarInfo.getNonWorkingDays()[date.getDay()] == (byte)1;
 	}
 	
 	public String getExpressionByDate(Date date) {
