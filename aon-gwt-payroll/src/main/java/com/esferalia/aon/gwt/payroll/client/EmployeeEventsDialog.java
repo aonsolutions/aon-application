@@ -269,6 +269,8 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 			AonToolbarSmallButton deletePeriod = new AonToolbarSmallButton("Borrar tramo", AON.CSS.aonIconDelete());
 			deletePeriod.addClickHandler(e -> {
 				deletePeriod(employeeEventsVariable);
+				sortEmployeeEventsVariablesDesc();
+				createEmployeeEventsVariablesTable();
 			});
 			
 			rowPanel.add(startDateTB);
@@ -284,7 +286,7 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 	// ------------------------------------------------------ Table methods
 	
 	private boolean checkIfStartDateCanBeChange(Date newStartDate, EmployeeEventsVariable employeeEventsVariable) {
-		if(null == newStartDate || newStartDate.before(this.contractStartDate) || newStartDate.after(this.contractEndDate))
+		if(null == newStartDate || newStartDate.before(this.contractStartDate) || (null != this.contractEndDate && newStartDate.after(this.contractEndDate)))
 			return false;
 		
 		for(EmployeeEventsVariable iterator : this.employeeEventsVariables) {
@@ -339,6 +341,8 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 		ArrayList<EmployeeEventsVariable> tmpEmployeeEventsVariables = new ArrayList<EmployeeEventsVariable>();
 		
 		for(EmployeeEventsVariable iterator : this.employeeEventsVariables) {
+//			Window.alert("StartDate -> " + employeeEventsVariable.getStartDate() + " == " + iterator.getStartDate() + " -> " + DateUtils.equals(employeeEventsVariable.getStartDate(), iterator.getStartDate()));
+//			Window.alert("EndDate -> " + employeeEventsVariable.getEndDate() + " == " + iterator.getEndDate() + " -> " + DateUtils.equals(employeeEventsVariable.getEndDate(), iterator.getEndDate()));
 			if(!DateUtils.equals(employeeEventsVariable.getStartDate(), iterator.getStartDate()) && !DateUtils.equals(employeeEventsVariable.getEndDate(), iterator.getEndDate()))
 				tmpEmployeeEventsVariables.add(iterator);
 		}
