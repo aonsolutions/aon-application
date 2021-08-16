@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
+import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
@@ -16,6 +18,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceValidation {
@@ -266,6 +269,17 @@ public class FinanceValidation {
 		Finance original = FinanceDAO.getFinance(ctx, finance.getId());
 		if (original == null ) {
 			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		if (finance.isDirty()) {
+			if (!AonNumberUtils.equals( finance.getPayMethod(), original.getPayMethod())) {
+				int i = ctx.getDslContext().update(FINANCE)
+						.set(FINANCE.PAY_METHOD, finance.getPayMethod())
+						.set(FINANCE.MODIFICATION_USER,ctx.getUser())
+						.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.where(FINANCE.ID.equal( finance.getId()))
+						.execute();
+				ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId() + " PayMethod");
+			}
 		}
 		CHECK_PENDING_FOR_PAYING.accept(original, ctx);
 		CHECK_AMOUNT_ZERO.accept(finance, ctx);

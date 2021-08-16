@@ -254,7 +254,7 @@ public class FinanceTrackingDAO {
 		ctx.log().info(" ----- START FINANCE PAY ----- ");
 		try {
 			ctx.checkWrite();
-			Finance finance = tracking.getFinance(); 
+			Finance finance = tracking.getFinance();
 			FinanceValidation.validatePay(ctx, finance);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {

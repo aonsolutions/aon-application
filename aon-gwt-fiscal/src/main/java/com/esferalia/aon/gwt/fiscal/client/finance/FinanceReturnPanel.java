@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
@@ -334,7 +334,7 @@ public class FinanceReturnPanel extends SimplePanel implements Focusable {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (tracking.getPayAccount() == null || tracking.getPayAccount().getId() == null ) {
-					MessageDialog.error("No se ha indicado la cuenta contable del banco o caja.");
+					AonMessageDialog.error("No se ha indicado la cuenta contable del banco o caja.");
 					payAccount.setFocus(true);
 				} else {
 					okButton.setEnabled(false);
@@ -430,7 +430,7 @@ public class FinanceReturnPanel extends SimplePanel implements Focusable {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageDialog.error("No se han podido recuperar los bancos del titular del vencimiento. [" + caught.getMessage() + "]");								
+						AonMessageDialog.error("No se han podido recuperar los bancos del titular del vencimiento. [" + caught.getMessage() + "]");								
 					}
 				});
 			} else {
@@ -461,7 +461,7 @@ public class FinanceReturnPanel extends SimplePanel implements Focusable {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageDialog.error("No se han podido recuperar los bancos de la empresa. [" + caught.getMessage() + "]");
+						AonMessageDialog.error("No se han podido recuperar los bancos de la empresa. [" + caught.getMessage() + "]");
 					}
 				});
 			}

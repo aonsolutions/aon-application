@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
@@ -598,7 +597,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		    
 		    @Override
 		    public void onError(Throwable caught) {
-		      MessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+		      AonMessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 		    }
 		    
 		    @Override
