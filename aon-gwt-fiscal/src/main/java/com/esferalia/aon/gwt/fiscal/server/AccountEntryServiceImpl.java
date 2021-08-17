@@ -63,6 +63,16 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	public AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
 		return ACCOUNTING.initializeInvoice(domainName, domain, user, registry, ai, preserveData);
 	}
+	
+	@Override
+	public AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.removeInvoiceAttach(domainName, domain, user, invoiceId);
+	}
+
+	@Override
+	public AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) throws AonCoreException {
+		return ACCOUNTING.addInvoiceAttach(domainName, domain, user, ai);
+	}
 
 	@Override
 	public AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry) throws AonCoreException {

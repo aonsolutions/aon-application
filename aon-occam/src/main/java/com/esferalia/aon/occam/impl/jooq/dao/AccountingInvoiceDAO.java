@@ -1321,5 +1321,29 @@ public class AccountingInvoiceDAO {
 			.orElse( InvoiceType.EXPENSES );
 	}
 
+	public static AccountingInvoice removeInvoiceAttach(AONContext ctx, Integer invoiceId) {
+		if (invoiceId == null) {
+			throw new AonCoreException("El dato n\u00FAmero de factura es obligatorio");
+		}
+		int count = ctx.getDslContext()
+				.delete(INVOICE_ATTACH)
+				.where(INVOICE_ATTACH.INVOICE.equal(invoiceId))
+				.execute();
+		ctx.log().info("------ [START] INVOICE ATTACH REMOVE " + count + " rows.");		
+		return getAccountingInvoiceFromInvoice(ctx, invoiceId);
+	}
+
+	public static AccountingInvoice addInvoiceAttach(AONContext ctx, AccountingInvoice ai) {
+		try {
+			if (ai == null) {
+				throw new AonCoreException("El dato n\u00FAmero de factura es obligatorio");
+			}
+			insertInvoiceAttach( ctx, ai);
+			return getAccountingInvoiceFromInvoice(ctx, ai.getInvoice().getId());
+		} catch (IOException t) {
+			t.printStackTrace();
+			throw new AonCoreException( t );
+		}
+	}
 }
 

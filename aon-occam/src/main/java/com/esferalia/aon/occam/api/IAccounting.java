@@ -86,7 +86,9 @@ public interface IAccounting {
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate);
-	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData);	
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData);
+	public AccountingInvoice removeInvoiceAttach(AONContext ctx, Integer invoiceId);
+	public AccountingInvoice addInvoiceAttach(AONContext ctx, AccountingInvoice ai);
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data);
 	public IAccountEntryWrapper  updateSpecial(AONContext ctx, AccountEntryUpdate operation, IAccountEntryWrapper wrapper);
@@ -146,6 +148,7 @@ public interface IAccounting {
 	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
 	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params, Analytical analytical) throws AonCoreException;
 	public Analytical saveAnalyticConfiguration(AONContext ctx, Analytical analytical);
+	
 	
 	
 	

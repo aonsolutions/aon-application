@@ -492,6 +492,28 @@ public class ACCOUNTING {
 		}
 	}
 	
+	public static AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().removeInvoiceAttach(ctx, invoiceId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().addInvoiceAttach(ctx, ai);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccountingInvoice getAccountingInvoice(String domainName, int domain, String user,
 			 Integer accountEntry) {
 		AONContext ctx = null;

@@ -269,7 +269,19 @@ public class AccountingImpl implements IAccounting {
 		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), ai, preserveData);
 	}
 	
-	
+	@Override
+	public AccountingInvoice removeInvoiceAttach(AONContext ctx, Integer invoiceId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingInvoiceDAO.removeInvoiceAttach(ctx, invoiceId) 
+			 );
+	}	
+
+	@Override
+	public AccountingInvoice addInvoiceAttach(AONContext ctx, AccountingInvoice ai) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingInvoiceDAO.addInvoiceAttach(ctx, ai) 
+			 );
+	}	
 
 	@Override
 	public AccountingInvoice save(final AONContext ctx, AccountingInvoice invoice) {

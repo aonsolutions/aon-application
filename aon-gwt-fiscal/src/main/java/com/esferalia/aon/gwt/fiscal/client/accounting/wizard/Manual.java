@@ -115,6 +115,21 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	}
 	
 	@Override
+	public boolean isAttachmentManagementEnabled() {
+		return false;
+	}
+	@Override
+	public boolean hasAttachment() {
+		return false;
+	}
+	@Override
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+	@Override
+	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+	
+	@Override
 	public boolean isRemovable() {
 		AccountEntryType type = getAccountEntry().getEntryType();
 		return super.isRemovable() || (

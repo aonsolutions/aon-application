@@ -917,6 +917,21 @@ public class TicketPanel extends WizardContentBase<AccountingInvoice> implements
 	}
 	
 	@Override
+	public boolean isAttachmentManagementEnabled() {
+		return false;
+	}
+	@Override
+	public boolean hasAttachment() {
+		return false;
+	}
+	@Override
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+	@Override
+	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+
+	@Override
 	public boolean isStatusMsgEnabled() {
 		return getWrapper() != null && getWrapper().isAccountSource();
 	}

@@ -208,6 +208,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	private AonToolbarButton back;
 	private AonToolbarButton duplicate;
 	private AonToolbarButton specialUpdate;
+	private AonToolbarButton attachment;
+	private AonToolbarButton removeAttachment;
 	private AonToolbarButton audit;
 	
 	private SplitLayoutPanel splitLayoutPanel;	
@@ -386,6 +388,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		audit.setVisible(false);
 		duplicate.setVisible(false);
 		specialUpdate.setVisible(false);
+		attachment.setVisible(false);
+		removeAttachment.setVisible(false);
 		if (getOptions().isBackButtonVisible()) {
 			back.setVisible(false);
 		}
@@ -610,6 +614,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		accept.setEnabled(canEdit);
 		specialUpdate.setVisible(!isNew());
 		specialUpdate.setEnabled(!isNew());
+		attachment.setVisible( wizardContent.isAttachmentManagementEnabled() && !wizardContent.hasAttachment() );
+		attachment.setVisible( wizardContent.isAttachmentManagementEnabled() && !wizardContent.hasAttachment() );
+		removeAttachment.setVisible( wizardContent.isAttachmentManagementEnabled() && wizardContent.hasAttachment() );
+		removeAttachment.setVisible( wizardContent.isAttachmentManagementEnabled() && wizardContent.hasAttachment() );
 		remove.setVisible(canRemove);
 		remove.setEnabled(canRemove);
 		if (getOptions().isBackButtonVisible()) {
@@ -1188,6 +1196,48 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (getOptions().hasExternalCallback()) {
 			getOptions().getExternalCallback().onExit();
 		}
+	
+	}
+	
+	private void onAttachment(ClickEvent event) {
+		wizardContent.addAttach(new AsyncCallback<IAccountEntryWrapper>() {
+			
+			@Override
+			public void onSuccess(IAccountEntryWrapper result) {
+				selectWizardContent(null, result);						
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught.getMessage());
+			}
+		});
+	}
+	
+	private void onRemoveAttachment(ClickEvent event) {
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm( AON.MSG.removeAttachConfirmation() , new AonConfirmDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+			}
+			
+			@Override
+			public void onAccept() {
+				wizardContent.removeAttach( new AsyncCallback<IAccountEntryWrapper>() {
+					
+					@Override
+					public void onSuccess(IAccountEntryWrapper result) {
+						selectWizardContent(null, result);						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						showError(caught.getMessage());
+					}
+				});
+			}
+		});
 	}
 	
 	private void onSpecialUpdate(ClickEvent event) {
@@ -1485,6 +1535,26 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 		});
 		toolbar.add(specialUpdate);
+
+		attachment  = new AonToolbarButton( AON.MSG.attachDocument(), AON.CSS.aonIconAttach());
+		attachment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAttachment(event);
+			}
+
+		});
+		toolbar.add(attachment);
+
+		removeAttachment  = new AonToolbarButton( AON.MSG.attachRemoveDocument(), AON.CSS.aonIconNoAttach());
+		removeAttachment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onRemoveAttachment(event);
+			}
+
+		});
+		toolbar.add(removeAttachment);
 
 		duplicate = new AonToolbarButton( AON.MSG.duplicate(), AON.CSS.aonIconCopy() );
 		duplicate.addClickHandler(new ClickHandler() {

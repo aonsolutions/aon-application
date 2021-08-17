@@ -294,6 +294,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_attach")
 	String aonIconAttach();
 	
+	@ClassName("aon_icon_no_attach")
+	String aonIconNoAttach();
+
 	@ClassName("aon_icon_show_pass")
 	String aonIconShowPass();
 	

@@ -168,6 +168,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAttach();
 	
+	@Source("icons/aon-icon-no-attach.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNoAttach();
+
 	@Source("icons/aon-icon-show-pass.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconShowPass();

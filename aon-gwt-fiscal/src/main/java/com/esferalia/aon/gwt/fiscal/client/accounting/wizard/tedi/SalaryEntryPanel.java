@@ -665,6 +665,20 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		return null;
 	}
 	
+	@Override
+	public boolean isAttachmentManagementEnabled() {
+		return false;
+	}
+	@Override
+	public boolean hasAttachment() {
+		return false;
+	}
+	@Override
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+	@Override
+	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
 	
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {

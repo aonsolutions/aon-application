@@ -35,5 +35,12 @@ public interface IWizardContent extends IsWidget,Focusable {
 	
 	default public boolean isStatusMsgEnabled() {
 		return true;
-	};
+	}
+	
+	public boolean isAttachmentManagementEnabled();
+	public boolean hasAttachment();
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk);
+	public void addAttach(AsyncCallback<IAccountEntryWrapper> asyncCallback);
+	
+	
 }

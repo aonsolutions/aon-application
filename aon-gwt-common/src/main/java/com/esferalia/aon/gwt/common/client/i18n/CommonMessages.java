@@ -3915,6 +3915,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Adjunto")
 	String attach();
 
+	@DefaultMessage("Adjuntar documento")
+	String attachDocument();
+	
+	@DefaultMessage("\u00BFDesea elimiar el documento adjunto?")
+	String removeAttachConfirmation();
+
+
+	@DefaultMessage("Eliminar documento adjunto")
+	String attachRemoveDocument();
+
 	@DefaultMessage("Rechazar")
 	String reject();
 
