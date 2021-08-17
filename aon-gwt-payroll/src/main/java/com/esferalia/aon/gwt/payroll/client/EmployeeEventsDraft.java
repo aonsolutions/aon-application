@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -657,7 +659,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				}
 			});
 			
-			if (employeeEventsDraft.isCalendarVariable(var) || (null != varList && !varList.isEmpty())){
+			if (employeeEventsDraft.isCalendarVariable(var) || (null != varList && !varList.isEmpty() && !isBeforeLastDate(actualMonth, Integer.parseInt(yearLB.getSelectedItemText()), varList))){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
 			}else{
@@ -707,7 +709,28 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 	}
     
-    // ----------------------------------------------- EmployeeEventsDraft.Auxiliar Methods
+    private boolean isBeforeLastDate(Integer month, int year, ArrayList<EmployeeEventsVariable> varList) {
+    	// Get finding Date
+    	Date findingDate = DateUtils.getDate(month, year);
+		
+    	// Sort list
+		Collections.sort(varList, Collections.reverseOrder(new Comparator<EmployeeEventsVariable>() {
+			@Override
+			public int compare(EmployeeEventsVariable o1, EmployeeEventsVariable o2) {
+				return o1.getStartDate().compareTo(o2.getStartDate());
+			}
+		}));
+		
+		// Get lastDate
+		Date lastDate = varList.get(0).getEndDate();
+		
+		if(lastDate == null)
+			return false;
+		else
+			return DateUtils.isBeforeOrEquals(lastDate, findingDate);
+	}
+
+	// ----------------------------------------------- EmployeeEventsDraft.Auxiliar Methods
     
    private boolean checkBlockVariables(int row) {
 		Element element = eventsGrid.getWidget(row, 0).getElement().getFirstChildElement();
