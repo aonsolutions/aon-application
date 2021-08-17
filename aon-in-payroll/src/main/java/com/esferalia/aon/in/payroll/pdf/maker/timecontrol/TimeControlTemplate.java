@@ -85,7 +85,6 @@ public class TimeControlTemplate {
 		PDDocumentInformation pdd = document.getDocumentInformation();
 		pdd.setTitle("REGISTRO JORNADA LABORAL");
 		pdd.setCreator("AON SOLUTIONS");
-		this.document.save("/home/igonzalez/Escritorio/pedefes/prueba.pdf");
 		this.document.save(os);
 		this.document.close();
 	}

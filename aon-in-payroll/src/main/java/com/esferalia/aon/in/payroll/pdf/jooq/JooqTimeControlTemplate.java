@@ -51,7 +51,7 @@ public class JooqTimeControlTemplate {
 			.innerJoin(ent).on(WORKPLACE.ENTERPRISE.eq(ent.ID))
 			.where(CONTRACT.DOMAIN.eq(aonContext.getDomainId()))
 			.and(WORKPLACE.ENTERPRISE.eq(enterpriseId))
-			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.gt(sqlDate)))
+			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(sqlDate)))
 			.and(CONTRACT_DATA.NAME.eq("TC2"))
 //			.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.eq(CONTRACT.END_DATE)))
 			.and(CONTRACT_DATA.START_DATE.eq(DSL.select(DSL.max(CONTRACT_DATA.START_DATE)).from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID).and(CONTRACT_DATA.NAME.eq("TC2")))))
