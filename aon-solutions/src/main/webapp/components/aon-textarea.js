@@ -231,7 +231,8 @@ export class AonTextArea extends AonElement {
 			styles : {
 				userSelect : 'text',
 				height: '100%',
-				padding: '10px'
+				padding: '10px',
+				fontSize: "1.3em"
 			}
 		});
 	}

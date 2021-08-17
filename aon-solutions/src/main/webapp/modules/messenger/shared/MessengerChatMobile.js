@@ -1,31 +1,18 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { COLORS, CSS, MSG, TAG } from "../../../environments/environments.js";
+import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
 import {  createDivEditable, createMobileMainView, createTitle } from "../createComponents.js";
-import {  MessengerSidenav, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
-import { createAonTextArea, createTaskHolder, createWorkgroup} from "./creationUtils.js";
+import {  MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
+import { createAonTextArea, createChat, createSectionComment, createTaskHolder, createWorkgroup} from "./creationUtils.js";
 import { buildTextareaToolbar, fillWorkGroup } from "./utils.js";
 
 /**
  * 
  * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
  */
- export const buildMobile = (aonMessengerChat)=> {
-    const task = aonMessengerChat.task;    
-
-    if (task.id) {
-        let span = aonMessengerChat.getApplication().addFloatOption(MessengerSidenav.ADD_COMMENT, () => {
-            //Hidding float button
-            setStyles(span.querySelector("button"), { transition: "0.25s", opacity: 0});
-            // show writter
-            let componentWrite = setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER), { display: "flex" });
-            setTimeout(() => setStyles(componentWrite, {zIndex: 9,opacity: 1,left: 0}), 100);
-          }
-        );
-      }
-  
+export const buildMobile = (aonMessengerChat)=> {
     buildChat(aonMessengerChat);
 }
 
@@ -38,16 +25,34 @@ const buildChat = (aonMessengerChat) => {
     const mainView = createMobileMainView();
     aonMessengerChat.appendChild(mainView);
 
-    const firstView = newComponent({
+    const firstDiv = newComponent({
         classes: [CSS.FLEX_ROW],
+        id: MESSENGER_IDS.FIRST_DIV,
         styles: {
           width: "100%",
-          height: "100%",
+          height: "90%",
           maxWidth: "600px",
-          padding: "0"
+          padding: "0",
+        //   paddingBottom: "3px"
         },
     });
-    firstView.appendTo(mainView);
+    firstDiv.appendTo(mainView);
+
+    const secondDiv = newComponent({
+        classes: [CSS.FLEX_ROW],
+        id: MESSENGER_IDS.SECOND_DIV,
+        styles: {
+          width: "100%",
+          position: "absolute",
+          bottom: 0
+        },
+    });
+    secondDiv.appendTo(mainView);
+
+    const divs = createSectionComment(secondDiv);
+    divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>openFullComment(divs.aonTextArea));
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+    changeStyleSectionComment(divs);
 
     /**
      * Wrapper 
@@ -62,7 +67,7 @@ const buildChat = (aonMessengerChat) => {
             fontSize: '14px'
         }
     });
-    wrapper.appendTo(firstView.element);
+    wrapper.appendTo(firstDiv.element);
 
     /**
      * Building toolbars
@@ -92,32 +97,9 @@ const buildChat = (aonMessengerChat) => {
     /**
      * The chat itself
      */
-    const chat = newComponent({
-        type: MESSENGER_COMPONENTS.CHAT,
-        id: MESSENGER_IDS.MESSENGER_CHAT,
-        attributes:{
-            title: MSG.COMMENTS
-        },
-        classes: [
-            "continueLined", 
-            CSS.FLEX_COLUMN, 
-            CSS.NO_SCROLLBAR, 
-            CSS.FLEX_ALIGN_CENTER
-        ],
-        styles: {
-            position: "relative",
-            width: '100%',
-            zIndex: "0",
-            "scroll-behavior": "smooth",
-            height: '100%',
-            padding: "20px",
-            paddingTop: "0px",
-            overflow: 'auto',
-            borderBottom: '1px solid #f0f0f0',
-        }
-    });
-
-    chat.appendTo(wrapper.element);
+    const chat = createChat();
+    chat.classList.add(CSS.NO_SCROLLBAR);
+    wrapper.element.appendChild(chat);
 
     const title = setStyles(createTitle(task.title),{
         display : 'block',
@@ -125,12 +107,11 @@ const buildChat = (aonMessengerChat) => {
         paddingTop: "10px",
         paddingBottom: "10px",
         width : '100%',
-        background : "#fff",
         borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
     });
     chat.appendChild(title);
 
-    buildMobileWritter(wrapper, aonMessengerChat);
+    createFullComment(wrapper.element, aonMessengerChat, divs.aonTextArea);
 
     setTimeout(() => {
         setStyles(mainView, { opacity: 1, marginTop: 0});
@@ -294,13 +275,13 @@ const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
 }
 
 
-
 /**
  * Build mobile version of the writter 
  * @param {HTMLElement} wrapper 
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat component 
+ * @param {HTMLElement} aonTextArea textarea principal
  */
-const buildMobileWritter = (wrapper, aonMessengerChat) => { 
+const createFullComment = (wrapper, aonMessengerChat, aonTextArea) => { 
     const writter = newComponent({
         id : MESSENGER_COMPONENTS.WRITTER,
         classes: [CSS.FLEX_COLUMN],
@@ -315,25 +296,23 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
             opacity: 0,
             zIndex: -9
         }
-    });
-    writter.appendTo(wrapper.element);
+    }).element;
+    wrapper.appendChild(writter);
 
     const bar = setAttributes(new AonToolbar(),{
        type:ToolbarType.SECONDARY,
-       title:MSG.HISTORIC
+       title:MSG.COMMENT
     });
-
     bar.style.background = "#fff";
+    writter.appendChild(bar);
 
-    writter.element.appendChild(bar);
-
-    bar.addButton2(ACTIONS.SAVE,() => {
+    bar.addButton2(ACTIONS.SEND,() => {
         aonMessengerChat.saveTaskWorkflow();
-        hideWritter();
+        closeFullComment();
     });
-    bar.addButton2(ACTIONS.BACK,() => hideWritter());
+    bar.addButton2(ACTIONS.BACK,() => closeFullComment());
 
-    const aonTextArea = setStyles(createAonTextArea(), {
+    const textarea = setStyles(createAonTextArea(), {
         flexDirection: 'column',
         height: '100%',
         width: '100%',
@@ -341,11 +320,10 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
         background: CSS.variable(COLORS.AON_WHITE),
         margin: 0,
     });
-    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-    writter.element.appendChild(aonTextArea);
-    buildTextareaToolbar(aonTextArea, aonMessengerChat.task);
+    writter.appendChild(textarea);
+    buildTextareaToolbar(textarea, aonMessengerChat.task);
 
-    const textAreaToolbar = aonTextArea.querySelector("toolbar");
+    const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
         setStyles(textAreaToolbar, {
             background: CSS.variable(COLORS.AON_LIGHT_GRAY),
@@ -354,19 +332,35 @@ const buildMobileWritter = (wrapper, aonMessengerChat) => {
             height: "50px"
         });
     }
+    textarea.addEventListener(EVENT.INPUT, ()=>{
+      aonTextArea.value = textarea.value || "";
+      aonTextArea.FILES = textarea.FILES;
+    });
 }
 
 
 /**
  * Hide writter with animation
  */
- const hideWritter = () => {
-    let button = setStyles(document.getElementById(MESSENGER_IDS.ADD_ICON_BUTTON) , {transition : "0.25s", opacity : "1"});
-    setTimeout(() => button.style.display = "block", 100);
-
+const closeFullComment = () => {
     setTimeout(() => {
         setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{zIndex : -9, opacity : 0});
     }, 100);
 }
 
 
+const openFullComment  = (aonTextArea) => {
+    const writter = document.getElementById(MESSENGER_COMPONENTS.WRITTER);
+    const textarea = writter.querySelector("aon-textarea");
+    if(aonTextArea.value) textarea.value = aonTextArea.value;
+    // show writter
+    let componentWrite = setStyles(writter, { display: "flex" });
+    setTimeout(() => setStyles(componentWrite, {zIndex: 9,opacity: 1,left: 0}), 100);
+} 
+
+const changeStyleSectionComment = (divs) => {
+    divs.aonTextArea.style.fontSize = "15px";
+    divs.aonTextArea.style.margin = "0";
+    divs.iconOpenFull.querySelector("i").style.fontSize = "2.5em";
+    divs.iconSend.querySelector("i").style.fontSize = "2.5em";
+}

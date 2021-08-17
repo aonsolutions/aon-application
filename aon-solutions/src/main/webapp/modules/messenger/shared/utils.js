@@ -171,10 +171,12 @@ export const fillChat = (workflows=[])=>{
                     id,
                     type,
                     comment,
-                    name: me ? "Yo" : alias,
                     direction: me ? RIGHT: LEFT,
                     date: new Date(modification_date)
                 }
+
+                if(!me)message.name =alias;
+
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{

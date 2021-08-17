@@ -54,7 +54,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
+		this.createApplication(this.AON_MESSENGER, MSG.MESSENGER_SERVICE, new AonApplication());
 	}
 
 	buildToolbar(){
@@ -87,7 +87,7 @@ export class AonMessenger extends AonElement {
 		}
 		messengerOpts.push(listTrash);
 		
-		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
+		this.applicationEl.addSidenavOptions(MSG.MESSENGER_SERVICE, messengerOpts);
 		this.addWorkGroupOptions();
 	}
 

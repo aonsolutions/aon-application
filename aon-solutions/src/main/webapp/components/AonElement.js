@@ -135,7 +135,7 @@ export class AonElement extends HTMLElement{
 
 	isBeta(){
     const href = window.location.href;
-		return href.includes('aonsolutions.org') || href.includes('localhost');
+		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
 	}
 
   showError(e) {

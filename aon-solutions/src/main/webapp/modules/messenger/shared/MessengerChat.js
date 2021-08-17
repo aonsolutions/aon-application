@@ -4,7 +4,7 @@ import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import { createAonTextArea, createOutlinedMaterialIcon, createProcessType, createStartJustifiedColumn, createTaskHolder, createWorkgroup, iconComment, titleFirstDiv } from "./creationUtils";
+import { createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv } from "./creationUtils";
 import {  createDivEditable, createMainView, createReceiverDiv, createTitle } from "../createComponents";
 import { buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
@@ -241,22 +241,8 @@ const buildChat = (mainView, aonMessengerChat) => {
     /**
      * The chat itself
      */
-    const chat = newComponent({
-        type: MESSENGER_COMPONENTS.CHAT,
-        id: MESSENGER_IDS.MESSENGER_CHAT,
-        classes: ["continueLined", CSS.FLEX_COLUMN, CSS.MATERIAL_SCROLL, CSS.FLEX_ALIGN_CENTER],
-        styles: {
-            position: "relative",
-            width: '100%',
-            zIndex: "0",
-            height: '100%',
-            padding: "20px",
-            paddingTop: "20px",
-            overflow: 'auto',
-            borderBottom: '1px solid #f0f0f0',
-            "scroll-behavior": "smooth",
-        }
-    }).element;
+    const chat = createChat(); 
+    chat.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(chat);
 
 
@@ -277,17 +263,17 @@ const buildChat = (mainView, aonMessengerChat) => {
     leftButtonBar.appendTo(secondDiv);
 
     const upIcon = setAttributes(new AonIconButton(), {
-        icon: MATERIAL_ICONS.EXPAND_LESS,
-        id: "upIcon",
-        background: "transparent",
+      icon: MATERIAL_ICONS.EXPAND_LESS,
+      id: "upIcon",
+      background: "transparent",
     });
     upIcon.addEventListener(EVENT.CLICK, ()=>chat.scrollTo(0,0));
     leftButtonBar.appendChild(upIcon);
 
     const downIcon = setAttributes(new AonIconButton(), {
-        icon: MATERIAL_ICONS.EXPAND_MORE,
-        id: "downIcon",
-        background: "transparent",
+      icon: MATERIAL_ICONS.EXPAND_MORE,
+      id: "downIcon",
+      background: "transparent",
     });
     downIcon.addEventListener(EVENT.CLICK, ()=> chat.scrollTo(0, chat.scrollHeight))
     leftButtonBar.appendChild(downIcon);
@@ -304,61 +290,12 @@ const buildChat = (mainView, aonMessengerChat) => {
 
 const sectionComment = (wrapper) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-  const divComment = setStyles(document.createElement(TAG.DIV),{
-    width: "100%",
-    display: "flex",
-    background: "#fff",
-    borderTop: "1px solid #eee",
-    borderBottomRightRadius: "10px",
-    borderBottomLeftRadius: "10px",
-    position:"relative",
-    marginTop: "5px",
-    top:"-56px",
-  });
-  divComment.title = MSG.COMMENT;
-  wrapper.appendChild(divComment);
 
-  const divMain  = setStyles(document.createElement(TAG.DIV),{
-    width: "100%",
-    display: "flex",
-    flexDirection: "row-reverse",
-    overflow: "hidden",
-  });
-  divMain.classList.add(CSS.FOCUS_COLOR_MINUS);
-  divComment.appendChild(divMain);
+  const divs = createSectionComment(wrapper);
+  // setStyles(divs.divComment);
 
-  const iconSend = iconComment(MATERIAL_ICONS.SEND);
-  iconSend.title = MSG.SEND;
-  iconSend.addEventListener(EVENT.CLICK,()=> aonMessengerChat.saveTaskWorkflow());
-  divComment.appendChild(iconSend);
-
-  const iconOpenFull = iconComment(MATERIAL_ICONS.OPEN_IN_FULL); 
-  iconOpenFull.title = MSG.MAXIMIZE;
-  divMain.appendChild(iconOpenFull);
-
-  const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
-    position: "relative",
-    margin: "5px 0 5px 5px",
-    color: "#4b4b4b",
-    border: "none",
-    outline: "none",
-    width: "82%",
-    resize: "none",
-    fontSize: "13px",
-    fontWeight: "400",
-    maxHeight:"200px",
-    boxShadow: "none",
-    height: "auto !important",
-    overflow:"hidden",
-    flex: 1
-  });
-  aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
-  divMain.appendChild(aonTextArea);
-  aonTextArea.height = "45px";
-  aonTextArea.removeToolbar();
-  aonTextArea.draggableEnable(); 
-  aonTextArea.removeBackground();
-  iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, aonTextArea));
+  divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+  divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
 }
 
 const openFullComment = (aonMessengerChat, aonTextArea) => {
@@ -370,7 +307,6 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
     maxHeight: '300px'
   });
   dialog.setContent(textarea);
-  if(aonTextArea.value) textarea.value = aonTextArea.value;
 
   buildTextareaToolbar(textarea, aonMessengerChat.task);
 
@@ -400,6 +336,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   //   iconMinimize.addEventListener(EVENT.CLICK, ()=>dialog.close());
   // }
 
+  if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ()=>{
     aonTextArea.value = textarea.value || "";
     aonTextArea.FILES = textarea.FILES;

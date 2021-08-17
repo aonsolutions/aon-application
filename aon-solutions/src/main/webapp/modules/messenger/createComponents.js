@@ -182,22 +182,29 @@ export const createExpandIcon = () => newComponent({
 // MESSAGE COMPONENT
 // ----------------------------------------------------
 
-export const createMessageBox = (properties) => newComponent({
-  type: MESSENGER_COMPONENTS.MESSAGE,
-  classes : [CSS.FLEX_COLUMN],
-  styles: {
-      margin: '10px',
-      padding: '20px',
-      background : properties.direction == RIGHT ? CSS.variable(COLORS.AON_WHITE) : "#fafafa",
-      boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
-      borderRadius : '5px',
-      maxWidth: '500px',
-      width: '96%'
-  },
-  dataset:{
-    id: properties.id
-  }
-});
+export const createMessageBox = (properties) =>{
+  let component =  newComponent({
+    type: MESSENGER_COMPONENTS.MESSAGE,
+    classes : [CSS.FLEX_COLUMN],
+    styles: {
+        margin:"5px",
+        padding: '20px',
+        background : properties.direction == RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
+        boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
+        borderRadius : '5px',
+        maxWidth: '500px',
+        width: '90%'
+    },
+    dataset:{
+      id: properties.id
+    }
+  });
+  if(properties.direction == RIGHT)
+    component.element.style.marginLeft = "auto";
+  else 
+    component.element.style.marginRight = "auto";
+  return component;
+} 
 
 export const createMessageAuthor = (properties) => newComponent({
   text: `<span style="font-size: 14px;font-weight: 600;">${properties.name}</span>`,
@@ -214,7 +221,7 @@ export const createMessageAuthor = (properties) => newComponent({
 export const createCommentContent = (properties) => newComponent({
   text: properties.comment,
   styles: {
-      fontSize: "1em",
+      fontSize: "16px",//"1em",
       textAlign : "left",
       fontWeight : "400",
       color :  CSS.variable(COLORS.GRAYSON),

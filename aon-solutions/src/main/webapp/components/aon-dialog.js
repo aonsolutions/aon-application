@@ -79,9 +79,12 @@ export class AonDialog extends AonElement {
 	}
 
 	clear() {
-		this.getElement(this.TITLE).innerHTML = '';
-		this.getElement(this.CONTENT).innerHTML = '';
-		this.getElement(this.ACTION).innerHTML = '';
+		const title = this.getElement(this.TITLE);
+		const content = this.getElement(this.CONTENT);
+		const action = this.getElement(this.ACTION)
+		if(title) title.innerHTML = '';
+		if(content) content.innerHTML = '';
+		if(action) action.innerHTML = '';
 	}
 
 	buildBlank() {
@@ -194,7 +197,7 @@ export class AonDialog extends AonElement {
 
 	close() {
 		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog');
-		dialog.style.display = 'none';
+		if(dialog) dialog.style.display = 'none';
 		this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
 	}
 

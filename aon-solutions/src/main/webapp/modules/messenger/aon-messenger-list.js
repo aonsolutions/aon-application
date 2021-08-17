@@ -1,7 +1,7 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS } from "../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles } from "../../services/companyService.js";
 import { getTasks } from "../../services/taskService.js";
@@ -186,11 +186,11 @@ export class AonMessengerList extends AonElement {
     if(this.isMobile()) top = top - 50;
 
     let options = [{
-      name: 'Solicitud',
+      name: MSG.QUERY,
       icon: 'assignment',
       fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
     }, {
-      name: 'Trámite',
+      name: MSG.REQUEST,
       icon: 'archive',
       fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.GITHUB})
     }];

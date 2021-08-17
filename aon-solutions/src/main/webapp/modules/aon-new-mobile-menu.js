@@ -3,16 +3,16 @@ import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
-import { actionMobile, getDomainUserRoles } from "../services/service.js";
-
+import { actionMobile, closeSession, getDomainUserRoles } from "../services/service.js";
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
-import { AonMobileProfile } from "./user/aon-mobile-profile.js";
+// import { AonMobileProfile } from "./user/aon-mobile-profile.js";
 import { uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
+import { AonDialog } from "../components/aon-dialog.js";
 
 export class AonNewMobileMenu extends AonElement {
 
@@ -112,8 +112,7 @@ export class AonNewMobileMenu extends AonElement {
 
   async buildMenu(){
     await waitEl(`#${this.id}Sidenav`);
-    let count = 1;
-    
+  
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
       this.newButtons();
@@ -146,10 +145,16 @@ export class AonNewMobileMenu extends AonElement {
       fn: () => this.notification()
     });
 
+    // this.addMenuButton({
+    //   name: 'User',
+    //   icon: 'person',
+    //   fn: () => this.user()
+    // });
+
     this.addMenuButton({
-      name: 'User',
-      icon: 'person',
-      fn: () => this.user()
+      name: 'Exit',
+      icon: 'input',
+      fn: () => this.closeSession()
     });
   }
 
@@ -318,13 +323,30 @@ export class AonNewMobileMenu extends AonElement {
     }
   }
 
-  user() {
-    if(LS.getCompany()) {
-      let aonHeader = this.getElement("aonHeader");
-      aonHeader.companyIn();
+  // user() {
+  //   if(LS.getCompany()) {
+  //     let aonHeader = this.getElement("aonHeader");
+  //     aonHeader.companyIn();
+  //   }
+  //   this.rootPanel(new AonMobileProfile());
+  // }
+
+  closeSession() {
+    const idDialog = "dialogCloseSesion";
+    let d = this.getElement(idDialog);
+    if(!d){
+      d = new AonDialog();
+      d.id = idDialog;
+      this.appendChild(d);
     }
-    this.rootPanel(new AonMobileProfile());
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle('Cerrar Sesión');
+    d.setContentHTML(`Estás seguro de cerrar sesión`);
+    d.addAcceptAction(() => closeSession());
+    d.open();
   }
+
 
 	async openCamera() {
 		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });

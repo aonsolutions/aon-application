@@ -3,7 +3,7 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { createCommentContent, createMessageAuthor, createMessageBox } from "../createComponents.js";
-import { ICON_TYPES, MESSENGER_IDS } from "../MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick } from "./utils.js";
 
 /**
@@ -149,7 +149,7 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
     placeholder: placeholder || MSG.COMMENT+"..."
 });
 
-export const iconComment = (icon) => {
+const iconComment = (icon) => {
     const a = setStyles(document.createElement("a"),{
         boxShadow: "none",
         margin: "5px",
@@ -160,8 +160,8 @@ export const iconComment = (icon) => {
     });
 
     let iconSend = setStyles(document.createElement("i"),{
-        fontSize: "1.6em",
-        lineHeight: "35px",
+        fontSize: "2em",
+        lineHeight: "44px",
         color: "#42a5f5"
     });
     iconSend.className   = "material-icons";
@@ -201,7 +201,7 @@ export const createChatMessage = (properties, chat) => {
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : '.7em',
+        fontSize : "12px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);
@@ -213,3 +213,84 @@ export const createChatMessage = (properties, chat) => {
     return message;
 }
 
+/**
+ * 
+ * @param {HTMLElement} div div append
+ * @returns Object divs
+ */
+export const createSectionComment = (div) => {
+    const divComment = setStyles(document.createElement(TAG.DIV),{
+        width: "100%",
+        display: "flex",
+        background: "#fff",
+        borderTop: "1px solid #eee",
+        borderBottomRightRadius: "10px",
+        borderBottomLeftRadius: "10px",
+        // position:"relative"
+    });
+    divComment.title = MSG.COMMENT;
+    div.appendChild(divComment);
+  
+    const divMain  = setStyles(document.createElement(TAG.DIV),{
+      width: "100%",
+      display: "flex",
+      flexDirection: "row-reverse",
+      overflow: "hidden",
+    });
+    divMain.classList.add(CSS.FOCUS_COLOR_MINUS);
+    divComment.appendChild(divMain);
+  
+    const iconSend = iconComment(MATERIAL_ICONS.SEND);
+    iconSend.title = MSG.SEND;
+    divComment.appendChild(iconSend);
+  
+    const iconOpenFull = iconComment(MATERIAL_ICONS.OPEN_IN_FULL); 
+    iconOpenFull.title = MSG.MAXIMIZE;
+    divMain.appendChild(iconOpenFull);
+  
+    const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {
+      position: "relative",
+      margin: "5px 0 5px 5px",
+      color: "#4b4b4b",
+      border: "none",
+      outline: "none",
+      width: "82%",
+      resize: "none",
+      fontSize: "15px",
+      fontWeight: "400",
+      maxHeight:"200px",
+      boxShadow: "none",
+      height: "auto !important",
+      overflow:"hidden",
+      flex: 1
+    });
+    aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
+    divMain.appendChild(aonTextArea);
+    aonTextArea.height = "45px";
+    aonTextArea.removeToolbar();
+    aonTextArea.draggableEnable(); 
+    aonTextArea.removeBackground();
+
+    return {
+        divComment,
+        aonTextArea,
+        iconSend,
+        iconOpenFull,
+    }
+  }
+
+export const createChat = () => newComponent({
+    type: MESSENGER_COMPONENTS.CHAT,
+    id: MESSENGER_IDS.MESSENGER_CHAT,
+    classes: ["continueLined", CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
+    styles: {
+        position: "relative",
+        width: '100%',
+        zIndex: "0",
+        height: '100%',
+        padding: "15px",
+        overflow: 'auto',
+        borderBottom: '1px solid #f0f0f0',
+        "scroll-behavior": "smooth",
+    }
+}).element;

@@ -39,7 +39,7 @@ export const MESSENGER_COMPONENTS = {
 }
 
 export const MESSENGER_IDS = {
-    ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
+    // ADD_ICON_BUTTON : "aonMessengerAddcommentButtonIconButton",
     MESSENGER_CHAT: "messengerChat",
     MAIN_DIV: "mainDiv",
     FORM_DINAMIC:"formDinamic",

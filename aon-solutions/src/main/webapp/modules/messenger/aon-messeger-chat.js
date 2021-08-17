@@ -163,6 +163,7 @@ export class AonMessengerChat extends AonElement {
         });
       }
     } catch (error) {
+      console.log(error);
       this.showError(error);
     }
   }
@@ -255,7 +256,8 @@ export class AonMessengerChat extends AonElement {
   }
 
   async uploadFile({file, taskId}) {
-    return await saveTaskAttach({file, taskId}).catch(e=>null);
+    let result = await saveTaskAttach({file, taskId}).catch(e=>null);
+    return result;
   }
 
   deleteTask(){

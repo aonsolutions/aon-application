@@ -206,7 +206,7 @@ export const MY_USER = MSG.MY_USER;
 export const MSG_SENT = "Mensaje enviado";//TODO
 export const MAXIMIZE = "Maximizar";//TODO
 export const MINIMIZE = "Minimizar";//TODO
-
+export const MESSENGER_SERVICE = "Mensajería";//TODO
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -248,11 +248,12 @@ export const PRODUCT = MSG.PRODUCT;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
 export const PROCESS_TYPE = "Tipo de trámite"; //TODO
+export const PROCESS = "Trámite"; //TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
 export const QUOTA = MSG.QUOTA;
-
+export const QUERY = "Consulta"; //TODO
 // ----- R
 
 export const RADIO = "Radio"; // TODO

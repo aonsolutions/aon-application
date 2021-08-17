@@ -10,12 +10,12 @@ import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
 import './user/aon-user.js';
-import './messenger/aon-messenger.js';
 import './notification/aon-notification-icon.js';
 import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
+import { AonMessenger } from './messenger/aon-messenger.js';
 
 export class AonHeader extends AonElement {
 
@@ -128,13 +128,25 @@ export class AonHeader extends AonElement {
 					this.dur = new DomainUserRoles(r);
 					let d = this.getElement('aonHeaderDialogHelpOption');
 					let options = [{
-						name: 'Solicitudes',
-						icon: 'assignment',
-						fn: () =>this.isBeta() ? this.rootPanelHtml(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
+						name: 'Soporte / CAU',
+						icon: 'support_agent',
+						fn: () =>{
+							if(this.isBeta()){
+								let aonMessenger = new AonMessenger();
+								this.rootPanel(aonMessenger);
+							}  else 
+								alert('en desarrollo');
+						}
 					}, {
 						name: 'Ayuda',
 						icon: 'help_outline',
-						fn: () => this.rootPanelHtml('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+						fn: () =>{
+							let iframe = document.createElement("iframe");
+							iframe.height = "100%";
+							iframe.width = "100%";
+							iframe.src = "http://faqs.aonsolutions.es";
+							this.rootPanel(iframe);
+						} 
 					}];
 					if(this.dur.isDev()) {
 						options.push({
