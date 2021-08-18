@@ -53,7 +53,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
-public class EmployeeEventsDraft extends Composite implements ContextMenuHandler {
+public abstract class EmployeeEventsDraft extends Composite implements ContextMenuHandler {
 
 	// ----------------------------------------------- UiBinder 
 	
@@ -387,7 +387,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
-		Label loadingL = new Label("Obteniendo incidencias del trabajador ...");
+		Label loadingL = new Label("Obteniendo variables de c\u00E1lculo del trabajador ...");
 		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
 		loadingPanel.add(loadingBtn);
@@ -446,10 +446,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			
 			ArrayList<EmployeeEventsVariable> employeeEventsVariables = employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
 			
-			if(null != employeeEventsVariables && !employeeEventsVariables.isEmpty())
-				openEventsDialog(variableName, employeeEventsVariables);
-			else
-				openNewValueDialog(variableName);
+			if(!employeeEventsDraft.isCalendarVariable(variableName)) {
+				if(null != employeeEventsVariables && !employeeEventsVariables.isEmpty())
+					openEventsDialog(variableName, employeeEventsVariables);
+				else
+					openNewValueDialog(variableName);
+			}
 		}
 		
 	}
@@ -580,8 +582,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		if (employeeEventsDraft.isCalendarVariable(var)){
 			Double acumulateYaer = employeeEventsDraft.getAcumulateYear(var);
-			if(AonNumberUtils.notEquals(acumulateYaer, 0.0))
-				headLabel.setText(var + " (" + acumulateYaer + " dias)");
+			if(AonNumberUtils.notEquals(acumulateYaer, 0.0)) {
+				headLabel.setText(var + " (" + acumulateYaer);
+			
+				if(AonStringUtils.containsIgnoreCase(var, "DIAS"))
+					headLabel.setText(headLabel.getText() + " dias)");
+				else if(AonStringUtils.containsIgnoreCase(var, "HORA"))
+					headLabel.setText(headLabel.getText() + " horas)");
+			}
 		}
 		
 		headLabel.ensureDebugId(var.toLowerCase());
@@ -595,7 +603,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					EmployeeTree.showEmployeeCalendar(employeeEventsDraft.getEmployeeCalendar());
+					onShowCalendar();
 				}
 			});
 			
@@ -708,7 +716,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		}
 		
 	}
-    
+   
     private boolean isBeforeLastDate(Integer month, int year, ArrayList<EmployeeEventsVariable> varList) {
     	// Get finding Date
     	Date findingDate = DateUtils.getDate(month, year);
@@ -919,9 +927,19 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	public void onSave(ClickEvent e) {
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
-					changeYear();
-					saveButton.setEnabled(false);
-					undoAllButton.setEnabled(false);
+					//Descargar Variables actualizadas
+					Integer actualYear = DateUtils.getYear();
+					employeeEventsDraft.initializeDBEventsVariables(actualYear,
+							s -> {
+								initializeVariablesToShow();
+								showEvents();
+								changeYear();
+								saveButton.setEnabled(false);
+								undoAllButton.setEnabled(false);
+							}, f -> {});
+//					changeYear();
+//					saveButton.setEnabled(false);
+//					undoAllButton.setEnabled(false);
 				}, 
 				t -> {});
 	}
@@ -954,7 +972,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 	
 	private void openEventsDialog(String variableName, ArrayList<EmployeeEventsVariable> employeeEventsVariables) {
-		EmployeeEventsDialog employeeEventsDialog = new EmployeeEventsDialog(
+		new EmployeeEventsDialog(
 				variableName, 
 				employeeEventsVariables,
 				employeeEventsDraft.getContractStartDate(),
@@ -970,9 +988,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				undoAllButton.setEnabled(true);
 			}
 		};
-		
-		employeeEventsDialog.show();
-		employeeEventsDialog.center();
 	}
 	
 	private void openNewValueDialog(String variableName){
@@ -1028,5 +1043,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	
 	public void setYearLB(ListBox yearLB) {
 		this.yearLB = yearLB;
+	}
+		 
+    protected abstract void onShowCalendar();
+
+    public EmployeeCalendarDraftObject getEmployeeCalendarObject() {
+		return employeeEventsDraft.getEmployeeCalendar();
 	}
 }

@@ -174,6 +174,11 @@ public class EmployeeEventsDraftObject {
 			return accumulateYear;
 		
 		for(EmployeeEventsVariable employeeEventsVariable : employeeEventsVariables) {
+			if(null == employeeEventsVariable.getEndDate()) {
+				accumulateYear = getAccumulateYearForNullEndPeriod(accumulateYear, employeeEventsVariable);
+				break;
+			}
+			
 			if(DateUtils.isAfterOrEquals(employeeEventsVariable.getStartDate(), startDate) &&
 				(null == employeeEventsVariable.getEndDate() || DateUtils.isBeforeOrEquals(employeeEventsVariable.getEndDate(), endDate))) {
 				
@@ -185,6 +190,14 @@ public class EmployeeEventsDraftObject {
 		return accumulateYear;
 	}
 	
+	private Double getAccumulateYearForNullEndPeriod(Double accumulateYear, EmployeeEventsVariable employeeEventsVariable) {
+		Date endDate = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfMonth());
+		int monthsBetween = DateUtils.getMonths(employeeEventsVariable.getStartDate(), endDate);
+		Double accumulate = employeeEventsVariable.getValue() * monthsBetween;
+		
+		return accumulateYear + accumulate;
+	}
+
 	public EmployeeEventsVariable getEmployeeEventsVariable(String variableName) {
 		ArrayList<EmployeeEventsVariable> employeeEventsVariables = this.mapEventsVar.get(variableName);
 		if(employeeEventsVariables.isEmpty())
@@ -412,6 +425,11 @@ public class EmployeeEventsDraftObject {
 		
 		if(null != varList) {
 			for (EmployeeEventsVariable e : varList){
+				if(null == e.getEndDate() && DateUtils.isBeforeOrEquals(e.getStartDate(), firstDayMonth)) {
+					acumulateMonth = e.getValue();
+					break;
+				}
+				
 				if(year != DateUtils.getYear(e.getStartDate()))
 					continue;
 				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) &&
@@ -424,7 +442,7 @@ public class EmployeeEventsDraftObject {
 		
 		return acumulateMonth;
 	}
-	
+
 	public boolean hasMoreThanOneValue (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
 		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
@@ -433,6 +451,11 @@ public class EmployeeEventsDraftObject {
 		
 		if(null != varList) {
 			for (EmployeeEventsVariable e : varList){
+				if(null == e.getEndDate() && DateUtils.isBeforeOrEquals(e.getStartDate(), firstDayMonth)) {
+					values = 1;
+					break;
+				}
+				
 				if(year != DateUtils.getYear(e.getStartDate()))
 					continue;
 				

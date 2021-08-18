@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 public class EmployeeEventsData implements Serializable {
@@ -367,16 +366,16 @@ public class EmployeeEventsData implements Serializable {
 			String varName = entry.getKey();
 			ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 			
-			if(AonStringUtils.equalsIgnoreCase(varName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
-				if(null == entry.getValue() || entry.getValue().isEmpty())
-					continue;
-				
-				Quartet<Date, Date, String, String> settleHolidaysQuarter = entry.getValue().get(0);
-				EmployeeEventsVariable eVar = new EmployeeEventsVariable(settleHolidaysQuarter.getStartDate(), settleHolidaysQuarter.getEndDate(), Double.parseDouble(settleHolidaysQuarter.getExpression()));
-				varList.add(eVar);
-				mapEventsVar.put(varName, varList);
-				continue;
-			}
+//			if(AonStringUtils.equalsIgnoreCase(varName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+//				if(null == entry.getValue() || entry.getValue().isEmpty())
+//					continue;
+//				
+//				Quartet<Date, Date, String, String> settleHolidaysQuarter = entry.getValue().get(0);
+//				EmployeeEventsVariable eVar = new EmployeeEventsVariable(settleHolidaysQuarter.getStartDate(), settleHolidaysQuarter.getEndDate(), Double.parseDouble(settleHolidaysQuarter.getExpression()));
+//				varList.add(eVar);
+//				mapEventsVar.put(varName, varList);
+//				continue;
+//			}
 			
 			if(!entry.getValue().isEmpty()){
 				for(Quartet<Date, Date, String, String> quarter : entry.getValue()){
@@ -386,20 +385,25 @@ public class EmployeeEventsData implements Serializable {
 						
 						// EndDate
 						Date endDate = null;
+						
+						// Value
+						Double value = Double.parseDouble(quarter.getExpression());
+						
 						if(null != quarter.getEndDate())
 							endDate = DateUtils.copyDateOnly(quarter.getEndDate());
 						else {
-							Date currentDate = new Date();
-							DateUtils.addYears2Date(currentDate, 1);
+//							Date currentDate = new Date();
+//							DateUtils.addYears2Date(currentDate, 1);
+//							
+//							Date newEndDate = DateUtils.getLastDayOfYear(currentDate);
+//							DateUtils.resetTime(newEndDate);
+//							
+//							endDate = DateUtils.copyDateOnly(newEndDate);
 							
-							Date newEndDate = DateUtils.getLastDayOfYear(currentDate);
-							DateUtils.resetTime(newEndDate);
-							
-							endDate = DateUtils.copyDateOnly(newEndDate);
+							EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+							varList.add(eVar);
+							continue;
 						}
-							
-						// Value
-						Double value = Double.parseDouble(quarter.getExpression());
 						
 						// Add to var list
 						if(null != endDate) {
