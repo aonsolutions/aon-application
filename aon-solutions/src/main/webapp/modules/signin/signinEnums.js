@@ -19,6 +19,11 @@ export const SigninSidenav = {
     icon: "tune",
     id: "filter",
   },
+  MORE:{
+    name: "Ver",
+    icon: "more_vert",
+    id: "more",
+  },
   EXCEL:{
     name: "Excel",
     aonIcon: "aon_excel",

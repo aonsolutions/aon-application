@@ -232,7 +232,7 @@ export class AonTextArea extends AonElement {
 				userSelect : 'text',
 				height: '100%',
 				padding: '10px',
-				fontSize: "1.3em"
+				// fontSize: "1.3em"
 			}
 		});
 	}

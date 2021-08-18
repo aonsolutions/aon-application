@@ -710,21 +710,21 @@ export class AonApplication extends AonElement {
 	}
 
   confirmDialog(title, subtitle, fn, buttonTitle = undefined){
-      let d = this.getDialog();
-      if(d){
-        d.clear();
-        d.setContentHTML(subtitle);
-        if (!this.isMobile()) d.width = '400px';
-        d.setTitle(title);
-        d.open();
-        if(buttonTitle) {
-          d.addSendAction(() => {
-            d.close();
-            return fn();
-          }, buttonTitle);
-        }
-        else d.addAcceptAction(() => fn());
+    let d = this.getDialog();
+    if(d){
+      d.clear();
+      d.setContentHTML(subtitle);
+      if (!this.isMobile()) d.width = '400px';
+      d.setTitle(title);
+      d.open();
+      if(buttonTitle) {
+        d.addSendAction(() => {
+          d.close();
+          return fn();
+        }, buttonTitle);
       }
+      else d.addAcceptAction(() => fn());
+    }
   }
 
 }

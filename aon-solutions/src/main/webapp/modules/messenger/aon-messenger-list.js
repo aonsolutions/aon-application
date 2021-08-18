@@ -20,8 +20,7 @@ export class AonMessengerList extends AonElement {
   static get observedAttributes() {
     return [];
   }
-
-
+  
   setFilter(filter) {
 		return this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
 	}

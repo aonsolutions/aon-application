@@ -207,6 +207,7 @@ export const MSG_SENT = "Mensaje enviado";//TODO
 export const MAXIMIZE = "Maximizar";//TODO
 export const MINIMIZE = "Minimizar";//TODO
 export const MESSENGER_SERVICE = "Mensajería";//TODO
+export const MONTH = "Mes"; //TODO
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -366,6 +367,7 @@ export const WRITE_A_DESCRIPTION = "Escribe una descripción"; //TODO
 // ----- X
 
 // ----- Y
+export const YEAR = "Año";//TODO
 
 // ----- Z
 

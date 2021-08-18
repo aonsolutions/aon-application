@@ -214,10 +214,7 @@ export class AonMessengerChat extends AonElement {
     else 
       await this.saveSourceManual();
 
-    this.applicationEl.stopLoading();
-
-    console.log(this.task);
-    
+    this.applicationEl.stopLoading();    
   }
 
   async saveSourceManual(){

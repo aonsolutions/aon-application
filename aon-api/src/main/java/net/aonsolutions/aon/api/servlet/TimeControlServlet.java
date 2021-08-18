@@ -6,17 +6,16 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqTimeControlTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
@@ -31,7 +30,6 @@ import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.excel.TimeControlExcel;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -59,6 +57,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				break;
 			case "/list-holder-detail":
 				response(req, resp, getTimeControlDetailStream(api));
+				break;
+			case "/pdf":
+				responseFile(req, resp, getTimeControlPdfManual(api), MimeType.PDF);
 				break;
 			case "/excel":
 				responseFile(req, resp, getTimeControlExcel(req, api), MimeType.MS_EXCEL);
@@ -315,7 +316,25 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		File file = File.createTempFile("timecontrol", "");
 		TimeControlExcel.excelTimeControl(domain, new FileOutputStream(file), startDate, endDate, active);
 		return file;
+	}
+	
+	private File getTimeControlPdfManual(AonApiData api) throws Exception {
+		Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getNameProperty().eq(api.getDomain().getName()));
+		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->f.getDomainProperty().eq(api.getDomain().getId()));
+		
+		Date startDate = new Date();
 
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
+
+		File file = File.createTempFile("timecontrol-pdf", "");
+		JooqTimeControlTemplate.generateTimeControlTemplate(
+				new FileOutputStream(file), 
+				domain.getName(), 
+				api.getUser().getLogin(), 
+				company.getId(), 
+				startDate
+		);
+		return file;
 	}
 	
 }

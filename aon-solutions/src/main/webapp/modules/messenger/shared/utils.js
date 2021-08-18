@@ -4,10 +4,9 @@ import { openFileUrl } from "../../../services/fileService";
 import { domainName } from "../../../services/request";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
-import { createAction, } from "../createComponents";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createChatMessage, LEFT, RIGHT } from "./creationUtils";
+import { createAction, createChatMessage, LEFT, RIGHT } from "./creationUtils";
 
 /**
  * Build standard toolbar options 
@@ -282,7 +281,7 @@ export const sendMessage = async (aonTextArea) => {
     const task = aonMessengerChat.task;
     const message = {
         type: WORKFLOW_TYPES.COMMENT,
-        sender: "Yo",
+        sender: "",
         comment: value,
         creation_date: new Date()
     }
@@ -299,13 +298,7 @@ export const sendMessage = async (aonTextArea) => {
         direction : RIGHT
     });
 
-    /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = document.querySelector(".continueLined");
-    if (lined)
-        lined.style.setProperty("--height", lined.scrollHeight + "px");
+    addLine();
 
     aonMessengerChat.data = task;
 
@@ -422,4 +415,15 @@ const jsonDiv = ()=> {
     return pre;
 }
 
+export const addLine = () => {
+    /**
+     * Setting the chat line once all is rendered
+     * DO NOT change this, is compulsory.
+     */
+    const lined = document.querySelector(".continueLined");
+    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
+}
 
+
+
+  

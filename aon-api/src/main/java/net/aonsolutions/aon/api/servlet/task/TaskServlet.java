@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -104,6 +105,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	private Filter taskFilter(AonApiData api, TaskProperties f) {
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
+		String source = api.getParams().optString("source");
 		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		if("pending".equalsIgnoreCase(status)) {
@@ -113,6 +115,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(workgroup != null && workgroup > 0) {
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 		} 
+		System.out.println("source>>>" + source);
+		if(!source.isEmpty()) {
+			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
+		}
 		
 		return filter;
 	}

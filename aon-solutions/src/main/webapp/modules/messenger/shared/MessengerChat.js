@@ -1,12 +1,11 @@
 import { AonToolbar } from "../../../components/aon-toolbar";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT, TAG } from "../../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT } from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import { createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv } from "./creationUtils";
-import {  createDivEditable, createMainView, createReceiverDiv, createTitle } from "../createComponents";
-import { buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
+import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv } from "./creationUtils";
+import { addLine, buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -278,21 +277,13 @@ const buildChat = (mainView, aonMessengerChat) => {
     downIcon.addEventListener(EVENT.CLICK, ()=> chat.scrollTo(0, chat.scrollHeight))
     leftButtonBar.appendChild(downIcon);
 
-     /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = document.querySelector(".continueLined");
-    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
-
+    addLine();
 }
-
 
 const sectionComment = (wrapper) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
   const divs = createSectionComment(wrapper);
-  // setStyles(divs.divComment);
 
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));

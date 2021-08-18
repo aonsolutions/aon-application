@@ -16,6 +16,7 @@ import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
 import { AonMessenger } from './messenger/aon-messenger.js';
+import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 
 export class AonHeader extends AonElement {
 
@@ -133,6 +134,7 @@ export class AonHeader extends AonElement {
 						fn: () =>{
 							if(this.isBeta()){
 								let aonMessenger = new AonMessenger();
+								aonMessenger._filter.source = TASK_SOURCE.CAU;
 								this.rootPanel(aonMessenger);
 							}  else 
 								alert('en desarrollo');

@@ -235,7 +235,6 @@ export class AonDialog extends AonElement {
 		let ul = document.createElement('ul');
 		content.appendChild(ul);
 		options.forEach((item, i) => {
-			console.log(item);
 			let li = document.createElement('li');
 			li.style.padding = '10px';
 			li.style.cursor = 'pointer';

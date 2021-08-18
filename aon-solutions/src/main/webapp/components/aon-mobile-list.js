@@ -4,7 +4,6 @@ import { AonIconButton } from "./aon-icon-button.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 
-
 export class AonMobileList extends AonElement {
   UL;
 

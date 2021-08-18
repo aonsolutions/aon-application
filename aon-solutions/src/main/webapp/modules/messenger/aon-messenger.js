@@ -15,7 +15,7 @@ import { getTaskHolder } from '../../services/taskHolderService.js';
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
 	_workgroups;
-	_filter;
+	_filter={};
 	SENDER;
 	constructor () {
 		super();
@@ -32,6 +32,7 @@ export class AonMessenger extends AonElement {
 		this._workgroups = [];
 		this._filter = {
 			workgroup: undefined,
+			source: this._filter.source || undefined,
 			status: TASK_STATUS.PENDING,
 			page:0, 
 			perPage:30
@@ -49,7 +50,7 @@ export class AonMessenger extends AonElement {
 			await taskH;
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else {
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
 	}
 

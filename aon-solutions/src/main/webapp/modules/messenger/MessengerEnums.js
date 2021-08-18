@@ -100,6 +100,7 @@ export const TASK_SOURCE = {
 
 export const ICON_TYPES = {
     MATERIAL : "material",
+    MATERIAL_ICONS:"material-icons",
     MATERIAL_OUTLINED : "material_outlined",
     MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
 }

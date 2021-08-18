@@ -3,9 +3,8 @@ import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import {  createDivEditable, createMobileMainView, createTitle } from "../createComponents.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
-import { createAonTextArea, createChat, createSectionComment, createTaskHolder, createWorkgroup} from "./creationUtils.js";
+import {  createDivEditable, createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment, createTaskHolder, createWorkgroup} from "./creationUtils.js";
 import { buildTextareaToolbar, fillWorkGroup } from "./utils.js";
 
 /**
@@ -13,17 +12,18 @@ import { buildTextareaToolbar, fillWorkGroup } from "./utils.js";
  * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
  */
 export const buildMobile = (aonMessengerChat)=> {
-    buildChat(aonMessengerChat);
+    const mainView = createMobileMainView();
+    aonMessengerChat.appendChild(mainView);
+
+    buildProcess(aonMessengerChat, mainView);
 }
 
 /**
  * Create desktop chat for messenger (mobile)
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-const buildChat = (aonMessengerChat) => {
+const buildProcess = (aonMessengerChat, mainView) => {
     const task = aonMessengerChat.task;
-    const mainView = createMobileMainView();
-    aonMessengerChat.appendChild(mainView);
 
     const firstDiv = newComponent({
         classes: [CSS.FLEX_ROW],
@@ -72,26 +72,7 @@ const buildChat = (aonMessengerChat) => {
     /**
      * Building toolbars
      */
-    const toolbar = setAttributes(new AonToolbar(),{
-        type: ToolbarType.SECONDARY,
-        title: aonMessengerChat.task.id ? "#"+(task.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
-    });
-    
-    if(aonMessengerChat.task.id){
-        wrapper.appendChild(toolbar);
-    } else {
-        buildCreate(wrapper, toolbar, aonMessengerChat);
-    }
-
-    //TOOLBAR BOTONS  
-    toolbar.style.width = "100%"; 
-    if(!aonMessengerChat.task.id){
-        toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
-    }    
-    toolbar.addButton2(ACTIONS.BACK,() => {
-        setStyles(wrapper.element,{transition: ".25s", opacity: 0});
-        setTimeout(() =>  aonMessengerChat.back(), 250);
-    });
+    buildToolbar(aonMessengerChat, wrapper);
 
     
     /**
@@ -363,4 +344,27 @@ const changeStyleSectionComment = (divs) => {
     divs.aonTextArea.style.margin = "0";
     divs.iconOpenFull.querySelector("i").style.fontSize = "2.5em";
     divs.iconSend.querySelector("i").style.fontSize = "2.5em";
+}
+
+
+const buildToolbar = (aonMessengerChat, wrapper) => {
+    const task = aonMessengerChat.task;
+    /**
+     * Building toolbars
+     */
+     const toolbar = setAttributes(new AonToolbar(),{
+        type: ToolbarType.SECONDARY,
+        title: task.id ? "#"+(task.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
+    });
+    toolbar.style.width = "100%"; 
+    
+    if(task.id){
+        wrapper.appendChild(toolbar);
+    } else {
+        buildCreate(wrapper, toolbar, aonMessengerChat);
+
+        toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+    }
+    
+    toolbar.addButton2(ACTIONS.BACK,() => aonMessengerChat.back());
 }
