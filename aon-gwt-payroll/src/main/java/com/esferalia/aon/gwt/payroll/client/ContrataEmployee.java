@@ -157,6 +157,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		
 	}
+	
+	// ------------------------------------------------- EmployeeEventsImpl
+	
+	public class EmployeeEventsImpl extends EmployeeEventsDraft {
+
+		@Override
+		protected void onShowCalendar() {
+			tabLayOutPanel.selectTab(7, true);
+		}
+		
+	}
 
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 	
@@ -595,7 +606,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeCalendar.hideToolbar();
 		employeeCalendar.setContrataEmployeeCalendarHeight();
 		
-		employeeEvents = new EmployeeEventsDraft();
+		employeeEvents = new EmployeeEventsImpl();
 		employeeEvents.hideToolbar();
 		
 		salaryDraft = new SalaryDraft();
@@ -1755,7 +1766,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void checkTGSSStatus() {
 		boolean isTGSSActive = contrataEmployeeObject.getContractData().isTGSSActive();
 		Date startDate = contrataEmployeeObject.getContractData().getStartDate();
-		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
 		if(isTGSSActive && DateUtils.isAfterOrEquals(new Date(), startDate))
 			setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), true);

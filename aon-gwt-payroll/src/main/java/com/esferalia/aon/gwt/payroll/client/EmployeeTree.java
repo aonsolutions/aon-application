@@ -2786,7 +2786,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EmployeeEventsDraft getEmployeeEventsDraft() {
 		if (employeeEventsDraft == null)
-			employeeEventsDraft = new EmployeeEventsDraft();
+			employeeEventsDraft = new EmployeeEventsDraft() {
+				@Override
+				protected void onShowCalendar() {
+					showEmployeeCalendar(this.getEmployeeCalendarObject());
+				}};
 		return employeeEventsDraft;
 	}
 
