@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -27,6 +29,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeEventsDialog extends AonCustomDialog {
@@ -51,6 +54,9 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 	
 	@UiField
 	HTMLPanel containerNewPeriod;
+	
+	@UiField
+	ScrollPanel containerScrollPanel;
 	
 	@UiField
 	HTMLPanel container;
@@ -102,6 +108,7 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 		sortEmployeeEventsVariablesDesc();
 		createEmployeeEventsVariablesTable();
 		
+		showDialog();
 	}
 
 	// ------------------------------------------------------ List sorter
@@ -440,6 +447,17 @@ public abstract class EmployeeEventsDialog extends AonCustomDialog {
 	private void hideErrorPanel() {
 		errorMessage.getElement().getStyle().setDisplay(Display.NONE);
 		acceptBtnDialog.setEnabled(true);
+	}
+	
+	private void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				center();
+				show();
+			}
+		});
 	}
 
 }
