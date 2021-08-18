@@ -500,7 +500,7 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-		if(null != contractData.getMdctz() && !contractData.getMdctz().equals("-1")) {
+		if(null != contractData.getMdctz() && !!AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")) {
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.NAME, "MODELO_COTIZACION_AGRARIO")
@@ -1506,7 +1506,7 @@ public class JooqEmployee {
 				}
 				
 				if(null == contractData.getMdctzId()){
-					if(null != contractData.getMdctz() && "-1" != contractData.getMdctz()){
+					if(null != contractData.getMdctz() && !AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")){
 						ContractDataRecord mdCtzRecord = null;
 						
 						mdCtzRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 

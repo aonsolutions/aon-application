@@ -714,6 +714,9 @@ public class JooqEmployeeCalendarNew {
 		
 		if(fullTimeJourney) {
 			for(int day=0; day<7; day++) {
+				if(null == nonWorkingDays[day])
+					continue;
+				
 				String expression = Byte.toString(nonWorkingDays[day]);
 				
 				String name = "";
