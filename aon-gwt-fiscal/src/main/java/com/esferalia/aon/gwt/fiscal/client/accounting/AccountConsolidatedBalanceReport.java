@@ -209,7 +209,7 @@ public class AccountConsolidatedBalanceReport extends MainEntryPoint {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad(
 			new AccountEntryModuleOptions()
 				.setParentWidget(entryDialog)
@@ -217,6 +217,9 @@ public class AccountConsolidatedBalanceReport extends MainEntryPoint {
 				.setUser(options.getUser())
 				.setDomain(options.getDomain())
 				.setAccountEntryId(entryId)
+				.setSessionLogTabVisible(false)
+				.setJournalTabVisible(false)
+				.setExtraInfoTabVisible(false)
 				.setExternalCallback(new ModuleCallback() {
 					@Override
 					public void onRemove(IAccountEntryWrapper removed) {

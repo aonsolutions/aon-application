@@ -143,8 +143,6 @@ public class AccountStatementReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {

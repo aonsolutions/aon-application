@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountAnalyticalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountJournalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountLedgerReport;
@@ -554,21 +553,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					FinanceUtilities financeUtilities = new FinanceUtilities();
 					financeUtilities.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT)) {
-			GWT.runAsync(AccountEntryModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					AccountEntryModule accountEntryModule = new AccountEntryModule();
-					accountEntryModule.onModuleLoad();
 				}
 				
 			});

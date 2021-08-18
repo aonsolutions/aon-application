@@ -20,8 +20,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -786,7 +786,7 @@ class EntriesRemover extends OptionBase {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad( new AccountEntryModuleOptions()
 			.setParentWidget( entryDialog)
 			.setDomainName( domainName)

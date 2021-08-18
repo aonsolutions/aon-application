@@ -4,8 +4,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -194,7 +194,7 @@ class EmptyEntryFinder extends OptionBase {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad( new AccountEntryModuleOptions()
 			.setParentWidget( entryDialog)
 			.setDomainName( domainName)
