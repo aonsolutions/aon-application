@@ -904,6 +904,7 @@ public class InvoiceDAO {
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+		.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
 		.groupBy(orderedType,INVOICE.SERIES)
 		.fetch()
 		.stream()

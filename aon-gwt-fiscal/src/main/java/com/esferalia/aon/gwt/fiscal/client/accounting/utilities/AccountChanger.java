@@ -51,7 +51,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -612,22 +611,6 @@ class AccountChanger extends OptionBase {
 	public void run() {
 		run(false,true);
 	}
-	
-	public static Widget getSplashWidget() {
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setStyleName(AON.CSS.aonBlockCenter());
-		hp.addStyleName(AON.CSS.aonMarginTop() );
-		Label iconWaitLabel = new Label();
-		iconWaitLabel.setStyleName(AON.CSS.aonLoader());
-		iconWaitLabel.addStyleName(AON.CSS.aonMargin());
-		hp.add(iconWaitLabel);
-		Label textWaitLabel = new Label("Procesando la extracci\u00F3n de datos del documento.");
-		textWaitLabel.setStyleName(AON.CSS.aonMargin());
-		textWaitLabel.addStyleName(AON.CSS.aonBold());
-		hp.add(textWaitLabel);
-		return hp;
-	}
-
 	
 	public void run(boolean check, boolean cleanFooter) {
 		if (check()) {
