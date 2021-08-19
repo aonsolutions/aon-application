@@ -32,6 +32,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -254,6 +256,31 @@ public class SeleniumTools {
 	        attempts++;
 	    }
 	    return result;
+	}
+	/**
+	 * Right clicks the element of the selector
+	 * @param driver The WebDriver
+	 * @param by The selector
+	 */
+	public static void rightClick(WebDriver driver, By by) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions actions = new Actions(driver)
+				.contextClick(wait.until(ExpectedConditions.elementToBeClickable(by)));
+		Action action = actions.build();
+		action.perform();
+	}
+	
+	/**
+	 * Double clicks the element of the selector
+	 * @param driver The WebDriver
+	 * @param by The selector
+	 */
+	public static void doubleClick(WebDriver driver, By by) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions actions = new Actions(driver)
+				.doubleClick(wait.until(ExpectedConditions.elementToBeClickable(by)));
+		Action action = actions.build();
+		action.perform();
 	}
 	
 	/**
@@ -1240,5 +1267,15 @@ public class SeleniumTools {
 		String xpath = "//div[contains(text(), '" + agreement + "')]";
 		
 		click(driver, wait, By.xpath(xpath));
+	}
+	
+	public static Date firstMondayOfMonth(Date month) {
+		Calendar calendar = Calendar.getInstance(new Locale("es",  "ES"));
+		calendar.setTime(month);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		return calendar.getTime();
 	}
 }
