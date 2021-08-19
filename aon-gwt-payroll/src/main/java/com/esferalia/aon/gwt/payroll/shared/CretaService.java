@@ -383,6 +383,53 @@ public interface CretaService {
 
 	}
 
+	public static class JsDato extends JavaScriptObject {
+		protected JsDato() {
+		}
+		
+		public final String getDescription() {
+			switch (getCodigo()) {
+			case "01":
+				return "N\u00BA de Horas";
+			case "02":
+				return "N\u00BA de HorasCompementarias";
+			case "500":
+				return "Base de Contingencias Comunes";
+			case "601":
+			case "611":
+				return "Base de Accidentes de Trabajo";
+			case "537":
+				return "Base de Horas Complementarias";
+			case "501":
+				return "Base de Horas Extras Fuerza Mayor";
+			case "563":
+				return "Compensaci\u00F3n IT Contingencias Comunes";
+			case "663":
+				return "Compensaci\u00F3n IT por AT y EP";
+			default:
+				return "";
+			}
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getCodigo() /*-{
+			return this.codigo;
+		}-*/;
+
+		public final native String getTipo() /*-{
+			return this.tipo;
+		}-*/;
+
+		public final native String getValor() /*-{
+			return this.valor;
+		}-*/;
+
+		public final native JsError [] getErrores() /*-{
+			return this.errores;
+		}-*/;
+	}
+
 	public static class JsEmployee extends JavaScriptObject 
 	{
 		protected JsEmployee() {
@@ -406,6 +453,20 @@ public interface CretaService {
 			return this.tramos;
 		}-*/;
 
+		public final native JsError [] getErrores() /*-{
+			return this.errores;
+		}-*/;
+		
+		public static native JsEmployee createEmptyEmployee() /*-{
+			return {
+				naf: "",
+				ipf: "",
+				caf: "",
+				tramos: [],
+				errores: []
+			};
+		}-*/;		
+
 	}
 
 	public static class JsTramo extends JavaScriptObject 
@@ -426,8 +487,15 @@ public interface CretaService {
 		public final native String getHasta() /*-{
 			return this.hasta;
 		}-*/;
-
 		
+		public final native JsDato [] getDatos() /*-{
+			return this.datos;
+		}-*/;
+
+		public final native JsError [] getErrores() /*-{
+			return this.errores;
+		}-*/;
+
 		public final native JsPeculiaridad [] getPeculiaridades() /*-{
 			return this.peculiaridades;
 		}-*/;

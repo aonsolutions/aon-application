@@ -41,7 +41,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			.filter(d -> d.type != null && d.type.isSsDeduction())
 			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
 		}
-		
+
 		private void addDeduction(String code, DeductionType type, Date startDate, Date endDate, double amount) {
 			getDeduction(code, type, startDate, endDate)
 			.ifPresentOrElse( 
@@ -78,8 +78,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private static class Costs extends Deductions {
 		
 		private double getTotalEnterprise(UnaryOperator<Double> f) {
-			return super.getTotalSS(f);
+			return super.getTotalSS(f) + getTotalECSS(f);
 		}
+		
+
+		private double getTotalECSS(UnaryOperator<Double> f) {
+			return super.deductions.stream()
+			.filter(d -> AonStringUtils.equalsIgnoreCase(d.code, "ECSS_E"))
+			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
+		}		
 
 		private void addCost(String code, DeductionType type, Date startDate, Date endDate, double amount) {
 			super.addDeduction(code, type, startDate, endDate, amount);
