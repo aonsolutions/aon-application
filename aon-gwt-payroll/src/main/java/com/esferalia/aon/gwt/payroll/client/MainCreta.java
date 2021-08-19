@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsDato;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
@@ -105,7 +106,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private static final int LIMIT = 100;
 
-	private static Logger LOGGER = Logger.getLogger("");
+	private static final Logger LOGGER = Logger.getLogger("");
 
 	public static String getAuthorized() {
 		
@@ -676,7 +677,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return popupPanel;
 	}
 
-	public static PopupPanel showjsEmployeeToolTip(final JsEmployee employee, final int x, final int y) {
+	public static PopupPanel showjsEmployeeToolTip(final JsEmployee tEmployee, final JsEmployee[] rEmployees, final int x, final int y) {
 		
 		final DateTimeFormat yearMonthNumDayFormat = DateTimeFormat.getFormat("y-M-d");
 		final DateTimeFormat dayMonthNumYearFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
@@ -685,10 +686,21 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
 		popupPanel.setAutoHideEnabled(true);
 		popupPanel.getElement().getStyle().setZIndex(70);
-		
-		int rows = 4 + 
-				Arrays.stream(employee.getTramos())
+
+		int rows = 4  
+				+ Arrays.stream(tEmployee.getTramos())
 				.collect(Collectors.summingInt(t -> 1 + t.getPeculiaridades().length));
+		for( JsEmployee rEmployee: rEmployees ) {
+			rows += filter(rEmployee.getErrores()).length ;
+			rows +=	rEmployee.getTramos().length ;
+			rows +=	Arrays.stream(rEmployee.getTramos())
+					.flatMap(t -> Arrays.stream(t.getDatos()))
+					.collect(Collectors.summingInt(d -> filter(d.getErrores()).length));
+			rows +=	Arrays.stream(rEmployee.getTramos())
+					.collect(Collectors.summingInt(d -> filter(d.getErrores()).length));
+
+		}
+				
 		Grid grid = new Grid(rows, 5);
 		grid.setBorderWidth(1);
 		grid.getElement().getStyle().setProperty("borderCollapse", "collapse");
@@ -721,7 +733,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		int i = 1;
 		
-		for ( JsTramo tramo :  employee.getTramos()) {
+		for ( JsTramo tramo :  tEmployee.getTramos()) {
 						
 			row++;
 			grid.setText(row, 0, String.valueOf( i++ ));
@@ -754,9 +766,89 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			
 		}
-		
-		
 
+		row++;
+		row++;
+		grid.setText(row, 0, ""); 
+		grid.setText(row, 1, ""); 
+		grid.setText(row, 2, ""); 
+		grid.setHTML(row, 3, SafeHtmlUtils.fromString(" C\u00D3DIGO"));
+		grid.setHTML(row, 4, SafeHtmlUtils.fromString(" MENSAJE "));
+		for ( int col = 0; col < 5; col++ ) {
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_BOLD);
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_TEXT_CENTER);
+		}
+		
+		for( JsEmployee rEmployee: rEmployees ) {
+			
+			for ( JsError error : filter(rEmployee.getErrores())) {
+				row++;
+				String code = error.getCode();
+				String message = error.getMessage();
+				
+				grid.setHTML(row, 3, new SafeHtmlBuilder()
+						.appendHtmlConstant("<b style='color:red;'>").appendEscaped(code).appendHtmlConstant("</b>")
+						.toSafeHtml());
+				grid.setHTML(row, 4, new SafeHtmlBuilder()
+						.appendHtmlConstant("<span style='color:red;'>").appendEscaped(message).appendHtmlConstant("</span>")
+						.toSafeHtml());
+			}
+		
+			i = 1;
+			for ( JsTramo tramo: rEmployee.getTramos()) {
+				row++;
+				grid.setText(row, 0, String.valueOf( i++ ));
+				grid.getCellFormatter().addStyleName(row, 0, AON.AON_TEXT_CENTER);
+				Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
+				Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
+				grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) );
+				for ( JsDato dato: tramo.getDatos() ) {
+					String tipo = dato.getTipo();
+					String codigo = dato.getCodigo();
+					//String valor = dato.getValor();
+					String description = dato.getDescription();
+					
+	
+					for(JsError error: filter(dato.getErrores()) ) {
+						row++;
+						
+						String code = error.getCode();
+						String message = error.getMessage();
+
+						grid.setHTML(row, 1, new SafeHtmlBuilder().append(' ').append(' ')
+								.appendHtmlConstant("<b>")
+								.appendEscaped(tipo)
+								.appendEscaped(codigo)
+								.appendHtmlConstant("</b>")
+								.append(' ')
+								.appendEscaped(description)
+								.toSafeHtml());			
+
+						grid.setHTML(row, 3, new SafeHtmlBuilder()
+								.appendHtmlConstant("<b style='color:red;' >").appendEscaped(code).appendHtmlConstant("</b>")
+								.toSafeHtml());
+						grid.setHTML(row, 4, new SafeHtmlBuilder()
+								.appendHtmlConstant("<span style='color:red;'>").appendEscaped(message).appendHtmlConstant("</span>")
+								.toSafeHtml());
+					}
+				}
+				
+				for ( JsError error : filter(tramo.getErrores()) ) {
+					row++;
+					String code = error.getCode();
+					String message = error.getMessage();
+					
+					grid.setHTML(row, 3, new SafeHtmlBuilder()
+							.appendHtmlConstant("<b style='color:red;'>").appendEscaped(code).appendHtmlConstant("</b>")
+							.toSafeHtml());
+					grid.setHTML(row, 4, new SafeHtmlBuilder()
+							.appendHtmlConstant("<span style='color:red;'>").appendEscaped(message).appendHtmlConstant("</span>")
+							.toSafeHtml());
+				}
+				
+				
+			}
+		}
 		popupPanel.add(grid);
 
 		popupPanel.setPopupPositionAndShow(new PositionCallback() {
@@ -772,6 +864,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		
 		return popupPanel;
+	}
+	
+	private static JsError[] filter(JsError[] errores ) {
+		return Arrays.stream(errores)
+				.filter( e -> !("R9632".equals(e.getCode())))
+				.toArray(JsError[]::new);
 	}
 
 	private static interface EnterpriseCommand extends ScheduledCommand {

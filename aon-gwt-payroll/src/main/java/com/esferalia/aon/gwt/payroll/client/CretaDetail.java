@@ -1033,9 +1033,15 @@ public abstract class CretaDetail extends Composite {
 				if (CretaDetail.this.popupTooltip != null)
 					CretaDetail.this.popupTooltip.hide();
 				
+				JsEmployee[] rEmployees =
+				Arrays.stream(respuestasMap.get(trabajadoresYTramosId).getEmployees())
+				.filter(employee -> employee.getNaf().equalsIgnoreCase(naf)).toArray(JsEmployee[]::new);
+
 				Arrays.stream(trabajadoresYTramosMap.get(trabajadoresYTramosId).getEmployees())
-					.filter(e -> e.getNaf().equalsIgnoreCase(naf)).findAny()
-					.ifPresent(e -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(e, x, y));									
+					.filter(tEmployee -> tEmployee.getNaf().equalsIgnoreCase(naf)).findAny()
+					.ifPresent(tEmployee -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(tEmployee, rEmployees, x, y));
+				
+
 			}
 		};
 
