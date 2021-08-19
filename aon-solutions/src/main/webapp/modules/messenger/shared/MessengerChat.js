@@ -50,14 +50,15 @@ const buildToolbar = (aonMessengerChat) => {
       if(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS){
         toolbar.addButton2({
           ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
-          name: 'Cerrar',
+          name: MSG.CLOSE,
+          icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
         }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
       }
       if(task.status == TASK_STATUS.DELETED || task.status == TASK_STATUS.FINISHED)
         toolbar.addButton2({...ACTIONS.RESTORE, name:"Reabrir"}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
 
       if(task.status != TASK_STATUS.DELETED) 
-        toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
+        toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
     }
 
     if(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS)

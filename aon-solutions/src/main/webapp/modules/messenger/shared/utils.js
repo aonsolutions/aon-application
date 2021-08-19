@@ -161,7 +161,7 @@ export const fillChat = (workflows=[])=>{
             const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
             const applicationParent = aonMessengerChat.getApplicationParent();
     
-            const meId = applicationParent.SENDER.id;
+            const meId = applicationParent.TASK_HOLDER.id;
     
             workflows.forEach(workflow => {
                 const {id, comment, type, modification_date, task_holder:{name, alias, id:taskHolderId}} = workflow;

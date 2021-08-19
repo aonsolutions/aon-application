@@ -7,6 +7,7 @@ import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
+import { AonIcon } from "./aon-icon.js";
 // import { DIV } from "../environments/aonTag.js";
 
 export class AonApplication extends AonElement {
@@ -469,14 +470,18 @@ export class AonApplication extends AonElement {
 
       if (option.icon) {
         let i = this.createElement(TAG.I);
-        i.className = "material-icons aonVerticalMiddle";
+        let iconClass = "material-icons";
+        if(option.icon_color) i.style.color = option.icon_color;
+        if(option.icon_class) iconClass = option.icon_class;
+        i.className = `${iconClass} aonVerticalMiddle`;
         i.innerHTML = option.icon;
         li.appendChild(i);
       } else if (option.aonIcon) {
-        li.innerHTML = `<aon-icon id="${id + "AonIcon"}" icon="${
-          option.aonIcon.icon
-        }" size="18px"></aon-icon>`;
-
+        let ai = new AonIcon();
+        ai.id    = id + "AonIcon";
+        ai.icon  = option.aonIcon.icon;
+        ai.size  = "18px";
+        li.appendChild(ai);
         li.addEventListener(EVENT.MOUSEOVER, () => {
           this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
@@ -508,13 +513,9 @@ export class AonApplication extends AonElement {
         let actionDiv = this.createElement(TAG.SPAN);
         actionDiv.style.display = "none";
         li.appendChild(actionDiv);
-        li.addEventListener(EVENT.MOUSEOVER, () => {
-          actionDiv.style.display = "contents";
-        });
+        li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
 
-        li.addEventListener(EVENT.MOUSELEAVE, () => {
-          actionDiv.style.display = "none";
-        });
+        li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
@@ -538,12 +539,10 @@ export class AonApplication extends AonElement {
 
       li.addEventListener(EVENT.CLICK, () => {
         const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
-        document
-          .querySelectorAll(`[id^='${sidenavId}'] li`)
-          .forEach((el, i) => {
+        ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
-          });
+        });
         this.selected = id;
         li.style.backgroundColor = "#ddd";
         let toolbar = this.getElement(this.TOOLBAR);
@@ -593,8 +592,7 @@ export class AonApplication extends AonElement {
 
   addSearchOption() {
     let toolbar = this.getElement(this.TOOLBAR);
-    const btnSearch = toolbar.addSearchButton();
-    return btnSearch;
+    return toolbar.addSearchButton();
   }
 
   addToolbarTitle(title) {

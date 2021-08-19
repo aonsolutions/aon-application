@@ -12,14 +12,12 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-
-import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
-// import { AonUser } from "../user/aon-user.js";
-
 import * as ACTION from '../actions.js';
 import { CONFIGURATION} from "../../services/app.js";
+import { AonGroupList } from "./groups/aon-group-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -132,6 +130,13 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildCompanyList(),
         });
       }
+
+      companyOptions.push({
+        name: "Gestión de Grupos",
+        icon: "groups",
+        fn: () => this.buildGroups(),
+      });
+
       if (!this.isMobile()) {
         companyOptions.push({
           name: "Contratación",
@@ -139,11 +144,6 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildStore(),
         });
       }
-      // companyOptions.push({
-      //   name: "Notificación manual",
-      //   icon: "notifications",
-      //   fn: () => this.buildNotification(),
-      // });
 
       aonConfiguration.addSidenavOptions("EMPRESA", companyOptions);
     }
@@ -286,6 +286,10 @@ export class AonConfiguration extends AonElement {
       let aonMarketplace = this.getElement("aonMarketplace");
       aonMarketplace.setAttribute("company", this.getAttribute("company"));
     }
+  }
+
+  buildGroups(){
+    this.getApplication().setContent(new AonGroupList());
   }
 
   hiddenGeneral() {

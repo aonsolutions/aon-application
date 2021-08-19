@@ -319,16 +319,10 @@ const createFullComment = (wrapper, aonMessengerChat, aonTextArea) => {
     });
 }
 
-
 /**
  * Hide writter with animation
  */
-const closeFullComment = () => {
-    setTimeout(() => {
-        setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{zIndex : -9, opacity : 0});
-    }, 100);
-}
-
+const closeFullComment = () => setTimeout(() => setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{zIndex : -9, opacity : 0}), 100);
 
 const openFullComment  = (aonTextArea) => {
     const writter = document.getElementById(MESSENGER_COMPONENTS.WRITTER);
@@ -345,7 +339,6 @@ const changeStyleSectionComment = (divs) => {
     divs.iconOpenFull.querySelector("i").style.fontSize = "2.5em";
     divs.iconSend.querySelector("i").style.fontSize = "2.5em";
 }
-
 
 const buildToolbar = (aonMessengerChat, wrapper) => {
     const task = aonMessengerChat.task;

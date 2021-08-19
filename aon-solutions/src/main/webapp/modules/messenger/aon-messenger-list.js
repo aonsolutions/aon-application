@@ -1,22 +1,22 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles } from "../../services/companyService.js";
 import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
+import { ICON_TYPES, MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask } from "./TaskCache.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
-  _list;
   MORE;
   KEY_VIEW;
+  TASK_HOLDER;
   static get observedAttributes() {
     return [];
   }
@@ -55,7 +55,7 @@ export class AonMessengerList extends AonElement {
     this.TOOLBAR = this.id + "Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this._list = [];
+    this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
     this.INDEX = 0;
     this.MORE = true;
     this.KEY_VIEW = Math.random();
@@ -81,9 +81,11 @@ export class AonMessengerList extends AonElement {
       aonTable.removeAllLi();
     } else {
       aonTable.removeColumns();
-      aonTable.addColumn("", "icon", "icon", "2%");
-      aonTable.addColumn("Titulo", "string", "titleDescription", "30%");
-      aonTable.addColumn("Fecha", "string", "dateParse", "20%");
+      // aonTable.addColumn("  ", "icon", "icon", "2%");
+      aonTable.addColumn("", "string", "lettersHtml", "2%");
+      aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
+      aonTable.addColumn(MSG.TITLE, "string", "title", "30%");
+      aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
 
     aonTable.addEventListener(EVENT.MORE, ()=>{ 
@@ -100,7 +102,7 @@ export class AonMessengerList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     if(this.isBeta()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, ({target}) =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT,{source:TASK_SOURCE.CAU}));
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, ({target}) =>  this.addTask(target));
       } else {
         this.applicationEl.addToolbarOption2(SigninSidenav.ADD, ({target}) => this.addTask(target));
       }
@@ -110,14 +112,13 @@ export class AonMessengerList extends AonElement {
 
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
-    
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      console.log(detail);
+      let filter = this.getFilter();    
+      filter.search = detail;
+      this.setFilter(filter);
+      this.paintTable();
     });
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-      this._list = [];
-      console.log(detail);
-    });
+    // btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{ });
     
     // btnSearch.buildOptionsFilter(INPUTS);//INPUTS
   }
@@ -128,7 +129,6 @@ export class AonMessengerList extends AonElement {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
-
       const tasks = await getTasks(filter);
       if(tasks.length == 0)
         this.MORE = false;
@@ -136,12 +136,11 @@ export class AonMessengerList extends AonElement {
         data = tasks.map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
           const newTitle  = `#${newNumber} ${task.title}`;
-          const titleDescription = `<span style="font-size:14px;font-weight: 500;">${newTitle}</span>`;
           return {
             ...task,
             date:task.start_date,
             newTitle,
-            titleDescription
+            newNumber
           };
         });
       }
@@ -159,22 +158,22 @@ export class AonMessengerList extends AonElement {
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         const options = {
-          icon: MATERIAL_ICONS.INFO,
-          icon_color: CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
-          icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
           title: res.newTitle,
-          subtitle: dateParse, 
+          subtitle: dateParse,
+          ...this.getIconList(res)
         };
         aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
       });
     } else {
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        res.icon = MATERIAL_ICONS.INFO;
-        res.icon_title = "status";
-        res.icon_color = CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON);
-        res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-        aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res, idx));
+        const newData = { 
+          ...res, 
+          // ...this.getIconList(res),
+          lettersHtml: this.getIcon(res),
+          dateParse
+        };
+        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
       });
     }
 	}
@@ -197,6 +196,72 @@ export class AonMessengerList extends AonElement {
     const d = this.applicationEl.getOptionDialog();
     d.setMenuOptions(options, top, left);
     d.open();
+  }
+
+
+  getIconList(res){
+    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
+    let icon = MATERIAL_ICONS.INFO;
+    if(res.source===TASK_SOURCE.CAU) 
+      icon = MATERIAL_ICONS.SUPPORT_AGENT;
+    else if(res.source===TASK_SOURCE.GITHUB) 
+      icon = MATERIAL_ICONS.ASSIGNMENT;
+
+    let color = AON_MESSENGER_LIST_OPEN.icon_color;
+    if(res.status === TASK_STATUS.FINISHED) 
+      color = AON_MESSENGER_LIST_CLOSE.icon_color;
+    else if(res.status === TASK_STATUS.DELETED) 
+      color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+      
+    return {
+      icon,
+      icon_color:color,//CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
+      icon_class:ICON_TYPES.MATERIAL_ICONS_OUTLINED,
+      icon_title:res.source,
+    }
+  }
+
+  getIcon(res){
+    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
+    let icon = MATERIAL_ICONS.INFO;
+    if(res.source===TASK_SOURCE.CAU) 
+      icon = MATERIAL_ICONS.SUPPORT_AGENT;
+    else if(res.source===TASK_SOURCE.GITHUB) 
+      icon = MATERIAL_ICONS.ASSIGNMENT;
+
+    let color = AON_MESSENGER_LIST_OPEN.icon_color;
+    if(res.status === TASK_STATUS.FINISHED) 
+      color = AON_MESSENGER_LIST_CLOSE.icon_color;
+    else if(res.status === TASK_STATUS.DELETED) 
+      color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+
+    let span = this.createElement(TAG.SPAN);
+    span.style.color = color;
+    span.title = res.source;
+
+    let iOne = this.createElement("i");
+    iOne.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+    iOne.textContent = icon;
+    span.appendChild(iOne);
+
+    //ICON WAY (IN OR OUT)
+    // if(res.task_holder && res.task_holder.id === this.TASK_HOLDER.id) {
+    //   span.appendChild(this.createIcon(MATERIAL_ICONS.ARROW_DROP_DOWN));
+    // } else if(res.sender && res.sender.id === this.TASK_HOLDER.id){
+    //   span.appendChild(this.createIcon(MATERIAL_ICONS.ARROW_DROP_UP)); // ,"-12px"
+    // }
+
+    return span.outerHTML;
+  }
+
+  createIcon(icon, marginTop="11px"){
+    let i = this.createElement("i");
+    i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+    i.textContent = icon;
+    i.style.marginTop = marginTop;
+    i.style.position = "fixed";
+    i.style.marginLeft = "-11px";
+    return i;
   }
 
   goMessengerChat(res, idx){

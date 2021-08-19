@@ -70,7 +70,7 @@ export class AonMessengerChat extends AonElement {
 
     if(this.data.id) this.setData(this.data);
 
-    const sender = this.applicationParentEl.SENDER;
+    const sender = this.applicationParentEl.TASK_HOLDER;
     this.task.setSender(sender);
     this.task.setDomain(sender.domain.id);
     this.task.createTask(this.data);

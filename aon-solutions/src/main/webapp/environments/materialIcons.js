@@ -33,6 +33,7 @@ export const ARROW_BACK = 'arrow_back';
 export const ARROW_CIRCLE_DOWN = 'arrow_circle_down';
 export const ARROW_CIRCLE_UP = 'arrow_circle_up';
 export const ARROW_DROP_DOWN = 'arrow_drop_down';
+export const ARROW_DROP_UP = 'arrow_drop_up';
 export const ARROW_RIGHT = 'arrow_right';
 export const ARROW_RIGHT_ALT = 'arrow_right_alt';
 export const ARTICLE = 'article';
@@ -117,6 +118,7 @@ export const FORWARD_TO_INBOX = "forward_to_inbox";
 export const FORMAT_UNDERLINED = "format_underlined"; 
 export const FORMAT_CLEAR = "format_clear"; 
 export const FORMAT_QUOTE = "format_quote"; 
+export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 
@@ -164,6 +166,7 @@ export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';
 export const SWAP_CALLS = 'swap_calls';
+export const SUPPORT_AGENT = "support_agent";
 
 // ----- T
 

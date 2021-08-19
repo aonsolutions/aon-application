@@ -1,25 +1,38 @@
-import { MATERIAL_ICONS } from "../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments";
 
-const AON_MESSENGER_LIST = {
+export const ICON_TYPES = {
+    MATERIAL : "material",
+    MATERIAL_ICONS:"material-icons",
+    MATERIAL_OUTLINED : "material_outlined",
+    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
+}
+
+const AON_MESSENGER_LIST_OPEN = {
     name: 'Abiertas',
-    icon: MATERIAL_ICONS.ASSIGNMENT,
-    id: MATERIAL_ICONS.ASSIGNMENT
+    id:'Abiertas',
+    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
+    icon_color: "#2e7d32",
+    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_CLOSE = {
     name: 'Cerradas',
-    icon: MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE,
-    id: MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
+    id:'Cerradas',
+    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
+    icon_color: CSS.variable(COLORS.AON_BLACK),
+    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_ARCHIVE = {
     name: 'Archivadas',
-    icon: MATERIAL_ICONS.ARCHIVE,
-    id: MATERIAL_ICONS.ARCHIVE
+    id: 'Archivadas',
+    icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
+    icon_color: COLORS.ORANGE,
+    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
 };
 
 export const MessengerOptions = {
-    AON_MESSENGER_LIST,
+    AON_MESSENGER_LIST_OPEN,
     AON_MESSENGER_LIST_CLOSE,
     AON_MESSENGER_LIST_ARCHIVE
 };
@@ -96,14 +109,6 @@ export const TASK_SOURCE = {
 	CAU:"cau",
 	GITHUB:"github"
 } 
-
-
-export const ICON_TYPES = {
-    MATERIAL : "material",
-    MATERIAL_ICONS:"material-icons",
-    MATERIAL_OUTLINED : "material_outlined",
-    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
-}
 
 export const MessengerSidenav = {
     ADD_COMMENT: {

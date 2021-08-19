@@ -130,7 +130,7 @@ export class AonHeader extends AonElement {
 					let d = this.getElement('aonHeaderDialogHelpOption');
 					let options = [{
 						name: 'Soporte / CAU',
-						icon: 'support_agent',
+						icon: MATERIAL_ICONS.SUPPORT_AGENT,
 						fn: () =>{
 							if(this.isBeta()){
 								let aonMessenger = new AonMessenger();

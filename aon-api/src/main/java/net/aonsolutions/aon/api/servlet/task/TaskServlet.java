@@ -106,20 +106,31 @@ public class TaskServlet extends AonApiHttpServlet{
 		Integer workgroup = api.getParams().optInt("workgroup");
 		String status = api.getParams().optString("status");
 		String source = api.getParams().optString("source");
+		Integer taskHolder = api.getParams().optInt("task_holder");
+		Integer sender = api.getParams().optInt("sender");
+		String search = api.getParams().optString("search");
 		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		if("pending".equalsIgnoreCase(status)) {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
-		} else filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		} else 
+			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		
-		if(workgroup != null && workgroup > 0) {
+		if(workgroup != null && workgroup > 0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-		} 
-		System.out.println("source>>>" + source);
-		if(!source.isEmpty()) {
+
+		if(taskHolder != null && taskHolder!=0) 
+			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
+
+		if(sender != null && sender!=0) 
+			filter = filter.and(f.getSenderProperty().eq(sender));
+
+		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
-		}
 		
+//		if(!search.isEmpty()) 
+			
+			
 		return filter;
 	}
 	

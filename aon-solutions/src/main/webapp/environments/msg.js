@@ -161,6 +161,9 @@ export const FOOTER = MSG.FOOTER;
 
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 
+export const GROUP = "Grupo";//TODO
+export const GROUPS = "Grupos";//TODO
+
 // ----- H
 
 export const HEADER = MSG.HEADER;
@@ -208,6 +211,8 @@ export const MAXIMIZE = "Maximizar";//TODO
 export const MINIMIZE = "Minimizar";//TODO
 export const MESSENGER_SERVICE = "Mensajería";//TODO
 export const MONTH = "Mes"; //TODO
+export const MAILBOX = "Buzón";//TODO
+
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -317,6 +322,8 @@ export const START_DATE = "Fecha inicio";//TODO
 // ----- T
 
 export const TAG = MSG.TAG;
+export const TASK = "Tarea"; //TODO
+export const TASKS = "Tareas"; //TODO
 export const TAGS = MSG.TAGS;
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
@@ -334,7 +341,9 @@ export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
-
+export const TASK_TRAY = "Bandeja de tareas";//TODO
+export const TITLE = "Título" //TODO
+export const TRAY = "Bandeja";//TODO
 // ----- U
 
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
