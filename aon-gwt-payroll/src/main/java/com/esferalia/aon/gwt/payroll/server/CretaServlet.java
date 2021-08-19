@@ -856,15 +856,7 @@ public class CretaServlet extends HttpServlet
 	private static String toJSON(Collection<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Trabajador> trabajadores) {
 		if ( trabajadores == null )
 			return "";
-		
-		trabajadores.stream().filter(t -> AonStringUtils.equals("281419424174", t.getNaf())).forEach( t -> {
-			try {
-				Utils.marshal(t, System.err);
-			} catch ( Exception e ) {
 				
-			}
-		});
-		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(trabajadores.stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\",\"errores\":[%s],\"tramos\":[%s] }", trabajador.getNaf(), toJSON(trabajador.getErrores()), toJSON(trabajador.getTramos())))
