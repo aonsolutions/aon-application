@@ -80,6 +80,7 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
+import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -3116,6 +3117,53 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	private static List<Employee> getCCCEmployees(Connection connection, String ccc)
+			throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			// @formatter:off
+			String sql = "SELECT "
+			+ " " + SQLConstants.PERSON + "." + PersonColumns.SOCIAL_SECURITY_NUM
+			+ ", " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME
+			+ " FROM " + SQLConstants.CONTRACT
+			+ " INNER JOIN " + SQLConstants.PERSON + " ON (" + SQLConstants.CONTRACT + "." +ContractColumns.PERSON + " = " + SQLConstants.PERSON + "." +PersonColumns.REGISTRY + ")"
+			+ " INNER JOIN " + SQLConstants.REGISTRY + " ON (" + SQLConstants.PERSON + "." + PersonColumns.REGISTRY + " = " + SQLConstants.REGISTRY + "." + RegistryColumns.ID + ")"
+			+ " INNER JOIN " + SQLConstants.ENTERPRISE_CCC + " ON (" + SQLConstants.CONTRACT + "." +ContractColumns.ENTERPRISE_CCC + " = " + SQLConstants.ENTERPRISE_CCC + "." +EnterpriseCccColumns.ID + ")"
+			+ " WHERE " + EnterpriseCccColumns.CCC + " = ? "
+			+ " GROUP BY 1,2"
+			;
+			// @formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, ccc);
+			rs = stmt.executeQuery();
+
+			List<Employee> employees = new LinkedList<>();
+			while (rs.next()) {
+
+				Employee employee = new Employee();
+				employee.setSocialSecurity(rs.getString(1));
+				employee.setName(rs.getString(2));
+				employees.add(employee);
+			}
+
+			return employees;
+		} catch ( SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+	}
+
 	private static Enterprise getEnterprise(Integer registryID, Integer userID, Connection connection)
 			throws SQLException {
 
@@ -3169,6 +3217,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			List<BankAccount> bankAccounts = getEnterpriseBankAccounts(connection, enterprise.getId());
 			enterprise.setBankAccounts(bankAccounts);
+			
+			for( Activity activity: enterprise.getActivities() ) {
+				for( CCC ccc: activity.getCccs()) {
+					try {
+						ccc.setEmployees(getCCCEmployees(connection, ccc.getCode()));
+					} catch ( Exception e ) {
+						// show must go on :-)
+					}
+				}
+			}
 
 			return enterprise;
 		} finally {
