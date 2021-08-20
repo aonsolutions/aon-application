@@ -56,7 +56,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, MSG.TASK_TRAY, new AonApplication());
+		this.createApplication(this.AON_MESSENGER, `${MSG.REQUESTS} / ${MSG.TASKS}`, new AonApplication());
 	}
 
 	async buildToolbar(){
@@ -73,8 +73,8 @@ export class AonMessenger extends AonElement {
 		let messengerOpts = [
 			{
 				name: 'Todas',
-				icon: MATERIAL_ICONS.INBOX,
-				id: MATERIAL_ICONS.INBOX,
+				icon: MATERIAL_ICONS.ALL_INBOX,
+				id: MATERIAL_ICONS.ALL_INBOX,
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
@@ -83,8 +83,8 @@ export class AonMessenger extends AonElement {
 			},
 			{
 				name: 'Enviadas',
-				icon: MATERIAL_ICONS.UNARCHIVE,
-				id: MATERIAL_ICONS.UNARCHIVE,
+				icon: MATERIAL_ICONS.OUTBOX,
+				id: MATERIAL_ICONS.OUTBOX,
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
@@ -93,8 +93,8 @@ export class AonMessenger extends AonElement {
 			},
 			{
 				name: 'Recibidas',
-				icon: MATERIAL_ICONS.ARCHIVE,
-				id: MATERIAL_ICONS.ARCHIVE,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				id: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () =>{
 					this._filter.sender = undefined;
 					this._filter.task_holder = this.TASK_HOLDER.id;
@@ -182,6 +182,9 @@ export class AonMessenger extends AonElement {
 			let openCount = 0;
 			let archiveCount = 0;
 			let closeCount = 0;
+			// for(const key in res){
+			// 	console.log(value);
+			// }
 			res.map(r=>{
 				if(r.status ===0)
 					archiveCount = r.count;

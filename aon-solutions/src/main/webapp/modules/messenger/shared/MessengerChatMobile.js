@@ -3,7 +3,7 @@ import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import {  MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
+import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE } from "../MessengerEnums.js";
 import {  createDivEditable, createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment, createTaskHolder, createWorkgroup} from "./creationUtils.js";
 import { buildTextareaToolbar, fillWorkGroup } from "./utils.js";
 
@@ -15,14 +15,18 @@ export const buildMobile = (aonMessengerChat)=> {
     const mainView = createMobileMainView();
     aonMessengerChat.appendChild(mainView);
 
-    buildProcess(aonMessengerChat, mainView);
+    if(aonMessengerChat.task.source === TASK_SOURCE.GITHUB) 
+        buildProcess(mainView, aonMessengerChat);
+    else 
+        buildManual(mainView, aonMessengerChat); // SOURCE MANUAL 
 }
 
 /**
  * Create desktop chat for messenger (mobile)
+ * @param {HTMLElement} mainView htmlElement aon-messenger-chat
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-const buildProcess = (aonMessengerChat, mainView) => {
+const buildManual = (mainView, aonMessengerChat) => {
     const task = aonMessengerChat.task;
 
     const firstDiv = newComponent({
@@ -37,29 +41,14 @@ const buildProcess = (aonMessengerChat, mainView) => {
         },
     });
     firstDiv.appendTo(mainView);
-
-    const secondDiv = newComponent({
-        classes: [CSS.FLEX_ROW],
-        id: MESSENGER_IDS.SECOND_DIV,
-        styles: {
-          width: "100%",
-          position: "absolute",
-          bottom: 0
-        },
-    });
-    secondDiv.appendTo(mainView);
-
-    const divs = createSectionComment(secondDiv);
-    divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>openFullComment(divs.aonTextArea));
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
-    changeStyleSectionComment(divs);
-
+    
     /**
      * Wrapper 
      * if some new menus / toolbars needed, here.
      */
     const wrapper = newComponent({
         type: MESSENGER_COMPONENTS.WRAPPER,
+        id:MESSENGER_IDS.MAIN_WRAPPER,
         classes: [CSS.FLEX_COLUMN],
         styles: {
             width: "100%",
@@ -73,7 +62,6 @@ const buildProcess = (aonMessengerChat, mainView) => {
      * Building toolbars
      */
     buildToolbar(aonMessengerChat, wrapper);
-
     
     /**
      * The chat itself
@@ -92,11 +80,19 @@ const buildProcess = (aonMessengerChat, mainView) => {
     });
     chat.appendChild(title);
 
-    createFullComment(wrapper.element, aonMessengerChat, divs.aonTextArea);
+    //CREATE COMMENT CHAT
+    buildChat(mainView, aonMessengerChat);
 
-    setTimeout(() => {
-        setStyles(mainView, { opacity: 1, marginTop: 0});
-    }, 100);
+
+    setTimeout(() =>  setStyles(mainView, { opacity: 1, marginTop: 0}), 100);
+}
+
+/**
+ * @param {HTMLElement} mainView htmlElement aon-messenger-chat
+ * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
+ */
+const buildProcess =  (mainView, aonMessengerChat) => {
+    aonMessengerChat.getApplication().development();
 }
 
 const changeStyleSelect = (aonSelect) => {
@@ -238,7 +234,7 @@ const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     div.appendChild(aonTextArea);
-    buildTextareaToolbar(aonTextArea, aonMessengerChat.task);
+    buildTextareaToolbar(aonTextArea, aonMessengerChat.task, false);
     let textAreaDiv = document.getElementById(aonTextArea.TEXTAREA);
     if(textAreaDiv) textAreaDiv.style.padding = "20px";
 
@@ -255,14 +251,34 @@ const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
     }
 }
 
+const buildChat = (mainView, aonMessengerChat) => {
+    const secondDiv = newComponent({
+        classes: [CSS.FLEX_ROW],
+        id: MESSENGER_IDS.SECOND_DIV,
+        styles: {
+          width: "100%",
+          position: "absolute",
+          bottom: 0
+        },
+    });
+    secondDiv.appendTo(mainView);
+
+    const divs = createSectionComment(secondDiv);
+    divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>openFullComment(divs.aonTextArea));
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+    changeStyleSectionComment(divs);
+
+    createFullComment(aonMessengerChat, divs.aonTextArea);
+}
+
 
 /**
  * Build mobile version of the writter 
- * @param {HTMLElement} wrapper 
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat component 
  * @param {HTMLElement} aonTextArea textarea principal
  */
-const createFullComment = (wrapper, aonMessengerChat, aonTextArea) => { 
+ const createFullComment = (aonMessengerChat, aonTextArea) => { 
+    const wrapper = document.getElementById(MESSENGER_IDS.MAIN_WRAPPER);
     const writter = newComponent({
         id : MESSENGER_COMPONENTS.WRITTER,
         classes: [CSS.FLEX_COLUMN],
@@ -302,7 +318,7 @@ const createFullComment = (wrapper, aonMessengerChat, aonTextArea) => {
         margin: 0,
     });
     writter.appendChild(textarea);
-    buildTextareaToolbar(textarea, aonMessengerChat.task);
+    buildTextareaToolbar(textarea, aonMessengerChat.task, true);
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -318,7 +334,6 @@ const createFullComment = (wrapper, aonMessengerChat, aonTextArea) => {
       aonTextArea.FILES = textarea.FILES;
     });
 }
-
 /**
  * Hide writter with animation
  */
@@ -347,7 +362,7 @@ const buildToolbar = (aonMessengerChat, wrapper) => {
      */
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title: task.id ? "#"+(task.number  || "0").toString().padStart(5,0) : MSG.NEW_REQUEST
+        title:"#" + (task.number || "0").toString().padStart(5, 0)
     });
     toolbar.style.width = "100%"; 
     
@@ -361,3 +376,4 @@ const buildToolbar = (aonMessengerChat, wrapper) => {
     
     toolbar.addButton2(ACTIONS.BACK,() => aonMessengerChat.back());
 }
+

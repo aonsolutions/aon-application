@@ -1,9 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskHolder, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../signin/aon-sign.js';
@@ -12,13 +12,13 @@ import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../laboral/aon-laboral.js';
-import '../messenger/aon-messenger.js';
 import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
 
 import './aon-stat.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
+import { AonMessenger } from '../messenger/aon-messenger.js';
 
 export class AonDesktop extends AonElement {
 
@@ -134,11 +134,35 @@ export class AonDesktop extends AonElement {
 					}
 				}, {
 					name: 'Solicitudes',
-					icon: 'assignment',
-					fn: () => this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud')
+					icon: MATERIAL_ICONS.OUTBOX,
+					fn: () =>{
+						if(this.isBeta()){
+							getTaskHolder().then(th=>{
+								let aonMessenger = new AonMessenger();
+								aonMessenger._filter.sender = th.id;
+								this.rootPanel(aonMessenger);
+							});
+						} else {
+							this.development('Solicitud')
+						}
+					} 
+				},{
+					name: 'Tareas',
+					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+					fn: () =>{
+						if(this.isBeta()){
+							getTaskHolder().then(th=>{
+								let aonMessenger = new AonMessenger();
+								aonMessenger._filter.task_holder = th.id;
+								this.rootPanel(aonMessenger);
+							});
+						} else {
+							this.development('Solicitud')
+						}
+					}
 				}
 			];
-			aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
+			aonDesktop.addSidenavOptions('RESUMEN ACTIVIDADES', taskOptions);
 		}
 		let classicOptions = [];
 
@@ -334,7 +358,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanelHtml('<aon-signin></aon-signin>');
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');
+				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development('Solicitud');
 				break;
 		}
 	}

@@ -1,3 +1,4 @@
+import { AonCard } from "../../../components/aon-card.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS } from "../../../environments/environments.js";
@@ -291,7 +292,7 @@ export const createAction = (icon, message, outlined) => {
  * @param {object} styles 
  * @returns 
  */
-const createStartJustifiedRow = (styles) => newComponent({
+export const createStartJustifiedRow = (styles) => newComponent({
     classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: styles
 });
@@ -563,3 +564,18 @@ export const createChat = () => newComponent({
         "scroll-behavior": "smooth",
     }
 }).element;
+
+
+/**
+ * 
+ * @param {String} id 
+ * @param {String} title 
+ * @returns 
+ */
+export const createCardMessenger = (id, title) =>{
+  const aonCard = new AonCard();
+  aonCard.title = title;
+  aonCard.id = id;
+  aonCard.style.width = "100%";
+  return aonCard;
+}

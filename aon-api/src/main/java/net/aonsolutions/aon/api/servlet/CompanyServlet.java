@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -368,7 +370,14 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getNotices(AonApiData api) {
-		return AON.getRawdocUserData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()).toJSON();
+		JSONObject jsonG = AON.getRawdocUserData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()).toJSON();
+		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
+		JSONObject request = new JSONObject();
+		map.forEach((k,v)->{
+			request.put(TaskStatus.safeValueOf(k).getName(), v);
+		});
+		jsonG.put("solicitudes",request);
+		return jsonG;
 	}
 	
 	private JSONObject getMedia(AonApiData api) {

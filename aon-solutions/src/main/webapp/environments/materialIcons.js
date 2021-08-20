@@ -145,7 +145,7 @@ export const LINK = "link";
 
 export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
-
+export const MOVE_TO_INBOX = "move_to_inbox";
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';
@@ -184,3 +184,5 @@ export const VISIBILITY_OFF = 'visibility_off';
 
 
 export const OPEN_IN_FULL = "open_in_full";
+
+export const OUTBOX = "outbox";

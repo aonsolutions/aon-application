@@ -104,6 +104,7 @@ export const CLOSE = "Cerrar";// TODO
 // ----- D
 
 export const DATE = MSG.DATE;
+export const DATA = "Datos";//TODO
 export const DEACTIVATE = MSG.DEACTIVATE;
 export const DELETE = MSG.DELETE;
 export const DELETE_CATEGORY = MSG.DELETE_CATEGORY;
@@ -218,6 +219,7 @@ export const MAILBOX = "Buzón";//TODO
 export const NAME = MSG.NAME;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_REQUEST = "Nueva solicitud"; //TODO
+export const NEW = "Nueva"; //TODO
 export const NEXT = MSG.NEXT;
 export const NIF = 'NIF';//TODO
 export const NOTIFICATIONS = 'Notificaciones';//TODO

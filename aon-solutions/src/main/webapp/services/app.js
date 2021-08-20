@@ -144,8 +144,8 @@ export const CONFIGURATION = {
 
 export const MESSENGER = {
   app: CONSTANT.MESSENGER,
-  title: MSG.TASK_TRAY,
-  description: MSG.TASK_TRAY,
+  title: `${MSG.REQUESTS} / ${MSG.TASKS}`,
+  description: `${MSG.REQUEST} / ${MSG.TASKS}`,
   icon: AON_ICONS.AON_APP,
   color: '#CADEFF',
   access: [{

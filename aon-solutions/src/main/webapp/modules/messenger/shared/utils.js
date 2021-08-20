@@ -6,13 +6,13 @@ import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createChatMessage, LEFT, RIGHT } from "./creationUtils";
+import { createAction, createCardMessenger, createChatMessage, LEFT, RIGHT } from "./creationUtils";
 
 /**
  * Build standard toolbar options 
  * @param {*} aonTextArea 
  */
-export const buildTextareaToolbar =  (aonTextArea, task) => {
+export const buildTextareaToolbar =  (aonTextArea, task, file= false) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText) setStyles(textAreaText, {resize: "none"});
     /**
@@ -66,7 +66,7 @@ export const buildTextareaToolbar =  (aonTextArea, task) => {
     },() =>blockquote());
 
 
-    if(task && task.id){
+    if(task && task.id && file){
         //ATTACH
         aonTextArea.addToolbarOptionLeft({
             id: MATERIAL_ICONS.ATTACH_FILE,
@@ -373,12 +373,12 @@ const changeFormProcess = ({value,name}) => {
     const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
     processDiv.innerHTML = "";
     //CREATE CARD
-    let card = setAttributes(new AonCard(), { id:"cardProcess", title: name });
-    processDiv.appendChild(card);
-    card.getCard().style.margin = 0;
-
+    let aonCard = createCardMessenger("aonCardProcess", name);
+    processDiv.appendChild(aonCard);
+    aonCard.getCard().style.margin = 0;
+    aonCard.getCard().style.marginTop = "10px";
     if(task.id){ //BUTTON SHOW JSON
-        card.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
+        aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
              if(d){
                 d.clear();
@@ -392,7 +392,7 @@ const changeFormProcess = ({value,name}) => {
     }
 
     if(value===1){ //FORM VACATION
-        createFormVacation(card, aonMessengerChat);
+        createFormVacation(aonCard, aonMessengerChat);
     } 
 }
 

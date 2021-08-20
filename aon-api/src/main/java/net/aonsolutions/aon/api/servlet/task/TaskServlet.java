@@ -211,6 +211,13 @@ public class TaskServlet extends AonApiHttpServlet{
 			json.put("count",v);
 			array.put(json);
 		});
+		
+//		JSONObject json = new JSONObject();
+//		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
+//		map.forEach((k,v)->{
+//			json.put(TaskStatus.safeValueOf(k).getName(), v);
+//		});
+//		return json;
 
 		return array;
 	}

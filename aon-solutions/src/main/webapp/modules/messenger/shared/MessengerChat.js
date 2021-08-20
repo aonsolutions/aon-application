@@ -4,7 +4,7 @@ import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv } from "./creationUtils";
+import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv, createStartJustifiedRow, createCardMessenger } from "./creationUtils";
 import { addLine, buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
@@ -105,26 +105,34 @@ const buildManual = (mainView, aonMessengerChat) => {
     });
     firstDiv.appendTo(mainView);
 
+    const aonCard = createCardMessenger(MSG.DATA, MSG.DATA);
+    firstDiv.appendChild(aonCard);
+    aonCard.getCard().style.margin = 0;
+  
+    const columnsDiv = createStartJustifiedColumn();
+    aonCard.setContent(columnsDiv.element);
+
     const titleDiv = titleFirstDiv();
-    firstDiv.appendChild(titleDiv);
+    columnsDiv.appendChild(titleDiv);
     //TITLE
     const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, `Escriba su ${MSG.ISSUE} aquí`);
     titleDiv.appendChild(title);
   
-    const receiverDiv = createReceiverDiv();
-    receiverDiv.appendTo(firstDiv.element);
+
+    const rowsDiv = createStartJustifiedRow();
+    rowsDiv.element.style.width = "100%";
+    columnsDiv.appendChild(rowsDiv.element);
 
      //-----------------WORKGROUP
     const workgroupSelect = createWorkgroup();
     workgroupSelect.style.width = "100%";
-    receiverDiv.appendChild(workgroupSelect);
+    rowsDiv.appendChild(workgroupSelect);
     fillWorkGroup(task, application);
 
     //-----------------TASK HOLDER
     const taskHolderSelect = createTaskHolder();
-    taskHolderSelect.style.marginLeft = "5px";
     taskHolderSelect.style.width = "100%";
-    receiverDiv.appendChild(taskHolderSelect);
+    rowsDiv.appendChild(taskHolderSelect);
 
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
         height: '100%',
@@ -134,7 +142,7 @@ const buildManual = (mainView, aonMessengerChat) => {
     firstDiv.appendChild(aonTextArea);
     if(task && task.description) aonTextArea.value = task.description;
 
-    buildTextareaToolbar(aonTextArea, task);
+    buildTextareaToolbar(aonTextArea, task, false);
 
     setTimeout(() =>  setStyles(mainView, {opacity: 1, marginTop:0}), 100);
 }
@@ -149,6 +157,7 @@ const buildManual = (mainView, aonMessengerChat) => {
   const task = aonMessengerChat.task;
   const application = aonMessengerChat.applicationEl;
 
+  
   const firstDiv = newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
     id: MESSENGER_IDS.FIRST_DIV,
@@ -166,8 +175,12 @@ const buildManual = (mainView, aonMessengerChat) => {
   });
   mainView.appendChild(firstDiv.element)
 
+  const aonCard = createCardMessenger(MSG.DATA, MSG.DATA);
+  firstDiv.appendChild(aonCard);
+  aonCard.getCard().style.margin = 0;
+
   const receiverDiv = createReceiverDiv();
-  receiverDiv.appendTo(firstDiv.element);
+  aonCard.setContent(receiverDiv.element);
 
   //-----------------TYPE PROCESS
   const typeProcess = createProcessType();
@@ -300,7 +313,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   });
   dialog.setContent(textarea);
 
-  buildTextareaToolbar(textarea, aonMessengerChat.task);
+  buildTextareaToolbar(textarea, aonMessengerChat.task, true);
 
   // const dialogMain = dialog.getMain();
 
