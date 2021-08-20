@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
@@ -12,10 +11,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.IT;
-import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
+import com.esferalia.aon.gwt.payroll.shared.IT;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -878,7 +877,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	@UiHandler("leyendButton")
 	public void onLeyendButtonClick(ClickEvent event) {
-		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog();
+		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
+
+			@Override
+			protected Integer getTotalYearDays(DayType realDays) {
+				return employeeCalendarDraftObject.getTotalYearDays(realDays);
+			}
+		};
+			
 		leyendDialog.center();
 		leyendDialog.show();
 	}

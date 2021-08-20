@@ -660,4 +660,27 @@ public class EmployeeCalendarDraftObject {
 //		Window.alert(this.employeeCalendarInfo.getCalendarHoursExtraCompl().toStringList());
 		this.employeeCalendarInfo.getCalendarHoursExtraCompl().initMapDayHoursComplementary();
 	}
+
+	// ----------------------------------------------------------------------------------
+	// 										LEYEND METHOD
+	// ----------------------------------------------------------------------------------
+	
+	public Integer getTotalYearDays(DayType dayType) {
+		Integer countDays = 0;
+		
+		Date startDate = DateUtils.getFirstDayOfYear();
+		Date endDate = DateUtils.getLastDayOfYear(startDate);
+		Date iteratorDate = DateUtils.copyDateOnly(startDate);
+		
+		while (DateUtils.isBeforeOrEquals(iteratorDate, endDate)) {
+			DayType iteratorDayType = employeeCalendarInfo.getCalendarDaysType().getDayTypeByDate(iteratorDate);
+			
+			if(null != iteratorDayType && iteratorDayType == dayType)
+				countDays++;
+			
+			DateUtils.addDays2Date(iteratorDate, 1);
+		}
+		
+		return countDays;
+	}
 }
