@@ -422,8 +422,10 @@ public class AccountingUtilitiesDAO {
 					AccUtilitiesAccountChangeParams params = new AccUtilitiesAccountChangeParams()
 						.setDomain(ctx.getDomainId())
 						.setOldAccount(wrongAccount)
-						.setNewAccount(rightAccount); 
-//					changeAccount(ctx, ctx.getDomainId(), wrongAccount, rightAccount, result  );
+						.setNewAccount(rightAccount)
+						.setChangeInEntriesEnabled(true)
+						.setChangeInMastersEnabled(true)
+						; 
 					LinkedList<String> msgs = AccountChangeDAO.changeAccount(ctx, params);
 					for (String msg :  msgs) {
 						result.add(new AccUtilitiesInfoItem().setMessage(msg));	
