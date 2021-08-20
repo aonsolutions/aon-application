@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -678,6 +679,12 @@ public class AON_SOLUTIONS {
 	public static Task getTask(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTask(ctx, filter);
+		}
+	}
+	
+	public static HashMap<Byte, Integer> getTaskStatusCount(Domain domain, User user, TaskFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskStatusCount(ctx, filter);
 		}
 	}
 	

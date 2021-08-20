@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -194,6 +195,18 @@ public class TaskDAO {
 		.execute();
 	}
 	
+	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
+		HashMap<Byte, Integer> map = new HashMap<Byte, Integer>();
+		ctx.getDslContext()
+		.select(DSL.count(TASK.STATUS).as(DSL.name("count")), TASK.STATUS)
+		.from(TASK)
+		.where(TASK_PROPERTIES.getConditions(filter))
+		.groupBy(TASK.STATUS)
+		.fetch().stream().forEach(r->{
+			map.put(r.get(TASK.STATUS), (Integer) r.get(DSL.name("count")));
+		});
+		return map;
+	}
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
 		 return 
 				 DSL.select( 

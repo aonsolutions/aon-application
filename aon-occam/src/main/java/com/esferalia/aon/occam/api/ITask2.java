@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
@@ -19,6 +20,7 @@ public interface ITask2 {
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Task saveTask(AONContext ctx, Task task);
 	public void deleteTask(AONContext ctx, Integer id);
+	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);

@@ -1,11 +1,16 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
@@ -18,6 +23,7 @@ import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -44,6 +50,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/attach":
 					response(req, resp,  getTasksAttach(api));
+					break;
+				case "/count-status-task":
+					response(req, resp,  getTaskStatusCount(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -128,9 +137,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		
-//		if(!search.isEmpty()) 
-			
-			
+		if(!search.isEmpty()) {
+			filter = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
+//			String numberSearch = search.replaceAll("[^\\d]", "");
+//			if(!numberSearch.isEmpty())
+//				System.out.println( Integer.parseInt(numberSearch)  );
+		}
+		
 		return filter;
 	}
 	
@@ -187,6 +200,19 @@ public class TaskServlet extends AonApiHttpServlet{
 			return TaskAttachJSON.toJSON(AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach));
 		}
 		return new JSONObject();
+	}
+	
+	private JSONArray getTaskStatusCount(AonApiData api) {
+		JSONArray array = new JSONArray(); 
+		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
+		map.forEach((k,v)->{
+			JSONObject json = new JSONObject();
+			json.put("status", k);
+			json.put("count",v);
+			array.put(json);
+		});
+
+		return array;
 	}
 	
 	private JSONObject deleteTask(AonApiData api) {

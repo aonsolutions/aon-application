@@ -68,6 +68,7 @@ export const modalReport = (application, aonPresenceList, type) => {
         } else {
           aonPresenceList.getTimeControlExcel(aonSelectYear);
         }
+        d.close();
       }, "Aceptar");
     }
 }

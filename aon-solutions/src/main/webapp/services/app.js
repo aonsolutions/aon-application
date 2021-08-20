@@ -144,8 +144,8 @@ export const CONFIGURATION = {
 
 export const MESSENGER = {
   app: CONSTANT.MESSENGER,
-  title: MSG.REQUESTS,
-  description: MSG.REQUESTS,
+  title: MSG.TASK_TRAY,
+  description: MSG.TASK_TRAY,
   icon: AON_ICONS.AON_APP,
   color: '#CADEFF',
   access: [{
@@ -258,7 +258,7 @@ export const OUTSOURCING = {
   disabled: true
 };
 
-export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, TOOLS};
+export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS};
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 

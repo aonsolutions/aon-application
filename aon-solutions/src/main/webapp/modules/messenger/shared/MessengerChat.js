@@ -159,7 +159,7 @@ const buildManual = (mainView, aonMessengerChat) => {
       maxWidth: "600px",
       paddingTop: "20px",
       paddingRight: "20px",
-      paddingLeft: "60px",
+      paddingLeft: "30px",
       overflow:"auto",
       top: 0
     },

@@ -391,9 +391,8 @@ const changeFormProcess = ({value,name}) => {
         });
     }
 
-    let data = task.id ? JSON.parse(task.description) : undefined;
     if(value===1){ //FORM VACATION
-        createFormVacation(card, data);
+        createFormVacation(card, aonMessengerChat);
     } 
 }
 
@@ -423,7 +422,3 @@ export const addLine = () => {
     const lined = document.querySelector(".continueLined");
     if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
 }
-
-
-
-  

@@ -3,15 +3,20 @@ import { AonBasicTable } from "../../../components/aon-basic-table";
 import { AonDate } from "../../../components/aon-date";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { AonInput } from "../../../components/aon-input";
+import { AonSelect } from "../../../components/aon-select";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
-import { formatDateOrigin, setAttributes } from "../../../services/utils";
+import { formatDateOrigin, serializeForm, setAttributes } from "../../../services/utils";
 import { MESSENGER_IDS } from "../MessengerEnums";
 
 /**
  * 
  * @param {HTMLElement} card 
  */
- export const createFormVacation = (card, data= {}) =>{
+ export const createFormVacation = (card, aonMessengerChat) =>{
+    const task = aonMessengerChat.task;
+    
+    let data = task.id ? JSON.parse(task.description) : {};
+
     const form  = setAttributes(document.createElement(TAG.FORM),{
         id:MESSENGER_IDS.FORM_DINAMIC,
         action:"#"
@@ -20,8 +25,15 @@ import { MESSENGER_IDS } from "../MessengerEnums";
     form.style.width = "100%";
     card.setContent(form);
 
-    let textarea = setAttributes(new AonInput(),{ description: MSG.OBSERVATION, autocomplete : "off", id:form.id+"Observation", value: data.observation || "" });
-    form.appendChild(textarea);
+    if(task.id){
+        let aonSelect = setAttributes(new AonSelect(),{ title: "Estado", id:"status", name:"status"});
+        form.appendChild(aonSelect);
+        aonSelect.options = JSON.stringify(getStatus());
+        if(data.status) aonSelect.value = data.status;
+    }
+
+    let input = setAttributes(new AonInput(),{ description: MSG.OBSERVATION, autocomplete : "off", name:"observation", value: data.observation || "" });
+    form.appendChild(input);
 
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
@@ -57,7 +69,6 @@ const addDates = (table, data={}, i) =>{
     
     //DATE INI
     let startDate = setAttributes(new AonDate(),{
-        name:`startDate[]`,
         id:"startDate" + i,
         title:MSG.START_DATE,
     });
@@ -68,7 +79,6 @@ const addDates = (table, data={}, i) =>{
     //DATE END
     let endDate = setAttributes(new AonDate(),{
         id: "endDate" + i,
-        name:`endDate[]`,
         title:MSG.END_DATE
     });
 
@@ -94,19 +104,28 @@ const addDates = (table, data={}, i) =>{
  */
 export const getFormVacationJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
-    const observation = document.getElementById(form.id+"Observation").value;
-    let dates = [];
     //DATES
+    let dates = [];
     [...form.querySelectorAll("table tr")].map(tr=>{
-        let startDate = tr.querySelector("[name*=startDate]");
-        let endDate = tr.querySelector("[name*=endDate]");
+        let startDate = tr.querySelector("[id*=startDate]");
+        let endDate = tr.querySelector("[id*=endDate]");
         if(startDate && endDate && startDate.value && endDate.value)
             dates.push({startDate: startDate.value, endDate: endDate.value});
     })
 
-    let json = {
-        observation,
-        dates
-    }
-    return JSON.stringify(json);
+    const formSerialize = serializeForm(form);
+
+    return JSON.stringify({ ...formSerialize, dates});
 }
+
+
+const getStatus = () => [
+    {
+        name:MSG.ACCEPT,
+        value: 1
+    },
+    {
+        name:MSG.REJECT,
+        value: 2
+    }
+];

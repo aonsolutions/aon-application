@@ -151,6 +151,7 @@ export const MORE_VERT = 'more_vert';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PRINT = 'print';
+export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 
 // ----- R
 

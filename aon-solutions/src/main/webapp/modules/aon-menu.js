@@ -16,6 +16,7 @@ import './imports/aon-imports.js';
 import './invoice/aon-invoice-panel.js';
 
 import * as GWT from "../gwt/gwt.js";
+import { AonMessenger } from './messenger/aon-messenger.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -131,6 +132,9 @@ export class AonMenu extends AonElement {
 				break;
 			case Apps.TIMECONTROL.app:
 				this.rootPanelHtml('<aon-signin></aon-signin>');
+				break;
+			case Apps.MESSENGER.app:
+				this.rootPanel(new AonMessenger());
 				break;
 			case AuxApps.TOOLS.app:
 				this.buildAppMenu(AuxApps.TOOLS);
@@ -464,6 +468,8 @@ export class AonMenu extends AonElement {
 			return this.getDur().isTimecontrol();
 		else if(MenuApps.INVOICE.app === app.app)
 			return this.getDur().isInvoice();
+		else if(MenuApps.MESSENGER.app === app.app)
+			return this.getDur().isMessenger();
 		else if(MenuApps.TOOLS.app === app.app)
 			return true;
 		else return false;

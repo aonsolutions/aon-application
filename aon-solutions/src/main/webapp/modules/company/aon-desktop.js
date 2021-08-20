@@ -232,6 +232,7 @@ export class AonDesktop extends AonElement {
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
 					li.style.cursor = 'pointer';
+					li.title = Apps[key].title;
 					li.addEventListener('click', () => {
 						this.appSelection(Apps[key].app);
 					});

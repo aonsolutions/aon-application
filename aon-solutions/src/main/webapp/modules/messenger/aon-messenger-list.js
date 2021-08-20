@@ -104,7 +104,13 @@ export class AonMessengerList extends AonElement {
       if(this.isMobile()){
         this.applicationEl.addFloatOption(SigninSidenav.ADD, ({target}) =>  this.addTask(target));
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, ({target}) => this.addTask(target));
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, ({target}) =>{
+          if(TASK_SOURCE.CAU === this.applicationParentEl._filter.source){
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
+          } else {
+            this.addTask(target);
+          }
+        });
       }
     }
     this.buildToolbarSearch();

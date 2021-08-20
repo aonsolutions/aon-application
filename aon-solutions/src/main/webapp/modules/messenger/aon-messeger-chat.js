@@ -184,7 +184,8 @@ export class AonMessengerChat extends AonElement {
         break;
       }
       await saveTaskWorkflow({...this.task.getWorkflowTmp(), type});
-      this.save();
+      await this.save();
+      this.applicationParentEl.updateStatusSidenavCount();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
   }

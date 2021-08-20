@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
@@ -50,6 +51,11 @@ public class Task2Impl implements ITask2 {
 	public Task saveTask(AONContext ctx, Task task) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			TaskDAO.save(ctx, task));
+	}	
+	
+	@Override
+	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskStatusCount(ctx, filter));
 	}	
 	
 	@Override

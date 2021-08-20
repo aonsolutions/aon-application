@@ -438,7 +438,7 @@ export class AonApplication extends AonElement {
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;
-      li.className = "aonAppMenuSidenavList aonOpacity";
+      li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
       ul.appendChild(li);
       if(option.options) {
         li.style.paddingLeft = '6px';
@@ -463,6 +463,7 @@ export class AonApplication extends AonElement {
 
       let span = this.createElement(TAG.SPAN);
       span.className = "aonMenuItemSpan";
+      span.title =  option.name;
       if (option.count && option.count > 0) {
         span.innerHTML = option.name + " (" + option.count + ")";
         span.style.fontWeight = "bold";
@@ -499,15 +500,15 @@ export class AonApplication extends AonElement {
       }
       li.appendChild(span);
 
-      li.addEventListener(EVENT.MOUSEOVER, () => {
-        if (!this.selected || this.selected !== id)
-          li.style.backgroundColor = "#f1f1f1";
-      });
+      // li.addEventListener(EVENT.MOUSEOVER, () => {
+      //   if (!this.selected || this.selected !== id)
+      //     li.style.backgroundColor = "#f1f1f1";
+      // });
 
-      li.addEventListener(EVENT.MOUSELEAVE, () => {
-        if (!this.selected || this.selected !== id)
-          li.style.backgroundColor = "white";
-      });
+      // li.addEventListener(EVENT.MOUSELEAVE, () => {
+      //   if (!this.selected || this.selected !== id)
+      //     li.style.backgroundColor = "white";
+      // });
 
       if (option.actions) {
         let actionDiv = this.createElement(TAG.SPAN);
@@ -538,13 +539,20 @@ export class AonApplication extends AonElement {
       }
 
       li.addEventListener(EVENT.CLICK, () => {
+        let backgroundEl = li.style.backgroundColor;
+
         const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
         ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
+            else {
+              console.log(el.style.backgroundColor);
+            }
         });
+        
+        li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
+
         this.selected = id;
-        li.style.backgroundColor = "#ddd";
         let toolbar = this.getElement(this.TOOLBAR);
         toolbar.setAttribute("option", option.name);
         if(option.fn) option.fn();
@@ -580,6 +588,29 @@ export class AonApplication extends AonElement {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
+  }
+
+  /**
+   * 
+   * @param {String} id  
+   * @param {Number} count 
+   */
+  updateSidenavCount(id, count){
+    let li = this.getElement(this.SIDENAV+id);
+    if(li){
+      let span = li.querySelector("span");
+      if(span){
+        let name = span.title;
+        let fontWeight = "normal";
+        let text = name;
+        if(count) {
+          text = name + " (" + count + ")";
+          fontWeight = "bold";
+        } 
+        span.innerHTML = text;
+        span.style.fontWeight = fontWeight;
+      }
+    }
   }
 
   addOption(name, icon, fn) {

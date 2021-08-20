@@ -341,7 +341,7 @@ export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
-export const TASK_TRAY = "Bandeja de tareas";//TODO
+export const TASK_TRAY = "Bandeja Tareas";//TODO
 export const TITLE = "Título" //TODO
 export const TRAY = "Bandeja";//TODO
 // ----- U
