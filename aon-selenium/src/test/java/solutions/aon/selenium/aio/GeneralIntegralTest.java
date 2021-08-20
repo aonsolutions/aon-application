@@ -1,6 +1,7 @@
 package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
@@ -152,7 +153,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 			calendar.set(Calendar.MONTH, month);
 			switchSalaryMonth(driver, calendar);
 			retryingFindClick(driver, By.id(GWT_ID_PROFIX + "salaryButton"));
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
+			wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "dbSalaryCheck")));
 		}
 		
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
@@ -1081,9 +1082,7 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		assertEquals(0, driver.findElements(By.cssSelector("#" + GWT_ID_PROFIX + "eventsTable tr")).size());
 	}
 	
-	@Test
-	public void testDraftConceptChange() throws Exception {
-//		ENTER 'INTEGRAL DE NÓMINAS'
+	private static void createDraftTestContract() throws InterruptedException {
 		SeleniumTools.integralFromIndex(driver);
 		
 		String workplaceId = GWT_ID_PROFIX + "i.t";
@@ -1103,10 +1102,10 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "name", "BORRADOR");
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "first_surname", "PRUEBA");
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "activityCCC"));
-		SeleniumTools.click(driver, By.cssSelector("#" + GWT_ID_PROFIX + "activityCCC :nth-child(2)"));
+		SeleniumTools.click(driver, By.cssSelector("#" + GWT_ID_PROFIX + "activityCCC :nth-child(3)"));
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "activityCCC"));
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "contractType"));
-		SeleniumTools.click(driver, By.cssSelector("#" + GWT_ID_PROFIX + "contractType :nth-child(2)"));
+		SeleniumTools.click(driver, By.cssSelector("#" + GWT_ID_PROFIX + "contractType :nth-child(3)"));
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "contractType"));
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "modality"));
 		SeleniumTools.click(driver, By.cssSelector("#" + GWT_ID_PROFIX + "modality :nth-child(2)"));
@@ -1114,12 +1113,10 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		
 		Calendar cal = Calendar.getInstance(new Locale("es", "ES"));
 		cal.set(Calendar.DAY_OF_MONTH, 1);
-		cal.add(Calendar.MONTH, -1);
+		cal.add(Calendar.YEAR, -1);
+//		cal.add(Calendar.MONTH, -2);
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
 		String from = df.format(cal.getTime());
-		
-		String diseaseDate = df.format(SeleniumTools.firstMondayOfMonth(cal.getTime()));
-		String healthDate = df.format(SeleniumTools.firstMondayOfMonth(cal.getTime()));
 		
 		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "start_date", from);
 		
@@ -1140,7 +1137,16 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "occupation"));
 		
 		SeleniumTools.click(driver, By.cssSelector("button.aon_ok_button_small"));
-		
+	}
+	
+	private void addIT() {
+		Calendar cal = Calendar.getInstance(new Locale("es", "ES"));
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
+		cal.set(Calendar.DAY_OF_MONTH, 10);
+		String diseaseDate = df.format(cal.getTime());
+		cal.set(Calendar.DAY_OF_MONTH, 13);
+		String healDate = df.format(cal.getTime());
 		SeleniumTools.click(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		SeleniumTools.click(driver, By.cssSelector("a[id='aonContent:payrollMenu:gwt_main_it']"));
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy((By.cssSelector("rect"))));
@@ -1160,41 +1166,98 @@ public class GeneralIntegralTest extends AioBaseTestCase {
 		SeleniumTools.safeInput(driver, cssBaja, diseaseDate);
 		SeleniumTools.click(driver, By.cssSelector(cssOut));
 		SeleniumTools.click(driver, By.cssSelector(cssAlta));
-		SeleniumTools.safeInput(driver, cssAlta, healthDate);
+		SeleniumTools.safeInput(driver, cssAlta, healDate);
 		SeleniumTools.click(driver, By.cssSelector(cssOut));
 		SeleniumTools.click(driver, By.cssSelector(cssCausaBaja));
-		SeleniumTools.click(driver, By.cssSelector(cssCausaBaja + " :nth-child(3)"));
+		SeleniumTools.click(driver, By.cssSelector(cssCausaBaja + " :nth-child(2)"));
 		SeleniumTools.click(driver, By.cssSelector(cssCausaBaja));
 		SeleniumTools.click(driver, By.cssSelector(cssCausaAlta));
 		SeleniumTools.click(driver, By.cssSelector(cssCausaAlta + " :nth-child(2)"));
 		SeleniumTools.click(driver, By.cssSelector(cssCausaAlta));
 		SeleniumTools.click(driver, By.cssSelector(cssAceptar));
-		
-		//TODO
+	}
+	
+	private void removeIT() {
 		SeleniumTools.click(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		SeleniumTools.click(driver, By.cssSelector("a[id='aonContent:payrollMenu:gwt_main_it']"));
 		
 		SeleniumTools.safeInput(driver, ".gwt-SuggestBox", "PRUEBA , BORRADOR");
 		SeleniumTools.click(driver, By.cssSelector(".gwt-SuggestBoxPopup .item"));
-		SeleniumTools.click(driver, By.cssSelector("rect[fill='#aa0033']"));
+		SeleniumTools.click(driver, By.cssSelector("rect[fill='#ffa500']"));
 		SeleniumTools.click(driver, By.cssSelector("button.aon_icon_delete"));
 		SeleniumTools.click(driver, By.cssSelector("button.aon_ok_button"));
-		
+	}
+	
+	@Test
+	public void testDraftConceptChange() throws Exception {
+		createDraftTestContract();
 		
 		SeleniumTools.integralFromIndex(driver);
-		
+		String workplaceId = GWT_ID_PROFIX + "i.t";
 		SeleniumTools.openWorkplace(driver, workplaceId);
+		SeleniumTools.draft(driver, "PRUEBA, BORRADOR");
 		
-		String createdId = GWT_ID_PROFIX + "prueba,_borrador-content";
-		
-		SeleniumTools.click(driver, By.id(createdId));
-		SeleniumTools.rightClick(driver, By.id(createdId));
-		SeleniumTools.click(driver, By.cssSelector("span.aon-icon-delete"));
-		
-		Thread.sleep(3000);
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "description-box-new-payment", "CUALQUIER COSA");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment"))).sendKeys(Keys.TAB);
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "amount-box-new-payment", "100");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "amount-box-new-payment"))).sendKeys(Keys.TAB);
+		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "edit-button-1"));
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "conceptSuggestBox", "PLUS_CONVENIO");
+		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "paymetDialogAcceptButton"));
+		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "edit-button-1"));
+		boolean fail = false;
+		try {
+			wait.until(ExpectedConditions.attributeToBe(By.id(GWT_ID_PROFIX + "conceptSuggestBox"), "value", "PLUS_CONVENIO"));
+		} catch (Exception e) {
+			fail = true;
+		} finally {
+			SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "paymetDialogCancelButton"));
+			removeContract();
+			assertFalse(fail);
+		}
 		
 	}
 	
+	@Test
+	public void testDraftITConceptChange() throws Exception {
+		createDraftTestContract();
+		addIT();
+		
+		
+		SeleniumTools.integralFromIndex(driver);
+		SeleniumTools.search(driver, "PRUEBA, BORRADOR");
+		SeleniumTools.draft(driver, "PRUEBA, BORRADOR");
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "description-box-new-payment", "CUALQUIER COSA");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "description-box-new-payment"))).sendKeys(Keys.TAB);
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "amount-box-new-payment", "DIAS_TRABAJADOS");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "amount-box-new-payment"))).sendKeys(Keys.TAB);
+		SeleniumTools.click(driver, By.id(GWT_ID_PROFIX + "acceptButton"));
+		SeleniumTools.safeInput(driver, "#" + GWT_ID_PROFIX + "db-amount-label-3", "DIAS_TRABAJADOS/DIAS_MES");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(GWT_ID_PROFIX + "db-amount-label-3"))).sendKeys(Keys.TAB);
+		
+		boolean fail = false;
+		try {
+			wait.until(ExpectedConditions.attributeToBe(By.id(GWT_ID_PROFIX + "db-amount-label-3"), "value", "CUALQUIER COSA"));
+		} catch (Exception e) {
+			fail = true;
+		} finally {
+			removeIT();
+			removeContract();
+			assertFalse(fail);
+		}
+		
+	}
+	
+	private void removeContract() throws InterruptedException {
+		SeleniumTools.integralFromIndex(driver);
+		SeleniumTools.search(driver, "PRUEBA, BORRADOR");
+		String createdId = GWT_ID_PROFIX + "prueba,_borrador-content";
+		SeleniumTools.click(driver, By.id(createdId));
+		SeleniumTools.rightClick(driver, By.id(createdId));
+		SeleniumTools.click(driver, By.cssSelector("span.aon-icon-delete"));
+	}
+
+
 	private void extra(Date issueDate, Date endDate) {
 		SeleniumTools.selectPayrollType(driver, SalaryType.EXTRA);
 		
