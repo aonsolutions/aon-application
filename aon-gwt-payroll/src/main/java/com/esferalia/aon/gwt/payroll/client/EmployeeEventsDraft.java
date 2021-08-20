@@ -444,6 +444,9 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			
 			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
 			
+			if(AonStringUtils.containsIgnoreCase(variableName, "("))
+				variableName = AonStringUtils.split(variableName, '(')[0].trim();
+			
 			ArrayList<EmployeeEventsVariable> employeeEventsVariables = employeeEventsDraft.getListEmployeeEventsVaribales(variableName);
 			
 			if(!employeeEventsDraft.isCalendarVariable(variableName)) {
