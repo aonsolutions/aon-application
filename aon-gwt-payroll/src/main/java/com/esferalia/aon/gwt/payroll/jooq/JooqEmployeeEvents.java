@@ -18,6 +18,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.mvel2.MVEL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
@@ -237,7 +238,7 @@ public class JooqEmployeeEvents {
 					.setStartDate(parseDateToJava(startDate))
 					.setEndDate(parseDateToJava(endDate))
 					.setName(name)
-					.setExpression(expression);
+					.setExpression(MVEL.eval(expression).toString());
 					
 					varibaleList.add(quarterVariableEmployeeInfo);
 				}
@@ -256,9 +257,20 @@ public class JooqEmployeeEvents {
 		return employeeInfoVariablesEvents;
 	}
 	
-	private static void checkVariableIfComplexExpression(Result<Record> variableEmployeeInfo) {
-		for(Record record : variableEmployeeInfo)
-			Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+	private static void checkVariableIfComplexExpression(Result<Record> variableEmployeeInfo) throws Exception {
+		for(Record record : variableEmployeeInfo) {
+			try {
+				Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+			} catch (Exception e) {
+				try {
+				    Object res = MVEL.eval(record.get(CONTRACT_DATA.EXPRESSION));
+				    System.err.println("EVAL EXPRESSION " + record.get(CONTRACT_DATA.EXPRESSION) + " -> " + res);
+				} catch (Exception ex) {
+					throw new RuntimeException();
+				}
+			}
+			
+		}
 	}
 
 	private static String getCoefficientVariable(String name) {
