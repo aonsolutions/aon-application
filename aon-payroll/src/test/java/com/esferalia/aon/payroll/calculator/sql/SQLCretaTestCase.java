@@ -5516,6 +5516,77 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaITPagoDelegadoMonthly()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C401, "08");
+		setData(aonContext, contract, ContextVariable.MONTH_DAYS.getName(), "30.00");
+		
+		setData(aonContext, contract, ContextVariable.CGC_BASE_MIN.getName(), "[\"08\":(100.00)][GRUPO_COTIZACION]");
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startIt = add(startDate, DAY_OF_MONTH, -16);
+		Date endIt = add(startDate,  DAY_OF_MONTH, 20);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, endIt, null);
+		
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		//Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
+				.forEach(salary -> {
+					
+					Date endActive = add(startIt, DATE, -1);
+					
+					for ( Entry<String, List<ContextData>> entry : salary.getContextData().entrySet() ) {
+						System.out.print(entry.getKey() + ": " );
+						for ( ContextData data: entry.getValue())
+							System.out.print(data.getExpression() + "(" + data.getStartDate() + ".." + data.getEndDate()  + "),") ;
+						System.out.println();
+					}
+					
+
+				});
+		;
+		
+
+		cleanSalaries(aonContext);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		for (Tramo tramo : tramos) {
+			//Utils.marshal(tramo, System.out);
+			assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), "I", "51", "P");
+		}
+		
+		cleanSalaries(aonContext);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		for (net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo : bases) {
+			assertDato(tramo.getDatosTramo().getDato(), "I", "51", "M");
+		}
+
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosITLack15Days()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
