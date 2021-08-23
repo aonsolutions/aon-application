@@ -85,6 +85,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.CtaCot;
@@ -1955,7 +1956,31 @@ public class Bases {
 					return 0.00;
 				};
 			});
-			put("02", new HCretaData(ADDITIONAL_HOURS.getName()));
+			put("02", new HCretaData(ADDITIONAL_HOURS.getName()) {
+				public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
+					Fecha desde = tramo.getFechaDesde();
+					Fecha hasta = tramo.getFechaHasta();
+					Period period = new Period(toDate(desde), toDate(hasta));
+					try {
+						Double base = get(ADDITIONAL_BASE.getName(), salary, period);
+						if ( AonNumberUtils.isValid(base) && base > 0 ) {
+							super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+						}
+					} catch (NoSuchVariableException e) {
+						try {
+							for (BasesCallback cb : cbs)
+								cb.noSuchDato(salary, tramo, datoSolicitado,
+										tramoBuilder, isOptional(datoSolicitado));
+						} catch (Cancel c) {
+						}
+					} catch (UnMatchedVariableException e) {
+						for (BasesCallback cb : cbs)
+							cb.unMatchedVariable(salary, e.getVariable(),
+									e.getContextData(), datoSolicitado, tramo,
+									tramoBuilder, isOptional(datoSolicitado));
+					}
+				};
+			});
 
 			put("05", new CompositeHCretaData() {
 					public Double get(Salary salary, Fecha desde, Fecha hasta) 

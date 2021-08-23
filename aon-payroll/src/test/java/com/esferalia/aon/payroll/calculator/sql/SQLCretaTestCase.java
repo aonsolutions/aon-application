@@ -4607,13 +4607,6 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					}
 				}
 				);
-
-//		List<Tramo> tramos = 
-//		getTramos(connection, contract, startDate, endDate, ccc);
-//		for ( Tramo tramo: tramos ) {
-//			assertTramoActivoNormalTiempoParcial(tramo);
-//		}
-		
 		
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
 		getBases(connection, startDate, endDate, ccc, contract);
@@ -4629,6 +4622,212 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
 		Assert.assertEquals("10" ,_2.getValor() );
+
+	}
+
+	@Test
+	public void testCretaAdditionalHoursWithOtherConcept()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord concept = addConcept(aonContext, "OTHER_CONCEPT");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				concept, 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0058);
+		
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("HORAS_COMPLEMENTARIAS", "10.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+	
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		Dato _537 = tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		;
+		Assert.assertEquals("69000" ,_537.getValor() );
+		
+		Dato _2 = 
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		Assert.assertEquals("10" ,_2.getValor() );
+
+	}
+
+	@Test
+	public void testCretaAdditionalHoursWithoutConcept()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0058);
+		
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("HORAS_COMPLEMENTARIAS", "10.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		Dato _537 = tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		;
+		Assert.assertEquals("69000" ,_537.getValor() );
+		
+		Dato _2 = 
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		Assert.assertEquals("10" ,_2.getValor() );
+
+	}
+
+	@Test
+	public void testCretaAdditionalHoursWithoutPayment()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("HORAS_COMPLEMENTARIAS", "10.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.forEach(d -> {
+			throw new AssertionError();
+		});
 
 	}
 

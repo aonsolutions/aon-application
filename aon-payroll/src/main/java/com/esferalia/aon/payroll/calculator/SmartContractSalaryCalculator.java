@@ -453,7 +453,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
 			}
 			
-			if ( type == PaymentType.CRA_0057 ) {				
+			if ( type == PaymentType.CRA_0057 
+				|| type == PaymentType.CRA_0058 ) {				
 				payment = new AdditionalHoursContractPayment(payment);
 			}
 
