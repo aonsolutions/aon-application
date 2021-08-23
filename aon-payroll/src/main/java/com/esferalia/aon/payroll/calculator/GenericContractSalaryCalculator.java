@@ -26,6 +26,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
@@ -1838,6 +1839,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				TC2.getName(), 
 				MONTH_DAYS.getName(), 
 				QUOTE_DAYS.getName(), 
+				QUOTE_GROUP.getName(),
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
 				WORKED_DAYS.getName(), 
