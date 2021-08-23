@@ -604,6 +604,11 @@ public interface CretaService {
 		protected JsTrabajadoresYTramos() {
 		}
 
+		public static native JsTrabajadoresYTramos createEmptyTrabajadoresyTramos() /*-{
+			return {
+				employees: []
+			};
+		}-*/;		
 	}
 
 	public static class JsRespuesta extends JsFile {
@@ -616,6 +621,12 @@ public interface CretaService {
 			return this.errors;
 		}-*/;
 
+		public static native JsRespuesta createEmptyRespuesta() /*-{
+			return {
+				errores: [],
+				employees: []
+			};
+		}-*/;		
 	}
 
 	public static class JsDCLResult extends JsEvent {

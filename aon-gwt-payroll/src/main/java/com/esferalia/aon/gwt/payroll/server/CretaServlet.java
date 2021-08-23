@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -103,7 +104,6 @@ import net.aonsolutions.core.tgss.creta.jaxb.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.Tramo;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
-import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.CtaCot;
@@ -774,56 +774,56 @@ public class CretaServlet extends HttpServlet
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.Liquidacion<?, ?, ?, ?, ?> l) {
 
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("\"ccc\":\"%s%s%s\",", l.getCcc().getRegimen(), l.getCcc().getProvincia(),
 				l.getCcc().getNumero()));
-		buffer.append(String.format("\"type\":\"%s\",", l.getTipo()));
-		buffer.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
-		buffer.append(String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
+		builder.append(String.format("\"type\":\"%s\",", l.getTipo()));
+		builder.append(String.format("\"from\":\"%s\",", toString(l.getPeriodoDesde())));
+		builder.append(String.format("\"to\":\"%s\"", toString(l.getPeriodoDesde())));
 		try {
-			buffer.append(String.format(",\"date\":\"%s\"", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
-			buffer.append(String.format(",\"time\":\"%s\"", l.getFechaHoraRecaudacion().getHoraRecaudacion()));
+			builder.append(String.format(",\"date\":\"%s\"", toString(l.getFechaHoraRecaudacion().getFechaRecaudacion())));
+			builder.append(String.format(",\"time\":\"%s\"", l.getFechaHoraRecaudacion().getHoraRecaudacion()));
 		} catch ( UnsupportedOperationException e) {
 			
 		}
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores errs) {
 		if ( errs == null )
 			return "";
 		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(errs.getError().stream().map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
+		StringBuilder builder = new StringBuilder();
+		builder.append(errs.getError().stream().map(err -> String.format("{\"code\":\"%s\", \"msg\":\"%s\"}",
 				err.getCodigoErr(), safeEncode(err.getDescripcion()))).collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Tramos tramos) {
 		if ( tramos == null )
 			return "";
 		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(tramos.getTramo().stream()
+		StringBuilder builder = new StringBuilder();
+		builder.append(tramos.getTramo().stream()
 				.map(tramo -> 
 				String.format("{\"desde\":\"%s\", \"hasta\":\"%s\", \"datos\":[%s], \"errores\":[%s] }",toString(tramo.getFechaDesde()), toString(tramo.getFechaHasta()), toJSON(tramo.getDatosTramo()), toJSON(tramo.getErrores())))
 				.collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.respuesta.DatosTramo datosTramo) {
 		if ( datosTramo == null )
 			return "";
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		
-		buffer.append(datosTramo.getDato().stream()
+		builder.append(datosTramo.getDato().stream()
 				.map(dato -> String.format("{\"codigo\":\"%s\", \"tipo\":\"%s\", \"valor\":\"%s\", \"errores\":[%s] }", dato.getCodigo(), dato.getTipoDato(), dato.getValor(), toJSON(dato.getErrores())))
 				.collect(Collectors.joining(",")));
 		
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajadores trabajadores) {
@@ -844,12 +844,12 @@ public class CretaServlet extends HttpServlet
 		if ( trabajadores == null )
 			return "";
 		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(trabajadores.stream()
+		StringBuilder builder = new StringBuilder();
+		builder.append(trabajadores.stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\"}", trabajador.getNaf()))
 				.collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
 
@@ -857,12 +857,12 @@ public class CretaServlet extends HttpServlet
 		if ( trabajadores == null )
 			return "";
 				
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(trabajadores.stream()
+		StringBuilder builder = new StringBuilder();
+		builder.append(trabajadores.stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\",\"errores\":[%s],\"tramos\":[%s] }", trabajador.getNaf(), toJSON(trabajador.getErrores()), toJSON(trabajador.getTramos())))
 				.collect(Collectors.joining(",")));
-
-		return buffer.toString();
+		
+		return builder.toString();
 	}
 
 
@@ -870,14 +870,35 @@ public class CretaServlet extends HttpServlet
 		if ( liquidacionesMes == null )
 			return "";
 
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(
+		StringBuilder builder = new StringBuilder();
+		builder.append(
 				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
 						.collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
+	private static net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores getErrores(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion liquidacion) {
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Error> list = new LinkedList<>();
+		
+		Optional.ofNullable(liquidacion.getDatosNoTratados()).ifPresent(d -> d.getContent().stream()
+		.filter(o -> o instanceof net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes)
+		.map( o -> ((net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes)o).getErrores())
+		.filter( Objects::nonNull  )
+		.forEach( e -> e.getError().forEach(list::add))
+		);
+		
+		Optional.ofNullable(liquidacion.getErrores())
+		.ifPresent( e -> e.getError().forEach(list::add));
+		
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores errores = new net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores();
+		errores.setError(list);
+
+		return errores;
+		
+	}
+	
 	private static List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes> getLiquidacionMes(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion liquidacion) {
 		List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionMes = new LinkedList<>();
 		
@@ -890,26 +911,29 @@ public class CretaServlet extends HttpServlet
 		return liquidacionMes;
 		
 	}
-	
+
 	private static String toJSON(Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.LiquidacionMes> liquidacionesMes) {
 		if ( liquidacionesMes == null )
 			return "";
+		
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(
-				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
-						.collect(Collectors.joining(",")));
-
+				liquidacionesMes
+				.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
+				.filter( AonStringUtils::isNotBlank)
+				.collect(Collectors.joining(",")));
+		
 		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores trabajadores) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(trabajadores.getTrabajador().stream()
+		StringBuilder builder = new StringBuilder();
+		builder.append(trabajadores.getTrabajador().stream()
 				.map(trabajador -> String.format("{\"naf\":\"%s\",\"ipf\":\"%s\",\"caf\":\"%s\",\"tramos\":[%s]}", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf() ,trabajador.getCaf(), toJSON(trabajador.getTramos())))
 				.collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos tramos) {
@@ -940,12 +964,12 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static String toJS0N(Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes> liquidacionesMes) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(
+		StringBuilder builder = new StringBuilder();
+		builder.append(
 				liquidacionesMes.map(liquidacionMes -> String.format("%s", toJSON(liquidacionMes.getTrabajadores())))
 						.collect(Collectors.joining(",")));
 
-		return buffer.toString();
+		return builder.toString();
 	}
 
 	// ------------------------------------------------------------------------
@@ -1538,7 +1562,7 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static <J extends JSON> String toJSON(List<J> jsons) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append("[\r\n");
 		buff.append(jsons.stream().map(json -> json.toJSON()).collect(Collectors.joining(",")));
 		buff.append("\r\n]");
@@ -1837,7 +1861,7 @@ public class CretaServlet extends HttpServlet
 				Respuesta r = rsIt.next();
 				List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
 				for  (net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
-					os.printf("%s\r\n{\"name\":\"%s\",\"authorized\":\"%s\",\"externalReference\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, r.getAutorizado(), r.getReferenciaExterna(), toJSON(l), toJSON(l.getErrores()),toJSON(getLiquidacionMes(l).stream()), marshallAndEncode(create(l,r)));
+					os.printf("%s\r\n{\"name\":\"%s\",\"authorized\":\"%s\",\"externalReference\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, r.getAutorizado(), r.getReferenciaExterna(), toJSON(l), toJSON(getErrores(l)),toJSON(getLiquidacionMes(l).stream()), marshallAndEncode(create(l,r)));
 					os.flush();
 					sep = ",";
 					

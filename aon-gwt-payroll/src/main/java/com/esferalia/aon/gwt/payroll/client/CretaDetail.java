@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -1033,14 +1034,16 @@ public abstract class CretaDetail extends Composite {
 				if (CretaDetail.this.popupTooltip != null)
 					CretaDetail.this.popupTooltip.hide();
 				
+				
 				JsEmployee[] rEmployees =
-				Arrays.stream(respuestasMap.get(trabajadoresYTramosId).getEmployees())
+				Arrays.stream(respuestasMap.getOrDefault(trabajadoresYTramosId, JsRespuesta.createEmptyRespuesta()).getEmployees())
 				.filter(employee -> employee.getNaf().equalsIgnoreCase(naf)).toArray(JsEmployee[]::new);
 
-				Arrays.stream(trabajadoresYTramosMap.get(trabajadoresYTramosId).getEmployees())
-					.filter(tEmployee -> tEmployee.getNaf().equalsIgnoreCase(naf)).findAny()
-					.ifPresent(tEmployee -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(tEmployee, rEmployees, x, y));
+				JsEmployee[] tEmployees =
+				Arrays.stream(trabajadoresYTramosMap.getOrDefault(trabajadoresYTramosId, JsTrabajadoresYTramos.createEmptyTrabajadoresyTramos()).getEmployees())
+				.filter(tEmployee -> tEmployee.getNaf().equalsIgnoreCase(naf)).toArray(JsEmployee[]::new);
 				
+				CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(tEmployees, rEmployees, x, y);
 
 			}
 		};
