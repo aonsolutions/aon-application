@@ -3,7 +3,7 @@ import { API_URL } from "../environments/environments.js";
 
 export const getUserList = (data) => get(`${API_URL}/user`, data);
 
-export const setUser = (data) => post(`${API_URL}/user`, data);
+export const saveUser = (data) => post(`${API_URL}/user`, data);
 
 export const getUser = (data) => get(`${API_URL}/user/info`, data);
 

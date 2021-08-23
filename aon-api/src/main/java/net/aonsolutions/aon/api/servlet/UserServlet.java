@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,10 +30,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Person;
-import com.esferalia.aon.occam.api.model.RawdocUserData;
-import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -261,29 +258,30 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 
-	
-	private void setUserAppRole(Domain domain, User user, AonApp app, AonRole role){
-		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
-			f.getDomainProperty().eq(domain.getId())
-				.and(f.getUserIdProperty().eq(user.getId()))
-				.and((app != null ? f.getAppProperty().eq(app.value()): f.getAppProperty().eq((byte) -1))))
-			.findFirst().orElse(new UserAppRole());
-		if(uar.getId() == null) {
-			uar = new UserAppRole();
-			uar.setApp(app)
-				.setDomain(domain.getId())
-				.setRole(role)
-				.setUser(user.getId());
-			try {
-				uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
-			} catch ( Exception e ) {
-				
-			}
-		} else {
-			uar.setRole(role);
-			AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
-		}
-	}
+//	
+//	private void setUserAppRole(Domain domain, User user, AonApp app, AonRole role){
+//		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
+//			f.getDomainProperty().eq(domain.getId())
+//				.and(f.getUserIdProperty().eq(user.getId()))
+//				.and((app != null ? f.getAppProperty().eq(app.value()): f.getAppProperty().eq((byte) -1))))
+//			.findFirst().orElse(new UserAppRole());
+//		if(uar.getId() == null) {
+//			uar = new UserAppRole();
+//			uar.setApp(app)
+//				.setDomain(domain.getId())
+//				.setRole(role)
+//				.setUser(user.getId());
+//			try {
+//				uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+//			} catch ( Exception e ) {
+//				
+//			}
+//		} else {
+//			uar.setRole(role);
+//			AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
+//		}
+//	}
+//	
 	
 	private JSONObject setUserAppRole(AonApiData api, User user){
 		Domain domain = api.getDomain();
@@ -302,7 +300,10 @@ public class UserServlet extends AonApiHttpServlet {
 
 		AonRole.stream().forEach(role -> {	
 			if(aRoles.contains(role) && !tRoles.contains(role)) {
-				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> f.getRoleProperty().eq(role.value()));
+				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), login, f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getUserIdProperty().eq(userId))
+					.and(f.getRoleProperty().eq(role.value())));
 			}
 			if(!aRoles.contains(role) && tRoles.contains(role)) {
 				AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", new UserAppRole()
@@ -315,115 +316,115 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private JSONObject setUserAppRole3(AonApiData api){
-		JSONArray roles = JsonUtils.getJSONArray(api.getData(), "roles");
-		Boolean portal = false;
-		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
-		for (Integer i = 0; i < roles.length(); i++) {
-			JSONObject object = roles.getJSONObject(i);
-			String app = object.optString("app");
-			Integer user = object.optInt("user");
-			Boolean active = object.optBoolean("active"); 
-			String role = object.optString("role");
-
-			AonApp aonApp = AonApp.safeValueOf(app);
-			
-			AonRole aonRole = AonRole.safeValueOf(role);
-			if(aonRole != null) {
-				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-					f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getUserIdProperty().eq(user))
-					.and(f.getRoleProperty().eq(aonRole.value())))
-					.findFirst().orElse(new UserAppRole());
-				
-				if(active) {
-					if(uar.getId() == null) {
-						uar = new UserAppRole();
-						uar.setApp(aonApp)
-							.setDomain(api.getDomain().getId())
-							.setRole(aonRole)
-							.setUser(user);
-						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
-					}
-					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
-						if(th == null || th.getId() == null) {
-							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
-							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
-
-							Registry r = null;
-							if(!AonStringUtils.isBlank(a.getDocument())) {
-								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-								f.getDomainProperty().eq(api.getDomain().getId())
-								.and(f.getDocumentProperty().eq(a.getDocument())));
-							}
-							if(r == null || r.getId() == null) {
-								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
-										.setDocument(a.getDocument())
-										.setName(a.getName()+ " "+ a.getSurname())
-										.setAlias(a.getName())
-										.setDomain(api.getDomain()));
-							}
-							Integer registryId = r.getId();
-							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
-							if(th != null && th.getId() != null) {
-								th.setActive(true);
-							} else {
-								th = new TaskHolder().copy(r)
-									.setActive(true)
-									.setUserId(user);
-							}
-						} else if(!th.isActive()) {
-							th.setActive(true);
-						}
-						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
-					} 
-				
-					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
-						portal = true;
-						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
-								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
-							
-						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
-						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-							f.getDomainProperty().eq(api.getDomain().getId())
-							.and(f.getUserIdProperty().eq(user))
-							.and(f.getRoleProperty().notIn(arr)));
-					}
-				} else {
-					if(uar.getId() != null) {
-						Integer id = uar.getId();
-						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
-					}
-					
-					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
-						if(th != null && th.getId() != null) {
-							th.setActive(false);
-							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
-						}
-					}
-				}
-			}
-		}
-		
-		if(portal) {
-			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
-			if(usr.getEnterprise() == null) {
-				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-				usr.setEnterprise(cp.getId());
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
-			}
-		} else {
-			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
-			if(usr.getEnterprise() != null) {
-				usr.setEnterprise(null);
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
-			}
-		}
-		
-		return new JSONObject();
-	}
+//	private JSONObject setUserAppRole3(AonApiData api){
+//		JSONArray roles = JsonUtils.getJSONArray(api.getData(), "roles");
+//		Boolean portal = false;
+//		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
+//		for (Integer i = 0; i < roles.length(); i++) {
+//			JSONObject object = roles.getJSONObject(i);
+//			String app = object.optString("app");
+//			Integer user = object.optInt("user");
+//			Boolean active = object.optBoolean("active"); 
+//			String role = object.optString("role");
+//
+//			AonApp aonApp = AonApp.safeValueOf(app);
+//			
+//			AonRole aonRole = AonRole.safeValueOf(role);
+//			if(aonRole != null) {
+//				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//					f.getDomainProperty().eq(api.getDomain().getId())
+//					.and(f.getUserIdProperty().eq(user))
+//					.and(f.getRoleProperty().eq(aonRole.value())))
+//					.findFirst().orElse(new UserAppRole());
+//				
+//				if(active) {
+//					if(uar.getId() == null) {
+//						uar = new UserAppRole();
+//						uar.setApp(aonApp)
+//							.setDomain(api.getDomain().getId())
+//							.setRole(aonRole)
+//							.setUser(user);
+//						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
+//					}
+//					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
+//						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+//						if(th == null || th.getId() == null) {
+//							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
+//							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
+//
+//							Registry r = null;
+//							if(!AonStringUtils.isBlank(a.getDocument())) {
+//								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//								f.getDomainProperty().eq(api.getDomain().getId())
+//								.and(f.getDocumentProperty().eq(a.getDocument())));
+//							}
+//							if(r == null || r.getId() == null) {
+//								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
+//										.setDocument(a.getDocument())
+//										.setName(a.getName()+ " "+ a.getSurname())
+//										.setAlias(a.getName())
+//										.setDomain(api.getDomain()));
+//							}
+//							Integer registryId = r.getId();
+//							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+//							if(th != null && th.getId() != null) {
+//								th.setActive(true);
+//							} else {
+//								th = new TaskHolder().copy(r)
+//									.setActive(true)
+//									.setUserId(user);
+//							}
+//						} else if(!th.isActive()) {
+//							th.setActive(true);
+//						}
+//						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+//					} 
+//				
+//					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
+//						portal = true;
+//						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
+//								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
+//							
+//						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
+//						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//							f.getDomainProperty().eq(api.getDomain().getId())
+//							.and(f.getUserIdProperty().eq(user))
+//							.and(f.getRoleProperty().notIn(arr)));
+//					}
+//				} else {
+//					if(uar.getId() != null) {
+//						Integer id = uar.getId();
+//						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
+//					}
+//					
+//					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+//						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+//						if(th != null && th.getId() != null) {
+//							th.setActive(false);
+//							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		
+//		if(portal) {
+//			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+//			if(usr.getEnterprise() == null) {
+//				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+//				usr.setEnterprise(cp.getId());
+//				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+//			}
+//		} else {
+//			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+//			if(usr.getEnterprise() != null) {
+//				usr.setEnterprise(null);
+//				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+//			}
+//		}
+//		
+//		return new JSONObject();
+//	}
 	
 	private void saveTaskHolder(AonApiData api, User user) {
 		Integer userId = user != null && user.getId() != null 
@@ -461,115 +462,115 @@ public class UserServlet extends AonApiHttpServlet {
 		AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
 	}
 	
-	private JSONObject setUserAppRole2(AonApiData api){
-		JSONArray roles = api.getData().optJSONArray("roles");
-		Boolean portal = false;
-		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
-		for (Integer i = 0; i < roles.length(); i++) {
-			JSONObject object = roles.getJSONObject(i);
-			String app = object.optString("app");
-			Integer user = object.optInt("user");
-			Boolean active = object.optBoolean("active"); 
-			String role = object.optString("role");
-
-			AonApp aonApp = AonApp.safeValueOf(app);
-			
-			AonRole aonRole = AonRole.safeValueOf(role);
-			if(aonRole != null) {
-				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-					f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getUserIdProperty().eq(user))
-					.and(f.getRoleProperty().eq(aonRole.value())))
-					.findFirst().orElse(new UserAppRole());
-				
-				if(active) {
-					if(uar.getId() == null) {
-						uar = new UserAppRole();
-						uar.setApp(aonApp)
-							.setDomain(api.getDomain().getId())
-							.setRole(aonRole)
-							.setUser(user);
-						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
-					}
-					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
-						if(th == null || th.getId() == null) {
-							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
-							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
-
-							Registry r = null;
-							if(!AonStringUtils.isBlank(a.getDocument())) {
-								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-								f.getDomainProperty().eq(api.getDomain().getId())
-								.and(f.getDocumentProperty().eq(a.getDocument())));
-							}
-							if(r == null || r.getId() == null) {
-								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
-										.setDocument(a.getDocument())
-										.setName(a.getName()+ " "+ a.getSurname())
-										.setAlias(a.getName())
-										.setDomain(api.getDomain()));
-							}
-							Integer registryId = r.getId();
-							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
-							if(th != null && th.getId() != null) {
-								th.setActive(true);
-							} else {
-								th = new TaskHolder().copy(r)
-									.setActive(true)
-									.setUserId(user);
-							}
-						} else if(!th.isActive()) {
-							th.setActive(true);
-						}
-						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
-					} 
-				
-					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
-						portal = true;
-						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
-								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
-							
-						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
-						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-							f.getDomainProperty().eq(api.getDomain().getId())
-							.and(f.getUserIdProperty().eq(user))
-							.and(f.getRoleProperty().notIn(arr)));
-					}
-				} else {
-					if(uar.getId() != null) {
-						Integer id = uar.getId();
-						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
-					}
-					
-					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
-						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
-						if(th != null && th.getId() != null) {
-							th.setActive(false);
-							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
-						}
-					}
-				}
-			}
-		}
-		
-		if(portal) {
-			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
-			if(usr.getEnterprise() == null) {
-				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-				usr.setEnterprise(cp.getId());
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
-			}
-		} else {
-			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
-			if(usr.getEnterprise() != null) {
-				usr.setEnterprise(null);
-				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
-			}
-		}
-		
-		return new JSONObject();
-	}
+//	private JSONObject setUserAppRole2(AonApiData api){
+//		JSONArray roles = api.getData().optJSONArray("roles");
+//		Boolean portal = false;
+//		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
+//		for (Integer i = 0; i < roles.length(); i++) {
+//			JSONObject object = roles.getJSONObject(i);
+//			String app = object.optString("app");
+//			Integer user = object.optInt("user");
+//			Boolean active = object.optBoolean("active"); 
+//			String role = object.optString("role");
+//
+//			AonApp aonApp = AonApp.safeValueOf(app);
+//			
+//			AonRole aonRole = AonRole.safeValueOf(role);
+//			if(aonRole != null) {
+//				UserAppRole uar = AON_SOLUTIONS.getUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//					f.getDomainProperty().eq(api.getDomain().getId())
+//					.and(f.getUserIdProperty().eq(user))
+//					.and(f.getRoleProperty().eq(aonRole.value())))
+//					.findFirst().orElse(new UserAppRole());
+//				
+//				if(active) {
+//					if(uar.getId() == null) {
+//						uar = new UserAppRole();
+//						uar.setApp(aonApp)
+//							.setDomain(api.getDomain().getId())
+//							.setRole(aonRole)
+//							.setUser(user);
+//						uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", uar);
+//					}
+//					if(!api.getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
+//						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+//						if(th == null || th.getId() == null) {
+//							User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(user));
+//							Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
+//
+//							Registry r = null;
+//							if(!AonStringUtils.isBlank(a.getDocument())) {
+//								r = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//								f.getDomainProperty().eq(api.getDomain().getId())
+//								.and(f.getDocumentProperty().eq(a.getDocument())));
+//							}
+//							if(r == null || r.getId() == null) {
+//								r = AON.save(api.getDomain().getName(), api.getDomain().getId(), "", new Registry()
+//										.setDocument(a.getDocument())
+//										.setName(a.getName()+ " "+ a.getSurname())
+//										.setAlias(a.getName())
+//										.setDomain(api.getDomain()));
+//							}
+//							Integer registryId = r.getId();
+//							th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+//							if(th != null && th.getId() != null) {
+//								th.setActive(true);
+//							} else {
+//								th = new TaskHolder().copy(r)
+//									.setActive(true)
+//									.setUserId(user);
+//							}
+//						} else if(!th.isActive()) {
+//							th.setActive(true);
+//						}
+//						AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+//					} 
+//				
+//					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
+//						portal = true;
+//						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
+//								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
+//							
+//						Byte[] arr = list.stream().map(r -> r.value()).toArray(Byte[]::new);
+//						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+//							f.getDomainProperty().eq(api.getDomain().getId())
+//							.and(f.getUserIdProperty().eq(user))
+//							.and(f.getRoleProperty().notIn(arr)));
+//					}
+//				} else {
+//					if(uar.getId() != null) {
+//						Integer id = uar.getId();
+//						AON_SOLUTIONS.deleteUserAppRole(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(id));
+//					}
+//					
+//					if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+//						TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(user)));
+//						if(th != null && th.getId() != null) {
+//							th.setActive(false);
+//							AON.updateTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", th);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		
+//		if(portal) {
+//			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+//			if(usr.getEnterprise() == null) {
+//				Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+//				usr.setEnterprise(cp.getId());
+//				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+//			}
+//		} else {
+//			User usr = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+//			if(usr.getEnterprise() != null) {
+//				usr.setEnterprise(null);
+//				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), usr);
+//			}
+//		}
+//		
+//		return new JSONObject();
+//	}
 	
 	private JSONObject setUser(AonApiData api) throws Exception {
 		JSONObject js = new JSONObject();

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUser, setUser, deleteUser,
+import {getUser, saveUser, deleteUser,
 	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {Role, ToolbarType} from '../../models/enums.js';
@@ -444,7 +444,7 @@ export class AonUser extends AonElement {
 			this._user.portal = true;
 			this._user.roles = [Role.ENTERPRISE];
 		}
-		setUser(this._user).then(r => {
+		saveUser(this._user).then(r => {
 			this.setAttribute('showInfo', 'true');
 			this.setAttribute('user', JSON.stringify(r));
 			this._user = r;
