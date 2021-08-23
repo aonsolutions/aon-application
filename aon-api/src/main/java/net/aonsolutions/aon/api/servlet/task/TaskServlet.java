@@ -3,14 +3,10 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
@@ -23,7 +19,6 @@ import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -202,24 +197,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private JSONArray getTaskStatusCount(AonApiData api) {
-		JSONArray array = new JSONArray(); 
+	private JSONObject getTaskStatusCount(AonApiData api) {
+		JSONObject json = new JSONObject();
 		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
-		map.forEach((k,v)->{
-			JSONObject json = new JSONObject();
-			json.put("status", k);
-			json.put("count",v);
-			array.put(json);
-		});
-		
-//		JSONObject json = new JSONObject();
-//		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
-//		map.forEach((k,v)->{
-//			json.put(TaskStatus.safeValueOf(k).getName(), v);
-//		});
-//		return json;
-
-		return array;
+		map.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
+		return json;
 	}
 	
 	private JSONObject deleteTask(AonApiData api) {

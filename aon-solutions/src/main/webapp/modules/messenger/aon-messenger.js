@@ -178,23 +178,15 @@ export class AonMessenger extends AonElement {
 
 	updateStatusSidenavCount(){
 		let application = this.applicationEl;
-		getTaskStatusCount().then(res=>{
-			let openCount = 0;
-			let archiveCount = 0;
-			let closeCount = 0;
-			// for(const key in res){
-			// 	console.log(value);
-			// }
-			res.map(r=>{
-				if(r.status ===0)
-					archiveCount = r.count;
-				else if(r.status ===1 || r.status ===2)
-					openCount = r.count;
-				else if(r.status ===3)
-					closeCount = r.count;
-			})
-			
-			// UPDATE COUNT
+		getTaskStatusCount().then(resp=>{
+			let openCount = resp[TASK_STATUS.PENDING];
+			let archiveCount = resp[TASK_STATUS.DELETED];
+			let closeCount = resp[TASK_STATUS.FINISHED];
+
+			if(resp[TASK_STATUS.IN_PROGRESS]) 
+				openCount + resp[TASK_STATUS.IN_PROGRESS];
+	
+			// // UPDATE COUNT
 			let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
 			application.updateSidenavCount(listOpen.id, openCount);
 
