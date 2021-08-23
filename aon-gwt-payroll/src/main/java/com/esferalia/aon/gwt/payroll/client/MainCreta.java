@@ -677,7 +677,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return popupPanel;
 	}
 
-	public static PopupPanel showjsEmployeeToolTip(final JsEmployee tEmployee, final JsEmployee[] rEmployees, final int x, final int y) {
+	public static PopupPanel showjsEmployeeToolTip(final JsEmployee [] tEmployees, final JsEmployee[] rEmployees, final int x, final int y) {
 		
 		final DateTimeFormat yearMonthNumDayFormat = DateTimeFormat.getFormat("y-M-d");
 		final DateTimeFormat dayMonthNumYearFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
@@ -687,9 +687,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		popupPanel.setAutoHideEnabled(true);
 		popupPanel.getElement().getStyle().setZIndex(70);
 
-		int rows = 4  
-				+ Arrays.stream(tEmployee.getTramos())
+		int rows = 4;  
+		
+		for( JsEmployee tEmployee: tEmployees ) {
+				rows += Arrays.stream(tEmployee.getTramos())
 				.collect(Collectors.summingInt(t -> 1 + t.getPeculiaridades().length));
+		}
+		
 		for( JsEmployee rEmployee: rEmployees ) {
 			rows += filter(rEmployee.getErrores()).length ;
 			rows +=	rEmployee.getTramos().length ;
@@ -733,40 +737,42 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		int i = 1;
 		
-		for ( JsTramo tramo :  tEmployee.getTramos()) {
-						
-			row++;
-			grid.setText(row, 0, String.valueOf( i++ ));
-			grid.getCellFormatter().addStyleName(row, 0, AON.AON_TEXT_CENTER);
-			Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
-			Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
-			grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) + " " + tramo.getDias());
-			
-			for ( JsPeculiaridad peculiaridad: tramo.getPeculiaridades() ) {
+		for( JsEmployee tEmployee: tEmployees ) {
+			for ( JsTramo tramo :  tEmployee.getTramos()) {
+							
 				row++;
-				String code = peculiaridad.getCod();
-				String fraccion = peculiaridad.getFraccion();
-				String colectivo = peculiaridad.getColectivo();
-				String valor = AonStringUtils.defaultIfBlank(peculiaridad.getValor(), "");
+				grid.setText(row, 0, String.valueOf( i++ ));
+				grid.getCellFormatter().addStyleName(row, 0, AON.AON_TEXT_CENTER);
+				Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
+				Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
+				grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) + " " + tramo.getDias());
 				
-				grid.setHTML(row, 1, new SafeHtmlBuilder().append(' ').append(' ')
-						.appendHtmlConstant("<b>").appendEscaped(code).appendHtmlConstant("</b>")
-						.append(' ').appendEscaped(PEC.getPEC(peculiaridad.getCod()).getMessage()).toSafeHtml());
-				grid.setHTML(row, 2, new SafeHtmlBuilder().append(' ').append(' ')
-						.appendHtmlConstant("<b>").appendEscaped(valor).toSafeHtml());
-				grid.getCellFormatter().addStyleName(row, 2, AON.AON_TEXT_RIGHT);
+				for ( JsPeculiaridad peculiaridad: tramo.getPeculiaridades() ) {
+					row++;
+					String code = peculiaridad.getCod();
+					String fraccion = peculiaridad.getFraccion();
+					String colectivo = peculiaridad.getColectivo();
+					String valor = AonStringUtils.defaultIfBlank(peculiaridad.getValor(), "");
+					
+					grid.setHTML(row, 1, new SafeHtmlBuilder().append(' ').append(' ')
+							.appendHtmlConstant("<b>").appendEscaped(code).appendHtmlConstant("</b>")
+							.append(' ').appendEscaped(PEC.getPEC(peculiaridad.getCod()).getMessage()).toSafeHtml());
+					grid.setHTML(row, 2, new SafeHtmlBuilder().append(' ').append(' ')
+							.appendHtmlConstant("<b>").appendEscaped(valor).toSafeHtml());
+					grid.getCellFormatter().addStyleName(row, 2, AON.AON_TEXT_RIGHT);
+					
+					grid.setHTML(row, 3, new SafeHtmlBuilder().append(' ').append(' ')
+							.appendHtmlConstant("<b>").appendEscaped(fraccion).appendHtmlConstant("</b>")
+							.append(' ').appendEscaped(PEC.getCuotaDescription(fraccion)).toSafeHtml());
+					grid.setHTML(row, 4, new SafeHtmlBuilder().append(' ').append(' ')
+							.appendHtmlConstant("<b>").appendEscaped(colectivo).appendHtmlConstant("</b>")
+							.append(' ').appendEscaped(PEC.getColectivoDescription(colectivo)).toSafeHtml());
+				}
 				
-				grid.setHTML(row, 3, new SafeHtmlBuilder().append(' ').append(' ')
-						.appendHtmlConstant("<b>").appendEscaped(fraccion).appendHtmlConstant("</b>")
-						.append(' ').appendEscaped(PEC.getCuotaDescription(fraccion)).toSafeHtml());
-				grid.setHTML(row, 4, new SafeHtmlBuilder().append(' ').append(' ')
-						.appendHtmlConstant("<b>").appendEscaped(colectivo).appendHtmlConstant("</b>")
-						.append(' ').appendEscaped(PEC.getColectivoDescription(colectivo)).toSafeHtml());
+				
 			}
-			
-			
 		}
-
+		
 		row++;
 		row++;
 		grid.setText(row, 0, ""); 
