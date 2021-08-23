@@ -353,7 +353,8 @@ public class FinanceTrackingDAO {
 	
 	private static FinanceTracking returnFinance(AONContext ctx,FinanceTracking ft,AccountEntry entry) {
 		ft.setTrackingDate(entry.getEntryDate())
-		  .setRecorded(true)
+			.setType(FinanceTrackingType.RETURNED)
+			.setRecorded(true)
 		;
 		updateFinanceStatus(ctx,ft.getFinance().getId(),FinanceStatus.RETURNED);
 		Integer trackingId = insert(ctx, ft);
