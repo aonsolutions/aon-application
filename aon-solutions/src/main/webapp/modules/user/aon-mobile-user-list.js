@@ -53,10 +53,16 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     aonUser(user, i) {
-        this.getApplication().setContentHTML('<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>');
-		let aonUser = document.getElementById('aonUser-' + user.id);
-		aonUser.style.width = "100%";
-		aonUser.setAttribute('user', JSON.stringify(user));
+        setIndex(index);
+    
+        let aonUser = new AonUser();
+        aonUser.id = 'aonUser-' + user.id;
+        aonUser.setShowApps(true);
+        aonUser.setShowToolbar(true);
+        aonUser.setUser(user);
+        aonUser.style.width = "100%";
+    
+        this.getApplication().setContent(aonUser);	
 	}
 
     setValue(value) {

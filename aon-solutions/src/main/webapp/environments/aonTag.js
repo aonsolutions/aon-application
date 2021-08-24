@@ -56,6 +56,7 @@ export const AON_COMPANY_LIST = 'aon-company-list';
 
 // MODULES - USER
 
+export const AON_USER = 'aon-user';
 export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
 
 // DEV DOC

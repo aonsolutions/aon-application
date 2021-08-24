@@ -9,7 +9,6 @@ import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
-import './user/aon-user.js';
 import './notification/aon-notification-icon.js';
 import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';

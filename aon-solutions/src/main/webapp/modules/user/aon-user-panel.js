@@ -8,6 +8,7 @@ import '../../components/aon-input.js';
 import {AonUserList} from '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import { MSG } from '../../environments/environments.js';
+import { AonUser } from '../user/aon-user.js';
 
 export class AonUserPanel extends AonElement {
 
@@ -87,11 +88,14 @@ export class AonUserPanel extends AonElement {
 	}
 
 	buildCreateUser(share) {
-		let content = document.getElementById('aonUserPanelContent');
-		content.innerHTML = '<aon-user id="aonUserCreate" showApps="true" showToolbar="true"><aon-user>';
-		let aonUser = document.getElementById('aonUserCreate');
+		let aonUser = new AonUser();
+		aonUser.id = 'aonUserCreate';
+		aonUser.setShowApps(true);
+		aonUser.setShowToolbar(true);
 		aonUser.style.width = "100%";
-		if(share)	aonUser.setAttribute('share', share);
+		if(share) aonUser.setAttribute('share', share);
+		
+		this.getApplication().setContent(aonUser);	
 	}
 
 	getApplication() {

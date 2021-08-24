@@ -161,6 +161,7 @@ export const NUMBER = 'Nombre';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Sol Portal';
 export const OPTIONS = 'Opcions';
 
 // ----- P

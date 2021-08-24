@@ -12,12 +12,13 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
 import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser } from './UserCache.js';
+import { AonSwitch } from '../../components/aon-switch.js';
 
 export class AonUser extends AonElement {
 
@@ -25,84 +26,56 @@ export class AonUser extends AonElement {
 	SELECT;
 	TOOLBAR;
 
-	_user;
+	user;
 	dur;
 	apps;
 
-	static get observedAttributes() {
-		return ['user', 'company', 'apps'];
-	}
-
-	get company() {
-		return this.getAttribute('company');
-	}
-
-	set company(company) {
-		this.setAttribute('company', company);
-	}
-
-	get user() {
-		return this.getAttribute('user');
-	}
-
-	set user(user) {
-		this.setAttribute('user', user);
-	}
-
 	get showApps() {
-		return this.getAttribute('showApps');
+		return this.getAttribute(CONSTANT.SHOW_APPS);
 	}
 
 	set showApps(showApps) {
-		this.setAttribute('showApps', showApps);
+		this.setAttribute(CONSTANT.SHOW_APPS, showApps);
 	}
 
 	get share() {
-		return this.getAttribute('share');
+		return this.getAttribute(CONSTANT.SHARE);
 	}
 
-	set showShare(share) {
-		this.setAttribute('share', share);
+	set share(share) {
+		this.setAttribute(CONSTANT.SHARE, share);
 	}
 
 	get showPassword() {
-		return this.getAttribute('showPassword');
+		return this.getAttribute(CONSTANT.SHOW_PASSWORD);
 	}
 
 	set showPassword(showPassword) {
-		this.setAttribute('showPassword', showPassword);
-	}
-
-	get showInfo() {
-		return this.getAttribute('showInfo');
-	}
-
-	set showInfo(showInfo) {
-		this.setAttribute('showInfo', showInfo);
+		this.setAttribute(CONSTANT.SHOW_PASSWORD, showPassword);
 	}
 
 	get showToolbar() {
-		return this.getAttribute('showToolbar');
+		return this.getAttribute(CONSTANT.SHOW_TOOLBAR);
 	}
 
 	set showToolbar(showToolbar) {
-		this.setAttribute('showToolbar', showToolbar);
+		this.setAttribute(CONSTANT.SHOW_TOOLBAR, showToolbar);
 	}
 
 	get autosave() {
-		return this.getAttribute('autosave');
+		return this.getAttribute(CONSTANT.AUTOSAVE);
 	}
 
 	set autosave(autosave) {
-		this.setAttribute('autosave', autosave);
+		this.setAttribute(CONSTANT.AUTOSAVE, autosave);
 	}
 
 	get onlyAuth() {
-		return this.getAttribute('onlyAuth');
+		return this.getAttribute(CONSTANT.ONLY_AUTH);
 	}
 
 	set onlyAuth(onlyAuth) {
-		this.setAttribute('onlyAuth', onlyAuth);
+		this.setAttribute(CONSTANT.ONLY_AUTH, onlyAuth);
 	}
 
 	constructor () {
@@ -115,14 +88,13 @@ export class AonUser extends AonElement {
 
 	init() {
 		this.initialize();
-		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-		let login = this._user.login ? ' (' + this._user.login + ')' : '';
+		this.user = this.user || {};
+		let login = this.user.login ? ' (' + this.user.login + ')' : '';
 		this.innerHTML = this.isMobile() 
 			? `
 				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
 				<div class="aonMobileSubContent">
 					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
-					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 					<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
 				</div>
 			` 
@@ -131,7 +103,6 @@ export class AonUser extends AonElement {
 				<div style="display:flex;width:100%;" class="aonSubContent">
 					<div id="aonConfigurationUserDiv" style="width:50%;">
 						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
-						<aon-card id="aonConfigurationUserInfoCard" title="${MSG.ADDITIONAL_INFORMATION}"></aon-card>
 					</div>
 					<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
 				</div>
@@ -172,27 +143,26 @@ export class AonUser extends AonElement {
 	}
 
 	initUser() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-		this._user = user;
+		this.user = this.user || {};
 		this.buildUserToolbar();
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
 		if(aonUserName)
-			aonUserName.setAttribute('value', user && user.name && user.email ? user.name : '');
+			aonUserName.setAttribute('value', this.user && this.user.name && this.user.email ? this.user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
 		if(aonUserSurname)
-			aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
+			aonUserSurname.setAttribute('value', this.user && this.user.surname ? this.user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
-		aonUserDocument.value = user.document;
+		aonUserDocument.value = this.user.document;
 
 		let aonUserPhone = document.getElementById('aonConfigurationUserCardPhone');
-		aonUserPhone.setAttribute('value', user && user.phone ? user.phone : '');
+		aonUserPhone.setAttribute('value', this.user && this.user.phone ? this.user.phone : '');
 		let aonUserEmail = document.getElementById('aonConfigurationUserCardEmail');
-		aonUserEmail.value = user.email;
+		aonUserEmail.value = this.user.email;
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
 
-		if(user && this.hasAttribute('showApps')) {
+		if(this.user && this.hasAttribute('showApps')) {
 			this.buildPermissionButtons();
 			for (let key in AllApps){
 				if(this.hasApp(AllApps[key])){
@@ -200,72 +170,50 @@ export class AonUser extends AonElement {
 				}
 			}
 		}
-		if(this.hasAttribute('showInfo')) {
-			let data = {
-				user: this._user.id
-			}
-			getUser(data).then(usr => {
-				this.getElement('aonConfigurationUserInfoLogin').value = usr.login;
-				this.getElement('aonConfigurationUserInfoAON').checked = usr.newAon;
-			});
-		}
 	}
 
 	buildPermissionButtons() {
 		let card2 = this.getElement('aonConfigurationUserSecurityCard');
 		card2.cleanSection2();
-		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
-		if(this.getDur().checkUsers() || !user.portal || user.shared){
-			card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
-				let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-				
-				let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
-				let employee = { role: 'EMPLOYEE', active: false, user: user.id};
-				this.updateRoles([enterprise, employee]);
-				this._user.portal = false;
-				user.portal = false;
-				this.setAttribute('user', JSON.stringify(user));
-			});
+
+		if(this.user.portal) {
+			card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => this.selectionEnterprisePortal());
+			card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => this.selectionEmployeePortal());
 		}
+	}
 
-		card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => {
-			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
+	selectionPersonalizado() {
+		let enterprise = { role: 'ENTERPRISE', active: false, user: this.user.id};
+		let employee = { role: 'EMPLOYEE', active: false, user: this.user.id};
+		this.updateRoles([enterprise, employee]);
+	}
 
-			let roles = [{ role: 'ENTERPRISE', active: true, user: user.id}];
-			this.apps.forEach((app, i) => {
-				let application = getApp(app);
-
-				if(application && EnterpriseApps.includes(application.app)){
-					let rol1 = {app:application.app, role: application.app.toUpperCase(), active: true, user: user.id};
-					let rol2 = {app:application.app, role: application.app.toUpperCase() + '_PORTAL', active: true, user: user.id};
-					roles.push(rol1);
-					roles.push(rol2);
-				}
-			});
-			this.updateRoles(roles);
-			this._user.portal = true;
-			user.portal = true;
-			this.setAttribute('user', JSON.stringify(user));
+	selectionEnterprisePortal() {
+		let roles = [{ role: 'ENTERPRISE', active: true, user: this.user.id}];
+		this.apps.forEach((app, i) => {
+			let application = getApp(app);
+			if(application && EnterpriseApps.includes(application.app)){
+				let rol1 = {app:application.app, role: application.app.toUpperCase(), active: true, user: this.user.id};
+				let rol2 = {app:application.app, role: application.app.toUpperCase() + '_PORTAL', active: true, user: this.user.id};
+				roles.push(rol1);
+				roles.push(rol2);
+			}
 		});
+		this.updateRoles(roles);
+	}
 
-		card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => {
-			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
-
-			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
-			let employee = { role: 'EMPLOYEE', active: true, user: user.id};
-			let roles = [enterprise, employee];
-			this.apps.forEach((app, i) => {
-				let application = getApp(app);
-				if(application && EmployeeApps.includes(application.app)){
-					let rol = {app:application.app, role: application.app.toUpperCase(), active: true, user: user.id};
-					roles.push(rol);
-				}
-			});
-			this.updateRoles(roles);
-			this._user.portal = true;
-			user.portal = true;
-			this.setAttribute('user', JSON.stringify(user));
+	selectionEmployeePortal() {
+		let enterprise = { role: 'ENTERPRISE', active: false, user: this.user.id};
+		let employee = { role: 'EMPLOYEE', active: true, user: this.user.id};
+		let roles = [enterprise, employee];
+		this.apps.forEach((app, i) => {
+			let application = getApp(app);
+			if(application && EmployeeApps.includes(application.app)){
+				let rol = {app:application.app, role: application.app.toUpperCase(), active: true, user: this.user.id};
+				roles.push(rol);
+			}
 		});
+		this.updateRoles(roles);
 	}
 
 	buildUserToolbar() {
@@ -278,11 +226,11 @@ export class AonUser extends AonElement {
 			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 			toolbar.addSeparator();
 		}
-		if(!this.isOnlyAuth() && this._user && this._user.uuid)
+		if(!this.isOnlyAuth() && this.user && this.user.uuid)
 			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
 		if(!this.isAutosave())
 			toolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(!this.isOnlyAuth() && this._user.id)
+		if(!this.isOnlyAuth() && this.user.id)
 			toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		if(!this.isOnlyAuth()) 
 			toolbar.addButton2(ACTION.BACK, () => this.back());
@@ -295,13 +243,14 @@ export class AonUser extends AonElement {
 				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth25" id="aonConfigurationUserCardName" description="Nombre" value=""></aon-input>
-				<aon-input class="aonWidth75" id="aonConfigurationUserCardSurname" description="Apellidos" value=""></aon-input>
+				<aon-input class="aonWidth25" id="aonConfigurationUserCardName" description="${MSG.NAME}" value=""></aon-input>
+				<aon-input class="aonWidth75" id="aonConfigurationUserCardSurname" description="${MSG.SURNAME}" value=""></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input>
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
-			</form>`;
+			</form>
+			`;
 		if(this.hasAttribute('showPassword')) {
 			html = html +
 			`<form action="#" class="aon-margin-0">
@@ -322,7 +271,7 @@ export class AonUser extends AonElement {
 
 		let name = document.getElementById('aonConfigurationUserCardName');
 		name.onChange(() => {
-			this._user.name = name.value;
+			this.user.name = name.value;
 			if(this.isAutosave()){
 				this.save();
 			}
@@ -330,7 +279,7 @@ export class AonUser extends AonElement {
 
 		let surname = document.getElementById('aonConfigurationUserCardSurname');
 		surname.onChange(() => {
-			this._user.surname= surname.value;
+			this.user.surname= surname.value;
 			if(this.isAutosave()){
 				this.save();
 			}
@@ -338,7 +287,7 @@ export class AonUser extends AonElement {
 
 		let doc = document.getElementById('aonConfigurationUserCardDocument');
 		doc.onChange(() => {
-			this._user.document= doc.getAttribute('value');
+			this.user.document= doc.getAttribute('value');
 			if(this.isAutosave()){
 				this.save();
 			}
@@ -346,7 +295,7 @@ export class AonUser extends AonElement {
 
 		let phone = document.getElementById('aonConfigurationUserCardPhone');
 		phone.onChange(() => {
-			this._user.phone= phone.getAttribute('value');
+			this.user.phone= phone.getAttribute('value');
 			if(this.isAutosave()){
 				this.save();
 			}
@@ -354,23 +303,39 @@ export class AonUser extends AonElement {
 
 		let email = document.getElementById('aonConfigurationUserCardEmail');
 		email.onChange(() => {
-			this._user.email = email.getAttribute('value');
-			this._user.shared = this.hasAttribute('share');
+			this.user.email = email.getAttribute('value');
+			this.user.shared = this.hasAttribute('share');
 			if(this.isAutosave()){
 				this.save();
 			} else {
-				getAuth({email: this._user.email}).then((auth) => {
+				getAuth({email: this.user.email}).then((auth) => {
 					if(auth.uuid){
-						this._user.name = auth.name || "";
-						this._user.surname = auth.surname || "";
-						this._user.document = auth.document || "";
-						this._user.phone = auth.phone || "";
-						this.setAttribute('user', JSON.stringify(this._user));
+						this.user.name = auth.name || '';
+						this.user.surname = auth.surname || '';
+						this.user.document = auth.document || '';
+						this.user.phone = auth.phone || '';
 						this.initUser();
 					}
 				});
 			}
 		});
+
+		if(!this.isOnlyAuth()){
+			let portal = new AonSwitch();
+			portal.id = 'aonConfigurationUserCardPortal';
+			portal.title = MSG.ONLY_PORTAL;
+			portal.readonly = this.user.portal && !this.getDur().checkUsers();
+			portal.checked = this.user.portal;
+			portal.style.marginLeft = '5px';
+			portal.addEventListener('change', () => {
+				this.user.portal = !this.user.portal;
+				this.buildPermissionButtons();
+				if(this.user.portal) this.selectionEnterprisePortal();
+				else this.selectionPersonalizado();
+			});
+
+			card.getContent().appendChild(portal);
+		}
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
@@ -386,24 +351,6 @@ export class AonUser extends AonElement {
 				e.preventDefault();
 				this.editPassword();
 			});
-		}
-		let card3 = document.getElementById('aonConfigurationUserInfoCard');
-		card3.setVisible(this.hasAttribute('showInfo'));
-		if(this.hasAttribute('showInfo')) {
-			card3.setContentHTML = '';
-			let table = document.createElement('table');
-			card3.setContent(table);
-			table.style.width = '100%';
-			let tr = document.createElement('tr');
-			table.appendChild(tr);
-
-			let td1 = document.createElement('td');
-			tr.appendChild(td1)
-			td1.innerHTML = `<aon-input id="aonConfigurationUserInfoLogin" description="Identificador" disabled="true"></aon-input>`;
-
-			let td2 = document.createElement('td');
-			tr.appendChild(td2)
-			td2.innerHTML = `<aon-switch id="aonConfigurationUserInfoAON" title="nuevo AON" disabled="true"></aon-switch>`;
 		}
 
 		if(this.isMobile()) {
@@ -439,15 +386,13 @@ export class AonUser extends AonElement {
 	}
 
 	save() {
-		updateUser(this._user);
-		if(!this._user.portal && (!this._user.roles || this._user.roles.length == 0)) {
-			this._user.portal = true;
-			this._user.roles = [Role.ENTERPRISE];
+		updateUser(this.user);
+		if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {
+			this.user.portal = true;
+			this.user.roles = [Role.ENTERPRISE];
 		}
-		saveUser(this._user).then(r => {
-			this.setAttribute('showInfo', 'true');
-			this.setAttribute('user', JSON.stringify(r));
-			this._user = r;
+		saveUser(this.user).then(r => {
+			this.user = r;
 			this.init();
 		}).catch(e => {
 			if(!this.isOnlyAuth()) {
@@ -465,7 +410,7 @@ export class AonUser extends AonElement {
     	d.setTitle(MSG.DELETE);
    	 	d.setContentHTML(`Estás seguro de eliminar el usuario`);
     	d.addAcceptAction(() => {
-			let data = { user: this._user.id};
+			let data = { user: this.user.id};
 			deleteUser(data).then(() => this.back());
     	});
     	d.open();
@@ -498,7 +443,7 @@ export class AonUser extends AonElement {
 		d.setTitle(MSG.SEND);
 		d.setContentHTML('Al notificar los datos de usuario se generará una nueva contraseña.');
 		d.addAcceptAction(() => {
-			sendUserInfoEmail(this._user);
+			sendUserInfoEmail(this.user);
 		});
 		d.open();
 	}
@@ -508,7 +453,6 @@ export class AonUser extends AonElement {
 	 			|| (this.isEnterprise() && EnterpriseApps.includes(app.app))
 				|| this.isPersonalizado()){
 			let table = this.getElement('aonUserRoleTable');
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
 			let tr = document.createElement('tr');
 			table.appendChild(tr);
@@ -561,7 +505,7 @@ export class AonUser extends AonElement {
 				let roleA = {
 					app: app ? app.app : 'ADMIN',
 					role: rolePortal,
-					user: user.id,
+					user: this.user.id,
 					active: aonSwitch.isChecked()
 				};
 				let roles = [roleA];
@@ -571,7 +515,7 @@ export class AonUser extends AonElement {
 					let roleB = {
 						app: app ? app.app : 'ADMIN',
 						role: roleManager,
-						user: user.id,
+						user: this.user.id,
 						active: aonSwitch.isChecked()
 					};
 					roles.push(roleB);
@@ -582,7 +526,7 @@ export class AonUser extends AonElement {
 					let roleC = {
 						app: app ? app.app : 'ADMIN',
 						role: rolePortal,
-						user: user.id,
+						user: this.user.id,
 						active: aonSwitch.isChecked()
 					};
 					roles.push(roleC);
@@ -607,17 +551,15 @@ export class AonUser extends AonElement {
 	}
 
 	isApp(app) {
-		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
-		return user && user.roles && user.roles.includes(app.toUpperCase())
+		return this.user && this.user.roles && this.user.roles.includes(app.toUpperCase());
 	}
 
 	getAccess(app) {
-		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 		let manager = app.app.toUpperCase() + '_MANAGER';
 		let portal = app.app.toUpperCase() + '_PORTAL';
-		if(this.isAdmin() || (user.roles && user.roles.includes(manager))){
+		if(this.isAdmin() || (this.user.roles && this.user.roles.includes(manager))){
 			return 'Asesor';
-		} else if(user.roles && user.roles.includes(portal)) {
+		} else if(this.user.roles && this.user.roles.includes(portal)) {
 			return 'Empresa';
 		} else if(app.access.length < 3) {
 			return 'Empresa';
@@ -626,7 +568,6 @@ export class AonUser extends AonElement {
 
 	accessAction(app, value) {
 		if(app) {
-			let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
 			let roles = [];
 			let rol = app.app.toUpperCase()
 			let manager = app.app.toUpperCase() + '_MANAGER';
@@ -637,21 +578,21 @@ export class AonUser extends AonElement {
 			if('Asesor' === value){
 				roles.push({
 					app: app ? app.app : 'ADMIN',
-					user: user.id,
+					user: this.user.id,
 					role: manager,
 					active: true
 				});
 			} else if('Empresa' === value) {
 				roles.push({
 					app: app ? app.app : 'ADMIN',
-					user: user.id,
+					user: this.user.id,
 					role: manager,
 					active: false
 				});
 				if(app.access.length > 2) {
 					roles.push({
 						app: app ? app.app : 'ADMIN',
-						user: user.id,
+						user: this.user.id,
 						role: portal,
 						active: true
 					});
@@ -659,13 +600,13 @@ export class AonUser extends AonElement {
 			} else if('Empleado' === value) {
 				roles.push({
 					app: app ? app.app : 'ADMIN',
-					user: user.id,
+					user: this.user.id,
 					role: manager,
 					active: false
 				});
 				roles.push({
 					app: app ? app.app : 'ADMIN',
-					user: user.id,
+					user: this.user.id,
 					role: portal,
 					active: false
 				});
@@ -675,27 +616,27 @@ export class AonUser extends AonElement {
 	}
 
 	isAutosave() {
-		return this.hasAttribute('autosave') && this.getAttribute('autosave') != 'false';
+		return this.hasAttribute(CONSTANT.AUTOSAVE) && this.getAttribute(CONSTANT.AUTOSAVE) != 'false';
 	}
 
 	isOnlyAuth() {
-		return this.hasAttribute('onlyAuth') && this.getAttribute('onlyAuth') != 'false';
+		return this.hasAttribute(CONSTANT.ONLY_AUTH) && this.getAttribute(CONSTANT.ONLY_AUTH) != 'false';
 	}
 
 	isShowApps() {
-		return this.hasAttribute('showApps') && this.getAttribute('showApps') != 'false'
+		return this.hasAttribute(CONSTANT.SHOW_APPS) && this.getAttribute(CONSTANT.SHOW_APPS) != 'false'
 	}
 
 	isAdmin() {
-		return this._user.roles && this._user.roles.includes('ADMIN');
+		return this.user.roles && this.user.roles.includes('ADMIN');
 	}
 
 	isEmployee() {
-		return this._user.roles && this._user.roles.includes('EMPLOYEE') && !this.isEnterprise();
+		return this.user.roles && this.user.roles.includes('EMPLOYEE') && !this.isEnterprise();
 	}
 
 	isEnterprise() {
-		return this._user.roles && this._user.roles.includes('ENTERPRISE');
+		return this.user.roles && this.user.roles.includes('ENTERPRISE');
 	}
 
 	isPersonalizado() {
@@ -703,9 +644,9 @@ export class AonUser extends AonElement {
 	}
 
 	hasSecurity() {
-		return this.hasAttribute('showApps') && this._user != null
-				&& this._user.email != null && !this._user.email.isEmpty()
-				&& this._user.id != null;
+		return this.isShowApps() && this.user != null
+				&& this.user.email != null && !this.user.email.isEmpty()
+				&& this.user.id != null;
 	}
 
 	hasApp(app) {
@@ -729,52 +670,63 @@ export class AonUser extends AonElement {
 	}
 
 	updateRoles(roles) {
-		let user = this._user ? this._user : (this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined);
-		this._user.roles = user && user.roles ? user.roles : [];
+		this.user.roles = this.user && this.user.roles ? this.user.roles : [];
 		roles.forEach(role => this.updateRole(role));
-		console.log(roles);
-		console.log(user.roles);
-		console.log(this._user.roles);
-		user.roles = this._user.roles;
-		this.setAttribute('user', JSON.stringify(user));
 		this.initApps();
 		this.buildPermissionButtons();
 	}
 
 	updateRole(role) {
 		let bool = true;
-		this._user.roles.forEach((item, i) => {
+		this.user.roles.forEach((item, i) => {
 			if(role === Role.EMPLOYEE && (item.includes('PORTAL') || item.includes('MANAGER'))){
-				this._user.roles.splice(i, 1);
+				this.user.roles.splice(i, 1);
 			} 
 			if(role === Role.ENTERPRISE && item.includes('MANAGER')){
-				this._user.roles.splice(i, 1);				
+				this.user.roles.splice(i, 1);				
 			}
  			if(item === role.role) {
 				bool = false;
 				if(!role.active) 
-					this._user.roles.splice(i, 1);
+					this.user.roles.splice(i, 1);
 			}
 		});
 		if(bool && role.active) {
-			this._user.roles.push(role.role);
+			this.user.roles.push(role.role);
 		}
 	}
 
 	setUser(user) {
-		this._user = user;
-		this.setAttribute('user', JSON.stringify(user));
+		this.user = user;
 	}
 
 	setShowToolbar(showToolbar) {
 		// this.showToolbar = showToolbar;
-		this.setAttribute('showToolbar', showToolbar);
+		this.setAttribute(CONSTANT.SHOW_TOOLBAR, showToolbar);
 	}
 
 	setShowApps(showApps) {
 		// this.showToolbar = showToolbar;
-		this.setAttribute('showApps', showApps);
+		this.setAttribute(CONSTANT.SHOW_APPS, showApps);
+	}
+
+	setOnlyAuth(onlyAuth) {
+		// this.onlyAuth = onlyAuth;
+		this.setAttribute(CONSTANT.ONLY_AUTH, onlyAuth);
+	}
+
+	setShare(share) {
+		this.setAttribute(CONSTANT.SHARE, share);
+	}
+
+	setShowPassword(showPassword) {
+		this.setAttribute(CONSTANT.SHOW_PASSWORD, showPassword);
+	}
+
+	setAutosave(autosave) {
+		this.setAttribute(CONSTANT.AUTOSAVE, autosave);
 	}
 }
-
-window.customElements.define('aon-user', AonUser);
+if(!window.customElements.get(TAG.AON_USER)){
+	window.customElements.define(TAG.AON_USER, AonUser);
+}

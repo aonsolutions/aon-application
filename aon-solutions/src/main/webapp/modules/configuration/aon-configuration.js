@@ -6,7 +6,6 @@ import "../../components/aon-input.js";
 import "../../components/aon-address.js";
 import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
-import "../user/aon-user.js";
 import "../company/aon-company-list.js";
 
 import { AonCompanyList } from "../company/aon-company-list.js";
@@ -18,6 +17,7 @@ import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
 import { CONFIGURATION} from "../../services/app.js";
 import { AonGroupList } from "./groups/aon-group-list.js";
+import { AonUser } from "../user/aon-user.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -159,12 +159,16 @@ export class AonConfiguration extends AonElement {
 		  toolbar.setAttribute('option', MSG.MY_DATA);
       
       aonConfiguration.removeToolbarOptions();
-      aonConfiguration.setContentHTML(
-        '<aon-user id="aonUserPersonal" showPassword="true" showToolbar="true" onlyAuth="true"><aon-user>'
-      );
-      let aonUser = this.getElement("aonUserPersonal");
+
+      let aonUser = new AonUser();
+      aonUser.id = 'aonUserPersonal';
+      aonUser.setShowPassword(true);
+      aonUser.setShowToolbar(true);
+      aonUser.setOnlyAuth(true);
+      aonUser.setUser(user);
       aonUser.style.width = "100%";
-      aonUser.setAttribute("user", JSON.stringify(user));
+  
+      aonConfiguration.setContent(aonUser);	
     });
   }
 
@@ -265,14 +269,16 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(aonCompany);
   }
 
-  buildCreateUser(share) {
-    let content =  this.getApplication().getContent();
-    content.innerHTML =
-      '<aon-user id="aonUserCreate" showApps="true" showToolbar="true" ><aon-user>';
-    let aonUser = document.getElementById("aonUserCreate");
-    aonUser.style.width = "100%";
-    if (share) aonUser.setAttribute("share", share);
-  }
+	buildCreateUser(share) {
+		let aonUser = new AonUser();
+		aonUser.id = 'aonUserCreate';
+		aonUser.setShowApps(true);
+		aonUser.setShowToolbar(true);
+		aonUser.style.width = "100%";
+		if(share) aonUser.setAttribute('share', share);
+		
+		this.getApplication().setContent(aonUser);	
+	}
 
   buildStore() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);

@@ -229,6 +229,7 @@ export const NUMBER = MSG.NUMBER;
 // ----- O
 
 export const OFFICE = 'Despacho';//TODO
+export const ONLY_PORTAL = MSG.ONLY_PORTAL;
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
 export const OBSERVATION = "Observación"; //TODO
@@ -245,6 +246,7 @@ export const PENDING_TASKS = 'Tareas Pendientes';//TODO
 export const PENDINGS = MSG.PENDINGS;
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
+export const PORTAL = 'Portal';
 export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;

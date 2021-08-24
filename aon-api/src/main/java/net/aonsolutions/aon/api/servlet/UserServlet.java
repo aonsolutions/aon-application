@@ -634,6 +634,7 @@ public class UserServlet extends AonApiHttpServlet {
 				js.put("roles", getUserRoles(api.getDomain(), user));
 				js.put("portal", user.isPortal());
 				js.put("shared", user.isShared());
+				js.put("login", user.getLogin());
 			}
 		} else {
 			throw new Exception("El email no es correcto.");

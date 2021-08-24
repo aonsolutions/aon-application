@@ -126,6 +126,7 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OFFER = 'offer';
+export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
@@ -191,7 +192,11 @@ export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
+export const SHARE = 'share';
+export const SHOW_APPS = 'showApps';
 export const SHOW_FILE = 'showFile';
+export const SHOW_PASSWORD = 'showPassword';
+export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
 export const STATUS = 'status';
 export const STRING = 'string';

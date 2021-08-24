@@ -2,8 +2,6 @@ import {AonElement} from '../../components/AonElement.js';
 import {getUserList} from  '../../services/service.js';
 import {setUsers, setIndex} from './UserCache.js';
 
-
-import './aon-user.js'
 import '../../components/aon-table.js';
 import { AonUser } from './aon-user.js';
 import { EVENT } from '../../environments/environments.js';

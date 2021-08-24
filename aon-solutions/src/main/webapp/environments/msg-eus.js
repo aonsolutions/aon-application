@@ -161,6 +161,7 @@ export const NUMBER = 'Zenbakia';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Portala Soilik';
 export const OPTIONS = 'Aukerak';
 
 // ----- P

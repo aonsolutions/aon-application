@@ -161,6 +161,7 @@ export const NUMBER = 'Número';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Solo Portal';
 export const OPTIONS = 'Opciones';
 
 // ----- P
