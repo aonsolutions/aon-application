@@ -1367,8 +1367,10 @@ public class SecurityDAO {
 		
 		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getSharedProperty().eq((byte)0))).count();
 		domain.setDefinedUsers(userNum.intValue());
+		
 
 		return new DomainUserRoles()
+				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
 				.setDomain(domain)
 				.setUser(user)
 				.setDomainApps(domainApps)

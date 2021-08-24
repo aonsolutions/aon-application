@@ -101,8 +101,9 @@ public class DomainUserRoles implements Serializable {
 		return oldDomainModules;
 	}
 
-	public void setOldDomainModules(LinkedList<Module> oldDomainModules) {
+	public DomainUserRoles setOldDomainModules(LinkedList<Module> oldDomainModules) {
 		this.oldDomainModules = oldDomainModules;
+		return this;
 	}
 
 	public LinkedList<Module> getOldParentDomainModules() {
