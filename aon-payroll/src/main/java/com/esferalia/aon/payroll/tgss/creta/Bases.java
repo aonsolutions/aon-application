@@ -1920,7 +1920,7 @@ public class Bases {
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
-			put("01", new HCretaData(WORKED_HOURS.getName()) {
+			put("01", new HCretaData(SALARY_HOURS.getName()) {
 				@Override
 				public Double get(Salary salary, Fecha desde, Fecha hasta)
 				throws NoSuchVariableException,
@@ -1932,18 +1932,15 @@ public class Bases {
 						throws NoSuchVariableException,
 						UnMatchedVariableException {
 					try {
-						return super.get(salary, desde, hasta);
+						double salaryHours =  super.get(salary, desde, hasta);
+						return Math.max(1.00, salaryHours);
 					} catch (NoSuchVariableException e) {
 					}
 					
-					try {
-						Period p = new Period(toDate(desde), toDate(hasta));
-						return get(SALARY_HOURS.getName(),salary,  p);
-					} catch (NoSuchVariableException e) {
-					}
-
-					return getWorkedHours(salary, desde, hasta);
+					double workedHours = getWorkedHours(salary, desde, hasta);
+					return Math.max(1.00, workedHours);
 				};
+				
 				public Double getAdditionalHours(Salary salary, Fecha desde, Fecha hasta)
 						throws NoSuchVariableException,
 						UnMatchedVariableException {
