@@ -181,6 +181,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 					if ( extraIssueDate.before(settleEndDate)
 						 && extraIssueDate.after(contractStartDate) ) {
 						extraStartDate  = AgreementExtra.parseAgreementDate(extra.getStartDate(), ++year);
+						extraIssueDate  = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
 						if ( extraStartDate.after(settleEndDate))  
 							break;  // Nothing to calculate
 					} else if (extraEndDate.before(settleEndDate)  ) {
