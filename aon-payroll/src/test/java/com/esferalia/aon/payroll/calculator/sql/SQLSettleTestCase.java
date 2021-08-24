@@ -2179,6 +2179,89 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( 950.00/12.00 * 7, settle.getTotalPayment(), 0.005);
 	}
 
+	@Test
+	public void testSettleWithExtrasXX() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "(P_0) + (P_1) + (P_2)";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "31/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "(P_0 + P_1 + P_2)";
+						this.month = Month.JUNE;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "30/06";
+					}
+				}, });
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		//contractStart = add(contractStart, Calendar.MONTH,7);
+		Date contractEnd = add(add(contractStart, Calendar.MONTH, 7), Calendar.DATE, 14 ); 
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { 
+					"( P_1 + P_2 ) * 0.10 ",
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					"BASE_IRPF * 0.00/100" 
+				}, 
+				category);
+		//@formatter:off		
+		
+		addSSRegimeStuff(aonContext);
+		
+		
+		for ( int i = 0 ; i < 8 ; i++ ) {
+			Date startDate = add(contractStart, Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+			.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate , endDate , contract));
+			jooqSalaryBuilder.execute();
+			System.out.println(startDate +".." + endDate);
+		}
+
+		
+		System.out.println("*" +contractStart +".." + contractEnd);
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contractEnd, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		for ( SalaryPayment p : settle.getSalaryPayments() ) 
+			System.out.println(p.getDescription() + "= " + p.getAmount() );
+		
+		Assert.assertEquals( 
+				Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 7.5 
+				+Math.round(1750.00 * 1.10 / 12 * 1000.00 ) / 1000.00 * 1.5  , 
+				settle.getTotalPayment(), 0.001);
+	}
+
 	// ------------------------------------------------------------------------
 
 	@Test
