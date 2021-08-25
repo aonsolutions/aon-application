@@ -92,7 +92,6 @@ public class NotificationRequest extends Notification {
 		    payload.put("registration_ids", getAuthDevices());
 		    payload.put("notification", notification);
 		    payload.put("data", getData());
-
 			StringEntity params = new StringEntity(payload.toString());
 		    httpPost.setEntity(params);
 	

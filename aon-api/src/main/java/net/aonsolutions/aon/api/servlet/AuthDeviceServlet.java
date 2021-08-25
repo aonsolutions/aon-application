@@ -56,15 +56,17 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	}	
 	
 	private JSONObject save(AonApiData api) {
-		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-
-		Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
-		AuthDevice authDevice = new AuthDevice()
-				.setId(api.getData().optInt("id"))
-				.setAuth(aonToken.getAuth())
-				.setDeviceType(DeviceType.safeValueOf(api.getData().optString("device_type")))
-				.setDeviceToken(api.getData().optString("tokenFCM"));
-		return SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
+		if(!api.getData().optString("tokenFCM").isEmpty()) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
+			AuthDevice authDevice = new AuthDevice()
+					.setId(api.getData().optInt("id"))
+					.setAuth(aonToken.getAuth())
+					.setDeviceType(DeviceType.safeValueOf(api.getData().optString("device_type")))
+					.setDeviceToken(api.getData().optString("tokenFCM"));
+			return SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
+		}
+		return new JSONObject();
 	}
 	
 	private JSONObject delete(AonApiData api) {

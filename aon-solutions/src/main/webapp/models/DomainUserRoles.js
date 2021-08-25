@@ -119,7 +119,7 @@ export class DomainUserRoles {
 	}
 
   hasOldModule(mod) {
-  	return (getOldDomainModules() && getOldDomainModules().includes(mod)) || (getOldParentDomainModules() && getOldParentDomainModules().includes(mod));
+  	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
   }
 
   hasOldRole(oldRole) {

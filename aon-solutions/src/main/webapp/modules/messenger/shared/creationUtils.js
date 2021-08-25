@@ -1,4 +1,5 @@
 import { AonCard } from "../../../components/aon-card.js";
+import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS } from "../../../environments/environments.js";
@@ -305,14 +306,14 @@ export const createStartJustifiedColumn = () =>newComponent({
     }
 });
 
-export const titleFirstDiv  = () => {
+export const titleFirstDiv  = (title="") => {
     const div = createStartJustifiedColumn();
     let span = setStyles(document.createElement(TAG.SPAN),{
         fontSize: "0.9375rem",
         width:"100%",
         color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
     });
-    span.textContent = MSG.ISSUE;
+    span.textContent = title;
     div.appendChild(span);
 
     return div.element;
@@ -413,6 +414,16 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
     title: "Asignar a"
 });
 
+ //-----------------CUSTOMER
+ export const createCustomer = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.CUSTOMER_TASK,
+  name: MESSENGER_IDS.CUSTOMER_TASK,
+  title: MSG.SENDER,
+  autocomplete: "off",
+  readonly: "false"
+});
+
+
 //-------------TEXT AREA COMMENT
 export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
     name:MESSENGER_IDS.COMMENT_TASK,
@@ -432,7 +443,7 @@ const iconComment = (icon) => {
     let iconSend = setStyles(document.createElement("i"),{
         fontSize: "2em",
         lineHeight: "44px",
-        color: "#42a5f5"
+        color: CSS.variable(COLORS.AON_BLUE)
     });
     iconSend.className   = ICON_TYPES.MATERIAL_ICONS;
     iconSend.textContent = icon;
@@ -579,3 +590,9 @@ export const createCardMessenger = (id, title) =>{
   aonCard.style.width = "100%";
   return aonCard;
 }
+
+export const createInputContact = () =>  setAttributes(new AonInput(),{
+  name:MESSENGER_IDS.GTASK_ID_TASK,
+  id: MESSENGER_IDS.GTASK_ID_TASK,
+  description: MSG.CONTACT + ` (${MSG.OPTIONAL})`
+});

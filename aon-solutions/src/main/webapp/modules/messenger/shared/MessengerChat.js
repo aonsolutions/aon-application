@@ -4,8 +4,8 @@ import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv, createStartJustifiedRow, createCardMessenger } from "./creationUtils";
-import { addLine, buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
+import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv, createStartJustifiedRow, createCardMessenger, createCustomer, createInputContact } from "./creationUtils";
+import { addLine, buildTextareaToolbar, fillCustomer, fillProcessType, fillWorkGroup } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -19,10 +19,10 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   const mainView = createMainView(aonMessengerChat);
 
-  if(aonMessengerChat.task.source === TASK_SOURCE.GITHUB) 
-    buildProcess(mainView, aonMessengerChat);
+  if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST) 
+    buildRequest(mainView, aonMessengerChat);
   else 
-    buildManual(mainView, aonMessengerChat); // SOURCE MANUAL 
+    buildQuery(mainView, aonMessengerChat); // SOURCE QUERY 
 
   buildChat(mainView, aonMessengerChat);
 
@@ -55,7 +55,7 @@ const buildToolbar = (aonMessengerChat) => {
         }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
       }
       if(task.status == TASK_STATUS.DELETED || task.status == TASK_STATUS.FINISHED)
-        toolbar.addButton2({...ACTIONS.RESTORE, name:"Reabrir"}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
+        toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
 
       if(task.status != TASK_STATUS.DELETED) 
         toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
@@ -83,10 +83,11 @@ const buildToolbar = (aonMessengerChat) => {
  * @param {HTMLElement} mainView div principal
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildManual = (mainView, aonMessengerChat) => {
+const buildQuery = (mainView, aonMessengerChat) => {
 
     const task = aonMessengerChat.task;
     const application = aonMessengerChat.applicationEl;
+    const applicationParent = aonMessengerChat.applicationParentEl;
 
     const firstDiv = newComponent({
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
@@ -105,42 +106,67 @@ const buildManual = (mainView, aonMessengerChat) => {
     });
     firstDiv.appendTo(mainView);
 
-    const aonCard = createCardMessenger(MSG.DATA, MSG.DATA);
+    const aonCard = createCardMessenger(MSG.DATA, "");
     firstDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
   
     const columnsDiv = createStartJustifiedColumn();
     aonCard.setContent(columnsDiv.element);
 
-    const titleDiv = titleFirstDiv();
+
+    if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
+      // DIV CUSTOMER
+      const rowsDivTwo = createStartJustifiedRow();
+      rowsDivTwo.element.style.width = "100%";
+      columnsDiv.appendChild(rowsDivTwo.element);
+      // CUSTOMER
+      const customerSelect = createCustomer();
+      customerSelect.style.width = "100%";
+      rowsDivTwo.appendChild(customerSelect);
+          //-----------------TASK HOLDER
+      const contact = createInputContact();
+      contact.style.width = "100%";
+      contact.style.marginLeft = "5px";
+      rowsDivTwo.appendChild(contact);
+      if(task.gtask_id) contact.value  = task.gtask_id;
+      fillCustomer(task);
+    }
+
+    //DIV TITLE
+    const titleDiv = titleFirstDiv(MSG.ISSUE);
     columnsDiv.appendChild(titleDiv);
     //TITLE
-    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, `Escriba su ${MSG.ISSUE} aquí`);
-    titleDiv.appendChild(title);
-  
+    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
+    titleDiv.appendChild(title); 
+    
+    if(!applicationParent.cauData){
+      //DIV WORKGROUP AND TASKHOLDER
+      const rowsDiv = createStartJustifiedRow();
+      rowsDiv.element.style.width = "100%";
+      columnsDiv.appendChild(rowsDiv.element);
 
-    const rowsDiv = createStartJustifiedRow();
-    rowsDiv.element.style.width = "100%";
-    columnsDiv.appendChild(rowsDiv.element);
+      //-----------------WORKGROUP
+      const workgroupSelect = createWorkgroup();
+      workgroupSelect.style.width = "100%";
+      rowsDiv.appendChild(workgroupSelect);
+      fillWorkGroup(task, application);
 
-     //-----------------WORKGROUP
-    const workgroupSelect = createWorkgroup();
-    workgroupSelect.style.width = "100%";
-    rowsDiv.appendChild(workgroupSelect);
-    fillWorkGroup(task, application);
-
-    //-----------------TASK HOLDER
-    const taskHolderSelect = createTaskHolder();
-    taskHolderSelect.style.width = "100%";
-    rowsDiv.appendChild(taskHolderSelect);
-
+      //-----------------TASK HOLDER
+      const taskHolderSelect = createTaskHolder();
+      taskHolderSelect.style.width = "100%";
+      taskHolderSelect.style.marginLeft = "5px";
+      rowsDiv.appendChild(taskHolderSelect);
+    } else {   // addInfoCau
+      task.setDescriptionJson({cauData:applicationParent.cauData});
+    }
+    
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
         height: '100%',
         maxHeight: '300px'
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     firstDiv.appendChild(aonTextArea);
-    if(task && task.description) aonTextArea.value = task.description;
+    if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
 
     buildTextareaToolbar(aonTextArea, task, false);
 
@@ -152,7 +178,7 @@ const buildManual = (mainView, aonMessengerChat) => {
  * @param {HTMLElement} mainView div principal
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
- const buildProcess = (mainView, aonMessengerChat) => {
+ const buildRequest = (mainView, aonMessengerChat) => {
 
   const task = aonMessengerChat.task;
   const application = aonMessengerChat.applicationEl;
@@ -342,9 +368,9 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   // }
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
-  textarea.addEventListener(EVENT.INPUT, ()=>{
-    aonTextArea.value = textarea.value || "";
-    aonTextArea.FILES = textarea.FILES;
+  textarea.addEventListener(EVENT.INPUT, ({target})=>{
+    aonTextArea.value = target.value || "";
+    aonTextArea.FILES = target.FILES;
   });
 
   let button = dialog.addSendAction(

@@ -1,7 +1,8 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 public enum NotificationSource {
-	DOCUMENTAL
+	DOCUMENTAL,
+	MESSENGER
 	;
 	
 	private NotificationSource() {}

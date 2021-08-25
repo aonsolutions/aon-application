@@ -17,6 +17,7 @@ export class AonMessengerList extends AonElement {
   MORE;
   KEY_VIEW;
   TASK_HOLDER;
+  dur;
   static get observedAttributes() {
     return [];
   }
@@ -84,7 +85,7 @@ export class AonMessengerList extends AonElement {
       // aonTable.addColumn("  ", "icon", "icon", "2%");
       aonTable.addColumn("", "string", "lettersHtml", "2%");
       aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
-      aonTable.addColumn(MSG.TITLE, "string", "title", "30%");
+      aonTable.addColumn(MSG.TITLE, "string", "newTitle", "30%");
       aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
 
@@ -119,21 +120,69 @@ export class AonMessengerList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      let filter = this.getFilter();    
-      filter.search = detail;
+      let filter = this.getFilter();   
+      filter = {page:0, perPage:30, status: filter.status, search:detail};
       this.setFilter(filter);
-      this.paintTable();
+      this.loadMoreSearch();
     });
     // btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{ });
     
     // btnSearch.buildOptionsFilter(INPUTS);//INPUTS
   }
 
+  async loadMoreSearch(){
+    let aonTable = this.getElement(this.TABLE_ID);
+    if(this.isMobile()){
+      aonTable.removeAllLi();
+    } else {
+      aonTable.removeRows();
+    }
+
+    await this.loadMore();
+  }
+
+  async loadMore() {
+		let aonTable = this.getElement(this.TABLE_ID);
+    const datos = await this.getData();
+    addTasks(datos);
+    if(this.isMobile()){
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        const newTitle  = `#${res.newNumber} ${res.title}`;
+        const options = {
+          title: newTitle,
+          subtitle: dateParse,
+          ...this.getIconList(res)
+        };
+        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
+      });
+    } else {
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        let newTitle  =  res.title;
+        if(res.registry && res.registry.name)
+          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+        
+        const newData = { 
+          ...res, 
+          newTitle,
+          // ...this.getIconList(res),
+          lettersHtml: this.getIcon(res),
+          dateParse
+        };
+        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+      });
+    }
+	}
+
   async getData(){
     let data = []
     try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
+      if(this.applicationParentEl.cauData && this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email){
+        filter.email = this.applicationParentEl.cauData.auth.email;
+      }
       this.setFilter(filter);
       const tasks = await getTasks(filter);
       if(tasks.length == 0)
@@ -141,11 +190,9 @@ export class AonMessengerList extends AonElement {
       else {
         data = tasks.map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
-          const newTitle  = `#${newNumber} ${task.title}`;
           return {
             ...task,
             date:task.start_date,
-            newTitle,
             newNumber
           };
         });
@@ -156,48 +203,30 @@ export class AonMessengerList extends AonElement {
     return data;
   }
 
-  async loadMore() {
-		let aonTable = this.getElement(this.TABLE_ID);
-    const datos = await this.getData();
-    addTasks(datos);
-    if(this.isMobile()){
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        const options = {
-          title: res.newTitle,
-          subtitle: dateParse,
-          ...this.getIconList(res)
-        };
-        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
-      });
-    } else {
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        const newData = { 
-          ...res, 
-          // ...this.getIconList(res),
-          lettersHtml: this.getIcon(res),
-          dateParse
-        };
-        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-      });
-    }
-	}
-
   addTask(button){
 		const left = button.getBoundingClientRect().left;
     let top  = button.getBoundingClientRect().top;
     if(this.isMobile()) top = top - 50;
 
-    let options = [{
+    let options = [];
+    options.push({
       name: MSG.QUERY,
-      icon: 'assignment',
-      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
-    }, {
+      icon: MATERIAL_ICONS.ASSESSMENT,
+      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+    });
+    options.push({
       name: MSG.REQUEST,
-      icon: 'archive',
-      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.GITHUB})
-    }];
+      icon: MATERIAL_ICONS.OUTBOX,
+      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST})
+    });
+
+    if(this.dur.hasCallCenter()){
+      options.push({
+        name: "CAU",
+        icon: MATERIAL_ICONS.SUPPORT_AGENT,
+        fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
+      });
+    }
 
     const d = this.applicationEl.getOptionDialog();
     d.setMenuOptions(options, top, left);
@@ -205,49 +234,44 @@ export class AonMessengerList extends AonElement {
   }
 
 
-  getIconList(res){
-    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
-    let icon = MATERIAL_ICONS.INFO;
-    if(res.source===TASK_SOURCE.CAU) 
-      icon = MATERIAL_ICONS.SUPPORT_AGENT;
-    else if(res.source===TASK_SOURCE.GITHUB) 
-      icon = MATERIAL_ICONS.ASSIGNMENT;
-
-    let color = AON_MESSENGER_LIST_OPEN.icon_color;
-    if(res.status === TASK_STATUS.FINISHED) 
-      color = AON_MESSENGER_LIST_CLOSE.icon_color;
-    else if(res.status === TASK_STATUS.DELETED) 
-      color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
-      
+  getIconList(res){      
     return {
-      icon,
-      icon_color:color,//CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
+      ...this.getIconJson(res),
       icon_class:ICON_TYPES.MATERIAL_ICONS_OUTLINED,
       icon_title:res.source,
     }
   }
 
-  getIcon(res){
+  getIconJson({source,status}){
     const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
     let icon = MATERIAL_ICONS.INFO;
-    if(res.source===TASK_SOURCE.CAU) 
+    if(source===TASK_SOURCE.CAU) 
       icon = MATERIAL_ICONS.SUPPORT_AGENT;
-    else if(res.source===TASK_SOURCE.GITHUB) 
+    else if(source===TASK_SOURCE.REQUEST) 
       icon = MATERIAL_ICONS.ASSIGNMENT;
 
-    let color = AON_MESSENGER_LIST_OPEN.icon_color;
-    if(res.status === TASK_STATUS.FINISHED) 
-      color = AON_MESSENGER_LIST_CLOSE.icon_color;
-    else if(res.status === TASK_STATUS.DELETED) 
-      color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+    let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
+    if(status === TASK_STATUS.FINISHED) 
+      icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
+    else if(status === TASK_STATUS.DELETED) 
+      icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+    
+    return {
+      icon,
+      icon_color
+    }
+  }
+
+  getIcon(res){
+    let icon = this.getIconJson(res);
 
     let span = this.createElement(TAG.SPAN);
-    span.style.color = color;
+    span.style.color = icon.icon_color;
     span.title = res.source;
 
     let iOne = this.createElement("i");
     iOne.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-    iOne.textContent = icon;
+    iOne.textContent = icon.icon;
     span.appendChild(iOne);
 
     //ICON WAY (IN OR OUT)

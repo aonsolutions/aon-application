@@ -15,10 +15,10 @@ export const buildMobile = (aonMessengerChat)=> {
     const mainView = createMobileMainView();
     aonMessengerChat.appendChild(mainView);
 
-    if(aonMessengerChat.task.source === TASK_SOURCE.GITHUB) 
-        buildProcess(mainView, aonMessengerChat);
+    if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST) 
+        buildRequest(mainView, aonMessengerChat);
     else 
-        buildManual(mainView, aonMessengerChat); // SOURCE MANUAL 
+        buildQuery(mainView, aonMessengerChat); // SOURCE QUERY 
 }
 
 /**
@@ -26,7 +26,7 @@ export const buildMobile = (aonMessengerChat)=> {
  * @param {HTMLElement} mainView htmlElement aon-messenger-chat
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-const buildManual = (mainView, aonMessengerChat) => {
+const buildQuery = (mainView, aonMessengerChat) => {
     const task = aonMessengerChat.task;
 
     const firstDiv = newComponent({
@@ -91,7 +91,7 @@ const buildManual = (mainView, aonMessengerChat) => {
  * @param {HTMLElement} mainView htmlElement aon-messenger-chat
  * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
  */
-const buildProcess =  (mainView, aonMessengerChat) => {
+const buildRequest =  (mainView, aonMessengerChat) => {
     aonMessengerChat.getApplication().development();
 }
 
@@ -168,7 +168,7 @@ const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
     /**
      * Creating title input
      */
-    const titleIn = setStyles( createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, `Escriba su ${MSG.ISSUE} aquí`), {
+    const titleIn = setStyles( createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE), {
         padding: "10px 20px",
         display : "block",
         width: "100%",

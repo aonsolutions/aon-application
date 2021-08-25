@@ -15,6 +15,7 @@ import { fillChat, sendMessage } from "./shared/utils.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
+import { getAuth } from "../../services/authService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -141,9 +142,19 @@ export class AonMessengerChat extends AonElement {
       if(detail) this.task.setTaskHolder(detail)
     });
 
+    let customerEl = this.getElement(MESSENGER_IDS.CUSTOMER_TASK);
+    if(customerEl) customerEl.addEventListener(EVENT.CHANGE, ({detail})=>{
+      if(detail) this.task.setRegistry(detail);
+    });
+
     let descriptionTask = this.getElement(MESSENGER_IDS.DESCRIPTION_TASK);
-    if(descriptionTask) descriptionTask.addEventListener(EVENT.INPUT, ()=>{
-      if(descriptionTask.value) this.task.setDescription(descriptionTask.value)
+    if(descriptionTask) descriptionTask.addEventListener(EVENT.INPUT, ({target})=>{
+      if(target.value) this.task.setDescriptionJson({observation:target.value})
+    });
+
+    let gtaskIdTask = this.getElement(MESSENGER_IDS.GTASK_ID_TASK);
+    if(gtaskIdTask) gtaskIdTask.addEventListener(EVENT.INPUT, ({target})=>{
+      if(target.value) this.task.setGTaskId(target.value)
     });
 
     let processTypeEl = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
@@ -210,7 +221,7 @@ export class AonMessengerChat extends AonElement {
     this.applicationEl.startLoading();
     
     this.buildTaskWorkflow();
-    if(this.task.source === TASK_SOURCE.GITHUB)
+    if(this.task.source === TASK_SOURCE.REQUEST)
       await this.saveSourceProcess();
     else 
       await this.saveSourceManual();
@@ -239,7 +250,7 @@ export class AonMessengerChat extends AonElement {
   async saveSourceProcess(){
     try {
         this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
-        this.task.description = getFormVacationJson();
+        this.task.setDescriptionJson(getFormVacationJson());
         const data = await saveTask(this.task);
         this.task.editTask(data);
         if(this.getData().id){
@@ -262,7 +273,7 @@ export class AonMessengerChat extends AonElement {
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
         await deleteTask({taskId:this.task.id});
-        this.showToast({message:MSG.DELETED_DATA, type:CONSTANT.ERROR});
+        this.showToast({message:MSG.DELETED_DATA});
         this.back();
       } catch (error) {
         this.showError(error);

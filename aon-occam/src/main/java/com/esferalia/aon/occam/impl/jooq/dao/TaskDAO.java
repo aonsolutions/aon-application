@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,13 +22,13 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.project.Project;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -79,6 +80,7 @@ public class TaskDAO {
 				.select()
 				.from(TASK)
 				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.orderBy(TASK.CREATION_DATE.desc());
 	}
@@ -104,7 +106,7 @@ public class TaskDAO {
 	
 	public static Task get(AONContext ctx, TaskFilter filter) {
 		Task task = select(ctx, filter).limit(1)
-			.fetchInto(TASK).stream().map(new TaskFiller())
+			.stream().map(new TaskFiller())
 			.findFirst().orElse(new Task());
 		if(task.getId() != null) {
 			task.setWorkflows(TaskWorkflowDAO.getList(ctx, f -> f.getTaskProperty().eq(task.getId())));
@@ -259,7 +261,6 @@ public class TaskDAO {
 				.setPercent(r.getValue(TASK.PERCENT))
 				.setPriority(Priority.safeValueOf(r.getValue(TASK.PRIORITY)))
 				.setProject(new Project().setId(r.getValue(TASK.PROJECT)))
-				.setRegistry(new Registry().setId(r.getValue(TASK.REGISTRY)))
 				.setRepeatPeriod(TaskPeriod.safeValueOf(r.getValue(TASK.REPEAT_PERIOD)))
 				.setSender((TaskHolder) new TaskHolder().setId(r.getValue(TASK.SENDER)))
 				.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)))
@@ -267,6 +268,7 @@ public class TaskDAO {
 				.setStartDate(r.getValue(TASK.START_DATE))
 				.setStatus(TaskStatus.safeValueOf(r.getValue(TASK.STATUS)))
 				.setTaskHolder((TaskHolder) new TaskHolder().setId(r.getValue(TASK.TASK_HOLDER)))
+				.setRegistry(RegistryFiller.build(r, REGISTRY))
 				.setWorkgroup(WorkgroupFiller.build(r))
 				.setNumber(r.getValue(TASK.NUMBER))
 				.setCreationUser(r.getValue(TASK.CREATION_USER))

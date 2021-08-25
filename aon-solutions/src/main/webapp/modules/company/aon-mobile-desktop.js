@@ -63,36 +63,43 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	async build() {
-		this.innerHTML = '';
-		let divParent = this.createElement(TAG.DIV);
-		divParent.id = this.DIV_PARENT;
-		divParent.style.height = '100%';
-		divParent.style.maxWidth = '100%';
-		divParent.style.overflowX = 'hidden';
-		divParent.style.display = "flex";
-		divParent.style.flexDirection = "column";
-		this.appendChild(divParent);
-
-		if(localStorage.getItem('company')) {
-			let company = JSON.parse(localStorage.getItem('company'));
-			localStorage.setItem('aon_domain_id', company.id);
-			localStorage.setItem('aon_domain_name', company.domain);
-			getUser().then(user => {
+		try {
+			this.innerHTML = '';
+			let divParent = this.createElement(TAG.DIV);
+			divParent.id = this.DIV_PARENT;
+			divParent.style.height = '100%';
+			divParent.style.maxWidth = '100%';
+			divParent.style.overflowX = 'hidden';
+			divParent.style.display = "flex";
+			divParent.style.flexDirection = "column";
+			this.appendChild(divParent);
+			let notice = undefined;
+			if(localStorage.getItem('company')) {
+				let company = JSON.parse(localStorage.getItem('company'));
+				localStorage.setItem('aon_domain_id', company.id);
+				localStorage.setItem('aon_domain_name', company.domain);
+				const user = await getUser();
 				localStorage.setItem('aon_domain_login', user.login);
-			});
-			await this.buildCompany();
-			if(!this.getDur().isEmployee()){
-				const noticeDomain = await getDomainNotice();
-				this.buildNotifications(noticeDomain);
+				await this.buildCompany();
+				if(!this.getDur().isEmployee()){
+					notice = await getDomainNotice();
+				}
+			} else {
+				await this.buildCompany();
+				if(!this.getDur().isEmployee()) {
+					notice = await getUserNotice();
+				}
 			}
-		} else {
-			await this.buildCompany();
-			if(!this.getDur().isEmployee()) {
-				const noticeUser = await getUserNotice();
-				this.buildNotifications(noticeUser);
+			
+			if(notice){
+				this.buildNotifications(notice);
 			}
+
+			await this.buildTimeControl();
+		} catch (error) {
+			console.log(object);
 		}
-		this.buildTimeControl();
+
 	}
 
 	async buildCompany() {
@@ -107,7 +114,7 @@ export class AonMobileDesktop extends AonElement {
 	
 			const pi = await getCompanyHeaderInfo();
 			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
-			let img = this.createElement('img');
+			let img = this.createElement(TAG.IMG);
 			img.style.maxWidth = '200px';
 			img.style.maxHeight = '100px';
 			img.style.position = 'relative';

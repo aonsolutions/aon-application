@@ -87,7 +87,9 @@ export class AonNotificationIcon extends AonElement {
 					saveAuthDevice({token});
 				}
 			} 
-		} catch(e){}
+		} catch(e){
+            console.log(e);
+        }
   	}
       
     async goAonNotification(){

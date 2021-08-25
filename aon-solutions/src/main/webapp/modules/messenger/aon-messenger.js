@@ -7,7 +7,7 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
-import { getTaskStatusCount } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskOne, getCauInfo } from '../../services/taskService.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
@@ -15,6 +15,8 @@ export class AonMessenger extends AonElement {
 	_workgroups;
 	_filter={};
 	TASK_HOLDER;
+	cau; //BOOLEAN
+	cauData;
 	constructor () {
 		super();
 	}
@@ -41,6 +43,11 @@ export class AonMessenger extends AonElement {
 	}
 
  	async build() {
+		if(this.cau)
+			this.cauData = await getCauInfo();
+			
+		localStorage.setItem("taskCau", this.cau ? 1 : 0);
+
 		this.paintView();
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();
@@ -50,6 +57,9 @@ export class AonMessenger extends AonElement {
 
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
+		} else if(this.value){
+			const task = await getTaskOne({id:this.value});
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
 		} else {
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
@@ -66,7 +76,8 @@ export class AonMessenger extends AonElement {
 
 		this.taskNavBar();
 		this.statusNavBar();
-		this.groupNavBar();
+		if(!this.cau)
+			this.groupNavBar();
 	}
 
 	taskNavBar(){
@@ -178,15 +189,18 @@ export class AonMessenger extends AonElement {
 
 	updateStatusSidenavCount(){
 		let application = this.applicationEl;
-		getTaskStatusCount().then(resp=>{
+		let filter = {};
+		if(this._filter.source) filter.source = this._filter.source;
+		
+		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];
 			let archiveCount = resp[TASK_STATUS.DELETED];
 			let closeCount = resp[TASK_STATUS.FINISHED];
-
+			
 			if(resp[TASK_STATUS.IN_PROGRESS]) 
-				openCount + resp[TASK_STATUS.IN_PROGRESS];
+				openCount = openCount + resp[TASK_STATUS.IN_PROGRESS];
 	
-			// // UPDATE COUNT
+			//----------------------- UPDATE COUNT---------------
 			let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
 			application.updateSidenavCount(listOpen.id, openCount);
 

@@ -1,4 +1,4 @@
-import { CONSTANT, MSG } from "../environments/environments.js";
+import { CONSTANT, MSG, SIG_DOMAIN_ID, SIG_DOMAIN_NAME } from "../environments/environments.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 const formatParams = (params) => {
@@ -79,6 +79,42 @@ export const requestJsonAsset = (file) => new Promise((resolve,reject)=>{
   };
   xobj.send(null);  
 });
+
+export const requestSig = (method, url, token, sendData, fn) => {
+  try {
+    let xhr = xmlHttpRequestAon(method, url, token, sendData);
+    xhr.setRequestHeader("session_id", token);
+    xhr.setRequestHeader("domain_id", SIG_DOMAIN_ID);
+    xhr.setRequestHeader("domain_name", SIG_DOMAIN_NAME);
+    xhr.setRequestHeader("domain_login", domainLogin());
+    xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    console.log("error");
+    fn(undefined, error);
+  }
+};
 
 
 export const requestFile = (method, url, sendData, fn) => {

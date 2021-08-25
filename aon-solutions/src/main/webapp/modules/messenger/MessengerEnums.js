@@ -64,7 +64,9 @@ export const MESSENGER_IDS = {
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
     COMMENT_TASK: "commentTask",
+    CUSTOMER_TASK: "customerTask",
     DESCRIPTION_TASK: "descriptionTask",
+    GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
     BUTTON_SEND: "buttonSend"
 }
@@ -107,7 +109,9 @@ export const TASK_SOURCE = {
 	ASSIGNED:"assigned",
 	PROCESS:"process",
 	CAU:"cau",
-	GITHUB:"github"
+	GITHUB:"github",
+    QUERY: "query",
+	REQUEST: "request"
 } 
 
 export const MessengerSidenav = {

@@ -2,10 +2,8 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.model.project.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
@@ -41,13 +39,13 @@ public class TaskJSON {
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 			.setProject(new Project().setId(JsonUtils.getInteger(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
-			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			.setSourceId(JsonUtils.getInteger(json, "source_id"))
 			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, "status"))) 
+			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
-//			.setGtaskId(gtaskId)
+			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
 //			.setGtasklistId(gtasklistId)
 			;
 	}
@@ -75,7 +73,7 @@ public class TaskJSON {
 			.put(IJsonNames.PERCENT, task.getPercent())
 			.put(IJsonNames.SENDER, TaskHolderJSON.toJSON(task.getSender()))
 			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(task.getTaskHolder()))
-			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(task.getRegistry()))
+			.put(IJsonNames.REGISTRY, task.getRegistry()!=null  ? RegistryJSON.toJSON(task.getRegistry()) : null)
 			.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(task.getWorkgroup()))
 			.put(IJsonNames.SOURCE, task.getSource()!=null ? task.getSource().getName() : null )
 			.put(IJsonNames.SOURCE_ID, task.getSourceId())
@@ -84,8 +82,7 @@ public class TaskJSON {
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
 			.put(IJsonNames.END_DATE, task.getEndDate()!=null ?  task.getEndDate().getTime() : null)
-			//.put(IJsonNames, GTASK_ID)
-			//.put(IJsonNames, GTASKLIST_ID)
+			.put("gtask_id", task.getGtaskId())
 			.put(IJsonNames.PARENT, task.getParent())
 //			.put(IJsonNames.CREATION_USER, task.getCreationUser())
 //			.put(IJsonNames.CREATION_DATE, task.getCreationDate())

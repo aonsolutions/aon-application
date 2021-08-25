@@ -1,7 +1,7 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CSS, TAG } from "../../environments/environments.js";
+import { CSS, EVENT, TAG } from "../../environments/environments.js";
 import { formatDateOrigin, setAttributes } from "../../services/utils.js";
 import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
@@ -92,7 +92,7 @@ export const createCardEnterprise = (parent) => {
         title:"Convenio (opcional)",
         name:"convenio"
     });
-    aonConvenio.addEventListener("keyup", ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
+    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
     divC.appendChild(aonConvenio);
 
     createInput({

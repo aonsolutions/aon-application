@@ -232,6 +232,7 @@ export const OFFICE = 'Despacho';//TODO
 export const ONLY_PORTAL = MSG.ONLY_PORTAL;
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
+export const OPTIONAL = "Opcional"; //TODO
 export const OBSERVATION = "Observación"; //TODO
 // ----- P
 
@@ -292,7 +293,7 @@ export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
-
+export const REOPEN = "Reabrir"; // TODO
 // ----- S
 
 export const SAVE = MSG.SAVE;
@@ -323,6 +324,8 @@ export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
 export const STORE = "Archivar"; //TODO
 export const START_DATE = "Fecha inicio";//TODO
+export const SENDER = "Remitente";//TODO
+
 // ----- T
 
 export const TAG = MSG.TAG;
@@ -348,6 +351,8 @@ export const TYPES = MSG.TYPES;
 export const TASK_TRAY = "Bandeja Tareas";//TODO
 export const TITLE = "Título" //TODO
 export const TRAY = "Bandeja";//TODO
+export const TYPE_HERE = "Escriba aquí"; //TODO
+
 // ----- U
 
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;

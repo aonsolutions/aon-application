@@ -7,6 +7,7 @@ import { AonSelect } from "../../../components/aon-select";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
 import { formatDateOrigin, serializeForm, setAttributes } from "../../../services/utils";
 import { MESSENGER_IDS } from "../MessengerEnums";
+import { createDivEditable, titleFirstDiv } from "../shared/creationUtils";
 
 /**
  * 
@@ -32,8 +33,11 @@ import { MESSENGER_IDS } from "../MessengerEnums";
         if(data.status) aonSelect.value = data.status;
     }
 
-    let input = setAttributes(new AonInput(),{ description: MSG.OBSERVATION, autocomplete : "off", name:"observation", value: data.observation || "" });
-    form.appendChild(input);
+    //DIV TITLE
+    const titleDiv = titleFirstDiv(MSG.OBSERVATION);
+    form.appendChild(titleDiv);
+    const observation = createDivEditable( data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    titleDiv.appendChild(observation);
 
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
@@ -104,6 +108,7 @@ const addDates = (table, data={}, i) =>{
  */
 export const getFormVacationJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    let observation = form.querySelector("#observation").innerText;
     //DATES
     let dates = [];
     [...form.querySelectorAll("table tr")].map(tr=>{
@@ -115,7 +120,7 @@ export const getFormVacationJson = ()=>{
 
     const formSerialize = serializeForm(form);
 
-    return JSON.stringify({ ...formSerialize, dates});
+    return { ...formSerialize, dates, observation};
 }
 
 

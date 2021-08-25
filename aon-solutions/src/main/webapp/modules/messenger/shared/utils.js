@@ -1,6 +1,6 @@
-import { AonCard } from "../../../components/aon-card";
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments";
 import { openFileUrl } from "../../../services/fileService";
+import { getCustomers } from "../../../services/registryService";
 import { domainName } from "../../../services/request";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
@@ -108,22 +108,21 @@ const blockquote = ()=>{
 export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
+
+        const workgroups = application.getParent()._workgroups;
+        if(workgroups && workgroups.length>0){
+            aonSelect.options = JSON.stringify( workgroups.map( wg=> ({...wg, id: wg.value}) ) );
+        }
+        if(workgroup && workgroup.id){
+            aonSelect.value = workgroup.id;
+            if(task_holder && task_holder.id)
+                fillTaskHolder(workgroup.id, task_holder.id);
+        } 
+
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
             if(detail && detail.value)
                 fillTaskHolder(detail.value);
         })
-        const workgroups = application.getParent()._workgroups;
-        if(workgroups && workgroups.length>0){
-            aonSelect.options = JSON.stringify(
-                workgroups.map( wg=> ({...wg, id: wg.value}) )
-            );
-        }
-        if(workgroup && workgroup.id){
-            aonSelect.value = workgroup.id;
-
-            if(task_holder && task_holder.id) 
-                fillTaskHolder(workgroup.id, task_holder.id);
-        } 
        
     } catch (error) { console.log(error);}
 }
@@ -142,6 +141,20 @@ const fillTaskHolder = async (workgroupId, taskHolderId=undefined) => {
         if(taskHolderId) aonSelect.value = taskHolderId;
     }
 }
+
+//FILL CUSTOMER
+export const fillCustomer = async ({registry}) => {
+    const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
+    if(aonSelect){
+        aonSelect.clear();
+        const customers = await getCustomers();
+        if(customers){
+            aonSelect.options = JSON.stringify( customers.map( th=> ({...th, value: th.id}) ) );
+        }
+        if(registry && registry.id) aonSelect.value = registry.id;
+    }
+}
+
 
 //FILL CHAT
 export const fillChat = (workflows=[])=>{
@@ -410,7 +423,7 @@ const jsonDiv = ()=> {
     const code = document.createElement("code");
     code.style.color = "brown";
     pre.appendChild(code); 
-    code.textContent = JSON.stringify(JSON.parse(task.description), undefined, 2);
+    code.textContent = JSON.stringify(task.getDescriptionJson(), undefined, 2);
     return pre;
 }
 
