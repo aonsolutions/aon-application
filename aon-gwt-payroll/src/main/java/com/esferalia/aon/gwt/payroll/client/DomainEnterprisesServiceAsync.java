@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -173,10 +172,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getWorkplaces(workplace, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getActivitiesCCC(Workplace workplace, AsyncCallback<ActivitiesCCC> asyncCallback) {
-		enterprisesServiceAsync.getActivitiesCCC(workplace, getCurrentDomainName(), asyncCallback);
-	}
-	
 	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
 		enterprisesServiceAsync.getActivityInfoDataBase(activityId, getCurrentDomainName(), asyncCallback);
 	}
@@ -213,10 +208,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getEnterpiseScopes(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
-		enterprisesServiceAsync.getEnterpiseScopes(enterpriseId, getCurrentDomainName(), asyncCallback);
-	}
-
 	public void getEnterpriseInfo(Integer enterpriseId, AsyncCallback<EnterpriseInfo> asyncCallback) {
 		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
@@ -414,10 +405,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void setMainCCCInfoDataBase(MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.setMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), mainCCCInfo, asyncCallback);
-	}
-	
-	public void getPayMethods(AsyncCallback<Map<String, String>> asyncCallback) {
-		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {

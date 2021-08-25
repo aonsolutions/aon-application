@@ -402,8 +402,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsWorkplace(getCurrentDomainName(),  updateEventsWorkplace, asyncCallback);
 	}
 
-	public void getEmployeeInfoDataBase(Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	public void getEmployeeInfoDataBase(Integer contractId, Workplace workplace, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(), getCurrentUser(), contractId, workplace, asyncCallback);
 	}
 
 	public void setEmployeeInfoDataBase(EmployeeContractInfo new_employeeContractData,

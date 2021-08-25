@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -77,7 +76,6 @@ public interface EnterprisesServiceAsync {
 	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void getWorkplaces(Workplace workplace, String domain, AsyncCallback<List<Workplace>> asyncCallback);
-	void getActivitiesCCC(Workplace workplaceId, String currentDomainName, AsyncCallback<ActivitiesCCC> asyncCallback);
 	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
@@ -148,7 +146,6 @@ public interface EnterprisesServiceAsync {
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback);
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
-	void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> asyncCallback);
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback);
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);

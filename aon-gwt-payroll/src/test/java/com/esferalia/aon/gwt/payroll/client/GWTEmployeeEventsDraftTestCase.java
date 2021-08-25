@@ -120,7 +120,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeInfoDataBase(String domain, String user, Integer contractId,
+			public void getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace,
 					AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				

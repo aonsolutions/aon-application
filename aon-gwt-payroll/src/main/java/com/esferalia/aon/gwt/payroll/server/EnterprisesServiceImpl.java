@@ -56,7 +56,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -1595,35 +1594,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ActivitiesCCC getActivitiesCCC(Workplace workplace, String domainName) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqWorkplace.getActivitiesCCC(workplace, domainId, connection);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-		}
-	}
-	
-	@Override
-	public Map<String, String> getPayMethods(String domainName) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqWorkplace.getPayMethods(connection, domainId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
 	public ActivityInfo getActivityInfoDataBase(Integer activityId, String domain) {
 		Connection connection = null;
 		try {
@@ -1800,20 +1770,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public EnterpriseInfo getEnterpriseInfo(Integer enterpriseId, String domain) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqEnterprise.getEnterpriseInfo(connection, enterpriseId);
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+
+			EnterpriseInfo enterpriseInfo = JooqEnterprise.getEnterpriseInfo(connection, enterpriseId);
+			enterpriseInfo.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainID, parentDomainID));
+			enterpriseInfo.setScopes(JooqEnterprise.getEnterpriseScopes(connection, enterpriseId));
+			
+			return enterpriseInfo;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-		}
+		} 
 	}
 
 	@Override

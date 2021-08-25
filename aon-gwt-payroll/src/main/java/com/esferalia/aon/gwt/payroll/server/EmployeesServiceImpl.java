@@ -107,6 +107,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
+import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
@@ -5441,19 +5442,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract) throws IllegalArgumentException {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract, Workplace workplace) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Domain, parentDomain and User id
 //			Integer domainId = AonServletUtils.getDomainID(domainName);
 //			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 //			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
 
 			// Get certificate
 //			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			// Get EmployeeContractInfo
 			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
-			
+			employeeContractInfo.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
+			employeeContractInfo.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(workplace, domainId, connection));
+			employeeContractInfo.setWorkplaces(JooqWorkplace.getWorkplaces(workplace, domainId, connection));
+			employeeContractInfo.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
 			// Get SistemaRED employee to check situation
 //			try {
 //				

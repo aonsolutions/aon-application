@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -111,8 +110,6 @@ public interface EnterprisesService extends RemoteService {
 	WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo);
 
 	List<Workplace> getWorkplaces(Workplace workplace, String domain);
-
-	ActivitiesCCC getActivitiesCCC(Workplace workplaceId, String currentDomainName);
 
 	ActivityInfo getActivityInfoDataBase(Integer activityId, String domain);
 
@@ -228,8 +225,6 @@ public interface EnterprisesService extends RemoteService {
 	List<SSBonusData> getContractBonus(String currentDomainName, Integer contractId);
 
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
-
-	Map<String, String> getPayMethods(String currentDomainName);
 
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 

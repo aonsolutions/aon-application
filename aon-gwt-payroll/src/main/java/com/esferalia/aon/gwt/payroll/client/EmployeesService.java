@@ -180,7 +180,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EventsWorkplace setEventsWorkplace(String domain, 
 			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
 
-	EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId) throws IllegalArgumentException;
+	EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace);
 
 	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData);
 
