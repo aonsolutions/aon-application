@@ -14,13 +14,13 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PRORATION;
@@ -32,13 +32,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -71,7 +71,6 @@ import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.itextpdf.text.log.SysoLogger;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -603,8 +602,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	}
 
 	private static Set<Level> getAgreementLevel(DSLContext dslContext, Integer id, Agreement agreement) {
-		Set<Level>  levelsList = new HashSet();
-		Map<Integer, Set<String>> categoriesMap = new HashMap<>();
+		Set<Level>  levelsList = new TreeSet<Level>();
+		Map<Integer, Set<String>> categoriesMap = new TreeMap<>();
 		Result<Record> levels = dslContext.select().from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.eq(id)).fetch();
 		for(Record r: levels){
 			Level level =  new Level();
@@ -615,7 +614,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(r.get(AGREEMENT_LEVEL.ID))).fetch();
 			
 			
-			categoriesMap.put(r.get(AGREEMENT_LEVEL.ID), new HashSet());
+			categoriesMap.put(r.get(AGREEMENT_LEVEL.ID), new TreeSet<String>());
 			for(Record rc : categories){
 				categoriesMap.get(r.get(AGREEMENT_LEVEL.ID)).add(rc.get(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
 			}
@@ -623,6 +622,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			levelsList.add(level);
 		}
 		agreement.setCategoriesMap(categoriesMap);
+		
 		return levelsList;
 	}
 

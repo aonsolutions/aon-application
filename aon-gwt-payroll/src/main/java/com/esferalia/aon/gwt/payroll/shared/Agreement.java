@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.shared.HasId;
 
 public class Agreement implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	
-	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer> {
+	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer>, Comparable<Level> {
 
 		private Integer id;
 		private Integer domain;
@@ -50,6 +50,11 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof Level && id.equals(((Level) obj).id);
+		}
+
+		@Override
+		public int compareTo(Level lvl) {
+			return this.description.compareTo(lvl.getDescription());
 		}
 	}
 

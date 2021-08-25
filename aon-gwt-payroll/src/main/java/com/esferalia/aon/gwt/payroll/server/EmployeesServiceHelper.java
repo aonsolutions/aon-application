@@ -584,7 +584,7 @@ public class EmployeesServiceHelper {
 		Map<Integer, Set<String>> dbCategories = SQLAgreementDraft
 				.getCategories(connection, draft.getId(), domainId, parentDomainId);
 
-		Map<Integer, Set<String>> allCategories = new HashMap<Integer, Set<String>>(
+		Map<Integer, Set<String>> allCategories = new TreeMap<Integer, Set<String>>(
 				dbCategories);
 
 		Map<Integer, Set<String>> draftCategories = draft.getDraftCategories();
