@@ -2287,7 +2287,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEnterpriseDraft());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
 
-		checkStatus(enterpriseDraftObject);
+//		checkStatus(enterpriseDraftObject);
 
 //		int pos = employees.getVerticalScrollPosition();
 //		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
@@ -2517,14 +2517,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		getEmployeeDraft().setOnSaved(e -> {
-			checkStatus(e);
+//			checkStatus(e);
 			refreshWorkplace();
 		});
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
-		
-		checkStatus(employeeDraftObject);
 	}
 
 	@Override
@@ -2746,7 +2744,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EnterpriseDraft getEnterpriseDraft() {
 		if (enterpriseDraft == null)
-			enterpriseDraft = new EnterpriseDraft().setOnSaved(w -> refreshEnterprise());
+			enterpriseDraft = new EnterpriseDraft() {
+				@Override
+				protected void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject) {
+					checkStatus(enterpriseDraftObject);
+				}}.setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
 
@@ -2796,7 +2798,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EmployeeDraft getEmployeeDraft() {
 		if (employeeDraft == null)
-			employeeDraft = new EmployeeDraft();// .setOnSaved(w -> refreshWorkplace() );
+			employeeDraft = new EmployeeDraft() {
+				@Override
+				protected void onCheckStatus(EmployeeDraftObject employeeDraftObject) {
+					checkStatus(employeeDraftObject);
+				}}
+		;// .setOnSaved(w -> refreshWorkplace() );
 		return employeeDraft;
 	}
 
