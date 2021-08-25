@@ -80,7 +80,7 @@ public class SQLContractDelayCalculatorContext extends
 	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
-	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
+	public static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
 
 		
 		private long prevDays = 0;
