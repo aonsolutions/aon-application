@@ -30,7 +30,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -520,7 +522,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.fetchInto(AGREEMENT);
 		// @formatter:on
 
-		List<Agreement> agreements = new LinkedList<Agreement>();
+		List<Agreement> agreements = new ArrayList<Agreement>();
 		for (AgreementRecord record : result) {
 			Agreement agreement = new Agreement();
 
@@ -541,6 +543,14 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreements.add(agreement);
 
 		}
+		
+		agreements.sort(new Comparator<Agreement>() {
+			@Override
+			public int compare(Agreement agreement1, Agreement agreement2) {
+				return agreement1.getDescription().compareTo(agreement2.getDescription());
+			}
+		});
+		
 		return agreements;
 	}
 
