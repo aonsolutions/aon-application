@@ -332,10 +332,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	// ------------------------------------------------- setContrataEmployeeObject
 	
-	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeObject, EmployeeContractInfo employeeContractInfo) {
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeObject, Integer contractId, Consumer<EmployeeContractInfo> success) {
 		// Set variables
-		this.contrataEmployeeObject = contrataEmployeeObject;
-		this.contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);		
+		this.contrataEmployeeObject = contrataEmployeeObject;		
 		
 		// Load animation
 		new Animation() {
@@ -360,17 +359,19 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getFootTabPanel().clear();
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
-		// Init toolbar
-		getToolbar().setTitle(employeeContractInfo.getEmployeeInfo().getFullName());		
-		getExportContract().getElement().getStyle().setDisplay(Display.NONE);
 		
 		// Load info and fill fields
-		this.contrataEmployeeObject.getAgreements(
+		this.contrataEmployeeObject.initializeEmployee(contractId,
 				r -> {
+					// Init toolbar
+					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
+					getExportContract().getElement().getStyle().setDisplay(Display.NONE);
+					
 					employee.initializeView();
 					initLogicWindow();
 					initializeIdcMonthListBox();
-					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
+					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
 				}, t -> {}
 		);
 		
@@ -417,7 +418,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 	
 	private void initializeIdcMonthListBox() {
-		Date firstMonth = DateUtils.getFirstDayOfMonth(contrataEmployeeObject.getContractStartDate());
+		Date firstMonth = null == contrataEmployeeObject.getContractStartDate() ? DateUtils.getFirstDayOfYear() : DateUtils.getFirstDayOfMonth(contrataEmployeeObject.getContractStartDate());
 		Date lastMonth = DateUtils.getFirstDayOfMonth();
 		getIDCMonthListBox().setFirstMonth(firstMonth);
 		getIDCMonthListBox().setLastMonth(lastMonth);

@@ -313,12 +313,19 @@ public class MainContrataContract extends MainEntryPoint {
 	        	EmployeeContractInfo employeeContractInfoSelected = selectionCCCInfoModel.getLastSelectedObject();
 	        	Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 	        	
-	        	mainContrataContractObject.getEmployeeInfo(contractId, employeeContractInfo -> {
-	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
-	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
-		    		deckPanel.showWidget(1);
-	        	}, f -> {});
+	        	contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+	    				s -> {
+	    		    		deckPanel.showWidget(1);
+	    				});
+	        	
+//	        	mainContrataContractObject.getEmployeeInfo(contractId, workplaceId, employeeContractInfo -> {
+//	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+//	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+//		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+//		    		deckPanel.showWidget(1);
+//	        	}, f -> {});
 	        	
 	        }
 	    });
@@ -1249,12 +1256,19 @@ public class MainContrataContract extends MainEntryPoint {
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
 			protected void onAccept(Integer contractId) {
-				mainContrataContractObject.getEmployeeInfo(contractId, employeeContractInfo -> {
-	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
-	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
-		    		deckPanel.showWidget(1);
-	        	}, f -> {});
+				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+	    				s -> {
+	    		    		deckPanel.showWidget(1);
+	    				});
+				
+//				mainContrataContractObject.getEmployeeInfo(contractId, workplaceId, employeeContractInfo -> {
+//	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+//	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+//		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+//		    		deckPanel.showWidget(1);
+//	        	}, f -> {});
 			}
 		};
 		

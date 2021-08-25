@@ -77,22 +77,29 @@ public class MainContrataContractObject {
 		
 	}
 	
-	public void getEmployeeInfo(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-		
-		employeesService.getEmployeeInfoDataBase(contractId, new AsyncCallback<EmployeeContractInfo>() {
-//		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
-				success.accept(employeeContractInfo);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) { }
-		});
-		
-	}
+//	public void getEmployeeInfo(Integer contractId, Integer workplaceId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+//		
+//		employeesService.getEmployeeInfoDataBase(contractId, findWorkplace(workplaceId), new AsyncCallback<EmployeeContractInfo>() {
+////		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
+//			
+//			@Override
+//			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
+//				success.accept(employeeContractInfo);
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) { }
+//		});
+//		
+//	}
 	
+//	private Workplace findWorkplace(Integer workplaceId) {
+//		for(Workplace workplace : workplaces)
+//			if(workplaceId == workplace.getId())
+//				return workplace;
+//		return null;
+//	}
+
 	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
 		
 		impl.getEnterpriseStatus(null, new AsyncCallback<EnterpriseStatus>() {

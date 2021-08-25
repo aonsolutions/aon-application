@@ -32,6 +32,7 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -41,7 +42,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
-public class EmployeeDraft extends Composite {
+public abstract class EmployeeDraft extends Composite {
 	
 	private class EmployeeImplementation extends Employee{
 		
@@ -467,11 +468,18 @@ public class EmployeeDraft extends Composite {
 					initializeIdcMonthListBox();
 					initializeView();
 					initializeUndoRedo();
+					onCheckStatus(getEmployeeDraftObject());
 			}, t -> {}
 		);
 	
 	}
 	
+	protected abstract void onCheckStatus(EmployeeDraftObject employeeDraftObject2);
+
+	public EmployeeDraftObject getEmployeeDraftObject() {
+		return this.employeeDraftObject;
+	}
+
 	// ------------------------------------------------- Initialize view
 	
 	private void initializeIdcMonthListBox() {
@@ -697,19 +705,24 @@ public class EmployeeDraft extends Composite {
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
 		}
-		employee.partiality_coef.setValue(contractData.getPartialityCoef());	
+		
+		if(null != contractData.getPartialityCoef())
+			employee.partiality_coef.setValue(contractData.getPartialityCoef());	
 	}
 	
 	private Double calculatePartialityCoef() {
 		Double hours = 0.00;
-		for(JourneyDuration journeyDuration : employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
-				String expression = journeyDuration.getExpression();
-				expression = expression.replace(",", ".");
-				hours += Double.parseDouble(expression);
+		
+		if(null != employeeDraftObject.getContractData().getContractJourneyDuration() && !employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+			for(JourneyDuration journeyDuration : employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+				if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
+					String expression = journeyDuration.getExpression();
+					expression = expression.replace(",", ".");
+					hours += Double.parseDouble(expression);
+				}
 			}
+			hours = hours / 40;
 		}
-		hours = hours / 40;
 				
 		return Math.round(hours * 100.0) / 100.0;
 	}

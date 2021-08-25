@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
@@ -707,10 +706,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			case 0:
 				contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 					showContractButtons();
-					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, employeeContractInfoIn);
-					checkStatus(this.contrataEmployeeObject);
-					checkCertificateSEPE();
-					checkTGSSStatus();
+					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+							success -> {
+								checkStatus(this.contrataEmployeeObject);
+								checkCertificateSEPE();
+								checkTGSSStatus();
+							});
 				}, f -> {});
 				break;
 			case 1:
@@ -834,13 +835,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- setContrataEmployeeObject
 	
-	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, EmployeeContractInfo employeeContractInfo) {
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Consumer<String> success) {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
-		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
-		showContractButtons();
-		checkStatus(this.contrataEmployeeObject);
-		checkCertificateSEPE();
-		checkTGSSStatus();
+		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+				s -> {
+					showContractButtons();
+					checkStatus(this.contrataEmployeeObject);
+					checkCertificateSEPE();
+					checkTGSSStatus();
+					success.accept("");
+				});
 	}
 	
 	// ------------------------------------------------- Show/Hide Toolbar methods
@@ -1090,10 +1094,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.movPrevDelete(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {
@@ -1107,10 +1113,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.altaConsolidadaDelete(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(
+								contrataEmployeeObject, 
+								this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
+						
 					}, f -> {});
 				}, 
 				f -> {
@@ -1137,10 +1148,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					@Override
 					protected void onAcceptCB() {
 						contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-							checkStatus(contrataEmployeeObject);
-							checkCertificateSEPE();
-							checkTGSSStatus();
+							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
+									success -> {
+										checkStatus(contrataEmployeeObject);
+										checkCertificateSEPE();
+										checkTGSSStatus();
+									});
 						}, f -> {});
 					}
 			
@@ -1306,10 +1319,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.sendBasicCopy(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});
@@ -1319,10 +1334,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.sendContract(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});
@@ -1331,10 +1348,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.removeContract(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});

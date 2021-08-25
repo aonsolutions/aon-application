@@ -61,78 +61,6 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods
 	
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = result;
-				getWorkplaces(
-					r->{
-						success.accept(result);
-					}, f->{}
-				);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
-	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
-		enterprisesService.getWorkplaces(workplace, new AsyncCallback<List<Workplace>>() {
-			
-			@Override
-			public void onSuccess(List<Workplace> result) {
-				workplaces = result;
-				getActivitiesCCC(
-					r->{
-						success.accept(result);
-					}, f->{}
-				);	
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
-	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivitiesCCC(workplace, new AsyncCallback<ActivitiesCCC>() {
-			
-			@Override
-			public void onSuccess(ActivitiesCCC result) {
-				activitiesCCC = result;
-				getPayMethods(
-						r->{
-							success.accept(result);
-						}, f->{}
-					);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
-	public void getPayMethods(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				payMethodsMap = result;
-				success.accept(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
 	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {	
 		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
 			
@@ -150,13 +78,18 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (Employee)
 	
 	public void initializeEmployee(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeInfoDataBase(contractId, new AsyncCallback<EmployeeContractInfo>() {
+		employeesService.getEmployeeInfoDataBase(contractId, workplace, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo result) {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
+				
+				agreements = employeeContractData.getAgreements();
+				workplaces = employeeContractData.getWorkplaces();
+				activitiesCCC = employeeContractData.getActivitiesCCC();
+				payMethodsMap = employeeContractData.getPayMethods();
 				
 				// Set default contract start_date & end_date to null
 				contractData.setStartDate(null);
@@ -180,7 +113,7 @@ public class ContrataEmployeeObject {
 		employeeContractData.setEmployeeInfo(employeeData);
 		employeeContractData.setContractInfo(contractData);
 		
-		employeesService.getEmployeeInfoDataBase(contractData.getContractId(), new AsyncCallback<EmployeeContractInfo>() {
+		employeesService.getEmployeeInfoDataBase(contractData.getContractId(), workplace, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo result) {

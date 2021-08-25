@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,104 +83,26 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 		
 	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
+		employeesService.getEmployeeInfoDataBase(this.employee.getId(), workplace, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeData = result.getEmployeeInfo();
-				contractData = result.getContractInfo();
+			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
+				employeeContractData = employeeContractInfo;
+				employeeData = employeeContractInfo.getEmployeeInfo();
+				contractData = employeeContractInfo.getContractInfo();
+				
+				agreements = employeeContractData.getAgreements();
+				activitiesCCC = employeeContractData.getActivitiesCCC();
+				workplaces = employeeContractData.getWorkplaces();
+				payMethodsMap = employeeContractData.getPayMethods();
 
-				getAgreements(
-						r ->{success.accept(result);},
-						f->{}
-				);
+				success.accept(employeeContractInfo);	
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
-			
-		});
-	}
-
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				orderAgreement(result);
-				agreements = result;
-				getActivitiesCCC(
-						r->{success.accept(result);},
-						f->{}
-					);
-			}
-			
-			private void orderAgreement(List<Agreement> agreements) {
-				agreements.sort(new Comparator<Agreement>() {
-					@Override
-					public int compare(Agreement agreement1, Agreement agreement2) {
-						return agreement1.getDescription().compareTo(agreement2.getDescription());
-					}
-				});
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});	
-	}
-	
-	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivitiesCCC(workplace, new AsyncCallback<ActivitiesCCC>() {
-			
-			@Override
-			public void onSuccess(ActivitiesCCC result) {
-				activitiesCCC = result;
-				getWorkplaces(
-						r->{success.accept(result);},
-						f->{}
-					);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
-	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
-		enterprisesService.getWorkplaces(workplace, new AsyncCallback<List<Workplace>>() {
-			
-			@Override
-			public void onSuccess(List<Workplace> result) {
-				workplaces = result;
-				getPayMethods(
-						r->{
-							success.accept(result);
-						}, f->{}
-					);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-		});
-	}
-	
-	public void getPayMethods(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
-			
-			@Override
-			public void onSuccess(Map<String, String> result) {
-				payMethodsMap = result;
-				success.accept(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
 			
 		});
 	}
