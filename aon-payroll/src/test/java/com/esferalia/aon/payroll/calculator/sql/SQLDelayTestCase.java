@@ -2,10 +2,13 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -593,6 +596,94 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	SalaryException {
 		testERTE(ContextVariable.ERE_FORCE_OFF, ContextVariable.ERE_DAYS_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE_OFF);
 	}
+
+	@Test
+	public void testDropDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+					"BASE_CGC * 4.70/100", 
+					"BASE_CGP * 1.55/100",
+					"BASE_CGP * 0.10/100",
+					"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		
+		addData(aonContext, contract, firstDayOfMonth, firstDayOfMonth, ContextVariable.DROP_FACTOR, "1.0");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), MONTH_DAYS, "30.00");
+//		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), CGC_BASE_MIN, "35.00");
+		
+		addSystemData(aonContext, contract.getStartDate(), null, new  HashMap<String, String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "35.00 * DIAS_NOMINA");
+			}
+		});
+		
+		//@formatter:off
+		addPayment(aonContext, 
+				contract, 
+				String.format("/*read_only*/%s * 0.00/**/",  DROP_DAYS),
+				String.format("%s",  CGC_BASE_MIN)
+				);
+		
+		//@formatter:on
+
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<>();
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate,
+				endDate,
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println( startDate + " [" +payment.getName() + "] " + payment.getDescription() + ": " + amount +", " + quote);
+			}
+		};
+		
+		delayCalculator.setSalaryBuilder(salaryBuilder);
+		Salary salary = delayCalculator.calculate(delayCtx);
+		
+		org.junit.Assert.assertEquals(0.00  , salary.getIrpfBase(), DELTA);
+		org.junit.Assert.assertEquals(0.00  , salary.getTotalPayment(), DELTA);
+		org.junit.Assert.assertEquals( 0.00 , salary.getCommonBase(), DELTA);
+
+	}
+
 
 	private void testERTE(ContextVariable ere, ContextVariable ereDays, ContextVariable ereFactor) throws ExpressionException, SQLException,
 			SalaryException {
