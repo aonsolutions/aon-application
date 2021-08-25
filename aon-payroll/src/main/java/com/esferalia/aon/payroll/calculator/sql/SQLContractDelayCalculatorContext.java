@@ -934,7 +934,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
 				+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
 														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
-														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + " =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,3))"
+														+ " AND  ROUND("+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + ",2) =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,2))"
 														+")" 
 				
 				+ " WHERE " 
