@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -47,13 +48,7 @@ public class AuthServlet extends AonApiHttpServlet{
 				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 			}
 			
-			JSONObject json = new JSONObject();
-			json.put("email", auth.getEmail());
-			json.put("uuid", auth.getUuid());
-			json.put("name", auth.getName() != null ? auth.getName() : "");
-			json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
-			json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
-			json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+			JSONObject json = AuthJSON.toJSON(auth);
 			
 			byte[] a = auth.getAuth();
 			if(auth.getSchema() == null && aonToken != null) {

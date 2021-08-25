@@ -3,22 +3,31 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.AuthJSON;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
@@ -48,6 +57,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/count-status-task":
 					response(req, resp,  getTaskStatusCount(api));
+					break;
+				case "/cau":
+					response(req, resp,  getCauInfo(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -201,6 +213,24 @@ public class TaskServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
 		map.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
+		return json;
+	}
+	
+	
+	private JSONObject getCauInfo(AonApiData api) {
+		JSONObject json = new JSONObject();
+		if(api.getDomain().isChild()) {
+			Company parentCompany = AON.getCompany(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin(), f -> 
+					f.getDomainProperty().eq(api.getDomain().getParentId()));
+			json.put("parent", CompanyJSON.toJSON(parentCompany));
+		}
+		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(api.getDomain().getId()));
+		json.put("company", CompanyJSON.toJSON(company));
+		
+		Auth auth = AON_SOLUTIONS.getAuth(api.getToken());
+		json.put("auth", AuthJSON.toJSON(auth));
+		
 		return json;
 	}
 	

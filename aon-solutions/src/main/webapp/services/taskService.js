@@ -17,3 +17,5 @@ export const saveTaskWorkflow = (data) => post(`${API_URL}/task/workflow`, data)
 
 export const getTaskStatusCount = (data) => get(`${API_URL}/task/count-status-task`, data);
 
+export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
+
