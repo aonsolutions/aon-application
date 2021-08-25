@@ -155,6 +155,7 @@ import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.mvel2.ast.IsDef;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -4719,7 +4720,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 					Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 					
-					if ( !isWholeMonth())
+					if ( !isWholeMonth() )
 						return availableDays.doubleValue();
 					
 					double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
@@ -5689,6 +5690,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return false;
 	}
 	
+	protected boolean isWholeMonth() {
+		return isWholeMonth(new Period(this.contractStartDate,this.contractEndDate));
+	}
 	
 	private Double getLiquidStartValue(Date date, double liquid) {
 		PaymentVariable paymentVar = getVariable(ContextVariable.PAYMENT_VARIABLE, PaymentVariable.class);
@@ -5953,9 +5957,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return currentEreFactor < startEreFactor;
 	}
 
-	private boolean isWholeMonth() {
-		return isWholeMonth(new Period(this.contractStartDate,this.contractEndDate));
-	}
 
 	
 	// ------------------------------------------------------------------------

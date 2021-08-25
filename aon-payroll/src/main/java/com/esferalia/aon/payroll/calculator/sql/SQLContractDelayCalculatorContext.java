@@ -80,7 +80,7 @@ public class SQLContractDelayCalculatorContext extends
 	private static final String ERE_DAYS = Arrays.stream(ContextVariable.ERE_DAYSS).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
-	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
+	public static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
 
 		
 		private long prevDays = 0;
@@ -144,6 +144,11 @@ public class SQLContractDelayCalculatorContext extends
 			override(ctx, ContextVariable.QUOTE_DAYS, ContextVariable.WORKED_DAYS, ContextVariable.TOTAL_WORKED_DAYS);
 			
 			loadMothItDays(ctx);
+		}
+		
+		@Override
+		protected boolean isWholeMonth() {
+			return this.monthCtx.isWholeMonth();
 		}
 
 		private void loadMothItDays(ContractExpressionContext ctx) {
@@ -833,6 +838,17 @@ public class SQLContractDelayCalculatorContext extends
 				+ "),0.00)"
 				;
 		
+		private static final String DROP_DAYS = 
+				"IFNULL((SELECT"
+				+ " SUM(" + "(DATEDIFF("+SalaryDataColumns.END_DATE+", "+ SalaryDataColumns.START_DATE +") + 1 )" + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'DIAS_AUSENCIA'"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ "),0.00)"
+				;
+
 		private static final String ALL_IT_DAYS = 
 				"(SELECT"
 				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
@@ -886,6 +902,9 @@ public class SQLContractDelayCalculatorContext extends
 				+ ", @WORKED_DAYS:=(" + WORKED_DAYS +")" 
 				+ " AS WORKEDDAYS" 
 
+				+ ", @DROP_DAYS:=(" + DROP_DAYS +")" 
+				+ " AS DROPDAYS" 
+
 				+ ", @GTZDOIT:=IFNULL((@GTZDO / @ALL_IT_DAYS  * @IT_DAYS ),0.00)"
 				+ " AS GTZDOIT" 
 
@@ -903,7 +922,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AS _" + SalaryColumns.TOTAL_PAYMENT
 				
 				//+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * (DATEDIFF(?, ?) + 1 )"   
-				+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * ( IF(@WORKED_DAYS > 0.00, @WORKED_DAYS , (DATEDIFF(?, ?) + 1 )) )"   
+				+ ", @AMOUNT:=( (" + OTHERS_AMOUNT_SQL + ") / @ALL_WORKED_DAYS * ( IF(@WORKED_DAYS > 0.00, @WORKED_DAYS , IF(@DROP_DAYS > 0.00, 0.00 ,(DATEDIFF(?, ?) + 1 )) ) )"   
 				+ ")"
 				+ " AS _" + SalaryPaymentColumns.AMOUNT  
 				
@@ -1038,12 +1057,12 @@ public class SQLContractDelayCalculatorContext extends
 				 
 			}
 			
-			//values.forEach((k,v) -> System.out.printf("[NEW] %s=%s", k,v ));
-			//System.out.println();
-			//paidValues.forEach((k,v) -> System.out.printf("[OLD] %s=%s", k,v ));
-			//System.out.println();
-			//diffValues.forEach((k,v) -> System.out.printf("[DIFF] %s=%s", k,v ));
-			//System.out.println();
+//			values.forEach((k,v) -> System.out.printf("[NEW] %s=%s", k,v ));
+//			System.out.println();
+//			paidValues.forEach((k,v) -> System.out.printf("[OLD] %s=%s", k,v ));
+//			System.out.println();
+//			diffValues.forEach((k,v) -> System.out.printf("[DIFF] %s=%s", k,v ));
+//			System.out.println();
 
 			List<IContractPayment> payments = new LinkedList<IContractPayment>();
 
@@ -1121,11 +1140,11 @@ public class SQLContractDelayCalculatorContext extends
 			// separator.
 			// Be care that MVEL like any other expression language don't
 			// understand ','.
-			paymentConcept.setExpression(String.format(Locale.US, "%.3f",
+			paymentConcept.setExpression(String.format(Locale.US, "%.2f",
 					amount));
-			paymentConcept.setIrpfExpression(String.format(Locale.US, "%.3f",
+			paymentConcept.setIrpfExpression(String.format(Locale.US, "%.2f",
 					irpf));
-			paymentConcept.setQuoteExpression(String.format(Locale.US, "%.3f",
+			paymentConcept.setQuoteExpression(String.format(Locale.US, "%.2f",
 					quote));
 			paymentConcept.setDescription(paymentDecorator
 					.getDescriptionFor(payment));
@@ -1153,6 +1172,8 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
