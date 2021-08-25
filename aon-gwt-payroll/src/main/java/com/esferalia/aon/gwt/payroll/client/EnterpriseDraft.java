@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EnterpriseDraft extends Composite {
+public abstract class EnterpriseDraft extends Composite {
 	
 	private class EnterpriseImplementation extends Enterprise {
 
@@ -261,9 +261,16 @@ public class EnterpriseDraft extends Composite {
 				s -> {
 					initializeUndoRedo();
 					initilizeView();
+					onCheckStatus(getEnterpriseDraftObject());
 				},
 				f -> {}
 		);
+	}
+	
+	protected abstract void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject);
+
+	public EnterpriseDraftObject getEnterpriseDraftObject() {
+		return this.enterpriseDraftObject;
 	}
 
 	private void initializeUndoRedo() {
