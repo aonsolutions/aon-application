@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +111,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onSuccess(List<Agreement> result) {
+				orderAgreement(result);
 				agreements = result;
 				getActivitiesCCC(
 						r->{success.accept(result);},
@@ -117,6 +119,15 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 					);
 			}
 			
+			private void orderAgreement(List<Agreement> agreements) {
+				agreements.sort(new Comparator<Agreement>() {
+					@Override
+					public int compare(Agreement agreement1, Agreement agreement2) {
+						return agreement1.getDescription().compareTo(agreement2.getDescription());
+					}
+				});
+			}
+
 			@Override
 			public void onFailure(Throwable caught) {}
 			

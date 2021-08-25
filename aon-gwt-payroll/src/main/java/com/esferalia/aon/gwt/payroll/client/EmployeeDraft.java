@@ -722,9 +722,11 @@ public class EmployeeDraft extends Composite {
 		
 		employeeDraftObject.getAgreement(agreementId,  
 		(agreement) -> {
-			for (Level levelRecord : agreement.getLevels())
+			for (Level levelRecord : agreement.getLevels()) {
+				employee.level.addItem(levelRecord.getDescription(), String.valueOf(levelRecord.getId()));
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
 					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+			}
 
 			success.accept(agreement);
 		},

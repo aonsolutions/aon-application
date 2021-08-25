@@ -589,9 +589,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		contrataEmployeeObject.getAgreement(agreementId,  
 		(agreement) -> {
-			for (Level levelRecord : agreement.getLevels())
+			for (Level levelRecord : agreement.getLevels()) {
+				employee.level.addItem(levelRecord.getDescription(), String.valueOf(levelRecord.getId()));
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
 					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
+			}
 
 			contrataEmployeeObject.setContractAgreementId(agreement.getId());
 			success.accept(agreement);
