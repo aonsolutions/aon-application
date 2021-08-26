@@ -23,6 +23,7 @@
 					<include>**/AonTediTestSuite.class</include>					
 				</configuration>
 			</plugin>
+<!-- 
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -33,7 +34,6 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- attached to Maven test phase -->
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -43,6 +43,7 @@
 					</execution>
 				</executions>
 			</plugin>
+ -->
 		</plugins>
 	</build>
 	<dependencies>
