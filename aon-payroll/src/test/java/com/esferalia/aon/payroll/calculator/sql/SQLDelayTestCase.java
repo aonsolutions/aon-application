@@ -2184,7 +2184,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
-		Date startITDate = add(startDate, DAY_OF_MONTH,7);
+		Date startITDate = add(startDate, DAY_OF_MONTH,8);
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -2226,15 +2226,15 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 						int dayOfMonth = get(startDate, Calendar.DAY_OF_MONTH);
 						if ( dayOfMonth == 1 )
-							org.junit.Assert.assertEquals( 7.00, (double) amount, DELTA);
-						else if ( dayOfMonth == 8 )
+							org.junit.Assert.assertEquals( 8.00, (double) amount, DELTA);
+						else if ( dayOfMonth == 9 )
 							org.junit.Assert.assertEquals( ( 3 * 0.60 ), (double) amount,  DELTA);
-						else if ( dayOfMonth == 11 )
+						else if ( dayOfMonth == 12 )
 							org.junit.Assert.assertEquals( ( 12 * 0.15  + 12 * 0.60 ), (double) amount,  DELTA);
-						else if ( dayOfMonth == 23 )
+						else if ( dayOfMonth == 22 )
 							org.junit.Assert.assertEquals( ( 5 * 0.15 + 5 * 0.60 ), (double) amount,  DELTA);
-						else if ( dayOfMonth == 28 )
-							org.junit.Assert.assertEquals( ( 4 * 0.25 + 4 * 0.751 ), (double) amount,  DELTA);
+						else if ( dayOfMonth == 29 )
+							org.junit.Assert.assertEquals( ( 3 * 0.25 + 3 * 0.75 ), (double) amount,  DELTA);
 							
 					}
 				});
@@ -2244,11 +2244,11 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(30.00, delay.getCommonBase(), DELTA);
 		org.junit.Assert.assertEquals(
-		 7 							// 01 - 07 
+		 8 							// 01 - 07 
 		 + 3 * 0.60 				// 08 - 10
 		 + 12 * 0.15  + 12 * 0.60	// 11 - 22 
 		 + 5 * 0.15 + 5 * 0.60 		// 23 - 27 
-		 + 4 * 0.25 + 4 * 0.75		// 28 - 31 
+		 + 3 * 0.25 + 3 * 0.75		// 28 - 31 
 		, delay.getTotalPayment(), DELTA);
 		
 		
