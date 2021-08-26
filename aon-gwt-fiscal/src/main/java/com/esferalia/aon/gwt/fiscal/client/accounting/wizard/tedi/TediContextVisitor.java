@@ -206,6 +206,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 							} else {
 								callback.getResult().getInvoice().setType( ai.getInvoiceType());
 							}
+							callback.getResult().getAccountingInvoice().setSuggestedAccounts(ai.getSuggestedAccounts());
 							callback.onAccept(callback.getResult());
 						}
 						

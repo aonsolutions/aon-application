@@ -14,7 +14,7 @@ import net.aonsolutions.aon.tedi.test.pdf.TediInvoicePDFParserAonDemoTestCase;
 	TediValidationTest.class,
 	TediInvoicePDFParserAonDemoTestCase.class,
 	PDF2AONTestCase.class,
-	TediInvoiceIMGParserAonDemoTestCase.class,
+//	TediInvoiceIMGParserAonDemoTestCase.class,
 })
 public class AonTediTestSuite {
 

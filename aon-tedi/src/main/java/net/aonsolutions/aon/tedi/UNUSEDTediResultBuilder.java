@@ -61,7 +61,7 @@ import es.translogia.tedi.ewok.TediRegistry;
 import es.translogia.tedi.ewok.TediTaxType;
 import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
-public class TediResultBuilder {
+public class UNUSEDTediResultBuilder {
 	
 	@FunctionalInterface
 	private static interface ITediInvoiceToAonInvoice {
@@ -241,7 +241,7 @@ public class TediResultBuilder {
 			Invoice invoice = result.getInvoice();
 			invoice.setDomain(ctx.getDomainId());
 		}),		
-		REGISTRY ( (ctx, aonCtx,result) -> TediResultBuilder.fillRegistry(ctx, aonCtx,result)),
+		REGISTRY ( (ctx, aonCtx,result) -> UNUSEDTediResultBuilder.fillRegistry(ctx, aonCtx,result)),
 		SERIES	( (ctx, aonCtx,result) -> {
 			if (result.getTedi().isEmitida()) {
 				result.getInvoice().setSeries(result.getTedi().getSeries());

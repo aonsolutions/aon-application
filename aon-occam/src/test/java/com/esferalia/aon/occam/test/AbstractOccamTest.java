@@ -37,6 +37,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
@@ -217,6 +219,11 @@ public class AbstractOccamTest {
 		}
 
 		Registry registry = AonFaker.getRegistry(ctx);
+		registry.setDocumentType(DocumentType.CIF);
+		registry.setDocumentCountry(Country.ES);
+		registry.setDocument("B01487271");
+		registry.setName("AON Solutions, S.L.");
+		registry.setAlias("AON");
 		registry.setDomain(domain);
 		registry = RegistryDAO.save(ctx, registry);
 		ctx.log().info("Registry insertado correctamente");

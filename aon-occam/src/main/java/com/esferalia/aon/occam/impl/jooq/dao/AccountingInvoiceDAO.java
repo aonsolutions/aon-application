@@ -491,7 +491,8 @@ public class AccountingInvoiceDAO {
 				.setFinanceStatus(FinanceStatus.PENDING));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx,ai.getRegistry().getId()));
-		ai.addVat(createNewInvoiceVAT(ai, config));
+		InvoiceVAT vat = createNewInvoiceVAT(ai, config);
+		ai.addVat(vat);
 		/// RETENCIÓN
 		if (ai.isWithholding()) {
 			ai.setWithholdingData(new InvoiceWithholding());

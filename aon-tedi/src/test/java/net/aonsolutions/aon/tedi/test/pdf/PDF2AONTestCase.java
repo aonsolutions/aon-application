@@ -31,40 +31,43 @@ public class PDF2AONTestCase extends AbstractTediTest {
 	public void test01AUSARTA() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_01_AUSARTA);
 	}
-/*	
 	@Test
-	public void test02BNP() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test02BNP() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_02_BNP);
 	}
 	@Test
-	public void test03BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test03BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_03_BIP_DRIVE);
 	}
 	@Test
-	public void test04BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test04BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_04_BIP_DRIVE);
 	}
 	@Test
-	public void test05TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test05TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_05_TRANSLOGIA);
 	}
 	@Test
-	public void test06TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test06TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_06_TRANSLOGIA);
 	}
 	@Test
-	public void test07TOLEDO() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test07TOLEDO() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_07_TOLEDO);
 	}
 	@Test
-	public void test08VODAFONE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test08VODAFONE() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_08_VODAFONE);
 	}
 	@Test
-	public void test09VUELING() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	public void test09VUELING() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		testTemplate(TestTemplates.AON_09_VUELING);
 	}
-*/
+	@Test
+	public void test10UDAPA() throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
+		testTemplate(TestTemplates.AON_2019_01_02_UDAPA);
+	}
+
 	private void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException, TediException {
 		StringBuilder out = new StringBuilder();
 		out.append("-----------------");
@@ -92,7 +95,7 @@ public class PDF2AONTestCase extends AbstractTediTest {
 			Invoice inv = result.getInvoice();
 			
 			// Domain
-			//assertEquals(file + " Invoice domain does not match: ", DOMAIN_ID.intValue() , inv.getDomain());
+			assertEquals(file + " Invoice domain does not match: ", DOMAIN_ID , inv.getDomain());
 			
 			
 			// Activity

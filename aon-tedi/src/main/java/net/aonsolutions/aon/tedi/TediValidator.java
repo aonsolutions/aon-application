@@ -33,7 +33,7 @@ public class TediValidator {
 	 * El dominio de la factura no puede estar vacio.
 	 */
 	public static Consumer<ValidationContext> EMPTY_DOMAIN = (ctx) -> {
-		if (ctx.getInvoice().getDomain() == 0) {
+		if (ctx.getInvoice().getDomain() == null || ctx.getInvoice().getDomain() == 0) {
 			ctx.add( TediErrorMessages.C001.err(TediContextKey.DOMAIN) );
 		}
 	};
