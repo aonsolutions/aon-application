@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_Q
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -1867,7 +1868,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				ContextVariable.SLD_H03.getName(),
 				ContextVariable.SLD_H04.getName(),
 
-				PREST_IT
+				PREST_IT,
+				GUARENTEED
 				});
 		fillData(ctx, ERE_BASES);
 		
