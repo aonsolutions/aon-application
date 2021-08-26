@@ -20,7 +20,9 @@
 <!--				
 					<skipTests>true</skipTests>
 -->
-					<include>**/AonTediTestSuite.class</include>					
+ 					<includes>
+						<include>**/AonTediTestSuite.class</include>					
+ 					</includes>
 				</configuration>
 			</plugin>
 <!-- 
