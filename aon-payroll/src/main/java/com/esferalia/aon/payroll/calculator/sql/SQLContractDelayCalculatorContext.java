@@ -748,6 +748,17 @@ public class SQLContractDelayCalculatorContext extends
 
 	private static class DelayPaymentBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 
+		private static final String GARANTIZADO = 
+				"(SELECT"
+				+ " SUM(" + SalaryDataColumns.EXPRESSION + ")"
+				+ " FROM " + SALARY_DATA 
+				+ " WHERE " + SalaryDataColumns.SALARY + " = " + SALARY +"." + SalaryColumns.ID 
+				+ " AND " + SalaryDataColumns.NAME + " = 'GARANTIZADO'"
+				+ " AND " + SalaryDataColumns.START_DATE + " = ? " 
+				+ " AND " + SalaryDataColumns.END_DATE + " =  ? " 
+				+ ")"
+				;
+
 		private static final String PREST_IT_IRPF_SQL = 
 				"IFNULL((SELECT"
 				+ " SUM(" + SalaryPaymentColumns.IRPF+")"
@@ -889,6 +900,9 @@ public class SQLContractDelayCalculatorContext extends
 				
 				+ ", @GTZDO:=" + GARANTIZADO_AMOUNT_SQL +  ""
 				+ " AS GTZDO" 
+
+				+ ", @GARANTIZADO:=" + GARANTIZADO +  ""
+				+ " AS GARANTIZADO" 
 				
 				+ ", @ALL_IT_DAYS:=(" + ALL_IT_DAYS +")" 
 				+ " AS ALLITDAYS" 
@@ -905,7 +919,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ ", @DROP_DAYS:=(" + DROP_DAYS +")" 
 				+ " AS DROPDAYS" 
 
-				+ ", @GTZDOIT:=IFNULL((@GTZDO / @ALL_IT_DAYS  * @IT_DAYS ),0.00)"
+				+ ", @GTZDOIT:=IFNULL(@GARANTIZADO,IFNULL((@GTZDO / @ALL_IT_DAYS  * @IT_DAYS ),0.00))"
 				+ " AS GTZDOIT" 
 
 				+ ", SUM(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION 
@@ -934,7 +948,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
 				+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
 														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
-														+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + " =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,3))"
+														+ " AND  ROUND("+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + ",2) =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,2))"
 														+")" 
 				
 				+ " WHERE " 
@@ -1172,6 +1186,8 @@ public class SQLContractDelayCalculatorContext extends
 			int i = 1;
 			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+			stmt.setDate(i++, sqlStartDate); 
+			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 
 			stmt.setDate(i++, sqlEndDate); 
 			stmt.setDate(i++, sqlStartDate); 

@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -2071,27 +2072,28 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
-	public void testCommonDiseaseITAndGtzdoII() throws ExpressionException, SQLException,
+	public void testCommonDiseaseITAndGtzdos() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
 
 		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
-		PaymentConceptRecord conceptAntiguedad = addConcept(aonContext, "ANTIGUEDAD");
 		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
 		PaymentConceptRecord conceptGtzdo = addConcept(aonContext, GUARENTEED, PaymentType.CRA_0055);
 
 		// @formatter:on
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
 				new Extra[] { 
+					/*
 					new Extra() {
 						{
 							this.start = "01/07";
 							this.end = "31/12";
 							this.issue = "21/12";
 							this.month = Month.DECEMBER;
-							this.expression = "SALARIO_BASE + ANTIGUEDAD";
+							this.expression = "SALARIO_BASE";
 							this.concept = conceptPagaExtra.getId();
 						}
 					}, 
@@ -2101,40 +2103,10 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 							this.end = "30/06";
 							this.issue = "30/06";
 							this.month = Month.JUNE;
-							this.expression = "SALARIO_BASE + ANTIGUEDAD";
+							this.expression = "SALARIO_BASE";
 							this.concept = conceptPagaExtra.getId();
 						}
-					}, 
-					new Extra() {
-						{
-							this.start = "01/01 -1";
-							this.end = "31/12 -1";
-							this.issue = "31/03";
-							this.month = Month.MARCH;
-							this.expression = "SALARIO_BASE + ANTIGUEDAD";
-							this.concept = conceptPagaExtra.getId();
-						}
-					}, 
-					new Extra() {
-						{
-							this.start = "01/10 -1";
-							this.end = "30/09";
-							this.issue = "30/09";
-							this.month = Month.SEPTEMBER;
-							this.expression = "SALARIO_BASE + ANTIGUEDAD";
-							this.concept = conceptPagaExtra.getId();
-						}
-					}, 
-//					new Extra() {
-//						{
-//							this.start = "01/01";
-//							this.end = "31/12";
-//							this.issue = "31/12";
-//							this.month = Month.DECEMBER;
-//							this.expression = "SALARIO_BASE + ANTIGUEDAD";
-//							this.concept = conceptPagaExtra.getId();
-//						}
-//					}, 
+					}*/
 				},
 				new Payment[] {
 						new Payment() {
@@ -2145,14 +2117,26 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 						},
 						new Payment() {
 							{
-								this.concept = conceptAntiguedad.getId();
-								this.expression = "ANTIGÜEDAD(SALARIO_BASE * 2.05/100, QUINQUENIO)";
+								this.concept = conceptGtzdo.getId();
+								this.expression = "isdef DIAS_ENFERMEDAD_COMUN_1_3 ? DIAS_ENFERMEDAD_COMUN_1_3 * /*user*/BASE_REGULADORA*0.60/**/: HIDE()";
 							}
 						},
 						new Payment() {
 							{
 								this.concept = conceptGtzdo.getId();
-								this.expression = "isdef DIAS_IT ? GTZDO(TODO) : HIDE()";
+								this.expression = "isdef DIAS_ENFERMEDAD_COMUN_4_15 ? DIAS_ENFERMEDAD_COMUN_4_15 * /*user*/BASE_REGULADORA*0.15/**/: HIDE()";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptGtzdo.getId();
+								this.expression = "isdef DIAS_ENFERMEDAD_COMUN_16_20 ? DIAS_ENFERMEDAD_COMUN_16_20 * /*user*/BASE_REGULADORA*0.15/**/: HIDE()";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptGtzdo.getId();
+								this.expression = "isdef DIAS_ENFERMEDAD_COMUN_21 ? DIAS_ENFERMEDAD_COMUN_21 * /*user*/BASE_REGULADORA*0.25/**/: HIDE()";
 							}
 						},
 				});
@@ -2173,9 +2157,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "TC2", "\"100\"");
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "DIAS_MES", "30.00");
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "GRUPO_COTIZACION", "\"03\"");
-		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "SALARIO_MENSUAL", "1912.97");
-		//addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "AJUSTE MEJORA PREST.SS.INCAPACIDAD TEMPORAL", "187.84", "_P", "0.00", PaymentType.CRA_0000);
-		//addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "AJUSTE DIAS COTIZADOS MES FEBRERO", "DIAS_ENFERMEDAD_COMUN_21;DIAS_MES=28.00;0.00", "_P", "_P", PaymentType.CRA_0001);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "SALARIO_MENSUAL", "1900.00");
 		
 		//@formatter:off
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
@@ -2199,72 +2181,27 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 
 		
-		Date startDate = getFirstDayOfYear(getToday());
+		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startITDate = add(startDate, DAY_OF_MONTH,8);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
-		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
-			@Override
-			public void addPayment(Double amount, Double quote, Double tax, String description,
-					java.util.Date startDate, java.util.Date endDate, IPayment payment,
-					Map<String, ITimedVariable<?>> context) {
-				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-				System.out.printf("[%1$td-%2$td] %3$s : %4$f,  %5$f \r\n", startDate, endDate, description, amount, quote );
-			}
-			
-			@Override
-			public void setTotalPayment(Double totalPayment) {
-				super.setTotalPayment(totalPayment);
-				System.out.println("PAYMENT : " + totalPayment );
-			}
-			
-			@Override
-			public void setCgcBase(Double cgcBase) {
-				super.setCgcBase(cgcBase);
-				System.out.println("BASE : " + cgcBase );
-			}
-		};
-		calculator.setSalaryBuilder(jooqSalaryBuilder);
-		calculator.calculate(ctx);
-		jooqSalaryBuilder.execute();
-
-		startDate = add(getFirstDayOfYear(getToday()), Calendar.MONTH,1);
-		endDate = getLastDayOfMonth(startDate);
-		Date startITDate = add(startDate, DAY_OF_MONTH,7);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
-
-		ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, contract);
-		calculator = new SmartContractSalaryCalculator<ISalary>();
-		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
-			@Override
-			public void addPayment(Double amount, Double quote, Double tax, String description,
-					java.util.Date startDate, java.util.Date endDate, IPayment payment,
-					Map<String, ITimedVariable<?>> context) {
-				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-				System.out.printf("[%1$td-%2$td] %3$s : %4$f,  %5$f \r\n", startDate, endDate, description, amount, quote );
-			}
-			
-			@Override
-			public void setTotalPayment(Double totalPayment) {
-				super.setTotalPayment(totalPayment);
-				System.out.println("PAYMENT : " + totalPayment );
-			}
-			
-			@Override
-			public void setCgcBase(Double cgcBase) {
-				super.setCgcBase(cgcBase);
-				System.out.println("BASE : " + cgcBase );
-			}
-		};
-		calculator.setSalaryBuilder(jooqSalaryBuilder);
-		calculator.calculate(ctx);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<>();
+		
+		SalaryBuilder salaryBuilder = new SalaryBuilder();
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> compositeSalaryBuilder = 
+				new CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>>(salaryBuilder, jooqSalaryBuilder);
+		
+		calculator.setSalaryBuilder(compositeSalaryBuilder);
+		Salary salary = calculator.calculate(ctx);
 		jooqSalaryBuilder.execute();
 
 		
-		addData(aonContext, contract, startDate, null, "SALARIO_MENSUAL", "1930.19");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "SALARIO_MENSUAL", "1930.00");
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -2274,6 +2211,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				endDate, 
 				criteria);
 		delayCtx.next();
+		
 		SmartContractSalaryCalculator<Salary> delayCalculator = 
 				new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
 					@Override
@@ -2281,14 +2219,37 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 							java.util.Date startDate, java.util.Date endDate, IPayment payment,
 							Map<String, ITimedVariable<?>> context) {
 						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
-						System.out.printf("[%1$td-%2$td] %3$s : %4$f \r\n", startDate, endDate, description, amount);
+						if ( amount ==  0 )
+							return;
+						
+						System.out.printf("\t[%1$td-%2$td] %3$s : %4$f \r\n", startDate, endDate, description, amount);
+
+						int dayOfMonth = get(startDate, Calendar.DAY_OF_MONTH);
+						if ( dayOfMonth == 1 )
+							org.junit.Assert.assertEquals( 8.00, (double) amount, DELTA);
+						else if ( dayOfMonth == 9 )
+							org.junit.Assert.assertEquals( ( 3 * 0.60 ), (double) amount,  DELTA);
+						else if ( dayOfMonth == 12 )
+							org.junit.Assert.assertEquals( ( 12 * 0.15  + 12 * 0.60 ), (double) amount,  DELTA);
+						else if ( dayOfMonth == 22 )
+							org.junit.Assert.assertEquals( ( 5 * 0.15 + 5 * 0.60 ), (double) amount,  DELTA);
+						else if ( dayOfMonth == 29 )
+							org.junit.Assert.assertEquals( ( 3 * 0.25 + 3 * 0.75 ), (double) amount,  DELTA);
+							
 					}
 				});
 		
-		Salary salary = delayCalculator.calculate(delayCtx);
-		//salary.getSalaryPayments().forEach(p -> System.out.println( p.getDescription() + " = " + p.getAmount() +", " + p.getQuote()));
+		Salary delay = delayCalculator.calculate(delayCtx);
+		delay.getSalaryPayments().forEach(p -> System.out.println( p.getDescription() + " = " + p.getAmount() +", " + p.getQuote()));
 		
-		org.junit.Assert.assertEquals(66.00+166.00, salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(30.00, delay.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(
+		 8 							// 01 - 07 
+		 + 3 * 0.60 				// 08 - 10
+		 + 12 * 0.15  + 12 * 0.60	// 11 - 22 
+		 + 5 * 0.15 + 5 * 0.60 		// 23 - 27 
+		 + 3 * 0.25 + 3 * 0.75		// 28 - 31 
+		, delay.getTotalPayment(), DELTA);
 		
 		
 	}
