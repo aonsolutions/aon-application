@@ -82,7 +82,9 @@ export const requestJsonAsset = (file) => new Promise((resolve,reject)=>{
 
 export const requestSig = (method, url, token, sendData, fn) => {
   try {
-    let xhr = xmlHttpRequestAon(method, url, token, sendData);
+    let xhr = new XMLHttpRequest();
+    if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
+    xhr.open(method, url);
     xhr.setRequestHeader("session_id", token);
     xhr.setRequestHeader("domain_id", SIG_DOMAIN_ID);
     xhr.setRequestHeader("domain_name", SIG_DOMAIN_NAME);

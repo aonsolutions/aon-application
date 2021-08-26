@@ -2,7 +2,6 @@
 import { AonBasicTable } from "../../../components/aon-basic-table";
 import { AonDate } from "../../../components/aon-date";
 import { AonIconButton } from "../../../components/aon-icon-button";
-import { AonInput } from "../../../components/aon-input";
 import { AonSelect } from "../../../components/aon-select";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
 import { formatDateOrigin, serializeForm, setAttributes } from "../../../services/utils";
