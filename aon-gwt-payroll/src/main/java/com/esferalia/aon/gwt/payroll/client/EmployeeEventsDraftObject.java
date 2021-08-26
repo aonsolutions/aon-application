@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -35,6 +36,7 @@ public class EmployeeEventsDraftObject {
 	
 	private ArrayList<String> calendarVariables;
 	private ArrayList<String> agreementVariables;
+	private Map<String, String> agreementVariablesValue;
 	private ArrayList<String> contractVariables;
 	
 	// ----------------------------------------------- Constructor 
@@ -46,6 +48,7 @@ public class EmployeeEventsDraftObject {
 		this.calendarVariables = new ArrayList<String>();
 		this.agreementVariables = new ArrayList<String>();
 		this.contractVariables = new ArrayList<String>();
+		this.agreementVariablesValue = new HashMap<String, String>();
 	}
 	
 	// ----------------------------------------------- initCalendarVariables 
@@ -77,7 +80,22 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	public ArrayList<String> getAllVariables() {
-		return this.employeeContractVariables;
+		LinkedHashSet<String> allVariablesListAux = new LinkedHashSet<String>();
+		
+		allVariablesListAux.addAll(calendarVariables);
+		allVariablesListAux.addAll(agreementVariables);
+		allVariablesListAux.addAll(contractVariables);
+		allVariablesListAux.addAll(employeeContractVariables);
+		
+		ArrayList<String> allVariablesList = new ArrayList<String>(allVariablesListAux);
+		allVariablesList.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		
+		return allVariablesList;
 	}
 
 	public ArrayList<String> getAgreementVariables() {
@@ -85,6 +103,13 @@ public class EmployeeEventsDraftObject {
 		for(String var : employeeContractVariables)
 			if(!isCalendarVariable(var))
 				agreementVars.add(var);
+		
+		agreementVars.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
 		
 		return agreementVars;
 	}
@@ -131,6 +156,13 @@ public class EmployeeEventsDraftObject {
 			result.add(var);
 		}
 		
+		result.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		
 		return result;
 	}
 	
@@ -160,6 +192,13 @@ public class EmployeeEventsDraftObject {
 				continue;
 			result.add(var);
 		}
+		
+		result.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
 		
 		return result;
 	}
@@ -209,8 +248,16 @@ public class EmployeeEventsDraftObject {
 		return calendarVariables.contains(var);
 	}
 	
+	public Boolean isAgreementVariable(String var) {
+		return agreementVariables.contains(var);
+	}
+	
 	public boolean isContractVariable(String var){
 		return this.employeeContractVariables.contains(var);
+	}
+	
+	public String getAgreementVariablesValue(String var) {
+		return agreementVariablesValue.get(var);
 	}
 	
 	public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
@@ -277,11 +324,11 @@ public class EmployeeEventsDraftObject {
 						continue;
 					
 					for(VariableDescriptor variableDescriptor : variables) {
-						if(variableDescriptor.getScope() == Scope.AGREEMENT && !agreementVariables.contains(variableName))
+						if(variableDescriptor.getScope() == Scope.AGREEMENT && !agreementVariables.contains(variableName)) {
 							agreementVariables.add(variableName);
-					}
-					
-					for(VariableDescriptor variableDescriptor : variables) {
+							agreementVariablesValue.put(variableName, variableDescriptor.getExpression());
+						}
+						
 						if(variableDescriptor.getScope() == Scope.CONTRACT && !contractVariables.contains(variableName) && !continueVariable(variableName))
 							contractVariables.add(variableName);
 					}
@@ -322,7 +369,36 @@ public class EmployeeEventsDraftObject {
 				for(String contractVariable : contractVariables)
 					employeeContractVariables.remove(contractVariable);
 				
+				sortVariablesList();
+				
 				success.accept(resultEmployeeEventsData);
+			}
+		});
+	}
+
+	private void sortVariablesList() {
+		calendarVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		agreementVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		contractVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		employeeContractVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
 			}
 		});
 	}
@@ -359,6 +435,9 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("DIAS_");
 		filterSet.add("OCUPACI");
 		filterSet.add("COEFICIENTE_PARCIALIDAD");
+		filterSet.add("SMI");
+		filterSet.add("HIDE");
+		filterSet.add("TODO");
 		
 		filterSet.addAll(allStaticVariables);
 		

@@ -38,6 +38,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -49,6 +50,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
@@ -331,6 +333,9 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	HTMLPanel loadingPanel;
 	
 	@UiField
+	ScrollPanel scrollPanel;
+	
+	@UiField
 	HTMLPanel mainPanel;
 	
 	@UiField
@@ -379,6 +384,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		saveButton.setEnabled(false);
 		undoAllButton.setEnabled(false);
+		
+		scrollPanel.setHeight((Window.getClientHeight() - 150) + "px");
 	}
 
 	// ----------------------------------------------- Constructor.Methods
@@ -595,6 +602,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 			}
 		}
 		
+		if(employeeEventsDraft.isAgreementVariable(var)) {
+			String value = employeeEventsDraft.getAgreementVariablesValue(var);
+			headLabel.setText(headLabel.getText() + " (" + value + ")");
+		}
+		
 		headLabel.ensureDebugId(var.toLowerCase());
 		
 		headPanel.add(headLabel);
@@ -759,14 +771,13 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		undoAllButton.setEnabled(true);
 	}
 	
-	private ArrayList<String> getVariablesWithOutContract() {
+	private ArrayList<String> getVariablesWithOutCalendar() {
 		ArrayList<String> result = new ArrayList<String>();
 		
-		ArrayList<String> allEmployeeVariables = employeeEventsDraft.getEmployeeContractVariables();
-		ArrayList<String> calendarVariables = employeeEventsDraft.getCalendarVariables();
+		ArrayList<String> allEmployeeVariables = employeeEventsDraft.getAllVariables();
 		
 		for(String var : allEmployeeVariables) {
-			if(calendarVariables.contains(var))
+			if(employeeEventsDraft.isCalendarVariable(var))
 				continue;
 			result.add(var);
 		}
@@ -997,7 +1008,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		if(null == variableName)
 			variableName = "Nuevo valor";
 		
-		ArrayList<String> filterVariables = getVariablesWithOutContract();
+		ArrayList<String> filterVariables = getVariablesWithOutCalendar();
 		EmployeeInputDialog inputDialog = null;
 		
 		inputDialog = new EmployeeInputDialog(

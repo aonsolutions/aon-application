@@ -214,7 +214,7 @@
 				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
 			
 				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.container}  {style.mt50}">
-					<g:ScrollPanel>
+					<g:ScrollPanel ui:field="scrollPanel">
 						<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
 							<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
 						</g:FlexTable>

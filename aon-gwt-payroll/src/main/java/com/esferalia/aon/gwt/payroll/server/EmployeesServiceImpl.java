@@ -1262,7 +1262,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				}
 			}
 
-			System.out.println("Context Variables Size : " + contextResult.getVariables().size());
+//			System.out.println("Context Variables Size : " + contextResult.getVariables().size());
+//			System.out.println("Context Variables : " + contextResult.getVariables().toString());
 
 //			for (String key : contextResult.getVariables()) {
 //				if (contextResult.getList(key).isEmpty()) {
