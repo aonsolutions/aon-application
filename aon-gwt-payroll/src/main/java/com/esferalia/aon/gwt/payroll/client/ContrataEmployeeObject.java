@@ -91,9 +91,9 @@ public class ContrataEmployeeObject {
 				activitiesCCC = employeeContractData.getActivitiesCCC();
 				payMethodsMap = employeeContractData.getPayMethods();
 				
-				// Set default contract start_date & end_date to null
-				contractData.setStartDate(null);
-				contractData.setEndDate(null);
+//				// Set default contract start_date & end_date to null
+//				contractData.setStartDate(null);
+//				contractData.setEndDate(null);
 				
 				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
 				contractData.setContractJourneyDuration(journies);
