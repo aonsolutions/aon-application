@@ -378,7 +378,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C120("303-CTA120",true ,"120","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 123).")
 	,CT_C122("303-CTA122",true ,"122","Operaciones sujetas con inversi\u00F3n del sujeto pasivo.")
 	,CT_C123("303-CTA123",true ,"123","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
-	,CT_C124("303-CTA124",true ,"124","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla única.")
+	,CT_C124("303-CTA124",true ,"124","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica.")
 	,CT_C60("303-CTA60",true ,"60","Exportaciones y operaciones asimiladas")
 	,CT_C61("303-CTA61",true ,"61","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
 	,CT_C62("303-CTA62",true ,"62","Criterio de Caja. Importes devengados en per\u00EDodo de liquidaci\u00F3n seg\u00FAn art. 75 LIVA. - Base Imponible")
@@ -757,6 +757,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,GP_C030("303-GP030",true ,"30","Entregas intracomunitarias de bienes y servicios")
 	,GP_C031("303-GP031",true ,"31","Exportaciones y operaciones asimiladas")
 	,GP_C032("303-GP032",true ,"32","Otras operaciones no sujetas o con inversi\u00F3n de sujeto pasivo")
+	
+	,GP_C051("303-GP051",true ,"51","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 53)")
+	,GP_C052("303-GP052",true ,"52","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,GP_C053("303-GP053",true ,"53","OSS. Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS")
+	,GP_C054("303-GP054",true ,"54","OSS. Operaciones sujetas y acogidas a la OSS")
+	
 	,GP_C047("303-GP047",true ,"47","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Base Imponible")
 	,GP_C048("303-GP048",true ,"48","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
 	,GP_C049("303-GP049",true ,"49","Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Base Imponible")

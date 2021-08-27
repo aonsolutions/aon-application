@@ -28,7 +28,7 @@ public class Mod303Writer {
 	protected static SimpleDateFormat df = new SimpleDateFormat("MMMMM");
 	
 	private enum Writers {
-		 AEAT_2021_2	(mod303 -> (mod303.isAEAT() && (mod303.getYear() >= 2021 || mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester()) ), Mod303WriterAEAT2021_2::new)
+		 AEAT_2021_2	(mod303 -> (mod303.isAEAT() && (mod303.getYear() >= 2021 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())) ), Mod303WriterAEAT2021_2::new)
 		,AEAT_2021		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester()), Mod303WriterAEAT2021::new)
 		,AEAT_2019		(mod303 -> (mod303.isAEAT() && mod303.getYear() > 2018 && mod303.getYear() <= 2020), Mod303WriterAEAT2019::new)
 		,AEAT_2018T4	(mod303 -> (mod303.getYear() == 2018 && mod303.isLastPeriod()) 	, Mod303WriterAEAT20184T::new)
@@ -38,7 +38,9 @@ public class Mod303Writer {
 		,BIZKAIA_2017	(mod303 -> (mod303.isBizkaia() && mod303.getYear() > 2016) 	, Mod303WriterBIZKAIA2017::new)
 		,ARABA_2017		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2016 && mod303.getYear() < 2019)	, Mod303WriterARABA2017::new)
 		,ARABA_2019		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2019)	, Mod303WriterARABA2019::new)
-		,GIPUZKOA_2017	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() >= 2015), Mod303WriterGIPUZKOA2017::new)
+		,GIPUZKOA_2021_2(mod303 -> (mod303.isGipuzkoa() && (mod303.getYear() >= 2021 || (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())) ), Mod303WriterGIPUZKOA2021::new)
+		,GIPUZKOA_2021_1(mod303 -> (mod303.isGipuzkoa() && (mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester()) ), Mod303WriterGIPUZKOA2017::new)
+		,GIPUZKOA_2017	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() < 2021), Mod303WriterGIPUZKOA2017::new)
 		;
 		private IModelAccepter accepter;
 		private IWriterInstance instancer;

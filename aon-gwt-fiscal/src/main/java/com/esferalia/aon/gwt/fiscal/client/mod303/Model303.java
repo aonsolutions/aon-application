@@ -312,8 +312,10 @@ public class Model303 extends MainEntryPoint {
 				declarationContainer.setWidget( new Model3032019ARABA(selected,new Model303Callback(), getOptions()));
 			}
 		} else if (selected.isGipuzkoa()) {
-			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getOptions()));	
+			if (selected.getYear() >2021 ) {
+				declarationContainer.setWidget( new Model3032021GIPUZKOA(selected,new Model303Callback(), getOptions()));	
+			} else if (selected.getYear() == 2021 && selected.getPeriod().isLastSemester()) {
+				declarationContainer.setWidget( new Model3032021GIPUZKOA(selected,new Model303Callback(), getOptions()));
 			} else {
 				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getOptions()));
 			}
