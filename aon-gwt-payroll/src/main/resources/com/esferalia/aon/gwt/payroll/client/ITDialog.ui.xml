@@ -148,6 +148,8 @@
 				    			<g:Label ui:field="realStartDate"></g:Label>
 				    			<g:Label styleName='{style.columnS}'>Recaída</g:Label>
 				    			<g:ListBox ui:field="raggedList" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+				    			<g:Label ui:field="baseRDBxNL" styleName='{style.columnXL}'>Base reguladora</g:Label>
+				    			<c:DoubleBox ui:field="baseRDBxN" styleName='aon-inputText {style.maxWidth}'></c:DoubleBox>
 				    		</g:HTMLPanel>
 				    		<g:HTMLPanel styleName="{style.flex}">
 				    			<g:Label  styleName='{style.columnS}'>Nº colegiado</g:Label>
