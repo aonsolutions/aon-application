@@ -17,15 +17,20 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   buildToolbar(aonMessengerChat);
 
-  const mainView = createMainView(aonMessengerChat);
+  const mainView = createMainView(aonMessengerChat); //DIV MAIN
+
+  const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
+
+  const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
 
   if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST) 
-    buildRequest(mainView, aonMessengerChat);
+    buildRequest(firstDiv, aonMessengerChat);
   else 
-    buildQuery(mainView, aonMessengerChat); // SOURCE QUERY 
+    buildQuery(firstDiv, aonMessengerChat); 
 
-  buildChat(mainView, aonMessengerChat);
-
+  if(aonMessengerChat.task.id){
+    buildChat(secondDiv);
+  }
 }
 
 /**
@@ -77,42 +82,29 @@ const buildToolbar = (aonMessengerChat) => {
     status.appendTo(titleSpan);
 }
 
-
 /**
- * SOURCE MANUAL
- * @param {HTMLElement} mainView div principal
+ * SOURCE QUERY
+ * @param {HTMLElement} firstDiv firstDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildQuery = (mainView, aonMessengerChat) => {
-
+const buildQuery = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const application = aonMessengerChat.applicationEl;
     const applicationParent = aonMessengerChat.applicationParentEl;
 
-    const firstDiv = newComponent({
-      classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
-      id: MESSENGER_IDS.FIRST_DIV,
-      styles: {
-        width: "50%",
-        height: "100%",
-        minWidth: "400px",
-        maxWidth: "600px",
-        paddingTop: "5vh",
-        paddingRight: "20px",
-        paddingLeft: "30px",
-        overflow:"auto",
-        top: 0
-      },
-    });
-    firstDiv.appendTo(mainView);
-
     const aonCard = createCardMessenger(MSG.DATA, "");
     firstDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-  
+
     const columnsDiv = createStartJustifiedColumn();
     aonCard.setContent(columnsDiv.element);
 
+    //----------------ISSUE-----------
+    const titleDiv = titleFirstDiv(MSG.ISSUE);
+    columnsDiv.appendChild(titleDiv);
+    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
+    titleDiv.appendChild(title); 
+    //-------------------------END ISSUE
 
     if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
       // DIV CUSTOMER
@@ -132,13 +124,7 @@ const buildQuery = (mainView, aonMessengerChat) => {
       fillCustomer(task);
     }
 
-    //DIV TITLE
-    const titleDiv = titleFirstDiv(MSG.ISSUE);
-    columnsDiv.appendChild(titleDiv);
-    //TITLE
-    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
-    titleDiv.appendChild(title); 
-    
+
     if(!applicationParent.cauData){
       //DIV WORKGROUP AND TASKHOLDER
       const rowsDiv = createStartJustifiedRow();
@@ -161,7 +147,7 @@ const buildQuery = (mainView, aonMessengerChat) => {
     }
     
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
-        height: '100%',
+        minHeight: '200px',
         maxHeight: '300px'
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
@@ -169,39 +155,19 @@ const buildQuery = (mainView, aonMessengerChat) => {
     if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
 
     buildTextareaToolbar(aonTextArea, task, false);
-
-    setTimeout(() =>  setStyles(mainView, {opacity: 1, marginTop:0}), 100);
 }
 
 /**
  * SOURCE PROCESS
- * @param {HTMLElement} mainView div principal
+ * @param {HTMLElement} firstDiv firstDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
- const buildRequest = (mainView, aonMessengerChat) => {
+ const buildRequest = (firstDiv, aonMessengerChat) => {
 
   const task = aonMessengerChat.task;
   const application = aonMessengerChat.applicationEl;
 
-  
-  const firstDiv = newComponent({
-    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
-    id: MESSENGER_IDS.FIRST_DIV,
-    styles: {
-      width: "50%",
-      height: "100%",
-      minWidth: "400px",
-      maxWidth: "600px",
-      paddingTop: "20px",
-      paddingRight: "20px",
-      paddingLeft: "30px",
-      overflow:"auto",
-      top: 0
-    },
-  });
-  mainView.appendChild(firstDiv.element)
-
-  const aonCard = createCardMessenger(MSG.DATA, MSG.DATA);
+  const aonCard = createCardMessenger(MSG.DATA, "");
   firstDiv.appendChild(aonCard);
   aonCard.getCard().style.margin = 0;
 
@@ -226,34 +192,14 @@ const buildQuery = (mainView, aonMessengerChat) => {
   const divProcess = createStartJustifiedColumn().element;
   divProcess.id = MESSENGER_IDS.PROCESS_DIV;
   firstDiv.appendChild(divProcess);
-
-  setTimeout(() => { 
-    setStyles(mainView, { opacity: 1, marginTop: 0 }) 
-  }, 100);
 }
 
 /**
  * Create desktop chat for messenger
- * @param {HTMLElement} mainView div principal
+ * @param {HTMLElement} secondDiv secondDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildChat = (mainView, aonMessengerChat) => {
-
-    const secondDiv = newComponent({
-        classes: [CSS.FLEX_ROW],
-        id: MESSENGER_IDS.SECOND_DIV,
-        styles: {
-            width: "50%",
-            height: "90%",
-            minWidth: "400px",
-            maxWidth: "600px",
-            paddingTop: "20px",
-            display: !aonMessengerChat.task.id  ? "none" : null
-        },
-    }).element;
-
-    mainView.appendChild(secondDiv);
-
+const buildChat = (secondDiv) => {
     /**
      * Wrapper 
      * if some new side menus / toolbars needed, here.
@@ -269,10 +215,9 @@ const buildChat = (mainView, aonMessengerChat) => {
     wrapper.appendTo(secondDiv);
 
     const title = setStyles(createTitle(MSG.HISTORIC), {
-            maxWidth: '550px',
-            alignSelf: 'center',
-            paddingBottom: '10px',
-            borderBottom: '1px solid #f0f0f0',
+          alignSelf: 'center',
+          paddingBottom: '10px',
+          borderBottom: '1px solid #f0f0f0',
         }
     );
     wrapper.appendChild(title);
@@ -280,50 +225,27 @@ const buildChat = (mainView, aonMessengerChat) => {
     /**
      * The chat itself
      */
-    const chat = createChat(); 
-    chat.classList.add(CSS.MATERIAL_SCROLL);
-    wrapper.appendChild(chat);
+    const sectionComment = createChat(); 
+    sectionComment.classList.add(CSS.MATERIAL_SCROLL);
+    wrapper.appendChild(sectionComment);
 
 
-    //-----------------SECTION COMMENT
-    sectionComment(wrapper);
+    //-----------------ADD TEXT AREA CHAT
+    addTextAreaChat(wrapper); //
 
-    /**
-     * A side buttonbar 
-     */
-    const leftButtonBar = newComponent({
-        classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-        styles: {
-            position: 'relative',
-            width: "10%",
-            height: "100%"
-        }
-    });
-    leftButtonBar.appendTo(secondDiv);
-
-    const upIcon = setAttributes(new AonIconButton(), {
-      icon: MATERIAL_ICONS.EXPAND_LESS,
-      id: "upIcon",
-      background: "transparent",
-    });
-    upIcon.addEventListener(EVENT.CLICK, ()=>chat.scrollTo(0,0));
-    leftButtonBar.appendChild(upIcon);
-
-    const downIcon = setAttributes(new AonIconButton(), {
-      icon: MATERIAL_ICONS.EXPAND_MORE,
-      id: "downIcon",
-      background: "transparent",
-    });
-    downIcon.addEventListener(EVENT.CLICK, ()=> chat.scrollTo(0, chat.scrollHeight))
-    leftButtonBar.appendChild(downIcon);
+    addChatButtonsUpDown(secondDiv, sectionComment); //BUTTONS DOWN UP CHAT
 
     addLine();
 }
 
-const sectionComment = (wrapper) => {
+const addTextAreaChat = (wrapper) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
   const divs = createSectionComment(wrapper);
+  setStyles(divs.divComment,{
+    borderRadius:"8px 8px",
+    border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
+  });
 
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
@@ -382,4 +304,74 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   );
   button.style.padding = "0.7rem 1em";
   dialog.open();
+}
+
+const createFirstDiv = (mainView) => {
+  const div = newComponent({
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER, CSS.MATERIAL_SCROLL],
+    id: MESSENGER_IDS.FIRST_DIV,
+    styles: {
+      width: "50%",
+      minWidth: "400px",
+      paddingTop: "5vh",
+      paddingRight: "20px",
+      paddingLeft: "30px",
+      overflow:"auto",
+      top: 0
+    },
+  });
+  div.appendTo(mainView);
+
+  return div.element;
+}
+
+const createSecondDiv = (mainView) => {
+  const secondDiv = newComponent({
+    classes: [CSS.FLEX_ROW],
+    id: MESSENGER_IDS.SECOND_DIV,
+    styles: {
+        width: "50%",
+        // height: "90%",
+        minWidth: "400px",
+        paddingTop: "20px",
+        paddingBottom: "30px",
+    },
+  }).element;
+
+  mainView.appendChild(secondDiv);
+  return secondDiv;
+}
+
+/**
+ * 
+ * @param {HTMLElement} secondDiv div right
+ * @param {HTMLElement} sectionComment div sectionComment
+ */
+const addChatButtonsUpDown = (secondDiv, sectionComment) => {
+  const leftButtonBar = newComponent({
+      classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
+      styles: {
+          position: 'relative',
+          width: "10%",
+          height: "100%"
+      }
+  });
+  leftButtonBar.appendTo(secondDiv);
+
+  const upIcon = setAttributes(new AonIconButton(), {
+    icon: MATERIAL_ICONS.EXPAND_LESS,
+    id: "upIcon",
+    background: "transparent",
+  });
+  upIcon.addEventListener(EVENT.CLICK, ()=>sectionComment.scrollTo(0,0));
+  leftButtonBar.appendChild(upIcon);
+
+  const downIcon = setAttributes(new AonIconButton(), {
+    icon: MATERIAL_ICONS.EXPAND_MORE,
+    id: "downIcon",
+    background: "transparent",
+  });
+  downIcon.addEventListener(EVENT.CLICK, ()=> sectionComment.scrollTo(0, sectionComment.scrollHeight))
+  leftButtonBar.appendChild(downIcon);
+
 }

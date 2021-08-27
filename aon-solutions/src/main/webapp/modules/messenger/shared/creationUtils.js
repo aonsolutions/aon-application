@@ -28,11 +28,9 @@ export const createMainView = (aonMessengerChat) =>{
       transition: ".5s",
       display: "flex",
       flexDirection: "row",
-      opacity: 0,
       marginTop: "0vh",
       padding: "0px",
       width: "100%",
-      maxWidth: "1400px",
       height: "100%",
       overflow: 'hidden'
     },
@@ -43,6 +41,7 @@ export const createMainView = (aonMessengerChat) =>{
   return mainView;
   
 } 
+
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
   id: MESSENGER_IDS.MAIN_DIV,
@@ -68,7 +67,7 @@ export const createTitleDiv = () => newComponent({
     paddingTop: "10px",
     paddingBottom: "10px",
     width: "100%",
-    maxWidth: "600px",
+    // maxWidth: "600px",
   },
 });
 
@@ -125,7 +124,7 @@ export const createReceiverDiv = () => newComponent({
   ],
   styles: {
     width: "100%",
-    maxWidth: "600px"
+    // maxWidth: "600px"
   },
 });
 
@@ -138,7 +137,7 @@ export const createAttachHistory = () => newComponent({
   classes: [CSS.FLEX_COLUMN],
   styles: {
     width: "100%",
-    maxWidth: "600px",
+    // maxWidth: "600px",
     marginTop: "25px",
     boxShadow: "0px 0px 2px rgba(0,0,0,.15)",
     border: "1px solid #E0E0E0",
@@ -199,7 +198,7 @@ export const createMessageBox = (properties) =>{
         background : properties.direction == RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
         boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
         borderRadius : '5px',
-        maxWidth: '500px',
+        // maxWidth: '500px',
         width: '90%'
     },
     dataset:{
@@ -434,6 +433,8 @@ const iconComment = (icon) => {
     const a = setStyles(document.createElement("a"),{
         boxShadow: "none",
         margin: "5px",
+        marginTop: "auto",
+        marginBottom: "auto",
         visibility: "visible",
         float: "right",
         background: "rgba(0, 0, 0, 0)",
@@ -441,7 +442,7 @@ const iconComment = (icon) => {
     });
 
     let iconSend = setStyles(document.createElement("i"),{
-        fontSize: "2em",
+        fontSize: "1.8em",
         lineHeight: "44px",
         color: CSS.variable(COLORS.AON_BLUE)
     });
@@ -507,7 +508,6 @@ export const createSectionComment = (div) => {
         borderTop: "1px solid #eee",
         borderBottomRightRadius: "10px",
         borderBottomLeftRadius: "10px",
-        // position:"relative"
     });
     divComment.title = MSG.COMMENT;
     div.appendChild(divComment);
@@ -568,7 +568,7 @@ export const createChat = () => newComponent({
         position: "relative",
         width: '100%',
         zIndex: "0",
-        height: '100%',
+        minHeight: '300px',
         padding: "15px",
         overflow: 'auto',
         borderBottom: '1px solid #f0f0f0',

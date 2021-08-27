@@ -1,16 +1,16 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
@@ -23,15 +23,15 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskAttach;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -64,7 +64,10 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/attach":
 					response(req, resp,  getTasksAttach(api));
 					break;
-				case "/count-status-task":
+				case "/count":
+					response(req, resp,  getTaskCount(api));
+					break;
+				case "/status/count":
 					response(req, resp,  getTaskStatusCount(api));
 					break;
 				case "/cau":
@@ -232,10 +235,20 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
 		JSONObject json = new JSONObject();
-		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> taskFilterCount(api, f));
-		map.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
+		AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> taskFilterCount(api, f))
+		.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
 		return json;
 	}
+	
+	private JSONObject getTaskCount(AonApiData api) {
+		JSONObject json = new JSONObject();
+		Domain domain = api.getDomain();
+		Integer taskHolder = api.getParams().getInt("task_holder");
+		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  f -> f.getDomainProperty().eq(domain.getId()), taskHolder)
+		.forEach((k,v)->json.put(k, v));
+		return json;
+	}
+	
 	
 	private JSONObject getCauInfo(AonApiData api) {
 		JSONObject json = new JSONObject();

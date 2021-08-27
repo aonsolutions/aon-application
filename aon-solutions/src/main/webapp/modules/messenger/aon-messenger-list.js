@@ -205,8 +205,8 @@ export class AonMessengerList extends AonElement {
 
   addTask(button){
 		const left = button.getBoundingClientRect().left;
-    let top  = button.getBoundingClientRect().top;
-    if(this.isMobile()) top = top - 50;
+    let top    = button.getBoundingClientRect().top;
+    if(this.isMobile()) top = top - 80;
 
     let options = [];
     options.push({

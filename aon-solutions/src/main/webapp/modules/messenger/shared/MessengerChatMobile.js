@@ -21,6 +21,16 @@ export const buildMobile = (aonMessengerChat)=> {
         buildQuery(mainView, aonMessengerChat); // SOURCE QUERY 
 }
 
+
+/**
+ * @param {HTMLElement} mainView htmlElement aon-messenger-chat
+ * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
+ */
+ const buildRequest =  (mainView, aonMessengerChat) => {
+    aonMessengerChat.getApplication().development();
+}
+
+
 /**
  * Create desktop chat for messenger (mobile)
  * @param {HTMLElement} mainView htmlElement aon-messenger-chat
@@ -37,7 +47,6 @@ const buildQuery = (mainView, aonMessengerChat) => {
           height: "90%",
           maxWidth: "600px",
           padding: "0",
-        //   paddingBottom: "3px"
         },
     });
     firstDiv.appendTo(mainView);
@@ -85,14 +94,6 @@ const buildQuery = (mainView, aonMessengerChat) => {
 
 
     setTimeout(() =>  setStyles(mainView, { opacity: 1, marginTop: 0}), 100);
-}
-
-/**
- * @param {HTMLElement} mainView htmlElement aon-messenger-chat
- * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
- */
-const buildRequest =  (mainView, aonMessengerChat) => {
-    aonMessengerChat.getApplication().development();
 }
 
 const changeStyleSelect = (aonSelect) => {
@@ -229,8 +230,8 @@ const buildCreate = (wrapper, toolbar, aonMessengerChat)=>{
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`),{
         height: "100%",
         width: "100%",
-        marginTop : 0,
         boxShadow : "none",
+        marginTop : 0
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     div.appendChild(aonTextArea);
@@ -351,8 +352,9 @@ const openFullComment  = (aonTextArea) => {
 const changeStyleSectionComment = (divs) => {
     divs.aonTextArea.style.fontSize = "15px";
     divs.aonTextArea.style.margin = "0";
-    divs.iconOpenFull.querySelector("i").style.fontSize = "2.5em";
-    divs.iconSend.querySelector("i").style.fontSize = "2.5em";
+    divs.aonTextArea.style.minHeight = "55px";
+    divs.iconOpenFull.querySelector("i").style.fontSize = "1.8em";
+    divs.iconSend.querySelector("i").style.fontSize = "1.8em";
 }
 
 const buildToolbar = (aonMessengerChat, wrapper) => {
@@ -368,6 +370,9 @@ const buildToolbar = (aonMessengerChat, wrapper) => {
     
     if(task.id){
         wrapper.appendChild(toolbar);
+        toolbar.addButton2(ACTIONS.EDIT,() => {
+            aonMessengerChat.applicationEl.development();
+        });
     } else {
         buildCreate(wrapper, toolbar, aonMessengerChat);
 

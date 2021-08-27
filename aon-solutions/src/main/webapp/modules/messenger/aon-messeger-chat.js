@@ -285,9 +285,7 @@ export class AonMessengerChat extends AonElement {
   }
 
   back(){
-    setStyles(this.getElement(MESSENGER_IDS.MAIN_DIV),{ opacity:"0", transition:".25s" });
-
-    setTimeout(() => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter), 250);
+   this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
   }
 }
 
