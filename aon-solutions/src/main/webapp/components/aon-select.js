@@ -91,8 +91,7 @@ export class AonSelect extends AonElement {
 
       if(options.length > 0)
         detail =  options.find(v=>  v.value == newValue);
-
-      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail}));
+      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: detail || {} }));
     } else if(CONSTANT.DISABLED === name){
       if(CONSTANT.TRUE == this.disabled){
         let input = this.getElement(this.INPUT);
@@ -177,6 +176,8 @@ export class AonSelect extends AonElement {
 
     if(options.length === 0) return div;
 
+    options.unshift({ name:"-", value:"" }); //EMPTY
+
     let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
@@ -184,12 +185,12 @@ export class AonSelect extends AonElement {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
       li.innerHTML = option.name;
-      li.addEventListener(EVENT.CLICK, (e) => {
+      li.addEventListener(EVENT.CLICK, () => {
         div.classList.remove('is-visible');
         this.value = option.value;
         input.value = option.name;
         this._selected = option;
-        this.dispatchEvent(new CustomEvent('select', {detail: option}));
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
       });
       ul.appendChild(li);
     }

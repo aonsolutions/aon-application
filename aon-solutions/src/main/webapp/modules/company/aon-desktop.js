@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskHolder, getTimeControl} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -56,18 +56,13 @@ export class AonDesktop extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		let company = JSON.parse(localStorage.getItem("company"));
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
-			if(company.parentId || company.type !== 'CONSULTANCY'){
-				getDomainNotice().then(notice => {
-					this.build(notice);
-				});
-			} else this.build();
+			this.build();
 		});
   	}
 
-	build(notice) {
+	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`
 			<input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
@@ -100,15 +95,6 @@ export class AonDesktop extends AonElement {
 		aonNew.addEventListener(EVENT.CLICK, (e) => this.addNewOptions(e));
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-			let inboxCount = 0;
-			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
-				inboxCount = notice.invoice.inbox.count;
-			}
-
-			let rejectedCount = 0;
-			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
-				rejectedCount = notice.invoice.rejected.count;
-			}
 
 			let taskOptions = [{
 					name: 'Notificaciones',
@@ -116,21 +102,19 @@ export class AonDesktop extends AonElement {
 					fn: () => {}
 				},{
 					name: 'Facturas Pendientes',
-					count: inboxCount,
 					icon: 'inbox',
-					fn: () => {
-						if(inboxCount > 0) {
+					fn: (count) => {
+						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 						}
 					}
 				}, {
 					name: 'Facturas Rechazadas',
-					count: rejectedCount,
 					icon: 'report',
-					fn: () => {
-						if(rejectedCount > 0) {
+					fn: (count) => {
+						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
-						}
+						} 
 					}
 				}, {
 					name: 'Solicitudes',
@@ -164,6 +148,7 @@ export class AonDesktop extends AonElement {
 			];
 			aonDesktop.addSidenavOptions('RESUMEN ACTIVIDADES', taskOptions);
 		}
+
 		let classicOptions = [];
 
 		// if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
@@ -323,6 +308,8 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li);
 		}
 		div.appendChild(ul);
+
+		this.updateCount();
 	}
 
 	buildTitle(title) {
@@ -386,6 +373,34 @@ export class AonDesktop extends AonElement {
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		else return false;
+	}
+
+	updateCount(){
+		let application = this.getApplication();
+			
+		getDomainNotice().then(notice => {
+			let inboxCount = 0;
+			let rejectedCount = 0;
+			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+				inboxCount = notice.invoice.inbox.count;
+			}
+			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+				rejectedCount = notice.invoice.rejected.count;
+			}
+
+			application.updateSidenavCount('Facturas Pendientes', inboxCount);
+			application.updateSidenavCount('Facturas Rechazadas', rejectedCount);
+		});
+
+
+		getTaskHolder().then(th=>{
+			getTaskCount({task_holder:th.id}).then(count=>{
+				application.updateSidenavCount("Solicitudes", count.sender);
+				application.updateSidenavCount("Tareas", count.task_holder);
+			});
+		});
+
+		
 	}
 
 	addNewOptions(e) {

@@ -72,8 +72,10 @@ export class AonMessengerChat extends AonElement {
     if(this.data.id) this.setData(this.data);
 
     const sender = this.applicationParentEl.TASK_HOLDER;
-    this.task.setSender(sender);
-    this.task.setDomain(sender.domain.id);
+    if(sender){
+      this.task.setSender(sender);
+      this.task.setDomain(sender.domain.id);
+    }
     this.task.createTask(this.data);
   }
 
@@ -105,7 +107,7 @@ export class AonMessengerChat extends AonElement {
   buildTaskWorkflow(){
     this.task.setWorkflow([]);
     if (this.task.id) { //UPDATE
-      if( this.getData().workgroup && this.getData().workgroup.id!= this.task.getWorkgroup().id){
+      if( this.getData().workgroup && this.task.getWorkgroup().id && this.getData().workgroup.id!= this.task.getWorkgroup().id){
         this.task.addWorkflow({
           comment: this.task.getWorkgroup().description,
           domain:this.task.getDomain(),
@@ -114,9 +116,9 @@ export class AonMessengerChat extends AonElement {
           type: WORKFLOW_TYPES.ASSIGN,
         });
       }
-      if( this.getData().task_holder && this.getData().task_holder.id!= this.task.getTaskHolder().id){
+      if( this.getData().task_holder && this.task.getTaskHolder().id && this.getData().task_holder.id!= this.task.getTaskHolder().id){
         this.task.addWorkflow({
-          comment: this.task.getTaskHolder().description,
+          comment: this.task.getTaskHolder().name,
           domain:this.task.getDomain(),
           modification_date:new Date().getTime(),
           task_holder: this.task.getSender(),
@@ -135,6 +137,7 @@ export class AonMessengerChat extends AonElement {
     let workgroupEl = this.getElement(MESSENGER_IDS.WORKGROUP);
     if(workgroupEl) workgroupEl.addEventListener(EVENT.CHANGE, ({detail})=> {
       if(detail) this.task.setWorkgroup(detail);
+
     });
 
     let taskHolderEl = this.getElement(MESSENGER_IDS.TASKHOLDER);

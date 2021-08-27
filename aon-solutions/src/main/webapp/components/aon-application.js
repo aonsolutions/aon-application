@@ -555,7 +555,11 @@ export class AonApplication extends AonElement {
         this.selected = id;
         let toolbar = this.getElement(this.TOOLBAR);
         toolbar.setAttribute("option", option.name);
-        if(option.fn) option.fn();
+        if(option.fn){
+          let count = 0;
+          if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
+          option.fn(count);
+        } 
         this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
         if (this.isMobile()) {
           this.closeMobileSidenav();
@@ -603,6 +607,7 @@ export class AonApplication extends AonElement {
         let name = span.title;
         let fontWeight = "normal";
         let text = name;
+        span.dataset.count = count;
         if(count) {
           text = name + " (" + count + ")";
           fontWeight = "bold";

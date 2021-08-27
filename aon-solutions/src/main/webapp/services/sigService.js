@@ -3,19 +3,19 @@ import { get, post, remove, requestSig } from "./request.js";
 
 export const isSigGet = (data, url) => {
     const isCau = parseInt(localStorage.getItem("taskCau"));
-    data.cau = isCau;
+    if(data) data.cau = isCau;
     return isCau ?  getSig(`${SIG_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
 }  
   
 export const isSigPost = (data, url) => {
     const isCau = parseInt(localStorage.getItem("taskCau"));
-    data.cau = isCau;
+     if(data) data.cau = isCau;
     return isCau ? postSig(`${SIG_URL}/${url}`, data) : post(`${API_URL}/${url}`, data);
 } 
     
 export const isSigRemove = (data, url) => {
     const isCau = parseInt(localStorage.getItem("taskCau"));
-    data.cau = isCau;
+     if(data) data.cau = isCau;
     return isCau ? removeSig(`${SIG_URL}/${url}`, data) : remove(`${API_URL}/${url}`, data);
 } 
   

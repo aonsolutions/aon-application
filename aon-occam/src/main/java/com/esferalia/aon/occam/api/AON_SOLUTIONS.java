@@ -688,6 +688,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskCount(ctx, filter, taskHolderId);
+		}
+	}
+	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter);

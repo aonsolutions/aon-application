@@ -20,7 +20,9 @@ export const getTaskWorkflow = (data) => isSigGet(data, "task/workflow");
 
 export const saveTaskWorkflow = (data) => isSigPost(data, "task/workflow"); 
 
-export const getTaskStatusCount = (data) => isSigGet(data, "task/count-status-task");
+export const getTaskStatusCount = (data) => isSigGet(data, "task/status/count");
+
+export const getTaskCount = (data) => isSigGet(data, "task/count");
 
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 

@@ -120,7 +120,7 @@ export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
         } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail && detail.value)
+            if(detail)
                 fillTaskHolder(detail.value);
         })
        

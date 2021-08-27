@@ -209,6 +209,26 @@ public class TaskDAO {
 		});
 		return map;
 	}
+	
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		Integer sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter))
+				.and(TASK.SENDER.eq(taskHolderId))
+				.groupBy(TASK.SENDER)
+		.fetchOne().value1();
+		
+		Integer taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter))
+				.and(TASK.TASK_HOLDER.eq(taskHolderId))
+				.groupBy(TASK.TASK_HOLDER)
+				.fetchOne().value1();
+				
+		map.put("sender", sender);
+		map.put("task_holder", taskHolder);
+		
+		return map;
+	}
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
 		 return 
 				 DSL.select( 

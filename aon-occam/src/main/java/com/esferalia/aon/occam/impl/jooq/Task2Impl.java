@@ -59,6 +59,11 @@ public class Task2Impl implements ITask2 {
 	}	
 	
 	@Override
+	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.getTaskCount(ctx, filter,taskHolderId));
+	}	
+	
+	@Override
 	public void deleteTask(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> TaskDAO.delete(ctx, id));
 	}
