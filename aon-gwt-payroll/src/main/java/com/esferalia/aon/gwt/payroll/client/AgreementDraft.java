@@ -27,10 +27,11 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EmptyStringException;
@@ -1281,7 +1282,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	HorizontalPanel moreToggleButtonsPanel;
 	
 	@UiField
-	HorizontalPanel periodTypePanel;
+	HTMLPanel periodTypePanel;
 	
 	@UiField
 	DeckPanel deckPanelExtras;
@@ -1382,6 +1383,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private String filterPattern;
 	private FilterPatternTimer filterPatternTimer;
 	private boolean isOnCategoryTab = false;
+	private boolean showExtrasTable = false;
 	
 	private AddPaymentContextMenu contextMenu;
 	
@@ -1424,12 +1426,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if(event.isAltKeyDown()) {
-					if(event.getNativeKeyCode() == 79)
-						deckPanelExtras.showWidget(0);
-	                else if(event.getNativeKeyCode() == 77) 
-	                	deckPanelExtras.showWidget(1);
-				}	
+				if(event.isAltKeyDown() && event.isUpArrow()) {
+					deckPanelExtras.showWidget(0);	
+					showExtrasTable = false;
+				}
 			}
 		};
 		
@@ -1438,6 +1438,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		//Show new payPeriod
 		deckPanelExtras.showWidget(0);
 		periodTypePanel.getElement().getStyle().clearWidth();
+		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras", AON.CSS.aonIconVisibility());
+		showExtras.addClickHandler(e -> {
+			showExtrasTable = !showExtrasTable;
+			if(showExtrasTable) deckPanelExtras.showWidget(1);
+			else deckPanelExtras.showWidget(0);
+		});
+		periodTypePanel.add(showExtras);
 		
 		//Add options to payPeriod ListBox
 		this.payPeriod.addItem("ANUALES");

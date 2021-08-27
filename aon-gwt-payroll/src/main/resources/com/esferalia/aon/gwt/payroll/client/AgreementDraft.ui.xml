@@ -351,6 +351,7 @@
 		.flex{
 			display: flex;
 			align-items: center;
+			gap: 5px;
 		}
 		
 		.cmd_btn{
@@ -421,13 +422,13 @@
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
 							<g:DeckPanel ui:field="deckPanelExtras">
-								<g:HorizontalPanel ui:field="periodTypePanel">
+								<g:HTMLPanel ui:field="periodTypePanel" styleName="{style.flex}">
 									<g:Label styleName="{style.payPeriodLabel}">Pagas extras:</g:Label>
 									<g:DeckPanel ui:field="deckPanelPayPeriod">
 										<g:ListBox ui:field="payPeriod"></g:ListBox>
 										<g:Label ui:field="payPeriodLabel"></g:Label>
 									</g:DeckPanel>
-								</g:HorizontalPanel>
+								</g:HTMLPanel>
 								<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 								<g:HTML styleName="{style.vertical-space}" />
