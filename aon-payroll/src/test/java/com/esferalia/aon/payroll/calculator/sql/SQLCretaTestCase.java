@@ -6849,6 +6849,90 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testCretaDelayIT() throws ExpressionException, SQLException,
+			SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C501, "04");
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startITDate = add(startDate, DAY_OF_MONTH,8);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, null, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		calculateAndSave(connection, ctx);
+		
+		addPayment(aonContext, contract, "30.00");
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();		
+		
+		int salaries = calculateAndSave(connection, delayCtx);
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(4, tramos.size());
+		
+		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("08", tramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("8", tramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(0) );
+		
+		Assert.assertEquals("09", tramos.get(1).getFechaDesde().getDia());
+		Assert.assertEquals("23", tramos.get(1).getFechaHasta().getDia());
+		Assert.assertEquals("15", tramos.get(1).getDiasCotizados());
+		assertTramoIT15PrimerosDias( tramos.get(1) );
+
+		Assert.assertEquals("24", tramos.get(2).getFechaDesde().getDia());
+		Assert.assertEquals("28", tramos.get(2).getFechaHasta().getDia());
+		Assert.assertEquals("5", tramos.get(2).getDiasCotizados());
+		assertTramoITPagoDelegado( tramos.get(2) );
+
+		Assert.assertEquals("29", tramos.get(3).getFechaDesde().getDia());
+		assertTramoITPagoDelegado( tramos.get(3) );
+		
+		cleanSalaries(aonContext);
+	
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		
+		Assert.assertEquals(4, bases.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = bases.get(0);
+		assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "800");
+		assertDato(tramo0.getDatosTramo().getDato(), "C", "601", "800");
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(1);
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "1500");
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "603", "1500");
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(2);
+		assertDato(tramo2.getDatosTramo().getDato(), "C", "500", "500");
+		assertDato(tramo2.getDatosTramo().getDato(), "C", "603", "500");
+		assertDato(tramo2.getDatosTramo().getDato(), "C", "563", "375");
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo3 = bases.get(3);
+		
+	
+	}
+
+	
 	protected static ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}

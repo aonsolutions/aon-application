@@ -7,6 +7,11 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
@@ -24,6 +29,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
@@ -83,6 +89,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -1869,9 +1876,45 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				ContextVariable.SLD_H04.getName(),
 
 				PREST_IT,
-				GUARENTEED
+				GUARENTEED,
 				});
 		fillData(ctx, ERE_BASES);
+		
+		ctx.getSalaryType().accept(new SalaryTypeVisitor<Void>() {
+
+			@Override
+			public Void visitSalary(SalaryType salaryType) {
+				return null;
+			}
+
+			@Override
+			public Void visitExtra(SalaryType salaryType) {
+				return null;
+			}
+
+			@Override
+			public Void visitSettle(SalaryType salaryType) {
+				return null;
+			}
+
+			@Override
+			public Void visitDelay(SalaryType salaryType) {
+				try {
+					fillData(ctx,
+					new String[] { 
+							COMMON_DISEASE_DAYS_1_3.getName(),
+							COMMON_DISEASE_DAYS_4_15.getName(),
+							COMMON_DISEASE_DAYS_16_20.getName(),
+							COMMON_DISEASE_DAYS_21.getName(),
+
+							OCCUPATIONAL_DISEASE_DAYS.getName(),
+					});
+				} catch (SalaryException e) {
+				}
+				return null;
+			}
+			
+		});
 		
 	}
 	
