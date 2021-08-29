@@ -6858,7 +6858,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		cleanSalaries(aonContext);
 
 		String ccc = UUID.randomUUID().toString().substring(0, 11);
-		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C501, "04");
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "04");
 		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -6871,7 +6871,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		calculateAndSave(connection, ctx);
 		
-		addPayment(aonContext, contract, "30.00");
+		addPayment(aonContext, contract, "30.00*DIAS_TRABAJADOS/DIAS_MES");
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -6880,54 +6880,124 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				endDate, 
 				endDate, 
 				criteria);
-		delayCtx.next();		
+		delayCtx.next();				
 		
 		int salaries = calculateAndSave(connection, delayCtx);
 
-		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
-		
-		Assert.assertEquals(4, tramos.size());
-		
-		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
-		Assert.assertEquals("08", tramos.get(0).getFechaHasta().getDia());
-		Assert.assertEquals("8", tramos.get(0).getDiasCotizados());
-		assertTramoActivoNormalTiempoCompleto( tramos.get(0) );
-		
-		Assert.assertEquals("09", tramos.get(1).getFechaDesde().getDia());
-		Assert.assertEquals("23", tramos.get(1).getFechaHasta().getDia());
-		Assert.assertEquals("15", tramos.get(1).getDiasCotizados());
-		assertTramoIT15PrimerosDias( tramos.get(1) );
+		// Only one salary saved to DB.
+		Assert.assertEquals(1, salaries);
 
-		Assert.assertEquals("24", tramos.get(2).getFechaDesde().getDia());
-		Assert.assertEquals("28", tramos.get(2).getFechaHasta().getDia());
-		Assert.assertEquals("5", tramos.get(2).getDiasCotizados());
-		assertTramoITPagoDelegado( tramos.get(2) );
-
-		Assert.assertEquals("29", tramos.get(3).getFechaDesde().getDia());
-		assertTramoITPagoDelegado( tramos.get(3) );
 		
-		cleanSalaries(aonContext);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		String mes = Integer.toString(calendar.get(MONTH)+1);
+		String anho = Integer.toString(calendar.get(YEAR));
+		
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		TrabajadoresTramos.generate(connection, 
+				"0000", 	//autorizado, 
+				mes, 		//desdeAnhoMes, 
+				anho , 		//desdeAnho, 
+				mes, 		//hastaMes, 
+				anho , 		//hastaAnho, 
+				mes, 		//ctrlMes, 
+				anho , 		//ctrlAnho, 
+				"L90",		//tipo, 
+				new String[]
+				{
+				"0111" + "" + ccc
+				}, 			//cccs
+				trabajadoresTramosOs);
+		trabajadoresTramosOs.flush();
+		
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
+
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+				.unmarshal(
+						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+						trabajadoresTramosIs);
+		
+		Utils.marshal(trabajadoresTramos, System.out);
+		
+		trabajadoresTramosIs.close();
+		trabajadoresTramosOs.close();
+		
+		List<Tramo> tTramos = 
+		trabajadoresTramos
+		.getLiquidacion()
+		.getLiquidacionMes()
+		.get(0)
+		.getTrabajadores()
+		.getTrabajador()
+		.get(0)
+		.getTramos()
+		.getTramo()
+		;
+		
+		Assert.assertEquals(4, tTramos.size());
+		
+		Assert.assertEquals("01", tTramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("08", tTramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("8", tTramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tTramos.get(0) );
+		
+		Assert.assertEquals("09", tTramos.get(1).getFechaDesde().getDia());
+		Assert.assertEquals("23", tTramos.get(1).getFechaHasta().getDia());
+		//Assert.assertEquals("15", tramos.get(1).getDiasCotizados());
+		assertTramoIT15PrimerosDias( tTramos.get(1) );
+
+		Assert.assertEquals("24", tTramos.get(2).getFechaDesde().getDia());
+		Assert.assertEquals("28", tTramos.get(2).getFechaHasta().getDia());
+		//Assert.assertEquals("5", tramos.get(2).getDiasCotizados());
+		assertTramoITPagoDelegado( tTramos.get(2) );
+
+		Assert.assertEquals("29", tTramos.get(3).getFechaDesde().getDia());
+		assertTramoITPagoDelegado( tTramos.get(3) );
+		
 	
-		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
-		getBases(connection, startDate, endDate, ccc, contract);
+		trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
 		
 		
-		Assert.assertEquals(4, bases.size());
+		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
+
+		Bases.generate(connection, 
+				true, 							//comments, 
+				false,							//skipExisting, 
+				false,							//acceptPrevBases, 
+				null,							//nafs, 
+				new String [] {},				//defaultsValues, 
+				trabajadoresTramosIs, 
+				null, 							//respuestaIs, 
+				basesOs,						//os, 
+				new Bases.BasesCallback [] {}	//cbs
+				);
 		
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = bases.get(0);
+		System.out.println(basesOs.toString());
+
+		ByteArrayInputStream basesIs = new ByteArrayInputStream(basesOs.toByteArray());
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = Utils
+				.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class,basesIs);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bTramos = 
+		bases.getLiquidacion().get(0).getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
+		
+		Assert.assertEquals(4, bTramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = bTramos.get(0);
 		assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "800");
 		assertDato(tramo0.getDatosTramo().getDato(), "C", "601", "800");
 
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bases.get(1);
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = bTramos.get(1);
 		assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "1500");
 		assertDato(tramo1.getDatosTramo().getDato(), "C", "603", "1500");
 
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bases.get(2);
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = bTramos.get(2);
 		assertDato(tramo2.getDatosTramo().getDato(), "C", "500", "500");
 		assertDato(tramo2.getDatosTramo().getDato(), "C", "603", "500");
-		assertDato(tramo2.getDatosTramo().getDato(), "C", "563", "375");
+//		assertDato(tramo2.getDatosTramo().getDato(), "C", "563", "375");
 
-		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo3 = bases.get(3);
+//		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo3 = bTramos.get(3);
 		
 	
 	}
