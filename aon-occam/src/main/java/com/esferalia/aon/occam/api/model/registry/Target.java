@@ -48,6 +48,15 @@ public class Target extends Registry implements Serializable{
 		return this;
 	}
 	
+	public Target copy(Registry registry) {
+		return super.copy( registry, this);
+	}
+
+	public Target setId(Integer id) {
+		super.setId(id);
+		return this;
+	}
+
 	public Integer getTariff() {
 		return tariff;
 	}

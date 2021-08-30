@@ -142,9 +142,9 @@ public class DownloadFeeServlet extends HttpServlet {
         		} else if(IConstants.PERIODO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getPeriod().getValue());
         		} else if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
-        			cell.setCellValue(fee.getSeller().getRegistryDocument());
+        			cell.setCellValue(fee.getSeller().getDocument());
         		} else if(IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
-        			cell.setCellValue(fee.getSeller().getRegistryName());
+        			cell.setCellValue(fee.getSeller().getName());
         		} else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getWorkplace().getDescription());
         		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACIÓN.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)

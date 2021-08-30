@@ -267,7 +267,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		ListBox sellerListBox = new ListBox();
 		sellerListBox.addItem("-","-1");
 		for(Seller seller : dialog.getSellerList())
-			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());
+			sellerListBox.addItem(seller.getName(), seller.getId().toString());
 		Label label2 = new Label(MSG.seller());
 		label2.addStyleName("aon-input-required");
 		flex_table.setWidget(1, 0, label2);
@@ -341,8 +341,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		sellerListBox.addItem("-","-1");
 		Integer index = 1;
 		for(Seller seller : dialog.getSellerList()){
-			sellerListBox.addItem(seller.getRegistryName(), seller.getId().toString());	
-			if(dialog.getEcommerceProduct().getTemplate().getSeller().equals(seller.getRegistryName()))
+			sellerListBox.addItem(seller.getName(), seller.getId().toString());	
+			if(dialog.getEcommerceProduct().getTemplate().getSeller().equals(seller.getName()))
 				sellerListBox.setSelectedIndex(index);
 			index++;
 		}	

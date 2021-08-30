@@ -36,6 +36,11 @@ public class Supplier extends Registry implements Serializable, HasAudit, IScopa
 		return super.copy( registry, this);
 	}
 
+	public Supplier setId(Integer id) {
+		super.setId(id);
+		return this;
+	}
+
 	public Integer getTariff() {
 		return tariff;
 	}

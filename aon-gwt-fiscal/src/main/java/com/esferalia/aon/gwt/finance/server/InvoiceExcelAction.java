@@ -191,7 +191,7 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		addCell( detail.getInvoice().getScope().getDescription());
 		addCell( detail.getWorkPlaceName() );
 		addCell( detail.getProjectName() );
-		addCell( detail.getSeller()!=null?detail.getSeller().getRegistryName():null );
+		addCell( detail.getSeller()!=null? detail.getSeller().getName() : null );
 		
 		Integer productId = detail.getItem()!= null 
 				? detail.getItem().getProduct().getId() : null;

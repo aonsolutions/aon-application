@@ -6,7 +6,9 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -93,6 +95,10 @@ public class ItemDAO {
 			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
 			.where(ITEM_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new ItemFiller());
+	}
+	
+	public static LinkedList<Item> getList(AONContext ctx, ItemFilter filter) {
+		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Item save(AONContext ctx, Item item) {
@@ -206,24 +212,24 @@ public class ItemDAO {
 				.setProduct(checkField(r, PRODUCT.ID)
 					? ProductFiller.buildProduct(r)
 					: new Product().setId(r.getValue(ITEM.PRODUCT)))
-				.setBarcode(r.getValue(ITEM.BARCODE))
-				.setDescription(r.getValue(ITEM.DESCRIPTION))
-				.setDetail(r.getValue(ITEM.DETAIL))
-				.setDetail2(r.getValue(ITEM.DETAIL2))
-				.setDetail3(r.getValue(ITEM.DETAIL3))
-				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
-				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
-				.setInternet(r.getValue(ITEM.INTERNET) == 1)
-				.setPackFormatTag(new Tag().setId(r.getValue(ITEM.PACK_FORMAT_TAG)))
-				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
-				.setPackMeasurementTag(new Tag().setId(r.getValue(ITEM.PACK_MEASUREMENT_TAG)))
-				.setPackUnits(r.getValue(ITEM.PACK_UNITS))
-				.setPackUnitsTag(new Tag().setId(r.getValue(ITEM.PACK_UNITS_TAG)))
-				.setPrice(r.getValue(ITEM.PRICE))
-				.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
-				.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
-				.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER));
+				.setBarcode(getValue(r, ITEM.BARCODE))
+				.setDescription(getValue(r, ITEM.DESCRIPTION))
+				.setDetail(getValue(r, ITEM.DETAIL))
+				.setDetail2(getValue(r, ITEM.DETAIL2))
+				.setDetail3(getValue(r, ITEM.DETAIL3))
+				.setExpensesFixed(getValue(r, ITEM.EXPENSES_FIXED))
+				.setExpensesPercent(getValue(r, ITEM.EXPENSES_PERCENT))
+				.setInternet(getBoolean(r, ITEM.INTERNET))
+				.setPackFormatTag(new Tag().setId(getValue(r, ITEM.PACK_FORMAT_TAG)))
+				.setPackMeasurement(getValue(r, ITEM.PACK_MEASUREMENT))
+				.setPackMeasurementTag(new Tag().setId(getValue(r, ITEM.PACK_MEASUREMENT_TAG)))
+				.setPackUnits(getValue(r, ITEM.PACK_UNITS))
+				.setPackUnitsTag(new Tag().setId(getValue(r, ITEM.PACK_UNITS_TAG)))
+				.setPrice(getValue(r, ITEM.PRICE))
+				.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
+				.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
+				.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
+				.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER));
 		}
 	}
 }

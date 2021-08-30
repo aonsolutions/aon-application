@@ -6,13 +6,17 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.stream.Stream;
+
+import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.registry.Target;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
+import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 
 public class TargetDAO {
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
@@ -57,5 +61,27 @@ public class TargetDAO {
 		return target;
 	}
 	
+	public static class TargetFiller extends Filler implements Function<Record, Target> {
+		@Override
+		public Target apply(Record r) {
+			return build(r, REGISTRY);				
+		}
+		
+		public static Target build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
+			return new Target()
+				.copy(RegistryFiller.build(r, registry))
+				.setScope(r.getValue(TARGET.SCOPE))
+				.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
+				.setSurcharge(r.getValue(TARGET.SURCHARGE).shortValue())
+				.setTariff(r.getValue(TARGET.TARIFF))
+				.setWithholding(r.getValue(TARGET.WITHHOLDING).shortValue())
+				.setTransaction(r.getValue(TARGET.TRANSACTION).shortValue())
+				.setStatus(TargetStatus.safeValueOf(r.getValue(TARGET.STATUS)))
+				.setCreationDate(r.getValue(TARGET.CREATION_DATE))
+				.setCreationUser(r.getValue(TARGET.CREATION_USER))
+				.setModificationDate(r.getValue(TARGET.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(TARGET.MODIFICATION_USER));
+		}
+	}
 	
 }

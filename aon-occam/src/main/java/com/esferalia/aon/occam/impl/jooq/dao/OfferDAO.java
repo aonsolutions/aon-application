@@ -4,15 +4,20 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -23,28 +28,33 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
-import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
-import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 
 public class OfferDAO {
 	
@@ -84,7 +94,8 @@ public class OfferDAO {
 		@Override public Property<String> getExternalReferenceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.EXTERNAL_REFERENCE);}
 	}
 
-	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
+	private static final com.esferalia.aon.jooq.tables.Registry TARGET_ALIAS = REGISTRY.as("target");
+	private static final com.esferalia.aon.jooq.tables.Registry SUPPLIER_ALIAS = REGISTRY.as("supplier");
 	
 	public static Offer getOffer(AONContext ctx, OfferFilter filter) {
 		return ctx.getDslContext()
@@ -113,53 +124,7 @@ public class OfferDAO {
 		ctx.checkRead();
 
 		return ctx.getDslContext()
-			.select(
-				 OFFER.ID
-				,OFFER.DOMAIN
-				,OFFER.TYPE
-				,OFFER.STATUS
-				,OFFER.SCOPE
-				,OFFER.PROJECT
-				,OFFER.SERIES
-				,OFFER.NUMBER
-				,OFFER.ISSUE_DATE
-				,OFFER.TARGET
-				,OFFER.SUPPLIER
-				,OFFER.WORKPLACE
-				,REGISTRY.DOCUMENT
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.NAME
-				,GEOZONE.ID
-				,GEOZONE.CODE
-				,GEOZONE.NAME
-				,RADDRESS.ZIP
-				,RADDRESS.CITY
-				,OFFER.SELLER
-				,SELLER_ALIAS.NAME
-				,SCOPE.DESCRIPTION
-				,PROJECT.NAME
-				,OFFER_DETAIL.LINE
-				,OFFER_DETAIL.ITEM
-				,PCATEGORY.NAME
-				,PRODUCT.ID
-				,PRODUCT.NAME
-				,PRODUCT.CODE
-				,PRODUCT.VAT
-				,TAX.ID
-				,TAX.PERCENTAGE
-				,ITEM.DETAIL
-				,ITEM.DETAIL2
-				,ITEM.DETAIL3
-				,ITEM.DESCRIPTION
-				,OFFER_DETAIL.ID
-				,OFFER_DETAIL.DESCRIPTION
-				,OFFER_DETAIL.QUANTITY
-				,OFFER_DETAIL.PRICE
-				,OFFER_DETAIL.DISCOUNT_EXPR
-				,WORKPLACE.DESCRIPTION
-				,PRODUCT.CATEGORY
-			)
+			.select()
 			.from(OFFER)
 			.join(OFFER_DETAIL).on(OFFER_DETAIL.OFFER.equal(OFFER.ID))
 			.join(TARGET).on(TARGET.REGISTRY.equal(OFFER.TARGET))
@@ -172,6 +137,7 @@ public class OfferDAO {
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(TAX).on(PRODUCT.VAT.equal(TAX.ID))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(SELLER).on(SELLER.REGISTRY.equal(OFFER.SELLER))
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(OFFER.SELLER))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(OFFER.WORKPLACE))
 			.where(OFFER_PROPERTIES.getConditions(filter))
@@ -183,7 +149,7 @@ public class OfferDAO {
 	public static Stream<OfferDetail> getOfferDetails(AONContext ctx, OfferFilter filter) {
 		return getFullOffers(ctx, filter)
 			.stream()
-			.map(new FullOfferDetailFiller());
+			.map(new OfferDetailFiller());
 	}
 	
 	public static Offer updateOffer(AONContext ctx, Offer offer) {
@@ -242,108 +208,85 @@ public class OfferDAO {
 		return offerDetail;
 	}
 		
-	private static class FullOfferDetailFiller  implements Function<Record,OfferDetail> {
+	public static class OfferDetailFiller extends Filler implements Function<Record,OfferDetail> {
 
 		@Override
-		public OfferDetail apply(Record record) {
-			Boolean od = record.getValue(OFFER_DETAIL.ID) != null;
+		public OfferDetail apply(Record r) {
+			return build(r);
+		}
+		
+		public static OfferDetail build(Record r) {
 			return new OfferDetail()
-				.setId(od ? record.getValue(OFFER_DETAIL.ID) : null)
-				.setOffer(new Offer()
-					.setId(record.getValue(OFFER.ID))
-					.setDomain(record.getValue(OFFER.DOMAIN))
-					.setType(
-							AonEnumUtils.enumValue(OfferType.class,
-									record.getValue(OFFER.TYPE)))
-					.setStatus(
-							AonEnumUtils.enumValue(OfferStatus.class,
-									record.getValue(OFFER.STATUS)))
-					.setSeries(record.getValue(OFFER.SERIES))
-					.setNumber(record.getValue(OFFER.NUMBER))
-					.setIssueDate(record.getValue(OFFER.ISSUE_DATE))
-					.setTarget((Target) new Target()
-							.setId(record.getValue(OFFER.TARGET))
-							.setDocument(record.getValue(REGISTRY.DOCUMENT))
-							.setDocumentType(
-									AonEnumUtils.enumValue(DocumentType.class,
-											record.getValue(REGISTRY.DOCUMENT_TYPE)))
-							.setDocumentCountry(
-									Country.safeValueOf(record
-											.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-							.setName(record.getValue(REGISTRY.NAME))
-							.setMainAddress(new RAddress()
-									.setGeozone(record.getValue(GEOZONE.ID))
-									.setGeozoneName(record.getValue(GEOZONE.NAME))
-									.setGeozoneCode(record.getValue(GEOZONE.CODE))
-									.setCity(record.getValue(RADDRESS.CITY))
-									.setZip(record.getValue(RADDRESS.ZIP))
-							)
-					)
-					.setScope(new Scope().setDescription(record.getValue(SCOPE.DESCRIPTION))
-							.setId(record.getValue(OFFER.SCOPE)))						
-					.setProject(new Project().setName(record.getValue( PROJECT.NAME))
-							.setId(record.getValue(OFFER.PROJECT)))
-					.setSupplier((Supplier) new Supplier().setId(record.getValue(OFFER.SUPPLIER)))
-					.setSeller((record.getValue(OFFER.SELLER) == null)
-							? null
-							: new Seller()
-							.setId( record.getValue(OFFER.SELLER) )
-							.setRegistryName( record.getValue(SELLER_ALIAS.NAME) ))
-					.setWorkPlace((record.getValue(OFFER.WORKPLACE) == null)
-							? null
-							: new Workplace().setId(record.getValue(OFFER.WORKPLACE))
-								.setDescription(record.getValue(WORKPLACE.DESCRIPTION)))
-						
-				)
-				.setLine(od ? record.getValue( OFFER_DETAIL.LINE ) : null)
-				.setDescription(od ? record.getValue( OFFER_DETAIL.DESCRIPTION ) : null)
-				.setQuantity(od ? record.getValue(OFFER_DETAIL.QUANTITY) : null)
-				.setPrice(od ? record.getValue(OFFER_DETAIL.PRICE) : null)
-				.setDiscountExpression(od ? record.getValue(OFFER_DETAIL.DISCOUNT_EXPR) : null)
-				.setItem((!od || record.getValue(OFFER_DETAIL.ITEM) == null)
-					? null
-					: new OldItem()
-						.setId(record.getValue(OFFER_DETAIL.ITEM))
-						.setCategory( record.getValue( PCATEGORY.NAME ) )
-						.setProduct(new OldProduct().setCategory(record.getValue(PRODUCT.CATEGORY)))
-						.setProductId( record.getValue( PRODUCT.ID ) )
-						.setName( record.getValue( PRODUCT.NAME ) )
-						.setCode(record.getValue( PRODUCT.CODE ) )
-						.setDetail(record.getValue( ITEM.DETAIL ))
-						.setDetail2(record.getValue( ITEM.DETAIL2 ))
-						.setDetail3(record.getValue( ITEM.DETAIL3 ))
-						.setVat(new Tax().setId(record.getValue(TAX.ID))
-								.setPercentage(record.getValue(TAX.PERCENTAGE)))
-						.setDescription(record.getValue( ITEM.DESCRIPTION )));
+				.setId(r.getValue(OFFER_DETAIL.ID))
+				.setOffer(checkField(r, OFFER.ID)
+					? OfferFiller.build(r)
+					: new Offer().setId(r.getValue(OFFER_DETAIL.OFFER)))
+				.setLine(r.getValue(OFFER_DETAIL.LINE))
+				.setDescription(r.getValue(OFFER_DETAIL.DESCRIPTION))
+				.setQuantity(r.getValue(OFFER_DETAIL.QUANTITY))
+				.setPrice(r.getValue(OFFER_DETAIL.PRICE))
+				.setDiscountExpression(r.getValue(OFFER_DETAIL.DISCOUNT_EXPR))
+				.setItem(checkField(r, ITEM.ID)
+					? ItemFiller.build(r)
+					: new Item().setId(r.getValue(OFFER_DETAIL.ITEM)));
 		}
 		
 	}
 	
-	private static class OfferFiller  implements Function<Record, Offer> {
+	
+	private static class OfferFiller extends Filler implements Function<Record, Offer> {
 
 		@Override
-		public Offer apply(Record record) {
+		public Offer apply(Record r) {
+			return build(r);
+		}
+		
+		public static Offer build(Record r) {
 			return new Offer()
-					.setId(record.getValue(OFFER.ID))
-					.setDomain(record.getValue(OFFER.DOMAIN))
-					.setType(AonEnumUtils.enumValue(OfferType.class, record.getValue(OFFER.TYPE)))
-					.setStatus(AonEnumUtils.enumValue(OfferStatus.class, record.getValue(OFFER.STATUS)))
-					.setSeries(record.getValue(OFFER.SERIES))
-					.setNumber(record.getValue(OFFER.NUMBER))
-					.setIssueDate(record.getValue(OFFER.ISSUE_DATE))
-					.setTarget((Target) new Target().setId(record.getValue(OFFER.TARGET)))
-					.setSeller((record.getValue(OFFER.SELLER) == null) 
-							? null : new Seller().setId( record.getValue(OFFER.SELLER) ))
-					.setSupplier((Supplier) 
-						((record.getValue(OFFER.SUPPLIER) == null)
-							? null : new Supplier().setId( record.getValue(OFFER.SUPPLIER))))
-					.setWorkPlace(new Workplace().setId(record.getValue(OFFER.WORKPLACE)))
-					.setExternalReference(record.getValue(OFFER.EXTERNAL_REFERENCE))
-					.setComments(record.getValue(OFFER.COMMENTS))
-					.setRemarks(record.getValue(OFFER.REMARKS))
-					.setBankAccount(record.getValue(OFFER.BANK_ACCOUNT))
-					.setBic(record.getValue(OFFER.BIC));
-			
+					.setId(r.getValue(OFFER.ID))
+					.setDomain(r.getValue(OFFER.DOMAIN))
+					.setProject(checkField(r, PROJECT.ID)
+							? ProjectFiller.build(r)
+							: new Project().setId(r.getValue(OFFER.PROJECT)))
+					.setType(OfferType.safeValueOf(r.getValue(OFFER.TYPE)))
+					.setStatus(OfferStatus.safeValueOf(r.getValue(OFFER.STATUS)))
+					.setSeries(r.getValue(OFFER.SERIES))
+					.setNumber(r.getValue(OFFER.NUMBER))
+					.setIssueDate(r.getValue(OFFER.ISSUE_DATE))
+					.setTarget(checkField(r, TARGET.REGISTRY)
+							? TargetFiller.build(r, TARGET_ALIAS)
+							: new Target().copy(new Registry().setId(r.getValue(OFFER.TARGET))))
+					.setSeller(checkField(r, SELLER.REGISTRY)
+							? SellerFiller.build(r)
+							: new Seller().setId(r.getValue(OFFER.SELLER)))
+					.setSupplier(checkField(r, SUPPLIER.REGISTRY) 
+							? SupplierFiller.buildSupplier(r, SUPPLIER_ALIAS)
+							: new Supplier().setId(r.getValue(OFFER.SUPPLIER)))
+					.setWorkPlace(checkField(r, WORKPLACE.ID)
+							? WorkplaceFiller.buildWorkplace(r)
+							: new Workplace().setId(r.getValue(OFFER.WORKPLACE)))
+					.setScope(checkField(r, SCOPE.ID)
+							? ScopeFiller.buildScope(r)
+							: new Scope().setId(r.getValue(OFFER.SCOPE)))
+					.setAddress(checkField(r, RADDRESS.ID)
+							? RegistryAddressFiller.build(r)
+							: new RegistryAddress().setId(r.getValue(OFFER.ADDRESS)))
+					.setExternalReference(r.getValue(OFFER.EXTERNAL_REFERENCE))
+					.setComments(r.getValue(OFFER.COMMENTS))
+					.setRemarks(r.getValue(OFFER.REMARKS))
+					.setBankAccount(r.getValue(OFFER.BANK_ACCOUNT))
+					.setBic(r.getValue(OFFER.BIC))
+					.setPaymethod(checkField(r, PAY_METHOD.ID)
+							? PayMethodFiller.build(r)
+							: new PayMethod().setId(r.getValue(OFFER.PAY_METHOD)))
+					.setNumberOfPayments(r.getValue(OFFER.NUMBER_OF_PYMNTS).intValue())
+					.setDaysToFirstPayment(r.getValue(OFFER.DAYS_TO_FIRST_PYMNT).intValue())
+					.setDaysBetweenPayments(r.getValue(OFFER.DAYS_BETWEEN_PYMNTS).intValue())
+					.setPaymentDays(r.getValue(OFFER.PYMNT_DAYS))
+					.setCreationDate(r.getValue(OFFER.CREATION_DATE))
+					.setCreationUser(r.getValue(OFFER.CREATION_USER))
+					.setModificationDate(r.getValue(OFFER.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(OFFER.MODIFICATION_USER));
 		}
 		
 	}

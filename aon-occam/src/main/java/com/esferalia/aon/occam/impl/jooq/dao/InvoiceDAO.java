@@ -97,6 +97,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
@@ -365,6 +366,7 @@ public class InvoiceDAO {
 				,ACCOUNT.ID
 				,ACCOUNT.CODE
 				,ACCOUNT.DESCRIPTION
+				,ITEM.ID
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -684,11 +686,9 @@ public class InvoiceDAO {
 				.setItem(checkField(record, ITEM.ID)
 					? ItemFiller.build(record)
 					: new Item().setId(record.getValue(INVOICE_DETAIL.ITEM)))
-				.setSeller((record.getValue(INVOICE_DETAIL.SELLER) == null)
-					? null
-					: new Seller()
-					.setId( record.getValue(INVOICE_DETAIL.SELLER) )
-					.setRegistryName( record.getValue(SELLER_ALIAS.NAME) ))
+				.setSeller(checkField(record, SELLER_ALIAS.ID)
+					? new Seller().copy(RegistryFiller.build(record, SELLER_ALIAS))
+					: new Seller().setId(record.getValue(INVOICE_DETAIL.SELLER)))
 				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
 				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))

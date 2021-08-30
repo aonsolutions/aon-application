@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -119,6 +120,20 @@ public class AonFaker {
 			.setAccount( account == null? null : account.getId() );
 	}
 
+
+	public static Seller getSeller( AONContext ctx ) {
+		return getSeller(ctx, getRegistry(ctx));
+	}
+
+	public static Seller getSeller(AONContext ctx, Registry registry) {
+		Scope scope =  AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		return new Seller()
+			.copy(registry)
+			.setActive(true)
+			.setScope(scope)
+			.setCommissionType(null);
+	}
+	
 	public static Supplier getSupplier( AONContext ctx ) {
 		return getSupplier(ctx, getRegistry(ctx));
 	}

@@ -17,7 +17,6 @@ import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.ProjectRecord;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
-import com.esferalia.aon.jooq.tables.records.ProjectTypeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
@@ -31,7 +30,9 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
@@ -172,7 +173,7 @@ public class ProjectDAO {
 					PROJECT.REGISTRY, PROJECT.RESERVATION, PROJECT.TAS)
 				.values(project.isActive()?(byte)1:(byte)0, project.getAlias(), project.isCommercial()?(byte)1:(byte)0,
 						new Date(project.getDate().getTime()), project.getDomain(), project.getName(), project.getProjectTypeId(),
-						project.getRegistryId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
+						project.getRegistry().getId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
 				.returning(PROJECT.ID).fetchOne().getId();
 	}
 	
@@ -238,17 +239,20 @@ public class ProjectDAO {
 
 	}
 	
-	private static class ProjectTypeFiller implements Function<ProjectTypeRecord, ProjectType> {
+	public static class ProjectTypeFiller implements Function<Record, ProjectType> {
 		
 		@Override
-		public ProjectType apply(ProjectTypeRecord r) {
-			return new ProjectType()
-					.setActive(r.getActive().equals(0))
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setDescription(r.getDescription());
+		public ProjectType apply(Record r) {
+			return build(r);
 		}
-
+		
+		public static ProjectType build(Record r) {
+			return new ProjectType()
+					.setId(r.getValue(PROJECT_TYPE.ID))
+					.setDomain(r.getValue(PROJECT_TYPE.DOMAIN))
+					.setDescription(r.getValue(PROJECT_TYPE.DESCRIPTION))
+					.setActive(r.getValue(PROJECT_TYPE.ACTIVE).equals((byte) 0));
+		}
 	}
 	
 	private static class FullProjectFiller implements Function<ProjectRecord, Project> {
@@ -266,6 +270,34 @@ public class ProjectDAO {
 					.setProjectTypeId(r.getProjectType())
 					.setReservation(r.getReservation().equals(0))
 					.setTas(r.getTas().equals(0));
+		}
+
+	}
+	
+	public static class ProjectFiller extends Filler implements Function<Record, Project> {
+		
+		@Override
+		public Project apply(Record r) {
+			return build(r);
+		}
+		
+		public static Project build(Record r) {
+			return new Project()
+				.setId(r.getValue(PROJECT.ID))
+				.setDomain(r.getValue(PROJECT.DOMAIN))
+				.setName(r.getValue(PROJECT.NAME))
+				.setRegistry(checkField(r, REGISTRY.ID)
+					? RegistryFiller.build(r, REGISTRY)
+					: new Registry().setId(r.getValue(PROJECT.REGISTRY)))
+				.setActive(r.getValue(PROJECT.ACTIVE).equals((byte) 0))
+				.setAlias(r.getValue(PROJECT.ALIAS))
+				.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0))
+				.setDate(r.getValue(PROJECT.DATE))
+				.setType(checkField(r, PROJECT.ID)
+					? ProjectTypeFiller.build(r)
+					: new ProjectType().setId(r.getValue(PROJECT.PROJECT_TYPE)))
+				.setReservation(r.getValue(PROJECT.RESERVATION).equals((byte) 0))
+				.setTas(r.getValue(PROJECT.TAS).equals((byte) 0));
 		}
 
 	}
@@ -329,7 +361,6 @@ public class ProjectDAO {
 					.setProject(r.getValue(PROJECT_COMMERCIAL.PROJECT))
 					.setDocument(r.getValue(REGISTRY.DOCUMENT));	
 		}
-
 	}
 	
 	

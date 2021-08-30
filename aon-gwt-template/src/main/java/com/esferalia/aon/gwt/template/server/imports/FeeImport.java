@@ -151,7 +151,7 @@ public class FeeImport extends Import {
 		}
 		
 		if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
-			fee.getSeller().setRegistryAlias(o.toString());
+			fee.getSeller().setAlias(o.toString());
 			return;
 		}
 		
@@ -243,7 +243,7 @@ public class FeeImport extends Import {
 		}
 		
 		// SELLER
-		if(fee.getSeller().getRegistryAlias() != null) {
+		if(fee.getSeller().getAlias() != null) {
 			fee.setSeller(AON.getSeller(domain.getName(), domain.getId(), user.getLogin(), f -> sellerFilter(domain, user, feeInfo.getFee().getSeller(), f)));
 			if(fee.getSeller().getId() == null) {
 				error.setError(false);
@@ -397,7 +397,7 @@ public class FeeImport extends Import {
 	
 	private static Filter sellerFilter(Domain domain, User user, Seller seller, SellerProperties f) {
 		return f.getDomainProperty().eq(domain.getId())
-			.and(f.getDocumentProperty().eq(seller.getRegistryAlias()).or(f.getNameProperty().eq(seller.getRegistryAlias())));
+			.and(f.getDocumentProperty().eq(seller.getAlias()).or(f.getNameProperty().eq(seller.getAlias())));
 	}
 	
 	private static Filter workplaceFilter(Domain domain, User user, Workplace workplace, WorkplaceProperties f) {

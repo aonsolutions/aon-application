@@ -24,12 +24,12 @@ public class Item implements Serializable {
 	private ProductStatus status; // TODO
 	private Product product;
 	
-	private double price;
-	private double expensesPercent;
-	private double expensesFixed;
-	private double profitPercent;
-	private double purchasePrice;
-	private boolean internet;
+	private Double price;
+	private Double expensesPercent;
+	private Double expensesFixed;
+	private Double profitPercent;
+	private Double purchasePrice;
+	private Boolean internet;
 	
 	private Tag packFormatTag;
 	private Integer packUnits;
@@ -137,7 +137,7 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 	
@@ -146,47 +146,47 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public double getExpensesPercent() {
+	public Double getExpensesPercent() {
 		return expensesPercent;
 	}
 	
-	public Item setExpensesPercent(double expensesPercent) {
+	public Item setExpensesPercent(Double expensesPercent) {
 		this.expensesPercent = expensesPercent;
 		return this;
 	}
 
-	public double getExpensesFixed() {
+	public Double getExpensesFixed() {
 		return expensesFixed;
 	}
 	
-	public Item setExpensesFixed(double expensesFixed) {
+	public Item setExpensesFixed(Double expensesFixed) {
 		this.expensesFixed = expensesFixed;
 		return this;
 	}
 
-	public double getProfitPercent() {
+	public Double getProfitPercent() {
 		return profitPercent;
 	}
 	
-	public Item setProfitPercent(double profitPercent) {
+	public Item setProfitPercent(Double profitPercent) {
 		this.profitPercent = profitPercent;
 		return this;
 	}
 
-	public double getPurchasePrice() {
+	public Double getPurchasePrice() {
 		return purchasePrice;
 	}
 	
-	public Item setPurchasePrice(double purchasePrice) {
+	public Item setPurchasePrice(Double purchasePrice) {
 		this.purchasePrice = purchasePrice;
 		return this;
 	}
 
-	public boolean isInternet() {
+	public Boolean isInternet() {
 		return internet;
 	}
 	
-	public Item setInternet(boolean internet) {
+	public Item setInternet(Boolean internet) {
 		this.internet = internet;
 		return this;
 	}

@@ -33,6 +33,8 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CustomerDAO {
 	
+	public static final com.esferalia.aon.jooq.tables.Registry CUSTOMER_ALIAS = REGISTRY.as("registry_customer");
+
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
 		

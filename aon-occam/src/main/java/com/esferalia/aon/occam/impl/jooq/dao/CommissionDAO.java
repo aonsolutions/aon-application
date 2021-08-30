@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETA
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.util.stream.Stream;
 
@@ -106,7 +108,8 @@ public class CommissionDAO {
 				.from(OFFER_DETAIL_COMMISSION)
 				.join(OFFER_DETAIL).on(OFFER_DETAIL_COMMISSION.OFFER_DETAIL.eq(OFFER_DETAIL.ID))
 				.join(OFFER).on(OFFER_DETAIL.OFFER.eq(OFFER.ID))
-				.leftOuterJoin(REGISTRY).on(OFFER.SELLER.eq(REGISTRY.ID))
+				.leftOuterJoin(SELLER).on(OFFER.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(OFFER.SELLER.eq(SELLER_ALIAS.ID))
 				.where(OFFER_DETAIL_COMMISSION_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new OfferDetailCommissionFiller());
 	}

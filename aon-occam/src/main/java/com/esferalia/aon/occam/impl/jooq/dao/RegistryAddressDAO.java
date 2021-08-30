@@ -66,6 +66,10 @@ public class RegistryAddressDAO {
 
 		@Override
 		public RegistryAddress apply(Record r) {
+			return build(r);
+		}
+		
+		public static RegistryAddress build(Record r) {
 			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
 			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
 			return new RegistryAddress()
@@ -93,6 +97,7 @@ public class RegistryAddressDAO {
 					.setDirty(false)
 					;
 		}
+		
 	}
 	
 	private static class RegistryAddressAutoComplete {

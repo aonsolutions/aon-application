@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
@@ -247,7 +248,7 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getSellerStream(ctx, filter));
+				configuration -> SellerDAO.getStream(ctx, filter));
 	}
 	
 	// -------------------- CARRIER

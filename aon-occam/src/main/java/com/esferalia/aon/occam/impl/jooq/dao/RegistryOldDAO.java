@@ -29,6 +29,9 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
+
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -106,7 +109,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
@@ -123,7 +125,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -593,9 +597,9 @@ public class RegistryOldDAO {
 	public static Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter){
 		return ctx.getDslContext().select().from(RSELLER)
 				.join(SELLER).on(RSELLER.SELLER.eq(SELLER.REGISTRY))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.where(RSELLER_PROPERTIES.getConditions(filter))
-				.fetchInto(REGISTRY).stream().map(new SellerFiller());
+				.fetch().stream().map(new SellerFiller());
 	}
 	
 	/**
@@ -807,15 +811,8 @@ public class RegistryOldDAO {
 			.execute();
 		return customer;
 	}
+	
 	// ------------------- SELLER
-
-	public static Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter){
-		return ctx.getDslContext().select()
-				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-				.where(SELLER_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new FullSellerFiller());
-	}
 	
 	public static Stream<Seller> getSellers(AONContext ctx){
 		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
@@ -840,16 +837,7 @@ public class RegistryOldDAO {
 					.setId(r.getValue(SELLER.REGISTRY))
 					.setActive(r.getValue(SELLER.STATUS) == 1)
 					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-					.setScope(r.getValue(SCOPE.DESCRIPTION))
-					
-					.setRegistryAlias(r.getValue(REGISTRY.ALIAS))
-					.setRegistryConfidential(r.getValue(REGISTRY.SECURITY_LEVEL) == 1)
-					.setRegistryDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setRegistryDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-					.setRegistryName(r.getValue(REGISTRY.NAME))
-					.setRegistryDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
-					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
-					;			
+					.setScope(ScopeFiller.buildScope(r));			
 		}
 	}
 	

@@ -405,7 +405,7 @@ public class OfferPdfServlet extends HttpServlet {
         LinkedList<OfferDetail> details = AON.getOfferDetails(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(offer.getId())).collect(Collectors.toCollection(LinkedList::new));
         for (OfferDetail detail : details) {
         	//Item item = AON.getItem(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(detail.getItem().getId()));
-        	OldProduct product = AON.getProduct(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getItem().getProductId()));
+        	OldProduct product = AON.getProduct(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getItem().getProduct().getId()));
         	Tax tax = AON.getTax(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(product.getVat()));
         	t1.addCell(new Paragraph(detail.getDescription(), getColorFont(9, DARK_BLUE)));
             t1.addCell(getRightCell(new Paragraph(Double.toString(AonMathUtils.round(detail.getQuantity())), getColorFont(9, DARK_BLUE))));
@@ -492,13 +492,15 @@ public class OfferPdfServlet extends HttpServlet {
        		+ (rdirStaff.getId() != null ? ("\n\nFdo.: " + rdirStaff.getName()+ " con D.N.I. " + rdirStaff.getDocument()) : "")
        		, getFont(9)));
 
-        BufferedImage img = ImageIO.read(new ByteArrayInputStream(sign));
-		Image logo = Image.getInstance(img, null);
+      	if(sign != null) {
+      		BufferedImage img = ImageIO.read(new ByteArrayInputStream(sign));
+      		Image logo = Image.getInstance(img, null);
 		
-		PdfPCell headerLogo = new PdfPCell(logo, false);
-		headerLogo.setBorder(PdfPCell.NO_BORDER);
+      		PdfPCell headerLogo = new PdfPCell(logo, false);
+			headerLogo.setBorder(PdfPCell.NO_BORDER);
         
-        table.addCell(logo);
+        	table.addCell(logo);
+      	}
         return table;
 	}
 

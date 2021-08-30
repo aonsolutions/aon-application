@@ -6,10 +6,11 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -79,18 +80,15 @@ public class FeeDAO {
 	
 	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
-		
-		com.esferalia.aon.jooq.tables.Registry sellerRegistry = REGISTRY.as("sellerRegistry");
-		com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
 		return ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-				.join(customerRegistry).on(CUSTOMER.REGISTRY.eq(customerRegistry.ID))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
-				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
@@ -104,17 +102,14 @@ public class FeeDAO {
 			return buildFee(r);
 		}
 		
-		public static Fee buildFee(Record r) {
-			com.esferalia.aon.jooq.tables.Registry sellerRegistry = REGISTRY.as("sellerRegistry");
-			com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
-			
+		public static Fee buildFee(Record r) {			
 			return new Fee()
 				.setId(r.getValue(CUSTOMER_FEE.ID))
 				.setDomain(checkField(r, DOMAIN.ID) 
 					? DomainFiller.buildDomain(r) 
 					: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
 				.setCustomer(checkField(r, CUSTOMER.REGISTRY)
-					? CustomerFiller.buildCustomer(r, customerRegistry)
+					? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)
 					: new Customer().copy(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.buildItem(r)
@@ -135,7 +130,7 @@ public class FeeDAO {
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSeller(checkField(r, SELLER.REGISTRY)
-					? SellerFiller.buildSeller(r, sellerRegistry)
+					? SellerFiller.build(r)
 					: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setWorkplace(checkField(r, WORKPLACE.ID)
 					? WorkplaceFiller.buildWorkplace(r)

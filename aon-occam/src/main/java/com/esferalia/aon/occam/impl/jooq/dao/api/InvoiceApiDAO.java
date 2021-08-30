@@ -1,8 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.api;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
-import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
@@ -14,14 +12,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
-import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -34,8 +31,6 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponsePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;;
 
@@ -185,7 +180,7 @@ public class InvoiceApiDAO {
 				.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
 				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setTaxes(record.getValue(INVOICE_DETAIL.TAXES))
-				.setSeller(new Seller().setId(record.getValue(INVOICE_DETAIL.SELLER)))
+				.setSeller(new Seller().copy(new Registry().setId(record.getValue(INVOICE_DETAIL.SELLER))))
 				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setAccount(record.getValue(ACCOUNT.ID))

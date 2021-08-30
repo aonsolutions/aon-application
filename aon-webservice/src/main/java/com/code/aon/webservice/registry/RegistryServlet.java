@@ -157,7 +157,7 @@ public class RegistryServlet extends HttpServlet{
 		.forEach(s -> {segmentation = segmentation + " - " + s.getName();});
 
 		AON.getRSellerStream(domain.getName(), domain.getId(), login, f-> f.getRegistryProperty().eq(registryId).and(f.getStatusProperty().eq(SellerStatus.ACTIVE.value())))
-		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
+		.forEach(s -> {commercial = commercial + " - " + s.getName();});
 		
 		RegistryStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
 		String st = !RegistryStatus.ACTIVE.equals(status) ? status.getDescription() : "";
@@ -232,7 +232,7 @@ public class RegistryServlet extends HttpServlet{
     		.forEach(seller -> {
 				JSONObject json = new JSONObject();
 				json.put("id", seller.getId());
-				json.put("name", seller.getRegistryName());
+				json.put("name", seller.getName());
 				array.put(json);
     	});
     	return array;    	

@@ -171,10 +171,12 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -248,6 +250,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -299,6 +302,10 @@ public class AON {
 
 	private static IProduct getProduct() {
 		return new ProductImpl();
+	}
+	
+	private static IProduct2 getNewProduct() {
+		return new Product2Impl();
 	}
 
 	private static IOffice getOffice() {
@@ -1265,8 +1272,74 @@ public class AON {
 		getProduct().deleteProductTag(ctx, pts);
 	}
 
+	// ------------------------------------ NEW PRODUCT
+	
+	public static Product getProduct(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProduct(ctx, filter);
+		}
+	}
+	
+	public static Stream<Product> getProductStream(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductStream(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Product> getProductList(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductList(ctx, filter);
+		}
+	}
+	
+	public static Product saveProduct(Domain domain, String login, Product product) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveProduct(ctx, product);
+		}
+	}
+	
+	public static void deleteProduct(Domain domain, String login, Integer productId) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			getNewProduct().deleteItem(ctx, productId);
+		}
+	}
+	
+	// ------------------------------------ NEW ITEM
+	
+	public static Item getItem(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItem(ctx, filter);
+		}
+	}
+	
+	public static Stream<Item> getItemStream(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItemStream(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Item> getItemList(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItemList(ctx, filter);
+		}
+	}
+	
+	public static Item saveItem(Domain domain, String login, Item item) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveItem(ctx, item);
+		}
+	}
+	
+	public static void deleteItem(Domain domain, String login, Integer itemId) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			getNewProduct().deleteItem(ctx, itemId);
+		}
+	}
+	
+	
 	// ------------------------------------ ITEM
 	
+	@Deprecated
 	public static LinkedList<OldItem> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1278,7 +1351,8 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
+	@Deprecated
 	public static LinkedList<OldItem> getFullItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1291,6 +1365,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldItem getItem(String domainName, Integer domainId, String login, Integer itemId) {
 		AONContext ctx = null;
 		try {
@@ -1303,6 +1378,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldItem getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1315,6 +1391,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static Optional<OldItem> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1337,6 +1414,7 @@ public class AON {
 		}
 	}
 
+	@Deprecated
 	public static OldItem insertItem(String domainName, Integer domainId, String login, OldItem i) {
 		AONContext ctx = null;
 		try {
@@ -1348,12 +1426,7 @@ public class AON {
 		}
 	}
 	
-//	public static Item save(String domainName, Integer domainId, String login, Item item) {
-//		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login);){
-//			return getProduct().save(ctx, item);
-//		}
-//	}
-
+	@Deprecated
 	public static void deleteItem(String domainName, Integer domainId, String login, OldItem item) {
 		AONContext ctx = null;
 		try {
@@ -1364,31 +1437,37 @@ public class AON {
 				ctx.close();
 		}	}
 
-	
+	@Deprecated
 	public static void insertItem(AONContext ctx, OldItem i) {
 		getProduct().insertItem(ctx, i);
 	}
 
+	@Deprecated
 	public static void insertItemWithId(AONContext ctx, OldItem i) {
 		getProduct().insertItemWithId(ctx, i);
 	}
 
+	@Deprecated
 	public static void insertItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItem(ctx, is);
 	}
 
+	@Deprecated
 	public static void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItemWithId(ctx, is);
 	}
 
+	@Deprecated
 	public static void updateItem(AONContext ctx, OldItem i) {
 		getProduct().updateItem(ctx, i);
 	}
-
+	
+	@Deprecated
 	public static void deleteItem(AONContext ctx, OldItem i) {
 		getProduct().deleteItem(ctx, i);
 	}
 
+	@Deprecated
 	public static void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().deleteItem(ctx, is);
 	}

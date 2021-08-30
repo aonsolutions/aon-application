@@ -19,11 +19,11 @@ import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ExportInfo;
 import com.esferalia.aon.gwt.template.shared.ImportType;
-import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.core.client.EntryPoint;
@@ -1415,7 +1415,7 @@ public class Templates extends Composite implements EntryPoint {
 						
 						ListBox sellerListBox = (ListBox) flex_table.getWidget(1, 1);
 						Seller seller = new Seller();
-						seller.setRegistryName(sellerListBox.getSelectedItemText());
+						seller.setName(sellerListBox.getSelectedItemText());
 						seller.setId(Integer.parseInt(sellerListBox.getSelectedValue()));
 						
 						TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);

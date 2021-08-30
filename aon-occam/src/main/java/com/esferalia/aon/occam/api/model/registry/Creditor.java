@@ -34,6 +34,11 @@ public class Creditor extends Registry implements Serializable, HasAudit, IScopa
 	public Creditor copy(Registry registry) {
 		return super.copy( registry, this);
 	}
+	
+	public Creditor setId(Integer id) {
+		super.setId(id);
+		return this;
+	}
 
 	public boolean isWithholding() {
 		return withholding;

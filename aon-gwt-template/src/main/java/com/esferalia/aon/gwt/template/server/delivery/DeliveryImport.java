@@ -1237,7 +1237,7 @@ public class DeliveryImport {
 									.setDate(new Date())
 									.setDomain(domain.getId())
 									.setName(r.getExpediente())
-									.setRegistryId(customerID);
+									.setRegistry(new Registry().setId(customerID));
 							Integer id = AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), p);
 							p.setId(id);
 						}

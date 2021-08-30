@@ -41,14 +41,19 @@ public class PayMethodDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PAY_METHOD.NAME);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PAY_METHOD.TYPE);}
 	}
-	private static class PayMethodFiller  implements Function<Record,PayMethod> {
+	
+	public static class PayMethodFiller  implements Function<Record,PayMethod> {
 		@Override
 		public PayMethod apply(Record record) {
+			return build(record);
+		}
+		
+		public static PayMethod build(Record r) {
 			return new PayMethod()
-				.setId(record.getValue(PAY_METHOD.ID))
-				.setDomain(record.getValue(PAY_METHOD.DOMAIN))
-				.setName(record.getValue(PAY_METHOD.NAME))
-				.setType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)));
+					.setId(r.getValue(PAY_METHOD.ID))
+					.setDomain(r.getValue(PAY_METHOD.DOMAIN))
+					.setName(r.getValue(PAY_METHOD.NAME))
+					.setType(PayMethodType.safeValueOf(r.getValue(PAY_METHOD.TYPE)));
 		}
 	}
 	

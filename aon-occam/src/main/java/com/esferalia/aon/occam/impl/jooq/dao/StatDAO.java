@@ -144,7 +144,7 @@ public class StatDAO {
 		RegistryOldDAO.getSellers(ctx).forEach(
 				seller -> params.getFilterItems().add(new StatFilterItem()
 							.setId(seller.getId())
-							.setLabel(seller.getRegistryName())
+							.setLabel(seller.getName())
 							.setType(StatFilterType.SELLER))
 						);
 		params.setFilterMap(new HashMap<String, String[]>());

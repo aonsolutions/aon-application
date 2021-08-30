@@ -14,4 +14,18 @@ public class Filler {
 		}
 		return bool;
 	}
+	
+	protected static <T> T getValue(Record r, Field<T> field) {
+		if(checkField(r, field)) {
+			return r.getValue(field);
+		}
+		return null;
+	}
+	
+	protected static Boolean getBoolean(Record r, Field<Byte> field) {
+		if(checkField(r, field)) {
+			return r.getValue(field) == 1;
+		}
+		return null;
+	}
 }

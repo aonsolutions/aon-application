@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
