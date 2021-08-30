@@ -349,6 +349,10 @@ export class AonTextArea extends AonElement {
 		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 	}
 
+	getToolbar(){
+		return this.getElement(this.TOOLBAR);
+	}
+
 	draggableEnable(){
 		const divTextArea = this.getTextAreaDiv();
 		divTextArea.classList.add("divDragOver");

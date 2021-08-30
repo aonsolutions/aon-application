@@ -97,7 +97,7 @@ export class AonMobileDesktop extends AonElement {
 
 			await this.buildTimeControl();
 		} catch (error) {
-			console.log(object);
+			console.log(error);
 		}
 
 	}

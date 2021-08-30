@@ -5,8 +5,8 @@ import { domainName } from "../../../services/request";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createCardMessenger, createChatMessage, LEFT, RIGHT } from "./creationUtils";
+import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
+import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
 
 /**
  * Build standard toolbar options 
@@ -143,7 +143,7 @@ const fillTaskHolder = async (workgroupId, taskHolderId=undefined) => {
 }
 
 //FILL CUSTOMER
-export const fillCustomer = async ({registry}) => {
+const fillCustomer = async ({registry}) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     if(aonSelect){
         aonSelect.clear();
@@ -433,4 +433,65 @@ export const addLine = () => {
      */
     const lined = document.querySelector(".continueLined");
     if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
+}
+
+export const buildFormQuery = (div, aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const application = aonMessengerChat.applicationEl;
+    const applicationParent = aonMessengerChat.applicationParentEl;
+
+    const aonCard = createCardMessenger(MSG.DATA, "");
+    div.appendChild(aonCard);
+    aonCard.getCard().style.margin = 0;
+
+    const columnsDiv = createStartJustifiedColumn();
+    aonCard.setContent(columnsDiv.element);
+
+    //----------------ISSUE-----------
+    const titleDiv = titleFirstDiv(MSG.ISSUE);
+    columnsDiv.appendChild(titleDiv);
+    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
+    titleDiv.appendChild(title); 
+    //-------------------------END ISSUE
+
+    if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
+      // DIV CUSTOMER
+      const rowsDivTwo = createStartJustifiedRow();
+      rowsDivTwo.element.style.width = "100%";
+      columnsDiv.appendChild(rowsDivTwo.element);
+      // CUSTOMER
+      const customerSelect = createCustomer();
+      customerSelect.style.width = "100%";
+      rowsDivTwo.appendChild(customerSelect);
+          //-----------------TASK HOLDER
+      const contact = createInputContact();
+      contact.style.width = "100%";
+      contact.style.marginLeft = "5px";
+      rowsDivTwo.appendChild(contact);
+      if(task.gtask_id) contact.value  = task.gtask_id;
+      fillCustomer(task);
+    }
+
+
+    if(!applicationParent.cauData){
+      //DIV WORKGROUP AND TASKHOLDER
+      const rowsDiv = createStartJustifiedRow();
+      rowsDiv.element.style.width = "100%";
+      columnsDiv.appendChild(rowsDiv.element);
+
+      //-----------------WORKGROUP
+      const workgroupSelect = createWorkgroup();
+      workgroupSelect.style.width = "100%";
+      rowsDiv.appendChild(workgroupSelect);
+      fillWorkGroup(task, application);
+
+      //-----------------TASK HOLDER
+      const taskHolderSelect = createTaskHolder();
+      taskHolderSelect.style.width = "100%";
+      taskHolderSelect.style.marginLeft = "5px";
+      rowsDiv.appendChild(taskHolderSelect);
+    } else {   // addInfoCau
+      task.setDescriptionJson({cauData:applicationParent.cauData});
+    }
+    
 }

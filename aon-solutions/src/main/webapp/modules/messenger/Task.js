@@ -1,22 +1,22 @@
 import { TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
 
 export class Task {
-    id;
-    number;
-    domain;
-    sender;
-    workgroup;
-    task_holder;
-    title;
-    registry;
-    workflow;
-    workflowTmp;
-    description;
-    status;
-    source;
-    source_id;
-    gtask_id;
-    constructor() {
+  id;
+  number;
+  domain;
+  sender;
+  workgroup;
+  task_holder;
+  title;
+  registry;
+  workflow;
+  workflowTmp;
+  description;
+  status;
+  source;
+  source_id;
+  gtask_id;
+  constructor() {
       this.id          = undefined;
       this.status      = undefined;
       this.number      = undefined;
@@ -30,7 +30,7 @@ export class Task {
       this.task_holder = {};
       this.workflow    = [];
       this.workflowTmp = {};
-    }
+  }
 
   createTask(task) {
     if(task) {

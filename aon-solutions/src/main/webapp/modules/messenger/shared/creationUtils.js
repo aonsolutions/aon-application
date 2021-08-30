@@ -48,7 +48,7 @@ export const createMobileMainView = () => newComponent({
   classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
   styles: {
     transition: ".5s",
-    opacity: 0,
+    opacity: 1,
     marginTop: "0vh",
     padding: "0px",
     width: "100%",

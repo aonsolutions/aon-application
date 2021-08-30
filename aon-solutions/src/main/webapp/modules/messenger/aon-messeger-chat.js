@@ -15,7 +15,6 @@ import { fillChat, sendMessage } from "./shared/utils.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
-import { getAuth } from "../../services/authService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -131,13 +130,12 @@ export class AonMessengerChat extends AonElement {
   }
   
   eventListenerAll(){
-    let titleEl = this.getElement(MESSENGER_IDS.TITLE_TASK)
-    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ()=> this.task.setTitle(titleEl.innerText) )
+    let titleEl = this.getElement(MESSENGER_IDS.TITLE_TASK);
+    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ({target})=> this.task.setTitle(target.innerText));
     
     let workgroupEl = this.getElement(MESSENGER_IDS.WORKGROUP);
     if(workgroupEl) workgroupEl.addEventListener(EVENT.CHANGE, ({detail})=> {
       if(detail) this.task.setWorkgroup(detail);
-
     });
 
     let taskHolderEl = this.getElement(MESSENGER_IDS.TASKHOLDER);

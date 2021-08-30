@@ -4,8 +4,8 @@ import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import {  createDivEditable, createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createTaskHolder, createWorkgroup, titleFirstDiv, createStartJustifiedRow, createCardMessenger, createCustomer, createInputContact } from "./creationUtils";
-import { addLine, buildTextareaToolbar, fillCustomer, fillProcessType, fillWorkGroup } from "./utils";
+import {  createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createWorkgroup, createCardMessenger } from "./creationUtils";
+import { addLine, buildFormQuery, buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -29,7 +29,7 @@ export const buildDesktop = (aonMessengerChat)=> {
     buildQuery(firstDiv, aonMessengerChat); 
 
   if(aonMessengerChat.task.id){
-    buildChat(secondDiv);
+    buildSectionHistoric(secondDiv);
   }
 }
 
@@ -89,63 +89,9 @@ const buildToolbar = (aonMessengerChat) => {
  */
 const buildQuery = (firstDiv, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    const application = aonMessengerChat.applicationEl;
-    const applicationParent = aonMessengerChat.applicationParentEl;
 
-    const aonCard = createCardMessenger(MSG.DATA, "");
-    firstDiv.appendChild(aonCard);
-    aonCard.getCard().style.margin = 0;
+    buildFormQuery(firstDiv, aonMessengerChat);
 
-    const columnsDiv = createStartJustifiedColumn();
-    aonCard.setContent(columnsDiv.element);
-
-    //----------------ISSUE-----------
-    const titleDiv = titleFirstDiv(MSG.ISSUE);
-    columnsDiv.appendChild(titleDiv);
-    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
-    titleDiv.appendChild(title); 
-    //-------------------------END ISSUE
-
-    if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
-      // DIV CUSTOMER
-      const rowsDivTwo = createStartJustifiedRow();
-      rowsDivTwo.element.style.width = "100%";
-      columnsDiv.appendChild(rowsDivTwo.element);
-      // CUSTOMER
-      const customerSelect = createCustomer();
-      customerSelect.style.width = "100%";
-      rowsDivTwo.appendChild(customerSelect);
-          //-----------------TASK HOLDER
-      const contact = createInputContact();
-      contact.style.width = "100%";
-      contact.style.marginLeft = "5px";
-      rowsDivTwo.appendChild(contact);
-      if(task.gtask_id) contact.value  = task.gtask_id;
-      fillCustomer(task);
-    }
-
-
-    if(!applicationParent.cauData){
-      //DIV WORKGROUP AND TASKHOLDER
-      const rowsDiv = createStartJustifiedRow();
-      rowsDiv.element.style.width = "100%";
-      columnsDiv.appendChild(rowsDiv.element);
-
-      //-----------------WORKGROUP
-      const workgroupSelect = createWorkgroup();
-      workgroupSelect.style.width = "100%";
-      rowsDiv.appendChild(workgroupSelect);
-      fillWorkGroup(task, application);
-
-      //-----------------TASK HOLDER
-      const taskHolderSelect = createTaskHolder();
-      taskHolderSelect.style.width = "100%";
-      taskHolderSelect.style.marginLeft = "5px";
-      rowsDiv.appendChild(taskHolderSelect);
-    } else {   // addInfoCau
-      task.setDescriptionJson({cauData:applicationParent.cauData});
-    }
-    
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
         minHeight: '200px',
         maxHeight: '300px'
@@ -199,7 +145,7 @@ const buildQuery = (firstDiv, aonMessengerChat) => {
  * @param {HTMLElement} secondDiv secondDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
  */
-const buildChat = (secondDiv) => {
+const buildSectionHistoric = (secondDiv) => {
     /**
      * Wrapper 
      * if some new side menus / toolbars needed, here.

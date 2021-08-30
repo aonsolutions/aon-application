@@ -52,6 +52,7 @@ export const MESSENGER_COMPONENTS = {
 }
 
 export const MESSENGER_IDS = {
+    FORM_DIV : "formDiv",
     MAIN_WRAPPER : "mainWrapper",
     MESSENGER_CHAT: "messengerChat",
     MAIN_DIV: "mainDiv",

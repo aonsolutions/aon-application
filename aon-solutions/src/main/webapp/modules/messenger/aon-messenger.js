@@ -5,7 +5,7 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo } from '../../services/taskService.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
@@ -214,24 +214,27 @@ export class AonMessenger extends AonElement {
 	}
 
 	showView(view, data = undefined, filter = undefined){
-        return new Promise(async(resolve)=>{
-          let aonView = undefined;
-            switch(view){
-              	case MESSENGER_VIEWS.AON_MESSENGER_LIST:
-                	aonView = new AonMessengerList();
-                break;
-				case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
-					aonView = new AonMessengerChat();
-				break;
-            }
-            if(aonView){
-              aonView.id = view;
-              if(filter) aonView.setFilter(filter);
-              if(data) aonView.data = data;
-              this.applicationEl.setContent(aonView);
-            }
-          resolve(aonView);
-        });
+		if(data && data.source && data.source === TASK_SOURCE.REQUEST) 
+			this.applicationEl.development();
+		else
+			return new Promise(async(resolve)=>{
+				let aonView = undefined;
+				switch(view){
+					case MESSENGER_VIEWS.AON_MESSENGER_LIST:
+						aonView = new AonMessengerList();
+					break;
+					case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
+						aonView = new AonMessengerChat();
+					break;
+				}
+				if(aonView){
+					aonView.id = view;
+					if(filter) aonView.setFilter(filter);
+					if(data) aonView.data = data;
+					this.applicationEl.setContent(aonView);
+				}
+				resolve(aonView);
+			});
     }
 }
 window.customElements.define('aon-messenger', AonMessenger);
