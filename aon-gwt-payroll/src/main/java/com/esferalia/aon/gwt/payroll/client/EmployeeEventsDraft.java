@@ -529,7 +529,10 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	private void hideOptionYearLB(ArrayList<Integer> idxsToDelete) {
 		for(Integer idx : idxsToDelete)
-			this.yearLB.removeItem(idx);
+			try {
+				this.yearLB.removeItem(idx);
+			} catch (IndexOutOfBoundsException e) {}
+			
 	}
 	
 	private boolean isOutOfContractPeriod(Date date) {
