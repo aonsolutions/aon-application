@@ -262,6 +262,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String popUpLine();
 		
 		String cmd_btn();
+		
+		String bg_newPaeriod();
 
 	}
 
@@ -1279,7 +1281,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	HorizontalPanel salaryToggleButtonsPanel;
 	
 	@UiField
-	HorizontalPanel moreToggleButtonsPanel;
+	HTMLPanel moreToggleButtonsPanel;
 	
 	@UiField
 	HTMLPanel periodTypePanel;
@@ -1384,6 +1386,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private FilterPatternTimer filterPatternTimer;
 	private boolean isOnCategoryTab = false;
 	private boolean showExtrasTable = false;
+	private boolean showAllVariables = false;
 	
 	private AddPaymentContextMenu contextMenu;
 	
@@ -1604,8 +1607,29 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		//addMoreButton
 		if(!readOnly){
 			Button moreButton = addMoreButton();
+			moreButton.addStyleName(style.bg_newPaeriod());
 			moreToggleButtonsPanel.add(moreButton);
 		}
+		
+		// Visibility Variables
+		AonToolbarSmallButton variablesVisivility = new AonToolbarSmallButton("Mostrar todas las variables", AON.CSS.aonIconVisibility());
+		variablesVisivility.addClickHandler(click -> {
+			showAllVariables = !showAllVariables;
+			if(showAllVariables) {
+				agreementDraftObject.showAllVariables();
+				variablesVisivility.removeStyleName(AON.CSS.aonIconVisibility());
+				variablesVisivility.addStyleName(AON.CSS.aonIconVisibilityOff());
+				variablesVisivility.setTitle("Mostrar variables con valor");
+			} else {
+				agreementDraftObject.showValueVariables();
+				variablesVisivility.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				variablesVisivility.addStyleName(AON.CSS.aonIconVisibility());
+				variablesVisivility.setTitle("Mostrar todas las variables");
+			}
+			
+			reloadSalaryTable();
+		});
+		moreToggleButtonsPanel.add(variablesVisivility);
 		
 		// Initialize toggleButtonsPanel
 		inicializeToggleButtons(datesList, readOnly, tabPos);
@@ -2016,7 +2040,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return popup;
 	}
 	
-	
 	private Date getNextDateWithChanges(Date newDate) {
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		Date endDate = null;
@@ -2101,8 +2124,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
 			categoryButton.click();
-		else
+		else {
 			createSalaryTable();
+			agreementDraftObject.showValueVariables();
+			reloadSalaryTable();
+		}
 		
 		clearPaymentsTable();
 		paymentEditors.clear();
@@ -2353,6 +2379,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			boolean isCategorySelected = isCategorySelected();
 			
 			createSalaryTable();
+			agreementDraftObject.showValueVariables();
+			reloadSalaryTable();
 			
 			if(isCategorySelected)
 				categoryButton.click();
@@ -2478,6 +2506,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		int col = 1;
 
 		SortedSet<String> variables = new TreeSet<String>();
+//		variables.addAll(agreementDraftObject.getValueVariables());
 		variables.addAll(agreementDraftObject.getVariables());
 
 		Set<String> changedVariables = agreementDraftObject.getChangedVariables();

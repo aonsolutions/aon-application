@@ -360,6 +360,12 @@
 			padding-left: 25px !important;
 			background-size: contain;
 		}
+		
+		.bg_newPaeriod{
+			background-color: white !important;
+			border: 1px solid #ababab !important;
+			background: white !important;
+		}
 
 	</ui:style>
 
@@ -403,7 +409,7 @@
 							<g:HorizontalPanel> 
 								<g:HorizontalPanel debugId='categoryButtonPanel' ui:field='categoryButtonPanel'/>
 								<g:HorizontalPanel debugId='salaryToggleButtonsPanel' ui:field='salaryToggleButtonsPanel'/>
-								<g:HorizontalPanel debugId='moreToggleButtonsPanel' ui:field='moreToggleButtonsPanel'/> 
+								<g:HTMLPanel debugId='moreToggleButtonsPanel' styleName="{style.flex}" ui:field='moreToggleButtonsPanel'/> 
 							</g:HorizontalPanel>
 							
 							<g:HTML styleName="{style.vertical-space2}" />

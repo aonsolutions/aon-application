@@ -619,7 +619,7 @@ public class EmployeesServiceHelper {
 
 		draft.setLevels(allLevels);
 		draft.setExtras(allExtras);
-		draft.setVariables(variables); // * No draft
+		draft.setVariables(filterVariables(variables)); // * No draft
 		draft.setPayments(allPayments);
 		draft.setSalaryTable(allSalaryTable);
 		draft.setCategoriesMap(allCategories);
@@ -656,6 +656,26 @@ public class EmployeesServiceHelper {
 		}
 		
 	}
+
+	private static Set<String> filterVariables(Set<String> variables) {
+		if(variables.isEmpty())
+			return Collections.emptySet();
+		
+		Set<String> filteredVariables = new HashSet<String>();
+		
+		// Filter variables list
+		List<String> filterVars = new ArrayList<String>();
+		filterVars.add("TRUE");
+		filterVars.add("FALSE");
+		
+		for(String var : variables)
+			if(!filterVars.contains(var))
+				filteredVariables.add(var);
+		
+		return filteredVariables;
+	}
+
+
 
 //	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 //			final Connection conn, final SalaryDraft draft,

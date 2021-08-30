@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -423,6 +424,23 @@ public class AgreementDraftObject {
 	public Set<Level> getLevels() {
 		return agreementDraft.getLevels();
 	}
+	
+	public Set<String> getAllVariables(){
+		Set<String> vars = new HashSet<String>();
+		vars.addAll(agreementDraft.getVariables());
+		
+		shownVariables.clear();
+		shownVariables.addAll(agreementDraft.getVariables());
+		
+//		for (String var : agreementDraft.getVariables())
+//			if (shownVariables.contains(var))
+//				vars.add(var);
+//		for (String var : getImplicitVariables())
+//			if (shownVariables.contains(var))
+//				vars.add(var);
+		
+		return vars;
+	}
 
 	public Set<String> getVariables() {
 		Set<String> vars = new HashSet<String>();
@@ -432,6 +450,20 @@ public class AgreementDraftObject {
 		for (String var : getImplicitVariables())
 			if (shownVariables.contains(var))
 				vars.add(var);
+		return vars;
+	}
+	
+	public Set<String> getValueVariables() {
+		Set<String> vars = new HashSet<String>();
+		
+		for (String var : agreementDraft.getVariables())
+			if(variableHasValue(var))
+				vars.add(var);
+		
+		for (String var : getImplicitVariables())
+			if(variableHasValue(var))
+				vars.add(var);
+		
 		return vars;
 	}
 
@@ -454,6 +486,27 @@ public class AgreementDraftObject {
 
 	public void showVariable(String variable) {
 		shownVariables.add(variable);
+	}
+	
+	public void showAllVariables() {
+		shownVariables.clear();
+		for (String var : agreementDraft.getVariables())
+			shownVariables.add(var);
+		
+		for (String var : getImplicitVariables())
+			shownVariables.add(var);
+	}
+	
+	public void showValueVariables() {
+		shownVariables.clear();
+		
+		for (String var : agreementDraft.getVariables())
+			if(variableHasValue(var))
+				shownVariables.add(var);
+		
+		for (String var : getImplicitVariables())
+			if(variableHasValue(var))
+				shownVariables.add(var);
 	}
 
 	public Variable getVariable(String var) {
@@ -795,8 +848,23 @@ public class AgreementDraftObject {
 			if (isHiddenByDefault(var))
 				continue;
 			if (salaryTable.contains(var) || !systemVars.contains(var))
-				shownVariables.add(var);
+				if(variableHasValue(var))
+					shownVariables.add(var);
 		}
+	}
+
+	private boolean variableHasValue(String var) {
+		Variable variableData = getVariable(var);
+		if(null != variableData && (AonStringUtils.isNotBlank(variableData.getExpression()) || null != variableData.getValue())) 
+			return true;
+		
+		for(Level level : getLevels()) {
+			Variable variableLevelData = getVariable(level, var);
+			if(null != variableLevelData && (AonStringUtils.isNotBlank(variableLevelData.getExpression()) || null != variableLevelData.getValue()))
+				return true;
+		}
+		
+		return false;
 	}
 
 	private void syncSalaryTable(AgreementDraft agreementDraft,
