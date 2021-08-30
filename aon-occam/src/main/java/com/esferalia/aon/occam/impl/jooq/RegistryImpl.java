@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -448,6 +449,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CustomerDAO.save(ctx, customerFull));
 	}
 
+	@Override
+	public Domain getDomainLinked(AONContext ctx, Integer customerId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getDomainLinked(ctx, customerId));
+	}
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

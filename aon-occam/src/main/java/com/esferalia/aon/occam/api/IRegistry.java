@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -169,6 +170,7 @@ public interface IRegistry {
 	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit);
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id);
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
+	public Domain getDomainLinked(AONContext ctx, Integer customerId);
 	
 	// **************************************************
 	// *************************************** [CREDITOR]

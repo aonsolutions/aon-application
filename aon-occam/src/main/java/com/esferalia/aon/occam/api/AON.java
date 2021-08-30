@@ -6472,6 +6472,17 @@ public class AON {
 		}
 	}
 	
+	public static Domain getDomainLinked(String domainName, int domain, String user, Integer customerId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getDomainLinked(ctx, customerId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

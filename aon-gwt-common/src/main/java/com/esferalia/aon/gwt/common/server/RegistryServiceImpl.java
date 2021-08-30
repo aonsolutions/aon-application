@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -36,6 +37,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public CustomerFull save(String domainName, int domain, String user, CustomerFull customerFull) throws AonCoreException {
 		return AON.save(domainName, domain,user, customerFull);
+	}
+	
+	@Override
+	public Domain getDomainLinked(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
+		return AON.getDomainLinked(domainName, domain,user, customerId);
 	}
 
 	// **************************************************
