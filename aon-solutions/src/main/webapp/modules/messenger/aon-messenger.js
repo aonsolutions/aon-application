@@ -214,27 +214,24 @@ export class AonMessenger extends AonElement {
 	}
 
 	showView(view, data = undefined, filter = undefined){
-		if(data && data.source && data.source === TASK_SOURCE.REQUEST) 
-			this.applicationEl.development();
-		else
-			return new Promise(async(resolve)=>{
-				let aonView = undefined;
-				switch(view){
-					case MESSENGER_VIEWS.AON_MESSENGER_LIST:
-						aonView = new AonMessengerList();
-					break;
-					case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
-						aonView = new AonMessengerChat();
-					break;
-				}
-				if(aonView){
-					aonView.id = view;
-					if(filter) aonView.setFilter(filter);
-					if(data) aonView.data = data;
-					this.applicationEl.setContent(aonView);
-				}
-				resolve(aonView);
-			});
+		return new Promise(async(resolve)=>{
+			let aonView = undefined;
+			switch(view){
+				case MESSENGER_VIEWS.AON_MESSENGER_LIST:
+					aonView = new AonMessengerList();
+				break;
+				case MESSENGER_VIEWS.AON_MESSENGER_CHAT:
+					aonView = new AonMessengerChat();
+				break;
+			}
+			if(aonView){
+				aonView.id = view;
+				if(filter) aonView.setFilter(filter);
+				if(data) aonView.data = data;
+				this.applicationEl.setContent(aonView);
+			}
+			resolve(aonView);
+		});
     }
 }
 window.customElements.define('aon-messenger', AonMessenger);

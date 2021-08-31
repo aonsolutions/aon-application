@@ -6,7 +6,7 @@ import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
+import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createProcessType, createReceiverDiv, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
 
 /**
  * Build standard toolbar options 
@@ -105,7 +105,7 @@ const blockquote = ()=>{
 
 
 //FILL WORKGROUP
-export const fillWorkGroup = async ({workgroup, task_holder}, application) => {
+const fillWorkGroup = async ({workgroup, task_holder}, application) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
 
@@ -203,7 +203,7 @@ export const fillChat = (workflows=[])=>{
 }
 
 //FILL PROCESS TYPE
-export const fillProcessType = async ({source_id}) => {
+const fillProcessType = async ({source_id}) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.PROCESS_TYPE}`);
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
@@ -493,5 +493,36 @@ export const buildFormQuery = (div, aonMessengerChat) => {
     } else {   // addInfoCau
       task.setDescriptionJson({cauData:applicationParent.cauData});
     }
-    
 }
+
+export const buildFormRequest = (div, aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const application = aonMessengerChat.applicationEl;
+
+    const aonCard = createCardMessenger(MSG.DATA, "");
+    div.appendChild(aonCard);
+    aonCard.getCard().style.margin = 0;
+  
+    const receiverDiv = createReceiverDiv();
+    aonCard.setContent(receiverDiv.element);
+  
+    //-----------------TYPE PROCESS
+    const typeProcess = createProcessType();
+    typeProcess.style.width = "100%";
+    receiverDiv.appendChild(typeProcess);
+    fillProcessType(task);
+    
+     //-----------------WORKGROUP
+    const workgroupSelect = createWorkgroup();
+    workgroupSelect.style.width = "100%";
+    workgroupSelect.style.marginLeft = "5px";
+    receiverDiv.appendChild(workgroupSelect);
+    fillWorkGroup(task, application);
+  
+  
+    // DIV PROCESS
+    const divProcess = createStartJustifiedColumn().element;
+    divProcess.id = MESSENGER_IDS.PROCESS_DIV;
+    div.appendChild(divProcess);
+}
+

@@ -107,19 +107,21 @@ const addDates = (table, data={}, i) =>{
  */
 export const getFormVacationJson = ()=>{
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
-    let observation = form.querySelector("#observation").innerText;
-    //DATES
-    let dates = [];
-    [...form.querySelectorAll("table tr")].map(tr=>{
-        let startDate = tr.querySelector("[id*=startDate]");
-        let endDate = tr.querySelector("[id*=endDate]");
-        if(startDate && endDate && startDate.value && endDate.value)
-            dates.push({startDate: startDate.value, endDate: endDate.value});
-    })
+    if(form){
+        let observation = form.querySelector("#observation").innerText;
+        //DATES
+        let dates = [];
+        [...form.querySelectorAll("table tr")].map(tr=>{
+            let startDate = tr.querySelector("[id*=startDate]");
+            let endDate = tr.querySelector("[id*=endDate]");
+            if(startDate && endDate && startDate.value && endDate.value)
+                dates.push({startDate: startDate.value, endDate: endDate.value});
+        })
 
-    const formSerialize = serializeForm(form);
-
-    return { ...formSerialize, dates, observation};
+        const formSerialize = serializeForm(form);
+        return { ...formSerialize, dates, observation};
+    }
+    return null;
 }
 
 

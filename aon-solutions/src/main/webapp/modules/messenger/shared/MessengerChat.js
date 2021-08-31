@@ -4,8 +4,8 @@ import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import {  createMainView, createReceiverDiv, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createProcessType, createSectionComment, createStartJustifiedColumn, createWorkgroup, createCardMessenger } from "./creationUtils";
-import { addLine, buildFormQuery, buildTextareaToolbar, fillProcessType, fillWorkGroup } from "./utils";
+import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment} from "./creationUtils";
+import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -110,34 +110,8 @@ const buildQuery = (firstDiv, aonMessengerChat) => {
  */
  const buildRequest = (firstDiv, aonMessengerChat) => {
 
-  const task = aonMessengerChat.task;
-  const application = aonMessengerChat.applicationEl;
+  buildFormRequest(firstDiv, aonMessengerChat);
 
-  const aonCard = createCardMessenger(MSG.DATA, "");
-  firstDiv.appendChild(aonCard);
-  aonCard.getCard().style.margin = 0;
-
-  const receiverDiv = createReceiverDiv();
-  aonCard.setContent(receiverDiv.element);
-
-  //-----------------TYPE PROCESS
-  const typeProcess = createProcessType();
-  typeProcess.style.width = "100%";
-  receiverDiv.appendChild(typeProcess);
-  fillProcessType(task, application);
-  
-   //-----------------WORKGROUP
-  const workgroupSelect = createWorkgroup();
-  workgroupSelect.style.width = "100%";
-  workgroupSelect.style.marginLeft = "5px";
-  receiverDiv.appendChild(workgroupSelect);
-  fillWorkGroup(task, application);
-
-
-  // DIV PROCESS
-  const divProcess = createStartJustifiedColumn().element;
-  divProcess.id = MESSENGER_IDS.PROCESS_DIV;
-  firstDiv.appendChild(divProcess);
 }
 
 /**

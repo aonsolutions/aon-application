@@ -1,6 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
-import { setStyles } from "../../services/utils.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
 import {
   saveTask,
@@ -223,14 +222,34 @@ export class AonMessengerChat extends AonElement {
     
     this.buildTaskWorkflow();
     if(this.task.source === TASK_SOURCE.REQUEST)
-      await this.saveSourceProcess();
+      await this.saveSourceRequest();
     else 
-      await this.saveSourceManual();
+      await this.saveSourceQuery();
 
     this.applicationEl.stopLoading();    
   }
 
-  async saveSourceManual(){
+  async saveSourceRequest(){
+    try {
+        const description = getFormVacationJson();
+        if(description){
+          this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
+          this.task.setDescriptionJson(description);
+          const data = await saveTask(this.task);
+          this.task.editTask(data);
+          if(this.getData().id){
+            this.setData(data);
+            if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+          } else {
+            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
+          }
+        }
+    } catch (error) {
+      this.showError(error);
+    }
+  }
+
+  async saveSourceQuery(){
     try {
       if (this.task.getTitle()) {
         const data = await saveTask(this.task);
@@ -242,24 +261,6 @@ export class AonMessengerChat extends AonElement {
           this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
         }
       }
-    } catch (error) {
-      this.showError(error);
-    }
-  }
-
-
-  async saveSourceProcess(){
-    try {
-        this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
-        this.task.setDescriptionJson(getFormVacationJson());
-        const data = await saveTask(this.task);
-        this.task.editTask(data);
-        if(this.getData().id){
-          this.setData(data);
-          if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
-        } else {
-          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-        }
     } catch (error) {
       this.showError(error);
     }

@@ -5,7 +5,7 @@ import { newComponent, setAttributes, setStyles} from "../../../services/utils.j
 import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { buildFormQuery, buildTextareaToolbar } from "./utils.js";
+import { buildFormQuery, buildFormRequest, buildTextareaToolbar } from "./utils.js";
 
 /**
  * 
@@ -268,7 +268,7 @@ const showForm = (b) => {
  * 
  * @param {Boolean} b true or false 
  */
- const showFullComment  = (b) => {
+const showFullComment  = (b) => {
     const writter = document.getElementById(MESSENGER_COMPONENTS.WRITTER);
     const textarea = writter.querySelector("aon-textarea");
     const aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK)
@@ -327,5 +327,13 @@ const showForm = (b) => {
  * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
  */
  const buildRequest = (div, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
+    buildFormRequest(div, aonMessengerChat);
+    changeStyleCard(div);
+}
+
+const changeStyleCard = (div) => {
+    [...div.querySelectorAll("aon-card")].map(aonCard=>{
+        // console.log(aonCard);
+        // aonCard.getCard().style.margin = "10px";
+    })
 }

@@ -3,13 +3,10 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -33,7 +30,6 @@ import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -44,7 +40,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(TaskServlet.class.getName());
 	
-	private static final String SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
+//	private static final String SIG_SESSION_ID = "SIGd95770f269e711eb94390242ac130002";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -158,11 +154,16 @@ public class TaskServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		
 		if(!search.isEmpty()) {
-			filter = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
 			
-//			String numberSearch = search.replaceAll("[^\\d]", "");
-//			if(!numberSearch.isEmpty())
-//				filter = filter.and(f.getNumberProperty().like("%" + numberSearch + "%"));
+			Integer numberSearch = 0;
+			try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
+			catch (NumberFormatException e){}
+			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
+			if(numberSearch!=0)
+				filter1 = filter1.or(f.getNumberProperty().eq(numberSearch));
+			
+			filter = filter.and(filter1);
+
 		}
 		
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
