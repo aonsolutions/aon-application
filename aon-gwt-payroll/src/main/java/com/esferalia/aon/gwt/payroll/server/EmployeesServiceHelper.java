@@ -669,7 +669,7 @@ public class EmployeesServiceHelper {
 		filterVars.add("FALSE");
 		
 		for(String var : variables)
-			if(!filterVars.contains(var))
+			if(!filterVars.contains(var) && !AonStringUtils.containsIgnoreCase(var, "HIDE"))
 				filteredVariables.add(var);
 		
 		return filteredVariables;

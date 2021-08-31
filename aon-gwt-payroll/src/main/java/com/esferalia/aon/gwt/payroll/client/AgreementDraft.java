@@ -1612,22 +1612,29 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 		
 		// Visibility Variables
-		AonToolbarSmallButton variablesVisivility = new AonToolbarSmallButton("Mostrar todas las variables", AON.CSS.aonIconVisibility());
+		AonToolbarSmallButton variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
 		variablesVisivility.addClickHandler(click -> {
-			showAllVariables = !showAllVariables;
-			if(showAllVariables) {
-				agreementDraftObject.showAllVariables();
-				variablesVisivility.removeStyleName(AON.CSS.aonIconVisibility());
-				variablesVisivility.addStyleName(AON.CSS.aonIconVisibilityOff());
-				variablesVisivility.setTitle("Mostrar variables con valor");
-			} else {
-				agreementDraftObject.showValueVariables();
-				variablesVisivility.removeStyleName(AON.CSS.aonIconVisibilityOff());
-				variablesVisivility.addStyleName(AON.CSS.aonIconVisibility());
-				variablesVisivility.setTitle("Mostrar todas las variables");
-			}
-			
-			reloadSalaryTable();
+			new AgreementVariablesDialog(agreementDraftObject.getAllVariables(), agreementDraftObject.getShownVariables()) {
+				
+				@Override
+				protected void onAccept(String variablesType, Set<String> variables) {
+					switch (variablesType) {
+						case "VALUES":
+							agreementDraftObject.showValueVariables();
+							break;
+						case "NO_VALUES":
+							agreementDraftObject.showNoValueVariables();
+							break;
+						case "ALL":
+							agreementDraftObject.showAllVariables();
+							break;
+						default:
+							agreementDraftObject.showVariables(variables);
+							break;
+					}
+					reloadSalaryTable();
+				}
+			};
 		});
 		moreToggleButtonsPanel.add(variablesVisivility);
 		
@@ -2506,7 +2513,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		int col = 1;
 
 		SortedSet<String> variables = new TreeSet<String>();
-//		variables.addAll(agreementDraftObject.getValueVariables());
 		variables.addAll(agreementDraftObject.getVariables());
 
 		Set<String> changedVariables = agreementDraftObject.getChangedVariables();
@@ -2530,8 +2536,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		col++;
 		
 		//cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
-		// salaryTable.setHTML(0, col, "&nbsp;");
-		salaryTable.setWidget(0, col, getViewButton());
+		salaryTable.setWidget(0, col, new Label());
+//		salaryTable.setWidget(0, col, getViewButton());
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
 		levels.addAll(agreementDraftObject.getLevels());
