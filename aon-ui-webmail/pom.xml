@@ -46,6 +46,14 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+   
+	<dependency>
+		<groupId>solutions.aon</groupId>
+		<artifactId>aon.aws</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>

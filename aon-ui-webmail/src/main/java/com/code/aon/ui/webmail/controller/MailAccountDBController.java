@@ -118,7 +118,23 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 			mailAccount.setSpamFolder(null);
 		}
 	}
+	boolean protocolAon;
+	public void onProtocolAonChanged( ActionEvent event ) {
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setProtocol(protocolAon ? "aon" : null);
+	}
 
+	public boolean isProtocolAon() {
+		MailAccount mailAccount = (MailAccount) getTo();
+		return isProtocolDefinied() && "aon".equalsIgnoreCase(mailAccount.getProtocol());
+	}
+	
+	public void setProtocolAon(boolean aon) {
+		protocolAon = aon;
+		MailAccount mailAccount = (MailAccount) getTo();
+		mailAccount.setProtocol(aon ? "aon" : null);
+	}
+	
 	public boolean isProtocolDefinied() {
 		MailAccount mailAccount = (MailAccount) getTo();
 		return !StringUtils.isEmpty(mailAccount.getProtocol());

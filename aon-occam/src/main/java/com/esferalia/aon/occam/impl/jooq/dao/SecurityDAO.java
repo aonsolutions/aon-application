@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -945,7 +946,7 @@ public class SecurityDAO {
 					.setSignatureId(r.getSignature())
 					.setSpamFolder(r.getSpamFolder())
 					.setTrashFolder(r.getTrashFolder())
-					.setType(r.getType())
+					.setType(MailAccountType.safeValueOf(r.getType()))
 					.setUserId(r.getUserId());
 		}
 	}

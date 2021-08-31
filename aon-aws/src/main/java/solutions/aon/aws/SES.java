@@ -50,7 +50,11 @@ public class SES extends AWS{
 	
 	private static String CONFIGURATION_SET = "ConfigSet";
 
-    public static String sendEmail(String from, String to, String subject, String body) {
+	public static String sendEmail(String from, String to, String subject, String body) {
+		return sendEmail(from, to, subject, body, null);
+	}
+    
+	public static String sendEmail(String from, String to, String subject, String body, String replyTo) {
         Destination destination = new Destination().withToAddresses(new String[]{to});
 
         Content subject2 = new Content().withData(subject);
@@ -59,22 +63,13 @@ public class SES extends AWS{
 
         Message message = new Message().withSubject(subject2).withBody(body2);
 
-        SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
         
-        try {
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(getProvider())
-                .withRegion("eu-west-1")
-                .build();
-
-            client.sendEmail(request);
-            System.out.println("Email sent!");
-            return "ok";
-        } catch (Exception ex) {
-            System.out.println("The email was not sent.");
-            System.out.println("Error message: " + ex.getMessage());
-            return "Error message: " + ex.getMessage();
+        SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
+        if(replyTo != null) {
+        	request.withReplyToAddresses(replyTo);
         }
+
+        return sendEmail(request);
     }
     
     public static void sendEmailToList(String from, LinkedList<String> toList, String subject, String body) {
@@ -88,19 +83,8 @@ public class SES extends AWS{
         Message message = new Message().withSubject(subject2).withBody(body2);
 
         SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
-        
-        try {
-            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(getProvider())
-                .withRegion("eu-west-1")
-                .build();
 
-            client.sendEmail(request);
-            System.out.println("Email sent!");
-        } catch (Exception ex) {
-            System.out.println("The email was not sent.");
-            System.out.println("Error message: " + ex.getMessage());
-        }
+        sendEmail(request);
     }
     
     public static String sendEmailWithBCC(String from, String to, String bbc, String subject, String body) {
@@ -116,7 +100,11 @@ public class SES extends AWS{
 
         SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
         
-        try {
+        return sendEmail(request);
+    }
+    
+    public static String sendEmail(SendEmailRequest request) {
+    	try {
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
                 .withCredentials(getProvider())
                 .withRegion("eu-west-1")
@@ -130,6 +118,11 @@ public class SES extends AWS{
             System.out.println("Error message: " + ex.getMessage());
             return "Error message: " + ex.getMessage();
         }
+    }
+    
+    public static void sendEmailWithAttachment(String from, LinkedList<String> toList, String subject, String body, LinkedList<File> files) throws AddressException, MessagingException, IOException{	
+    	  String toStr =  String.join(",", toList.toArray(String[]::new));
+    	  sendEmailWithAttachment(from, toStr, subject, body, files);
     }
     
     public static void sendEmailWithAttachment(String from, String to, String subject, String body, LinkedList<File> files) throws AddressException, MessagingException, IOException{	
@@ -220,53 +213,10 @@ public class SES extends AWS{
         }
     }
     
-    public static void sendEmailWithAttachment(String from, LinkedList<String> toList, String subject, String body, LinkedList<File> files) throws AddressException, MessagingException, IOException{	
-    	Session session = Session.getDefaultInstance(new Properties());
-        
-        // Create a new MimeMessage object.
-        MimeMessage message = new MimeMessage(session);
     
-        String toStr =  String.join(",", toList.toArray(String[]::new));
-        // Add subject, from and to lines.
-        message.setSubject(subject, "UTF-8");
-        message.setFrom(new InternetAddress(from));
-        message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(toStr));
-        MimeMultipart msg_body = new MimeMultipart("alternative");
-        // Create a wrapper for the HTML and text parts.        
-        MimeBodyPart wrap = new MimeBodyPart();
-        
-        // Define the HTML part.
-        MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(body,"text/html; charset=UTF-8");
-                
-        // Add the text and HTML parts to the child container.
-//        msg_body.addBodyPart(textPart);
-        msg_body.addBodyPart(htmlPart);
-        
-        // Add the child container to the wrapper object.
-        wrap.setContent(msg_body);
-        
-        // Create a multipart/mixed parent container.
-        MimeMultipart msg = new MimeMultipart("mixed");
-        
-        // Add the parent container to the message.
-        message.setContent(msg);
-        
-        // Add the multipart/alternative part to the message.
-        msg.addBodyPart(wrap);
-        
-        for (File file : files) {
-        	// Define the attachment
-        	MimeBodyPart att = new MimeBodyPart(); 
-        	DataSource bds = new FileDataSource(file);
-        	att.setDataHandler(new DataHandler(bds)); 
-        	att.setFileName(bds.getName());             
-            // Add the attachment to the message.
-            msg.addBodyPart(att);
-		}
-
-        // Try to send the email.
-        try {
+    
+    public static void sendEmail(MimeMessage message) throws AddressException, MessagingException, IOException{	
+    	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
@@ -278,9 +228,8 @@ public class SES extends AWS{
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
             RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
-
-            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
             
+            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
             client.sendRawEmail(rawEmailRequest);
             System.out.println("Email sent!");
         // Display an error if something goes wrong.

@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
+import javax.mail.Address;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +30,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+
+import solutions.aon.aws.SES;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SendEmail", urlPatterns = { "/send_email/*" })
@@ -151,12 +156,25 @@ public class SendEmailServlet extends HttpServlet{
 
 		try {
 			AonMessage sentMessage = mc.compoundMessage(server);
-			server.sendMessage(sentMessage);
+
+			if(ma.isProtocolAon()) {
+	    		String from = ma.getDisplayName() + "<no-reply@aon.solutions>";
+	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
+	            message.setFrom(new InternetAddress(from));
+	            Address replyTo = new InternetAddress(ma.getEmail());
+	            Address[] addresses = {replyTo};
+	            message.setReplyTo(addresses);
+	            SES.sendEmail(message);
+	    	} else {
+	    		server.sendMessage(sentMessage);
+	    	}
 		} catch (WebmailException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -194,7 +212,7 @@ public class SendEmailServlet extends HttpServlet{
 		ma2.setSentFolder(ma.getSentFolder());
 		ma2.setSpamFolder(ma.getSpamFolder());
 		ma2.setTrashFolder(ma.getTrashFolder());
-		ma2.setType(MailAccountType.values()[ma.getType()]);
+		ma2.setType(MailAccountType.values()[ma.getType().value()]);
 		
 		return ma2;
 	}
