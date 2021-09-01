@@ -4889,6 +4889,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testCretaAdditionalHoursIT()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
