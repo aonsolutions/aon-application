@@ -137,7 +137,7 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 				new SalaryDraftBuilder(draft)).calculate(ctx);
 
 		Assert.assertEquals(1, draft.getBonuses().size());
-		draft.getBonuses().forEach(bonus->Assert.assertEquals("REDEFINED",bonus.getDescription()));
+		draft.getBonuses().forEach(bonus->Assert.assertEquals(true,bonus.getDescription().startsWith("REDEFINED")));
 	
 		draft.getBonuses().forEach(bonus-> {
 			Bonus continousBonusI = new Bonus();
