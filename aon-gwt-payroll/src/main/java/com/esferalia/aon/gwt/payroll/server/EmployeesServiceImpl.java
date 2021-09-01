@@ -5407,20 +5407,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public WorkplaceEmployees getWorkplaceEmployees(String domainName, Workplace workplace) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
+			
+			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
+			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
+			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(workplace, domainId, connection));
+			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(workplace, domainId, connection));
+			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
+			
+			return workplaceEmployees;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
