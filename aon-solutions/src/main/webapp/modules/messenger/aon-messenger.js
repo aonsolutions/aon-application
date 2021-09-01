@@ -5,9 +5,9 @@ import Apps from '../../services/app.js';
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
-import { MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
+import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskOne, getCauInfo } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount } from '../../services/taskService.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
@@ -53,7 +53,10 @@ export class AonMessenger extends AonElement {
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
 		
-		await getTaskHolder({reload:false}).then(task=>this.TASK_HOLDER = task);
+		await getTaskHolder({reload:false}).then(task=>{
+			this.TASK_HOLDER = task;
+			this.updateCount();
+		});
 
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
@@ -149,7 +152,6 @@ export class AonMessenger extends AonElement {
 		];
 		
 		this.applicationEl.addSidenavOptions(MSG.STATUS, messengerOpts);
-		this.updateStatusSidenavCount();
 	}
 
     groupNavBar() {
@@ -163,7 +165,7 @@ export class AonMessenger extends AonElement {
 
 	loadWorkgroup() {
 		let application = this.applicationEl;
-		getWorkgroups().then( workgroup => {
+		getWorkgroups({status:1}).then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  workgroup.forEach((item, i) => {
@@ -187,11 +189,21 @@ export class AonMessenger extends AonElement {
 	}
 
 
-	updateStatusSidenavCount(){
+	updateCount(){
 		let application = this.applicationEl;
 		let filter = {};
 		if(this._filter.source) filter.source = this._filter.source;
 		
+		if(this.TASK_HOLDER && this.TASK_HOLDER.id){
+			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
+				let sender =  count.sender || 0;
+				let task_holder =  count.task_holder || 0;
+				application.updateSidenavCount("Todas", (sender + task_holder) );
+				application.updateSidenavCount("Enviadas", sender);
+				application.updateSidenavCount("Recibidas", task_holder);
+			});
+		}
+
 		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];
 			let archiveCount = resp[TASK_STATUS.DELETED];
@@ -210,7 +222,8 @@ export class AonMessenger extends AonElement {
 			let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
 			application.updateSidenavCount(listTrash.id, archiveCount);
 		});
-	
+		
+
 	}
 
 	showView(view, data = undefined, filter = undefined){

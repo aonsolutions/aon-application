@@ -694,6 +694,22 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+//	public static HashMap<String, Integer> getTaskCountSchemas(AonToken aonToken, TaskFilter filter) {
+//		List<String> schemas = AONContext.getSchemas();
+//		Integer total = 0;
+//		for(String schema: schemas) {
+//			String domain = AONContext.getSchemaFirstDomain(schema);
+//			if(!AonStringUtils.isBlank(domain)) {
+//				try(AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+//					 TaskHolder taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
+//					 if(taskHolder!=null) {
+//						 getTask2().getTaskCount(ctx, filter, taskHolder.getId());
+//					 }
+//				} 
+//			}
+//		}
+//	}
+	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter);

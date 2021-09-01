@@ -399,7 +399,6 @@ export class AonDesktop extends AonElement {
 				application.updateSidenavCount("Tareas", count.task_holder);
 			});
 		});
-
 		
 	}
 

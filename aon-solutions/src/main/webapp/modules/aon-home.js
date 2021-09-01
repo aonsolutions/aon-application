@@ -81,7 +81,6 @@ export class AonHome extends AonElement {
 
 	buildMobile() {
 		let aonMobileHeader = new AonNewMobileHeader();
-		// let aonMobileHeader = new AonMobileHeader();
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
 

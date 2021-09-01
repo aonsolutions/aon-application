@@ -330,6 +330,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	private void getAgreements(AonApiData api) {
+//		AON_SOLUTIONS.getA
+	}
+	
 	private void updateGrupCtz(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, Map<String, Object> map, List<String> errors){
 		JSONObject data = api.getData();

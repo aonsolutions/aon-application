@@ -1,6 +1,9 @@
 let tasks = [];
 let index = 0;
+
 export const getTasks = () => tasks;
+
+export const setTasks = (data) => tasks = data;
 
 export const addTasks = (data) => {
     if(tasks.length) 
@@ -21,9 +24,11 @@ export const getPreviousTask = () =>{
 
 export const getNextTask =() =>{
     if(index == tasks.length - 1)
-      index = 0
+      index = 0;
     else 
       index++;
+
+    console.log(tasks.length,tasks[index]);
     return tasks[index];
 }
 

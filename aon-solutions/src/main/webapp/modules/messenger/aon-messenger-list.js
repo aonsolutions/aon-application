@@ -10,7 +10,7 @@ import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { ICON_TYPES, MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
-import { addTasks, setIndexTask } from "./TaskCache.js";
+import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -85,6 +85,7 @@ export class AonMessengerList extends AonElement {
       // aonTable.addColumn("  ", "icon", "icon", "2%");
       aonTable.addColumn("", "string", "lettersHtml", "2%");
       aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
+      aonTable.addColumn(MSG.TYPE, "string", "type", "5%");
       aonTable.addColumn(MSG.TITLE, "string", "newTitle", "30%");
       aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
@@ -94,6 +95,8 @@ export class AonMessengerList extends AonElement {
         if(this.MORE) this.loadMore(); 
       }
     });
+
+    setTasks([]);
 
     this.loadMore();
   
@@ -190,9 +193,11 @@ export class AonMessengerList extends AonElement {
       else {
         data = tasks.map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
+          let type = task.source ? MSG[task.source.toString().toUpperCase()]: "";
           return {
             ...task,
             date:task.start_date,
+            type,
             newNumber
           };
         });
@@ -222,7 +227,7 @@ export class AonMessengerList extends AonElement {
 
     if(this.dur.hasCallCenter()){
       options.push({
-        name: "CAU",
+        name: MSG.CAU,
         icon: MATERIAL_ICONS.SUPPORT_AGENT,
         fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
       });

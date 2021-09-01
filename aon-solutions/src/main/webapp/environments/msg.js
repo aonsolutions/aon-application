@@ -100,6 +100,7 @@ export const CREDITORS = MSG.CREDITORS;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CLOSE = "Cerrar";// TODO
+export const CAU = "Cau";// TODO
 
 // ----- D
 

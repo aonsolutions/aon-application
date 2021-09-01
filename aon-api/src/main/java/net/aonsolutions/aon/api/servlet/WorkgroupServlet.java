@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
-
+import com.esferalia.aon.occam.api.model.Filter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -74,9 +75,8 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	private Object getWorkgroups(AonApiData api) {
 		Domain domain = api.getDomain();
 		return WorkgroupJSON.toJSON(AON.getWorkgroupStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-				f->f.getDomainProperty().eq(domain.getId())));
+				f->WorkgroupFilter(api,f) ));
 	}
-
 	
 	private JSONObject saveWorkgroup(AonApiData api) {
 		Domain domain = api.getDomain();
@@ -94,6 +94,16 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		AON.deleteWorkgroup(domain.getName(), domain.getId(), api.getUser().getLogin(), 
 				api.getData().optInt(IJsonNames.ID));
 		return new JSONObject();
+	}
+	
+	private Filter WorkgroupFilter(AonApiData api, WorkgroupProperties f) {
+		Domain domain = api.getDomain();
+		String status  = api.getParams().optString("status");
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		if(!status.isEmpty()) 
+			filter = filter.and(f.getStatusProperty().eq((byte) api.getParams().optInt("status")));
+
+		return filter;
 	}
 	
 }

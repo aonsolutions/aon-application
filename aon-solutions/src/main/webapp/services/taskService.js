@@ -24,6 +24,8 @@ export const getTaskStatusCount = (data) => isSigGet(data, "task/status/count");
 
 export const getTaskCount = (data) => isSigGet(data, "task/count");
 
+export const getTaskNotice = (data) => isSigGet(data, "task/notice");
+
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 
 

@@ -420,7 +420,7 @@ const jsonDiv = ()=> {
         whiteSpace: "pre-wrap"
     });
     const code = document.createElement("code");
-    code.style.color = "brown";
+    code.style.color = "brown";o
     pre.appendChild(code); 
     code.textContent = JSON.stringify(task.getDescriptionJson(), undefined, 2);
     return pre;
@@ -440,7 +440,11 @@ export const buildFormQuery = (div, aonMessengerChat) => {
     const application = aonMessengerChat.applicationEl;
     const applicationParent = aonMessengerChat.applicationParentEl;
 
-    const aonCard = createCardMessenger(MSG.DATA, "");
+    let registryName = "";
+    if(task.registry && task.registry.name)
+        registryName = `[${task.registry.name}]`;
+
+    const aonCard = createCardMessenger(MSG.DATA, registryName);
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
 

@@ -196,7 +196,7 @@ export class AonMessengerChat extends AonElement {
       }
       await saveTaskWorkflow({...this.task.getWorkflowTmp(), type});
       await this.save();
-      this.applicationParentEl.updateStatusSidenavCount();
+      this.applicationParentEl.updateCount();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
   }
@@ -276,6 +276,7 @@ export class AonMessengerChat extends AonElement {
       try {
         await deleteTask({taskId:this.task.id});
         this.showToast({message:MSG.DELETED_DATA});
+        this.applicationParentEl.updateCount();
         this.back();
       } catch (error) {
         this.showError(error);
