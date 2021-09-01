@@ -31,7 +31,9 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.aws.SES;
@@ -93,7 +95,7 @@ public class JooqMail {
 			mailAccount.setDisplayName(r.get(MAIL_ACCOUNT.DISPLAY_NAME));
 			mailAccount.setSignatureId(r.get(MAIL_ACCOUNT.SIGNATURE));
 			mailAccount.setUserId(r.get(MAIL_ACCOUNT.USER_ID));
-			mailAccount.setType(r.get(MAIL_ACCOUNT.TYPE));
+			mailAccount.setType(MailAccountType.safeValueOf(r.get(MAIL_ACCOUNT.TYPE)));
 			
 			mailAccounts.add(mailAccount);
 		}
