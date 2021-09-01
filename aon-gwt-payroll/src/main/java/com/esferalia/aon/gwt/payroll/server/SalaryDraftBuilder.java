@@ -1651,35 +1651,41 @@ public class SalaryDraftBuilder
 	}
 
 	private static String getDescription(Deduction deduction, String def) {
+		if ( deduction.getName() != null ) {
 		
-		switch (deduction.getName()) {
-		case "ECSS_E" :
-			return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
-		case "ATEP_E" :
-			return "Accidentes de Trabajo y Enfermedades Profesionales";
-		case "IT_E" :
-			return "Accidentes de Trabajo y Enfermedades Profesionales IT";
-		case "IMS_E" :
-			return "Accidentes de Trabajo y Enfermedades Profesionales IMS";
-		case "FOGASA_E" :
-			return "Fondo de Garant\u00eda Salarial ( FOGASA )";
-		case "CGC_E_TEMP" :
-			return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
-		default:
-			;
+			switch (deduction.getName()) {
+			case "ECSS_E" :
+				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
+			case "ATEP_E" :
+				return "Accidentes de Trabajo y Enfermedades Profesionales";
+			case "IT_E" :
+				return "Accidentes de Trabajo y Enfermedades Profesionales IT";
+			case "IMS_E" :
+				return "Accidentes de Trabajo y Enfermedades Profesionales IMS";
+			case "FOGASA_E" :
+				return "Fondo de Garant\u00eda Salarial ( FOGASA )";
+			case "CGC_E_TEMP" :
+				return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
+			default:
+				;
+			}
+
 		}
 
-		switch (deduction.getType()) {
-		case IRPF:
-		case COMMON_CONTINGENCY:
-		case PROFESSIONAL_CONTINGENCY:
-		case UNEMPLOYMENT:
-		case JOB_TRAINING:
-		case STRUCTURAL_OVERTIME:
-		case NON_STRUCTURAL_OVERTIME:
-			return deduction.getType().getDescription();
-		default:
-			;
+		if ( deduction.getType() != null ) {
+		
+			switch (deduction.getType()) {
+			case IRPF:
+			case COMMON_CONTINGENCY:
+			case PROFESSIONAL_CONTINGENCY:
+			case UNEMPLOYMENT:
+			case JOB_TRAINING:
+			case STRUCTURAL_OVERTIME:
+			case NON_STRUCTURAL_OVERTIME:
+				return deduction.getType().getDescription();
+			default:
+				;
+			}
 		}
 		
 		return def;
