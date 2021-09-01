@@ -208,6 +208,7 @@ public class Bases {
 				
 				// from here MONTH_DAYS == 30, so  
 				boolean monthly = lastDayOfMonth != 30 
+						|| getQuoteGroup(salary, period) >= 8
 						|| getQuoteDays(salary, period) == 0
 						|| getCotizacionMensual(salary,period);
 				
@@ -272,6 +273,25 @@ public class Bases {
 			}
 
 			throw new NoSuchVariableException("COTIZACION_MENSUAL");
+		}
+		
+		protected int getQuoteGroup(Salary salary, Period p)
+				throws NoSuchVariableException {
+			List<ContextData> datas = salary.getContextData()
+					.get(QUOTE_GROUP.getName());
+			
+			if (datas == null)
+				return -1;
+
+			for (ContextData data : datas) {
+				Period intersect = p.intersect(
+						new Period(data.getStartDate(), data.getEndDate()));
+				if (intersect == null)
+					continue;
+				return Integer.parseInt(data.getExpression());
+			}
+
+			return -1;
 		}
 		
 		private double getContextVariable(Salary salary, ContextVariable contextVariable, Period p, DoubleSupplier def){

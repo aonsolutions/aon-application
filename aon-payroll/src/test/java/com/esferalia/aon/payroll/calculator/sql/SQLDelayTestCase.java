@@ -2234,7 +2234,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 						else if ( dayOfMonth == 22 )
 							org.junit.Assert.assertEquals( ( 5 * 0.15 + 5 * 0.60 ), (double) amount,  DELTA);
 						else if ( dayOfMonth == 29 )
-							org.junit.Assert.assertEquals( ( 3 * 0.25 + 3 * 0.75 ), (double) amount,  DELTA);
+							org.junit.Assert.assertEquals( ( 2 * 0.25 + 2 * 0.75 ), (double) amount,  DELTA);
 							
 					}
 				});
@@ -2248,7 +2248,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		 + 3 * 0.60 				// 08 - 10
 		 + 12 * 0.15  + 12 * 0.60	// 11 - 22 
 		 + 5 * 0.15 + 5 * 0.60 		// 23 - 27 
-		 + 3 * 0.25 + 3 * 0.75		// 28 - 31 
+		 + 2 * 0.25 + 2 * 0.75		// 28 - 31 
 		, delay.getTotalPayment(), DELTA);
 		
 		
