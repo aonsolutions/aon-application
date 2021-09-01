@@ -8,15 +8,15 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompositeDeduction extends Deduction {
+public class CompositeBonus extends Bonus {
 	
 	private static final String UNSET_DATE = new String(); 
 	private static final String UNSET_STRING = new String(); 
 	private static final Integer UNSET_INTEGER = new Integer(1); 
 	
-	private LinkedList<Deduction> childs;
+	private LinkedList<Bonus> childs;
 
-	public CompositeDeduction() {
+	public CompositeBonus() {
 		endDate = UNSET_DATE;
 		startDate = UNSET_DATE;
 		conceptId = UNSET_INTEGER;
@@ -24,14 +24,14 @@ public class CompositeDeduction extends Deduction {
 		description = UNSET_STRING;
 		descriptionTemplate = UNSET_STRING;
 		
-		childs = new LinkedList<Deduction>();
+		childs = new LinkedList<>();
 	}
 
-	public void addChild(Deduction child) {
+	public void addChild(Bonus child) {
 		childs.add(child);
 	}
 
-	public Collection<Deduction> getChilds() {
+	public Collection<Bonus> getChilds() {
 		return childs;
 	}
 	
@@ -40,7 +40,7 @@ public class CompositeDeduction extends Deduction {
 	@Override
 	public Double getAmount() {
 		Double totalAmount = null;
-		for (Deduction child : childs)
+		for (Bonus child : childs)
 			if (child.amount != null)
 				totalAmount = totalAmount == null ? child.amount : totalAmount
 						+ child.amount;
@@ -50,7 +50,7 @@ public class CompositeDeduction extends Deduction {
 	@Override
 	public Double getDbAmount() {
 		Double totalDbAmount = null;
-		for (Deduction child : childs)
+		for (Bonus child : childs)
 			if (child.dbAmount != null)
 				totalDbAmount = totalDbAmount == null ? child.dbAmount
 						: totalDbAmount + child.dbAmount;
@@ -61,7 +61,7 @@ public class CompositeDeduction extends Deduction {
 	@Override
 	public Date getEndDate() {
 		Date end = new Date(0); // January 1, 1970, 00:00:00
-		for (Deduction child : childs)
+		for (Bonus child : childs)
 			end = DateUtils.after(end, child.getEndDate());
 		return end;
 	}
@@ -69,7 +69,7 @@ public class CompositeDeduction extends Deduction {
 	@Override
 	public Date getStartDate() {
 		Date start = null;
-		for (Deduction child : childs)
+		for (Bonus child : childs)
 			start = DateUtils.before(start, child.getStartDate());
 		return start;
 	}

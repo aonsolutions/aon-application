@@ -1,34 +1,37 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.payroll.util.Utilities.formatDate;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.MissingResourceException;
 import java.util.stream.Stream;
 
-import javax.faces.el.PropertyNotFoundException;
-
 import org.mvel2.ast.FunctionInstance;
-import org.mvel2.ast.PrototypalFunctionInstance;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.BonusEvent;
+import com.esferalia.aon.gwt.payroll.shared.CompositeBonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -48,9 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
-import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -70,23 +71,18 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
-import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
-import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonUtils;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class SalaryDraftBuilder
 		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
@@ -154,6 +150,47 @@ public class SalaryDraftBuilder
 							.toString();
 		
 		return formatted;
+	}
+	
+	private static String formatItemDescription(Item<?> item, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd) {
+		
+		if ( item.getType() == Deduction.Type.IRPF )
+			return item.getDescription();
+
+		String description = formatItemDescription(item, draftStart, draftEnd);
+	
+		if ( AonUtils.equals(item.getStartDate(),draftStart)
+				&&  AonUtils.equals(item.getEndDate(),draftEnd) ) {
+			return description;
+		}
+		
+		for ( ContextVariable contextVar : new ContextVariable [] {
+				CGC_BASE, 
+				CGC_BASE_ENTERPRISE, 
+				CGP_BASE, 
+				CGP_BASE_ENTERPRISE,
+				ENTERPRISE_QUOTA,
+				EMPLOYEE_QUOTA,
+				IRPF_BASE, 
+				STRUCTURAL_OVERTIME_BASE, 
+				NON_STRUCTURAL_OVERTIME_BASE, } ) {
+			ITimedVariable<?> var = context.get(contextVar.getName());
+			if ( var == null )
+				continue;
+			Object value = var.getValue(var.getPeriod());
+			if ( value == null )
+				continue;
+			if ( !(value instanceof Number) )
+				continue;
+			
+			Number base = ( Number ) value;
+			return String.format("%s <span style='float:right;' title='%s' >%s</span>", 
+					description, 
+					getDescription(contextVar),
+					new java.text.DecimalFormat("#,##0.00;(#,##0.00)", DecimalFormatSymbols.getInstance(new Locale("es","ES"))).format(base));
+		}
+		
+		return description;
 	}
 
 	public void setDbSalary(com.esferalia.aon.payroll.Salary dbSalary) throws SalaryException {
@@ -247,12 +284,12 @@ public class SalaryDraftBuilder
 			dbDeductions.removeAll(dbCounterParts);
 		}
 
-		for (IDeduction dbPayment : dbDeductions) {
+		for (IDeduction dbDeduction : dbDeductions) {
 			Deduction deduction = new Deduction();
-			deduction.setName(dbPayment.getName());
-			deduction.setDbAmount(dbPayment.getAmount());
-			deduction.setExpression(dbPayment.getExpression());
-			deduction.setDescription(dbPayment.getDescription());
+			deduction.setName(dbDeduction.getName());
+			deduction.setDbAmount(dbDeduction.getAmount());
+			deduction.setExpression(dbDeduction.getExpression());
+			deduction.setDescription(dbDeduction.getDescription());
 			salaryDraft.addDeduction(deduction);
 		}
 
@@ -656,8 +693,18 @@ public class SalaryDraftBuilder
 		myBonus.setStartDate(startDate);
 		myBonus.setEndDate(endDate);
 
+		CompositeBonus compositeBonus = getBonus(myBonus.getId());
 
-		salaryDraft.addBonus(myBonus);
+		if (compositeBonus != null) {
+			compositeBonus.addChild(myBonus);
+			compositeBonus.setDescription(myBonus.getDescription());
+		}
+		else {
+			salaryDraft.addBonus(myBonus);
+		}
+		
+		myBonus.setDescription(formatItemDescription(myBonus, context, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		
 
 	}
 
@@ -692,15 +739,19 @@ public class SalaryDraftBuilder
 		draftCost.setAmount(amount);
 		draftCost.setEndDate(endDate);
 		draftCost.setStartDate(startDate);
-		draftCost.setDescription(description);
-		draftCost.setDescription(formatItemDescription(draftCost, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		draftCost.setDescription(getDescription(draftCost,cost.getDescription()));
 
 		CompositeDeduction compositeCost = getCost(contractCost.getId());
 
-		if (compositeCost != null)
+		if (compositeCost != null) {
 			compositeCost.addChild(draftCost);
-		else
+			compositeCost.setDescription(draftCost.getDescription());
+		}
+		else {
 			salaryDraft.addCost(draftCost);
+		}
+		
+		draftCost.setDescription(formatItemDescription(draftCost, context, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 	}
 
 	@Override
@@ -720,14 +771,18 @@ public class SalaryDraftBuilder
 		draftPayment.setEndDate(endDate);
 		
 
-		CompositePayment compositePayment = getPayment(draftPayment);
+		Payment siblingPayment = getPayment(draftPayment);
 		
 		// TODO: por que falla el type??
 		draftPayment.setType(getPaymentType(payment.getType()));
 
-		if (compositePayment != null) {
-			compositePayment.addChild(draftPayment);
-			compositePayment.setDescription(draftPayment.getDescription());
+		if (siblingPayment != null) {
+			if ( isNotZero(amount) 
+				|| isNotZero(quote)
+				|| isNotZero(tax) ) {
+				Payment compositePayment = newCompositePayment(siblingPayment, draftPayment);
+				replacePayment(siblingPayment, compositePayment);
+			}
 		}else {
 			salaryDraft.addPayment(draftPayment);
 		}
@@ -756,17 +811,19 @@ public class SalaryDraftBuilder
 		deduction.setAmount(amount);
 		deduction.setStartDate(start);
 		deduction.setEndDate(end);
-		deduction.setDescription(description);
+		deduction.setDescription(getDescription(deduction,description));
 		
-		deduction.setDescription(formatItemDescription(deduction, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
 
-		if (compositeDeduction != null)
+		if (compositeDeduction != null) {
 			compositeDeduction.addChild(deduction);
-		else
+			compositeDeduction.setDescription(deduction.getDescription());
+		} else {
 			salaryDraft.addDeduction(deduction);
-
+		}
+		
+		deduction.setDescription(formatItemDescription(deduction, context,salaryDraft.getStartDate(), salaryDraft.getEndDate()));
 	}
 
 	@Override
@@ -1278,29 +1335,55 @@ public class SalaryDraftBuilder
 		return bonus;
 	}
 
-	private CompositePayment getPayment(Payment p) {
+
+
+	private Payment getPayment(Payment p) {
 		List<Payment> payments = salaryDraft.getPayments();
 		for (int i = 0; i < payments.size(); i++) {
 			Payment payment = payments.get(i);
 			if (AonNumberUtils.equals(payment.getId(), p.getId())
 				|| areSame(payment, p)  ) {
-				if (payment instanceof CompositePayment)
-					return (CompositePayment) payment;
-
-				CompositePayment composite = new CompositePayment();
-				
-				composite.setConceptId(payment.getConceptId());
-				//composite.setDescription(payment.getDescription().replaceAll("", ""));
-				composite.setExpression(payment.getExpression());
-				composite.setIrpfExpression(payment.getIrpfExpression());
-				composite.setQuoteExpression(payment.getQuoteExpression());
-				composite.addChild(payment);
-				payments.set(i, composite);
-				return composite;
-
+				return payment;
 			}  
 		}   
 		return null;
+	}
+	
+	private Payment newCompositePayment(Payment payment, Payment childPayment) {
+		
+		CompositePayment composite;
+		if (payment instanceof CompositePayment) {
+			composite = (CompositePayment) payment;
+			composite.addChild(childPayment);
+			composite.setDescription(childPayment.getDescription());
+		} else if (isNotZero(payment)){
+			composite = newCompositePayment(payment);
+			composite.addChild(childPayment);
+			composite.setDescription(childPayment.getDescription());
+
+		} else {
+			return childPayment;
+		}
+		
+		return composite;		
+	}
+	
+	private CompositePayment newCompositePayment(Payment payment) {
+		CompositePayment	composite = new CompositePayment();
+		composite.addChild(payment);
+		composite.setConceptId(payment.getConceptId());
+		composite.setExpression(payment.getExpression());
+		composite.setIrpfExpression(payment.getIrpfExpression());
+		composite.setQuoteExpression(payment.getQuoteExpression());
+		composite.setDescription(payment.getDescription());
+		return composite;		
+	}
+
+	private void replacePayment(Payment payment, Payment compositePayment) {
+		if ( payment == compositePayment )
+			return;
+		int index = salaryDraft.getPayments().indexOf(payment);
+		salaryDraft.getPayments().set(index, compositePayment);
 	}
 
 	private CompositeDeduction getDeduction(Integer id) {
@@ -1314,6 +1397,7 @@ public class SalaryDraftBuilder
 				CompositeDeduction composite = new CompositeDeduction();
 				composite.addChild(deduction);
 				deductions.set(i, composite);
+				
 				return composite;
 
 			}
@@ -1338,6 +1422,24 @@ public class SalaryDraftBuilder
 		}
 		return null;
 	}
+	
+	private CompositeBonus getBonus(Integer id) {
+		List<Bonus> bonuses = salaryDraft.getBonuses();
+		for (int i = 0; i < bonuses.size(); i++) {
+			Bonus bonus = bonuses.get(i);
+			if (bonus.getId().equals(id)) {
+				if (bonus instanceof CompositeBonus)
+					return (CompositeBonus) bonus;
+
+				CompositeBonus composite = new CompositeBonus();
+				composite.addChild(bonus);
+				bonuses.set(i, composite);
+				return composite;
+
+			}
+		}
+		return null;
+	}	
 	// ------------------------------------------------------------------------
 
 	private Short getMonth(Month month) {
@@ -1540,5 +1642,65 @@ public class SalaryDraftBuilder
 		;
 	}
 	
+	private boolean isNotZero(Double amount) {
+		return AonNumberUtils.zeroIfNull(amount) != 0.00;
+	}
+	
+	private boolean isNotZero(Payment payment) {
+		return isNotZero(payment.getAmount()) || isNotZero(payment.getQuote()) || isNotZero(payment.getIrpf()) ;
+	}
+
+	private static String getDescription(Deduction deduction, String def) {
+		
+		switch (deduction.getName()) {
+		case "ECSS_E" :
+			return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
+		case "ATEP_E" :
+			return "Accidentes de Trabajo y Enfermedades Profesionales";
+		case "IT_E" :
+			return "Accidentes de Trabajo y Enfermedades Profesionales IT";
+		case "IMS_E" :
+			return "Accidentes de Trabajo y Enfermedades Profesionales IMS";
+		case "FOGASA_E" :
+			return "Fondo de Garant\u00eda Salarial ( FOGASA )";
+		case "CGC_E_TEMP" :
+			return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
+		default:
+			;
+		}
+
+		switch (deduction.getType()) {
+		case IRPF:
+		case COMMON_CONTINGENCY:
+		case PROFESSIONAL_CONTINGENCY:
+		case UNEMPLOYMENT:
+		case JOB_TRAINING:
+		case STRUCTURAL_OVERTIME:
+		case NON_STRUCTURAL_OVERTIME:
+			return deduction.getType().getDescription();
+		default:
+			;
+		}
+		
+		return def;
+	}
+	
+	private static String getDescription(ContextVariable var) {
+		switch (var) {
+		case CGC_BASE:
+		case CGC_BASE_ENTERPRISE:
+			return "Base de contingencias comunes";
+		case CGP_BASE:
+		case CGP_BASE_ENTERPRISE:
+			return "Base de Accidentes de Trabajo";
+		case ENTERPRISE_QUOTA:
+			return "Cuota empresarial";
+		case EMPLOYEE_QUOTA:
+			return "Cuota trabajador";
+		default:
+			return var.getName();
+		}
+	}
+
 
 }
