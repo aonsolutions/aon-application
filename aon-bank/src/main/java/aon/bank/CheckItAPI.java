@@ -12,6 +12,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import aon.bank.exceptions.BankException;
 import aon.bank.exceptions.CheckItException;
 
 public class CheckItAPI {
@@ -75,7 +76,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getBanks(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "bancos", params);
@@ -90,7 +92,8 @@ public class CheckItAPI {
 	 *                 Token que identifica el despacho
 	 *                 </p>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getBanks(String claveApi) throws CheckItException {
 		JSONObject params = new JSONObject();
@@ -113,7 +116,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getLogins(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "bancos/logins", params);
@@ -128,7 +132,8 @@ public class CheckItAPI {
 	 *                Campo único que identifica el banco. Se obtiene de /bancos
 	 *                </p>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getLogins(Integer bancoId) throws CheckItException {
 		JSONObject params = new JSONObject();
@@ -155,7 +160,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getLoginFields(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "bancos/logins/campos", params);
@@ -172,7 +178,8 @@ public class CheckItAPI {
 	 *                         Se obtiene de /bancos/logins
 	 *                         </p>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getLoginFields(Integer tipoLoginBancoId) throws CheckItException {
 		JSONObject params = new JSONObject();
@@ -208,7 +215,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONObject getCredentials(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "credenciales", params);
@@ -234,7 +242,8 @@ public class CheckItAPI {
 	 *                         banco. Se obtiene de /bancos/logins
 	 *                         </p>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONObject getCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId)
 			throws CheckItException {
@@ -289,7 +298,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONObject addCredentials(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "credenciales/add", params);
@@ -327,7 +337,8 @@ public class CheckItAPI {
 	 *                         Campo del login del tipo_login_banco_id
 	 *                         </p>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONObject addCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId, String userID,
 			String userPassword, String userPIN) throws CheckItException {
@@ -373,7 +384,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getAccounts(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "cuentas", params);
@@ -402,7 +414,8 @@ public class CheckItAPI {
 	 *                             buscara la cuenta por el Iban
 	 *                             </p>
 	 * @return JSONArray
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONArray getAccounts(String claveApi, Integer empresaId, Integer tipocuentaBancariaId, String iban)
 			throws CheckItException {
@@ -456,8 +469,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as String as
-	 *                   message
+	 * @throws CheckItException Exception exception containing the error JSON as
+	 *                          String as message
 	 */
 	public static JSONObject addAccount(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "cuentas/add", params);
@@ -496,8 +509,8 @@ public class CheckItAPI {
 	 *                             Si es cuenta corriente '1', si es tarjeta '2'
 	 *                             </p>
 	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as String as
-	 *                   message
+	 * @throws CheckItException Exception exception containing the error JSON as
+	 *                          String as message
 	 */
 	public static JSONObject addAccount(String claveApi, Integer empresaId, Integer bancoId, Integer tipoLoginBancoId,
 			String iban, Integer tipoCuentaBancariaId) throws CheckItException {
@@ -569,7 +582,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws CheckItException exception containing the error JSON as String as
+	 *                          message
 	 */
 	public static JSONObject addAccountApi(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "cuentas/add/api", params);
@@ -620,8 +634,8 @@ public class CheckItAPI {
 	 *                      La id del servicio (#Id tabla apiServicios)
 	 *                      </p>
 	 * @return JSONObject
-	 * @throws CheckItException Exception exception containing the error JSON as String as
-	 *                   message
+	 * @throws CheckItException Exception exception containing the error JSON as
+	 *                          String as message
 	 */
 	public static JSONObject addAccountApi(String claveApi, Integer empresaId, Integer bancoId, String iban,
 			Double saldo, Double disponible, Date fechaSaldo, String identificador, Integer apiServicioId)
@@ -695,9 +709,27 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws BankException
 	 */
-	public static JSONObject addEnterprise(JSONObject params) throws CheckItException {
+	public static JSONObject addEnterprise(JSONObject params) throws BankException {
+		String emailField = "email";
+		if (params.optString(emailField) == null || params.optString(emailField).isEmpty()) {
+			if (params.optString("url") == null || params.optString("url").isEmpty()) {
+				throw new BankException(
+						"If email is null, the domain must be sent as <<url>> parameter in order to create a fake one");
+			} else {
+				String domain = params.optString("url");
+				String emailDomain = domain.lastIndexOf('-') != -1 ? domain.substring(domain.lastIndexOf('-') + 1)
+						: domain;
+				String emailUser = domain.lastIndexOf('-') != -1 ? domain.substring(0, domain.lastIndexOf('-'))
+						: "checkit";
+
+				String email = emailUser + "@" + emailDomain;
+				params.put(emailField, email);
+				
+			}
+		}
+
 		Object json = post(API_URL + "empresas/add", params);
 		return parseJSONObject(json);
 	}
@@ -744,10 +776,10 @@ public class CheckItAPI {
 	 *                    Direccion de la empresa
 	 *                    </p>
 	 * @return JSONObject
-	 * @throws CheckItException exception containing the error JSON as String as message
+	 * @throws BankException 
 	 */
 	public static JSONObject addEnterprise(String claveApi, String nombre, String cif, String email, String nombrecorto,
-			String url, String telefono, String direccion) throws CheckItException {
+			String url, String telefono, String direccion) throws BankException {
 		JSONObject params = new JSONObject();
 		params.put("claveApi", claveApi);
 		params.put("nombre", nombre);
@@ -795,8 +827,8 @@ public class CheckItAPI {
 	 *               </li>
 	 *               </ul>
 	 * @return JSONArray
-	 * @throws CheckItException Exception exception containing the error JSON as String as
-	 *                   message
+	 * @throws CheckItException Exception exception containing the error JSON as
+	 *                          String as message
 	 */
 	public static JSONArray getTransactions(JSONObject params) throws CheckItException {
 		Object json = post(API_URL + "movimientos", params);
@@ -828,8 +860,8 @@ public class CheckItAPI {
 	 *                         Id de la cuenta bancaria. Se obtiene de /cuentas
 	 *                         </p>
 	 * @return JSONArray
-	 * @throws CheckItException Exception exception containing the error JSON as String as
-	 *                   message
+	 * @throws CheckItException Exception exception containing the error JSON as
+	 *                          String as message
 	 */
 	public static JSONArray getTransactions(String claveApi, Integer empresaId, Date fechaDesde, Date fechaHasta,
 			String cuentaBancariaId) throws CheckItException {

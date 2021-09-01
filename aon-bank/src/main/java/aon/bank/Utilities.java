@@ -73,21 +73,21 @@ public class Utilities {
 		return rbank;	
 	}
 	
-	public static int getNextLotNumber(AONContext aonContext, RegistryBank rbank) {
+	public static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		Integer lot = (Integer) aonContext.getDslContext()
 		.select(DSL.max(BANK_STATEMENT.LOT_NUMBER).as("lot"))
 		.from(BANK_STATEMENT)
 		.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-		.and(BANK_STATEMENT.DOMAIN.eq(aonContext.getDomainId()))
+		.and(BANK_STATEMENT.DOMAIN.eq(domainId))
 		.fetchSingle().getValue("lot");
 		return lot != null ? lot + 1 : 1;
 	}
 	
-	public static Date getLastOperationDate(AONContext aonContext, RegistryBank rbank) {
+	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
 		.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
 		.from(BANK_STATEMENT)
-		.where(BANK_STATEMENT.DOMAIN.eq(aonContext.getDomainId()))
+		.where(BANK_STATEMENT.DOMAIN.eq(domainId))
 		.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
 		.fetchSingle().get("date");
 		if (date == null)

@@ -98,11 +98,29 @@ public class CheckItTestCase {
 		}
 	}
 	
-	@Ignore
+	@Ignore //Ignored because it inserts fake data
 	@Test
 	public void testAddEnterprise() {
 		try {
 			System.out.println(CheckItAPI.addEnterprise(API_KEY, "TRANSLOGIA DEVELOPMENT, S.L.", "B66941873", "jgarcia@translogia.es", "TRANSLOGIA DEVELOPMENT", null, null, null));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	@Ignore //Ignored because it inserts fake data
+	@Test
+	public void testAddEnterpriseNoMail() {
+		try {
+			System.out.println(CheckItAPI.addEnterprise(API_KEY, "Empresa HIJA", "B66600000", null, "Empresa HIJA", "empresa-parent.aonSolutions.net", null, null));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	@Ignore //Ignored because it inserts fake data
+	@Test
+	public void testAddEnterpriseNoMailParent() {
+		try {
+			System.out.println(CheckItAPI.addEnterprise(API_KEY, "Empresa MADRE", "B66600666", null, "Empresa MADRE", "empresa.aonSolutions.net", null, null));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
