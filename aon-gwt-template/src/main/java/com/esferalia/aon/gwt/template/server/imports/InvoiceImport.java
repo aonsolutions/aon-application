@@ -839,7 +839,7 @@ public class InvoiceImport {
 					vat.setSurchargeQuota(0.0);
 				}
 				ai.addVat(vat);
-				total = total + (invoice.mustApplyISP() ? aux.getBase() : aux.getTotal());
+				total = total + (invoice.isIsp() ? aux.getBase() : aux.getTotal());
 				base = base + aux.getBase();
 				checkCuotas(domain, aux);
 			}
