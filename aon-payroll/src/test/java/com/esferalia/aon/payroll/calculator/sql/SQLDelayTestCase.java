@@ -2072,7 +2072,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testCommonDiseaseITAndGtzdos() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
