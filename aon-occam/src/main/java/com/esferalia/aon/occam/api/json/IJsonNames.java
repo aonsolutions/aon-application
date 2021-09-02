@@ -289,6 +289,7 @@ public interface IJsonNames {
 	String TECHNICAL = "technical";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
+	String TO = "to";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";
 	String TOTAL = "total";

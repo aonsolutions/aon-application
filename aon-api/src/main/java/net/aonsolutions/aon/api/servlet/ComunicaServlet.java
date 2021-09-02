@@ -30,7 +30,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.object.Employee;

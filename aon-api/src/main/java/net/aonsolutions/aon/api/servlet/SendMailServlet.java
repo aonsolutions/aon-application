@@ -30,11 +30,11 @@ import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @WebServlet(name = "SendMailServlet-API", urlPatterns =	{	"/ms/api/send_mail/*",
 															"/aon_gwt_aio/ms/api/send_mail/*"})
@@ -64,7 +64,6 @@ public class SendMailServlet extends HttpServlet{
 		//Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
 		
 		JSONObject json = Utils.getRequestJSON(req);
-		String from = "no-reply@aon.solutions"; //auth.getEmail();
 		String to = json.getString("to");
 		String body = json.opt("body") != null ? json.optString("body") : "";
 		String subject = "";
@@ -80,8 +79,13 @@ public class SendMailServlet extends HttpServlet{
 				body = documentContent(domain, user.getLogin(), json.getJSONArray("documents"));				
 			}
 		}
+	
+		SESMessage msg = new SESMessage()
+				.setTo(to)
+				.setSubject(subject)
+				.setBody(body);
 		
-		String m = SES.sendEmail(from, to, subject, body);
+		String m = SES.sendEmail(msg);
 		JSONObject j = new JSONObject();
 		j.put("message", m);
 		Utils.addCorsHeader(resp);

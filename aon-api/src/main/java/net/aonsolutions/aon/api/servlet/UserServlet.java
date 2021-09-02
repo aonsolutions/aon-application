@@ -47,7 +47,8 @@ import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonUserServlet", urlPatterns = {"/ms/api/user/*"})
@@ -748,11 +749,11 @@ public class UserServlet extends AonApiHttpServlet {
 	}	
 	
 	private void sendAuthCreateInfoMail(String email, String password) {
-		String from = "no-reply@aon.solutions"; //auth.getEmail();
-		String to = email;
-		String body = authCreateInfoContent(email, password);
-		String subject = "NUEVO USUARIO | AON SOLUTIONS"; 
-		SES.sendEmail(from, to, subject, body);
+		SESMessage msg = new SESMessage()
+				.setTo(email)
+				.setBody(authCreateInfoContent(email, password))
+				.setSubject("NUEVO USUARIO | AON SOLUTIONS");
+		SES.sendEmail(msg);
 	}
 	
 	private JSONObject sendAuthInfoMail(AonApiData api) {

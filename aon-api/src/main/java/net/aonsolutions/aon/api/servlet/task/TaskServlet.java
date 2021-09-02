@@ -44,7 +44,7 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "TaskServlet", urlPatterns = {"/ms/api/task/*"})

@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "SendEmail", urlPatterns = { "/send_email/*" })

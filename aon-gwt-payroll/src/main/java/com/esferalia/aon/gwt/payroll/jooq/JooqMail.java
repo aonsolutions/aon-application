@@ -31,12 +31,12 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 public class JooqMail {
 
@@ -476,9 +476,11 @@ public class JooqMail {
 	// ---------------------------------------------- ServiAgreements mailing
 
 	public static void sendAgreementLogMail(String body) {
-//		SES.sendEmailWithBCC("no-reply@aon.solutions", "svaldepenas@aonsolutions.es", "s.valdepenas@gmail.com", "ServiConvenios Logs", body);
-		SES.sendEmail("no-reply@aon.solutions", "svaldepenas@aonsolutions.es", "ServiConvenios Logs", body);
-		
+		SESMessage msg = new SESMessage()
+				.setTo("svaldepenas@aonsolutions.es")
+				.setSubject("ServiConvenios Logs")
+				.setBody(body);
+		SES.sendEmail(msg);
 	}
 
 }

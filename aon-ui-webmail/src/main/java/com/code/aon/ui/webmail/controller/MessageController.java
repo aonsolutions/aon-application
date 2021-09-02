@@ -69,7 +69,7 @@ import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
-import solutions.aon.aws.SES;
+import solutions.aon.aws.ses.SES;
 
 public class MessageController implements IWebMailConstants, Serializable {
 	
