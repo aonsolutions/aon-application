@@ -91,12 +91,7 @@ public class OfferServlet extends HttpServlet{
 				
 				Target tar = new Target();
 				tar.setDomain(domain);
-				tar.setAdvertising((short) 0);
-				tar.setWithholding((short) 0);
-				tar.setTransaction((short) 0);
-				tar.setSurcharge((short) 0);	
-				tar.setScope(scope.getId());
-				tar.setStatus(TargetStatus.ACTIVE);
+				tar.setScope(scope);
 				tar.setId(registry.getId());
 					
 				target = AON.insertTarget(domain.getName(), domain.getId(), "", tar);

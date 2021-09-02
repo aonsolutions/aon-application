@@ -3838,12 +3838,8 @@ public class AON {
 	// ------------------ TARGET 
 	
 	public static Stream<Target> getTargetStream(String domainName, Integer domainId, String login, TargetFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getTargetStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	

@@ -23,10 +23,14 @@ public class TariffDAO {
 	
 	private static final TariffPropertiesDAO TARIFF_PROPERTIES = new TariffPropertiesDAO();
 
-	private static class TariffFiller  implements Function<Record, Tariff> {
+	public static class TariffFiller extends Filler implements Function<Record, Tariff> {
 
 		@Override
 		public Tariff apply(Record r) {
+			return build(r);
+		}
+		
+		public static Tariff build(Record r) {
 			return new Tariff()
 				.setId(r.getValue(TARIFF.ID))
 				.setDomain(r.getValue(TARIFF.DOMAIN))
@@ -34,8 +38,7 @@ public class TariffDAO {
 				.setName(r.getValue(TARIFF.NAME))
 				.setPurchase(r.getValue(TARIFF.PURCHASE)==1)
 				.setDiscount(r.getValue(TARIFF.DISCOUNT))
-				.setActive(r.getValue(TARIFF.ACTIVE)==1)
-				;
+				.setActive(r.getValue(TARIFF.ACTIVE)==1);
 		}
 	}
 	

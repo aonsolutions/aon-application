@@ -449,14 +449,10 @@ public class RegistryImport extends Import {
 				}
 				Optional<Target> target = AON.getTarget(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(registryId));
 				if(target.isEmpty()) {
-					Target t = new Target().setRegistryData(reg)
-							.setScope(s.getId());
-					t.setScope(s.getId());
-					AON.insertTarget(domain.getName(), domain.getId(), user.getLogin(), 
-							new Target()
-								.setRegistryData(reg)
-								.setScope(s.getId())
-							);
+					Target t = new Target()
+						.copy(reg)
+						.setScope(s);
+					AON.insertTarget(domain.getName(), domain.getId(), user.getLogin(), t);
 				}
 			}
 

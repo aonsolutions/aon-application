@@ -70,4 +70,8 @@ public class Tariff implements Serializable {
 		return this;
 	}
 
+	public Boolean isEmpty() {
+		return id == null && domain == null
+			&& code == null && name == null;
+	}
 }

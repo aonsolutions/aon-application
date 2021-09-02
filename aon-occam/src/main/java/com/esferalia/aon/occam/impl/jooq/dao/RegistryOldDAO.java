@@ -27,10 +27,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Target.TARGET;
-
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
-
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -67,9 +64,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
-import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
-import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
@@ -94,7 +89,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
-import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -127,7 +121,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -921,25 +914,6 @@ public class RegistryOldDAO {
 					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
 					new Timestamp(new Date().getTime())).execute();
 		return supplier;
-	}
-	
-	// ------------------- TARGET
-
-	public static Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter){
-		return TARGET_PROPERTIES.build(ctx.getDslContext().select()
-					.from(TARGET).join(SCOPE).on(TARGET.SCOPE.eq(SCOPE.ID))
-					.join(REGISTRY).on(REGISTRY.ID.eq(TARGET.REGISTRY))
-			,filter).fetch().stream().map(new TargetFiller());
-	}
-	
-	public static Target insertTarget(AONContext ctx, Target target){
-		ctx.getDslContext().insertInto(TARGET, TARGET.ADVERTISING, TARGET.DOMAIN, TARGET.REGISTRY, TARGET.SCOPE,
-				TARGET.STATUS, TARGET.SURCHARGE, TARGET.TARIFF, TARGET.TRANSACTION, TARGET.WITHHOLDING,
-				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
-			.values(target.getAdvertising().byteValue(), target.getDomain().getId(), target.getId(), target.getScope(), target.getStatus().value(),
-					target.getSurcharge().byteValue(), target.getTariff(),target.getTransaction().byteValue(), target.getWithholding().byteValue(),
-					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
-		return target;
 	}
 	
 	// ------------------- PERSON

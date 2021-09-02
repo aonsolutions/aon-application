@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -363,8 +362,6 @@ public class ProjectDAO {
 		}
 	}
 	
-	
-
 	public static void fixProjectCommercial(AONContext ctx) {
 		ctx.getDslContext().select(PROJECT_COMMERCIAL.PROJECT, REGISTRY.DOCUMENT)
 		.from(PROJECT_COMMERCIAL).join(REGISTRY).on(PROJECT_COMMERCIAL.TARGET.eq(REGISTRY.ID))
@@ -372,11 +369,12 @@ public class ProjectDAO {
 		.and(PROJECT_COMMERCIAL.DOMAIN.ne(REGISTRY.DOMAIN))
 		.fetch().stream().map(new FixProjectCommercialFiller())
 		.forEach(r -> {
-			Optional<Target> target = RegistryOldDAO.getTargetStream(ctx, f-> f.getDomainProperty().eq(ctx.getDomainId())
-					.and(f.getDocumentProperty().eq(r.getDocument()))).findFirst();
-			if(target.isPresent()) {
-				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.get().getId()).where(PROJECT.ID.eq(r.getProject())).execute();
-				ctx.getDslContext().update(PROJECT_COMMERCIAL).set(PROJECT_COMMERCIAL.TARGET, target.get().getId()).where(PROJECT_COMMERCIAL.PROJECT.eq(r.getProject())).execute();
+			Target target = TargetDAO.get(ctx,  f-> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getDocumentProperty().eq(r.getDocument())));
+			
+			if(target.isEmpty()) {
+				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.getId()).where(PROJECT.ID.eq(r.getProject())).execute();
+				ctx.getDslContext().update(PROJECT_COMMERCIAL).set(PROJECT_COMMERCIAL.TARGET, target.getId()).where(PROJECT_COMMERCIAL.PROJECT.eq(r.getProject())).execute();
 			}
 		});
 	}

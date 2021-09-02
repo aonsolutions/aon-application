@@ -3,6 +3,10 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Advertising;
+import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
 public class Target extends Registry implements Serializable{
@@ -11,14 +15,15 @@ public class Target extends Registry implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private Integer tariff;
-	private Short advertising;
-	private Short surcharge;
-	private Short withholding;
-	private Short transaction;
+
+	private Integer registry;
+	private Tariff tariff;
+	private Advertising advertising;
+	private Boolean surcharge;
+	private Boolean withholding;
+	private InvoiceTransactionType transaction;
 	private TargetStatus status;
-	private Integer scope;
+	private Scope scope;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -27,109 +32,135 @@ public class Target extends Registry implements Serializable{
 
 	
 	public Target() {
-		setAdvertising((short) 0);
-		setSurcharge((short) 0);
-		setWithholding((short) 0);
-		setTransaction((short) 0);
+		setAdvertising(Advertising.ALLOWED);
+		setSurcharge(false);
+		setWithholding(false);
+		setTransaction(InvoiceTransactionType.NATIONAL);
 		setStatus(TargetStatus.ACTIVE);
-	}
-	
-	public Target setRegistryData(Registry registry) {
-		this.setId(registry.getId());
-		this.setDomain(registry.getDomain());
-		this.setDocument(registry.getDocument());
-		this.setDocumentType(registry.getDocumentType());
-		this.setDocumentCountry(registry.getDocumentCountry());
-		this.setName(registry.getName());
-		this.setAlias(registry.getAlias());
-		this.setLegalPerson(registry.isLegalPerson());
-		this.setNationality(registry.getNationality());
-		this.setSecurityLevel(registry.getSecurityLevel());
-		return this;
 	}
 	
 	public Target copy(Registry registry) {
 		return super.copy( registry, this);
 	}
 
+	public Integer getRegistry() {
+		return registry;
+	}
+	
+	public Target setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
+	
 	public Target setId(Integer id) {
 		super.setId(id);
 		return this;
 	}
 
-	public Integer getTariff() {
+	public Tariff getTariff() {
+		if(tariff == null) 
+			tariff = new Tariff();
 		return tariff;
 	}
-	public Target setTariff(Integer tariff) {
+	
+	public Target setTariff(Tariff tariff) {
 		this.tariff = tariff;
 		return this;
 	}
-	public Short getAdvertising() {
+	
+	public Advertising getAdvertising() {
 		return advertising;
 	}
-	public Target setAdvertising(Short advertising) {
+	
+	public Target setAdvertising(Advertising advertising) {
 		this.advertising = advertising;
 		return this;
 	}
-	public Short getSurcharge() {
+	
+	public Boolean isSurcharge() {
 		return surcharge;
 	}
-	public Target setSurcharge(Short surcharge) {
+	
+	public Boolean getSurcharge() {
+		return surcharge;
+	}
+	
+	public Target setSurcharge(Boolean surcharge) {
 		this.surcharge = surcharge;
 		return this;
 	}
-	public Short getWithholding() {
+	
+	public Boolean isWithholding() {
 		return withholding;
 	}
-	public Target setWithholding(Short withholding) {
+	
+	public Boolean getWithholding() {
+		return withholding;
+	}
+	
+	public Target setWithholding(Boolean withholding) {
 		this.withholding = withholding;
 		return this;
 	}
-	public Short getTransaction() {
+	
+	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
-	public Target setTransaction(Short transaction) {
+	
+	public Target setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 		return this;
 	}
+	
 	public TargetStatus getStatus() {
 		return status;
 	}
+	
 	public Target setStatus(TargetStatus status) {
 		this.status = status;
 		return this;
 	}
-	public Integer getScope() {
+	
+	public Scope getScope() {
 		return scope;
 	}
-	public Target setScope(Integer scope) {
+	
+	public Target setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}
+	
 	public Target setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
 		return this;
 	}
+	
 	public Date getCreationDate() {
 		return creationDate;
 	}
+	
 	public Target setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 		return this;
 	}
+	
 	public String getModificationUser() {
 		return modificationUser;
 	}
+	
 	public Target setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
 		return this;
 	}
+	
 	public Date getModificationDate() {
 		return modificationDate;
 	}
+	
 	public Target setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
