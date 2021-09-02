@@ -141,12 +141,13 @@ public class StatDAO {
 				.setType(StatFilterType.WORKPLACE));
 		}
 		
-		RegistryOldDAO.getSellers(ctx).forEach(
-				seller -> params.getFilterItems().add(new StatFilterItem()
-							.setId(seller.getId())
-							.setLabel(seller.getName())
-							.setType(StatFilterType.SELLER))
-						);
+		SellerDAO.getStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()))
+			.sorted((a, b) -> a.getName().compareTo(b.getName()))
+			.forEach(seller -> 
+				params.getFilterItems().add(new StatFilterItem()
+					.setId(seller.getId())
+					.setLabel(seller.getName())
+					.setType(StatFilterType.SELLER)));
 		params.setFilterMap(new HashMap<String, String[]>());
 		return params;
 	}

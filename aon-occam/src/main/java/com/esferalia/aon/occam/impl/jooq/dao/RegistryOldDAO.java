@@ -807,6 +807,7 @@ public class RegistryOldDAO {
 	
 	// ------------------- SELLER
 	
+	@Deprecated
 	public static Stream<Seller> getSellers(AONContext ctx){
 		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
 				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
@@ -822,6 +823,7 @@ public class RegistryOldDAO {
 				.map(new FullSellerFiller());
 	}
 	
+	@Deprecated
 	private static class FullSellerFiller implements Function<Record, Seller> {
 		@Override
 		public Seller apply(Record r) {
