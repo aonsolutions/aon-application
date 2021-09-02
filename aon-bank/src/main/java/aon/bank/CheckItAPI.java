@@ -1,7 +1,15 @@
 package aon.bank;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -12,12 +20,27 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
+import com.esferalia.aon.occam.api.model.finance.CheckItParams;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.StatementConcept;
+import com.esferalia.aon.occam.api.model.type.StatementStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
+
 import aon.bank.exceptions.BankException;
 import aon.bank.exceptions.CheckItException;
 
-public class CheckItAPI {
+public class CheckItAPI implements IParamNames{
+	
+	private CheckItAPI() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	private static final String API_URL = "https://www.checkitbancario.com/openapi/";
+	public static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
+	public static final String CHECKIT_R1 = "CHECKIT";
+	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
 	private static Object post(String url, JSONObject params) {
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
@@ -37,12 +60,15 @@ public class CheckItAPI {
 					}
 				}
 			}
-		} catch (IOException e) {
+			return null;
+		} catch (IOException e) {			
+			return null;
 		}
-		return null;
 	}
 
 	private static JSONArray parseJSONArray(Object json) throws CheckItException {
+		if (json == null)
+			return null;
 		try {
 			return (JSONArray) json;
 		} catch (ClassCastException e) {
@@ -51,15 +77,19 @@ public class CheckItAPI {
 	}
 
 	private static JSONObject parseJSONObject(Object json) throws CheckItException {
+		if (json == null)
+			return null;
 		try {
 			JSONObject jsonObj = (JSONObject) json;
 			String result = jsonObj.optString("result");
 			if (result.isEmpty() || jsonObj.optString("result").equalsIgnoreCase("Success")) {
 				return jsonObj;
+			} else {				
+				throw new CheckItException(json.toString());
 			}
 		} catch (ClassCastException e) {
+			throw new CheckItException(json.toString());
 		}
-		throw new CheckItException(json.toString());
 
 	}
 
@@ -97,7 +127,7 @@ public class CheckItAPI {
 	 */
 	public static JSONArray getBanks(String claveApi) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
+		params.put(API_KEY_PARAM, claveApi);
 		return getBanks(params);
 	}
 
@@ -137,7 +167,7 @@ public class CheckItAPI {
 	 */
 	public static JSONArray getLogins(Integer bancoId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("banco_id", bancoId);
+		params.put(BANK_ID_PARAM, bancoId);
 		return getLogins(params);
 	}
 
@@ -183,7 +213,7 @@ public class CheckItAPI {
 	 */
 	public static JSONArray getLoginFields(Integer tipoLoginBancoId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("tipo_login_banco_id", tipoLoginBancoId);
+		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
 		return getLoginFields(params);
 	}
 
@@ -248,9 +278,9 @@ public class CheckItAPI {
 	public static JSONObject getCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("tipo_login_banco_id", tipoLoginBancoId);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
 		return getCredentials(params);
 	}
 
@@ -343,12 +373,12 @@ public class CheckItAPI {
 	public static JSONObject addCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId, String userID,
 			String userPassword, String userPIN) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("tipo_login_banco_id", tipoLoginBancoId);
-		params.put("userID", userID);
-		params.put("userPassword", userPassword);
-		params.put("userPIN", userPIN);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
+		params.put(USER_ID_PARAM, userID);
+		params.put(USER_PASSWORD_PARAM, userPassword);
+		params.put(USER_PIN_PARAM, userPIN);
 		return addCredentials(params);
 	}
 
@@ -420,10 +450,10 @@ public class CheckItAPI {
 	public static JSONArray getAccounts(String claveApi, Integer empresaId, Integer tipocuentaBancariaId, String iban)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("tipo_cuenta_bancaria_id", tipocuentaBancariaId);
-		params.put("iban", iban);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(ACCOUNT_TYPE_ID_PARAM, tipocuentaBancariaId);
+		params.put(IBAN_PARAM, iban);
 		return getAccounts(params);
 	}
 //------------------------------------------------------------------------------------------
@@ -515,12 +545,12 @@ public class CheckItAPI {
 	public static JSONObject addAccount(String claveApi, Integer empresaId, Integer bancoId, Integer tipoLoginBancoId,
 			String iban, Integer tipoCuentaBancariaId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("banco_id", bancoId);
-		params.put("tipo_login_banco_id", tipoLoginBancoId);
-		params.put("iban", iban);
-		params.put("tipo_cuenta_bancaria_id", tipoCuentaBancariaId);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(BANK_ID_PARAM, bancoId);
+		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
+		params.put(IBAN_PARAM, iban);
+		params.put(ACCOUNT_TYPE_ID_PARAM, tipoCuentaBancariaId);
 		return addAccount(params);
 
 	}
@@ -641,15 +671,15 @@ public class CheckItAPI {
 			Double saldo, Double disponible, Date fechaSaldo, String identificador, Integer apiServicioId)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("banco_id", bancoId);
-		params.put("iban", iban);
-		params.put("saldo", saldo);
-		params.put("disponible", disponible);
-		params.put("fecha_saldo", fechaSaldo);
-		params.put("identificador", identificador);
-		params.put("api_servicio_id", apiServicioId);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(BANK_ID_PARAM, bancoId);
+		params.put(IBAN_PARAM, iban);
+		params.put(BALANCE_PARAM, saldo);
+		params.put(AVAILABLE_PARAM, disponible);
+		params.put(BALANCE_DATE_PARAM, fechaSaldo);
+		params.put(ID_PARAM, identificador);
+		params.put(SERVICE_API_ID_PARAM, apiServicioId);
 		return addAccountApi(params);
 	}
 
@@ -781,14 +811,14 @@ public class CheckItAPI {
 	public static JSONObject addEnterprise(String claveApi, String nombre, String cif, String email, String nombrecorto,
 			String url, String telefono, String direccion) throws BankException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("nombre", nombre);
-		params.put("cif", cif);
-		params.put("email", email);
-		params.put("nombrecorto", nombrecorto);
-		params.put("url", url);
-		params.put("telefono", telefono);
-		params.put("direccion", direccion);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(NAME_PARAM, nombre);
+		params.put(CIF_PARAM, cif);
+		params.put(EMAIL_PARAM, email);
+		params.put(SHORT_NAME_PARAM, nombrecorto);
+		params.put(URL_PARAM, url);
+		params.put(PHONE_PARAM, telefono);
+		params.put(ADDRESS_PARAM, direccion);
 		return addEnterprise(params);
 	}
 //------------------------------------------------------------------------------------------
@@ -866,12 +896,177 @@ public class CheckItAPI {
 	public static JSONArray getTransactions(String claveApi, Integer empresaId, Date fechaDesde, Date fechaHasta,
 			String cuentaBancariaId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put("claveApi", claveApi);
-		params.put("empresa_id", empresaId);
-		params.put("fecha_desde", Utilities.formatDateForTransactions(fechaDesde));
-		params.put("fecha_hasta", Utilities.formatDateForTransactions(fechaHasta));
-		params.put("cuenta_bancaria_id", cuentaBancariaId);
+		params.put(API_KEY_PARAM, claveApi);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put(DATE_FROM_PARAM, formatDateForTransactions(fechaDesde));
+		params.put(DATE_TO_PARAM, formatDateForTransactions(fechaHasta));
+		params.put(ACCOUNT_ID_PARAM, cuentaBancariaId);
 		return getTransactions(params);
 	}
 //------------------------------------------------------------------------------------------
+	
+	public static String getAccountIdByIBAN(String claveApi, Integer empresaId, String iban) throws CheckItException {
+		String errMsg = "The requested account could not be found";
+		JSONArray accountsJson = CheckItAPI.getAccounts(claveApi, empresaId, null, iban);
+		if (accountsJson == null) {
+			throw new CheckItException(errMsg);
+		}
+		JSONObject accountJson = accountsJson.optJSONObject(0);
+		if (accountJson == null)
+			throw new CheckItException(errMsg);
+
+		String accountId = accountJson.optString("id_cuentabancaria");
+		if (accountId == null || accountId.isEmpty())
+			throw new CheckItException(errMsg);
+		return accountId;
+	}
+	
+	public static List<BankStatement> getBankStatements(Integer empresaId, String accountId, Date lastOperationDate, Integer maximumId) throws BankException {
+		Date today = new Date();
+
+		JSONObject requestParams = new JSONObject();
+		
+		requestParams.put(API_KEY_PARAM, API_KEY);
+		requestParams.put(ENTERPRISE_ID_PARAM, empresaId);
+		requestParams.put(DATE_TO_PARAM, formatDateForTransactions(today)); // HOY
+		requestParams.put(ACCOUNT_ID_PARAM, accountId);
+		requestParams.put(DATE_FROM_PARAM, formatDateForTransactions(lastOperationDate)); // REQUEST PARAMS COMPLETED
+
+		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
+		
+		List<BankStatement> bankStatements = new LinkedList<>();
+		
+		for (int i = 0; i < transactionsArray.length(); i++) {
+
+			JSONObject transactionJson = transactionsArray.optJSONObject(i);
+
+			int movementId = transactionJson.optInt("id_movimiento");
+			
+			if (maximumId == null)
+				maximumId = 0;
+			
+			if (movementId > maximumId) {
+				java.sql.Date operationDate = toSqlDate(parseTZDate(transactionJson.optString("fecha_operacion")));
+
+				String description = transactionJson.optString("descripcion");
+
+				if (description != null)
+					description = description.length() > 80 ? description.substring(0, 80) : description;
+
+				Double amount = transactionJson.optDouble("importe");
+				amount = amount.isNaN() ? 0.00 : amount;
+
+				boolean bpayment = amount < 0;
+				
+				
+				BankStatement bankStatement = new BankStatement();
+				bankStatement.setOperationDate(operationDate);
+				bankStatement.setCommonConcept(StatementConcept.UNKNOWN);
+				bankStatement.setPayment(bpayment);
+				bankStatement.setAmount(Math.abs(amount));
+				bankStatement.setDescription(description);
+				bankStatement.setStatus(StatementStatus.PENDING);
+				bankStatement.setReference1(CHECKIT_R1);
+				bankStatement.setReference2(leadingZeros(movementId, 16));
+				
+				bankStatements.add(bankStatement);
+			}
+
+		}
+		bankStatements.sort((b1, b2) -> b1.getReference2().compareTo(b2.getReference2()));
+		return bankStatements;
+
+	}
+	
+	/**
+	 * Method which picks up bank transactions from CheckIt and records them into
+	 * the DB.
+	 * 
+	 * @param params CheckItParams object
+	 * @return The number of rows inserted into the DB
+	 * @throws BankException
+	 */
+	public static int insertTransactions(CheckItParams params)
+			throws BankException {
+		
+		
+		String domainName = params.getDomainName();
+		String user = params.getUser();
+		Integer domainId = params.getDomainId();
+
+		String iban = params.getIban();
+		Integer empresaId = params.getCheckitEmpresaId();
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
+			Map<String, java.sql.Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
+			Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
+			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(API_KEY, empresaId, iban), lastDate, movId);
+			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+			return CheckItDAO.insertStatements(aonContext, bankStatements);
+		}
+		
+	}
+	
+	/**
+	 * Method which picks up bank transactions from CheckIt and records them into
+	 * the DB.
+	 * 
+	 * @param domainName The <u>AON DB</u> domain name
+	 * @param user       The <u>AON DB</u> user name
+	 * @param empresaId  The <u>CheckIt</u> Enterprise ID
+	 * @param iban       The bank account number
+	 * @return The number of rows inserted into the DB
+	 * @throws BankException
+	 */
+	public static int insertTransactions(String domainName, Integer domainId, String user, Integer empresaId, String iban)
+			throws BankException {
+		CheckItParams params = new CheckItParams();
+		params.setDomainName(domainName);
+		params.setDomainId(domainId);
+		params.setUser(user);
+		params.setCheckitEmpresaId(empresaId);
+		params.setIban(iban);
+		
+		return insertTransactions(params);
+	}
+	
+	private static String formatDateForTransactions(Date date) {
+		try {
+			return DF.format(date);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private static Date parseTZDate(String dateStr) throws CheckItException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES"));
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			return format.parse(dateStr);
+		} catch (ParseException e) {
+			throw new CheckItException("Date could not be parsed: " + dateStr);
+		}
+	}
+	
+	private static java.sql.Date toSqlDate (Date date) {
+		if (date == null)
+			return null;
+		else
+			return new java.sql.Date(date.getTime());
+					
+	}
+	
+	private static String leadingZeros(Integer id, int fieldSize) {
+		if (id != null) {
+			StringBuilder sb = new StringBuilder(String.valueOf(id));
+			while (sb.length() < fieldSize) {
+				sb.insert(0, 0);
+			}
+			return sb.toString();
+		} else
+			return null;
+	}
+	
 }

@@ -15,7 +15,7 @@ public class CheckItJooqTestCase {
 	public void InsertTransactionsTest() {
 //		ES6830581804332720027870 -> de muestra en la BD
 		try {
-			int insertedRows = CheckItJooq.insertTransactions(
+			int insertedRows = CheckItAPI.insertTransactions(
 					"b72384936-ayudat.aonsolutions.net"
 					, 7138
 					, ""

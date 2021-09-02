@@ -78,7 +78,7 @@ public class CheckItTestCase {
 		}
 	}
 	
-	@Ignore //Ignored because it inserts a new account each time is called and they cannot be deleted for now
+	@Ignore("Ignored because it inserts a new account each time is called and they cannot be deleted for now")
 	@Test
 	public void testAddAccount() {
 		try {
@@ -88,7 +88,7 @@ public class CheckItTestCase {
 		}
 	}
 	
-	@Ignore //Ignored because it inserts a new account each time is called and they cannot be deleted for now
+	@Ignore("Ignored because it inserts a new account each time is called and they cannot be deleted for now")
 	@Test
 	public void testAddAccountApi() {
 		try {
@@ -98,7 +98,7 @@ public class CheckItTestCase {
 		}
 	}
 	
-	@Ignore //Ignored because it inserts fake data
+	@Ignore("Ignored because it inserts fake data")
 	@Test
 	public void testAddEnterprise() {
 		try {
@@ -107,7 +107,7 @@ public class CheckItTestCase {
 			fail(e.getMessage());
 		}
 	}
-	@Ignore //Ignored because it inserts fake data
+	@Ignore("Ignored because it inserts fake data")
 	@Test
 	public void testAddEnterpriseNoMail() {
 		try {
@@ -116,7 +116,7 @@ public class CheckItTestCase {
 			fail(e.getMessage());
 		}
 	}
-	@Ignore //Ignored because it inserts fake data
+	@Ignore("Ignored because it inserts fake data")
 	@Test
 	public void testAddEnterpriseNoMailParent() {
 		try {
