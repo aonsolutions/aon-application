@@ -1,4 +1,4 @@
-package aon.bank.exceptions;
+package net.aonsolutions.aon.api.checkit.exceptions;
 
 public class BankJooqException extends BankException {
 	public BankJooqException() {

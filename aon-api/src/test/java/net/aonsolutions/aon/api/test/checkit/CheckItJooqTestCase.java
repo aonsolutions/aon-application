@@ -1,9 +1,11 @@
-package aon.bank;
+package net.aonsolutions.aon.api.test.checkit;
 
 import static org.junit.Assert.fail;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import net.aonsolutions.aon.api.checkit.CheckItAPI;
 
 public class CheckItJooqTestCase {
 

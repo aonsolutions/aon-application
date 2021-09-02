@@ -39,11 +39,12 @@ public class CheckItDAO {
 		});
 	}
 	
-	public static int insertStatements(AONContext aonContext, List<BankStatement> bankStatements) {
+	public static Integer insertStatements(AONContext aonContext, List<BankStatement> bankStatements) {
 		
 		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
 				aonContext.getDslContext()
-				.insertInto(BANK_STATEMENT
+				.insertInto(
+						  BANK_STATEMENT
 						, BANK_STATEMENT.DOMAIN
 						, BANK_STATEMENT.RBANK
 						, BANK_STATEMENT.LOT_NUMBER
@@ -58,17 +59,18 @@ public class CheckItDAO {
 					);
 		for (BankStatement bankStatement : bankStatements) {			
 			query = query.values(
-					bankStatement.getDomain()
+					  bankStatement.getDomain()
 					, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
-							, bankStatement.getLotNumber()
-							, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
-									, bankStatement.getCommonConcept().value()
-									, bankStatement.isPayment() ? (byte) 1 : 0
-											, bankStatement.getAmount()
-											, bankStatement.getDescription()
-											, bankStatement.getStatus().value()
-											, bankStatement.getReference1()
-											, bankStatement.getReference2());
+					, bankStatement.getLotNumber()
+					, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
+					, bankStatement.getCommonConcept().value()
+					, bankStatement.isPayment() ? (byte) 1 : 0
+					, bankStatement.getAmount()
+					, bankStatement.getDescription()
+					, bankStatement.getStatus().value()
+					, bankStatement.getReference1()
+					, bankStatement.getReference2()
+			);
 		}
 		
 		return query.execute();
@@ -94,7 +96,7 @@ public class CheckItDAO {
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		
-		Map<String, java.sql.Date> max = getMaxMovementIdAndDate(aonContext, domainId, rbank);
+		Map<String, Date> max = getMaxMovementIdAndDate(aonContext, domainId, rbank);
 		String maxId = null;
 		Date lastOperationDate = null;
 
@@ -112,7 +114,7 @@ public class CheckItDAO {
 		} else {
 			maxId = max.keySet().stream().findFirst().orElse(null);
 			if (maxId != null) {				
-				lastOperationDate = new Date(((java.util.Date) max.get(maxId)).getTime());
+				lastOperationDate = max.get(maxId);
 				// AÑADIR 1 DÍA MÁS PARA QUE NO HAYA DUPLICADOS
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(lastOperationDate);
@@ -127,7 +129,7 @@ public class CheckItDAO {
 		return lastOperationDate;
 	}
 	
-	public static Map<String, java.sql.Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
+	public static Map<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		Record2<String, java.sql.Date> result = aonContext.getDslContext()
 		.select(DSL.max(BANK_STATEMENT.REFERENCE2).as("maximum"), BANK_STATEMENT.OPERATION_DATE)
 		.from(BANK_STATEMENT)
@@ -138,12 +140,12 @@ public class CheckItDAO {
 		
 		String id = (String) result.get("maximum");
 		java.sql.Date date = result.get(BANK_STATEMENT.OPERATION_DATE);
-		
+		Date utilDate = date != null ? new Date(date.getTime()) : null;
 		
 		if (id == null || id.isEmpty()) {
 			return Collections.emptyMap();
 		} else
-			return Collections.singletonMap(id, date);
+			return Collections.singletonMap(id, utilDate);
 	}
 	
 	private static Date cleanDate(int day, int month, int year) {

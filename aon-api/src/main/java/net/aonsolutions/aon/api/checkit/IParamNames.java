@@ -1,4 +1,4 @@
-package aon.bank;
+package net.aonsolutions.aon.api.checkit;
 
 public interface IParamNames {
 	

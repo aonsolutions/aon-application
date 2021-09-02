@@ -1,4 +1,4 @@
-package aon.bank;
+package net.aonsolutions.aon.api.checkit;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -28,8 +28,8 @@ import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 
-import aon.bank.exceptions.BankException;
-import aon.bank.exceptions.CheckItException;
+import net.aonsolutions.aon.api.checkit.exceptions.BankException;
+import net.aonsolutions.aon.api.checkit.exceptions.CheckItException;
 
 public class CheckItAPI implements IParamNames{
 	
@@ -946,7 +946,7 @@ public class CheckItAPI implements IParamNames{
 				maximumId = 0;
 			
 			if (movementId > maximumId) {
-				java.sql.Date operationDate = toSqlDate(parseTZDate(transactionJson.optString("fecha_operacion")));
+				Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
 
 				String description = transactionJson.optString("descripcion");
 
@@ -996,16 +996,21 @@ public class CheckItAPI implements IParamNames{
 
 		String iban = params.getIban();
 		Integer empresaId = params.getCheckitEmpresaId();
-		
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
-			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
-			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
-			Map<String, java.sql.Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-			Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
-			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(API_KEY, empresaId, iban), lastDate, movId);
-			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
-			return CheckItDAO.insertStatements(aonContext, bankStatements);
+					RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+					Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
+					Map<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
+					Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
+					List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(API_KEY, empresaId, iban), lastDate, movId);
+					CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+					return 	aonContext.getDslContext().transactionResult( 
+						confi -> CheckItDAO.insertStatements(aonContext, bankStatements)
+					);		
 		}
+
+		
+
+		
 		
 	}
 	
@@ -1048,14 +1053,6 @@ public class CheckItAPI implements IParamNames{
 		} catch (ParseException e) {
 			throw new CheckItException("Date could not be parsed: " + dateStr);
 		}
-	}
-	
-	private static java.sql.Date toSqlDate (Date date) {
-		if (date == null)
-			return null;
-		else
-			return new java.sql.Date(date.getTime());
-					
 	}
 	
 	private static String leadingZeros(Integer id, int fieldSize) {
