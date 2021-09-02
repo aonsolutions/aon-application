@@ -70,7 +70,6 @@ public class RegistryServlet extends AonApiHttpServlet {
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
-			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}

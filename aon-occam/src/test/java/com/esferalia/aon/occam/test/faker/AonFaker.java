@@ -381,7 +381,7 @@ public class AonFaker {
 		return new Workgroup()
 			.setDomain(ctx.getDomainId())
 			.setDescription(faker.beer().name())
-			.setStatus(WorkgroupStatus.ACTIVE.value());
+			.setStatus(WorkgroupStatus.ACTIVE);
 	}
 	
 	public static ProductCategory getProductCategory( AONContext ctx ) {

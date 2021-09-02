@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -83,7 +84,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		Workgroup workgroup = new Workgroup()
 		.setDomain(domain.getId())
 		.setDescription(api.getData().optString("description"))
-		.setStatus((byte)(api.getData().optBoolean("status") ? 1 : 0))
+		.setStatus(api.getData().optBoolean("status") ? WorkgroupStatus.ACTIVE : WorkgroupStatus.INACTIVE)
 		.setId(api.getData().optInt("id"));
 		workgroup = AON.saveWorkgroup(domain.getName(), domain.getId(), api.getUser().getLogin(), workgroup);
 		return WorkgroupJSON.toJSON(workgroup);

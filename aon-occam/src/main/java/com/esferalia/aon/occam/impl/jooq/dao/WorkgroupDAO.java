@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.api.model.Workgroup;
 
 public class WorkgroupDAO {
@@ -50,7 +51,7 @@ public class WorkgroupDAO {
 	}
 	
 	public static Workgroup save(AONContext ctx, Workgroup workgroup) {
-		workgroup.setStatus(workgroup.getStatus()!=null ? workgroup.getStatus() : 0 );
+		workgroup.setStatus(workgroup.getStatus() !=null ? workgroup.getStatus() : WorkgroupStatus.ACTIVE);
 		return workgroup.getId() != 0
 				? update(ctx, workgroup)
 				: insert(ctx, workgroup);
@@ -60,7 +61,7 @@ public class WorkgroupDAO {
 		Integer id =  ctx.getDslContext().insertInto(WORKGROUP)
 				.set(WORKGROUP.DOMAIN, workgroup.getDomain())
 				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
-				.set(WORKGROUP.STATUS, workgroup.getStatus())
+				.set(WORKGROUP.STATUS, workgroup.getStatus().value())
 				.returning(WORKGROUP.ID).fetchOne().getValue(WORKGROUP.ID);
 		return workgroup.setId(id);
 	}
@@ -69,7 +70,7 @@ public class WorkgroupDAO {
 		ctx.getDslContext().update(WORKGROUP)
 				.set(WORKGROUP.DOMAIN, workgroup.getDomain())
 				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
-				.set(WORKGROUP.STATUS, workgroup.getStatus())
+				.set(WORKGROUP.STATUS, workgroup.getStatus().value())
 				.where(WORKGROUP.ID.eq(workgroup.getId())).execute();
 		return workgroup;
 	}
@@ -83,8 +84,8 @@ public class WorkgroupDAO {
 		delete(ctx, f->f.getIdProperty().eq(id));
 	}
 
-
 	public static class WorkgroupFiller implements Function<Record, Workgroup> {
+
 		@Override
 		public Workgroup apply(Record r) {
 			return build(r);
@@ -95,7 +96,7 @@ public class WorkgroupDAO {
 					.setId(r.getValue(WORKGROUP.ID))
 					.setDomain(r.getValue(WORKGROUP.DOMAIN))
 					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
-					.setStatus(r.getValue(WORKGROUP.STATUS));
+					.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)));
 					
 		}
 	}

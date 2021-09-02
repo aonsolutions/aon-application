@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 
 public class WorkgroupJSON {
 
@@ -22,7 +23,7 @@ public class WorkgroupJSON {
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-				.setStatus(status!=null ? status.byteValue() : 0);
+				.setStatus(status!=null ? WorkgroupStatus.safeValueOf(status.byteValue()) : WorkgroupStatus.ACTIVE);
 	}
 	
 	public static JSONArray toJSON(LinkedList<Workgroup> workgroups) {

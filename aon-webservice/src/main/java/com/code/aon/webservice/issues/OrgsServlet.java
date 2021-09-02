@@ -133,7 +133,7 @@ public class OrgsServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getDescription())
-					.setStatus(RegistryStatus.values()[r.getStatus()]);    
+					.setStatus(RegistryStatus.values()[r.getStatus().value()]);    
 		}
 	}
 }

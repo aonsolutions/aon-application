@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+
 public class Workgroup implements Serializable {
 	
 	private static final long serialVersionUID = -6673378118872331822L;
@@ -9,12 +11,12 @@ public class Workgroup implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private String description;
-	private Byte status;
+	private WorkgroupStatus status;
 
-	public Byte getStatus() {
+	public WorkgroupStatus getStatus() {
 		return status;
 	}
-	public Workgroup setStatus(Byte status) {
+	public Workgroup setStatus(WorkgroupStatus status) {
 		this.status = status;
 		return this;
 	}
