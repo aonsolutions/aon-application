@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.test.checkit;
+package net.aonsolutions.aon.api.checkit;
 
 import static org.junit.Assert.fail;
 

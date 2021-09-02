@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.api.checkit;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO.CHECKIT_R1;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,8 +40,7 @@ public class CheckItAPI implements IParamNames{
 	}
 
 	private static final String API_URL = "https://www.checkitbancario.com/openapi/";
-	public static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
-	public static final String CHECKIT_R1 = "CHECKIT";
+	protected static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
 	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
 	private static Object post(String url, JSONObject params) {

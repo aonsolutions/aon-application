@@ -1,5 +1,6 @@
-package net.aonsolutions.aon.api.test.checkit;
+package net.aonsolutions.aon.api.checkit;
 
+import static net.aonsolutions.aon.api.checkit.CheckItAPI.API_KEY;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
@@ -12,7 +13,6 @@ import net.aonsolutions.aon.api.checkit.CheckItAPI;
 
 public class CheckItTestCase {
 	
-	private static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
 	private static final Integer AON_ID = 11413;
 	private static final Integer RAYSON_ID = 11414;
 	
