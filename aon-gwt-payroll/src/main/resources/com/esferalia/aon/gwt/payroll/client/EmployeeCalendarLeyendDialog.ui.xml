@@ -73,145 +73,145 @@
 		<table class="aon-width-all aon-height-all" style="padding: 5px;">
 			<tr>
 				<td>
+					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
+				</td>
+				<td>
 					<g:Label>No Laborables</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="nonWorkingDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
+				</td>
 				<td>
 					<g:Label>Efectivos</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="effectiveDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
+				</td>
 				<td>
 					<g:Label>Inactividad</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="inactivityDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
+				</td>
 				<td>
 					<g:Label>Huelga</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="strikeDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="ereDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE Fuerza Mayor</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZADays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE Fuerza Mayor (Exoneración de cuotas)</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="ereFZAExonDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
+				</td>
 				<td>
 					<g:Label>Ausencia</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="dropDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
+				</td>
 				<td>
 					<g:Label>Vacaciones</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="holidayDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
+				</td>
 				<td>
 					<g:Label>Festivos</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="festiveDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.itColor}"/>
+				</td>
 				<td>
 					<g:Label>Baja IT</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="leaveDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.itColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
+				</td>
 				<td>
 					<g:Label>Parcialidad</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="partialityDays"/>
 				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
-				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
+				</td>
 				<td>
 					<g:Label>Peonadas</g:Label>
 				</td>
 				<td>
 					<g:Label ui:field="peonadasDays"/>
-				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
 				</td>
 			</tr>
 		</table>
