@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -47,6 +48,7 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 	private SimpleResizePanel simplePanel;
 	private FlowPanel dialogBar;
 	private Label captionLabel;
+	private AonToolbarButton closeDialog;
 	private FlowPanel flowPanel;
 	private List<AonCustomDialogListener> listeners;
 
@@ -59,6 +61,11 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		captionLabel = new Label();
 		captionLabel.setStyleName(AON.CSS.aonCustomDialogTitle());
 		dialogBar.add(captionLabel);
+		closeDialog = new AonToolbarButton("Cerrar", AON.CSS.aonCancelButton());
+		closeDialog.addClickHandler(e -> {hide();});
+		closeDialog.setVisible(false);
+		closeDialog.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		dialogBar.add(closeDialog);
 		
 		listeners = new LinkedList<AonCustomDialogListener>();
 		FocusPanel focusBar = new FocusPanel(dialogBar);
@@ -114,6 +121,10 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 
 	public void setCaption(String caption) {
 		captionLabel.setText(caption);
+	}
+	
+	public void showCloseButton(boolean visible) {
+		closeDialog.setVisible(visible);
 	}
 
 	public void handleMove(int absX, int absY) {

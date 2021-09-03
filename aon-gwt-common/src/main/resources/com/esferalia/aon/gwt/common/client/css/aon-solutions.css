@@ -992,6 +992,7 @@
 	width: auto;
 	display: flex;
 	align-items: center;
+	border-bottom: solid #c4c4c4 1px;
 }
 
 .aon_custom_dialog_title {
@@ -1002,7 +1003,7 @@
 	font-size: 1.2em;
 	flex-grow: 1;
 	cursor: grab;
-	border-bottom: solid #c4c4c4 1px;
+	/*border-bottom: solid #c4c4c4 1px;*/
 }
 
 .aon_custom_dialog_close {
