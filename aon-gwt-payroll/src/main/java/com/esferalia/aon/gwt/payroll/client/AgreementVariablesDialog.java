@@ -57,14 +57,14 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	
 	// --------------------------------------------------- Variables.Footer
 	
-	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 	
 	// --------------------------------------------------- Constructor
 	
 	public AgreementVariablesDialog(Set<String> variables, Set<String> shownVariables) {
-		setCaption("Variables");
+		setCaption("Selecci\u00D3n Variables");
 		setWidget(binder.createAndBindUi(this));
+		this.showCloseButton(true);
 		this.variables = variables;
 		this.shownVariables = shownVariables;
 		createContainer();
@@ -81,7 +81,7 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	private void initVariablesTypePanel() {
 		HTMLPanel variablesTypePanel = new HTMLPanel("");
 		variablesTypePanel.addStyleName(style.flex());
-		Label variablesTypeL = new Label("VISTA VARIABLES :");
+		Label variablesTypeL = new Label("VER :");
 		initVariablesTypeLB();
 		variablesTypePanel.add(variablesTypeL);
 		variablesTypePanel.add(variablesTypeLB);
@@ -110,10 +110,10 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 
 	private void initVariablesTypeLB() {
 		variablesTypeLB = new ListBox();
-		variablesTypeLB.addItem("CON VALOR", "VALUES");
+		variablesTypeLB.addItem("CON VALOR ASIGNADO", "VALUES");
 		variablesTypeLB.addItem("SIN VALOR", "NO_VALUES");
-		variablesTypeLB.addItem("TODAS", "ALL");
-		variablesTypeLB.addItem("MANUAL", "MANUAL");
+		variablesTypeLB.addItem("TODAS LAS DEFINIDAS", "ALL");
+		variablesTypeLB.addItem("SELECCI\u00D3N PERSONALIZADA", "MANUAL");
 		variablesTypeLB.addChangeHandler(e -> {
 			if(variablesTypeLB.getSelectedIndex() == 3)
 				showVariablesCBPanel();
@@ -135,13 +135,6 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 	private void createFooterButtons() {
 		buttonsPanel.clear();
 		
-		closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.addClickHandler(e -> {
-			hide();
-		});
-		
 		acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
@@ -149,7 +142,6 @@ public abstract class AgreementVariablesDialog extends AonCustomDialog {
 			onAcceptDialog();
 		});
 		
-		buttonsPanel.add(closeBtnDialog);
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
