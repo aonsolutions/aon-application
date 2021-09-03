@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Task.TASK;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Timestamp;
@@ -17,6 +18,8 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -30,6 +33,7 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskDAO {
@@ -76,11 +80,14 @@ public class TaskDAO {
 	}
 	
 	public static SelectSeekStep1<Record, Timestamp> select(AONContext ctx, TaskFilter filter){	
+		Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
 				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
 				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
+				.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.orderBy(TASK.CREATION_DATE.desc());
 	}
@@ -272,6 +279,8 @@ public class TaskDAO {
 
 		@Override
 		public Task apply(Record r) {
+			Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
+
 			return new Task()
 				.setId(r.getValue(TASK.ID))
 				.setDomain(r.getValue(TASK.DOMAIN))
@@ -291,7 +300,7 @@ public class TaskDAO {
 				.setSourceId(r.getValue(TASK.SOURCE_ID))
 				.setStartDate(r.getValue(TASK.START_DATE))
 				.setStatus(TaskStatus.safeValueOf(r.getValue(TASK.STATUS)))
-				.setTaskHolder((TaskHolder) new TaskHolder().setId(r.getValue(TASK.TASK_HOLDER)))
+				.setTaskHolder(r.getValue(TASK.TASK_HOLDER)!=null ?TaskHolderFiller.build(r, TH_REGISTRY) : new TaskHolder() )
 				.setRegistry(RegistryFiller.build(r, REGISTRY))
 				.setWorkgroup(WorkgroupFiller.build(r))
 				.setNumber(r.getValue(TASK.NUMBER))

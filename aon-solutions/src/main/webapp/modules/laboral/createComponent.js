@@ -332,7 +332,6 @@ const addSpanDecimal = () =>  {
         span.innerHTML = '0,';
         span.style.position = "absolute";
         span.style.top = "50%";
-        span.style.zIndex = "9";
         coefInput.parentNode.insertBefore(span, coefInput);
     }
 }

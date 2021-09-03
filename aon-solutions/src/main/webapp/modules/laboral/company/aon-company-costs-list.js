@@ -76,7 +76,6 @@ export class AonCompanyCostsList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     if(!this.isMobile())this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -89,6 +88,7 @@ export class AonCompanyCostsList extends AonElement {
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
 
     btnSearch.buildOptionsFilter([PAYROLL_FILTER[0], ...PRESENCE_FILTER]);//INPUTS
+    this.searchValueDefault();
   }
 
   async searchValueDefault() {

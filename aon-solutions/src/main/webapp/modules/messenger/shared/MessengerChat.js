@@ -5,7 +5,7 @@ import { newComponent, setAttributes, setClasses, setStyles } from "../../../ser
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment} from "./creationUtils";
-import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar } from "./utils";
+import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar, getIconJson } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -39,11 +39,11 @@ export const buildDesktop = (aonMessengerChat)=> {
  */
 const buildToolbar = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
-
+    const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
     const toolbar = setAttributes(new AonToolbar(), {
       id:aonMessengerChat.TOOLBAR,
       type:ToolbarType.SECONDARY,
-      title:"#" + (task.number || "0").toString().padStart(5, 0)
+      title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
     });
 
     aonMessengerChat.appendChild(toolbar);
@@ -73,12 +73,14 @@ const buildToolbar = (aonMessengerChat) => {
 
     const titleSpan = setClasses(toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` ), [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
 
+    const iconJson = getIconJson(task);
     const status = createOutlinedMaterialIcon({
-      color: CSS.variable(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
-      name: "info",
-      size: "20px",
+      name:  iconJson.icon,
+      color: iconJson.icon_color,
+      size: "20px"
     });
     status.element.style.marginLeft = "10px";
+    status.element.style.marginTop = "-1px";
     status.appendTo(titleSpan);
 }
 
@@ -146,6 +148,7 @@ const buildSectionHistoric = (secondDiv) => {
      * The chat itself
      */
     const sectionComment = createChat(); 
+    
     sectionComment.classList.add(CSS.MATERIAL_SCROLL);
     wrapper.appendChild(sectionComment);
 

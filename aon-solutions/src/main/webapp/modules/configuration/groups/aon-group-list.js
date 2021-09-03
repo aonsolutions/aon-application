@@ -128,7 +128,7 @@ export class AonGroupList extends AonElement {
       data = resp.map(res =>{
         return {
           ...res,
-          statusText: res.status ? "Activo" : "Inactivo"
+          statusText: "ACTIVE" === res.status ? "Activo":"Inactivo" 
         };
       })
     } catch (e) {

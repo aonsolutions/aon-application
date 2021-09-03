@@ -109,25 +109,29 @@ const buildForm = (aonMessengerChat)=>{
 const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     const task = aonMessengerChat.task;
     buildToolbar(aonMessengerChat,wrapper, false);
-    /**
+    
+    let titleText = task.title;
+    if(task.registry && task.registry.name)
+        titleText = `<b>[${task.registry.name}]</b> ${task.title}`;
+
+    const title = setStyles(createTitle(titleText),{
+        display : 'block',
+        fontSize: '1.3em',
+        padding: "10px 18px",
+        width : '100%',
+        borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
+    });
+    wrapper.appendChild(title);
+    
+    let titleEl = document.getElementById(MESSENGER_IDS.TITLE_TASK);
+    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ({target})=>  title.innerText = target.innerText);
+
+        /**
      * The chat itself
      */
     const chat = createChat();
     chat.classList.add(CSS.NO_SCROLLBAR);
     wrapper.appendChild(chat);
-    
-    const title = setStyles(createTitle(task.title),{
-        display : 'block',
-        fontSize: '1.3em',
-        paddingTop: "10px",
-        paddingBottom: "10px",
-        width : '100%',
-        borderBottom : "1px solid " + CSS.variable(COLORS.AON_LIGHT_GRAY)
-    });
-    chat.appendChild(title);
-    
-    let titleEl = document.getElementById(MESSENGER_IDS.TITLE_TASK);
-    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ({target})=>  title.innerText = target.innerText);
 
     addTextAreaChat(aonMessengerChat);
 }

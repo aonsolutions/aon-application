@@ -1,14 +1,16 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import java.io.File;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -45,6 +47,7 @@ import net.aonsolutions.aon.api.model.mail.TaskMail;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "TaskServlet", urlPatterns = {"/ms/api/task/*"})
@@ -143,10 +146,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Filter taskFilter(AonApiData api, TaskProperties f) {
 		Integer workgroup = api.getParams().optInt("workgroup");
-		String status = api.getParams().optString("status");
-		String source = api.getParams().optString("source");
 		Integer taskHolder = api.getParams().optInt("task_holder");
 		Integer sender = api.getParams().optInt("sender");
+		Integer registry = api.getParams().optInt("registry");
+		String status = api.getParams().optString("status");
+		String source = api.getParams().optString("source");
 		String search = api.getParams().optString("search");
 
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
@@ -168,17 +172,18 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		
+		if(registry != null && registry!=0) 
+			filter = filter.and(f.getRegistryProperty().eq(registry));
+		
 		if(!search.isEmpty()) {
-			
+			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
 			Integer numberSearch = 0;
 			try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
 			catch (NumberFormatException e){}
-			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
 			if(numberSearch!=0)
-				filter1 = filter1.or(f.getNumberProperty().eq(numberSearch));
+				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
 			
 			filter = filter.and(filter1);
-
 		}
 		
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
@@ -186,6 +191,12 @@ public class TaskServlet extends AonApiHttpServlet{
 			if(!email.isEmpty())
 				filter = filter.and(f.getGtaskIdProperty().eq(email));
 		}
+		
+		if(!api.getParams().optString("startDate").isEmpty()) {
+			Date startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
+			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
+		}
+			
 		
 		return filter;
 	}
@@ -260,7 +271,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		JSONObject json = new JSONObject();
 		Domain domain = api.getDomain();
 		Integer taskHolder = api.getParams().getInt("task_holder");
-		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  f -> f.getDomainProperty().eq(domain.getId()), taskHolder)
+		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  
+				f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getStatusProperty().eq(TaskStatus.PENDING.value())), 
+				taskHolder
+		)
 		.forEach((k,v)->json.put(k, v));
 		return json;
 	}
@@ -382,16 +397,31 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private void sendEmail(AonApiData api, Task task, TaskWorkflow workflow, Auth auth){
 		try {
-			String from = "no-reply@aon.solutions"; 
-			String to = auth.getEmail();
-			String subject = "SOLICITUD | AON SOLUTIONS";
-			TaskMail tm = new TaskMail();
-			tm.setNumber(task.getNumber().toString());
-			tm.setDate(AonDateUtils.format(task.getModificationDate(), "dd/MM/yyyy") );
-			tm.setUrl("https://aon.solutions/");
-			tm.setTitle(task.getTitle());
-			String body = taskContentEmail(api, tm);
-			SES.sendEmail(from, to, subject, body);
+			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			if(company!=null) {
+				String logo = getLogoCompany(company.getDomain().getName());
+				
+				String to = auth.getEmail();
+				
+				String subject = "SOLICITUD Nº "+ task.getNumber();
+				
+				TaskMail tm = new TaskMail()
+				.setNumber(task.getNumber().toString())
+				.setDate(AonDateUtils.format(task.getModificationDate(), "dd/MM/yyyy") )
+				.setUrl("https://aon.solutions")
+				.setTitle(task.getTitle())
+				.setLogo(logo);
+				
+				String body = taskContentEmail(api, tm);
+				
+				SESMessage msg = new SESMessage()
+				.setAlias(company.getName())
+				.setSubject(subject)
+				.setBody(body)
+				.setTo(to);
+				
+			    SES.sendEmail(msg);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -423,5 +453,21 @@ public class TaskServlet extends AonApiHttpServlet{
 //		.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
 		
 		return new JSONObject();
+	}
+	
+	private String getLogoCompany(String companyName) {
+		String logo = "https://aon.solutions/assets/aon-logo.png";
+		try {
+			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
+		    final URL url = new URL(urlLogo);
+	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	        int statusCode = connection.getResponseCode();
+	        if(200 == statusCode) {
+	        	logo = urlLogo;
+	        }
+            connection.disconnect();
+		}catch (Exception e) {}
+
+		return logo;
 	}
 }

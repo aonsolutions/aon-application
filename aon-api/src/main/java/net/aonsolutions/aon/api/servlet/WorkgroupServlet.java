@@ -102,7 +102,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		String status  = api.getParams().optString("status");
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 		if(!status.isEmpty()) 
-			filter = filter.and(f.getStatusProperty().eq((byte) api.getParams().optInt("status")));
+			filter = filter.and( f.getStatusProperty().eq( WorkgroupStatus.safeValueOf(status).value() ) );
 
 		return filter;
 	}

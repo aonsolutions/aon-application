@@ -67,7 +67,6 @@ export class AonPresenceList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     if(!this.isMobile()) this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -93,6 +92,7 @@ export class AonPresenceList extends AonElement {
     })
     
     btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
+    this.searchValueDefault();
   }
 
   searchValueDefault(){

@@ -100,7 +100,6 @@ export class AonEventList extends AonElement {
     }
 
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -111,6 +110,7 @@ export class AonEventList extends AonElement {
     }
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
     btnSearch.buildOptionsFilter(EVENT_LIST_FILTER);//INPUTS
+    this.searchValueDefault();
   }
 
   async searchValueDefault(){

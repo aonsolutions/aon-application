@@ -6,11 +6,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqTimeControlTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -30,9 +33,9 @@ import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.excel.TimeControlExcel;
-import solutions.aon.seg.social.toolkit.Toolkit;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonTimeControlServlet", urlPatterns = {"/ms/api/timecontrol/*"})
@@ -176,8 +179,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Boolean active = !api.getParams().optString("active").isEmpty() ?  api.getParams().getBoolean("active") : true;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
@@ -193,8 +196,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
 
 		JSONArray array = new JSONArray();
 		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(api.getParams().optString("group"));
@@ -209,8 +212,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	private Object getTimeControlDetailStream(AonApiData api) {		
 		Date startDate = null;
 		Date endDate = null;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
 		
 		startDate = AonDateUtils.getDateWithoutTime(startDate);
 		endDate = AonDateUtils.getDateWithoutTime(endDate);
@@ -308,8 +311,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date startDate = null;
 		Date endDate = null;
 		
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
 	
 		Boolean active = !api.getParams().optString("active").isEmpty() ?  api.getParams().getBoolean("active") : true;
 		
@@ -324,7 +327,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		
 		Date startDate = new Date();
 
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
 
 		File file = File.createTempFile("timecontrol-pdf", "");
 		JooqTimeControlTemplate.generateTimeControlTemplate(

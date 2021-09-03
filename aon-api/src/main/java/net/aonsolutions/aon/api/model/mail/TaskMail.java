@@ -5,6 +5,7 @@ public class TaskMail {
 	String date;
 	String url; 
 	String title;
+	String logo;
 	
 	public TaskMail() {
 	}
@@ -13,31 +14,44 @@ public class TaskMail {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public TaskMail setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public TaskMail setDate(String date) {
 		this.date = date;
+		return this;
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public TaskMail setUrl(String url) {
 		this.url = url;
+		return this;
 	}
 	
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public TaskMail setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+	
+	public String getLogo() {
+		return logo;
+	}
+
+	public TaskMail setLogo(String logo) {
+		this.logo = logo;
+		return this;
 	}
 }

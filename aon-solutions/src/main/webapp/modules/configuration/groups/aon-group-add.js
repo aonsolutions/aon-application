@@ -95,7 +95,7 @@ export class AonGroupAdd extends AonElement {
       aonSwitch.id = "status";
       aonSwitch.name = "status";
       aonSwitch.title = "Activo";
-      aonSwitch.checked = this.data.status ? true : false;
+      aonSwitch.checked = "ACTIVE" === this.data.status ? true : false;
       divG.appendChild(aonSwitch);
     }
 

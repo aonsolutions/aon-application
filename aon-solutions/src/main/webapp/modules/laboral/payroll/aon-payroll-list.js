@@ -76,7 +76,6 @@ export class AonPayrollList extends AonElement {
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
 
@@ -100,6 +99,7 @@ export class AonPayrollList extends AonElement {
       ...PAYROLL_FILTER,
       ...PRESENCE_FILTER
     ]);
+    this.searchValueDefault();
   }
 
 

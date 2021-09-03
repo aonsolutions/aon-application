@@ -239,11 +239,12 @@ export const createCommentContent = (properties) => newComponent({
 
 export const createAction = (icon, message, outlined) => {
   const comp = createStartJustifiedRow();
-  comp.element.style.width = "100%";
-  comp.element.style.paddingLeft = "calc(35px - .9em)";
-  comp.element.style.paddingTop = "10px";
-  comp.element.style.paddingBottom = "10px";
-  
+  setStyles(comp.element,{
+    width :"100%",
+    padding:"10px",
+    paddingLeft :"calc(35px - .9em)",
+    textAlign: "justify"
+  })
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
@@ -568,7 +569,7 @@ export const createChat = () => newComponent({
         position: "relative",
         width: '100%',
         zIndex: "0",
-        minHeight: '300px',
+        minHeight: '311px',
         padding: "15px",
         overflow: 'auto',
         borderBottom: '1px solid #f0f0f0',

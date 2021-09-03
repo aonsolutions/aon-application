@@ -85,12 +85,27 @@ export class AonMessenger extends AonElement {
 
 	taskNavBar(){
 		let messengerOpts = [
+			// {
+			// 	name: 'Todas',
+			// 	icon: MATERIAL_ICONS.ALL_INBOX,
+			// 	id: MATERIAL_ICONS.ALL_INBOX,
+			// 	fn: () =>{
+			// 		this._filter.task_holder = undefined;
+			// 		this._filter.sender = undefined;
+			// 		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+			// 	}
+			// },
 			{
-				name: 'Todas',
-				icon: MATERIAL_ICONS.ALL_INBOX,
-				id: MATERIAL_ICONS.ALL_INBOX,
+				name: 'Recibidas',
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				id: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () =>{
-					this._filter.task_holder = undefined;
+					let taskHolder = this.TASK_HOLDER.id;
+					if(this._filter.task_holder) {
+						taskHolder = undefined;
+						this.applicationEl.addTitleToolSection("");
+					}
+					this._filter.task_holder = taskHolder;
 					this._filter.sender = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -100,18 +115,10 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.OUTBOX,
 				id: MATERIAL_ICONS.OUTBOX,
 				fn: () =>{
+					let taskHolder = this.TASK_HOLDER.id;
+					if(this._filter.sender) taskHolder = undefined;
 					this._filter.task_holder = undefined;
-					this._filter.sender = this.TASK_HOLDER.id;
-					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
-				}
-			},
-			{
-				name: 'Recibidas',
-				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
-				id: MATERIAL_ICONS.MOVE_TO_INBOX,
-				fn: () =>{
-					this._filter.sender = undefined;
-					this._filter.task_holder = this.TASK_HOLDER.id;
+					this._filter.sender = taskHolder;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -165,7 +172,7 @@ export class AonMessenger extends AonElement {
 
 	loadWorkgroup() {
 		let application = this.applicationEl;
-		getWorkgroups({status:1}).then( workgroup => {
+		getWorkgroups({status:"ACTIVE"}).then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  workgroup.forEach((item, i) => {
@@ -198,7 +205,7 @@ export class AonMessenger extends AonElement {
 			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
 				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount("Todas", (sender + task_holder) );
+				// application.updateSidenavCount("Todas", (sender + task_holder) );
 				application.updateSidenavCount("Enviadas", sender);
 				application.updateSidenavCount("Recibidas", task_holder);
 			});

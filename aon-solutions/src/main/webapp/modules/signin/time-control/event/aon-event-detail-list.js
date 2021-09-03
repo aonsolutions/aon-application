@@ -113,9 +113,8 @@ export class AonEventDetailList extends AonElement {
         this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.aonEvent());
       }
     }
-
+    
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
 
@@ -127,6 +126,7 @@ export class AonEventDetailList extends AonElement {
     }
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
+    this.searchValueDefault();
   }
 
   async searchValueDefault(){

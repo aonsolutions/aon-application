@@ -58,6 +58,10 @@ export class AonBasicTable extends AonElement {
     return this.rows;
   }
 
+  getRowsCount(){
+    return this.querySelectorAll(`[id*=${this.TABLE_ROW}]`).length;
+  }
+
   removeRow(row){
     let tr = this.getElement(this.TABLE_ROW + row);
     tr.parentNode.removeChild(tr);

@@ -8,9 +8,12 @@ import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MessengerOptions, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
+import { getIconJson } from "./shared/utils.js";
+import { getCustomers } from "../../services/registryService.js";
+import { getTastHolders } from "../../services/taskHolderService.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -82,11 +85,10 @@ export class AonMessengerList extends AonElement {
       aonTable.removeAllLi();
     } else {
       aonTable.removeColumns();
-      // aonTable.addColumn("  ", "icon", "icon", "2%");
       aonTable.addColumn("", "string", "lettersHtml", "2%");
       aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
-      aonTable.addColumn(MSG.TYPE, "string", "type", "5%");
       aonTable.addColumn(MSG.TITLE, "string", "newTitle", "30%");
+      aonTable.addColumn("Asignado", "string", "assigned", "20%");
       aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
 
@@ -123,14 +125,32 @@ export class AonMessengerList extends AonElement {
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      let filter = this.getFilter();   
-      filter = {page:0, perPage:30, status: filter.status, search:detail};
-      this.setFilter(filter);
+      this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
       this.loadMoreSearch();
     });
-    // btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{ });
-    
-    // btnSearch.buildOptionsFilter(INPUTS);//INPUTS
+
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
+      if(detail) {
+        this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
+        this.loadMoreSearch();
+      } 
+    });
+
+    btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
+    this.searchValueDefault();
+  }
+
+  searchValueDefault(){
+    let registryEl = this.getElement("registry");
+    let taskHolderEl = this.getElement("task_holder");
+    getCustomers().then(customers=>{
+      registryEl.options = JSON.stringify( customers.map(c=> ({...c, value: c.id})) );
+    })
+
+    getTastHolders().then(ths=>{
+      taskHolderEl.options = JSON.stringify( ths.map(th=> ({...th, value: th.id})) );
+    })
+
   }
 
   async loadMoreSearch(){
@@ -163,15 +183,18 @@ export class AonMessengerList extends AonElement {
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         let newTitle  =  res.title;
-        if(res.registry && res.registry.name)
-          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
-        
+        if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+
+        let assigned = "";
+        if(res.task_holder&&res.task_holder.alias)        assigned = res.task_holder.alias; 
+        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+
         const newData = { 
           ...res, 
           newTitle,
-          // ...this.getIconList(res),
+          assigned,
+          dateParse,
           lettersHtml: this.getIcon(res),
-          dateParse
         };
         aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
       });
@@ -193,11 +216,9 @@ export class AonMessengerList extends AonElement {
       else {
         data = tasks.map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
-          let type = task.source ? MSG[task.source.toString().toUpperCase()]: "";
           return {
             ...task,
             date:task.start_date,
-            type,
             newNumber
           };
         });
@@ -241,34 +262,14 @@ export class AonMessengerList extends AonElement {
 
   getIconList(res){      
     return {
-      ...this.getIconJson(res),
+      ...getIconJson(res),
       icon_class:ICON_TYPES.MATERIAL_ICONS_OUTLINED,
       icon_title:res.source,
     }
   }
 
-  getIconJson({source,status}){
-    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
-    let icon = MATERIAL_ICONS.INFO;
-    if(source===TASK_SOURCE.CAU) 
-      icon = MATERIAL_ICONS.SUPPORT_AGENT;
-    else if(source===TASK_SOURCE.REQUEST) 
-      icon = MATERIAL_ICONS.ASSIGNMENT;
-
-    let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
-    if(status === TASK_STATUS.FINISHED) 
-      icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
-    else if(status === TASK_STATUS.DELETED) 
-      icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
-    
-    return {
-      icon,
-      icon_color
-    }
-  }
-
   getIcon(res){
-    let icon = this.getIconJson(res);
+    let icon = getIconJson(res);
 
     let span = this.createElement(TAG.SPAN);
     span.style.color = icon.icon_color;

@@ -1215,7 +1215,7 @@ button:disabled, button[disabled]{
 
 .continueLined{--height : 100%}
 .continueLined:before{
-    content: ".";
+    content: "";
     position: absolute;
     border-left:  2px solid #f0f0f0;
     height: var(--height);

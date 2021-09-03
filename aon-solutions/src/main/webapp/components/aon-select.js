@@ -110,7 +110,7 @@ export class AonSelect extends AonElement {
     let aonInput = new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
-    if(this.autocomplete) aonInput.autocomplete = this.autocomplete;
+    aonInput.autocomplete = false;
     this.appendChild(aonInput);
     this.build();
 	}

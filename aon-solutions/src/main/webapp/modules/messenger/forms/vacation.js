@@ -96,7 +96,7 @@ const addDates = (table, data={}, i) =>{
     });
 
     dataDelete.addEventListener(EVENT.CLICK, () => {
-        table.removeRow(rowIndex);
+        if(table.getRowsCount() > 1) table.removeRow(rowIndex);
     });
     table.addCell(dataDelete);
 }

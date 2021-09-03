@@ -1,13 +1,14 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";3
 import { AonIconButton } from "./aon-icon-button.js";
+import { AonIcon } from "./aon-icon.js";
 import "./aon-toolbar.js";
 import "./aon-loader.js";
 import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
-import { AonIcon } from "./aon-icon.js";
+
 // import { DIV } from "../environments/aonTag.js";
 
 export class AonApplication extends AonElement {
@@ -432,9 +433,10 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptionsListValue(data, option, ul) {
-    ul = ul || this.getElement(this.SIDENAV + data.id + "List");
+    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden) {
-      let id = this.SIDENAV + option.name;
+      let id = sidenavId + option.name;
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;
@@ -540,8 +542,7 @@ export class AonApplication extends AonElement {
 
       li.addEventListener(EVENT.CLICK, () => {
         let backgroundEl = li.style.backgroundColor;
-
-        const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+        
         ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";

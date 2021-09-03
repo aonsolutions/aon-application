@@ -1,4 +1,4 @@
-import { COLORS, CSS, MATERIAL_ICONS } from "../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments";
 
 export const ICON_TYPES = {
     MATERIAL : "material",
@@ -122,4 +122,26 @@ export const MessengerSidenav = {
         id: "Addcomment",
     }
 };
-  
+
+export const TASK_FILTER = [
+    {
+      type: "select",
+      id: "registry",
+      name: "registry",
+      title: MSG.CUSTOMER,
+      autocomplete: true
+    },
+    {
+        type: "select",
+        id: "task_holder",
+        name: "task_holder",
+        title: MSG.EMPLOYEE,
+        autocomplete: true
+    },
+    // {
+    //   type: "date",
+    //   name: "startDate",
+    //   id: "startDate",
+    //   title: MSG.DATE,
+    // }
+];

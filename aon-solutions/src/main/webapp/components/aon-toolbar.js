@@ -126,7 +126,7 @@ export class AonToolbar extends AonElement {
 			option.id = this.TITLE_SECTION_OPTION;
 			option.style.color = 'gray';
 			option.style.fontSize = '14px';
-			option.innerHTML = this.option ? '/ ' + this.option : '';
+			option.innerHTML = this.option ? ' / ' + this.option : '';
 			titleSection.appendChild(option);
 
 			header.appendChild(titleSection);

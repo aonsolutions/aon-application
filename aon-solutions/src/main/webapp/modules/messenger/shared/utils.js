@@ -5,7 +5,7 @@ import { domainName } from "../../../services/request";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
+import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
 import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createProcessType, createReceiverDiv, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
 
 /**
@@ -149,7 +149,7 @@ const fillCustomer = async ({registry}) => {
         aonSelect.clear();
         const customers = await getCustomers();
         if(customers){
-            aonSelect.options = JSON.stringify( customers.map( th=> ({...th, value: th.id}) ) );
+            aonSelect.options = JSON.stringify( customers.map( c=> ({...c, value: c.id}) ) );
         }
         if(registry && registry.id) aonSelect.value = registry.id;
     }
@@ -420,7 +420,7 @@ const jsonDiv = ()=> {
         whiteSpace: "pre-wrap"
     });
     const code = document.createElement("code");
-    code.style.color = "brown";o
+    code.style.color = "brown";
     pre.appendChild(code); 
     code.textContent = JSON.stringify(task.getDescriptionJson(), undefined, 2);
     return pre;
@@ -530,3 +530,27 @@ export const buildFormRequest = (div, aonMessengerChat) => {
     div.appendChild(divProcess);
 }
 
+/**
+ * 
+ * @param {Object} source,status 
+ * @returns icon, icon_color
+ */
+export const getIconJson =({source,status}) => {
+    const {AON_MESSENGER_LIST_OPEN,AON_MESSENGER_LIST_CLOSE,AON_MESSENGER_LIST_ARCHIVE} = MessengerOptions;
+    let icon = MATERIAL_ICONS.INFO;
+    let icon_color = AON_MESSENGER_LIST_OPEN.icon_color;
+
+    if(source===TASK_SOURCE.CAU) 
+      icon = MATERIAL_ICONS.SUPPORT_AGENT;
+    else if(source===TASK_SOURCE.REQUEST) 
+      icon = MATERIAL_ICONS.ASSIGNMENT;
+    if(status === TASK_STATUS.FINISHED) 
+      icon_color = AON_MESSENGER_LIST_CLOSE.icon_color;
+    else if(status === TASK_STATUS.DELETED) 
+      icon_color = AON_MESSENGER_LIST_ARCHIVE.icon_color;
+    
+    return {
+      icon,
+      icon_color
+    }
+}
