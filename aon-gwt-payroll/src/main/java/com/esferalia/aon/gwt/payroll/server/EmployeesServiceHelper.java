@@ -667,15 +667,27 @@ public class EmployeesServiceHelper {
 		List<String> filterVars = new ArrayList<String>();
 		filterVars.add("TRUE");
 		filterVars.add("FALSE");
+		filterVars.add("AÑOS_TRABAJADOS");
+		filterVars.add("DIAS_COTIZADOS");
+		filterVars.add("COEFICIENTE_PARCIALIDAD");
+		filterVars.add("DIAS_LABORALES");
+		filterVars.add("DIAS_LUNES");
+		filterVars.add("DIAS_MARTES");
+		filterVars.add("DIAS_MIERCOLES");
+		filterVars.add("DIAS_JUEVES");
+		filterVars.add("DIAS_VIERNES");
+		filterVars.add("DIAS_SABADO");
+		filterVars.add("DIAS_DOMINGO");
 		
 		for(String var : variables)
-			if(!filterVars.contains(var) && !AonStringUtils.containsIgnoreCase(var, "HIDE"))
+			if(	!filterVars.contains(var) && 
+				!AonStringUtils.containsIgnoreCase(var, "HIDE") && 
+				!AonStringUtils.containsIgnoreCase(var, "DIAS_ENFERMEDAD"))
+				
 				filteredVariables.add(var);
 		
 		return filteredVariables;
 	}
-
-
 
 //	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 //			final Connection conn, final SalaryDraft draft,
