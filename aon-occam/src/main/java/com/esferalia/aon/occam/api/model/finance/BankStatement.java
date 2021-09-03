@@ -11,10 +11,9 @@ import com.esferalia.aon.occam.api.model.type.StatementStatus;
 
 
 public class BankStatement implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -2154568050977394984L;
+	
 	private Integer id;
 	private RegistryBank registryBank;
 	private int domain;
@@ -32,107 +31,141 @@ public class BankStatement implements Serializable {
 	private SecurityLevel securityLevel;
 	private StatementStatus status;
 	private String comments;
+	
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public BankStatement setId(Integer id) {
 		this.id = id;
+		return this;
 	}
+	
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
-	public void setRegistryBank(RegistryBank registryBank) {
+	public BankStatement setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+		return this;
+
 	}
 	public int getDomain() {
 		return domain;
 	}
-	public void setDomain(int domain) {
+	public BankStatement setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
+	
 	public int getLotNumber() {
 		return lotNumber;
 	}
-	public void setLotNumber(int lotNumber) {
+	public BankStatement setLotNumber(int lotNumber) {
 		this.lotNumber = lotNumber;
+		return this;
 	}
+	
 	public Date getOperationDate() {
 		return operationDate;
 	}
-	public void setOperationDate(Date operationDate) {
+	public BankStatement setOperationDate(Date operationDate) {
 		this.operationDate = operationDate;
+		return this;
 	}
+	
 	public StatementConcept getCommonConcept() {
 		return commonConcept;
 	}
-	public void setCommonConcept(StatementConcept commonConcept) {
+	public BankStatement setCommonConcept(StatementConcept commonConcept) {
 		this.commonConcept = commonConcept;
+		return this;
 	}
+	
 	public String getOwnConcept() {
 		return ownConcept;
 	}
-	public void setOwnConcept(String ownConcept) {
+	public BankStatement setOwnConcept(String ownConcept) {
 		this.ownConcept = ownConcept;
+		return this;
 	}
+	
 	public boolean isPayment() {
 		return payment;
 	}
-	public void setPayment(boolean payment) {
+	public BankStatement setPayment(boolean payment) {
 		this.payment = payment;
+		return this;
 	}
+	
 	public double getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public BankStatement setAmount(double amount) {
 		this.amount = amount;
+		return this;
 	}
+	
 	public String getDocument() {
 		return document;
 	}
-	public void setDocument(String document) {
+	public BankStatement setDocument(String document) {
 		this.document = document;
+		return this;		
 	}
+	
 	public String getReference1() {
 		return reference1;
 	}
-	public void setReference1(String reference1) {
+	public BankStatement setReference1(String reference1) {
 		this.reference1 = reference1;
+		return this;
 	}
+	
 	public String getReference2() {
 		return reference2;
 	}
-	public void setReference2(String reference2) {
+	public BankStatement setReference2(String reference2) {
 		this.reference2 = reference2;
+		return this;
 	}
+	
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public BankStatement setDescription(String description) {
 		this.description = description;
+		return this;
 	}
+	
 	public StatementReliability getReliability() {
 		return reliability;
 	}
-	public void setReliability(StatementReliability reliability) {
+	public BankStatement setReliability(StatementReliability reliability) {
 		this.reliability = reliability;
+		return this;
 	}
+	
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-	public void setSecurityLevel(SecurityLevel securityLevel) {
+	public BankStatement setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+		return this;
 	}
+	
 	public StatementStatus getStatus() {
 		return status;
 	}
-	public void setStatus(StatementStatus status) {
+	public BankStatement setStatus(StatementStatus status) {
 		this.status = status;
+		return this;
 	}
+	
 	public String getComments() {
 		return comments;
 	}
-	public void setComments(String comments) {
+	public BankStatement setComments(String comments) {
 		this.comments = comments;
+		return this;
 	}
 	
 	

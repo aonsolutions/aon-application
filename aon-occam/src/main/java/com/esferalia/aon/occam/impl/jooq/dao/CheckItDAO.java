@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jooq.AggregateFunction;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record2;
 import org.jooq.impl.DSL;
@@ -18,6 +19,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CheckItDAO {
 	
@@ -57,14 +59,15 @@ public class CheckItDAO {
 						, BANK_STATEMENT.REFERENCE1
 						, BANK_STATEMENT.REFERENCE2
 					);
-		for (BankStatement bankStatement : bankStatements) {			
+		for (BankStatement bankStatement : bankStatements) {
+			// BankStatemetn Validation
 			query = query.values(
 					  bankStatement.getDomain()
 					, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
 					, bankStatement.getLotNumber()
 					, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
 					, bankStatement.getCommonConcept().value()
-					, bankStatement.isPayment() ? (byte) 1 : 0
+					, AonEnumUtils.getByte(bankStatement.isPayment())
 					, bankStatement.getAmount()
 					, bankStatement.getDescription()
 					, bankStatement.getStatus().value()
@@ -85,13 +88,16 @@ public class CheckItDAO {
 	}
 
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		Integer lot = (Integer) aonContext.getDslContext()
-		.select(DSL.max(BANK_STATEMENT.LOT_NUMBER).as("lot"))
-		.from(BANK_STATEMENT)
-		.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-		.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-		.fetchSingle().getValue("lot");
-		return lot != null ? lot + 1 : 1;
+		AggregateFunction<Integer> LOT = DSL.max(BANK_STATEMENT.LOT_NUMBER);
+		return aonContext.getDslContext().select( LOT )
+			.from(BANK_STATEMENT)
+			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+			.fetch()
+			.stream()
+			.map( r -> r.get(LOT))
+			.findFirst()
+			.orElse(1);
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {

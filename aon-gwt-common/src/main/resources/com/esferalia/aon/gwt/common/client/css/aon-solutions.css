@@ -293,6 +293,8 @@
 .aon_icon_toggle_on { background-image: iconToggleOn;}
 @url iconToggleOff aonIconToggleOff;
 .aon_icon_toggle_off { background-image: iconToggleOff;}
+@url iconRegister aonIconRegister;
+.aon_icon_register { background-image: iconRegister;}
 
 
 /* BASICS */

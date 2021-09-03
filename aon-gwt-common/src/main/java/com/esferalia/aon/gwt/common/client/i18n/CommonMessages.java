@@ -4035,6 +4035,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Configuraci\u00F3n")
 	String settings();
+	
+	@DefaultMessage("Agregador bancario")
+	String chekItModule();
+
+	@DefaultMessage("Registro")
+	String register();
 
 }
 

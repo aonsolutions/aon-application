@@ -24,20 +24,21 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
-import com.esferalia.aon.occam.api.model.finance.CheckItParams;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
-
-import net.aonsolutions.aon.api.checkit.exceptions.BankException;
-import net.aonsolutions.aon.api.checkit.exceptions.CheckItException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CheckItAPI implements IParamNames{
 	
 	private CheckItAPI() {
 		throw new IllegalStateException("Utility class");
 	}
+
+	private static final DateFormat DF_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES") );
 
 	private static final String API_URL = "https://www.checkitbancario.com/openapi/";
 	protected static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
@@ -742,11 +743,11 @@ public class CheckItAPI implements IParamNames{
 	 * @return JSONObject
 	 * @throws BankException
 	 */
-	public static JSONObject addEnterprise(JSONObject params) throws BankException {
+	public static JSONObject addEnterprise(JSONObject params) throws CheckItException {
 		String emailField = "email";
 		if (params.optString(emailField) == null || params.optString(emailField).isEmpty()) {
 			if (params.optString("url") == null || params.optString("url").isEmpty()) {
-				throw new BankException(
+				throw new CheckItException(
 						"If email is null, the domain must be sent as <<url>> parameter in order to create a fake one");
 			} else {
 				String domain = params.optString("url");
@@ -810,7 +811,7 @@ public class CheckItAPI implements IParamNames{
 	 * @throws BankException 
 	 */
 	public static JSONObject addEnterprise(String claveApi, String nombre, String cif, String email, String nombrecorto,
-			String url, String telefono, String direccion) throws BankException {
+			String url, String telefono, String direccion) throws CheckItException {
 		JSONObject params = new JSONObject();
 		params.put(API_KEY_PARAM, claveApi);
 		params.put(NAME_PARAM, nombre);
@@ -922,7 +923,7 @@ public class CheckItAPI implements IParamNames{
 		return accountId;
 	}
 	
-	public static List<BankStatement> getBankStatements(Integer empresaId, String accountId, Date lastOperationDate, Integer maximumId) throws BankException {
+	public static List<BankStatement> getBankStatements(Integer empresaId, String accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 
 		JSONObject requestParams = new JSONObject();
@@ -988,7 +989,7 @@ public class CheckItAPI implements IParamNames{
 	 * @throws BankException
 	 */
 	public static int insertTransactions(CheckItParams params)
-			throws BankException {
+			throws CheckItException {
 		
 		
 		String domainName = params.getDomainName();
@@ -1027,7 +1028,7 @@ public class CheckItAPI implements IParamNames{
 	 * @throws BankException
 	 */
 	public static int insertTransactions(String domainName, Integer domainId, String user, Integer empresaId, String iban)
-			throws BankException {
+			throws CheckItException {
 		CheckItParams params = new CheckItParams();
 		params.setDomainName(domainName);
 		params.setDomainId(domainId);
@@ -1066,5 +1067,35 @@ public class CheckItAPI implements IParamNames{
 		} else
 			return null;
 	}
+
 	
+	public static LinkedList<CheckItBankAccount> getAccounts( Integer empresaId ) throws CheckItException {
+		JSONArray accounts = getAccounts(API_KEY, empresaId, 1, null);
+		LinkedList<CheckItBankAccount> acc = new LinkedList<CheckItBankAccount>();
+		for (int i = 0; i < accounts.length() ; i++)  {
+			JSONObject obj = accounts.getJSONObject(i);
+			String fecha = obj.optString( BALANCE_DATE_PARAM );
+			acc.add( new CheckItBankAccount()
+				.setCcc( obj.optString(CCC))
+				.setAtDate( (AonStringUtils.isNotBlank(fecha)? parseDateFromJSON(fecha):null) ) 
+				.setBankId(obj.optInt(BANK_ID_PARAM, 0))
+				.setBank( obj.optString(BANK_NAME_PARAM))
+				.setBankAccountId(obj.optInt("id_cuentabancaria", 0))
+				.setBalance(obj.optDouble("saldo", 0))
+				.setRemainder(obj.optDouble("disponible", 0))
+				.setBankAccountType(obj.optInt("tipo_cuenta_bancaria_id", 0))
+				.setBankLoginType(obj.optInt("tipo_login_banco_id", 0))
+			);
+		}
+		return acc;
+	}
+
+	private static Date parseDateFromJSON(String date) {
+		try {
+			return DF_TIME.parse(date);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.finance;
+package com.esferalia.aon.occam.api.model.finance.checkit;
 
 public class CheckItParams {
 	private String domainName;

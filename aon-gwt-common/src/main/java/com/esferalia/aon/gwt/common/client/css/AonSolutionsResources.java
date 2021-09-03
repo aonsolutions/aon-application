@@ -583,5 +583,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-toggle-off.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconToggleOff();
+
+	@Source("icons/aon-icon-register.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRegister();
 }
 
