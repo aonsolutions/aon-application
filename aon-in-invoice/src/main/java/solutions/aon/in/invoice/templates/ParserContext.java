@@ -72,12 +72,12 @@ public enum ParserContext {
 		@Override
 		protected String[] getTotalPatterns() {
 			return new String[] {
-					"total\\s+pagar.*"+getDecimalPattern()+"\\b",
-					"total\\s+a\\s+pagar.*"+getDecimalPattern()+"\\b",
-					"total\\s+importe\\s+factura.*"+getDecimalPattern()+"\\b",
-					"total\\s+factura.*"+getDecimalPattern()+"\\b",
-					"total\\s+euros"+getDecimalPattern()+"\\b",
-					"total\\s+"+getDecimalPattern()+CURRENCY+"$"
+					"\\stotal\\s+pagar.*"+getDecimalPattern()+"\\b",
+					"\\stotal\\s+a\\s+pagar.*"+getDecimalPattern()+"\\b",
+					"\\stotal\\s+importe\\s+factura.*"+getDecimalPattern()+"\\b",
+					"\\stotal\\s+factura.*"+getDecimalPattern()+"\\b",
+					"\\stotal\\s+euros"+getDecimalPattern()+"\\b",
+					"\\stotal\\s+"+getDecimalPattern()+CURRENCY+"$"
 				};
 		}
 
@@ -136,8 +136,8 @@ public enum ParserContext {
 		@Override
 		protected String[] getTotalPatterns() {
 			return new String[] {
-					"total\\s+amount.*"+CURRENCY+getDecimalPattern()+"\\b",
-					"total\\s+"+getDecimalPattern()+CURRENCY+"$"
+					"\\stotal\\s+amount.*"+CURRENCY+getDecimalPattern()+"\\b",
+					"\\stotal\\s+"+getDecimalPattern()+CURRENCY+"$"
 				};
 		}
 		
