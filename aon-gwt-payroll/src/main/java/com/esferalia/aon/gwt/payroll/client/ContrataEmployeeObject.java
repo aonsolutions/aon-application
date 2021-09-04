@@ -387,6 +387,13 @@ public class ContrataEmployeeObject {
 		success.accept(employeeEventsDraftObject);
 	}
 	
+	// ------------------------------------------------- Database Methods (Events)
+	
+	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success, Consumer<Throwable> failure) {
+		EmployeeContractPaymentsObject employeeContractPaymentsObject = new EmployeeContractPaymentsObject(contractData.getContractId());
+		success.accept(employeeContractPaymentsObject);
+	}
+	
 	// ------------------------------------------------- Database Methods (Salary Draft)
 	
 	public void getSalaryDraftObject(Consumer<SalaryDraftObject> success, Consumer<Throwable> failure) {

@@ -470,6 +470,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	EmployeeEventsDraft employeeEvents;
 	
 	@UiField (provided = true)
+	EmployeeContractPayments employeeContractPayments;
+	
+	@UiField (provided = true)
 	SalaryDraft salaryDraft;
 	
 	@UiField
@@ -563,6 +566,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton visibilityButton;
 	private ListBox yearLBEvents;
 	
+	// EmployeeContractPayments
+	private HTMLPanel employeeContractPaymentsButtons;
+	private AonToolbarButton saveContractPaymentsButton;
+	private ListBox yearLBContractPayments;
+	
 	// SalaryDraft
 	private HTMLPanel salaryDraftButtos;
 	private AonToolbarButton acceptButton;
@@ -607,6 +615,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeEvents = new EmployeeEventsImpl();
 		employeeEvents.hideToolbar();
+		
+		employeeContractPayments = new EmployeeContractPayments();
+		employeeContractPayments.hideToolbar();
 		
 		salaryDraft = new SalaryDraft();
 		salaryDraft.hideToolbar();
@@ -779,6 +790,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				}, f -> {});
 				break;
 			case 9:
+				contrataEmployeeObject.getEmployeeContractPaymentsObject(employeeContractPaymentsObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractPaymentsButtons();
+					employeeContractPayments.setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
+				}, f -> {});
+				break;
+			case 10:
 				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalaryDraftButtons();
@@ -854,6 +872,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
@@ -862,6 +881,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
@@ -870,11 +890,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
 	private void showEventsButtons() {
 		employeeEventsButtons.setVisible(true);
+		employeeContractPaymentsButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+	}
+	
+	private void showContractPaymentsButtons() {
+		employeeContractPaymentsButtons.setVisible(true);
+		employeeEventsButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -884,6 +915,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showSalaryDraftButtons() {
 		salaryDraftButtos.setVisible(true);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -923,6 +955,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeEventsButtons = initEmployeeEventsButtons();
 		toolbar.add(employeeEventsButtons);
+		
+		// EmployeeEvents
+		
+		employeeContractPaymentsButtons = initEmployeeContractPaymentsButtons();
+		toolbar.add(employeeContractPaymentsButtons);
 		
 		// SalaryDrat
 		
@@ -1227,8 +1264,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				};
 	}
 	
-
-
 	private void downloadTA_IDC() {
 		contrataEmployeeObject.downloadTA_IDC(
 				s -> {
@@ -1344,6 +1379,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				}, 
 				f -> {});
 	}
+	
 	private void removeContract() {
 		contrataEmployeeObject.removeContract(
 				s -> {
@@ -1478,6 +1514,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEvents.initializeYearLB(yearLBEvents);
 		employeeEvents.setYearLB(yearLBEvents);
 		hPanel.add(yearLBEvents);
+		
+		return hPanel;
+	}
+	
+	// ------------------------------------------------- EmployeeContractPaymentsButtons
+	
+	private HTMLPanel initEmployeeContractPaymentsButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+		
+		saveContractPaymentsButton = new AonToolbarButton( AON.MSG.saveAction() + " Conceptos Calculo", AON.CSS.aonIconSave() );
+		saveContractPaymentsButton.addClickHandler(e -> {
+			employeeContractPayments.onSave(e);
+		});
+		hPanel.add(saveContractPaymentsButton);
+		
+		yearLBContractPayments = new ListBox();
+		employeeContractPayments.initializeYearLB(yearLBContractPayments);
+		employeeContractPayments.setYearLB(yearLBContractPayments);
+		hPanel.add(yearLBContractPayments);
 		
 		return hPanel;
 	}
