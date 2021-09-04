@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -915,6 +916,19 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			EmployeeEventsData employeeEventsData) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ContractPaymentData getContractPayements(String currentDomainName, Integer contractId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateContractPayments(String currentDomainName, Integer contractId,
+			ContractPaymentData contractPaymentData) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

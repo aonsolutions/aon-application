@@ -101,6 +101,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -125,6 +126,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -6650,6 +6652,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			return certifica2Info;
 			
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+
+	
+	// ------------------------------------------------- EmployeeContractPayments
+
+	@Override
+	public ContractPaymentData getContractPayements(String domainName, Integer contractId) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqEmployeeContractPayments.getContractPayements(connection, domainId, contractId);	
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void updateContractPayments(String domainName, Integer contractId, ContractPaymentData contractPaymentData) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeContractPayments.updateContractPayments(connection, domainId, contractId, contractPaymentData);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

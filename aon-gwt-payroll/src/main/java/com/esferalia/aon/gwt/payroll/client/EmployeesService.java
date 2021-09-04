@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -292,5 +293,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	// ------------------------------------------------- SEPE Methods
 	
 	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+
+	// ------------------------------------------------- EmployeeContractPayments
+
+	ContractPaymentData getContractPayements(String currentDomainName, Integer contractId);
+
+	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData);
 
 }

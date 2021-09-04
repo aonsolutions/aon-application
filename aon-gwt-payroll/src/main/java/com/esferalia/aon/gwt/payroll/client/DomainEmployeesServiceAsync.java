@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -596,6 +597,16 @@ public class DomainEmployeesServiceAsync {
 	
 	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), contractId, callback);
+	}
+	
+	// ------------------------------------------------- EmployeeContractPayments
+
+	public void getContractPayements(Integer contractId, AsyncCallback<ContractPaymentData> callback) {
+		employeesServiceAsync.getContractPayements(getCurrentDomainName(), contractId, callback);
+	}
+
+	public void updateContractPayments(Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback) {
+		employeesServiceAsync.updateContractPayments(getCurrentDomainName(), contractId, contractPaymentData, callback);
 	}
 
 	// ------------------------------------------------------------------------
