@@ -678,6 +678,9 @@ public class EmployeesServiceHelper {
 		filterVars.add("DIAS_VIERNES");
 		filterVars.add("DIAS_SABADO");
 		filterVars.add("DIAS_DOMINGO");
+		filterVars.add("BASE_REGULADORA");
+		filterVars.add("DIAS_TRABAJADOS");
+		filterVars.add("AÑOS_ANTIGUEDAD");
 		
 		for(String var : variables)
 			if(	!filterVars.contains(var) && 
