@@ -129,13 +129,13 @@ public class EmployeeContractPayments extends Composite {
 	}
 	
 	private void refreshContractPayments() {
-		contractPaymentDataProvider.refresh();
 		contractPaymentDG.redraw();
+		contractPaymentDataProvider.refresh();
 	}
 	
 	private void refreshContractDeductions() {
-		contractDeductionDataProvider.refresh();
 		contractDeductionDG.redraw();
+		contractDeductionDataProvider.refresh();
 	}
 	
 	private void provideContractPaymentDG() {
@@ -159,7 +159,6 @@ public class EmployeeContractPayments extends Composite {
 	    addStyleToHeader();
 	}
 	
-	
 	public void addStyleToHeader() {
 		contractPaymentDG.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		contractPaymentDG.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
@@ -168,7 +167,6 @@ public class EmployeeContractPayments extends Composite {
 		contractPaymentDG.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		contractPaymentDG.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
-	
 	
 	private void addContractPaymentColumns() {
 		
@@ -254,10 +252,11 @@ public class EmployeeContractPayments extends Composite {
 		
 		startDateColumn.setFieldUpdater(new FieldUpdater<ContractPayment, String>() {
 		      @Override
-		      public void update(int index, ContractPayment contractPayment, String startDate) {
+		      public void update(int index, ContractPayment contractPayment, String startDateIn) {
 		        // Called when the user changes the value.
-		    	contractPayment.setStartDate(formatDate.parse(startDate));
+		    	contractPayment.setStartDate(parseDate(startDateIn));
 		    	contractPayment.setHasChange(true);
+		    	refreshContractPayments();
 		      }
 		});
 
@@ -347,7 +346,6 @@ public class EmployeeContractPayments extends Composite {
 	    addStyleToHeaderDeduction();
 	}
 	
-	
 	public void addStyleToHeaderDeduction() {
 		contractDeductionDG.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		contractDeductionDG.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
@@ -356,7 +354,6 @@ public class EmployeeContractPayments extends Composite {
 		contractDeductionDG.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		contractDeductionDG.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
-	
 	
 	private void addContractDeductionColumns() {
 		
@@ -442,10 +439,11 @@ public class EmployeeContractPayments extends Composite {
 		
 		startDateColumn.setFieldUpdater(new FieldUpdater<ContractDeduction, String>() {
 		      @Override
-		      public void update(int index, ContractDeduction contractDeduction, String startDate) {
+		      public void update(int index, ContractDeduction contractDeduction, String startDateIn) {
 		        // Called when the user changes the value.
-		    	  contractDeduction.setStartDate(formatDate.parse(startDate));
+		    	  contractDeduction.setStartDate(parseDate(startDateIn));
 		    	  contractDeduction.setHasChange(true);
+		    	  refreshContractDeductions();
 		      }
 		});
 
