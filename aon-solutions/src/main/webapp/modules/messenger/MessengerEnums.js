@@ -105,6 +105,21 @@ export const TASK_STATUS = {
 	FAQ:"faq"
 } 
 
+export const TASK_STATUS_VALUE  = [
+    {
+        name:AON_MESSENGER_LIST_OPEN.name,
+        value:TASK_STATUS.PENDING,
+    },
+    {
+        name:AON_MESSENGER_LIST_CLOSE.name,
+        value:TASK_STATUS.FINISHED,
+    },
+    {
+        name:AON_MESSENGER_LIST_ARCHIVE.name,
+        value:TASK_STATUS.DELETED,
+    }
+];
+
 export const TASK_SOURCE = {
 	MANUAL:"manual",
 	ASSIGNED:"assigned",
@@ -138,6 +153,12 @@ export const TASK_FILTER = [
         title: MSG.EMPLOYEE,
         autocomplete: true
     },
+    {
+        type: "select",
+        id: "status",
+        name: "status",
+        title: MSG.STATUS
+      },
     // {
     //   type: "date",
     //   name: "startDate",

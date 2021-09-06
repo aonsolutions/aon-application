@@ -302,6 +302,7 @@ export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
 export const SEARCH = MSG.SEARCH;
 export const SEND = MSG.SEND;
+export const SENT = "Enviadas";//Todo
 export const SEND_FILE = MSG.SEND_FILE;
 export const SEND_FILES = MSG.SEND_FILES;
 export const SEND_INVOICE = MSG.SEND_INVOICE;

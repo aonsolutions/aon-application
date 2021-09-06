@@ -84,7 +84,7 @@ export class AonSearch extends AonElement {
 		span.appendChild(searchButton);
 		let input = this.createElement(TAG.INPUT);
 		input.id = this.SEARCH_INPUT;
-
+		input.autocomplete = 'off';
 		input.style.display = 'none';
 		input.style.outline = 'none';
 		input.style.border = 'none';

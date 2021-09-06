@@ -8,7 +8,7 @@ import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
@@ -143,6 +143,7 @@ export class AonMessengerList extends AonElement {
   searchValueDefault(){
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
+    let statusEl = this.getElement("status");
     getCustomers().then(customers=>{
       registryEl.options = JSON.stringify( customers.map(c=> ({...c, value: c.id})) );
     })
@@ -150,6 +151,8 @@ export class AonMessengerList extends AonElement {
     getTastHolders().then(ths=>{
       taskHolderEl.options = JSON.stringify( ths.map(th=> ({...th, value: th.id})) );
     })
+
+    statusEl.options = JSON.stringify( TASK_STATUS_VALUE );
 
   }
 
@@ -186,7 +189,7 @@ export class AonMessengerList extends AonElement {
         if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
 
         let assigned = "";
-        if(res.task_holder&&res.task_holder.alias)        assigned = res.task_holder.alias; 
+        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
         else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
 
         const newData = { 

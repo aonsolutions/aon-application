@@ -227,7 +227,7 @@ export const createMessageAuthor = (properties) => newComponent({
 export const createCommentContent = (properties) => newComponent({
   text: properties.comment,
   styles: {
-    fontSize: "16px",//"1em",
+    fontSize: "1em",
     textAlign : "left",
     fontWeight : "400",
     color :  CSS.variable(COLORS.GRAYSON),
@@ -502,16 +502,21 @@ export const createChatMessage = (properties, chat) => {
  * @returns Object divs
  */
 export const createSectionComment = (div) => {
-    const divComment = setStyles(document.createElement(TAG.DIV),{
-        width: "100%",
-        display: "flex",
-        background: "#fff",
-        borderTop: "1px solid #eee",
-        borderBottomRightRadius: "10px",
-        borderBottomLeftRadius: "10px",
+
+    const divWrite =  setStyles(document.createElement(TAG.DIV),{
+      width: "100%",
+      display: "flex",
+      flexDirection: "column"
     });
+    div.appendChild(divWrite);
+
+    const divComment = setStyles(document.createElement(TAG.DIV),{
+      display: "flex",
+      minHeight: "57px"
+    });
+    divComment.classList.add(CSS.RESIZE_VERTICAL);
     divComment.title = MSG.COMMENT;
-    div.appendChild(divComment);
+    divWrite.appendChild(divComment);
   
     const divMain  = setStyles(document.createElement(TAG.DIV),{
       width: "100%",
@@ -554,6 +559,7 @@ export const createSectionComment = (div) => {
     aonTextArea.removeBackground();
 
     return {
+        divWrite,
         divComment,
         aonTextArea,
         iconSend,
@@ -597,3 +603,18 @@ export const createInputContact = () =>  setAttributes(new AonInput(),{
   id: MESSENGER_IDS.GTASK_ID_TASK,
   description: MSG.CONTACT + ` (${MSG.OPTIONAL})`
 });
+
+export const createLabelFileText = () => {
+  const label =  setStyles(document.createElement(TAG.LABEL),{
+    color:"grey",
+    cursor:"pointer",
+    width:"100%",
+    borderTop :"1px dotted grey"
+  })
+  const span = document.createElement(TAG.SPAN);
+  span.style.margin = "0 5px";
+  span.innerHTML = "Adjunte archivos arrastrándolos y soltándolos, seleccionándolos o pegándolos.";
+  label.appendChild(span);
+  return label;
+}
+

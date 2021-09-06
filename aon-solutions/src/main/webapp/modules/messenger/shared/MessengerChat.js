@@ -1,10 +1,10 @@
 import { AonToolbar } from "../../../components/aon-toolbar";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT } from "../../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT , TAG} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
-import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment} from "./creationUtils";
+import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
 import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar, getIconJson } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
@@ -165,10 +165,15 @@ const addTextAreaChat = (wrapper) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
 
   const divs = createSectionComment(wrapper);
-  setStyles(divs.divComment,{
-    borderRadius:"8px 8px",
+  setStyles(divs.divWrite,{
+    borderRadius:"8px",
     border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
   });
+
+  const label = createLabelFileText();
+  label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
+  divs.divWrite.appendChild(label);
+
 
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
@@ -254,10 +259,9 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
         width: "50%",
-        // height: "90%",
         minWidth: "400px",
         paddingTop: "20px",
-        paddingBottom: "30px",
+        paddingBottom: "30px"
     },
   }).element;
 

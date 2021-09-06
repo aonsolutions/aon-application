@@ -440,11 +440,7 @@ export const buildFormQuery = (div, aonMessengerChat) => {
     const application = aonMessengerChat.applicationEl;
     const applicationParent = aonMessengerChat.applicationParentEl;
 
-    let registryName = "";
-    if(task.registry && task.registry.name)
-        registryName = `[${task.registry.name}]`;
-
-    const aonCard = createCardMessenger(MSG.DATA, registryName);
+    const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
 
@@ -474,6 +470,9 @@ export const buildFormQuery = (div, aonMessengerChat) => {
       rowsDivTwo.appendChild(contact);
       if(task.gtask_id) contact.value  = task.gtask_id;
       fillCustomer(task);
+    } else if(task.registry && task.registry.name){ // CARD TITLE REGISTRY
+        const registryName = `[${task.registry.name}]`;
+        aonCard.setTitleSection1(registryName)
     }
 
 

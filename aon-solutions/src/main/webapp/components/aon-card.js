@@ -128,6 +128,9 @@ export class AonCard extends AonElement {
 		return this.getElement(this.TITLE_SECTION1);
 	}
 
+	setTitleSection1(title){
+		this.getElement(this.TITLE_SECTION1).innerHTML = title
+	}
 
 	getCardTitle2(){
 		return this.getElement(this.TITLE_SECTION2);

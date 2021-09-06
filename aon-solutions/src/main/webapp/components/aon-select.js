@@ -110,7 +110,7 @@ export class AonSelect extends AonElement {
     let aonInput = new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
-    aonInput.autocomplete = false;
+    aonInput.autocomplete = "off";
     this.appendChild(aonInput);
     this.build();
 	}
@@ -169,12 +169,11 @@ export class AonSelect extends AonElement {
   }
 
   buildOptions(options) {
+    if(options.length === 0) return null;
     this.clearElementById(this.OPTIONS);
     let input = this.getElement(this.INPUT);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
-
-    if(options.length === 0) return div;
 
     options.unshift({ name:"-", value:"" }); //EMPTY
 

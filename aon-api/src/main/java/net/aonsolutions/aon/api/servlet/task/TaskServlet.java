@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.api.servlet.task;
 
-import java.io.File;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -466,7 +465,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	        	logo = urlLogo;
 	        }
             connection.disconnect();
-		}catch (Exception e) {}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return logo;
 	}

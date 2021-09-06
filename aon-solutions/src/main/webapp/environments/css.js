@@ -276,6 +276,8 @@ export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
 
+export const RESIZE_VERTICAL = "resizeVertical";
+
 // aon-textarea 
 
 export const AON_TEXTAREA = 'aonTextarea';

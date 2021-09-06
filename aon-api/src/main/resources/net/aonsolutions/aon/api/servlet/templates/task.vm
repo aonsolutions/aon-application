@@ -88,8 +88,11 @@
     <div class="divb">
       <table class="tableA">
         <tr>
-          <td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;"><img
-                src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="300px"></a></td>
+          <td>
+            <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
+              <img alt="icon" src="$task.getLogo()" style="cursor: pointer;" width="300px">
+            </a>
+          </td>
           <td></td>
         </tr>
 
@@ -137,7 +140,7 @@
         <tr>
           <td>
             <div class="divMain" style="justify-content: center !important;">
-              <a href="https://aonsolutions.org" class="grey styleCircle" target="_blank">
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
                 <div class="faces">
                   <img alt="Mala" src="https://aonsolutions.org/assets/img/sentiment_dissatisfied_black_36dp.png">
                 </div>
@@ -146,7 +149,7 @@
                 </div>
               </a>
 
-              <a href="https://aonsolutions.org" class="grey styleCircle" target="_blank">
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
                 <div class="faces">
                   <img alt="Regular" src="https://aonsolutions.org/assets/img/sentiment_neutral_black_36dp.png">
                 </div>
@@ -155,7 +158,7 @@
                 </div>
               </a>
 
-              <a href="https://aonsolutions.org" class="grey styleCircle" target="_blank">
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
                 <div class="faces">
                   <img alt="Buena" src="https://aonsolutions.org/assets/img/sentiment_satisfied_black_36dp.png">
                 </div>
@@ -164,12 +167,12 @@
                 </div>
               </a>
 
-              <a href="https://aonsolutions.org" class="grey styleCircle" target="_blank">
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
                 <div class="faces">
                   <img alt="Excelente" src="https://aonsolutions.org/assets/img/insert_emoticon_black_36dp.png">
                 </div>
                 <div class="faceText">
-                  <span>Excelente</span>
+                  <span>Muy buena</span>
                 </div>
               </a>
             </div>

@@ -224,6 +224,7 @@ const changeStyleSectionComment = (divs) => {
     divs.aonTextArea.style.fontSize = "15px";
     divs.aonTextArea.style.margin = "0";
     divs.aonTextArea.style.minHeight = "55px";
+    divs.divComment.style. background = "#fff";
     divs.iconOpenFull.querySelector("i").style.fontSize = "1.8em";
     divs.iconSend.querySelector("i").style.fontSize = "1.8em";
 }
@@ -233,9 +234,10 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
     /**
      * Building toolbars
      */
+     const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:"#" + (task.number || "0").toString().padStart(5, 0)
+        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
     });
     toolbar.style.width = "100%"; 
     

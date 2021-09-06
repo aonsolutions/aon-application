@@ -103,3 +103,10 @@
 .firstLetterUpper:first-letter {
     text-transform: uppercase;
 }
+
+@media screen and (min-width: 800px) {
+    .resizeVertical{
+      overflow: auto;
+      resize:vertical;
+    }
+}

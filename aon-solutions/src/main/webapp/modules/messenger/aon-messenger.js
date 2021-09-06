@@ -57,14 +57,16 @@ export class AonMessenger extends AonElement {
 			this.TASK_HOLDER = task;
 			this.updateCount();
 		});
-
+		console.log(this.data);
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.value){
 			const task = await getTaskOne({id:this.value});
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
 		} else {
+			this._filter.task_holder = this.TASK_HOLDER.id;
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+			this.applicationEl.addToolbarTitle("Recibidas");
 		}
 	}
 
@@ -85,40 +87,33 @@ export class AonMessenger extends AonElement {
 
 	taskNavBar(){
 		let messengerOpts = [
-			// {
-			// 	name: 'Todas',
-			// 	icon: MATERIAL_ICONS.ALL_INBOX,
-			// 	id: MATERIAL_ICONS.ALL_INBOX,
-			// 	fn: () =>{
-			// 		this._filter.task_holder = undefined;
-			// 		this._filter.sender = undefined;
-			// 		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
-			// 	}
-			// },
 			{
 				name: 'Recibidas',
 				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				id: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () =>{
-					let taskHolder = this.TASK_HOLDER.id;
-					if(this._filter.task_holder) {
-						taskHolder = undefined;
-						this.applicationEl.addTitleToolSection("");
-					}
-					this._filter.task_holder = taskHolder;
+					this._filter.task_holder = this.TASK_HOLDER.id;
 					this._filter.sender = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
 			{
-				name: 'Enviadas',
+				name: MSG.SENT,
 				icon: MATERIAL_ICONS.OUTBOX,
 				id: MATERIAL_ICONS.OUTBOX,
 				fn: () =>{
-					let taskHolder = this.TASK_HOLDER.id;
-					if(this._filter.sender) taskHolder = undefined;
 					this._filter.task_holder = undefined;
-					this._filter.sender = taskHolder;
+					this._filter.sender = this.TASK_HOLDER.id;
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			},
+			{
+				name: 'Todas',
+				icon: MATERIAL_ICONS.ALL_INBOX,
+				id: MATERIAL_ICONS.ALL_INBOX,
+				fn: () =>{
+					this._filter.task_holder = undefined;
+					this._filter.sender = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -205,7 +200,6 @@ export class AonMessenger extends AonElement {
 			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
 				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				// application.updateSidenavCount("Todas", (sender + task_holder) );
 				application.updateSidenavCount("Enviadas", sender);
 				application.updateSidenavCount("Recibidas", task_holder);
 			});
