@@ -75,30 +75,12 @@ export class AonDesktop extends AonElement {
 			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
+
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
 		inputInvoiceFile.addEventListener('change', ({target}) => uploadInvoices(inputInvoiceFile, target.files));
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener('change', ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
-
-		let sidenav = this.getElement(this.getApplication().SIDENAV);
-		sidenav.innerHTML = `
-		<div>
-		 	<button id="aonNew" class="aonButton" style="padding: 1rem;width: 140px;background-color: white;margin: 15px;border-radius: 50px;color: #002469;display: flex;">
-		 		<i id="aonNewIcon" class="material-icons-outlined" style="">add</i>
-		 		<span style="
-		 				margin-top: 5px;
-		 				margin-left: 10px;
-		 				position: relative;
-		 				">
-		 			NUEVO
-		 		</span>
-			</button>
-		</div>
-		`;
-
-		let aonNew = this.getElement('aonNew');
-		aonNew.addEventListener(EVENT.CLICK, (e) => this.addNewOptions(e));
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
@@ -279,6 +261,7 @@ export class AonDesktop extends AonElement {
 						let stat = new AonIconButton();
 						stat.id = li.id + 'Stat';
 						stat.icon = "bar_chart";
+						stat.title = MSG.STATISTICS;
 						stat.addEventListener(EVENT.CLICK, (event) => {
 							this.appOption = true;
 							event.preventDefault();
@@ -291,6 +274,7 @@ export class AonDesktop extends AonElement {
 						let upload = new AonIconButton();
 						upload.id = li.id + 'Upload';
 						upload.icon = "file_upload";
+						upload.title = MSG.UPLOAD_FILE;
 						upload.addEventListener(EVENT.CLICK, (event) => {
 							this.appOption = true;
 							event.preventDefault();
@@ -303,6 +287,7 @@ export class AonDesktop extends AonElement {
 						let add = new AonIconButton();
 						add.id = li.id + 'Add';
 						add.icon = "add";
+						add.title = MSG.NEW;
 						add.addEventListener(EVENT.CLICK, (event) => {
 							this.appOption = true;
 							event.preventDefault();
@@ -314,10 +299,18 @@ export class AonDesktop extends AonElement {
 					// if(Apps[key].options && Apps[key].options.menu) {
 						let menu = new AonIconButton();
 						menu.id = li.id + 'Menu';
-						menu.icon = "keyboard_arrow_right";
+						menu.icon = Apps[key].options && Apps[key].options.menu
+							? "menu_open" : "keyboard_arrow_right";
+
+						menu.title = Apps[key].options && Apps[key].options.menu
+							? MSG.OPEN_MENU : MSG.OPEN;
+						
 						menu.addEventListener(EVENT.CLICK, (event) => {
-							// this.appOption = true;
-							// event.preventDefault();
+							if(Apps[key].options && Apps[key].options.menu){
+								this.appOption = true;
+								event.preventDefault();
+								this.menuOption(Apps[key]);
+							}
 						});
 						buttons.appendChild(menu);
 					// }
@@ -527,12 +520,14 @@ export class AonDesktop extends AonElement {
 			case Apps.DOCUMENTAL.app:
 				break;
 			case Apps.ACCOUNTING.app:
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
 				break;
 			case Apps.COMUNICA.app:
 				break;
 			case Apps.PAYROLL.app:
+				this.rootPanelHtml(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
 				break;
 			case Apps.INVOICE.app:
 				GWT.load(GWT.INVOICE_STAT);
@@ -569,7 +564,8 @@ export class AonDesktop extends AonElement {
 	}
 
 	menuOption(app) {
-
+		let aonMenu = this.getElement('aonMenu');
+		aonMenu.buildAppMenu(app);
 	}
 	
 	uploadOption(app) {

@@ -221,9 +221,9 @@ export const MAILBOX = "Buzón";//TODO
 // ----- N
 
 export const NAME = MSG.NAME;
+export const NEW = MSG.NEW;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_REQUEST = "Nueva solicitud"; //TODO
-export const NEW = "Nueva"; //TODO
 export const NEXT = MSG.NEXT;
 export const NIF = 'NIF';//TODO
 export const NOTIFICATIONS = 'Notificaciones';//TODO
@@ -234,6 +234,8 @@ export const NUMBER = MSG.NUMBER;
 
 export const OFFICE = 'Despacho';//TODO
 export const ONLY_PORTAL = MSG.ONLY_PORTAL;
+export const OPEN = MSG.OPEN;
+export const OPEN_MENU = MSG.OPEN_MENU;
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
 export const OPTIONAL = "Opcional"; //TODO
@@ -319,6 +321,7 @@ export const SHOW_FILE = MSG.SHOW_FILE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
+export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;

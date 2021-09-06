@@ -160,6 +160,7 @@ export const MY_USER = 'O Meu Usuario';
 // ----- N
 
 export const NAME = 'Nome';
+export const NEW = 'Novo';
 export const NEW_COMPANY = 'Nova Empresa';
 export const NEXT = 'Seguinte';
 export const NUMBER = 'Número';
@@ -167,6 +168,8 @@ export const NUMBER = 'Número';
 // ----- O
 
 export const ONLY_PORTAL = 'Só Portal';
+export const OPEN = 'Abrir';
+export const OPEN_MENU = 'Abrir Menú';
 export const OPTIONS = "Opcións"
 
 // ----- P
@@ -240,6 +243,7 @@ export const SHOW_FILE = 'Ensinar Ficheiro';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
+export const STATISTICS = 'Estatística';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';

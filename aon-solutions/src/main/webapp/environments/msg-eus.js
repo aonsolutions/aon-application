@@ -160,6 +160,7 @@ export const MY_USER = 'Nire Erabiltzailea';
 // ----- N
 
 export const NAME = 'Izena';
+export const NEW = 'Berria';
 export const NEW_COMPANY = 'Enpresa Berria';
 export const NEXT = 'Hurrengoa';
 export const NUMBER = 'Zenbakia';
@@ -167,6 +168,8 @@ export const NUMBER = 'Zenbakia';
 // ----- O
 
 export const ONLY_PORTAL = 'Portala Soilik';
+export const OPEN = 'Ireki';
+export const OPEN_MENU = 'Ireki Menua';
 export const OPTIONS = 'Aukerak';
 
 // ----- P
@@ -240,6 +243,7 @@ export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
+export const STATISTICS = 'Estatistikak';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';

@@ -160,6 +160,7 @@ export const MY_USER = 'Mi Usuari';
 // ----- N
 
 export const NAME = 'Nom';
+export const NEW = 'Nou';
 export const NEW_COMPANY = 'Nova Empresa';
 export const NEXT = 'Següent';
 export const NUMBER = 'Nombre';
@@ -167,6 +168,8 @@ export const NUMBER = 'Nombre';
 // ----- O
 
 export const ONLY_PORTAL = 'Sol Portal';
+export const OPEN = 'Obrir';
+export const OPEN_MENU = 'Obrir Menú';
 export const OPTIONS = 'Opcions';
 
 // ----- P
@@ -240,6 +243,7 @@ export const SHOW_FILE = 'Mostrar Fitxer';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Mida';
+export const STATISTICS = 'Estadístiques';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';

@@ -22,7 +22,7 @@ export const TIMECONTROL = {
   price: ' ', //'-',
   disabled: true,
   options: {
-    menu: true,
+    menu: false,
     add: false,
     upload: false,
     stat: false
@@ -47,7 +47,7 @@ export const ACCOUNTING = {
     menu: true,
     add: false,
     upload: false,
-    stat: false
+    stat: true
   }
 };
 
@@ -64,7 +64,13 @@ export const FISCAL = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ' // '75€/mes'
+  price: ' ', // '75€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: false
+  }
 };
 
 export const PAYROLL = {
@@ -88,7 +94,7 @@ export const PAYROLL = {
     menu: true,
     add: false,
     upload: false,
-    stat: false
+    stat: true
   }
 };
 
@@ -131,7 +137,7 @@ export const DOCUMENTAL = {
   price: ' ', // '-',
   disabled: true,
   options: {
-    menu: true,
+    menu: false,
     add: false,
     upload: true,
     stat: false
@@ -188,7 +194,7 @@ export const MESSENGER = {
   price: ' ', //'-',
   disabled: true,
   options: {
-    menu: true,
+    menu: false,
     add: true,
     upload: false,
     stat: false
