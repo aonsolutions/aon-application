@@ -16,7 +16,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import net.aonsolutions.aon.api.checkit.CheckItAPI;
 import net.aonsolutions.aon.api.checkit.CheckItException;
 
-@WebServlet(name = "Rawdoc Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
+@WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
 public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet implements CheckItService {
 
 	private static final long serialVersionUID = 1249978088517559976L;
