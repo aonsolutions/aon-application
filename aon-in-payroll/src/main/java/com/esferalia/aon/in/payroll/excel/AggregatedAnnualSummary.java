@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1218,8 +1219,9 @@ public class AggregatedAnnualSummary {
 		Collection<Integer> ids = idsAndWorkplaces.keySet();
 		
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
-				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
-		LinkedHashMap<String, AggregatedAnnualYearlyEntry> entries = new LinkedHashMap<String, AggregatedAnnualYearlyEntry>();
+				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])))
+				.filter(s -> s.getSalaryType() != null && s.getSalaryType().ordinal() <= SalaryType.DELAY.ordinal());
+		LinkedHashMap<String, AggregatedAnnualYearlyEntry> entries = new LinkedHashMap<>();
 		
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", new Locale("es", "ES"));
 		salaries

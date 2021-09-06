@@ -11,7 +11,7 @@ public class AggregatedAnnualYearlyEntry {
 	
 	public AggregatedAnnualYearlyEntry () {
 		super();
-		monthlyEntries = new LinkedHashMap<String, AggregatedAnnualEntry> ();
+		monthlyEntries = new LinkedHashMap<> ();
 	}
 	
 	
@@ -21,7 +21,7 @@ public class AggregatedAnnualYearlyEntry {
 		this.employeeName = employeeName;
 		this.nif = nif;
 		this.workplace = workplace;
-		this.monthlyEntries = monthlyEntries != null ? monthlyEntries : new LinkedHashMap<String, AggregatedAnnualEntry> ();;
+		this.monthlyEntries = monthlyEntries != null ? monthlyEntries : new LinkedHashMap<> ();
 	}
 
 

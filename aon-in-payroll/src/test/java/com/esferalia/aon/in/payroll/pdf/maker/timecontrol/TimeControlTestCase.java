@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.maker.timecontrol;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,10 +46,12 @@ public class TimeControlTestCase {
 			emp.setEmployeeName(nullProbability(faker.gameOfThrones().character(), 15));
 			employees.add(emp);
 		}
-		try {
+		try (OutputStream os = OutputStream.nullOutputStream()){
 //			OutputStream os = new FileOutputStream("/home/igonzalez/Escritorio/pedefes/faker.pdf");
-			TimeControlTemplate.print(OutputStream.nullOutputStream(), enterprise, cif, employees, period);
+			TimeControlTemplate.print(os, enterprise, cif, employees, period);
 		} catch (CanNotCreatePdfException e) {
+			fail();
+		} catch (IOException e1) {
 			fail();
 		}
 	}
