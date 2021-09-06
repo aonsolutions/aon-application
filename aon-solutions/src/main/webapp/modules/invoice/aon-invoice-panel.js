@@ -240,8 +240,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoice() {
-		let ayudat = localStorage.getItem('aon_domain_name').includes('ayudat');
-
+		let ayudat = this.getDur().isSelfconta();
 		let aonInvoice = this.getElement('aonInvoice');
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
 		let button = this.isMobile()
