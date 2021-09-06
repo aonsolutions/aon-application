@@ -20,7 +20,13 @@ export const TIMECONTROL = {
       name: 'Empleado'
     }],
   price: ' ', //'-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: false
+  }
 }
 
 export const ACCOUNTING = {
@@ -36,7 +42,13 @@ export const ACCOUNTING = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ' // '75€/mes'
+  price: ' ', // '75€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: false
+  }
 };
 
 export const FISCAL = {
@@ -71,7 +83,13 @@ export const PAYROLL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ' // '90€/mes'
+  price: ' ', // '90€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: false
+  }
 };
 
 export const COMUNICA = {
@@ -111,7 +129,13 @@ export const DOCUMENTAL = {
       name: 'Empleado'
     }],
   price: ' ', // '-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: true,
+    add: false,
+    upload: true,
+    stat: false
+  }
 };
 
 export const INVOICE = {
@@ -130,8 +154,14 @@ export const INVOICE = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ' //'-'
-  ,disabled: true
+  price: ' ', //'-'
+  disabled: true,
+  options: {
+    menu: false,
+    add: true,
+    upload: true,
+    stat: true
+  }
 };
 
 export const CONFIGURATION = {
@@ -156,7 +186,13 @@ export const MESSENGER = {
       name: 'Empresa'
     }],
   price: ' ', //'-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: true,
+    add: true,
+    upload: false,
+    stat: false
+  }
 };
 
 export const TOOLS = {

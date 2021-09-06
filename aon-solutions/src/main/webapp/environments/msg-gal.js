@@ -19,6 +19,7 @@ export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
 export const ASESOR = 'Asesor';
+export const AVAILABLE = 'Dispoñible';
 
 // ----- B
 
@@ -52,6 +53,7 @@ export const CONCEPTS = 'Conceptos';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
+export const CONTACT_DATA = 'Datos do Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
 export const COUNTRY = 'País'
@@ -111,6 +113,9 @@ export const FOOTER = 'Pé';
 // ----- G
 
 export const GENERAL_INFORMATION = 'Información General';
+export const GROUP_DATA = 'Datos do Grupo';
+export const GROUP = 'Grupo';
+export const GROUPS = 'Grupos';
 
 // ----- H
 

@@ -12,6 +12,7 @@ export const ACCOUNT_BALANCE_WALLET = 'account_balance_wallet';
 export const ACCOUNT_BOX = 'account_box';
 export const ACCOUNT_CIRCLE = 'account_circle';
 export const ADD = 'add';
+export const ADD_CIRCLE_OUTLINE = 'add_circle_outline';
 export const ADD_SHOPPING_CART = 'add_shopping_cart';
 export const ADD_TASK = 'add_task';
 export const ADDCHART = 'addchart';
@@ -150,6 +151,7 @@ export const MOVE_TO_INBOX = "move_to_inbox";
 
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
+export const PHONE = 'phone';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 

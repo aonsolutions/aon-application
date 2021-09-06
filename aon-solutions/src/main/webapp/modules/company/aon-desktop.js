@@ -19,6 +19,10 @@ import './aon-stat.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
+import * as OPTION from '../invoice/InvoiceOptions.js';
+import * as GWT from "../../gwt/gwt.js";
 
 export class AonDesktop extends AonElement {
 
@@ -26,6 +30,8 @@ export class AonDesktop extends AonElement {
 	AON_DESKTOP;
 	INPUT_INVOICE_FILE;
 	INPUT_DOCUMENT_FILE;
+
+	appOption;
 
 	static get observedAttributes() {
 		return [];
@@ -48,7 +54,7 @@ export class AonDesktop extends AonElement {
 		this.AON_DESKTOP = 'aonDesktopMain';
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
 		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
-	}
+	}	
 
 	getDur() {
 		return this.dur;
@@ -228,7 +234,7 @@ export class AonDesktop extends AonElement {
 		divSlide.innerHTML = '<aon-stat></aon-stat>'
 		div.appendChild(divSlide);
 
-		div.appendChild(this.buildTitle('DISPONIBLES'));
+		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
 		ul.className = 'list-group';
@@ -237,6 +243,7 @@ export class AonDesktop extends AonElement {
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
 					let li = this.createElement(TAG.LI);
+					li.id = this.AON_DESKTOP + Apps[key].app.initCap();
 					li.className = 'list-group-item aonAppLi';
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
@@ -244,6 +251,7 @@ export class AonDesktop extends AonElement {
 					li.title = Apps[key].title;
 					li.addEventListener('click', () => {
 						this.appSelection(Apps[key].app);
+						this.appOption = false
 					});
 					let span = this.createElement(TAG.SPAN);
 					span.style.margin = '20px';
@@ -262,17 +270,128 @@ export class AonDesktop extends AonElement {
 					span.appendChild(span2);
 
 					let buttons = this.createElement(TAG.SPAN);
+					buttons.id = li.id + 'Buttons'
 					buttons.style.position = 'absolute';
 					buttons.style.right = '10px';
+					buttons.style.top = '8px';
 
-					let i = this.createElement('i');
-					i.className = 'material-icons';
-					i.innerHTML = 'keyboard_arrow_right';
-					buttons.appendChild(i);
+					if(Apps[key].options && Apps[key].options.stat) {
+						let stat = new AonIconButton();
+						stat.id = li.id + 'Stat';
+						stat.icon = "bar_chart";
+						stat.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.statOption(Apps[key].app);
+						});
+						buttons.appendChild(stat);
+					}
+
+					if(Apps[key].options && Apps[key].options.upload) {
+						let upload = new AonIconButton();
+						upload.id = li.id + 'Upload';
+						upload.icon = "file_upload";
+						upload.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.uploadOption(Apps[key].app);
+						});
+						buttons.appendChild(upload);
+					}
+
+					if(Apps[key].options && Apps[key].options.add) {
+						let add = new AonIconButton();
+						add.id = li.id + 'Add';
+						add.icon = "add";
+						add.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.addOption(Apps[key].app, add);
+						});
+						buttons.appendChild(add);
+					}
+
+					// if(Apps[key].options && Apps[key].options.menu) {
+						let menu = new AonIconButton();
+						menu.id = li.id + 'Menu';
+						menu.icon = "keyboard_arrow_right";
+						menu.addEventListener(EVENT.CLICK, (event) => {
+							// this.appOption = true;
+							// event.preventDefault();
+						});
+						buttons.appendChild(menu);
+					// }
 
 					span.appendChild(buttons);
 					li.appendChild(span);
 					ul.appendChild(li);
+
+					if (Apps[key].options && Apps[key].options.upload) {
+						li.addEventListener(EVENT.DRAGOVER, (event) => {
+						  event.preventDefault();
+						  console.log(EVENT.DRAGOVER);
+						  li.style.border = "1px solid #002469";
+						  li.style.opacity = "0.6";
+						});
+					
+						li.addEventListener(EVENT.DRAGENTER, (event) => {
+						  event.preventDefault();
+						  li.style.border = "1px solid #002469";
+						  li.style.opacity = "0.6";
+						});
+					
+						li.addEventListener(EVENT.MOUSELEAVE, (event) => {
+							li.style.borderRight = "0px";
+							li.style.borderLeft = "0px";
+							li.style.borderTop = "0px";
+							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
+						  	li.style.opacity = "1";
+						});
+					
+						li.addEventListener(EVENT.MOUSEOVER, (event) => {
+							li.style.borderRight = "0px";
+							li.style.borderLeft = "0px";
+							li.style.borderTop = "0px";
+							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";						  li.style.opacity = "1";
+						});
+					
+						document.addEventListener(EVENT.DRAGLEAVE, (event) => {
+						  event.preventDefault();
+						  let isClickInside = li.contains(event.target) || li === event.target;
+						  if (!isClickInside) {
+							li.style.borderRight = "0px";
+							li.style.borderLeft = "0px";
+							li.style.borderTop = "0px";
+							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
+							li.style.opacity = "1";
+						  }
+						});
+					
+						li.addEventListener(EVENT.DROP, (event) => {
+						  	event.preventDefault();
+						  	console.log(EVENT.DROP);
+						  	li.style.borderRight = "0px";
+						  	li.style.borderLeft = "0px";
+						  	li.style.borderTop = "0px";
+						  	li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
+						  	li.style.opacity = "1";
+						  	if(event && event.dataTransfer && event.dataTransfer.files){
+								let files = event.dataTransfer.files;
+
+								switch(Apps[key].app){
+								case Apps.DOCUMENTAL.app:
+									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+									uploadDocuments(inputDocumentFile, files);
+									break;
+								case Apps.INVOICE.app:
+									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+									uploadInvoices(inputInvoiceFile, files);
+									break;								
+						  		}
+							}
+						});
+					}
+
 				}
 			}
   	} else {
@@ -322,7 +441,8 @@ export class AonDesktop extends AonElement {
 	}
 
 	appSelection(app) {
-		switch(app){
+		if(!this.appOption)
+			switch(app){
 			case Apps.DOCUMENTAL.app:
 				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
@@ -347,7 +467,7 @@ export class AonDesktop extends AonElement {
 			case Apps.MESSENGER.app:
 				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development('Solicitud');
 				break;
-		}
+			}
 	}
 
 	development(title) {
@@ -402,6 +522,79 @@ export class AonDesktop extends AonElement {
 		
 	}
 
+	statOption(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				break;
+			case Apps.ACCOUNTING.app:
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				break;
+			case Apps.INVOICE.app:
+				GWT.load(GWT.INVOICE_STAT);
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				break;
+			}
+
+	}
+
+	addOption(app, button) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				this.getElement(this.INPUT_DOCUMENT_FILE).click();
+				break;
+			case Apps.ACCOUNTING.app:
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				break;
+			case Apps.INVOICE.app:
+				this.addInvoice(button);
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				break;
+			}
+	}
+
+	menuOption(app) {
+
+	}
+	
+	uploadOption(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				this.getElement(this.INPUT_DOCUMENT_FILE).click();
+				break;
+			case Apps.ACCOUNTING.app:
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				break;
+			case Apps.INVOICE.app:
+				this.getElement(this.INPUT_INVOICE_FILE).click();
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				break;
+			}
+	}
+
 	addNewOptions(e) {
 		let rect = e.target.getBoundingClientRect();
     	let x = e.clientX - rect.left;
@@ -437,6 +630,39 @@ export class AonDesktop extends AonElement {
 	  
 	  	d.setMenuOptions(actions, top, left);
 	  	d.open();
+	}
+
+	addInvoice(button) {		
+		let invoicePanel = new AonInvoicePanel();	
+
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+		let d = this.getApplication().getOptionDialog();
+		let options = [{
+			name: 'Emitidas',
+			icon: 'unarchive',
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+				this.rootPanel(invoicePanel);
+			}
+		}, {
+			name: 'Recibidas',
+			icon: 'archive',
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_RECEIVED;
+				this.rootPanel(invoicePanel);
+			}
+		}, {
+			name: 'Tickets/Justificantes',
+			icon: 'receipt',
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_TICKET;
+				this.rootPanel(invoicePanel);
+			}
+		}];
+		d.setMenuOptions(options, top, left);
+		d.open();
 	}
 }
 

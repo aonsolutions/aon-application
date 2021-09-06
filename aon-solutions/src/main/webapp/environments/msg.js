@@ -48,10 +48,12 @@ export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDRESS = MSG.ADDRESS;
+export const ALIAS = 'Alias';
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
+export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
 
 // ----- B
@@ -92,6 +94,7 @@ export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
 export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONTACT = MSG.CONTACT;
+export const CONTACT_DATA = MSG.CONTACT_DATA;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTRACT = MSG.CONTRACT;
 export const COUNTRY = MSG.COUNTRY;
@@ -162,9 +165,9 @@ export const FOOTER = MSG.FOOTER;
 // ----- G
 
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
-
-export const GROUP = "Grupo";//TODO
-export const GROUPS = "Grupos";//TODO
+export const GROUP_DATA = MSG.GROUP_DATA;
+export const GROUP = MSG.GROUP;
+export const GROUPS = MSG.GROUPS;
 
 // ----- H
 

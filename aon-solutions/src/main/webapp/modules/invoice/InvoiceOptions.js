@@ -18,6 +18,24 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.RECEIPT
   }
 
+  export const CREATE_INVOICE_ISSUED = {
+    id: CONSTANT.CREATE_INVOICE_ISSUED.initCap(),
+    name: MSG.ISSUEDS,
+    icon: MATERIAL_ICONS.UNARCHIVE
+  }
+
+  export const CREATE_INVOICE_RECEIVED = {
+    id: CONSTANT.CREATE_INVOICE_RECEIVED.initCap(),
+    name: MSG.RECEIVEDS,
+    icon: MATERIAL_ICONS.ARCHIVE
+  }
+
+  export const CREATE_INVOICE_TICKET = {
+    id: CONSTANT.CREATE_INVOICE_TICKET.initCap(),
+    name: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT
+  }
+
   export const RAWDOC_INBOX = {
     id: CONSTANT.RAWDOC_INBOX.initCap(),
     name: MSG.INVOICES,

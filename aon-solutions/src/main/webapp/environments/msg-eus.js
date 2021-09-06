@@ -19,6 +19,7 @@ export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
 export const ASESOR = 'Aholkulari';
+export const AVAILABLE = 'Eskuragai';
 
 // ----- B
 
@@ -52,6 +53,7 @@ export const CONCEPTS = 'Kontzeptuak';
 export const CONFIDENTIAL = 'Konfidentziala';
 export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
+export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
 export const COUNTRY = 'Herrialde';
@@ -111,6 +113,9 @@ export const FOOTER = 'Oina';
 // ----- G
 
 export const GENERAL_INFORMATION = 'Informazio Generala';
+export const GROUP_DATA = 'Taldeko Datuak';
+export const GROUP = 'Taldea';
+export const GROUPS = 'Taldeak';
 
 // ----- H
 

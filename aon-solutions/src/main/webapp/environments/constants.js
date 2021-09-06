@@ -48,6 +48,9 @@ export const COMUNICA = 'comunica';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
+export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
+export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
+export const CREATE_INVOICE_TICKET = 'createInvoiceTicket';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 
@@ -62,6 +65,7 @@ export const DELETE_FOREVER = 'deleteForever';
 export const DESCRIPTION = 'description';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
+export const DIV = 'div';
 export const DRAFT = 'draft';
 export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
@@ -109,6 +113,8 @@ export const INVOICE_TICKET = 'invoiceTicket';
 // ----- K
 
 // ----- L
+
+export const LIST = 'list';
 
 // ----- M
 
@@ -221,6 +227,8 @@ export const TYPE = 'type';
 
 export const UPLOAD = 'upload';
 export const UPLOAD_FILE = 'uploadFile';
+export const USER = 'user';
+export const USERS = 'users';
 
 // ----- V
 

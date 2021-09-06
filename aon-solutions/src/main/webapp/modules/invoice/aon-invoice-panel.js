@@ -82,8 +82,8 @@ export class AonInvoicePanel extends AonElement {
 			page: 0,
 			per_page: 50
 		}
-		this.option = CONSTANT.REFUSED === this.status
-			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX; 
+		this.option = this.option || (CONSTANT.REFUSED === this.status
+			? OPTION.RAWDOC_REJECT : OPTION.RAWDOC_INBOX); 
 	}
 
 	getDur(){
@@ -387,6 +387,16 @@ export class AonInvoicePanel extends AonElement {
 			this.selectedOption = option;
 			this.buildToolbarOptions();
 			switch(option.id){
+				case OPTION.CREATE_INVOICE_ISSUED.id:
+					this.aonInvoice('emitida');
+					break;
+				case OPTION.CREATE_INVOICE_RECEIVED.id:
+					this.aonInvoice('recibida');
+					break;
+				case OPTION.CREATE_INVOICE_TICKET.id:
+					this.aonInvoice('ticket');
+					break;
+				
 			case OPTION.RAWDOC_INBOX.id:
 				this.aonInvoiceList({status: CONSTANT.INBOX});
 				break;
