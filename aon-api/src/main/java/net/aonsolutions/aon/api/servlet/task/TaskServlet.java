@@ -7,6 +7,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,12 +18,14 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
@@ -207,9 +212,18 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Object saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
+		Boolean edit = task.getId()!=null ? true : false;
 		setCauData(api, task);
+		if(edit) {
+			checkFiles(api, task);
+		}
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
-
+		
+		if(!edit) {
+			checkFiles(api, task);
+			task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
+		}
+		
 		if(task.getWorkflows().size() > 0) {
 			saveAllTaskWorkflow(api, task); //ADD WORKFLOW
 		}
@@ -375,7 +389,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		try {
 			User myUser = AON_SOLUTIONS.getUser(api.getDomain(), api.getToken());
 			String title = "SOLICITUD | AON SOLUTIONS";
-			String body = "Solicitud Nº "+task.getNumber() + " <b>Cerrada</b>";
+			String body = "Solicitud Nº "+task.getNumber() + " Cerrada";
 			LinkedList<Auth> auths = new LinkedList<Auth>();
 			auths.add(auth);
 
@@ -470,5 +484,59 @@ public class TaskServlet extends AonApiHttpServlet{
 		}
 
 		return logo;
+	}
+	
+	private void checkFiles(AonApiData api, Task task){
+		JSONArray files = JsonUtils.getJSONArray(api.getData(), "files");
+		Domain domain = api.getDomain();
+		 for (int i = 0 ; i < files.length(); i++) {
+			try {
+			    JSONObject file = files.getJSONObject(i);
+			    String     dataId =  file.optString("id");
+			    Matcher    matcher = regexFile(task, dataId);
+			    if(matcher!=null) {
+					String base64 = file.optString("content");
+					String contentType = file.optString("contentType");
+					byte[] fileData = Base64.getDecoder().decode(base64);
+					TaskAttach taskAttach = new TaskAttach()
+					.setDomain(api.getDomain().getId())
+					.setTask(task.getId())
+					.setData(fileData)
+					.setMimetype(MimeType.get(contentType));
+										
+					taskAttach = AON_SOLUTIONS.saveTaskAttach(domain, api.getUser(), taskAttach);
+					
+					JSONObject jsonFile = new JSONObject(); 
+					jsonFile.put("domain_name", domain.getName());
+					jsonFile.put("domain_id", domain.getId());
+					jsonFile.put("attach_type", "task");
+					jsonFile.put("id", taskAttach.getId());
+
+					String base64FileStr = new String(Base64.getEncoder().encode(jsonFile.toString().getBytes()));
+
+	                String link = "/ms/api/file/"+base64FileStr;
+	                task.setDescription(matcher.replaceAll("$1" + link + "$3"));
+			    }
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	    }
+	}
+	
+	private Matcher regexFile(Task task, String dataId) {
+		String description = task.getDescription();
+	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")([^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	    Matcher matcher = pattern.matcher(description);
+	    if(!matcher.find()) {
+		    regex = "(\\<\\S[^<>]*?src=[\\\\]?\")([^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+		    pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		    matcher = pattern.matcher(description);
+		    if(!matcher.find()) {
+		    	return null;
+		    }
+	    }
+	    return matcher;
 	}
 }

@@ -1,11 +1,11 @@
 import { AonToolbar } from "../../../components/aon-toolbar";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT , TAG} from "../../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar, getIconJson } from "./utils";
+import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar, checkFilesAddEventDescription, getIconJson } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -96,12 +96,17 @@ const buildQuery = (firstDiv, aonMessengerChat) => {
 
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
         minHeight: '200px',
-        maxHeight: '300px'
+        maxHeight: '300px',
+        position: 'relative'
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     firstDiv.appendChild(aonTextArea);
+    aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
+      task.setFiles(target.FILES);
+    });
     if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-
+    checkFilesAddEventDescription(task);//check files description
+    
     buildTextareaToolbar(aonTextArea, task, false);
 }
 

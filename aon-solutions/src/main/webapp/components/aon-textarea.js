@@ -233,6 +233,9 @@ export class AonTextArea extends AonElement {
 				height: '100%',
 				padding: '10px',
 				// fontSize: "1.3em"
+			},
+			dataset:{
+				dragOver: "Suelte el archivo.",
 			}
 		});
 	}
@@ -356,9 +359,15 @@ export class AonTextArea extends AonElement {
 	draggableEnable(){
 		const divTextArea = this.getTextAreaDiv();
 		divTextArea.classList.add("divDragOver");
-
-		const highlight = ()   => divTextArea.classList.add('highlight');
-		const unhighlight = () => divTextArea.classList.remove('highlight');
+		
+		const highlight = ()   => {
+			divTextArea.classList.add('highlight');
+			divTextArea.setAttribute("placeholder", "");
+		} 
+		const unhighlight = () =>{
+			divTextArea.classList.remove('highlight');
+			divTextArea.setAttribute("placeholder", this.placeholder);
+		}
 
 		[EVENT.DRAGENTER, EVENT.DRAGOVER].forEach(eventName => divTextArea.addEventListener(eventName, highlight, false));
 		[EVENT.DRAGLEAVE, EVENT.DROP].forEach(eventName => divTextArea.addEventListener(eventName, unhighlight, false));

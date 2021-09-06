@@ -66,14 +66,12 @@ export const buildTextareaToolbar =  (aonTextArea, task, file= false) => {
     },() =>blockquote());
 
 
-    if(task && task.id && file){
-        //ATTACH
-        aonTextArea.addToolbarOptionLeft({
-            id: MATERIAL_ICONS.ATTACH_FILE,
-            icon: MATERIAL_ICONS.ATTACH_FILE,
-            name:MSG.ADD_FILE
-        },() =>{});
-    }
+    //ATTACH
+    aonTextArea.addToolbarOptionLeft({
+        id: MATERIAL_ICONS.ATTACH_FILE,
+        icon: MATERIAL_ICONS.ATTACH_FILE,
+        name:MSG.ADD_FILE
+    },() =>{});
 }
 
 
@@ -377,6 +375,21 @@ export const checkFilesAddEventClick = (parent)=>{
                 openFileUrl(url);
             });
         } 
+    }
+}
+
+/**
+ * Description add event click img or file
+ * @param {Task} task class task
+ */
+export const checkFilesAddEventDescription = (task)=>{
+    const descriptionEl = document.getElementById(MESSENGER_IDS.DESCRIPTION_TASK);
+    if(task && descriptionEl){
+        const observation = task.getDescriptionJson().observation;
+        if(observation) {
+            descriptionEl.value = observation;
+            checkFilesAddEventClick(descriptionEl.getTextAreaDiv());
+        }
     }
 }
 

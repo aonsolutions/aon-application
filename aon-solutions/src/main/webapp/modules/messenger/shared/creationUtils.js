@@ -2,7 +2,7 @@ import { AonCard } from "../../../components/aon-card.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
-import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS } from "../../../environments/environments.js";
+import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick } from "./utils.js";
@@ -188,7 +188,7 @@ export const createExpandIcon = () => newComponent({
 // MESSAGE COMPONENT
 // ----------------------------------------------------
 
-export const createMessageBox = (properties) =>{
+const createMessageBox = (properties) =>{
   let component =  newComponent({
     type: MESSENGER_COMPONENTS.MESSAGE,
     classes : [CSS.FLEX_COLUMN],
@@ -198,17 +198,18 @@ export const createMessageBox = (properties) =>{
         background : properties.direction == RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
         boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
         borderRadius : '5px',
-        // maxWidth: '500px',
+        position: "relative",
         width: '90%'
     },
     dataset:{
       id: properties.id
     }
-  });
+  }).element;
   if(properties.direction == RIGHT)
-    component.element.style.marginLeft = "auto";
+    component.style.marginLeft = "auto";
   else 
-    component.element.style.marginRight = "auto";
+    component.style.marginRight = "auto";
+
   return component;
 } 
 
@@ -355,17 +356,19 @@ const createMaterialIcon = (properties) => newComponent({
  * @param {object} properties 
  * @returns 
  */
- export const createOutlinedMaterialIcon = (properties) => newComponent({
-    type: 'i',
-    text: properties.name,
-    classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
-    styles: {
-        fontSize: properties.size ? properties.size : "24px",
-        color: properties.color? properties.color : "#404040"
-    }
-});
+ export const createOutlinedMaterialIcon = (properties) => {
+  console.log(properties);
+  return newComponent({
+      type: 'i',
+      text: properties.name,
+      classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
+      styles: {
+          fontSize: properties.size ? properties.size : "24px",
+          color: properties.color ? properties.color : "#404040"
+      }
+  });
 
-
+ } 
 
 /**
  * Check the properties of the comment
@@ -454,7 +457,7 @@ const iconComment = (icon) => {
     return a;
 }
 
-
+let messageSend = false;
 /**
  * Create a new message
  * @param {*} properties 
@@ -464,22 +467,30 @@ export const createChatMessage = (properties, chat) => {
     properties = checkProperties(properties);
 
     const message = createMessageBox(properties);
-
-    // const label = setStyles(document.createElement("label"),{
-    //     color: "grey",
-    //     fontSize: "17px",
-    //     textDecoration: "none",
-    //     cursor: "pointer",
-    //     textAlign: "right",
-    // });
-    // label.innerText="×";
-    // message.appendChild(label);
+    if(messageSend) message.classList.add("sent")
+    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
+  
+    if(properties.direction === RIGHT){
+      const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
+      setStyles(iconSendWorkflow, {
+          color: messageSend ? CSS.variable(COLORS.ONLINE_GREEN) : CSS.variable(COLORS.AON_BLUE),
+          fontSize: "17px",
+          position:"absolute",
+          cursor: "pointer",
+          right: "21px",
+          top: "18px"
+      });
+      iconSendWorkflow.title = MSG.SEND;
+      iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
+      messageSend = !messageSend;
+      message.appendChild(iconSendWorkflow);
+    }
 
     const name = createMessageAuthor(properties);
-    name.appendTo(message.element);
+    name.appendTo(message);
 
     const description = createCommentContent(properties);
-    description.appendTo(message.element);
+    description.appendTo(message);
 
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
@@ -488,10 +499,11 @@ export const createChatMessage = (properties, chat) => {
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);
+    
 
-    message.appendTo(chat); //ADD MESSAGE IN DIV CHAT
+    checkFilesAddEventClick(message); //ADD EVENT CLICK
 
-    checkFilesAddEventClick(message.element); //ADD EVENT CLICK
+    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
 
     return message;
 }
@@ -613,7 +625,7 @@ export const createLabelFileText = () => {
   })
   const span = document.createElement(TAG.SPAN);
   span.style.margin = "0 5px";
-  span.innerHTML = "Adjunte archivos arrastrándolos y soltándolos, seleccionándolos o pegándolos.";
+  span.innerHTML = "Adjunte archivos arrastrándolos y soltándolos.";
   label.appendChild(span);
   return label;
 }

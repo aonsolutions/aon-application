@@ -147,6 +147,7 @@ export const LINK = "link";
 export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = "move_to_inbox";
+export const mark_email_read = "mark_email_read";
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';

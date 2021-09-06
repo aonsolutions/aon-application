@@ -16,6 +16,7 @@ export class Task {
   source;
   source_id;
   gtask_id;
+  files;
   constructor() {
       this.id          = undefined;
       this.status      = undefined;
@@ -30,6 +31,7 @@ export class Task {
       this.task_holder = {};
       this.workflow    = [];
       this.workflowTmp = {};
+      this.files = [];
   }
 
   createTask(task) {
@@ -63,10 +65,11 @@ export class Task {
       if(task.gtask_id)                           this.gtask_id    = task.gtask_id;
       if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
       if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
-      if(task.status)                             this.status = task.status;
-      if(task.source_id)                          this.source_id = task.source_id;
+      if(task.status)                             this.status       = task.status;
+      if(task.source_id)                          this.source_id     = task.source_id;
       if(task.registry && task.registry.id)       this.registry      = task.registry;
-      // if(task.title)                              this.title       = task.title;
+      if(task.description)                        this.description    = task.description;
+      this.setFiles([]);
       // if(task.domain)                             this.domain      = task.domain;
       // if(task.workflow)                           this.workflow    = task.workflow;
     }
@@ -208,6 +211,14 @@ export class Task {
  
   deleteWorkflow(id) {
     this.workflow = this.workflow.filter(workflow=> workflow.id!=id);
+  }
+
+  getFiles() {
+    return this.files;
+  }
+
+  setFiles(files) {
+    this.files = files;
   }
 }
 

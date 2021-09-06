@@ -57,7 +57,6 @@ export class AonMessenger extends AonElement {
 			this.TASK_HOLDER = task;
 			this.updateCount();
 		});
-		console.log(this.data);
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.value){

@@ -334,12 +334,12 @@ const showFullComment  = (b) => {
  */
  const buildRequest = (div, aonMessengerChat) => {
     buildFormRequest(div, aonMessengerChat);
-    changeStyleCard(div);
+    // changeStyleCard(div);
 }
 
-const changeStyleCard = (div) => {
-    [...div.querySelectorAll("aon-card")].map(aonCard=>{
+// const changeStyleCard = (div) => {
+//     [...div.querySelectorAll("aon-card")].map(aonCard=>{
         // console.log(aonCard);
         // aonCard.getCard().style.margin = "10px";
-    })
-}
+    // })
+// }

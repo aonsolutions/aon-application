@@ -10,7 +10,7 @@ import {
 } from "../../services/taskService.js";
 import { Task } from "./Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
-import { fillChat, sendMessage } from "./shared/utils.js";
+import { checkFilesAddEventDescription, fillChat, sendMessage } from "./shared/utils.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
@@ -254,6 +254,8 @@ export class AonMessengerChat extends AonElement {
       if (this.task.getTitle()) {
         const data = await saveTask(this.task);
         this.task.editTask(data);
+        checkFilesAddEventDescription(this.task);//check files description
+
         if(this.getData().id){
           this.setData(data);
           if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
