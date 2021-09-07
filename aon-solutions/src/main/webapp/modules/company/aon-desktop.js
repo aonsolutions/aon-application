@@ -1,4 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
+import {AonAvatar} from '../../components/aon-avatar.js';
+
 import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
@@ -81,6 +83,55 @@ export class AonDesktop extends AonElement {
 		
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener('change', ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
+
+
+		let domainName = localStorage.getItem('aon_domain_name');
+		if(domainName.includes('aonsolutions.org')) {
+			let gestor = this.createElement(TAG.DIV);
+		
+			let aonAvatar = new AonAvatar();
+			gestor.appendChild(aonAvatar);
+			let spanGestor = this.createElement(TAG.SPAN);
+			spanGestor.className = 'aonSidenavTitle';
+			spanGestor.innerHTML = 'Gestor no asignado.';
+			gestor.appendChild(spanGestor);
+
+			let contacta = this.createElement(TAG.DIV);
+				contacta.style.marginTop = '10px';
+			let cicon = this.createElement(TAG.I);
+			cicon.className = 'material-icons';
+			cicon.style.color = 'gray';
+			cicon.style.verticalAlign = 'middle';
+			cicon.style.fontSize = '1.3rem';
+			cicon.innerHTML = 'chat';
+			contacta.appendChild(cicon);
+
+			let cspan = this.createElement(TAG.SPAN);
+			cspan.innerHTML = 'Contactar';
+			cspan.style.color = 'gray';
+			cspan.style.marginTop = '10px';
+			contacta.appendChild(cspan);
+			gestor.appendChild(contacta);
+
+			let val = this.createElement(TAG.DIV);
+			val.innerHTML = 'Valora a tu Gestor';
+			val.style.color = 'gray';
+			val.style.marginTop = '10px';
+			gestor.appendChild(val);
+
+			let starsDiv = this.createElement(TAG.DIV);
+			starsDiv.style.marginTop = '10px';
+			for(let i = 0; i < 5; i++) {
+				let icon = this.createElement(TAG.I);
+				icon.className = 'material-icons';
+				icon.style.color = 'gray';
+				icon.innerHTML = 'star_border';
+				starsDiv.appendChild(icon);
+			}
+			gestor.appendChild(starsDiv);
+
+			aonDesktop.addSidenavWidget('MI GESTOR', gestor);
+		}
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
@@ -321,42 +372,29 @@ export class AonDesktop extends AonElement {
 
 					if (Apps[key].options && Apps[key].options.upload) {
 						li.addEventListener(EVENT.DRAGOVER, (event) => {
-						  event.preventDefault();
-						  console.log(EVENT.DRAGOVER);
-						  li.style.border = "1px solid #002469";
-						  li.style.opacity = "0.6";
+							event.preventDefault();
+							console.log(EVENT.DRAGOVER);
+							li.classList.add('dragAndDrop');
 						});
 					
 						li.addEventListener(EVENT.DRAGENTER, (event) => {
 						  event.preventDefault();
-						  li.style.border = "1px solid #002469";
-						  li.style.opacity = "0.6";
+						  li.classList.add('dragAndDrop');
 						});
 					
 						li.addEventListener(EVENT.MOUSELEAVE, (event) => {
-							li.style.borderRight = "0px";
-							li.style.borderLeft = "0px";
-							li.style.borderTop = "0px";
-							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
-						  	li.style.opacity = "1";
+							li.classList.remove('dragAndDrop');
 						});
 					
 						li.addEventListener(EVENT.MOUSEOVER, (event) => {
-							li.style.borderRight = "0px";
-							li.style.borderLeft = "0px";
-							li.style.borderTop = "0px";
-							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";						  li.style.opacity = "1";
+							li.classList.remove('dragAndDrop');	
 						});
 					
 						document.addEventListener(EVENT.DRAGLEAVE, (event) => {
 						  event.preventDefault();
 						  let isClickInside = li.contains(event.target) || li === event.target;
 						  if (!isClickInside) {
-							li.style.borderRight = "0px";
-							li.style.borderLeft = "0px";
-							li.style.borderTop = "0px";
-							li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
-							li.style.opacity = "1";
+							li.classList.remove('dragAndDrop');
 						  }
 						});
 					

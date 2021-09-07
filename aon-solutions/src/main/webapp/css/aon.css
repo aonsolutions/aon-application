@@ -23,6 +23,24 @@
   box-sizing: border-box;
 }
 
+
+.dragAndDrop {
+  border: 1px dashed #002469 !important;
+  opacity: 0.6;
+}
+
+.dragAndDrop::after {
+  content: "Suelte los archivos aquí";
+  opacity:  1;
+  position: absolute;
+  color: #808080;
+  font-size: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
 body {
   padding: 0px !important;
   margin: 0px !important;
