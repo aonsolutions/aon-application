@@ -31,7 +31,6 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseFilter;
@@ -48,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CompanyPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -265,13 +265,10 @@ public class CompanyDAO {
 			.stream()
 			.map(rec -> {
 				Company c = new Company()
-						.setId(rec.getValue(COMPANY.REGISTRY))
-						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-						.setName(rec.getValue(REGISTRY.NAME))
+						.copy(RegistryFiller.build(rec, REGISTRY))
 						.setSurcharge(rec.getValue(COMPANY.SURCHARGE)==1)
 						.setWithholding(rec.getValue(COMPANY.WITHHOLDING)==1)
 						.setVatAccrualPayment(rec.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)==1);
-				c.setDomain(new Domain().setId(domain));
 				return c;
 			})
 			.findFirst()

@@ -643,11 +643,12 @@ public class FillerDAO {
 					.setDomain(r.getValue(SCOPE.DOMAIN))
 					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			company
-				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
 				.setDocument(r.getValue(REGISTRY.DOCUMENT))
 				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME))
+				.setName(r.getValue(REGISTRY.NAME));
+			company
+				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
+				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
 				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
 				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
 				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
@@ -687,12 +688,12 @@ public class FillerDAO {
 					.setId(r.getValue(SCOPE.ID))
 					.setDomain(r.getValue(SCOPE.DOMAIN))
 					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
+			company.setDocument(r.getValue(REGISTRY.DOCUMENT))
+				.setId(r.getValue(REGISTRY.ID))
+				.setName(r.getValue(REGISTRY.NAME));
 			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setDocument(r.getValue(REGISTRY.DOCUMENT))
-				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME))
 				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
 				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
 				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);

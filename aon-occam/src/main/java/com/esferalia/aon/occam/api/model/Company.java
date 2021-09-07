@@ -9,51 +9,15 @@ public class Company extends Registry implements Serializable {
 
 	private static final long serialVersionUID = -4970548127101817530L;
 
-	private Integer id;
-	private String document;
-	private String name;
-	
     private boolean active;
 	private boolean surcharge;
 	private boolean withholding;
 	private boolean vatAccrualPayment;
 	private boolean eInvoice;
-	
 	private Scope scope;
-	
-	public Company() {
-	
-	}
 	
 	public Company copy(Registry registry) {
 		return super.copy( registry, this);
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public Company setId(Integer id) {
-		this.id = id;
-		return this; 
-	}
-
-	public String getDocument() {
-		return document;
-	}
-
-	public Company setDocument(String document) {
-		this.document = document;
-		return this;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Company setName(String name) {
-		this.name = name;
-		return this;
 	}
 
 	public boolean isSurcharge() {
