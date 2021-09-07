@@ -126,6 +126,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -6675,9 +6676,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public void updateContractPayments(String domainName, Integer contractId, ContractPaymentData contractPaymentData) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Get domain id
-//			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqEmployeeContractPayments.updateContractPayments(connection, contractPaymentData);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void createContractPayment(String domainName, Integer contractId, ContractConceptCalc contractConceptCalc) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			// Get domain id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeContractPayments.createContractPayment(connection, domainId, contractId, contractConceptCalc);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

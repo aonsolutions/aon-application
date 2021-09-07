@@ -46,6 +46,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -70,6 +71,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -3310,6 +3312,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			
 		} catch (SQLException | SepeException | SegSocialException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+
+	@Override
+	public ContractConcepts getAllConcepts(String domainName, String currentUser) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			
+			return JooqEmployeeContractPayments.getAllConcepts(connection, domainId);
+			
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}

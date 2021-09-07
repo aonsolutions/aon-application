@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -519,6 +520,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
+	}
+	
+	public void getAllConcepts(AsyncCallback<ContractConcepts> asyncCallback) {
+		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

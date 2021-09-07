@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -608,13 +609,16 @@ public class DomainEmployeesServiceAsync {
 	public void updateContractPayments(Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback) {
 		employeesServiceAsync.updateContractPayments(getCurrentDomainName(), contractId, contractPaymentData, callback);
 	}
+	
+	public void createContractPayment(Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback) {
+		employeesServiceAsync.createContractPayment(getCurrentDomainName(), contractId, contractConceptCalc, callback);
+	}
 
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
 		return employeesServiceAsync;
 	}
-	
 	
 	// ----------------------------------------------------------------- static
 	

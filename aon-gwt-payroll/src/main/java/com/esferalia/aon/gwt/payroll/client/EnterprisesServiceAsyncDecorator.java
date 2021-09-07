@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -829,6 +830,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.verifyCertificate(domainName, currentUser, certificateType, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getAllConcepts(String domainName, String currentUser, AsyncCallback<ContractConcepts> callback) {
+		AON.start();
+		enterprisesServiceAsync.getAllConcepts(domainName, currentUser, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

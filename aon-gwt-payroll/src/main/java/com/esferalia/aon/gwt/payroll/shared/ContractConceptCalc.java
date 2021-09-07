@@ -17,6 +17,8 @@ public class ContractConceptCalc implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	private Byte type;
+	private Integer conceptId;
 	private String code;
 	private ContractConceptCalcType contractConceptCalcType;
 	private String description;
@@ -45,6 +47,24 @@ public class ContractConceptCalc implements Serializable {
 
 	public ContractConceptCalc setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Byte getType() {
+		return type;
+	}
+
+	public ContractConceptCalc setType(Byte type) {
+		this.type = type;
+		return this;
+	}
+
+	public Integer getConceptId() {
+		return conceptId;
+	}
+
+	public ContractConceptCalc setConceptId(Integer conceptId) {
+		this.conceptId = conceptId;
 		return this;
 	}
 
