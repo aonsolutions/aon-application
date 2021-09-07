@@ -756,7 +756,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0) 
 				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
 			else if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) < 0) {
-				fixBaseCgcMin(expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+				fixBaseCgcMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
 							offPeriods, rawCgcbase, cgcBase);
 				rawCgcbase = quoteCalculator.getRawCgcBase();
 				salaryBuilder.setRawCgcBase(rawCgcbase);
@@ -1316,7 +1316,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		
 	}
 
-	protected void fixBaseCgcMin(ExpressionContext expressionContext, Date start, Date end,
+	protected void fixBaseCgcMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
 			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 			List<Period> offPeriods, Double rawCgcbase, Double cgcBase) throws AonException {
 		onCheckError(String.format(BASE_CGC_MIN_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));

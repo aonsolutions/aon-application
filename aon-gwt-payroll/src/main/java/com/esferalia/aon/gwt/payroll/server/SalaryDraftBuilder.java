@@ -1657,13 +1657,13 @@ public class SalaryDraftBuilder
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
 			case "ATEP_E" :
-				return "Accidentes de Trabajo y Enfermedades Profesionales";
+				return "Accidentes de Trabajo";
 			case "IT_E" :
-				return "Accidentes de Trabajo y Enfermedades Profesionales IT";
+				return "IT de Accidentes de Trabajo";
 			case "IMS_E" :
-				return "Accidentes de Trabajo y Enfermedades Profesionales IMS";
+				return "IMS de Accidentes de Trabajo";
 			case "FOGASA_E" :
-				return "Fondo de Garant\u00eda Salarial ( FOGASA )";
+				return "FOGASA";
 			case "CGC_E_TEMP" :
 				return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
 			default:

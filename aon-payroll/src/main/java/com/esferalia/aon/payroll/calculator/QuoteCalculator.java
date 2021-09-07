@@ -818,8 +818,10 @@ public abstract class QuoteCalculator {
 
 					@Override
 					public QuoteCalculator visitSettle(SalaryType salaryType) {
-						return new UnlimitedQuote(expressionContext, startDate,
+						return new GeneralQuote(expressionContext, startDate,
 								endDate);
+						//return new UnlimitedQuote(expressionContext, startDate,
+						//		endDate);
 					}
 
 					@Override
