@@ -855,7 +855,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Consumer<String> success) {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
-		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+    	contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
 					showContractButtons();
 					checkStatus(this.contrataEmployeeObject);
@@ -1526,7 +1526,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		saveContractPaymentsButton = new AonToolbarButton( AON.MSG.saveAction() + " Conceptos Calculo", AON.CSS.aonIconSave() );
 		saveContractPaymentsButton.addClickHandler(e -> {
-			employeeContractPayments.onSave(e);
+			employeeContractPayments.onSave();
 		});
 		hPanel.add(saveContractPaymentsButton);
 		

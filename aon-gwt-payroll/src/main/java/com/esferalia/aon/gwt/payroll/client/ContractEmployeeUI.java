@@ -359,14 +359,12 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getFootTabPanel().clear();
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
-		
 		// Load info and fill fields
 		this.contrataEmployeeObject.initializeEmployee(contractId,
 				r -> {
 					// Init toolbar
 					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
 					getExportContract().getElement().getStyle().setDisplay(Display.NONE);
-					
 					employee.initializeView();
 					initLogicWindow();
 					initializeIdcMonthListBox();
@@ -569,15 +567,18 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	private Double calculatePartialityCoef() {
 		Double hours = 0.00;
-		for(JourneyDuration journeyDuration : contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
-				String expression = journeyDuration.getExpression();
-				expression = expression.replace(",", ".");
-				hours += Double.parseDouble(expression);
+		if(null != contrataEmployeeObject.getContractData().getContractJourneyDuration() && null != contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration() && 
+				!contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+			for(JourneyDuration journeyDuration : contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+				if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
+					String expression = journeyDuration.getExpression();
+					expression = expression.replace(",", ".");
+					hours += Double.parseDouble(expression);
+				}
 			}
+			
+			hours = hours / 40;
 		}
-		
-		hours = hours / 40;
 				
 		return Math.round(hours * 100.0) / 100.0;
 	}
