@@ -264,6 +264,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String cmd_btn();
 		
 		String bg_newPaeriod();
+		
+		String showExtra();
 
 	}
 
@@ -1441,12 +1443,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		//Show new payPeriod
 		deckPanelExtras.showWidget(0);
 		periodTypePanel.getElement().getStyle().clearWidth();
-		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras", AON.CSS.aonIconVisibility());
+		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras");
 		showExtras.addClickHandler(e -> {
 			showExtrasTable = !showExtrasTable;
 			if(showExtrasTable) deckPanelExtras.showWidget(1);
 			else deckPanelExtras.showWidget(0);
 		});
+		showExtras.addStyleName(style.showExtra());
 		periodTypePanel.add(showExtras);
 		
 		//Add options to payPeriod ListBox

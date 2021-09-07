@@ -366,6 +366,10 @@
 			border: 1px solid #ababab !important;
 			background: white !important;
 		}
+		
+		.showExtra:hover{
+			background-color: transparent !important;
+		}
 
 	</ui:style>
 
