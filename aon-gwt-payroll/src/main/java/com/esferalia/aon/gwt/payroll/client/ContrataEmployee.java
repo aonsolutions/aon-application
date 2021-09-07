@@ -569,6 +569,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// EmployeeContractPayments
 	private HTMLPanel employeeContractPaymentsButtons;
 	private AonToolbarButton saveContractPaymentsButton;
+	private AonToolbarButton addContractPaymentsButton;
 	private ListBox yearLBContractPayments;
 	
 	// SalaryDraft
@@ -1529,6 +1530,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			employeeContractPayments.onSave();
 		});
 		hPanel.add(saveContractPaymentsButton);
+		
+		addContractPaymentsButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		addContractPaymentsButton.addClickHandler(e -> {
+			employeeContractPayments.openEditor();
+		});
+		hPanel.add(addContractPaymentsButton);
 		
 		yearLBContractPayments = new ListBox();
 		employeeContractPayments.initializeYearLB(yearLBContractPayments);

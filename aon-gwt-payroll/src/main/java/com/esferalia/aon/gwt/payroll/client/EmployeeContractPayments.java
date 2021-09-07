@@ -469,6 +469,10 @@ public class EmployeeContractPayments extends Composite {
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
+		AonToolbarButton addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(e -> openEditor());
+		toolbar.add(addButton);
+		
 		this.yearLB = new ListBox();
 		this.toolbar.add(this.yearLB);
 	}
@@ -479,6 +483,22 @@ public class EmployeeContractPayments extends Composite {
 		employeeContractPaymentsObject.updateContractPayments(
 				r -> changeYear(), 
 				t -> {});
+	}
+	
+	public void openEditor() {
+		new EmployeeContractPaymentEditor() {
+			@Override
+			protected void onAccept(ContractConceptCalc contractConceptCalc) {
+				employeeContractPaymentsObject.createContractPayment(
+						contractConceptCalc, 
+						s ->
+							employeeContractPaymentsObject.getContractPayements(
+									r -> initContractConceptCalcsTable()
+									,t -> {})
+						, 
+						f -> {});
+			}
+		};
 	}
 	
 	// -------------------------------------------------- ContrataEmployee.Methods

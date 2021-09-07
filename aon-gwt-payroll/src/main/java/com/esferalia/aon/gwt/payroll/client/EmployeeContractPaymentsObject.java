@@ -60,6 +60,20 @@ public class EmployeeContractPaymentsObject {
 			}
 		});
 	}
+	
+	public void createContractPayment(ContractConceptCalc contractConceptCalc, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.createContractPayment(this.contractId, contractConceptCalc, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
 
 	public List<ContractConceptCalc> getContractConceptCalcs(Integer year) {
 		this.contractConceptCalcs.clear();
