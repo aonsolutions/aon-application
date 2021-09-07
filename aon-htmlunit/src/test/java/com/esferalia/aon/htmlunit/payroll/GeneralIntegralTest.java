@@ -365,11 +365,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("COTIZACIÓN, MÁX");
 		settle(calendar.getTime());
-		
-		assertValue("cgcBaseLabel", 666000.00);
-		assertValue("cgpBaseLabel", 666000.00);
+		// 2016  
+		double maxCgcBase = 3642.00 * 12/30;
+		assertValue("cgcBaseLabel", maxCgcBase);
+		assertValue("cgpBaseLabel", maxCgcBase);
 		assertValue("totalPaymentsLabel", 666000.00);
-		assertValue("totalLiquidLabel", 666000.00 - (666000.00 * (4.70 + 1.55 + 0.10) / 100.00));
+		assertValue("totalLiquidLabel", 666000.00 - (maxCgcBase * (4.70 + 1.55 + 0.10) / 100.00));
 
 	
 		draft("FINIQUITO, REDEFINIDO");
