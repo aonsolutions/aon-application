@@ -6,7 +6,7 @@ import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { newComponent, setAttributes, setFullDate, setStyles, setTime, waitEl } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createProcessType, createReceiverDiv, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
+import { createAction, createCardMessenger, createChatMessage, createCustomer, createDivEditable, createInputContact, createProcessType, createReceiverDiv, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createTaskTag, createWorkgroup, LEFT, RIGHT, titleFirstDiv } from "./creationUtils";
 
 /**
  * Build standard toolbar options 
@@ -153,6 +153,24 @@ const fillCustomer = async ({registry}) => {
     }
 }
 
+//FILL TAG
+const fillTag = async (task) => {
+    const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKTAG}`).catch(e=>null);
+    const applicationParent = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER).getApplicationParent();
+    if(aonSelect){
+        aonSelect.clear();
+        const tags = applicationParent._tags;
+        if(tags){
+            aonSelect.options = JSON.stringify( tags.map( c=> ({...c, value: c.id}) ) );
+        }
+        if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
+
+        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+            task.setDescriptionJson({tag:detail.id});
+        })
+    }
+}
+
 
 //FILL CHAT
 export const fillChat = (workflows=[])=>{
@@ -177,7 +195,7 @@ export const fillChat = (workflows=[])=>{
             workflows.forEach(workflow => {
                 const {id, comment, type, modification_date, task_holder:{name, alias, id:taskHolderId}} = workflow;
                 const me = taskHolderId == meId; // if taskHolder id is me
-                const message = {
+                let message = {
                     id,
                     type,
                     comment,
@@ -461,20 +479,29 @@ export const buildFormQuery = (div, aonMessengerChat) => {
     //-------------------------CAU--------------------------
     if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
         // DIV CUSTOMER
-        const rowsDivTwo = createStartJustifiedRow();
+        const rowsDivTwo = createStartJustifiedColumn();
         rowsDivTwo.element.style.width = "100%";
         columnsDiv.appendChild(rowsDivTwo.element);
         // CUSTOMER
         const customerSelect = createCustomer();
         customerSelect.style.width = "100%";
         rowsDivTwo.appendChild(customerSelect);
-            //-----------------TASK HOLDER
+        fillCustomer(task);
+        // DIV CONTACT
+        const rowsDivThree = createStartJustifiedRow();
+        rowsDivThree.element.style.width = "100%";
+        columnsDiv.appendChild(rowsDivThree.element);
+        //-----------------CONTACT
         const contact = createInputContact();
         contact.style.width = "100%";
-        contact.style.marginLeft = "5px";
-        rowsDivTwo.appendChild(contact);
+        rowsDivThree.appendChild(contact);
         if(task.gtask_id) contact.value  = task.gtask_id;
-        fillCustomer(task);
+        // TAG
+        const tagSelect = createTaskTag();
+        tagSelect.style.width = "100%";
+        tagSelect.style.marginLeft = "5px";
+        rowsDivThree.appendChild(tagSelect);
+        fillTag(task);
     } else if(task.registry && task.registry.name){ // CARD TITLE REGISTRY
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)

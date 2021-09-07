@@ -251,8 +251,8 @@ export const createAction = (icon, message, outlined) => {
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
    styles : {
-    width : '2em',
-    height : '2em',
+    width : '20px',
+    height : '20px',
     borderRadius : "100em",
     marginRight : "1em",
     background : CSS.variable(COLORS.AON_LIGHT_GRAY),
@@ -349,6 +349,9 @@ const createMaterialIcon = (properties) => newComponent({
     styles: {
         fontSize: properties.size,
         color: properties.color
+    },
+    attributes:{
+      title: properties.name,
     }
 });
 
@@ -365,6 +368,9 @@ const createMaterialIcon = (properties) => newComponent({
       styles: {
           fontSize: properties.size ? properties.size : "24px",
           color: properties.color ? properties.color : "#404040"
+      },
+      attributes:{
+        title: properties.name,
       }
   });
 
@@ -415,6 +421,13 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.TASKHOLDER,
     name: MESSENGER_IDS.TASKHOLDER,
     title: "Asignar a"
+});
+
+ //-----------------TAG
+ export const createTaskTag = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.TASKTAG,
+  name: MESSENGER_IDS.TASKTAG,
+  title: MSG.TAG
 });
 
  //-----------------CUSTOMER

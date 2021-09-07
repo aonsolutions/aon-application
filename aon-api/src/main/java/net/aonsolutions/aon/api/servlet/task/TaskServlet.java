@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -45,6 +47,7 @@ import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
@@ -78,6 +81,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/workflow":
 					response(req, resp,  getTaskWorkflow(api));
+					break;
+				case "/tags":
+					response(req, resp,  getTaskTags(api));
 					break;
 				case "/attach":
 					response(req, resp,  getTasksAttach(api));
@@ -115,6 +121,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/workflow":
 					response(req, resp,  saveTaskWorkflow(api));
 					break;
+				case "/tag":
+					response(req, resp,  saveTaskTag(api));
+					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -132,6 +141,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, deleteTask(api));
+				break;
+			case "/tag":
+				response(req, resp, deleteTaskTag(api));
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -238,15 +250,35 @@ public class TaskServlet extends AonApiHttpServlet{
 		);
 	}
 	
+	private Object getTaskTags(AonApiData api) {
+		String type = api.getParams().optString("type");
+		Domain domain = api.getDomain();
+		return TagJSON.toJSON( AON.getTagList(
+						domain.getName(), 
+						domain.getId(), api.getUser().getLogin(),
+						f->f.getDomainProperty().eq(domain.getId())
+						.and(f.getTypeProperty().eq(TagType.safeValueOf(type).value()))
+					) 
+				);
+	}
+	
 	private void saveAllTaskWorkflow(AonApiData api, Task task) {
 		task.getWorkflows().stream().forEach(workflow -> AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow.setTask(task.getId())));
 	}
-	
+
 	private JSONObject saveTaskWorkflow(AonApiData api) {
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), TaskWorkflowJSON.fromJSON(api.getData()));
 		sendWorkflowCommunication(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
+
+	private JSONObject saveTaskTag(AonApiData api) {
+		Domain domain = api.getDomain();
+		return TagJSON.toJSON(
+				AON.insertTag(domain.getName(), domain.getId(), api.getUser().getLogin(), TagJSON.fromJSON(api.getData()))
+		);
+	}
+	
 	
 	private Object getTasksAttach(AonApiData api) {
 		Integer taskId = api.getParams().optInt("taskId");
@@ -338,6 +370,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject deleteTask(AonApiData api) {
 		Integer taskId = api.getData().optInt("taskId");
 		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), taskId);
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteTaskTag(AonApiData api) {
+		AON.deleteTag(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),TagJSON.fromJSON(api.getData()));
 		return new JSONObject();
 	}
 	
@@ -470,18 +507,18 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private String getLogoCompany(String companyName) {
 		String logo = "https://aon.solutions/assets/aon-logo.png";
-		try {
-			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
-		    final URL url = new URL(urlLogo);
-	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-	        int statusCode = connection.getResponseCode();
-	        if(200 == statusCode) {
-	        	logo = urlLogo;
-	        }
-            connection.disconnect();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
+//		    final URL url = new URL(urlLogo);
+//	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+//	        int statusCode = connection.getResponseCode();
+//	        if(200 == statusCode) {
+//	        	logo = urlLogo;
+//	        }
+//            connection.disconnect();
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 		return logo;
 	}

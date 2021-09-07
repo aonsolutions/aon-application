@@ -278,6 +278,8 @@ export const DIV_DRAG_OVER = "divDragOver";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 
+export const ELEMENT_HIDDEN = "elementHidden";
+
 // aon-textarea 
 
 export const AON_TEXTAREA = 'aonTextarea';

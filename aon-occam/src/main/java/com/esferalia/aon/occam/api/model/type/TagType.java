@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.task.TaskSource;
+
 public enum TagType implements Serializable{
 
 	RATTACH,
@@ -19,8 +21,6 @@ public enum TagType implements Serializable{
 	TASK_DOCUMENT
 	; // Tipo de Aviso
 
-	
-	
 
 	public byte value() {
 		return (byte) this.ordinal();
@@ -28,5 +28,46 @@ public enum TagType implements Serializable{
 	
 	public String getValue(){
 		return this.toString();
+	}
+	
+	public String getName() {
+    	return this.toString().toLowerCase();
+    }
+	
+    
+    public static TagType valueOf(Integer index) {
+    	if(index != null) {
+    		return values()[index];
+    	} 
+    	return null;
+    }
+    
+    public static TagType valueOf(Byte index) {
+    	if(index != null) {
+    		return values()[index];
+    	} 
+    	return null;
+    }
+    
+    public static TagType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static TagType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= TagType.values().length) return null;
+		return TagType.values()[i];
+	}
+	
+	public static TagType safeValueOf(String name) {
+		return valueNameOf(name);
+	}
+	
+	public static TagType valueNameOf(String name) {
+		for(TagType p :TagType.values())
+			if(name.equalsIgnoreCase(p.getName()) || name.equalsIgnoreCase(p.name()))
+				return p;
+		return TASK_LABEL;
 	}
 }

@@ -96,6 +96,12 @@
     content: "";
 }
 
+.elementHidden{
+    opacity : 0;
+    height  : 0;
+    overflow: hidden;
+}
+
 .focusColorMinus:hover, .focusColorMinus:focus-within {
     background : var(--aon-color-interaction-minus-two) !important; 
 }
