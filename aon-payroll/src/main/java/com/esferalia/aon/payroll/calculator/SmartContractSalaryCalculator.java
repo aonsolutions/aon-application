@@ -8,8 +8,10 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0000;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
@@ -934,7 +936,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 	
 	@Override
-	protected void fixBaseCgcMin(ExpressionContext expressionContext, Date start, Date end,
+	protected void fixBaseCgcMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
 			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 			List<Period> offPeriods, Double rawCgcbase, Double cgcBase) throws AonException {
 		
@@ -952,16 +954,22 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //			}
 //		}
 		
+		
+		
+		
 		try {
+			ITimedVariable<?> noHoliDays = expressionContext.getVariable(NO_HOLIDAYS.getName(), start, end);
+			
 			resolvePayment(
 			new SimpleContractPayment()
 			.setId(Integer.MAX_VALUE)
 			.setStartDate(start)
 			.setEndDate(end)
-			.setExpression("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * DIAS_TRABAJADOS)")
+			//.setExpression("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * (isdef DIAS_TRABAJADOS ? DIAS_TRABAJADOS : DIAS_VACACIONES_NO_DISFRUTADOS ))")
+			.setExpression(String.format("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * %s)", noHoliDays != null ? NO_HOLIDAYS : WORKED_DAYS ))
 			.setIrpfExpression("_P")
 			.setType(PaymentType.CRA_0001)
-			.setSalaryType(SalaryType.SALARY)
+			.setSalaryType(salaryType)
 			.setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
 			.setQuoteExpression("/*fixBaseCgcMin*/_A=BASE_CGP;_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC - BASE_CGC_BRUTA))" )
 			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP=MAX(_B,_A);_P" )
