@@ -7,12 +7,14 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { AonInput } from '../../components/aon-input.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
 	_workgroups;
+	_tags;
 	_filter={};
 	TASK_HOLDER;
 	cau; //BOOLEAN
@@ -30,6 +32,7 @@ export class AonMessenger extends AonElement {
 	initialize(){
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
+		this._tags = [];
 		this.TASK_HOLDER = {};
 		this._filter = {
 			workgroup: undefined,
@@ -82,6 +85,8 @@ export class AonMessenger extends AonElement {
 		this.statusNavBar();
 		if(!this.cau)
 			this.groupNavBar();
+
+		this.tagNavBar();
 	}
 
 	taskNavBar(){
@@ -169,7 +174,7 @@ export class AonMessenger extends AonElement {
 		getWorkgroups({status:"ACTIVE"}).then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
-		  workgroup.forEach((item, i) => {
+		  this._workgroups.forEach(item => {
 			let option = {
 				name: item.description,
 				icon: 'people_alt',
@@ -188,6 +193,88 @@ export class AonMessenger extends AonElement {
 		  });
 		});
 	}
+
+
+    tagNavBar() {
+		let application = this.applicationEl;
+		application.addSidenavOptions2({
+			id: 'Tag',
+			name: MSG.TAG
+		}, [],() =>this.dialogTag());
+		this.loadTag();
+	}
+
+	loadTag() {
+		let application = this.applicationEl;
+		getTaskTags({type:"task_label"}).then(tags => {
+		  this._tags =  tags.map(t => ({...t,value: t.id, description: t.name, name:t.name}));
+		  this.clearElementById(application.SIDENAV+'TagList');
+		  this._tags.forEach(item => {
+			let option = {
+				name: item.description,
+				icon: 'label',
+				fn: () => {},
+				actions:[
+					{
+						id: 'Delete',
+						icon: 'delete',
+						action: () => this.deleteTag(item)
+					},
+					{
+						id: 'Edit',
+						icon: 'edit',
+						action: () => this.dialogTag(item)
+					}
+				]
+			};
+
+			application.addSidenavOptionsListValue({
+				id: 'Tag',
+				name: MSG.TAG.toUpperCase()
+			}, option);
+		  });
+		})
+	}
+
+	dialogTag(tag={}) {
+		let d = this.getElement(this.getApplication().DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(tag && tag.id ? MSG.EDIT : MSG.ADD);
+
+		let aonInput = new AonInput();
+		aonInput.id = "addTag";
+		aonInput.description = MSG.TAG;
+		if(tag.name) aonInput.value = tag.name;
+		d.setContent(aonInput);
+
+	
+		d.addAcceptAction(() => {
+			if(aonInput.value){
+				tag.name = aonInput.value;
+				tag.type = "task_label";
+				saveTaskTag(tag).then(() => {
+					this.loadTag();
+				});
+			}
+		});
+		d.open();
+	}
+
+	deleteTag(tag) {
+		let d = this.getElement(this.getApplication().DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE);
+		d.setContentHTML(`Estás seguro de eliminar la ${MSG.TAG} ${tag.name}`);
+		d.addAcceptAction(() => {
+			deleteTaskTag(tag).then(() => {
+				this.loadTag();
+			});
+		});
+		d.open();
+	}
+
 
 
 	updateCount(){

@@ -64,6 +64,7 @@ export const MESSENGER_IDS = {
     PROCESS_TYPE: "processType",
     WORKGROUP: "workgroupTask",
     TASKHOLDER: "taskHolderTask",
+    TASKTAG: "taskTag",
     COMMENT_TASK: "commentTask",
     CUSTOMER_TASK: "customerTask",
     DESCRIPTION_TASK: "descriptionTask",

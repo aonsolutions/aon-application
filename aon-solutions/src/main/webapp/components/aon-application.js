@@ -400,8 +400,25 @@ export class AonApplication extends AonElement {
 
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
-    sidenavTitle.innerHTML = data.name;
     sidenavTitle.title = data.name;
+    sidenavTitle.style.cursor = "pointer";
+    sidenavTitle.style.userSelect = "none";
+    sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+      const ul = div.querySelector("ul");
+      if(ul){
+       ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+      }
+    });
+
+    // let arrowTitle = this.createElement("i");
+    // arrowTitle.innerHTML = "arrow_right";
+    // arrowTitle.className = "material-icons aonVerticalMiddle";
+    // sidenavTitle.appendChild(arrowTitle);
+
+    let span = this.createElement(TAG.SPAN);
+    span.innerHTML = data.name;
+    sidenavTitle.appendChild(span);
+
     div.appendChild(sidenavTitle);
 
     return div;
@@ -451,15 +468,13 @@ export class AonApplication extends AonElement {
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
         newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
-        newLi.style.display = 'none';
+        newLi.style.transition = "opacity 1s ease-out";
+        this.hiddenElement(newLi, true);
         ul.appendChild(newLi);
         arrow.addEventListener(EVENT.CLICK, (e => {
           e.preventDefault();
-          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
-            ? MATERIAL_ICONS.ARROW_DROP_DOWN
-            : MATERIAL_ICONS.ARROW_RIGHT;
-          newLi.style.display = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
-            ? 'none' : 'block';
+          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+          this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
         }));
       }
 
@@ -762,6 +777,15 @@ export class AonApplication extends AonElement {
     }
   }
 
+  hiddenElement(element, condition = false){
+    if(element){
+      if(condition){
+        element.classList.add(CSS.ELEMENT_HIDDEN);
+      } else {
+        element.classList.remove(CSS.ELEMENT_HIDDEN);
+      }
+    }
+  }
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

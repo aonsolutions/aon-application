@@ -95,7 +95,7 @@ const buildQuery = (firstDiv, aonMessengerChat) => {
     buildFormQuery(firstDiv, aonMessengerChat);
 
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
-        minHeight: '200px',
+        minHeight: '150x',
         maxHeight: '300px',
         position: 'relative'
     });
@@ -249,7 +249,7 @@ const createFirstDiv = (mainView) => {
     styles: {
       width: "50%",
       minWidth: "400px",
-      paddingTop: "5vh",
+      paddingTop: "20px",
       paddingRight: "20px",
       paddingLeft: "30px",
       paddingBottom: "30px",
@@ -269,7 +269,7 @@ const createSecondDiv = (mainView) => {
     styles: {
         width: "50%",
         minWidth: "400px",
-        paddingTop: "20px",
+        paddingTop: "4px",
         paddingBottom: "30px"
     },
   }).element;
