@@ -256,8 +256,7 @@ public class CompanyDAO {
 
 	public static Company getCompany(AONContext ctx,int domain) {
 		return ctx.getDslContext()
-			.select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME
-				,COMPANY.SURCHARGE,COMPANY.WITHHOLDING,COMPANY.VAT_ACCRUAL_PAYMENT)
+			.select()
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.where(COMPANY.DOMAIN.equal(domain))
