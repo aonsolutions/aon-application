@@ -350,7 +350,6 @@ public class CommonServlet extends HttpServlet{
 		return new JSONObject();
 	}
 	
-	
 	private JSONObject insertDataResponse2(Domain domain, String login, JSONObject json) {
 		DataResponse dataResponse = new DataResponse()
 				.setDomain(domain.getId())

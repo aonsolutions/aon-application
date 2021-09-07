@@ -180,8 +180,8 @@ export const CONFIGURATION = {
 
 export const MESSENGER = {
   app: CONSTANT.MESSENGER,
-  title: `${MSG.REQUESTS} / ${MSG.TASKS}`,
-  description: `${MSG.REQUEST} / ${MSG.TASKS}`,
+  title: MSG.TASKS,
+  description: MSG.TASKS,
   icon: AON_ICONS.AON_APP,
   color: '#CADEFF',
   access: [{
@@ -433,10 +433,6 @@ export const PayrollMenu =[
       title:'Creación de Empresas.',
       initAction: 'newDomain_form-enterprise',
       parent: true
-    },{
-      title:'Gestion de Seguridad.',
-      module: 'aon_gwt_aio',
-      entryPoint: 'scope'
     },{
       title: 'Carga de datos desde ficheros Excel (Predefinidos)',
       module: 'aon_gwt_aio',
