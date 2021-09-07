@@ -42,7 +42,7 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 				put(OTHER, "Otras deducciones");
 				put(FOGASA, "FOGASA");
 				put(EMBARGO, "Embargo");
-				put(BONUS, "Bonificaci\u00f3n INEM");
+				put(BONUS, "Bonif.y Subvenc.con cargo al INEM");
 			}
 		};
 	}
