@@ -5,7 +5,7 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
-import { checkFilesAddEventClick } from "./utils.js";
+import { checkFilesAddEventClick, downChat } from "./utils.js";
 
 const fontColor = CSS.variable(COLORS.GRAYSON);
 
@@ -242,8 +242,9 @@ export const createAction = (icon, message, outlined) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
-    padding:"10px",
-    paddingLeft :"calc(35px - .9em)",
+    // padding:"10px",
+    // paddingLeft :"calc(35px - .9em)",
+    padding:"5px 0",
     textAlign: "justify"
   })
 
@@ -357,7 +358,6 @@ const createMaterialIcon = (properties) => newComponent({
  * @returns 
  */
  export const createOutlinedMaterialIcon = (properties) => {
-  console.log(properties);
   return newComponent({
       type: 'i',
       text: properties.name,
@@ -421,7 +421,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createCustomer = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
-  title: MSG.SENDER,
+  title: MSG.ENTERPRISE,
   autocomplete: "off",
   readonly: "false"
 });
@@ -478,12 +478,14 @@ export const createChatMessage = (properties, chat) => {
           position:"absolute",
           cursor: "pointer",
           right: "21px",
-          top: "18px"
+          top: "18px",
+          zIndex: 1
       });
-      iconSendWorkflow.title = MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado" : MSG.SEND;
+
       iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
-      messageSend = !messageSend;
       message.appendChild(iconSendWorkflow);
+      messageSend = !messageSend;
     }
 
     const name = createMessageAuthor(properties);
@@ -503,7 +505,7 @@ export const createChatMessage = (properties, chat) => {
 
     checkFilesAddEventClick(message); //ADD EVENT CLICK
 
-    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
+    downChat();
 
     return message;
 }
@@ -625,7 +627,7 @@ export const createLabelFileText = () => {
   })
   const span = document.createElement(TAG.SPAN);
   span.style.margin = "0 5px";
-  span.innerHTML = "Adjunte archivos arrastrándolos y soltándolos.";
+  span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
   label.appendChild(span);
   return label;
 }

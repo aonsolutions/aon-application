@@ -526,11 +526,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Matcher regexFile(Task task, String dataId) {
 		String description = task.getDescription();
-	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")([^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
 	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	    Matcher matcher = pattern.matcher(description);
 	    if(!matcher.find()) {
-		    regex = "(\\<\\S[^<>]*?src=[\\\\]?\")([^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+		    regex = "(\\<\\S[^<>]*?src=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
 		    pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		    matcher = pattern.matcher(description);
 		    if(!matcher.find()) {

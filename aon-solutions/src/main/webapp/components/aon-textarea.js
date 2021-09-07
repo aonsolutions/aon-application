@@ -1,4 +1,4 @@
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG} from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
 import { convertBase64Url, getReader, newComponent, setAttributes, waitEl } from '../services/utils.js';
 import { AonElement } from './AonElement.js';
@@ -235,7 +235,7 @@ export class AonTextArea extends AonElement {
 				// fontSize: "1.3em"
 			},
 			dataset:{
-				dragOver: "Suelte el archivo.",
+				dragOver: MSG.DROP_FILE,
 			}
 		});
 	}
@@ -377,6 +377,23 @@ export class AonTextArea extends AonElement {
 				this.addFiles(ev.dataTransfer.files);
 			}
 		});
+	}
+
+	addLabelTextEnd(){
+		let label = document.createElement(TAG.LABEL);
+		label.style.color = "grey";
+		label.style.width = "100%";
+		label.style.cursor = "pointer";
+		label.style.borderTop = "1px dotted grey";
+		label.style.fontSize = "10px";
+
+		let span = document.createElement(TAG.SPAN);
+		span.style.margin = "0px 5px";
+		span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
+		label.appendChild(span);
+		
+		this.appendChild(label);
+		return label;
 	}
 
 	removeBackground(){

@@ -439,15 +439,6 @@ const jsonDiv = ()=> {
     return pre;
 }
 
-export const addLine = () => {
-    /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = document.querySelector(".continueLined");
-    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
-}
-
 export const buildFormQuery = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const application = aonMessengerChat.applicationEl;
@@ -459,35 +450,35 @@ export const buildFormQuery = (div, aonMessengerChat) => {
 
     const columnsDiv = createStartJustifiedColumn();
     aonCard.setContent(columnsDiv.element);
-
+      
     //----------------ISSUE-----------
-    const titleDiv = titleFirstDiv(MSG.ISSUE);
-    columnsDiv.appendChild(titleDiv);
-    const title = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
-    titleDiv.appendChild(title); 
+    const issueDiv = titleFirstDiv(MSG.ISSUE);
+    columnsDiv.appendChild(issueDiv);
+    const issue = createDivEditable(task.title, MESSENGER_IDS.TITLE_TASK, MSG.TYPE_HERE);
+    issueDiv.appendChild(issue); 
     //-------------------------END ISSUE
 
+    //-------------------------CAU--------------------------
     if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
-      // DIV CUSTOMER
-      const rowsDivTwo = createStartJustifiedRow();
-      rowsDivTwo.element.style.width = "100%";
-      columnsDiv.appendChild(rowsDivTwo.element);
-      // CUSTOMER
-      const customerSelect = createCustomer();
-      customerSelect.style.width = "100%";
-      rowsDivTwo.appendChild(customerSelect);
-          //-----------------TASK HOLDER
-      const contact = createInputContact();
-      contact.style.width = "100%";
-      contact.style.marginLeft = "5px";
-      rowsDivTwo.appendChild(contact);
-      if(task.gtask_id) contact.value  = task.gtask_id;
-      fillCustomer(task);
+        // DIV CUSTOMER
+        const rowsDivTwo = createStartJustifiedRow();
+        rowsDivTwo.element.style.width = "100%";
+        columnsDiv.appendChild(rowsDivTwo.element);
+        // CUSTOMER
+        const customerSelect = createCustomer();
+        customerSelect.style.width = "100%";
+        rowsDivTwo.appendChild(customerSelect);
+            //-----------------TASK HOLDER
+        const contact = createInputContact();
+        contact.style.width = "100%";
+        contact.style.marginLeft = "5px";
+        rowsDivTwo.appendChild(contact);
+        if(task.gtask_id) contact.value  = task.gtask_id;
+        fillCustomer(task);
     } else if(task.registry && task.registry.name){ // CARD TITLE REGISTRY
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
-
 
     if(!applicationParent.cauData){
       //DIV WORKGROUP AND TASKHOLDER
@@ -565,4 +556,28 @@ export const getIconJson =({source,status}) => {
       icon,
       icon_color
     }
+}
+
+export const downChat = () => {
+    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    if(chat)
+        chat.scrollTo(0, chat.scrollHeight); //GO DOWN
+
+    addLine();
+
+}
+export const upChat = () => {
+    const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
+    if(chat)
+        chat.scrollTo(0,0) //GO UP
+    
+}
+
+const addLine = () => {
+    /**
+     * Setting the chat line once all is rendered
+     * DO NOT change this, is compulsory.
+     */
+    const lined = document.querySelector(".continueLined");
+    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
 }

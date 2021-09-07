@@ -5,7 +5,7 @@ import { newComponent, setAttributes, setClasses, setStyles } from "../../../ser
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { addLine, buildFormQuery, buildFormRequest, buildTextareaToolbar, checkFilesAddEventDescription, getIconJson } from "./utils";
+import { buildFormQuery, buildFormRequest, buildTextareaToolbar, checkFilesAddEventDescription, downChat, getIconJson, upChat } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -101,6 +101,10 @@ const buildQuery = (firstDiv, aonMessengerChat) => {
     });
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     firstDiv.appendChild(aonTextArea);
+    
+    const label = aonTextArea.addLabelTextEnd();
+    label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
+
     aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
       task.setFiles(target.FILES);
     });
@@ -152,18 +156,18 @@ const buildSectionHistoric = (secondDiv) => {
     /**
      * The chat itself
      */
-    const sectionComment = createChat(); 
+    const chat = createChat(); 
     
-    sectionComment.classList.add(CSS.MATERIAL_SCROLL);
-    wrapper.appendChild(sectionComment);
+    chat.classList.add(CSS.MATERIAL_SCROLL);
+    wrapper.appendChild(chat);
 
 
     //-----------------ADD TEXT AREA CHAT
     addTextAreaChat(wrapper); //
 
-    addChatButtonsUpDown(secondDiv, sectionComment); //BUTTONS DOWN UP CHAT
+    addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
 
-    addLine();
+    downChat();
 }
 
 const addTextAreaChat = (wrapper) => {
@@ -178,7 +182,6 @@ const addTextAreaChat = (wrapper) => {
   const label = createLabelFileText();
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
   divs.divWrite.appendChild(label);
-
 
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
@@ -249,6 +252,7 @@ const createFirstDiv = (mainView) => {
       paddingTop: "5vh",
       paddingRight: "20px",
       paddingLeft: "30px",
+      paddingBottom: "30px",
       overflow:"auto",
       top: 0
     },
@@ -277,9 +281,9 @@ const createSecondDiv = (mainView) => {
 /**
  * 
  * @param {HTMLElement} secondDiv div right
- * @param {HTMLElement} sectionComment div sectionComment
+ * @param {HTMLElement} chat div chat
  */
-const addChatButtonsUpDown = (secondDiv, sectionComment) => {
+const addChatButtonsUpDown = (secondDiv) => {
   const leftButtonBar = newComponent({
       classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
       styles: {
@@ -295,7 +299,7 @@ const addChatButtonsUpDown = (secondDiv, sectionComment) => {
     id: "upIcon",
     background: "transparent",
   });
-  upIcon.addEventListener(EVENT.CLICK, ()=>sectionComment.scrollTo(0,0));
+  upIcon.addEventListener(EVENT.CLICK, ()=>upChat());
   leftButtonBar.appendChild(upIcon);
 
   const downIcon = setAttributes(new AonIconButton(), {
@@ -303,7 +307,7 @@ const addChatButtonsUpDown = (secondDiv, sectionComment) => {
     id: "downIcon",
     background: "transparent",
   });
-  downIcon.addEventListener(EVENT.CLICK, ()=> sectionComment.scrollTo(0, sectionComment.scrollHeight))
+  downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);
 
 }

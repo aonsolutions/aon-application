@@ -55,6 +55,7 @@ export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
+export const ATTACH_FILES_DRAGGING_DROPPING = "Adjunte archivos arrastrándolos y soltándolos"; //TODO
 
 // ----- B
 
@@ -135,6 +136,8 @@ export const DUPLICATE = MSG.DUPLICATE;
 export const DUPLICATE_INVOICE = MSG.DUPLICATE_INVOICE;
 export const DURATION = "Duración";
 export const DESCRIPTION = "Descripción";// TODO
+export const DROP_FILE = "Suelta el archivo";//TODO
+
 
 // ----- E
 
