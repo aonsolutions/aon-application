@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.ContractDeduction;
-import com.esferalia.aon.gwt.payroll.shared.ContractPayment;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractPaymentsObject {
@@ -18,8 +19,7 @@ public class EmployeeContractPaymentsObject {
 	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
 	private ContractPaymentData contractPaymentData;
-	private List<ContractPayment> contractPayments;
-	private List<ContractDeduction> contractDeductions;
+	private List<ContractConceptCalc> contractConceptCalcs;
 	
 	private Integer contractId;
 	
@@ -27,8 +27,7 @@ public class EmployeeContractPaymentsObject {
 	
 	public EmployeeContractPaymentsObject(Integer contractId) {
 		this.contractId = contractId;
-		this.contractPayments = new ArrayList<ContractPayment>();
-		this.contractDeductions = new ArrayList<ContractDeduction>();
+		this.contractConceptCalcs = new ArrayList<>();
 	}
 
 	// ----------------------------------------------- DataBase.Methods
@@ -62,65 +61,72 @@ public class EmployeeContractPaymentsObject {
 		});
 	}
 
-	public List<ContractPayment> getContractPayments(Integer year) {
-		this.contractPayments.clear();
+	public List<ContractConceptCalc> getContractConceptCalcs(Integer year) {
+		this.contractConceptCalcs.clear();
 		Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
 		Date endDate = DateUtils.getLastDayOfYear(year - 1900);
 		
-		for(ContractPayment contractPayment : contractPaymentData.getContractPayments()) {
-			if(contractPayment.getId() < 0)
+		for(ContractConceptCalc contractConceptCalc : contractPaymentData.getCcontractConceptCalcs()) {
+			if(contractConceptCalc.getId() < 0)
 				continue;
 			
-			if(isInPeriod(startDate, endDate, contractPayment.getStartDate()))
-				this.contractPayments.add(contractPayment);
-			else if (null != contractPayment.getEndDate() && isInPeriod(startDate, endDate, contractPayment.getEndDate()))
-				this.contractPayments.add(contractPayment);
-			else if (null == contractPayment.getEndDate() && (isInPeriod(startDate, endDate, contractPayment.getStartDate()) || DateUtils.isBeforeOrEquals(contractPayment.getStartDate(), startDate)))
-				this.contractPayments.add(contractPayment);
+			if(	isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) ||
+				(null != contractConceptCalc.getEndDate() && isInPeriod(startDate, endDate, contractConceptCalc.getEndDate())) ||
+				(null == contractConceptCalc.getEndDate() && (isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) || DateUtils.isBeforeOrEquals(contractConceptCalc.getStartDate(), startDate))))
+				
+				this.contractConceptCalcs.add(contractConceptCalc);
 		}
 		
-		return this.contractPayments;
+		this.contractConceptCalcs.sort((o1, o2) -> compareString(o1, o2, getContractConceptCalcTypeShort(o1.getContractConceptCalcType()), getContractConceptCalcTypeShort(o2.getContractConceptCalcType())));	
+		
+		return this.contractConceptCalcs;
 	}
 
-	public List<ContractDeduction> getContractDeductions(Integer year) {
-		this.contractDeductions.clear();
-		Date startDate = DateUtils.getFirstDayOfYear(year - 1900);
-		Date endDate = DateUtils.getLastDayOfYear(year - 1900);
-		
-		for(ContractDeduction contractDeduction : contractPaymentData.getContractDeductions()) {
-			if(contractDeduction.getId() < 0)
-				continue;
-			
-			if(isInPeriod(startDate, endDate, contractDeduction.getStartDate()))
-				this.contractDeductions.add(contractDeduction);
-			else if (null != contractDeduction.getEndDate() && isInPeriod(startDate, endDate, contractDeduction.getEndDate()))
-				this.contractDeductions.add(contractDeduction);
-			else if (null == contractDeduction.getEndDate() && (isInPeriod(startDate, endDate, contractDeduction.getStartDate()) || DateUtils.isBeforeOrEquals(contractDeduction.getStartDate(), startDate)))
-				this.contractDeductions.add(contractDeduction);
-		}
-			
-		return this.contractDeductions;
-	}
-	
 	private boolean isInPeriod(Date start, Date end, Date date) {
 		return null == date || (DateUtils.isAfterOrEquals(date, start) && DateUtils.isBeforeOrEquals(date, end));
 	}
 
-	public void deleteDeduction(ContractDeduction contractDeductionIn) {
-		for(ContractDeduction contractDeduction : contractPaymentData.getContractDeductions()){
-			if(contractDeduction.getId() == contractDeductionIn.getId()) {
-				Integer id = contractDeduction.getId();
-				contractDeduction.setId(id * -1);
+	public void deleteContractConceptCalc(ContractConceptCalc contractConceptCalcIN) {
+		for(ContractConceptCalc contractConceptCalc : contractPaymentData.getCcontractConceptCalcs()){
+			if(contractConceptCalc.getId().equals(contractConceptCalcIN.getId())) {
+				Integer id = contractConceptCalc.getId();
+				contractConceptCalc.setId(id * -1);
 			}
 		}
 	}
 
-	public void deletePayment(ContractPayment contractPaymentIn) {
-		for(ContractPayment contractPayment : contractPaymentData.getContractPayments()){
-			if(contractPayment.getId() == contractPaymentIn.getId()) {
-				Integer id = contractPayment.getId();
-				contractPayment.setId(id * -1);
-			}
+	public void showHideContractConceptCalc(ContractConceptCalc contractConceptCalc) {
+		String expression = contractConceptCalc.getExpression();
+		
+		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE"))
+			expression = expression.replaceAll("HIDE\\(.*\\); ", "");
+		else
+			expression = "HIDE(\"<div>" + contractConceptCalc.getDescription() + " oculto desde Conceptos de c\u00E1lculo</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
+		
+		
+		contractConceptCalc.setExpression(expression);
+	}
+	
+	private int compareString(Object o1, Object o2, String s1, String s2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return s2.compareTo(s1);
+	}
+	
+	private String getContractConceptCalcTypeShort(ContractConceptCalcType contractConceptCalcType) {
+		switch (contractConceptCalcType) {
+			case PAYMENT:
+				return "P";
+			case DEDUCTION:
+				return "D";
+			case BONUS:
+				return "B";
+			case COST:
+				return "C";
+			default:
+				return "N/D";
 		}
 	}
 	

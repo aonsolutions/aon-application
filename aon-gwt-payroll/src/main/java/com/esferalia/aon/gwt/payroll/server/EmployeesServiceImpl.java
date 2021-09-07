@@ -6666,7 +6666,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get domain id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqEmployeeContractPayments.getContractPayements(connection, domainId, contractId);	
+			return JooqEmployeeContractPayments.getContractConceptCalcs(connection, domainId, contractId);	
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6676,8 +6676,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public void updateContractPayments(String domainName, Integer contractId, ContractPaymentData contractPaymentData) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get domain id
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			JooqEmployeeContractPayments.updateContractPayments(connection, domainId, contractId, contractPaymentData);
+//			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeContractPayments.updateContractPayments(connection, contractPaymentData);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

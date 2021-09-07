@@ -7,27 +7,18 @@ public class ContractPaymentData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private List<ContractPayment> contractPayments;
-	private List<ContractDeduction> contractDeductions;
+	private List<ContractConceptCalc> contractConceptCalcs;
 	
 	public ContractPaymentData() {
 		super();
 	}
 
-	public List<ContractPayment> getContractPayments() {
-		return contractPayments;
+	public List<ContractConceptCalc> getCcontractConceptCalcs() {
+		return contractConceptCalcs;
 	}
 
-	public void setContractPayments(List<ContractPayment> contractPayments) {
-		this.contractPayments = contractPayments;
-	}
-
-	public List<ContractDeduction> getContractDeductions() {
-		return contractDeductions;
-	}
-
-	public void setContractDeductions(List<ContractDeduction> contractDeductions) {
-		this.contractDeductions = contractDeductions;
+	public void setContractConceptCalcs(List<ContractConceptCalc> contractConceptCalcs) {
+		this.contractConceptCalcs = contractConceptCalcs;
 	}
 	
 }
