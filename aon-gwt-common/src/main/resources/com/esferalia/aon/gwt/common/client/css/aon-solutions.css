@@ -989,7 +989,7 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding: 1px;
+	padding: .2em .9em;
 	/*height: 22px;*/
 	width: auto;
 	display: flex;
@@ -999,7 +999,7 @@
 
 .aon_custom_dialog_title {
 	font-weight: bold;
-	padding: 5px 1em;
+	/*padding: 5px 1em;*/
 	text-transform: uppercase;
 	width: auto;
 	font-size: 1.2em;
