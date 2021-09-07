@@ -3,7 +3,6 @@ package com.esferalia.aon.in.payroll.excel;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -71,8 +70,10 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class RemunerationRecord {
 	
@@ -882,11 +883,14 @@ public class RemunerationRecord {
 		Condition condition = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNotNull().or(SALARY_PAYMENT.DESCRIPTION.isNotNull()))
 				.and(SALARY.START_DATE.ge(sqlStartDate))
-				.and(SALARY.END_DATE.le(sqlEndDate));
+				.and(SALARY.END_DATE.le(sqlEndDate))
+				.and(SALARY.TYPE.le(AonNumberUtils.toByte(SalaryType.DELAY.ordinal())));
+				
 		
 		Condition condition2 = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY.START_DATE.ge(sqlStartDate))
-				.and(SALARY.END_DATE.le(sqlEndDate));
+				.and(SALARY.END_DATE.le(sqlEndDate))
+				.and(SALARY.TYPE.le(AonNumberUtils.toByte(SalaryType.DELAY.ordinal())));
 		
 		String enterpriseDomain = aonContext.getDomainName();
 		Integer enterpriseDomainId = aonContext.getDomainId();
