@@ -668,28 +668,6 @@ public class FillerDAO {
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))));
 		}
 	}
-	public static class CompanyFiller implements Function<Record, Company> {
-		@Override
-		public Company apply(Record r) {
-			Company company = new Company();
-			company.setDomain(DomainFiller.buildDomain(r));
-			company.setAlias(r.getValue(REGISTRY.ALIAS));
-			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); 
-			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null);
-			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
-			company.setDocument(r.getValue(REGISTRY.DOCUMENT))
-				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME));
-			return company
-				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
-				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
-				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
-		}
-	}
 	
 	public static class IncomeFiller implements Function<Record, Income> {
 		@Override

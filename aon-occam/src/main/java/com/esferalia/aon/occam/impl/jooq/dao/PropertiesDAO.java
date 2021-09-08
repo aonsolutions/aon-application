@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.CommissionCategory.COMMISSION_CATEGO
 import static com.esferalia.aon.jooq.tables.CommissionItem.COMMISSION_ITEM;
 import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
-import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -32,9 +31,9 @@ import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
 import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
-import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -69,7 +68,6 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
@@ -82,7 +80,6 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
-import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -137,7 +134,6 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
-import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
@@ -996,33 +992,6 @@ public class PropertiesDAO {
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE);}
 		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE_DATE);}
 
-	}
-	
-	
-	protected static class CompanyPropertiesDAO extends RegistryPropertiesDAO implements CompanyProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, CompanyFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(CompanyFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.DOMAIN);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.ACTIVE);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.SURCHARGE);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.WITHHOLDING);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
- 		@Override public Property<Integer> getDomainParentProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.PARENT);}
-
-		@Override public Property<Integer> getScopeIdProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.ID);}
-		@Override public Property<String> getScopeDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
 	}
 	
 	public static class DataResponsePropertiesDAO implements DataResponseProperties{
