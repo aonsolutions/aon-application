@@ -1326,6 +1326,7 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
+		Property<Integer> getWorkgroupProperty();
 	}
 
 	public interface TimeControlProperties {

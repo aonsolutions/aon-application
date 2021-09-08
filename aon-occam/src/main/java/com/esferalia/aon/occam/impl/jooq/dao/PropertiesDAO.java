@@ -1540,6 +1540,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(USER.REGISTRY);}
 		@Override public Property<byte[]> getAuthProperty() { return new FilterDAO.PropertyDAO<>(USER.AUTH);}
 		@Override public Property<Byte> getSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
+		@Override public Property<Integer> getWorkgroupProperty() { return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
 	}
 	
 	
