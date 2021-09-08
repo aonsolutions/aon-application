@@ -109,7 +109,7 @@ public class JooqCRA {
 					dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
 						.where(USER_SCOPE.USER_ID.eq(userId))
 						.fetch(USER_SCOPE.SCOPE)
-				)).fetch(DOMAIN.ID);
+				).or(DOMAIN.SCOPE.isNull())).fetch(DOMAIN.ID);
 		
 		// Domain enterprise CCCs
 		List<Integer> ownCCCs = dslContext.select(ENTERPRISE_CCC.ID).from(ENTERPRISE_CCC)
