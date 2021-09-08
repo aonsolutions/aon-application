@@ -167,6 +167,7 @@ public interface IJsonNames {
 	String LEGAL_PERSON = "legalPerson";
 	String LEVEL = "level";
 	String LIMIT = "limit";
+	String LOGIN = "login";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	String MAIN = "main";
@@ -206,6 +207,7 @@ public interface IJsonNames {
 	String ORDER_STATUS_SERVED = "orderStatusServed";
 	String OUTPUT = "output";
 	// ---------------------------------------------------------------------------------------------	[P] 
+	String PAGE = "page";
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
 	String PAID = "paid";
@@ -216,12 +218,14 @@ public interface IJsonNames {
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
 	String PENDING = "pending";
+	String PER_PAGE = "perPage";
 	String PERCENTAGE = "percentage";
 	String PERCENT = "percent";
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String PERIOD = "period";
 	String PHONE = "phone";
 	String PLAN = "plan";
+	String PORTAL = "portal";
 	String POSTAL_CODE = "postal_code";
 	String PREPAYMENT = "prepayment";
 	String PREVIOUS_PERIODS = "previousPeriods";
@@ -255,6 +259,7 @@ public interface IJsonNames {
 	String RETURNED = "returned";
 	String REVERSE_ORDER = "reverseOrder";
 	String RNAME = "rname";
+	String ROLES = "roles";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
 	String SALES_RATIO = "salesRatio";
@@ -270,6 +275,7 @@ public interface IJsonNames {
 	String SERVICE = "service";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
+	String SHARED = "shared";
 	String SHOW_COVER = "showCover";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
