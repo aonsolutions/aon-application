@@ -102,7 +102,7 @@ public class ItemDAO {
 			.fetch().stream().map(new ItemFiller());
 	}
 	
-	public static List<Item> getList(AONContext ctx, ItemFilter filter) {
+	public static LinkedList<Item> getList(AONContext ctx, ItemFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
