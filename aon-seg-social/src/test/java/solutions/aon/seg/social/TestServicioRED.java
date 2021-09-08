@@ -921,6 +921,7 @@ public class TestServicioRED extends SegSocialTest {
 //----------------------------------------------SITUACIÓN EMPRESA------------------------------------------------
 		
 		@Test
+		@Ignore
 		public void testSituacionEmpresaPOST() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				assertEquals("Situación de la empresa: \n" + 
