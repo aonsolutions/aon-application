@@ -84,11 +84,7 @@ public class EmployeeContractPayments extends Composite {
 	@UiField
 	MyStyle style;
 
-	interface MyStyle extends CssResource {
-		String widthAll();
-		String cellTypeList();
-		String dateCell();
-	}
+	interface MyStyle extends CssResource {}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -129,7 +125,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	private boolean isHideExpression(ContractConceptCalc contractConceptCalc) {
 		String expression = contractConceptCalc.getExpression();
-		return !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE");
+		return !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE");
 	}
 	
 	private String getContractConceptCalcTypeShort(ContractConceptCalcType contractConceptCalcType) {
@@ -226,7 +222,6 @@ public class EmployeeContractPayments extends Composite {
 		});
 		
 		descriptionColumn.setSortable(true);
-		descriptionColumn.setCellStyleNames(style.widthAll());
 		contractConceptCalcDG.setColumnWidth(descriptionColumn, 20, Unit.PCT);
 	    
 	    // Expression column.
@@ -243,7 +238,6 @@ public class EmployeeContractPayments extends Composite {
 		});
 
 	    expressionColumn.setSortable(true);
-	    expressionColumn.setCellStyleNames(style.widthAll());
 	    contractConceptCalcDG.setColumnWidth(expressionColumn, 35, Unit.PCT);
 	    
 	    // StartDate column.
@@ -261,7 +255,7 @@ public class EmployeeContractPayments extends Composite {
 		});
 
 	    startDateColumn.setSortable(true);
-	    startDateColumn.setCellStyleNames(style.dateCell());
+	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    contractConceptCalcDG.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
 	    // EndDate column.	    
@@ -279,14 +273,14 @@ public class EmployeeContractPayments extends Composite {
 		});
 
 	    endDateColumn.setSortable(true);
-	    endDateColumn.setCellStyleNames(style.dateCell());
+	    endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    contractConceptCalcDG.setColumnWidth(endDateColumn, 10, Unit.PCT);
 	    
 	    // Visibility column.
 	    ActionCell<ContractConceptCalc> visibilityActionCell = new ActionCell<>("", contractConceptCalc -> {
 	    	employeeContractPaymentsObject.showHideContractConceptCalc(contractConceptCalc);
     		contractConceptCalc.setHasChange(true);
-			changeYear();
+    		onSave();
 	    });
 	    
 	    Column<ContractConceptCalc, ContractConceptCalc> visibilityColumn = new Column<ContractConceptCalc, ContractConceptCalc>(visibilityActionCell) {
@@ -313,7 +307,7 @@ public class EmployeeContractPayments extends Composite {
 	    // Delete column.
 	    ActionCell<ContractConceptCalc> deleteActionCell = new ActionCell<>("", contractConceptCalc -> {
 	    	employeeContractPaymentsObject.deleteContractConceptCalc(contractConceptCalc);
-			changeYear();
+	    	onSave();
 	    }); 
 	    
 	    Column<ContractConceptCalc, ContractConceptCalc> deleteColumn = new Column<ContractConceptCalc, ContractConceptCalc>(deleteActionCell) {
