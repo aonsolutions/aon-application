@@ -17,6 +17,9 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.sepe.Sepe;
@@ -70,8 +73,8 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 					PDF = getIdcCcc(api);
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
-			} 
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+				} 
 			
 			File file = File.createTempFile("informe", "");
 			try(OutputStream os = new FileOutputStream(file)){

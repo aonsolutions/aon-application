@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -43,6 +44,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
@@ -61,10 +64,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Integer page;
 		Integer perPage;
 		 
-		public InvoiceFilter() {
-			// TODO Auto-generated constructor stub
-		}
-
 		public String getDescription() {
 			return description;
 		}
@@ -129,9 +128,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/print_configuration":
 				response(req, resp, getPrintConfiguration(api));
 				break;
-	
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -160,7 +158,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				response(req, resp, selfcontaRecord(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -180,7 +178,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				response(req, resp, acceptInvoice(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -197,7 +195,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				response(req, resp, deleteInvoiceObject(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -234,14 +232,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject deleteInvoiceObject(AonApiData api) {
-		LinkedList<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
-		if(invoiceIds != null) {
+		List<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
+		if(!invoiceIds.isEmpty()) {
 			deleteInvoices(api.getDomain(), api.getUser().getLogin(), invoiceIds);
 		}
 		return new JSONObject();
 	}
 
-	public static LinkedList<Integer> toList(JSONArray array) {
+	public static List<Integer> toList(JSONArray array) {
 	    if(array==null || array.isEmpty())
 	        return new LinkedList<>();
 	    LinkedList<Integer> list = new LinkedList<>();
@@ -387,7 +385,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private void deleteInvoices(Domain domain, String login, LinkedList<Integer> ids) {
+	private void deleteInvoices(Domain domain, String login, List<Integer> ids) {
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
 		AON.rawdocDelete(domain.getName(), domain.getId(), login, 
 			f -> f.getDomainProperty().eq(domain.getId())

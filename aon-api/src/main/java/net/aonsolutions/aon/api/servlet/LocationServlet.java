@@ -10,6 +10,8 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -25,11 +27,11 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, getLocationList(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/":
+				response(req, resp, getLocationList(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -42,11 +44,11 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, saveLocation(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/":
+				response(req, resp, saveLocation(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -59,11 +61,11 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, deleteLocation(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/":
+				response(req, resp, deleteLocation(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -73,9 +75,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	private Object getLocationList(AonApiData api) {
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getLocationStream(api.getDomain(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()))
-		.forEach(lc -> {
-			array.put(lc.toJSON());
-		});
+		.forEach(lc -> array.put(lc.toJSON()));
 		return array;
 	}
 
@@ -90,8 +90,7 @@ public class LocationServlet extends AonApiHttpServlet{
 				.setId(api.getData().optInt("id"));
 
 		location = AON_SOLUTIONS.saveLocation(api.getDomain(), "", location);
-		JSONObject respObject = location.toJSON();
-		return respObject;
+		return location.toJSON();
 	}
 
 	private JSONObject deleteLocation(AonApiData api) {

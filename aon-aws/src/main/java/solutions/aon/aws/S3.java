@@ -52,12 +52,12 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  *
  * http://aws.amazon.com/security-credentials
  */
-public class S3 extends AWS{
+public class S3 {
 	
 	
     public static void main(String[] args) throws IOException {
         AmazonS3 s3 = AmazonS3ClientBuilder.standard()
-            .withCredentials(getProvider())
+            .withCredentials(AWS.getProvider())
             .withRegion("us-west-2")
             .build();
 

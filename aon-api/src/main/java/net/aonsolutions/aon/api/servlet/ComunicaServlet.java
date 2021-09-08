@@ -31,6 +31,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import solutions.aon.aws.ses.SES;
@@ -74,7 +77,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					jsonInString = gjson.toJson(this.nafxipf(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
@@ -113,7 +116,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					jsonInString = gjson.toJson(updateContrato(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
@@ -127,16 +130,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		ArrayList<Employee> employees = new ArrayList<>();
 	
 		byte[] cert = certificateInputStream.readAllBytes();
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		
 		
 
 		PAYROLL.getCCCStream(domain.getName(), domain.getId(), login)
-		.filter(distinctByKey(ci ->ci.getCccAccount()))
+		.filter(distinctByKey(ci -> ci.getCccAccount()))
 		.forEach(ccc -> {
             String cti = ccc.getCccAccount();
             String regimen = ccc.getCccRegimeCode();
-            System.out.println(cti);
             try{            	
                 employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
             } catch(InvalidCertificateException e) {
@@ -147,7 +149,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
             }
         });	
         
-        if(errors.size() > 0) throw new Exception(errors.get(0));
+        if(!errors.isEmpty()) throw new Exception(errors.get(0));
         
 		return employees;
 	}
@@ -337,10 +339,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
             	errors.add(e.getMessage());
             }	
 		}
-	}
-	
-	private void getAgreements(AonApiData api) {
-//		AON_SOLUTIONS.getA
 	}
 	
 	private void updateGrupCtz(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,

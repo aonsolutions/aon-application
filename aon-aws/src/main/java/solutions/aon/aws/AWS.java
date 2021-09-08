@@ -6,6 +6,11 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 
 public class AWS {
+	
+	private AWS() {
+		// Nothing to do.
+	}
+	
 	private static final String ACCESS_KEY = "AKIARG5OEKO7GGOK4NOG";
 	private static final String PRIVATE_KEY = "WiosXlQ3q1s18H39itwXRGG9USUk7/zUmqIqhvby";
 	

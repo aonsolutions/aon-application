@@ -44,6 +44,8 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 
@@ -91,7 +93,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, getActivities(api));
 				break;	
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -109,8 +111,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, setDomainApp(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
-			}
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -126,7 +127,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, saveCompany(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -274,7 +275,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		});
 	}
 	
-	private void createUserRoles(AonApiData api, Domain domain, User user, Boolean bidoq) {
+	private void createUserRoles(AonApiData api, Domain domain, User user, boolean bidoq) {
 		createUserRole(api, domain, user, AonRole.ENTERPRISE);
 		createUserRole(api, domain, user, AonRole.ACCOUNTING);
 		createUserRole(api, domain, user, AonRole.FISCAL);
@@ -292,10 +293,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		createUserRole(api, domain, user, AonRole.OCR);
 		createUserRole(api, domain, user, AonRole.AIO);
 		
-		if(bidoq) {
-			createUserRole(api, domain, user, AonRole.BIDOQ);
-		}
-		
+		if(bidoq) createUserRole(api, domain, user, AonRole.BIDOQ);
 	}
 	
 	private void createUserRole(AonApiData api, Domain domain, User user, AonRole role) {
@@ -303,7 +301,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.setDomain(domain.getId())
 				.setRole(role)
 				.setUser(user.getId());
-		uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), uar);
+		AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), uar);
 	}
 	
 		
@@ -452,7 +450,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				apps.add(AonApp.safeValueOf(array.optString(i)));
 			}
 		}
-		LinkedList<DomainApp> activeDomainApps = new LinkedList<DomainApp>();
+		LinkedList<DomainApp> activeDomainApps = new LinkedList<>();
 		
 		for (AonApp aonApp : AonApp.values()) {
 			DomainApp domainApp = AON_SOLUTIONS.getDomainApp(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 

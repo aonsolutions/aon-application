@@ -2,32 +2,29 @@ package solutions.aon.aws.ses;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 
 public class SESMessage {
 
-	private final static String DEFAULT_FROM = "no-reply@aon.solutions";
-	private final static String DEFAULT_ALIAS = "AON SOLUTIONS S.L.";
+	private static final String DEFAULT_FROM = "no-reply@aon.solutions";
+	private static final String DEFAULT_ALIAS = "AON SOLUTIONS S.L.";
 	
-	String alias;
-	String from;
-	String subject;
-	String body;
-	LinkedList<String> to;
-	LinkedList<String> bcc;
-	LinkedList<String> cc;
-	String replyTo;
-	LinkedList<File> files;
-	
-	public SESMessage() {
-	
-	}
+	private String alias;
+	private String from;
+	private String subject;
+	private String body;
+	private List<String> to;
+	private List<String> bcc;
+	private List<String> cc;
+	private String replyTo;
+	private List<File> files;
 
 	public String getAlias() {
 		return alias != null ? alias : DEFAULT_ALIAS;
 	}
 
 	public SESMessage setAlias(String alias) {
-		this.alias = alias;
+		this.alias = alias.replace(",", "").replace(";", "");
 		return this;
 	}
 
@@ -62,13 +59,13 @@ public class SESMessage {
 		return this;
 	}
 
-	public LinkedList<String> getTo() {
+	public List<String> getTo() {
 		if(to == null)
 			to = new LinkedList<>();
 		return to;
 	}
 
-	public SESMessage setTo(LinkedList<String> to) {
+	public SESMessage setTo(List<String> to) {
 		this.to = to;
 		return this;
 	}
@@ -85,13 +82,13 @@ public class SESMessage {
 		return this;
 	}
 
-	public LinkedList<String> getBcc() {
+	public List<String> getBcc() {
 		if(bcc == null)
 			bcc = new LinkedList<>();
 		return bcc;
 	}
 
-	public SESMessage setBcc(LinkedList<String> bcc) {
+	public SESMessage setBcc(List<String> bcc) {
 		this.bcc = bcc;
 		return this;
 	}
@@ -108,13 +105,13 @@ public class SESMessage {
 		return this;
 	}
 	
-	public LinkedList<String> getCc() {
+	public List<String> getCc() {
 		if(cc == null)
 			cc = new LinkedList<>();
 		return cc;
 	}
 
-	public SESMessage setCc(LinkedList<String> cc) {
+	public SESMessage setCc(List<String> cc) {
 		this.cc = cc;
 		return this;
 	}
@@ -140,23 +137,22 @@ public class SESMessage {
 		return this;
 	}
 	
-	public Boolean isReplyTo() {
+	public boolean isReplyTo() {
 		return getReplyTo() != null;
 	}
 
-	public LinkedList<File> getFiles() {
+	public List<File> getFiles() {
 		if(files == null)
 			files = new LinkedList<>();
 		return files;
 	}
 
-	public SESMessage setFiles(LinkedList<File> files) {
+	public SESMessage setFiles(List<File> files) {
 		this.files = files;
 		return this;
 	}
 	
-	public Boolean hasAttach() {
+	public boolean hasAttach() {
 		return !getFiles().isEmpty();
 	}
-	
 }

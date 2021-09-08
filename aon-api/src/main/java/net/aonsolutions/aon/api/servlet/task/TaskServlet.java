@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,11 +21,13 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
@@ -37,7 +40,6 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -49,6 +51,9 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
@@ -98,7 +103,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					response(req, resp,  getCauInfo(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,7 +130,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					response(req, resp,  saveTaskTag(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,7 +151,7 @@ public class TaskServlet extends AonApiHttpServlet{
 				response(req, resp, deleteTaskTag(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -154,8 +159,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private Object getTasks(AonApiData api) {
-		Integer page = api.getParams().optInt("page");
-		Integer perPage = api.getParams().optInt("perPage");
+		Integer page = api.getParams().optInt(IJsonNames.PAGE);
+		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
 		return TaskJSON.toJSON(
 				AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> taskFilter(api, f), page, perPage));
 	}
@@ -194,8 +199,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!search.isEmpty()) {
 			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
 			Integer numberSearch = 0;
-			try { numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
-			catch (NumberFormatException e){}
+			try { 
+				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
+			catch(NumberFormatException e){
+				e.printStackTrace();
+			}
 			if(numberSearch!=0)
 				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
 			
@@ -203,7 +211,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		}
 		
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
-			String email = api.getParams().optString("email");
+			String email = api.getParams().optString(IJsonNames.EMAIL);
 			if(!email.isEmpty())
 				filter = filter.and(f.getGtaskIdProperty().eq(email));
 		}
@@ -224,7 +232,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Object saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
-		Boolean edit = task.getId()!=null ? true : false;
+		boolean edit = task.getId() != null;
 		setCauData(api, task);
 		if(edit) {
 			checkFiles(api, task);
@@ -236,7 +244,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		}
 		
-		if(task.getWorkflows().size() > 0) {
+		if(!task.getWorkflows().isEmpty()) {
 			saveAllTaskWorkflow(api, task); //ADD WORKFLOW
 		}
 		return TaskJSON.toJSON(task);
@@ -321,7 +329,7 @@ public class TaskServlet extends AonApiHttpServlet{
 				.and(f.getStatusProperty().eq(TaskStatus.PENDING.value())), 
 				taskHolder
 		)
-		.forEach((k,v)->json.put(k, v));
+		.forEach((k,v) -> json.put(k, v));
 		return json;
 	}
 	
@@ -427,7 +435,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			User myUser = AON_SOLUTIONS.getUser(api.getDomain(), api.getToken());
 			String title = "SOLICITUD | AON SOLUTIONS";
 			String body = "Solicitud Nº "+task.getNumber() + " Cerrada";
-			LinkedList<Auth> auths = new LinkedList<Auth>();
+			LinkedList<Auth> auths = new LinkedList<>();
 			auths.add(auth);
 
 	    	NotificationRequest notification = new NotificationRequest();
@@ -496,29 +504,29 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getTaskNotice(AonApiData api) {
-//		Domain domain = api.getDomain();
-//		JSONObject json = new JSONObject();
-//		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-//		AON_SOLUTIONS.getTaskCountSchemas(aonToken,  f -> f.getDomainProperty().eq(domain.getId()) )
-//		.forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
+		// Domain domain = api.getDomain();
+		// JSONObject json = new JSONObject();
+		// AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		// AON_SOLUTIONS.getTaskCountSchemas(aonToken,  f -> f.getDomainProperty().eq(domain.getId()) )
+		// .forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
 		
 		return new JSONObject();
 	}
 	
 	private String getLogoCompany(String companyName) {
 		String logo = "https://aon.solutions/assets/aon-logo.png";
-//		try {
-//			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
-//		    final URL url = new URL(urlLogo);
-//	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-//	        int statusCode = connection.getResponseCode();
-//	        if(200 == statusCode) {
-//	        	logo = urlLogo;
-//	        }
-//            connection.disconnect();
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
+		    final URL url = new URL(urlLogo);
+	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	        int statusCode = connection.getResponseCode();
+	        if(200 == statusCode) {
+	        	logo = urlLogo;
+	        }
+            connection.disconnect();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return logo;
 	}

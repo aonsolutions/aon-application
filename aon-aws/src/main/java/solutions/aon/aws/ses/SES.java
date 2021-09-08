@@ -1,33 +1,19 @@
 package solutions.aon.aws.ses;
-/*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -46,9 +32,12 @@ import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 
 import solutions.aon.aws.AWS;
 
-public class SES extends AWS{
+public class SES {
 	
-	private final static String CONFIGURATION_SET = "ConfigSet";
+	private static final Logger LOGGER  = Logger.getLogger(SES.class.getName());
+	private static final String CONFIGURATION_SET = "ConfigSet";
+	private static final String EMAIL_SENT = "Email Sent!";
+	private static final String EMAIL_NOT_SENT = "The email was not sent.";
 	
 	public static String sendEmail(SESMessage msg) {	
 		if(msg.hasAttach()) {
@@ -98,25 +87,20 @@ public class SES extends AWS{
         	message.setRecipients(javax.mail.Message.RecipientType.BCC, InternetAddress.parse(cc));
         	
         	// Create a multipart/alternative child container.
-        	MimeMultipart msg_body = new MimeMultipart("alternative");
+        	MimeMultipart msgBody = new MimeMultipart("alternative");
         
         	// Create a wrapper for the HTML and text parts.        
         	MimeBodyPart wrap = new MimeBodyPart();
-        
-        	// Define the text part.
-        	// MimeBodyPart textPart = new MimeBodyPart();
-        	// textPart.setContent(BODY_TEXT, "text/plain; charset=UTF-8");
                 
         	// Define the HTML part.
         	MimeBodyPart htmlPart = new MimeBodyPart();
         	htmlPart.setContent(msg.getBody(),"text/html; charset=UTF-8");
                 
         	// Add the text and HTML parts to the child container.
-        	// msg_body.addBodyPart(textPart);
-        	msg_body.addBodyPart(htmlPart);
+        	msgBody.addBodyPart(htmlPart);
         
         	// Add the child container to the wrapper object.
-        	wrap.setContent(msg_body);
+        	wrap.setContent(msgBody);
         
         	// Create a multipart/mixed parent container.
         	MimeMultipart multipart = new MimeMultipart("mixed");
@@ -138,9 +122,8 @@ public class SES extends AWS{
         	}
 
         	// Try to send the email.
-
-            System.out.println("Attempting to send an email through Amazon SES "
-                              +"using the AWS SDK for Java...");
+        	LOGGER.info("Attempting to send an email through Amazon SES "
+                    + "using the AWS SDK for Java...");
 
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
@@ -149,11 +132,7 @@ public class SES extends AWS{
                     // Replace US_WEST_2 with the AWS Region you're using for
                     // Amazon SES.
                     .withRegion(Regions.EU_WEST_1).build();
-            
-            // Print the raw email content on the console
-            PrintStream out = System.out;
-            message.writeTo(out);
-
+           
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
@@ -165,23 +144,22 @@ public class SES extends AWS{
 	            		withConfigurationSetName(CONFIGURATION_SET);
             
             client.sendRawEmail(rawEmailRequest);
-            System.out.println("Email sent!");
+            LOGGER.info(EMAIL_SENT);
             return "ok";
-        } catch (Exception ex) {
+        } catch (Exception e) {
         	// Display an error if something goes wrong.
-        	System.out.println("Email Failed");
-			System.err.println("Error message: " + ex.getMessage());
-			ex.printStackTrace();
-			return "Error message: " + ex.getMessage();
+        	LOGGER.warning(EMAIL_NOT_SENT);
+			e.printStackTrace();
+			return e.getMessage();
         }
     }
     
-    public static void sendEmail(MimeMessage message) throws AddressException, MessagingException, IOException{	
+    public static void sendEmail(MimeMessage message) throws MessagingException, IOException{	
     	try {
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                    .withCredentials(getProvider())
+                    .withCredentials(AWS.getProvider())
                     .withRegion("eu-west-1")
                     .build();
 
@@ -192,36 +170,15 @@ public class SES extends AWS{
             
             SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
             client.sendRawEmail(rawEmailRequest);
-            System.out.println("Email sent!");
-        // Display an error if something goes wrong.
-        } catch (Exception ex) {
-			System.err.println("Error message: " + ex.getMessage());
-			ex.printStackTrace();
+            LOGGER.info(EMAIL_SENT);
+        } catch (Exception e) {
+            // Display an error if something goes wrong.
+        	LOGGER.warning(EMAIL_NOT_SENT);
+			e.printStackTrace();
         }
     }
 	
-	public static String sendEmail(String from, String to, String subject, String body) {
-		return sendEmail(from, to, subject, body, null);
-	}
-    
-	public static String sendEmail(String from, String to, String subject, String body, String replyTo) {
-        Destination destination = new Destination().withToAddresses(new String[]{to});
-
-        Content subject2 = new Content().withData(subject);
-        Content textBody = new Content().withData(body);
-        Body body2 = new Body().withHtml(textBody);
-
-        Message message = new Message().withSubject(subject2).withBody(body2);
-
-        SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
-        if(replyTo != null) {
-        	request.withReplyToAddresses(replyTo);
-        }
-
-        return sendEmail(request);
-    }
-    
-    public static String sendEmailToList(String from, LinkedList<String> toList, String subject, String body) {
+    public static String sendEmailToList(String from, List<String> toList, String subject, String body) {
     	SESMessage msg = new SESMessage()
     			.setFrom(from)
     			.setTo(toList)
@@ -249,21 +206,21 @@ public class SES extends AWS{
     public static String sendEmail(SendEmailRequest request) {
     	try {
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(getProvider())
+                .withCredentials(AWS.getProvider())
                 .withRegion("eu-west-1")
                 .build();
 
             client.sendEmail(request);
-            System.out.println("Email sent!");
+            LOGGER.info(EMAIL_SENT);
             return "ok";
-        } catch (Exception ex) {
-            System.out.println("The email was not sent.");
-            System.out.println("Error message: " + ex.getMessage());
-            return "Error message: " + ex.getMessage();
+        } catch (Exception e) {
+            LOGGER.warning(EMAIL_NOT_SENT);
+            e.printStackTrace();
+            return e.getMessage();
         }
     }
     
-    public static String sendEmailWithAttachment(String from, LinkedList<String> toList, String subject, String body, LinkedList<File> files) {	
+    public static String sendEmailWithAttachment(String from, List<String> toList, String subject, String body, List<File> files) {	
     	SESMessage msg = new SESMessage()
     			.setFrom(from)
     			.setTo(toList)
@@ -273,7 +230,7 @@ public class SES extends AWS{
     	return sendEmailWithAttachment(msg);
     }
     
-    public static String sendEmailWithAttachment(String from, String to, String subject, String body, LinkedList<File> files) {	
+    public static String sendEmailWithAttachment(String from, String to, String subject, String body, List<File> files) {	
     	LinkedList<String> toList = new LinkedList<>();
        	toList.add(to);
        	

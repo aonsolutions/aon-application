@@ -25,11 +25,7 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 public class AuthAvatarServlet extends AonApiHttpServlet {
 
 	private static final Logger LOGGER  = Logger.getLogger(AuthAvatarServlet.class.getName());
-	
-	public AuthAvatarServlet() {
 
-	}
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API DOWNLOAD INVOICE PDF AK");

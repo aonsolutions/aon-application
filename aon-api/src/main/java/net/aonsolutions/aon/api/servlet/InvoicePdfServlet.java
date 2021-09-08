@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -45,7 +44,6 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 @WebServlet(name = "DownloadInvoicePdf", urlPatterns = {"/ms/api/download_invoice_pdf/*",
 														"/aon_gwt_aio/download_invoice_pdf/*"})
 public class InvoicePdfServlet extends AonApiHttpServlet {
-
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -71,7 +69,6 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				invoice = InvoiceJSON.fromJSON(json);
 			} else if(json.opt(IConstants.ID) != null){
 				Integer id = json.optInt(IConstants.ID);
-				json = AON_SOLUTIONS.getInvoiceJSON(domainName, domainId, login, id);
 				invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			}
 			
@@ -89,10 +86,6 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoicePdfServlet.class.getName());
-	
-	public InvoicePdfServlet() {
-
-	}
 	
 	public static File createPdf(TediInvoice invoice) {
 		File archivoPDF = null;
