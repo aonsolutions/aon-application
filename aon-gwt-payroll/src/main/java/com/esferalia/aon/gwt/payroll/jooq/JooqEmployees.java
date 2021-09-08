@@ -392,6 +392,7 @@ public class JooqEmployees {
 		employee.setSecondSurName(record
 				.getValue(PERSON.SECOND_SURNAME));
 		employee.setDocument(record.getValue(REGISTRY.DOCUMENT));
+		employee.setSocialSecurity(record.getValue(PERSON.SOCIAL_SECURITY_NUM));
 		Integer levelId = record
 				.getValue(AGREEMENT_LEVEL.ID);
 		if (levelId != null) {
