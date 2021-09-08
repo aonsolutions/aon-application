@@ -3,7 +3,7 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
-import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
+import { formatDate, newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -494,7 +494,7 @@ export const createChatMessage = (properties, chat) => {
           top: "18px",
           zIndex: 1
       });
-      iconSendWorkflow.title = messageSend ? "Enviado" : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date()) : MSG.SEND;
 
       iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
       message.appendChild(iconSendWorkflow);

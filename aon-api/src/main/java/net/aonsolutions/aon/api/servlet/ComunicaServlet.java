@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -125,10 +128,16 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 		byte[] cert = certificateInputStream.readAllBytes();
 		List<String> errors = new ArrayList<String>();
-        PAYROLL.getCCCStream(domain.getName(), domain.getId(), login).forEach(ccc -> {
+		
+		
+
+		PAYROLL.getCCCStream(domain.getName(), domain.getId(), login)
+		.filter(distinctByKey(ci ->ci.getCccAccount()))
+		.forEach(ccc -> {
             String cti = ccc.getCccAccount();
             String regimen = ccc.getCccRegimeCode();
-            try{
+            System.out.println(cti);
+            try{            	
                 employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
             } catch(InvalidCertificateException e) {
                 e.printStackTrace();
@@ -466,5 +475,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			}
 		});
 		newThread.start();
+	}
+	
+	// predicate to filter the duplicates by the given key extractor.
+	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
+		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 }

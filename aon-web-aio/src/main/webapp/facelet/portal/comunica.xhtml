@@ -59,7 +59,8 @@
        	loadStylesSheet('dist/styles.min.css');
 		
 		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
-		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');       	
+		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
+		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
 
         //]]>
     </script>

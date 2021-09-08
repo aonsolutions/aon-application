@@ -73,7 +73,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, `${MSG.REQUESTS} / ${MSG.TASKS}`, new AonApplication());
+		this.createApplication(this.AON_MESSENGER, MSG.TASKS, new AonApplication());
 	}
 
 	async buildToolbar(){

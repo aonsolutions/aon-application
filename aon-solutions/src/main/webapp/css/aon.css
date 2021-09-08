@@ -1301,8 +1301,6 @@ message.sent:after{
   left: 10px;
   right: 10px;
   bottom: 14px;
-  /* border-top-right-radius: 7.5px;
-  border-bottom-right-radius: 7.5px; */
   border-radius: 7.5px;
   border-right: 8px solid var(--onlineGreen);
 }
