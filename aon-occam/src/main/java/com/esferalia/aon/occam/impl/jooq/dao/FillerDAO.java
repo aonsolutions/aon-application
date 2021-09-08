@@ -40,7 +40,6 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -633,15 +632,11 @@ public class FillerDAO {
 			company.setDomain(d);
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)));
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
+			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null);
 			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
-			company.setScope(new Scope()
-					.setId(r.getValue(SCOPE.ID))
-					.setDomain(r.getValue(SCOPE.DOMAIN))
-					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			company
 				.setDocument(r.getValue(REGISTRY.DOCUMENT))
 				.setId(r.getValue(REGISTRY.ID))
@@ -680,14 +675,10 @@ public class FillerDAO {
 			company.setDomain(DomainFiller.buildDomain(r));
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); 
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
+			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null);
 			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
-			company.setScope(new Scope()
-					.setId(r.getValue(SCOPE.ID))
-					.setDomain(r.getValue(SCOPE.DOMAIN))
-					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			company.setDocument(r.getValue(REGISTRY.DOCUMENT))
 				.setId(r.getValue(REGISTRY.ID))
 				.setName(r.getValue(REGISTRY.NAME));
