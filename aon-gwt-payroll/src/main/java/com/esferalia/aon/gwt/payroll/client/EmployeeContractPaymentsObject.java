@@ -112,8 +112,8 @@ public class EmployeeContractPaymentsObject {
 	public void showHideContractConceptCalc(ContractConceptCalc contractConceptCalc) {
 		String expression = contractConceptCalc.getExpression();
 		
-		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE"))
-			expression = expression.replaceAll("HIDE\\(.*\\); ", "");
+		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
+			expression = expression.replace("HIDE\\(.*\\); ", "");
 		else
 			expression = "HIDE(\"<div>" + contractConceptCalc.getDescription() + " oculto desde Conceptos de c\u00E1lculo</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
 		

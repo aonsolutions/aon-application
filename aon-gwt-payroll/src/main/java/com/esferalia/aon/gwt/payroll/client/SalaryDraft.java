@@ -2574,6 +2574,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	CheckBox eventsCheck;
 	@UiField
+	CheckBox notDefinedVarsCheck;
+	@UiField
 	CheckBox dbSalaryCheck;
 
 	@UiField
@@ -2647,6 +2649,7 @@ public class SalaryDraft extends ResizeComposite
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
+		initNotDefinedVarsCheck();
 		initEventsStyles(style);
 		initSalaryDb();
 		initSalarySs();
@@ -3244,7 +3247,30 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	
+	private void onHideShowNotDefinedVars() {
+		contextTable.clear();
+		contextTable.removeAllRows();
+		
+		Scope nextScope = null;
+		boolean show = false; 
+		
+		List<Variable> context = getContext(salaryDraftObject);
+		List<Variable> variables = context.stream()
+				.filter(v->!skipVariable(v))
+//				.filter(v->!isPaymentVariable(v))
+				.collect(Collectors.toList());
+		List<Variable> constants = getConstants(context);
+		
+		List<Variable> visibleContext  = new ArrayList<Variable>();
+		visibleContext.addAll(constants);
+		visibleContext.addAll(variables);
+		
+		for (Scope step : SCOPE_STEPS) {
+			nextScope = dumpContext(visibleContext, step, show, nextScope);
+			if (step.compareTo(scope) <= 0)
+				break;
+		}
+	}
 
 	private void initTgssCheck(){
 		// clean old styles 
@@ -3507,6 +3533,10 @@ public class SalaryDraft extends ResizeComposite
 				showPaymentsEvents(eventsTable.isVisible());
 			}
 		});
+	}
+	
+	private void initNotDefinedVarsCheck() {
+		notDefinedVarsCheck.addValueChangeHandler(e -> onHideShowNotDefinedVars());
 	}
 
 	private void initPaymentsTable() {
@@ -4617,6 +4647,10 @@ public class SalaryDraft extends ResizeComposite
 					continue;
 				}
 			}
+			
+			// Check agreement variables whit empty value
+			if(!notDefinedVarsCheck.getValue() && AonStringUtils.isBlank(variable.getExpression()) && scope.equals(Scope.AGREEMENT))
+				continue;
 
 			Widget variableWidget ; 
 			try {
@@ -4798,6 +4832,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			private void expand() {
+				notDefinedVarsCheck.setValue(true);
 				List<Variable> contextCopy = new ArrayList<Variable>(context);
 				dumpContext(contextCopy, expandScope, false, null);
 				expandButton.removeStyleName(AON.AON_ICON_EXPANDALL);
@@ -4807,6 +4842,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			private void collapse() {
+				notDefinedVarsCheck.setValue(false);
+				
 				for (int i = contextTable.getRowCount() - 1; i > row; i--)
 					contextTable.removeRow(i);
 				for (int i = contextTable.getCellCount(row) - 1; i > col; i--)

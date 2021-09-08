@@ -360,6 +360,9 @@
 								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 									text="AVISOS Y NOTIFICACIONES" checked="false" />
+								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="MOSTRAR VARIABLES NO DEFINIDAS" checked="false" />
 								
 								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
 									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>

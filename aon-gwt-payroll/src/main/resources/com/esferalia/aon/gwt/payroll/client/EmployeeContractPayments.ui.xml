@@ -20,38 +20,6 @@
 			width: 100%;
 		}
 		
-		.widthAll input{
-			width: 100%;
-		}
-		
-		.dateCell {
-			width: 100%;
-			text-align: center;
-		}
-		
-		.dateCell input {
-			width: 100%;
-			text-align: center;
-		}
-		
-		.dateCell input::-webkit-input-placeholder {
-		    color:#666;
-		    content:"dd/mm/yyyy";
-		}
-		
-		.dateCell::-webkit-input-placeholder {
-		    color:#666;
-		    content:"dd/mm/yyyy";
-		}
-		
-		.cellTypeList{
-			width: 180px;
-		}
-		
-		.cellTypeList select{
-			width: 180px;
-		}
-		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">

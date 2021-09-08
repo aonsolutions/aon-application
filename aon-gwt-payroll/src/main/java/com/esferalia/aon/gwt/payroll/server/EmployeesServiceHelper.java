@@ -39,6 +39,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -233,15 +234,15 @@ public class EmployeesServiceHelper {
 			});
 			
 			// check fecha_alta == start_date
-			{
-				Date ssStartDate = employee.getFra();
-				if ( AonUtils.notEquals(ssStartDate, startDate)) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedStartDate()
-							.setAonStartDate(startDate)
-							.setSsStartDate(ssStartDate));
-				}
-			}
+//			{
+//				Date ssStartDate = employee.getFra();
+//				if ( AonUtils.notEquals(ssStartDate, startDate)) {
+//					employeeStatus.and(
+//							new EmployeeStatus.MismatchedStartDate()
+//							.setAonStartDate(startDate)
+//							.setSsStartDate(ssStartDate));
+//				}
+//			}
 			
 			// check fecha_baja == end_date
 //			employee.getFrb().ifPresentOrElse(ssEndDate -> {
@@ -257,8 +258,11 @@ public class EmployeesServiceHelper {
 //					employeeStatus.and(new EmployeeStatus.EndDateNotFound());
 //				}
 //			});
+			
+			Date currentDate = new Date();
+			
 			employee.getFrb().ifPresent(ssEndDate -> {
-				if ( AonUtils.notEquals(ssEndDate, endDate)) {
+				if ( AonUtils.notEquals(ssEndDate, endDate) && DateUtils.getDaysBetween(currentDate, ssEndDate) < 30) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedStartDate()
 							.setAonStartDate(startDate)
