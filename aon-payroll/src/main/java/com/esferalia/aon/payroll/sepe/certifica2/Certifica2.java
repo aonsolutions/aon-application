@@ -217,6 +217,7 @@ public class Certifica2 {
 				.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 				.fetchOne();
 		
+		String ccc = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		String completeCCC = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		
 		Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(
@@ -233,9 +234,10 @@ public class Certifica2 {
 		Integer maxDays = 0;
 		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CONTRACT.eq(contractId))
+				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
-				.orderBy(SALARY.ID.desc())
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
 		for(Record salary : salariesRecords) {
@@ -305,9 +307,10 @@ public class Certifica2 {
 		
 		// Check Settle for unEnjoy Holidays
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CONTRACT.eq(contractId))
+				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
-				.orderBy(SALARY.ID.desc())
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
 		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
@@ -321,8 +324,13 @@ public class Certifica2 {
 				.and(SALARY_PAYMENT.TYPE.eq((byte)6))
 				.fetchOne();
 		
-		Double baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-		Double baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+		Double baseCGC = 0.00;
+		Double baseCGP = 0.00;
+		
+		if(null != holidaysRecord) {
+			baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
+			baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+		} 
 		
 		Certifica2Info settlementCertifica2Info = new Certifica2Info(
 				null,
