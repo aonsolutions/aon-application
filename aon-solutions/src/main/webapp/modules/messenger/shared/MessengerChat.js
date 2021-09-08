@@ -139,7 +139,7 @@ const buildSectionHistoric = (secondDiv) => {
         type: MESSENGER_COMPONENTS.WRAPPER,
         classes: [CSS.FLEX_COLUMN],
         styles: {
-            width: "90%",
+            width:'100%',
             height: '100%',
         }
     });
@@ -268,9 +268,10 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
         width: "50%",
-        minWidth: "400px",
+        // minWidth: "400px",
         paddingTop: "4px",
-        paddingBottom: "30px"
+        paddingBottom: "30px",
+        paddingRight: "44px"
     },
   }).element;
 
@@ -285,12 +286,7 @@ const createSecondDiv = (mainView) => {
  */
 const addChatButtonsUpDown = (secondDiv) => {
   const leftButtonBar = newComponent({
-      classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-      styles: {
-          position: 'relative',
-          width: "10%",
-          height: "100%"
-      }
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER]
   });
   leftButtonBar.appendTo(secondDiv);
 

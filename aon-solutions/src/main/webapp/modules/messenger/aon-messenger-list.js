@@ -240,12 +240,13 @@ export class AonMessengerList extends AonElement {
     let options = [];
     options.push({
       name: MSG.QUERY,
-      icon: MATERIAL_ICONS.ASSESSMENT,
+      icon: MATERIAL_ICONS.INFO,
+      icon_class: 'material-icons-outlined',
       fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
     });
     options.push({
       name: MSG.REQUEST,
-      icon: MATERIAL_ICONS.OUTBOX,
+      icon: MATERIAL_ICONS.ASSIGNMENT,
       fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST})
     });
 

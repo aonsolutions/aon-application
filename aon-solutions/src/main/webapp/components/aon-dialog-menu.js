@@ -134,7 +134,7 @@ export class AonDialogMenu extends AonElement {
 				li.appendChild(ai);
 			} else if(item.icon){
 				let ic = document.createElement('i');
-				ic.className = 'material-icons';
+				ic.className = item.icon_class || 'material-icons';
 				ic.style.verticalAlign = 'middle';
 				ic.style.fontSize = '16px';
 				ic.innerHTML = item.icon;

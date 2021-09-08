@@ -3,7 +3,7 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
-import { formatDate, newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
+import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -81,7 +81,7 @@ export const createDivEditable = (title, id, placeholder) => newComponent({
     fontWeight: "400",
     padding : "10px",
     background: "transparent",
-    border: "none",
+    borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
     width: "100%",
     color: CSS.variable(COLORS.AON_BLUE),
   },
@@ -194,7 +194,7 @@ const createMessageBox = (properties) =>{
     classes : [CSS.FLEX_COLUMN],
     styles: {
         margin:"5px",
-        padding: '20px',
+        padding: '15px',
         background : properties.direction == RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
         boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
         borderRadius : '5px',
@@ -213,19 +213,34 @@ const createMessageBox = (properties) =>{
   return component;
 } 
 
-export const createMessageAuthor = (properties) => newComponent({
-  text: `<span style="font-size: 14px;font-weight: 600;">${properties.name}</span>`,
-  classes :[CSS.FLEX_ROW,CSS.FLEX_JUSTIFY_BETWEEN,CSS.FLEX_ALIGN_CENTER],
-  styles: {
+const createMessageAuthor = (properties) =>{
+
+  let author = newComponent({
+    classes :[CSS.FLEX_ROW,CSS.FLEX_JUSTIFY_BETWEEN,CSS.FLEX_ALIGN_CENTER],
+    styles: {
       textAlign : properties.direction == RIGHT ? "right" : "left",
       flexDirection : properties.direction == RIGHT ? "row-reverse" : "reverse",
-      fontSize: "1.4em",
-      fontWeight : "400", 
-      color : CSS.variable(COLORS.GRAYSON)
-  }
-});
+    }
+  });
 
-export const createCommentContent = (properties) => newComponent({
+  let span = setStyles(document.createElement(TAG.SPAN),{
+    fontSize: "14px",
+    fontWeight:" 600",
+    color : CSS.variable(COLORS.GRAYSON),
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    zIndex: 1
+  });
+  if(properties.marginLeft) span.style.marginLeft = properties.marginLeft;
+  span.innerText = properties.name;
+  span.title = properties.name;
+  author.appendChild(span);
+
+  return author;
+}
+
+const createCommentContent = (properties) => newComponent({
   text: properties.comment,
   styles: {
     fontSize: "1em",
@@ -238,7 +253,7 @@ export const createCommentContent = (properties) => newComponent({
 });
 
 
-export const createAction = (icon, message, outlined) => {
+export const createAction = (icon, message) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
@@ -479,27 +494,35 @@ let messageSend = false;
 export const createChatMessage = (properties, chat) => {
     properties = checkProperties(properties);
 
-    const message = createMessageBox(properties);
-    if(messageSend) message.classList.add("sent")
-    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
-  
-    if(properties.direction === RIGHT){
-      const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      setStyles(iconSendWorkflow, {
-          color: messageSend ? CSS.variable(COLORS.ONLINE_GREEN) : CSS.variable(COLORS.AON_BLUE),
-          fontSize: "17px",
-          position:"absolute",
-          cursor: "pointer",
-          right: "21px",
-          top: "18px",
-          zIndex: 1
-      });
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date()) : MSG.SEND;
+    let me = properties.direction === RIGHT;
 
-      iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
+    const message = createMessageBox(properties);
+    chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
+
+    if(messageSend || me){
+      const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
+      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.date)) : MSG.SEND;
+
+      let color = COLORS.AON_BLUE;
+
+      if(messageSend){
+        color = me ? COLORS.ONLINE_GREEN : COLORS.AON_BLACK;
+        message.classList.add(CSS.MESSAGE_AFTER, me ? "colorMe" : "colorOther");
+      } 
+      
+      setStyles(iconSendWorkflow, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "14px", zIndex: 1 });
+
+      if(me){
+        setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
+        iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
+      } else {
+        properties.marginLeft = "20px";
+      }
+      
       message.appendChild(iconSendWorkflow);
-      messageSend = !messageSend;
     }
+
+    messageSend = !messageSend;
 
     const name = createMessageAuthor(properties);
     name.appendTo(message);
@@ -530,17 +553,10 @@ export const createChatMessage = (properties, chat) => {
  */
 export const createSectionComment = (div) => {
 
-    const divWrite =  setStyles(document.createElement(TAG.DIV),{
-      width: "100%",
-      display: "flex",
-      flexDirection: "column"
-    });
+    const divWrite =  setStyles(document.createElement(TAG.DIV),{ width: "100%", display: "flex", flexDirection: "column" });
     div.appendChild(divWrite);
 
-    const divComment = setStyles(document.createElement(TAG.DIV),{
-      display: "flex",
-      minHeight: "57px"
-    });
+    const divComment = setStyles(document.createElement(TAG.DIV),{ display: "flex", minHeight: "57px"});
     divComment.classList.add(CSS.RESIZE_VERTICAL);
     divComment.title = MSG.COMMENT;
     divWrite.appendChild(divComment);
@@ -632,14 +648,8 @@ export const createInputContact = () =>  setAttributes(new AonInput(),{
 });
 
 export const createLabelFileText = () => {
-  const label =  setStyles(document.createElement(TAG.LABEL),{
-    color:"grey",
-    cursor:"pointer",
-    width:"100%",
-    borderTop :"1px dotted grey"
-  })
-  const span = document.createElement(TAG.SPAN);
-  span.style.margin = "0 5px";
+  const label =  setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
+  const span  =  setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
   span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
   label.appendChild(span);
   return label;

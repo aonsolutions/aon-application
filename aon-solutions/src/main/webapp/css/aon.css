@@ -1291,16 +1291,23 @@ button:disabled, button[disabled]{
   cursor: pointer;
 }
 
-
-message.sent:after{
-  background: rgba(128, 128, 128, 0.1) ;
+.messageAfter:after{
+  background: rgba(128, 128, 128, 0.1);
   content: '';
   display: block;
   position: absolute;
-  top: 17px;
-  left: 10px;
-  right: 10px;
-  bottom: 14px;
+  top: 9px;
+  left: 8px;
+  right: 7px;
+  bottom: 9px;
   border-radius: 7.5px;
-  border-right: 8px solid var(--onlineGreen);
+}
+
+.colorMe.messageAfter:after{
+  border-right: 5px solid;
+  border-color: var(--onlineGreen);
+}
+.colorOther.messageAfter:after{
+  border-left: 5px solid;
+  border-color: var(--aonBlack);
 }
