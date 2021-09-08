@@ -78,6 +78,7 @@ public class OperationReportPanel extends ScrollPanel{
 			Map<Double,Double[]> mapIvaSummary = new TreeMap<Double, Double[]>();
 			Map<Double,Double[]> mapSurSummary = new TreeMap<Double, Double[]>();
 			Map<String,Object[]> mapConceptSummary = new TreeMap<String, Object[]>();
+			int idCount = 1;
 			
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
@@ -86,7 +87,7 @@ public class OperationReportPanel extends ScrollPanel{
 				if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
 					String text = xhr.getResponseText();
 					try {
-						int i = 1;
+						
 						for (JsOperationBreakdown op = read(text); text != null; op = read(text)) {
 							if (html.getWidgetCount() == 0) {
 								addHeaderWidget(html, params.getIrpf());
@@ -97,7 +98,7 @@ public class OperationReportPanel extends ScrollPanel{
 							sumSurchargeQuota = sumSurchargeQuota + op.getSurchargeQuota();
 							sumTotal = sumTotal + op.getTotal();
 							if (params.getIrpf() == true) { // IRPF
-								html.add( getIrpfWidget(op, i) );
+								html.add( getIrpfWidget(op, idCount) );
 								Object[] indexIrpf = mapConceptSummary.get(op.getAccount());								  
 								if (indexIrpf != null) {
 									Object[] obj = new Object[2];	
@@ -111,7 +112,7 @@ public class OperationReportPanel extends ScrollPanel{
 									mapConceptSummary.put(op.getAccount(), obj);
 								}
 							} else { // IVA
-								html.add( getIvaWidget(op, i) );
+								html.add( getIvaWidget(op, idCount) );
 								
 								Double[] indexIva = mapIvaSummary.get(op.getPercent());
 								if (indexIva != null) {
@@ -141,7 +142,7 @@ public class OperationReportPanel extends ScrollPanel{
 									}
 								}
 							}
-							i++;
+							idCount++;
 							
 						}
 					} catch (IndexOutOfBoundsException e) {
