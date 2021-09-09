@@ -28,6 +28,8 @@ import static com.esferalia.aon.watson.server.AonDateUtils.getDay;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,6 +78,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.MVEL;
+import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -125,6 +128,34 @@ public class Bases {
 
 	}
 	
+	@SuppressWarnings("serial")
+	public static class InvalidElementException extends Exception {
+
+		public InvalidElementException(Throwable cause) {
+			super(cause);
+		}
+		
+		@Override
+		public String getMessage() {
+			for( Throwable cause = this.getCause(); cause != null; cause = cause.getCause()) {
+				if ( AonStringUtils.isNotBlank(cause.getMessage())) {
+					return cause.getMessage();
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		public String getLocalizedMessage() {
+			for( Throwable cause = this.getCause(); cause != null; cause = cause.getCause()) {
+				if ( AonStringUtils.isNotBlank(cause.getLocalizedMessage())) {
+					return cause.getLocalizedMessage();
+				}
+			}
+			return null;
+		}
+	}
+
 	public static class ConstantDatoBasesCallback implements BasesCallback {
 		
 		private String valor;
@@ -557,6 +588,10 @@ public class Bases {
 
 		};
 
+		default void invalidLiquidacion(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion,
+				Exception e) {
+
+		};
 	}
 
 	@SuppressWarnings("serial")
@@ -3158,15 +3193,20 @@ public class Bases {
 				boolean noDatos = liquidacion.getDatosLiquidacion() == null ||  
 						liquidacion.getDatosLiquidacion().getDato().isEmpty();
 
-				if (noTrabajadores && noDatos)
-					for (BasesCallback cb : cbs)
+				if (noTrabajadores && noDatos) {
+					for (BasesCallback cb : cbs) {
 						cb.noDiffs(liquidacion);
-				else
+					}
+				}
+				else {
+					validate(liquidacion, callbacks);
 					liquidaciones.put(ccc, liquidacion);
+				}
 
 			} catch (JAXBException e) {
-				for (BasesCallback cb : callbacks)
+				for (BasesCallback cb : callbacks) {
 					cb.wrongTrabajadoresTramosIs(trabajadoresTramosIs, e);
+				}
 
 			}
 
@@ -3182,10 +3222,9 @@ public class Bases {
 
 				autorizados.add(respuesta.getAutorizado());
 
-				liquidaciones(respuesta, ctx, acceptPrevBases, xsw, callbacks)
-						.stream().forEach(l -> liquidaciones
-								.put(toString(l.getCcc()), l));
-				;
+				liquidaciones(respuesta, ctx, acceptPrevBases, xsw, callbacks).stream()
+				.filter(l -> validate(l, callbacks))
+				.forEach(l -> liquidaciones.put(toString(l.getCcc()), l));
 
 			} catch (JAXBException e) {
 				for (BasesCallback cb : callbacks)
@@ -3195,13 +3234,15 @@ public class Bases {
 		}
 
 		String autorizado = null;
+		
+		autorizados = autorizados.stream().filter(Bases::filter).collect(Collectors.toSet());
 
 		if (autorizados.size() > 1) {
 			// TODO
 		} else if (autorizados.isEmpty()) {
 			// TODO
 		} else {
-			autorizado = autorizados.stream().findFirst().get();
+			autorizado = autorizados.stream().findFirst().orElse(null);
 			builder.setAutorizado(autorizado);
 		}
 
@@ -3213,12 +3254,42 @@ public class Bases {
 
 		for (BasesCallback cb : callbacks)
 			cb.bases(bases);
-
+		
 		if (comments)
 			Utils.marshal(bases, xsw, comment);
 		else
 			Utils.marshal(bases, xsw);
 
+	}
+
+	public static boolean validate (net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion  liquidacion, BasesCallback ...callbacks) {
+		try {
+			validate(liquidacion);
+			return true ;
+		} catch (InvalidElementException e) {
+			for (BasesCallback cb : callbacks) {
+				cb.invalidLiquidacion(liquidacion, e);
+			}
+			return false;
+		}
+	}
+
+	public static <T> void validate (T t) throws InvalidElementException {
+		try {
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			Utils.marshal(t, os);
+			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+			Utils.unmarshal(t.getClass(),is, Utils.BASES);
+		} catch (JAXBException | SAXException e) {
+			throw new InvalidElementException(e);
+		}
+	}
+
+	public static <T> void validate (Class<T> clazz, T t ) throws JAXBException, SAXException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Utils.marshal(t, os);
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+		Utils.unmarshal(clazz,is, Utils.BASES);
 	}
 
 	private static int getDaysOf(Tramo<?> tramo) {
@@ -3245,6 +3316,11 @@ public class Bases {
 		
 	}
 	
+	private static boolean filter(String autorizado) {
+		autorizado = AonStringUtils.trimToEmpty(autorizado);
+		return AonStringUtils.isNotEmpty(autorizado)
+				&& autorizado.chars().distinct().count() > 1;
+	}
 	
 
 }
