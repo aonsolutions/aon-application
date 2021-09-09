@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.IModel180Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.Model180Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -18,6 +19,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class NewDeclarationPopup extends CustomDialog {
 	
@@ -26,14 +28,31 @@ public class NewDeclarationPopup extends CustomDialog {
 	private IntegerBox yearBox = new IntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
+	private TextBox replacedReceiptBox = new TextBox();	
 	
-	public NewDeclarationPopup(final Mod180 mod180 ,final Model180Callback callback) {
-		setCaption(AON.MSG.newDeclaration());
+	public NewDeclarationPopup(final Mod180 mod180, final Model180Callback callback) {
+		this(mod180, false, callback);
+	}
+	
+	public NewDeclarationPopup(final Mod180 mod180, boolean duplicate, final IModel180Callback callback) {
+		
+		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
+		// complementaria y sustitutiva están desmarcados
+		int oldYear = mod180.getYear();
+		if (duplicate) {
+			mod180.setYear(oldYear+1);
+			mod180.setComplementary(false);
+			mod180.setReplacement(false);
+			mod180.setReplacedReceipt("");
+		}		
+		
+		setCaption(duplicate?AON.MSG.duplicate():AON.MSG.newDeclaration());		
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
 		FlexTable tab = new FlexTable();
-		admonList.setSelectedIndex( mod180.getAdministration().ordinal());
+		
+		admonList.setSelectedIndex(mod180.getAdministration().ordinal());
 		yearBox.setValue(mod180.getYear());
 
 		FlowPanel rootPanel = new FlowPanel(); 
@@ -54,6 +73,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setEnabled(!duplicate);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -74,6 +94,17 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				mod180.setYear(yearBox.getValue());
+				
+				// Cuando se duplica el modelo, solo se puede marcar complementaria o sustitutiva
+				// si el ejercicio es el mismo que el modelo que se quiere duplicar
+				if (duplicate) {
+					complementary.setEnabled(yearBox.getValue()==oldYear);
+					replacement.setEnabled(yearBox.getValue()==oldYear);
+					if (yearBox.getValue()!=oldYear) {
+						complementary.setValue(false,true);
+						replacement.setValue(false,true);					
+					}
+				}				
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
@@ -81,17 +112,42 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
-		complementary.addClickHandler(new ClickHandler() {
+		complementary.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
+//		complementary.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				mod180.setComplementary(complementary.getValue());
+//				
+//				//replacement.setEnabled(!complementary.getValue());
+//				if (complementary.getValue()) {
+//					replacement.setValue(false,true);					
+//				}
+//					
+//				replacedReceiptBox.setEnabled(complementary.getValue()||replacement.getValue());
+//				if (!complementary.getValue() && !replacement.getValue()) {
+//					replacedReceiptBox.setValue("",true);
+//				}
+//			}
+//		});
+		complementary.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				mod180.setComplementary(complementary.getValue());
-				replacement.setEnabled(!complementary.getValue());
+
 				if (complementary.getValue()) {
-					replacement.setValue(false);
+					replacement.setValue(false,true);					
 				}
+					
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue()) {
+					replacedReceiptBox.setValue("",true);
+				}
+				
 			}
 		});
+		
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, complementary);
@@ -99,20 +155,56 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
-		replacement.addClickHandler(new ClickHandler() {
+		replacement.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
+//		replacement.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				mod180.setReplacement(replacement.getValue());
+//				//complementary.setEnabled(!replacement.getValue());
+//				if (replacement.getValue()) {
+//					complementary.setValue(false,true);
+//				}
+//				replacedReceiptBox.setEnabled(complementary.getValue()||replacement.getValue());
+//				if (!complementary.getValue() && !replacement.getValue())
+//					replacedReceiptBox.setValue("",true);					
+//			}
+//		});
+		replacement.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				mod180.setReplacement(replacement.getValue());
-				complementary.setEnabled(!replacement.getValue());
 				if (replacement.getValue()) {
-					complementary.setValue(false);
+					complementary.setValue(false,true);
 				}
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue())
+					replacedReceiptBox.setValue("",true);					
+				
 			}
 		});
+		
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
+		row++;
+		
+		// NUMERO DE DECLARACION ANTERIOR
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.previousDeclaration()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		replacedReceiptBox.setMaxLength(13);
+		replacedReceiptBox.setVisibleLength(13);
+		replacedReceiptBox.setEnabled(false);  // Por defecto deshabilitado porque complementaria y sustitutiva están desmarcados
+		replacedReceiptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				mod180.setReplacedReceipt(replacedReceiptBox.getValue());
+			}
+		});
+		tab.setWidget(row, 1, replacedReceiptBox);
 		row++;
 		
 		rootPanel.add(tab);

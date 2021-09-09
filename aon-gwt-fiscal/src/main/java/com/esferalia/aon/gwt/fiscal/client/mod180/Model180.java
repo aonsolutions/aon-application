@@ -66,6 +66,7 @@ public class Model180 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model180ModuleOptions options);
+		void onDuplicate(Model180ModuleOptions options, int id);		
 	}
 
 	protected class Model180Callback implements IModel180Callback {
@@ -84,6 +85,10 @@ public class Model180 extends MainEntryPoint {
 		@Override
 		public void onNew(Model180ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onDuplicate(Model180ModuleOptions options, int id) {
+			duplicateModel(options, id);
 		}
 		@Override
 		public void cleanErrorPanel() {
@@ -257,7 +262,26 @@ public class Model180 extends MainEntryPoint {
 					}
 				});
 	}
+	
+	private void duplicateModel(Model180ModuleOptions options, int id) {
+		cleanErrorPanel();
+		SERVICE.getMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id,
+				new AsyncCallback<Mod180>() {
+					@Override
+					public void onSuccess(Mod180 m180) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						showDuplicateDeclarationPopup(options, m180);
+					}
 
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void cancel() {
 		cleanErrorPanel();
 		declarationContainer.setWidget(model180Table);
@@ -377,4 +401,44 @@ public class Model180 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void showDuplicateDeclarationPopup(Model180ModuleOptions options, Mod180 model) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+			new Model180Callback() {
+
+					@Override
+					public void onAccept(Mod180 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicateMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+								new AsyncCallback<Mod180>() {
+									@Override
+									public void onSuccess(Mod180 model) {
+										popup.hide();
+										select(options, model, null);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 }
