@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
@@ -75,17 +76,22 @@ public class AonRandom {
         		:null;
     }
 
-    public static String name( int nullThreshold, int length ) {
+    public static String name( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-    		?faker.name().fullName( )
+    		?AonStringUtils.abbreviate( faker.name().fullName(), maxLength)
     		:null;
     }
-    public static String alias( int nullThreshold, int length ) {
+    public static String alias( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-    		?faker.name().username()
+    		?AonStringUtils.abbreviate( faker.name().username(), maxLength)
     		:null;
     }
 
+    public static Integer number(int nullThreshold, int from, int to) {
+    	return ( gt(nullThreshold) )
+        		?number(from, to)
+        		:null;
+    }
     public static int number( int from, int to) {
     	return faker.random().nextInt(from, to);
     }
@@ -99,6 +105,11 @@ public class AonRandom {
     	double r = faker.random().nextDouble();
     	return AonMathUtils.round(from + ((to - from) * r), precision);
     }
+    public static Double getDouble(int nullThreshold, int from, int to, int precision ) {
+    	return ( gt(nullThreshold) )
+        		?getDouble(from, to, precision)
+        		:null;
+    }
     
     public static Date getRandomYearDay( int year ) {
     	return truncate( faker.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year)));
@@ -110,6 +121,12 @@ public class AonRandom {
         		:null;
     }
     
+    public static Date getFutureDate( int threshold ) {
+    	return ( gt(threshold) )
+        		?truncate( faker.date().future(100, TimeUnit.DAYS, new Date()))
+        		:null;
+    }
+
     private static Date truncate( Date date) {
     	return date == null 
 			? null 

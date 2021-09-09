@@ -947,30 +947,6 @@ public class PropertiesDAO {
 		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.PYMNT_DAYS);}
 	}
 	
-	protected static class RDirStaffPropertiesDAO implements RDirStaffProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select,RDirStaffFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(RDirStaffFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REGISTRY);}
-		@Override public Property<Byte> getShareHolderProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.SHAREHOLDER);}
-		@Override public Property<Byte> getRepresentativeProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REPRESENTATIVE);}
-		@Override public Property<Byte> getRepresentativeLaborProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.REPRESENTATIVE_LABOR);}
-		@Override public Property<Byte> getDirectorProperty() {return new FilterDAO.PropertyDAO<>(RDIR_STAFF.DIRECTOR);}
-	
-	}
-	
-	
 	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryAddInfoFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
