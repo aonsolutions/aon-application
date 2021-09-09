@@ -5,14 +5,12 @@
   --aonDarkGray : #5F6368;
   --aonBlack : #212529;
   --aonWhite : #ffffff;
-
   --onlineGreen : #5cb85c;
   --grayson : #787878;
   --materialBlue : #007bff;
   --materialBlack : #404040;
   --materialRed : #f44336;
   --materialSoftBlack : #202020;
-
   --sat: env(safe-area-inset-top);
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
@@ -57,7 +55,7 @@ ul {
 }
 
 .aonAppLi:hover {
-  background-color: #f1f1f1;
+  background-color: var(--aonLightGray);
 }
 
 a {
@@ -96,7 +94,7 @@ a {
   position: relative;
   display: block;
   padding: .75rem 1.25rem;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-bottom: 1px solid rgba(0,0,0,.125);
   border-left: 1px solid rgba(0,0,0,.125);
   border-right: 1px solid rgba(0,0,0,.125);
@@ -335,7 +333,7 @@ button:disabled, button[disabled]{
 }
 
 .sidenavHover:hover{
-  background-color: #f1f1f1;
+  background-color: var(--aonLightGray);
 }
 
 .aonMenuLink {
@@ -345,7 +343,7 @@ button:disabled, button[disabled]{
 }
 
 .aonHeader {
-  background-color: #fff;
+  background-color: var(--aonWhite);
   padding: 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid #ddd;
@@ -533,7 +531,7 @@ button:disabled, button[disabled]{
 }
 
 .aonTable tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -550,7 +548,7 @@ button:disabled, button[disabled]{
   position: fixed;
   top: 60px;
   right: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-left: 1px solid #ddd;
   overflow-x: hidden;
   z-index: 2;
@@ -601,7 +599,7 @@ button:disabled, button[disabled]{
   flex-grow: 0;
   flex-shrink: 0;
   left: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -614,7 +612,7 @@ button:disabled, button[disabled]{
   position: fixed;
   z-index: 1;
   left: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -745,7 +743,7 @@ button:disabled, button[disabled]{
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   background-clip: border-box;
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
@@ -868,7 +866,7 @@ button:disabled, button[disabled]{
 
 .aonDatepicker {
   display: block;
-  background: #fff;
+  background: var(--aonWhite);
   margin: 0;
   padding: 0;
   border: none;
@@ -997,7 +995,7 @@ button:disabled, button[disabled]{
 
 .aonCheckbox > input:checked + span::after,
 .aonCheckbox > input:indeterminate + span::after {
-    border-color: #fff;
+    border-color: var(--aonWhite);
 }
 
 .aonCheckbox > input:indeterminate + span::after {
@@ -1200,7 +1198,7 @@ button:disabled, button[disabled]{
   display:none;
   top:60px;
   opacity:0.7;
-  background-color:#f1f1f1;
+  background-color:var(--aonLightGray);
   border-radius: 100px 0 0 100px;
   right: 0;
 }
@@ -1304,10 +1302,8 @@ button:disabled, button[disabled]{
 }
 
 .colorMe.messageAfter:after{
-  border-right: 5px solid;
-  border-color: var(--onlineGreen);
+  border-right: 5px solid var(--onlineGreen);
 }
 .colorOther.messageAfter:after{
-  border-left: 5px solid;
-  border-color: var(--aonBlack);
+  border-left: 5px solid var(--aonBlack);
 }

@@ -66,9 +66,13 @@ export class AonMessenger extends AonElement {
 			const task = await getTaskOne({id:this.value});
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
 		} else {
-			this._filter.task_holder = this.TASK_HOLDER.id;
+			if(!this._filter.sender){
+				this._filter.task_holder = this.TASK_HOLDER.id;
+				this.applicationEl.addToolbarTitle("Recibidas");
+			} else {
+				this.applicationEl.addToolbarTitle("Enviadas");
+			}
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
-			this.applicationEl.addToolbarTitle("Recibidas");
 		}
 	}
 

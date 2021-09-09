@@ -16,7 +16,6 @@ import '../invoice/aon-invoice-panel.js';
 import '../laboral/aon-laboral.js';
 import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
-
 import './aon-stat.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
@@ -25,6 +24,7 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import * as GWT from "../../gwt/gwt.js";
+import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 
 export class AonDesktop extends AonElement {
 
@@ -597,6 +597,7 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
+				this.addMessenger(button);
 				break;
 			}
 	}
@@ -668,8 +669,6 @@ export class AonDesktop extends AonElement {
 
 	addInvoice(button) {		
 		let invoicePanel = new AonInvoicePanel();	
-
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 		let d = this.getApplication().getOptionDialog();
@@ -695,6 +694,42 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(invoicePanel);
 			}
 		}];
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	addMessenger(button) {		
+		let aonMessengerChat = new AonMessenger();	
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+		let d = this.getApplication().getOptionDialog();
+		let options = [{
+			name: MSG.QUERY,
+			icon: MATERIAL_ICONS.INFO,
+			icon_class: 'material-icons-outlined',
+			fn: () => {
+				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+				this.rootPanel(aonMessengerChat);
+			}
+		}, {
+			name: MSG.REQUEST,
+			icon: MATERIAL_ICONS.ASSIGNMENT,
+			fn: () => {
+				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+				this.rootPanel(aonMessengerChat);
+			}
+		}];
+		if(this.dur.hasCallCenter()){
+			options.push({
+			  name: MSG.CAU,
+			  icon: MATERIAL_ICONS.SUPPORT_AGENT,
+			  fn: () => {
+				aonMessengerChat.data = {source:TASK_SOURCE.CAU};
+				this.rootPanel(aonMessengerChat);
+			  }
+			});
+		}
+
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}

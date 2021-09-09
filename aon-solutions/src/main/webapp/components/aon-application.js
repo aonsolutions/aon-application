@@ -381,7 +381,7 @@ export class AonApplication extends AonElement {
       : this.getElement(this.SIDENAV);
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
-    div.style.paddingBottom = "25px";
+    div.style.paddingBottom = "10px";
     div.style.borderBottom = "1px solid #ebebeb";
     sidenav.appendChild(div);
 
@@ -562,7 +562,7 @@ export class AonApplication extends AonElement {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
             else {
-              console.log(el.style.backgroundColor);
+              // console.log(el.style.backgroundColor);
             }
         });
         
@@ -649,7 +649,12 @@ export class AonApplication extends AonElement {
 
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
-    if (toolbar) toolbar.setAttribute("option", title);
+    if (toolbar) {
+      toolbar.setAttribute("option", title);
+      //----------ADD COLOR SIDENAV SELECTED---------
+      let li = this.getElement(this.SIDENAV+title);
+      if(li) li.style.backgroundColor = "#ddd";  
+    } 
   }
 
   addTitleToolSection(title) {

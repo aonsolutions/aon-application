@@ -9,11 +9,10 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import com.esferalia.aon.occam.api.model.office.Tag;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -21,7 +20,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -282,9 +280,13 @@ public class TaskServlet extends AonApiHttpServlet{
 
 	private JSONObject saveTaskTag(AonApiData api) {
 		Domain domain = api.getDomain();
-		return TagJSON.toJSON(
-				AON.insertTag(domain.getName(), domain.getId(), api.getUser().getLogin(), TagJSON.fromJSON(api.getData()))
-		);
+		Tag tag =  TagJSON.fromJSON(api.getData());
+		if(tag.getId()!=null) {
+			AON.updateTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag); 
+		} else {
+			tag = AON.insertTag(domain.getName(), domain.getId(), api.getUser().getLogin(), tag);
+		}
+		return TagJSON.toJSON(tag);
 	}
 	
 	
