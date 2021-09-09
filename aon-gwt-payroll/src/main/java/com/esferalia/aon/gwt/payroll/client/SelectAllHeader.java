@@ -65,5 +65,9 @@ public class SelectAllHeader<T> extends Header<Boolean> {
 	}
 
 	// --------------------------------------------------------------------
+	
+	protected boolean isSelectable ( T item ) {
+		return true;
+	}
 
 }

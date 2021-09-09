@@ -1119,6 +1119,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			filesEditor.add(basesButton);
 			
+			filesEditor.addSelectionHandler(event -> {
+				JsFile jsFile = jsFiles[event.getSelectedItem()];
+				basesButton.setEnabled(AbstractBaseCretaDetail.this.isSelectable(jsFile));
+			});
+			
 			for (JsFile jsFile : jsFiles) {
 				
 				FileEditor fileEditor = new FileEditor(false);

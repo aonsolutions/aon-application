@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -737,11 +737,24 @@ public abstract class CretaDetail extends Composite {
 			}
 			
 		}) {
+			
 			@Override
 			public Boolean getValue(JsFile jsFile) {
-				return CretaDetail.this.jsFileSelectionModel.isSelected(jsFile);
+				return CretaDetail.this.isSelectable(jsFile) && CretaDetail.this.jsFileSelectionModel.isSelected(jsFile);
 			}
-		}, new SelectAllHeader<JsFile>(jsFileSelectionModel, dataGrid));
+
+			@Override
+			public void render(Context context, JsFile jsFile, SafeHtmlBuilder sb) {
+				if ( CretaDetail.this.isSelectable(jsFile) )
+					super.render(context, jsFile, sb);
+			}
+			
+		}, new SelectAllHeader<JsFile>(jsFileSelectionModel, dataGrid) {
+			@Override
+			protected boolean isSelectable(JsFile item) {
+				return CretaDetail.this.isSelectable(item);
+			}
+		});
 
 		dataGrid.setColumnWidth(0, "40px");
 		
@@ -1133,6 +1146,20 @@ public abstract class CretaDetail extends Composite {
 				(progress) -> onProgress(progress));
 	}
 	
+	protected boolean isSelectable(JsFile jsFile) {
+		JsRespuesta jsRespuesta = respuestasMap.getOrDefault(jsFile.getId(), JsRespuesta.createEmptyRespuesta());
+		for ( JsError jsError : jsRespuesta.getErrors() ) { 
+			if ( "R9546".equals(jsError.getCode()))
+				return false;
+			if ( "R9607".equals(jsError.getCode()))
+				return false;
+			if ( "R9650".equals(jsError.getCode()))
+				return false;
+		}
+		return true;
+	}
+	
+
 	// ----------------------------------------------- DataGrid.Methods
 
 	private void onJsFileOut(final int clientX, final int clientY) {
@@ -1387,7 +1414,7 @@ public abstract class CretaDetail extends Composite {
 		}
 	}
 	
-	// ----------------------------------------------- Toolbar
+ 	// ----------------------------------------------- Toolbar
 	
 	private AonToolbar getToolbarPanel() {
 		

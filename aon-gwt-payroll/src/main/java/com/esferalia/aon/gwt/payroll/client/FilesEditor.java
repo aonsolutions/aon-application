@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -77,6 +78,10 @@ public class FilesEditor extends ResizeComposite {
 	
 	public int getSelectedIndex() {
 		return tabLayoutPanel.getSelectedIndex();
+	}
+	
+	public void addSelectionHandler(SelectionHandler<Integer> handler) {
+		tabLayoutPanel.addSelectionHandler(handler);
 	}
 	
 
