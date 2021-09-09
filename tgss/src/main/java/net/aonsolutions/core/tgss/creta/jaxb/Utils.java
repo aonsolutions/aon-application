@@ -4,9 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -15,12 +17,16 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 public class Utils {
+	
+	public static final URL BASES = Utils.class.getResource("bases/Bases.xsd");
 
 	// -----------------------------------------------------------------------
 
@@ -74,6 +80,23 @@ public class Utils {
 		}
 //		return (T) newUnmarshaller(clazz).unmarshal(reader);
 	}
+	public static <T> T unmarshal(Class<T> clazz, InputStream in, URL schema) throws JAXBException, SAXException {
+		return unmarshal(clazz, in, newSchema(schema));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T unmarshal(Class<T> clazz, InputStream in, Schema schema) throws JAXBException {
+		try {
+			XMLReader reader = new NamespaceFilterXMLReader();
+			InputSource is = new InputSource(in);
+			SAXSource ss = new SAXSource(reader, is);
+			Unmarshaller unmarshaller = newUnmarshaller(clazz);
+			unmarshaller.setSchema(schema);
+			return (T) unmarshaller.unmarshal(ss);
+		} catch (SAXException | ParserConfigurationException e1) {
+			throw new JAXBException(e1);
+		}
+	}
 	// ------------------------------------------------------------------------
 
 	private static Marshaller newMarshaller(Class classToBeBound) throws JAXBException {
@@ -90,6 +113,12 @@ public class Utils {
 	private static JAXBContext newJAXBContext(Class classToBeBound) throws JAXBException {
 		return JAXBContext.newInstance(classToBeBound);
 	}
+
+	private static Schema newSchema(URL url) throws JAXBException, SAXException {
+		return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(url);
+	}
+
+	// -------------------------------------------------------------------------
 
 	// -------------------------------------------------------------------------
 
