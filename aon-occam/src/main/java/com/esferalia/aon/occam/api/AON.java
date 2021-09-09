@@ -308,6 +308,7 @@ public class AON {
 		return new Product2Impl();
 	}
 
+	@Deprecated
 	private static IOffice getOffice() {
 		return new OfficeImpl();
 	}
@@ -2470,71 +2471,15 @@ public class AON {
 	}
 	
 	
+	/**
+	 * @deprecated  Replaced by AON.getUserStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);			
 			return getOffice().getUsers(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Tag editTag(Integer domainId, String domainName,
-			String userName, String labelName, Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().editTag(ctx, labelName, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static List<Tag> getTags(Integer domainId, String domainName,
-			String userName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getTags(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static boolean deleteTag(Integer domainId, String domainName,
-			String userName, String labelName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().deleteTag(ctx, labelName);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Tag getTag(Integer domainId, String domainName,
-			String userName, String name) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getTag(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static List<Registry> getRegistries(Integer domainId,
-			String domainName, String userName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getRegistries(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2572,6 +2517,7 @@ public class AON {
 		return getRegistry(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
+	@Deprecated
 	public static NotificationInfo getNotificationInfo(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try{
@@ -2581,7 +2527,8 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
+
+	@Deprecated
 	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
 			NotificationInfo notificationInfo){
 		AONContext ctx = null;
@@ -2593,6 +2540,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
 			String data, AppParam appParam){
 		AONContext ctx = null;
@@ -5166,38 +5114,19 @@ public class AON {
 		}
 	}
 
-	public static void updateTag(String domainName, Integer domainId, String login,
-			Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().updateTag(ctx, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Tag updateTag(String domainName, Integer domainId, String login, Tag tag) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().updateTag(ctx, tag);
 		}
 	}
 
-	public static void deleteTag(String domainName, Integer domainId, String login,
-			Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().deleteTag(ctx, f -> f.getIdProperty().eq(tag.getId()));
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static void deleteTag(String domainName, Integer domainId, String login, Tag tag) {
+		deleteTag(domainName, domainId, login, f -> f.getIdProperty().eq(tag.getId()));
 	}
 	
 	public static void deleteTag(String domainName, Integer domainId, String login, TagFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getCommon().deleteTag(ctx, filter);
-		} finally {
-			if(ctx != null)
-				ctx.close();
 		}
 	}
 	

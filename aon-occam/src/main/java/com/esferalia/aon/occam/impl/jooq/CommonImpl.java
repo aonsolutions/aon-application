@@ -284,8 +284,8 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
-	public void updateTag(AONContext ctx, Tag tag){
-		 ctx.getDslContext().transaction(configuration -> 
+	public Tag updateTag(AONContext ctx, Tag tag){
+		return ctx.getDslContext().transactionResult(configuration -> 
 		 	TagDAO.updateTag(ctx, tag));
 	}
 	
