@@ -5,9 +5,10 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -31,7 +32,7 @@ import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class AONContext implements AutoCloseable{
-
+	
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 	private static Settings SETTINGS = null;
@@ -265,27 +266,28 @@ public class AONContext implements AutoCloseable{
 
 	public ILogger log() {
 		if (logger == null) {
-			// implementacion basico de log. Revisar.
 			logger = new ILogger() {
+
+				private final Logger log = Logger.getLogger(this.getClass().getName());
 
 				@Override
 				public void error(String msg) {
-					System.out.println(MessageFormat.format(ERR,new Date(),AONContext.this.domainId,msg));
+					log.log(Level.SEVERE, ERR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
 
 				@Override
 				public void warn(String msg) {
-					System.out.println(MessageFormat.format(WAR,new Date(),AONContext.this.domainId,msg));
+					log.log(Level.WARNING, WAR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
 
 				@Override
 				public void info(String msg) {
-					System.out.println(MessageFormat.format(INF,new Date(),AONContext.this.domainId,msg));
+					log.log(Level.INFO, INF, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
 
 				@Override
 				public void debug(String msg) {
-					System.out.println(MessageFormat.format(DEB,new Date(),AONContext.this.domainId,msg));
+					log.log(Level.FINE, DEB, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
 				
 			};
