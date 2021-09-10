@@ -534,7 +534,8 @@ public class Mod180DAO {
 		int id = mod180.getId();
 		mod180.setId(null);
 		mod180 = insert(ctx, mod180, false);
-		// Si la nueva es complementaria, no se duplica el detalle
+		
+		// Si la nueva es complementaria, no se duplican las lineas
 		if (!mod180.isComplementary()) {
 			Mod180 original = getById(ctx, id);
 			for (Mod180Detail detail : original.getDetails()) {

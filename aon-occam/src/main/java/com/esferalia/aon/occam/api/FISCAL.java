@@ -1582,11 +1582,11 @@ public class FISCAL {
 		}
 	}
 	
-	public static Mod184 duplicateNextYearMod184(String domainName, Integer domain, String userLogin, Integer id) {
+	public static Mod184 duplicateMod184(String domainName, Integer domain, String userLogin, Mod184 mod184) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,userLogin);
-			return getFiscal().duplicateNextYearMod184(ctx, id);
+			return getFiscal().duplicateMod184(ctx, mod184);
 		} finally {
 			if (ctx != null)
 				ctx.close();

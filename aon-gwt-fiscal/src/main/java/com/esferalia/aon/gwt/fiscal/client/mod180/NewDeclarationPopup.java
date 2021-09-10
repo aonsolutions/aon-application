@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.IModel180Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.Model180Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -34,7 +33,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		this(mod180, false, callback);
 	}
 	
-	public NewDeclarationPopup(final Mod180 mod180, boolean duplicate, final IModel180Callback callback) {
+	public NewDeclarationPopup(final Mod180 mod180, boolean duplicate, final Model180Callback callback) {
 		
 		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
 		// complementaria y sustitutiva están desmarcados
@@ -113,23 +112,6 @@ public class NewDeclarationPopup extends CustomDialog {
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
 		complementary.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
-//		complementary.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				mod180.setComplementary(complementary.getValue());
-//				
-//				//replacement.setEnabled(!complementary.getValue());
-//				if (complementary.getValue()) {
-//					replacement.setValue(false,true);					
-//				}
-//					
-//				replacedReceiptBox.setEnabled(complementary.getValue()||replacement.getValue());
-//				if (!complementary.getValue() && !replacement.getValue()) {
-//					replacedReceiptBox.setValue("",true);
-//				}
-//			}
-//		});
 		complementary.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -156,20 +138,6 @@ public class NewDeclarationPopup extends CustomDialog {
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
 		replacement.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
-//		replacement.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				mod180.setReplacement(replacement.getValue());
-//				//complementary.setEnabled(!replacement.getValue());
-//				if (replacement.getValue()) {
-//					complementary.setValue(false,true);
-//				}
-//				replacedReceiptBox.setEnabled(complementary.getValue()||replacement.getValue());
-//				if (!complementary.getValue() && !replacement.getValue())
-//					replacedReceiptBox.setValue("",true);					
-//			}
-//		});
 		replacement.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -179,9 +147,9 @@ public class NewDeclarationPopup extends CustomDialog {
 					complementary.setValue(false,true);
 				}
 				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
-				if (!complementary.getValue() && !replacement.getValue())
+				if (!complementary.getValue() && !replacement.getValue()) {
 					replacedReceiptBox.setValue("",true);					
-				
+				}				
 			}
 		});
 		
