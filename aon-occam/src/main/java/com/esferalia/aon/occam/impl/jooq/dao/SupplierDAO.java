@@ -168,10 +168,6 @@ public class SupplierDAO {
 	}
 	
 	private static Supplier update(AONContext ctx, Supplier supplier){
-		ctx.checkWrite();
-		SupplierAutoComplete.autoComplete(ctx, supplier);
-		SupplierValidation.validate(ctx, supplier);
-		supplier = RegistryDAO.save(ctx, supplier);
 		int count = ctx.getDslContext().update(SUPPLIER)
 			.set(SUPPLIER.DOMAIN,supplier.getDomain().getId())
 			.set(SUPPLIER.TARIFF,supplier.getTariff())

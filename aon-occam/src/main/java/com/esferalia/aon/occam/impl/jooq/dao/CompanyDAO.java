@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -54,6 +56,8 @@ import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -103,6 +107,30 @@ public class CompanyDAO {
 		}
 	}
 	
+	public static class CompanyValidation {
+		
+		private CompanyValidation() {
+		}
+		
+		public static final BiConsumer<Company,AONContext> EMPTY_DOMAIN = (company,ctx) -> {
+			if (company.getDomain() == null || company.getDomain().getId() == null) 
+				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		};
+		
+		public static final BiConsumer<Company,AONContext> DUPLICATED_ROW = (company,ctx) -> {
+			Company c = getCompany(ctx, company.getDomain().getId());
+			if (c != null) 
+				throw new AonCoreException(AonError.DUPLICATED_COMPANY_ROW.getMessage());
+		};
+
+		public static void validateInsert(AONContext ctx, Company company) throws AonCoreException{
+			EMPTY_DOMAIN
+				.andThen(DUPLICATED_ROW)
+				.accept(company, ctx);
+		}
+
+	}
+
 	private static SelectConditionStep<Record> select(AONContext ctx, CompanyFilter filter) {
 		return ctx.getDslContext().select()
 				.from(COMPANY)
@@ -124,6 +152,68 @@ public class CompanyDAO {
 
 	public static Company getCompany(AONContext ctx,int domain) {
 		return getByDomain(ctx, domain);
+	}
+	
+	public static Company save(AONContext ctx, Company company) {
+		ctx.checkWrite();
+		boolean nullId = (company.getId() == null); 
+		company = RegistryDAO.save(ctx, company);
+		if (nullId) {
+			CompanyValidation.validateInsert(ctx, company);
+			insert(ctx, company);
+		} else {
+			update(ctx, company);			
+		}
+		return company;
+	}
+	
+	private static Company insert(AONContext ctx, Company company){
+		ctx.getDslContext().insertInto(COMPANY)
+			.set(COMPANY.REGISTRY,company.getId())
+			.set(COMPANY.DOMAIN,company.getDomain().getId())
+			.set(COMPANY.ACTIVE,AonEnumUtils.getByte(company.isActive()))
+			.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(company.isSurcharge()))
+			.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(company.isWithholding()))
+			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
+			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
+			.execute();
+		ctx.log().info("INSERT COMPANY id: " + company.getId());		
+		return company;
+	}
+	private static Company update(AONContext ctx, Company company){
+		int count = ctx.getDslContext().update(COMPANY)
+			.set(COMPANY.DOMAIN,company.getDomain().getId())
+			.set(COMPANY.ACTIVE,AonEnumUtils.getByte(company.isActive()))
+			.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(company.isSurcharge()))
+			.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(company.isWithholding()))
+			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
+			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
+			.where(COMPANY.REGISTRY.eq(company.getId()))
+			.execute();
+		ctx.log().info("UPDATE COMPANY id: " + company.getId() + ". (" + count + " rows)");		
+		return company;
+	}
+
+	// ******************************************
+	// ********** FULL COMPANY *****************
+	// ******************************************
+	public static CompanyFull getFull(AONContext ctx, Integer domain){
+		CompanyFull full = new CompanyFull();
+		full.setRegistry(CompanyDAO.getByDomain(ctx, domain));  
+		RegistryDAO.fillChilds(ctx, full);
+		return full;
+	}
+	public static CompanyFull fillChilds(AONContext ctx, CompanyFull full){
+		full.setDirStaff(RDirStaffDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)));
+		return full;
+	}
+	
+	public static CompanyFull save(AONContext ctx, CompanyFull companyFull) {
+		ctx.checkWrite();
+		companyFull.setRegistry(CompanyDAO.save(ctx, companyFull.getRegistry()));
+		RegistryDAO.saveChilds(ctx, companyFull);
+		companyFull = getFull(ctx, companyFull.getId());
+		return companyFull;
 	}
 
 	/* **********************************************

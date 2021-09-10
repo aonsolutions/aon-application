@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.faker;
 
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -76,6 +77,18 @@ public class AonFaker {
 			.setConfidential( !AonRandom.gt(3) );
 	}
 
+	public static Company getCompany( AONContext ctx , Registry registry) {
+		return  new Company()
+			.copy(registry)
+			.setActive( AonRandom.gt(2) )
+			.setSurcharge( AonRandom.gt(95) )
+			.setWithholding( AonRandom.gt(85) )
+			.setWithholding( AonRandom.gt(85) )
+			.setVatAccrualPayment( AonRandom.gt(99) )
+			.seteInvoice( AonRandom.gt(50) )
+			;
+	}
+	
 	public static Customer getCustomer( AONContext ctx ) {
 		return getCustomer(ctx, getRegistry(ctx));
 	}

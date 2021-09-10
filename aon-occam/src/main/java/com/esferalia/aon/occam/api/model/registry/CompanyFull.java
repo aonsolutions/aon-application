@@ -44,7 +44,7 @@ public class CompanyFull extends RegistryFull<Company> {
 		if (this.dirStaff == null) this.dirStaff = new LinkedList<>(); 
 		return this.dirStaff;
 	}
-	public CompanyFull addAddress(RDirStaff rDirStaff) {
+	public CompanyFull addRDirStaff(RDirStaff rDirStaff) {
 		ensureDirStaff().add(rDirStaff);
 		return this;
 	}

@@ -7,7 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	GetByDomain.class,
+	GetByDomainTest.class,
+	ValidationDuplicateRowTest.class,
+	CompanyUpdateTest.class,
 })
 public class CompanyTestSuite {
 

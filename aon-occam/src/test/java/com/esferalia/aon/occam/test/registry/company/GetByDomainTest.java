@@ -8,12 +8,12 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 
-public class GetByDomain extends AbstractOccamTest {
+public class GetByDomainTest extends AbstractOccamTest {
 
 	@Test
 	public void testGetByDomain() {
-		Company company0 = CompanyDAO.getByDomain(ctx, DOMAIN_ID);
-		assertNotNull(company0);
+		Company company = CompanyDAO.getByDomain(ctx, DOMAIN_ID);
+		assertNotNull(company);
 	}
 	
 	@Test

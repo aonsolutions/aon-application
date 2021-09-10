@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -529,6 +530,16 @@ public class Asserts {
 		assertEquals("NominalValue", expected.getNominalValue(), actual.getNominalValue());
 		assertEquals("ShareNumber", expected.getShareNumber(), actual.getShareNumber());
 		assertEquals("ChargeDescription", expected.getChargeDescription(), actual.getChargeDescription());
+	}
+	
+	public static void assertEqualsCompany(Company expected, Company actual) {
+		assertEqualsNulls( "Company", expected, actual);
+		assertEqualsRegistry(expected, actual);
+		assertEquals("Active",expected.isActive(),actual.isActive());
+		assertEquals("Surcharge",expected.isSurcharge(),actual.isSurcharge());
+		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+		assertEquals("eInvoice",expected.iseInvoice(),actual.iseInvoice());
 	}
 	
 }

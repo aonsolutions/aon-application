@@ -53,6 +53,11 @@ public enum AonError implements Serializable{
 	,REGISTRY_OVERFLOW_DOCUMENT("El documento no puede tener m\u00E1s de 16 caracteres.")
 	
 	// -----------------------------------------------------------
+	// --------------------- COMPANY ----------------------------
+	// -----------------------------------------------------------
+	,DUPLICATED_COMPANY_ROW("Ya existe el deto de la compa\u00F1ia para el dominio.")
+
+	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
 	
@@ -199,8 +204,8 @@ public enum AonError implements Serializable{
 	,INVOICE_FINANCES_AMOUNT("La suma de los importes de los vencimientos no coincide con el total factura")
 	// --------------------------------------------- RAWDOC
 	,EMPTY_RAWDOC_NATURE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
-	,EMPTY_RAWDOC_TYPE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
-	,EMPTY_RAWDOC_STATUS("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo") 
+	,EMPTY_RAWDOC_TYPE("El tipo del documento es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_RAWDOC_STATUS("El estado del documento es un dato obligatorio, no puede estar vac\u00EDo") 
 	;
 	
 	
