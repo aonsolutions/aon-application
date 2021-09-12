@@ -103,6 +103,8 @@
 .aon_icon_cancel { background-image: iconCancel;}
 @url iconClose aonIconClose;
 .aon_icon_close { background-image: iconClose;}
+@url iconCloseWhite aonIconCloseWhite;
+.aon_icon_close_white { background-image: iconCloseWhite;}
 @url iconCheck aonIconCheck;
 .aon_icon_check { background-image: iconCheck;}
 @url iconChecked aonIconChecked;
@@ -780,6 +782,66 @@
 	white-space: nowrap;
 	margin-right: 10px;
 	margin-left: 5px;
+}
+
+/* MESSAGE PANEL */
+
+.aon_message_close_panel{
+    padding: 1em 1em 0 0;
+}
+
+.aon_message_close{
+	min-height: 15px;
+}
+
+.aon_message_close:hover{
+	background-color: transparent !important;
+}
+
+.aon_message_panel{
+	border-radius: 0.5em;
+    display: flex;
+    margin: 0 1em;
+    width: auto;
+    justify-content: space-between;
+}
+
+.aon_message_container{
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1em;
+}
+
+.aon_message_row{
+	display: flex;
+	gap: 1em;
+	padding: 0 1em;
+	font-size: 13px;
+}
+
+.aon_message_title{
+	font-weight: bold;
+}
+
+.aon_message_error{
+	background-color: #fd4d4d;
+	color: white;
+}
+
+.aon_message_info{
+	background-color: #8888ff;
+	color: white;
+}
+
+.aon_message_warning{
+	background-color: #fba21c;
+	color: white;
+}
+
+.aon_message_success{
+	background-color: #0ac30a;
+	color: white;
 }
 
 /* TOOLBAR */

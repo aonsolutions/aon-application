@@ -34,6 +34,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
 import com.esferalia.aon.payroll.sepe.certifica2.Certifica2;
 import com.esferalia.aon.payroll.sepe.certifica2.Certifica2Info;
@@ -464,11 +465,16 @@ public class JooqCertifica2 {
 		
 		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
 		Integer maxDays = 0;
+
+		java.util.Date filterDateJava = DateUtils.copyDateOnly(parseDateToJava(endDate));
+		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
+		Date filterDate = parseDateToSQL(filterDateJava);
 		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -542,6 +548,7 @@ public class JooqCertifica2 {
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -717,10 +724,15 @@ public class JooqCertifica2 {
 		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
 		Integer maxDays = 0;
 		
+		java.util.Date filterDateJava = DateUtils.copyDateOnly(parseDateToJava(endDate));
+		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
+		Date filterDate = parseDateToSQL(filterDateJava);
+		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -794,6 +806,7 @@ public class JooqCertifica2 {
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -881,6 +894,24 @@ public class JooqCertifica2 {
 		certifica2Info.setQuoteDataList(quoteDataList);
 		
 		return certifica2Info;
+	}
+
+	private static Date parseDateToSQL(java.util.Date dateJava) {
+		if(null == dateJava)
+			return null;
+		
+		DateUtils.resetTime(dateJava);
+		return new Date(dateJava.getTime());
+	}
+
+	private static java.util.Date parseDateToJava(Date dateSQL) {
+		if(null == dateSQL)
+			return null;
+		
+		java.util.Date dateJava = new java.util.Date(dateSQL.getTime());
+		DateUtils.resetTime(dateJava);
+		
+		return dateJava;
 	}
 
 	public static String getSuspensionReasonCode(Connection conn, Integer domainId, Integer contractId) throws IllegalArgumentException {
