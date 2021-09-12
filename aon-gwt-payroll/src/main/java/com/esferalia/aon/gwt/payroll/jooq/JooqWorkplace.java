@@ -198,24 +198,16 @@ public class JooqWorkplace {
 		return workplaceInfo;
 	}
 
-	public static List<Workplace> getWorkplaces(Workplace workplace, Integer domainId, Connection connection) {
-		return getWorkplacesDB(DSL.using(connection, getDefaultSettings()), workplace, domainId);
+	public static List<Workplace> getWorkplaces(Integer domainId, Connection connection) {
+		return getWorkplacesDB(DSL.using(connection, getDefaultSettings()), domainId);
 	}
 
-	private static List<Workplace> getWorkplacesDB(DSLContext dslContext, Workplace workplace, Integer domainId) {
+	private static List<Workplace> getWorkplacesDB(DSLContext dslContext, Integer domainId) {
 		List<Workplace> workplaces  = new ArrayList<Workplace>();
 		
-		List<Integer> workplaceRecord = null;
-		
-		if(null != workplace) {
-			workplaceRecord  = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
-					.where(WORKPLACE.ID.eq(workplace.getId()))
-					.fetch(WORKPLACE.ENTERPRISE);
-		} else {
-			workplaceRecord  = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
-					.where(WORKPLACE.DOMAIN.eq(domainId))
-					.fetch(WORKPLACE.ENTERPRISE);
-		}
+		List<Integer> workplaceRecord = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.fetch(WORKPLACE.ENTERPRISE);;
 		
 		Result<Record> workplacesRecords = dslContext.select().from(WORKPLACE)
 				.where(WORKPLACE.ENTERPRISE.in(workplaceRecord))
@@ -233,24 +225,17 @@ public class JooqWorkplace {
 		return workplaces;
 	}
 
-	public static ActivitiesCCC getActivitiesCCC(Workplace workplace, Integer domainId, Connection connection) {
-		return getActivitiesCCCDB(DSL.using(connection, getDefaultSettings()), workplace, domainId);
+	public static ActivitiesCCC getActivitiesCCC(Integer domainId, Connection connection) {
+		return getActivitiesCCCDB(DSL.using(connection, getDefaultSettings()), domainId);
 	}
 
-	private static ActivitiesCCC getActivitiesCCCDB(DSLContext dslContext, Workplace workplace, Integer domainId) {
+	private static ActivitiesCCC getActivitiesCCCDB(DSLContext dslContext, Integer domainId) {
 		ActivitiesCCC activitiesCCC = new ActivitiesCCC();
 		
 		//ENTERPRISE ACTIVITIES-CCC
-		List<Integer> workplaceRecord = null;
-		if(null != workplace) {
-			 workplaceRecord = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
-					.where(WORKPLACE.ID.eq(workplace.getId()))
-					.fetch(WORKPLACE.ENTERPRISE);
-		} else {
-			workplaceRecord = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
-					.where(WORKPLACE.DOMAIN.eq(domainId))
-					.fetch(WORKPLACE.ENTERPRISE);
-		}
+		List<Integer> workplaceRecord = dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.fetch(WORKPLACE.ENTERPRISE);
 		
 		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
 				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.in(workplaceRecord))

@@ -5416,8 +5416,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			WorkplaceEmployees workplaceEmployees = JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
 			workplaceEmployees.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
-			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(workplace, domainId, connection));
-			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(workplace, domainId, connection));
+			workplaceEmployees.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
+			workplaceEmployees.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
 			workplaceEmployees.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
 			
 			return workplaceEmployees;
@@ -5447,85 +5447,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract, Workplace workplace) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Domain, parentDomain and User id
-//			Integer domainId = AonServletUtils.getDomainID(domainName);
-//			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-//			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
-
-			// Get certificate
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			
 			// Get EmployeeContractInfo
 			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
-			employeeContractInfo.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainID));
-			employeeContractInfo.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(workplace, domainId, connection));
-			employeeContractInfo.setWorkplaces(JooqWorkplace.getWorkplaces(workplace, domainId, connection));
-			employeeContractInfo.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
-			// Get SistemaRED employee to check situation
-//			try {
-//				
-//				if(AonStringUtils.isNotBlank(employeeContractInfo.getContractInfo().getCompleteCCC())) {
-//				
-//					solutions.aon.seg.social.object.Employee employeeSistemaRED = SistemaRED.getEmployee(
-//							new ByteArrayInputStream(certificate.getCertificate()), 
-//							certificate.getPassword(), 
-//							certificate.getType(), 
-//							employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4), 
-//							employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()), 
-//							employeeContractInfo.getEmployeeInfo().getSsNumber());
-//					
-//					System.out.println("\nEmployee SistemaRED\n" + employeeSistemaRED.toString() + "\n");
-//					
-//					if(null != employeeSistemaRED)
-//						employeeContractInfo.getContractInfo().setIsTGSSActive(AonStringUtils.containsIgnoreCase(employeeSistemaRED.getSituacion(), "AL"));
-//				}
-//				
-//			} catch (SegSocialException e) {
-//				e.printStackTrace();
-//			} 
-			
-			// Check SepeId
-//			String sepeId = employeeContractInfo.getContractInfo().getSepeId();
-//			
-//			if(AonStringUtils.isBlank(sepeId)) {
-//				
-//					try {
-//						// Get SEPE certificate
-//						Certificate certificaSepe = null;
-//						try {
-//							certificaSepe = AON.getCertificateSEPE(domainName, domainId, userLogin);
-//						} catch (CertificateNotFoundException e) {}
-//						
-//						if(null != certificaSepe) {
-//							aon.sepe.objects.Contract contratoSEPE = Sepe.getContractData(
-//									new ByteArrayInputStream(certificaSepe.getCertificate()), 
-//									certificaSepe.getPassword(), 
-//									certificaSepe.getType(), 
-//									employeeContractInfo.getEmployeeInfo().getDocument(), 
-//									employeeContractInfo.getContractInfo().getStartDate(), 
-//									null == employeeContractInfo.getContractInfo().getEndDate() ? employeeContractInfo.getContractInfo().getStartDate() : employeeContractInfo.getContractInfo().getEndDate());
-//							
-//							System.out.println("\nContract SEPE\n" + contratoSEPE.toString() + "\n");
-//							
-//							if(AonStringUtils.isNotBlank(contratoSEPE.getSepeId())) {
-//								// Set Sepe Ide
-//								JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), contratoSEPE.getSepeId());
-//
-//								employeeContractInfo.getContractInfo().setSepeId(contratoSEPE.getSepeId());
-//							}
-//						}
-//						
-//					} catch (SepeException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				
-//			}
-			
 			return employeeContractInfo;
-			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

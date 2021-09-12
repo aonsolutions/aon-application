@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -76,7 +77,9 @@ public interface EnterprisesServiceAsync {
 	void getParentDomain(String domain, AsyncCallback<Integer> callback);
 	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
-	void getWorkplaces(Workplace workplace, String domain, AsyncCallback<List<Workplace>> asyncCallback);
+	void getWorkplaces(String domain, AsyncCallback<List<Workplace>> asyncCallback);
+	void getPayMethods(String domain, AsyncCallback<Map<String, String>> asyncCallback);
+	void getActivityCCC(String domain, AsyncCallback<ActivitiesCCC> asyncCallback);
 	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);

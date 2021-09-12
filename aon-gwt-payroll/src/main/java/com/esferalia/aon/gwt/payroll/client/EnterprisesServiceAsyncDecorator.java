@@ -12,6 +12,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -263,11 +264,21 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getWorkplaces(Workplace workplace, String doamin, AsyncCallback<List<Workplace>> callback) {
+	public void getWorkplaces(String domain, AsyncCallback<List<Workplace>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getWorkplaces(workplace, doamin,
-				new AsyncCallbackWrapper<List<Workplace>>(callback));	
-		
+		enterprisesServiceAsync.getWorkplaces(domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getPayMethods(String domain, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getPayMethods(domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getActivityCCC(String domain, AsyncCallback<ActivitiesCCC> callback) {
+		AON.start();
+		enterprisesServiceAsync.getActivityCCC(domain, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
