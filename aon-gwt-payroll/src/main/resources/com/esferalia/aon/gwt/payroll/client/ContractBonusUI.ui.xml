@@ -36,20 +36,10 @@
 			margin-left: 10px;
 		}
 		
-		.footerStyle{
-			border-top: 1px solid #eaeaea;
-		    align-items: center;
-		    padding: 5px;
-		    gap: 5px;
-		    display: flex;
-		}
-		
 		.scrollStyle {
 			margin-left: 10px;
 			margin-bottom: 10px;
 		}
-		
-		.clauseTD{}
 		
 		.noBonusLB{
 			width: 100%;
@@ -63,6 +53,7 @@
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Bonificaciones</g:Label>
 	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel>
+	    			<g:HTMLPanel ui:field="messagePanel" />
 	    			<g:Grid ui:field="contractBonusDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
 	    			<g:HTMLPanel>
 	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
@@ -73,8 +64,6 @@
 		    				<g:Grid ui:field="contractBonusDataTable"></g:Grid>
 		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
-		    		<g:HTMLPanel ui:field="messagePanel" styleName="{style.footerStyle}">
-	    			</g:HTMLPanel>
 	    		</g:VerticalPanel>
 	    	</g:HTMLPanel>
 		</g:VerticalPanel>
