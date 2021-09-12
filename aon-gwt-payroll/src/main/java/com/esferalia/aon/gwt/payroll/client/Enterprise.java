@@ -2,12 +2,13 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -36,14 +37,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Enterprise extends ResizeComposite {
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// -------------------------------------------------- UiBinder
 
 	private static EnterpriseUiBinder uiBinder = GWT.create(EnterpriseUiBinder.class);
 
 	interface EnterpriseUiBinder extends UiBinder<Widget, Enterprise> {
 	}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// -------------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -51,13 +52,12 @@ public abstract class Enterprise extends ResizeComposite {
 	interface MyStyle extends CssResource {
 		String warningColor();
 		String warningTB();
-		String flexGrow();
 	}
 	
-	// TABLA DATOS EMPRESA
-	
 	@UiField
-	HTMLPanel namePanel;
+	HTMLPanel messageContainer;
+	
+	// TABLA DATOS EMPRESA
 	
 	@UiField
 	TextBox enterpriseName;
@@ -133,30 +133,91 @@ public abstract class Enterprise extends ResizeComposite {
 	@UiField
 	ListBox enterpriseAgreement;
 
-	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
+	// -------------------------------------------------- Constructor
 
-	public Enterprise() {
+	protected Enterprise() {
 		//Initialize Nationality SuggestBox
 		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
 		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
-		for (Country c : countries)
-			oracleCountries.add(c.getName());
+		countries.forEach(c -> oracleCountries.add(c.getName()));
 		this.nationality = new SuggestBox(oracleCountries);
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
 		initializeView();
 	}
+	
+	// -------------------------------------------------- initializeView
+	
+	public void initializeView() {
+		resetElements();
+		initializeListBox();
+	}
 
-	// ------------------------------------------------- UiHandlers ------------------------------------------------------
+	private void resetElements() {
+		
+		this.enterpriseName.setValue(null);
+		this.enterpriseAlias.setValue(null);
+		this.documentType.setText("");
+		this.document.setValue(null);
+		this.streetType.clear();
+		this.address.setValue(null);
+		this.addressNum.setValue(null);
+		this.addressZip.setValue(null);
+		this.addressCity.clear();
+		this.addressProvince.clear();
+		this.mobile.setValue(null);
+		this.phone.setValue(null);
+		this.email.setValue(null);
+		this.enterpriseWeb.setValue(null);
+		this.enterpriseScopePanel.clear();
+		
+		this.enterprisePaysheetModel.clear();
+		this.enterpriseCostModel.clear();
+		this.enterprisePaysheetSendType.clear();
+		this.enterprisePaysheetSendEmail.setValue(null);
+		this.enterpriseAgreement.clear();
+	}
+
+	private void initializeListBox() {
+		//STREET TYPE
+		for(int i=0; i<StreetType.values().length; i++)
+			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
+		
+		//PROVINCE
+		this.addressProvince.addItem("-");
+		for( Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
+			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
+		
+		//PAYSHEET MODEL
+		this.enterprisePaysheetModel.addItem("Estandar", "salary");
+		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "salary_dualColumn");
+		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
+		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
+		this.enterprisePaysheetModel.addItem("aon Solutions (MacLeod)", "salary_connorMacleod");
+		
+		//COST MODEL
+		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");
+		this.enterpriseCostModel.addItem("Extendida", "salaryExpenseExtended");
+		
+		//SEND PAYSHEET
+		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
+		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
+		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
+	}
+
+	// ------------------------------------------------- UiHandlers
 	
 	@UiHandler("enterpriseName")
 	void onEnterpriseNameChangeValue(ChangeEvent event) {
 		if(AonStringUtils.isNotBlank(enterpriseName.getValue())) {
-			removeWarningIcon(namePanel, enterpriseName);
+			removeWarning(enterpriseName);
 			onEnterpriseNameChange();
 		} else {
-			addWarningIcon(namePanel, enterpriseName, null);
+			addWarning(enterpriseName);
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("Nombre obligatorio", "Este campo debe ser rellenado obligatoriamente");
+			AonMessagePanel.showError(messageContainer, errorMap);
 		}
 	}
 	
@@ -250,9 +311,7 @@ public abstract class Enterprise extends ResizeComposite {
 		onEnterpriseAgreementChange();
 	}
 	
-	// ------------------------------------------------------------------------
-	//							Abstraact Methods
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------- Abstract Methods
 	
 	// TABLA DATOS EMPRESA
 	
@@ -280,70 +339,10 @@ public abstract class Enterprise extends ResizeComposite {
 	public abstract void onEnterpriseAgreementChange();
 	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
-	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
-
-	public void initializeView() {
-		resetElements();
-		initializeListBox();
-	}
-
-	private void resetElements() {
-		
-		this.enterpriseName.setValue(null);
-		this.enterpriseAlias.setValue(null);
-		this.documentType.setText("");
-		this.document.setValue(null);
-		this.streetType.clear();
-		this.address.setValue(null);
-		this.addressNum.setValue(null);
-		this.addressZip.setValue(null);
-		this.addressCity.clear();
-		this.addressProvince.clear();
-		this.mobile.setValue(null);
-		this.phone.setValue(null);
-		this.email.setValue(null);
-		this.enterpriseWeb.setValue(null);
-		this.enterpriseScopePanel.clear();
-		
-		this.enterprisePaysheetModel.clear();
-		this.enterpriseCostModel.clear();
-		this.enterprisePaysheetSendType.clear();
-		this.enterprisePaysheetSendEmail.setValue(null);
-		this.enterpriseAgreement.clear();
-	}
-
-	private void initializeListBox() {
-		//STREET TYPE
-		for(int i=0; i<StreetType.values().length; i++){
-			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
-		}
-		
-		//PROVINCE
-		this.addressProvince.addItem("-");
-		for( Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
-			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
-		
-		//PAYSHEET MODEL
-		this.enterprisePaysheetModel.addItem("Estandar", "salary");
-		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "salary_dualColumn");
-		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
-		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
-		this.enterprisePaysheetModel.addItem("aon Solutions (MacLeod)", "salary_connorMacleod");
-		
-		//COST MODEL
-		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");
-		this.enterpriseCostModel.addItem("Extendida", "salaryExpenseExtended");
-		
-		//SEND PAYSHEET
-		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
-		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
-		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
-	}
+	// ------------------------------------------------- Auxiliar Methods	
 	
 	public void checkDocument() {
-		String value = document.getValue();
-		
-		if(AonStringUtils.isNotBlank(value)) {
+		if(AonStringUtils.isNotBlank(document.getValue())) {
 			String documentTypeValue = checkDocumentType();
 		
 			documentType.setText(documentTypeValue);
@@ -381,11 +380,11 @@ public abstract class Enterprise extends ResizeComposite {
 	}
 	
 	private void showNationality() {
-		String documentType = checkDocumentType();
+		String documentTypeStr = checkDocumentType();
 		
-		if (	AonStringUtils.equals(documentType, "CIF") || 
-				AonStringUtils.equals(documentType, "Pasaporte") || 
-				AonStringUtils.equals(documentType, "NIE")) {
+		if (	AonStringUtils.equals(documentTypeStr, "CIF") || 
+				AonStringUtils.equals(documentTypeStr, "Pasaporte") || 
+				AonStringUtils.equals(documentTypeStr, "NIE")) {
 			
 			nationalityLabel.getElement().getStyle().clearDisplay();
 			nationality.getElement().getStyle().clearDisplay();
@@ -399,27 +398,18 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	private boolean checkDocumentValidation() {
 		String value = document.getValue();
-		String documentType = checkDocumentType();
+		String documentTypeStr = checkDocumentType();
 		
 		if(AonStringUtils.isBlank(value)) {
 			return false;
-		} else if(AonStringUtils.equals(documentType, "DNI")){
+		} else if(AonStringUtils.equals(documentTypeStr, "DNI")){
 			Dni dni = new Dni(value);
 			return dni.checkDNI();
 		} else
 			return true;
-	}	
-	
-	public void checkPaysheetSendType(String email) {
-		String paysheetSendType = String.valueOf(enterprisePaysheetSendType.getSelectedValue());
-		
-		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
-			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
-			enterprisePaysheetSendEmail.setValue(email);
-		}else {
-			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
-		}	
 	}
+	
+	// ------------------------------------------------- Initialize ListBoxes
 
 	public void initializeScopeCell(Map<Integer, String> enterprisecopes) {
 		Widget enterpriseScopeWidget;
@@ -463,19 +453,26 @@ public abstract class Enterprise extends ResizeComposite {
 		return label;
 	}
 	
-	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		if(panel.getWidgetCount() == 2) {
-			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-			widget.addStyleName(style.warningTB());
-			widget.addStyleName(style.flexGrow());
-		}
+	// ------------------------------------------------- checkPaysheetSendType
+	
+	public void checkPaysheetSendType(String email) {
+		String paysheetSendType = String.valueOf(enterprisePaysheetSendType.getSelectedValue());
+		
+		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
+			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
+			enterprisePaysheetSendEmail.setValue(email);
+		}else {
+			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
+		}	
 	}
 	
-	private void removeWarningIcon(HTMLPanel panel, Widget widget) {
-		if(panel.getWidgetCount() > 2)
-			panel.remove(panel.getWidgetCount() - 1);
-		
+	// ------------------------------------------------- Warning Styles
+	
+	private void addWarning(Widget widget) {
+		widget.addStyleName(style.warningTB());
+	}
+	
+	private void removeWarning(Widget widget) {
 		widget.removeStyleName(style.warningTB());
 	}
 
