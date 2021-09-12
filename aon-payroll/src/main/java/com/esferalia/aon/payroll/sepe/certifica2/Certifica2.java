@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
@@ -232,11 +233,17 @@ public class Certifica2 {
 		
 		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
 		Integer maxDays = 0;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(endDate.getTime());
+		cal.add(Calendar.DATE, -180);
+		Date filterDate = parseDateToSQL(cal.getTime());
 		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -310,6 +317,7 @@ public class Certifica2 {
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
+				.and(SALARY.END_DATE.ge(filterDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -403,6 +411,26 @@ public class Certifica2 {
 		}
 		
 		return "";
+	}
+	
+	private static Date parseDateToSQL(java.util.Date dateJava) {
+		if(null == dateJava)
+			return null;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateJava);
+		
+		return new Date(cal.getTimeInMillis());
+	}
+
+	private static java.util.Date parseDateToJava(Date dateSQL) {
+		if(null == dateSQL)
+			return null;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(dateSQL.getTime());
+		
+		return cal.getTime();
 	}
 	
 	private static JSONObject getCertifica2JSON(DSLContext dslContext, Integer contractId, String suspensionReasonCode) {
