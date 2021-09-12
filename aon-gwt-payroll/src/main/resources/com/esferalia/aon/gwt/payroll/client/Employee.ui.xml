@@ -176,6 +176,10 @@
 			width: 50px;
 			text-align: center;
 		}
+		
+		.errorBorder{
+			border: 1px solid red;
+		}
 	</ui:style>
 
    	<g:HTMLPanel> 

@@ -76,6 +76,7 @@ public abstract class Employee extends ResizeComposite {
 		String journeyDurationWarning();
 		String warningTB();
 		String flexGrow();
+		String errorBorder();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -104,9 +105,6 @@ public abstract class Employee extends ResizeComposite {
 	SuggestBox nationality;
 	
 	@UiField
-	HTMLPanel ssNumberPanel;
-	
-	@UiField
 	SuggestBox security_social_num;
 	
 	@UiField
@@ -128,22 +126,13 @@ public abstract class Employee extends ResizeComposite {
 	ListBox ssRegimeType;
 	
 	@UiField
-	HTMLPanel activityCCCPanel;
-
-	@UiField
 	ListBox activityCCC;
 	
 	@UiField
 	ListBox mdCTZLB;
 	
 	@UiField
-	HTMLPanel workplacePanel;
-	
-	@UiField
 	ListBox workplace;
-	
-	@UiField
-	HTMLPanel contractTypePanel;
 	
 	@UiField
 	TableCellElement contractTypeNode;
@@ -160,9 +149,6 @@ public abstract class Employee extends ResizeComposite {
 	@UiField
 	ListBox modality;
 	
-	@UiField
-	HTMLPanel startDatePanel;
-
 	@UiField
 	DateBoxEx start_date;
 
@@ -230,9 +216,6 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	TextBox addressInfo;
-	
-	@UiField
-	HTMLPanel addressZipPanel;
 
 	@UiField
 	TextBox addressZip;
@@ -257,9 +240,6 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	TextBox bic;
-	
-	@UiField
-	HTMLPanel accountPanel;
 	
 	@UiField
 	SuggestBox account;
@@ -324,15 +304,15 @@ public abstract class Employee extends ResizeComposite {
 			this.document_type.setText(document_type);
 			
 			if(checkDocumentValidation(document_type, document))
-				addSuccessIconTB(documentPanel, this.document);
+				removeErrorBorder(this.document);
 			else
-				addWarningIcon(documentPanel, this.document, "El documento de identidad es err\u00F3neo");
+				addErrorBorder(this.document);
 				
 			showNationality(document_type);	
 			
 			onEmployeeDocumentChange(document, document_type);
 		} else {
-			removeWarningIconTB(documentPanel, this.document);
+			removeErrorBorder(this.document);
 		}	
 	}
 	
@@ -353,14 +333,18 @@ public abstract class Employee extends ResizeComposite {
 	void onSocialSecurityNumChangeValue(ValueChangeEvent<String> event) {
 		String ssNum = this.security_social_num.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum)) {
-			if(checkSSNumValidation(ssNum))
-				addSuccessIconTB(ssNumberPanel, this.security_social_num);
-			else
-				addWarningIcon(ssNumberPanel, this.security_social_num, "El numero es err\u00F3neo");
+			if(checkSSNumValidation(ssNum)) {
+				removeErrorBorder(this.security_social_num);
+				this.security_social_num.setTitle(null);
+			} else {
+				addErrorBorder(this.security_social_num);
+				this.security_social_num.setTitle("El numero es err\u00F3neo");
+			}
 			
 			onEmployeeSSNumChange(ssNum); 
 		} else {
-			removeWarningIconTB(ssNumberPanel, this.security_social_num);
+			removeErrorBorder(this.security_social_num);
+			this.security_social_num.setTitle(null);
 		}
 	}
 	
@@ -689,10 +673,13 @@ public abstract class Employee extends ResizeComposite {
 		account = account.replaceAll("\\W+", "");
 		
 		if(account.length() > 0)
-			if(Iban.validateIBAN(account))
-				addSuccessIconTB(accountPanel, this.account);
-			else
-				addWarningIcon(accountPanel, this.account, "IBAN no valido");
+			if(Iban.validateIBAN(account)) {
+				removeErrorBorder(this.account);
+				this.account.setTitle(null);
+			} else {
+				addErrorBorder(this.account);
+				this.account.setTitle("IBAN no valido");
+			}
 		
 		String bankAlias = getBankAlias(account);
 		String bankSwift = getBankSwift(account);
@@ -1370,8 +1357,40 @@ public abstract class Employee extends ResizeComposite {
 		return checkIfNewEmployeeIsPossible() && checkAddress();
 	}
 	
+	public Map<String, String> checkSaveAndGetErrors() {
+		cleanErrorStyles();
+		Map<String, String> messageMap = new HashMap<>();
+		Byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue());
+		
+		if(ssRegime == (byte) 3) { // RETA
+			if(!isNotNameBlank()) messageMap.put("Nombre", "Campo obligatorio");
+			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
+		} else {
+			if(!isNotNameBlank()) messageMap.put("Nombre", "Campo obligatorio");
+			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
+			if(!isActivityCCCSelected()) messageMap.put("Actividad", "Campo obligatorio");
+			if(!isContractTypeSelected()) messageMap.put("Tipo de contrato", "Campo obligatorio");
+		}
+		
+		Date startDate = null == start_date.getValue() ? null : DateUtils.copyDateOnly(start_date.getValue());
+		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
+		
+		if(null == startDate) messageMap.put("Fecha inicio", "La fecha debe estar definida");
+		if(null != endDate && endDate.before(startDate)) messageMap.put("Fecha fin", "La fecha de inicio no puede ser posterior a la fecha de fin");
+		
+		String addressZipValue = addressZip.getValue();
+		String addressProvinceValue = addressProvince.getSelectedValue();
+		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
+		
+		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
+			if(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
+				messageMap.put("Direcci\u00F3n", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente");
+	
+		return messageMap;
+	}
+	
 	public boolean checkIfNewEmployeeIsPossible() {
-		cleanWarningIcons();
+		cleanErrorStyles();
 		
 		if(checkIfSaveIsPossible())
 			if(checkDates())
@@ -1406,7 +1425,7 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isNotNameBlank() {
 		String nameValue = name.getValue();
 		if(AonStringUtils.isBlank(nameValue)) {
-			addWarningIcon(namePanel, name, null);
+			addErrorBorder(name);
 			return false;
 		} else
 			return true;
@@ -1415,7 +1434,7 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isWokplaceSelected() {
 		String workplaceValue = workplace.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(workplaceValue, "-1")) {
-			addWarningIcon(workplacePanel, workplace, null);
+			addErrorBorder(workplace);
 			return false;
 		} else
 			return true;
@@ -1424,18 +1443,16 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isActivityCCCSelected() {
 		String activityValue = activityCCC.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(activityValue, "-1")) {
-			addWarningIcon(activityCCCPanel, activityCCC, null);
+			addErrorBorder(activityCCC);
 			return false;
 		} else
 			return true;
 	}
 	
 	private boolean isContractTypeSelected() {
-		removeWarningIconLB(contractTypePanel, contractTypeLB);
-		
 		String contractTypeValue = contractTypeLB.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1")) {
-			addWarningIcon(contractTypePanel, contractTypeLB, null);
+			addErrorBorder(contractTypeLB);
 			return false;
 		} else
 			return true;
@@ -1446,14 +1463,14 @@ public abstract class Employee extends ResizeComposite {
 		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
 		
 		if(null == startDate) {
-			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede estar sin definir.");
+			addErrorBorder(start_date);
 			return false;
 		}
 		
 		if(null == endDate || endDate.after(startDate) || endDate.equals(startDate))
 			return true;
 		else {
-			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede ser posterior a la fecha de fin.");
+			addErrorBorder(start_date);
 			return false;
 		}
 
@@ -1469,8 +1486,10 @@ public abstract class Employee extends ResizeComposite {
 		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) {
 			if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
 				return true;
-			else {	
-				addWarningIcon(addressZipPanel, addressZip, "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente.");
+			else {
+				if(AonStringUtils.isBlank(addressZipValue)) addErrorBorder(addressZip);
+				if(AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1")) addErrorBorder(addressProvince);
+				if(AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) addErrorBorder(addressMunicipality);
 				return false;
 			}
 		} else
@@ -1508,45 +1527,12 @@ public abstract class Employee extends ResizeComposite {
 	
 	// ------------------------------------------------- Add and remove styles
 	
-	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		panel.clear();
-		panel.add(widget);
-		message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-		widget.addStyleName(style.warningTB());
-		widget.addStyleName(style.flexGrow());
-	}
-
-	private void removeWarningIconTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-inputText");
-		widget.getElement().getStyle().setWidth(99, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
+	private void addErrorBorder(Widget widget) {
+		widget.addStyleName(style.errorBorder());
 	}
 	
-	private void removeWarningIconLB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-selectOneMenu");
-		widget.getElement().getStyle().setWidth(100, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
-	}
-	
-	private void removeWarningIconAddressTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-inputText");
-		widget.getElement().getStyle().setWidth(97, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
-	}
-	
-	private void addSuccessIconTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		panel.add(new AonToolbarSmallButton("", AON.CSS.aonIconAccept()));
-		widget.addStyleName(style.flexGrow());
-		widget.removeStyleName(style.warningTB());
+	private void removeErrorBorder(Widget widget) {
+		widget.removeStyleName(style.errorBorder());
 	}
 	
 	private void addInfoIcon(HTMLPanel panel, Widget widget, String message) {
@@ -1565,16 +1551,18 @@ public abstract class Employee extends ResizeComposite {
 		widget.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		widget.removeStyleName(style.warningTB());
 	}
-
+	
 	// ------------------------------------------------- cleanWarningIcons
 	
-	public void cleanWarningIcons() {
-		removeWarningIconTB(namePanel, name);
-		removeWarningIconLB(workplacePanel, workplace);
-		removeWarningIconLB(activityCCCPanel, activityCCC);
-		removeWarningIconLB(contractTypePanel, contractTypeLB);
-		removeWarningIconTB(startDatePanel, start_date);
-		removeWarningIconAddressTB(addressZipPanel, addressZip);
+	public void cleanErrorStyles() {
+		removeErrorBorder(name);
+		removeErrorBorder(activityCCC);
+		removeErrorBorder(workplace);
+		removeErrorBorder(contractTypeLB);
+		removeErrorBorder(start_date);
+		removeErrorBorder(addressZip);
+		removeErrorBorder(addressProvince);
+		removeErrorBorder(addressMunicipality);
 	}
 	
 }

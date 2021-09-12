@@ -4,7 +4,9 @@ import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEn
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,14 +18,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.Messages;
-import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -41,14 +42,12 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
@@ -112,11 +111,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public class ContractAttachUIImpl extends ContractAttachUI {
 		
 		@Override
-		protected void fireMessagesResults(Messages messages) {
-			paintMessagesResult(messages);
-		}
-
-		@Override
 		protected void onExportPDF() {
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
@@ -144,17 +138,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				}
 			}, f -> {});
 		}
-	}
-	
-	// ------------------------------------------------- ContractAttachUIImpl
-	
-	public class ContractBonusUIImpl extends ContractBonusUI {
-		
-		@Override
-		protected void fireMessagesResults(Messages messages) {
-			paintMessagesResult(messages);
-		}
-		
 	}
 	
 	// ------------------------------------------------- EmployeeEventsImpl
@@ -442,6 +425,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String cmd_btn();
 	}
 	
+	@UiField
+	HTMLPanel messageContainer;
+	
 	@UiField (provided = true)
 	ContractEmployeeUI contractEmployeeUI;
 	
@@ -521,8 +507,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private ContrataEmployeeObject contrataEmployeeObject;
+	private Integer contractId;
 	
 	private AonToolbar toolbar;
+//	private AonMessagePanel messagePanel;
 
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
@@ -594,6 +582,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private CheckBox eventsCheck;
 	private ListBox settlePreviewListBox; 
 	
+	private AonToolbarButton previusContract;
+	private AonToolbarButton nextContract;
+	
 	private boolean hasCertificateSEPE = false;;
 	
 	// ------------------------------------------------- Constructor
@@ -605,7 +596,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractOtherData = new ContractOtherData();
 		contractClauseUI = new ContractClauseUI();
 		contractAttachUI = new ContractAttachUIImpl();
-		contractBonusUI = new ContractBonusUIImpl();
+		contractBonusUI = new ContractBonusUI();
 		
 		employeeSalary = new EmployeeSalary();
 		employeeSalary.hideToolbar();
@@ -816,6 +807,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(true);
 		deleteContract.setVisible(true);
 		listEmployees.setVisible(true);
+		previusContract.setVisible(true);
+		nextContract.setVisible(true);
 		tgss.setVisible(true);
 		sepe.setVisible(true);
 		
@@ -835,6 +828,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
+		previusContract.setVisible(false);
+		nextContract.setVisible(false);
 
 		zoomListBox.setVisible(true);
 		closePDF.setVisible(true);
@@ -855,6 +850,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- setContrataEmployeeObject
 	
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Consumer<String> success) {
+		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
     	contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
@@ -925,6 +921,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Abstract methods
 	
 	protected abstract void onListShow(boolean reloadEmployees);
+	protected abstract void onPreviusContract(Integer contractId);
+	protected abstract void onNextContract(Integer contractId);
 	
 	// ------------------------------------------------- Toolbar panel
 	
@@ -966,6 +964,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		salaryDraftButtos = initSalaryDraftButtons();
 		toolbar.add(salaryDraftButtos);
+		
+		previusContract = new AonToolbarButton("Contrato anterior", AON.CSS.aonIconLeft());
+		previusContract.addClickHandler(e -> onPreviusContract(contractId));
+		toolbar.add(previusContract);
+		
+		nextContract = new AonToolbarButton("Contrato siguiente", AON.CSS.aonIconRight());
+		nextContract.addClickHandler(e -> onNextContract(contractId));
+		toolbar.add(nextContract);
 		
 		return toolbar;
 
@@ -1075,10 +1081,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onSaveContract() {
 		
 		Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+
 		switch (itemIdx) {
 		case 0:
-			if(contractEmployeeUI.checkIfSaveEmployeeIsPossible())
-				contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
+			Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
+			if(messageMap.isEmpty())
+				contrataEmployeeObject.setEmployeeContract(s -> {
+					Map<String, String> messageSuccessMap = new HashMap<>();
+					messageSuccessMap.put("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName() + " ha sido actualizado correctamente");
+					AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+				}, f -> {});
+			else
+				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
 			contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
@@ -1097,7 +1111,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			break;
 		}
 	}
-	
+
 	private void onDeleteContract() {
 		AonDialog dialog = new AonDialog("BORRADO", getMessageWidget());
 		dialog.confirm(new AonAcceptDialogCallback() {
@@ -1856,21 +1870,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	// ------------------------------------------------- Messages panel
-	
-	private void paintMessagesResult(Messages messages) {
-		Tree treeErrorMessages = new Tree();
-		treeErrorMessages.setAnimationEnabled(true);
-		
-		//Errors
-		for(Message errorMessage : messages.getErrorMessages()) {
-			Label errorLabel =  new Label();
-			errorLabel.setText(errorMessage.getDescription() + " -> " + errorMessage.getMessage());
-			treeErrorMessages.add(errorLabel);
-		}
-		
-		footTabPanel.add(treeErrorMessages, "Errores");
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
-	}
 	
 	private Widget getMessageWidget() {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();

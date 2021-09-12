@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -353,7 +354,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	    // Select first tab and init view 
 	    getTabLayoutPanel().selectTab(0, false);
 		employee.initializeView();
-		employee.cleanWarningIcons();
+		employee.cleanErrorStyles();
 		
 		// Init footPanel
 		getFootTabPanel().clear();
@@ -631,6 +632,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 
 	public boolean checkIfSaveEmployeeIsPossible() {
 		return employee.checkIfSaveEmployeeIsPossible();
+	}
+	
+	public Map<String, String> checkSaveAndGetErrors() {
+		return employee.checkSaveAndGetErrors();
 	}
 
 	// ------------------------------------------------- Getters
