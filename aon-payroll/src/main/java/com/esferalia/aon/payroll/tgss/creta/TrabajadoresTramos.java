@@ -185,6 +185,16 @@ public class TrabajadoresTramos {
 			Month ctrlMes, int ctrlAnho,
 			String tipo, String cccs[], OutputStream os) throws JAXBException {
 
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		generate(conn, autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs);
+
+		Utils.marshal(trabajadoresTramos, os);
+	}
+	
+	public static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos generate(Connection conn, int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho, 
+			Month ctrlMes, int ctrlAnho,
+			String tipo, String cccs[]) throws JAXBException {
+
 		TrabajadoresTramosBuilder trabajadoresTramosBuilder = new TrabajadoresTramosBuilder()
 				.setAutorizado(autorizado);
 
@@ -215,12 +225,11 @@ public class TrabajadoresTramos {
 			}
 		}		
 		
-		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
+		return trabajadoresTramosBuilder
 				.create();
 
-		Utils.marshal(trabajadoresTramos, os);
 	}
-	
+
 	// ------------------------------------------------------------------------
 	
 	private static void datosSolicitados(TrabajadoresTramosBuilder trabajadoresTramosBuilder) {

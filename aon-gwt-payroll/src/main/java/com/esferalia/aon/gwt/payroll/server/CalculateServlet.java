@@ -236,7 +236,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			}
 		}
 
-		static class JooqSalaryDuplicator extends JooqSalarySaver {
+		static class JooqSalaryDuplicator extends JooqSalarySaver<Salary> {
 
 			public JooqSalaryDuplicator(Connection connection) {
 				super(connection);
@@ -296,9 +296,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			builders.add(new SalaryBuilderExtended());
 
 			if (overwrite) {
-				builders.add(new JooqSalaryOverwriter(connection));
+				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalaryOverwriter(connection),
+						d -> Math.round(d * 100.00) / 100.00));
 			} else if (duplicate) {
-				builders.add(new JooqSalaryDuplicator(connection));
+				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalaryDuplicator(connection),
+						d -> Math.round(d * 100.00) / 100.00));
 			} else if (save) {
 				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalarySaver<Salary>(connection),
 						d -> Math.round(d * 100.00) / 100.00));

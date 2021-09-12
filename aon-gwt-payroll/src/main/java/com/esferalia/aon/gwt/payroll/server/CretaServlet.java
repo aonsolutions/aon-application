@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -216,7 +217,7 @@ public class CretaServlet extends HttpServlet
 						if (file == CretaService.File.TRABAJADORES_TRAMOS)
 							trabajadoresYTramosIss.add(part.getInputStream());
 						else if (file == CretaService.File.RESPUESTA)
-							respuestasIss.add(part.getInputStream());
+							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
 					} catch (IllegalArgumentException e) {
 		
 					}
@@ -248,9 +249,9 @@ public class CretaServlet extends HttpServlet
 						if (file == CretaService.File.TRABAJADORES_TRAMOS)
 							trabajadoresYTramosIss.add(part.getInputStream());
 						else if (file == CretaService.File.RESPUESTA)
-							respuestasIss.add(part.getInputStream());
+							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
 					} catch (IllegalArgumentException e) {
-		
+						e.printStackTrace();
 					}
 				}
 			}
@@ -522,6 +523,48 @@ public class CretaServlet extends HttpServlet
 	}
 
 	// ------------------------------------------------------------------------
+
+	private static InputStream generateTrabajadoresYTramos(Connection connection, InputStream respuestaIs ) throws JAXBException, IOException {
+		
+		Respuesta respuesta = Utils.unmarshal(Respuesta.class, respuestaIs);
+		
+		String tipo = getTipo(respuesta);
+		String cccs[] = getCCCs(respuesta);
+		
+		Periodo desde = getPeriodoDesde(respuesta);
+		String desdeMes = desde.getMes();
+		String desdeAnho = desde.getAnho();
+		
+		Periodo hasta = getPeriodoHasta(respuesta);
+		String hastaMes = hasta.getMes();
+		String hastaAnho = hasta.getAnho();
+		
+		//Periodo control = getFechaControl(respuesta);
+		
+		String ctrlMes = hasta.getMes();
+		String ctrlAnho = hasta.getAnho();
+		String autorizado = respuesta.getAutorizado();
+		
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		TrabajadoresTramos.generate(
+				connection, 
+				autorizado, 
+				desdeMes, 
+				desdeAnho, 
+				hastaMes, 
+				hastaAnho, 
+				ctrlMes, 
+				ctrlAnho, 
+				tipo, 
+				cccs, 
+				os);
+		os.close();
+		
+		return new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));
+		
+	}
 
 	private static InputStream generateTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
 		
@@ -1468,6 +1511,20 @@ public class CretaServlet extends HttpServlet
 		}
 		
 		
+		@Override
+		public void invalidLiquidacion(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion,
+				Exception e) {
+			warnings.add(new NoDiffs().setMessage(
+					format("(%s%s%s) %s .",
+							liquidacion.getCcc().getProvincia(), 
+							liquidacion.getCcc().getRegimen(),
+							liquidacion.getCcc().getNumero(),
+							e.getLocalizedMessage()
+							)
+					)
+					.setLiquidacion(liquidacion));
+		}
+		
 
 		// ----------------------------------------------------- Private Static
 
@@ -1785,23 +1842,6 @@ public class CretaServlet extends HttpServlet
 				AttachType.REGISTRY
 				);
 
-	}
-	
-	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from ) {
-		return  AON.getAttachList(
-				domainName, 
-				domainId, 
-				login,
-				p -> 
-				p.getDomainProperty().eq(domainId)
-				.and(p.getTypeProperty().eq((byte)type.ordinal()))
-				.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
-				,
-				AttachType.REGISTRY
-				)
-				.stream()
-				.filter(a -> checkData(a, login));
-		
 	}
 	
 	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
@@ -2262,7 +2302,7 @@ public class CretaServlet extends HttpServlet
 		String anho =  String.format("%02d", AonDateUtils.get(from, Calendar.YEAR));
 		
 		Respuesta respuesta = new Respuesta();
-		respuesta.setAutorizado( String.valueOf(System.currentTimeMillis()));
+		respuesta.setAutorizado( AonStringUtils.repeat('6', 8));
 		respuesta.setReferenciaExterna(CretaService.AON_REFERENCIA_EXTERNA);
 		
 		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion liquidacion = 
@@ -2409,5 +2449,34 @@ public class CretaServlet extends HttpServlet
 		}
 	}
 	
+	private static String getTipo(Respuesta respuesta) {
+		return respuesta.getLiquidacion().stream().map(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion::getTipo).findAny().orElseThrow(IllegalArgumentException::new);		
+	}
+
+	private static net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo getPeriodoDesde(Respuesta respuesta) {
+		return respuesta.getLiquidacion().stream().map(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion::getPeriodoDesde).findAny().orElseThrow(IllegalArgumentException::new);		
+	}
+
+	private static net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo getPeriodoHasta(Respuesta respuesta) {
+		return respuesta.getLiquidacion().stream().map(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion::getPeriodoHasta).findAny().orElseThrow(IllegalArgumentException::new)  ;		
+	}
+
+	private static String [] getCCCs(Respuesta respuesta) {
+		return 
+		respuesta.getLiquidacion().stream()
+		.map(l -> l.getCcc().getRegimen()+l.getCcc().getProvincia()+l.getCcc().getNumero())
+		.toArray(String[]::new);
+	}
+	
+	private static String [] getNafs(Respuesta respuesta) {
+		return 
+		respuesta.getLiquidacion().stream()
+		.filter(l -> l.getLiquidacionMes() != null)
+		.flatMap(l -> l.getLiquidacionMes().stream())
+		.filter(lm -> lm.getTrabajadores() != null)
+		.flatMap(lm -> lm.getTrabajadores().getTrabajador().stream())
+		.map( t -> t.getNaf() )
+		.toArray(String[]::new);
+	}
 
 }

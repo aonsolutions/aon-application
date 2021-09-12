@@ -1371,11 +1371,13 @@ public class SalaryDraftBuilder
 	private CompositePayment newCompositePayment(Payment payment) {
 		CompositePayment	composite = new CompositePayment();
 		composite.addChild(payment);
+		composite.setId(payment.getId());
 		composite.setConceptId(payment.getConceptId());
 		composite.setExpression(payment.getExpression());
 		composite.setIrpfExpression(payment.getIrpfExpression());
 		composite.setQuoteExpression(payment.getQuoteExpression());
 		composite.setDescription(payment.getDescription());
+		composite.setDescriptionTemplate(payment.getDescriptionTemplate());
 		return composite;		
 	}
 

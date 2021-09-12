@@ -921,7 +921,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 								random(PARTIAL_TIME).getValue()));
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+//						put(MONTH_DAYS.getName(), format("%f", 30.00));
 					}
 				},
 
@@ -973,7 +973,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			System.out.println(payment.getName() + " = " + payment.getAmount()  + ", " + payment.getQuote() );
 		}
 		
-		int monthDays = 30 ; //get(endDate, Calendar.DAY_OF_MONTH );
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH );
 		
 		org.junit.Assert.assertEquals( 
 		1750.00 / monthDays * 10  * ( 15.00 / 40.00) +
