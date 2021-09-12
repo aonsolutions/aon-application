@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -30,6 +32,11 @@ public class MainContrataContractObject {
 	
 	private boolean hasCertificateSEPE;
 	
+	private List<Agreement> agreementsContext;
+	private List<Workplace> workplacesContext;
+	private ActivitiesCCC activitiesCCCContex;
+	private Map<String, String> payMethodsMapContext;
+	
 	public MainContrataContractObject() {
 		super();
 		this.allEmployeesList = new ArrayList<EmployeeContractInfo>();
@@ -47,16 +54,19 @@ public class MainContrataContractObject {
 			@Override
 			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
 				initEmployeeList(employeesInfoList);
-				impl.getWorkplaces(null, new AsyncCallback<List<Workplace>>() {
+				impl.getWorkplaces(new AsyncCallback<List<Workplace>>() {
 					
 					@Override
-					public void onSuccess(List<Workplace> result) {
+					public void onSuccess(List<Workplace> dbWorkplaces) {
+						workplacesContext = dbWorkplaces;
 						workplaces.clear();
-						workplaces.addAll(result);
+						workplaces.addAll(dbWorkplaces);
 						impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								// Failure
+							}
 
 							@Override
 							public void onSuccess(Boolean result) {
@@ -67,38 +77,58 @@ public class MainContrataContractObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Failure
+					}
 				});
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
 		});
 		
 	}
 	
-//	public void getEmployeeInfo(Integer contractId, Integer workplaceId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-//		
-//		employeesService.getEmployeeInfoDataBase(contractId, findWorkplace(workplaceId), new AsyncCallback<EmployeeContractInfo>() {
-////		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
-//				success.accept(employeeContractInfo);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) { }
-//		});
-//		
-//	}
-	
-//	private Workplace findWorkplace(Integer workplaceId) {
-//		for(Workplace workplace : workplaces)
-//			if(workplaceId == workplace.getId())
-//				return workplace;
-//		return null;
-//	}
+	public void getContextInfo(){
+		impl.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+			
+			@Override
+			public void onSuccess(List<Agreement> dbAgreements) {
+				agreementsContext = dbAgreements;
+				impl.getActivityCCC(new AsyncCallback<ActivitiesCCC>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// Failure
+					}
+
+					@Override
+					public void onSuccess(ActivitiesCCC dbActivitiesCCC) {
+						activitiesCCCContex = dbActivitiesCCC;
+						impl.getPayMethods(new AsyncCallback<Map<String, String>>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// Failure
+							}
+
+							@Override
+							public void onSuccess(Map<String, String> dbPayMethods) {
+								payMethodsMapContext = dbPayMethods;
+							}
+						});
+					}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
+		});
+	}
 
 	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
 		
@@ -134,13 +164,7 @@ public class MainContrataContractObject {
 	}
 	
 	public List<EmployeeContractInfo> getEmployeesList(){
-		employeesList.sort(new Comparator<EmployeeContractInfo>() {
-			@Override
-			public int compare(EmployeeContractInfo e1, EmployeeContractInfo e2) {
-				return e1.getEmployeeInfo().getFullName().compareTo(e2.getEmployeeInfo().getFullName());
-			}
-		});
-		
+		employeesList.sort((e1, e2) -> e1.getEmployeeInfo().getFullName().compareTo(e2.getEmployeeInfo().getFullName()));
 		return employeesList;
 	}
 	
@@ -213,7 +237,9 @@ public class MainContrataContractObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
 		});	
 	}
 
@@ -226,7 +252,9 @@ public class MainContrataContractObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
 		});	
 	}
 
@@ -240,7 +268,9 @@ public class MainContrataContractObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				// Failure
+			}
 		});	
 	}
 	
@@ -262,10 +292,29 @@ public class MainContrataContractObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				// Failure
 			}
 		});
+	}
+
+	public List<Agreement> getAgreementsContext() {
+		return agreementsContext;
+	}
+
+	public void setAgreementsContext(List<Agreement> agreementsContext) {
+		this.agreementsContext = agreementsContext;
+	}
+
+	public List<Workplace> getWorkplacesContext() {
+		return workplacesContext;
+	}
+
+	public ActivitiesCCC getActivitiesCCCContex() {
+		return activitiesCCCContex;
+	}
+
+	public Map<String, String> getPayMethodsMapContext() {
+		return payMethodsMapContext;
 	}
 
 }
