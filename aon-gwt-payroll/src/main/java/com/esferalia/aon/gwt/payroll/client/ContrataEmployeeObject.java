@@ -43,7 +43,6 @@ public class ContrataEmployeeObject {
 	private List<Agreement> agreements;
 	private List<Workplace> workplaces;
 	private ActivitiesCCC activitiesCCC;
-	
 	private Map<String, String> payMethodsMap;
 	
 	// ------------------------------------------------- Constructor
@@ -85,15 +84,6 @@ public class ContrataEmployeeObject {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
-				
-				agreements = employeeContractData.getAgreements();
-				workplaces = employeeContractData.getWorkplaces();
-				activitiesCCC = employeeContractData.getActivitiesCCC();
-				payMethodsMap = employeeContractData.getPayMethods();
-				
-//				// Set default contract start_date & end_date to null
-//				contractData.setStartDate(null);
-//				contractData.setEndDate(null);
 				
 				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
 				contractData.setContractJourneyDuration(journies);
@@ -1081,6 +1071,22 @@ public class ContrataEmployeeObject {
 	
 	public void setEmployeeBankAlias(String bankAlias) {
 		employeeData.setBankAlias(bankAlias);
+	}
+
+	public void setAgreements(List<Agreement> agreements) {
+		this.agreements = agreements;
+	}
+
+	public void setWorkplaces(List<Workplace> workplaces) {
+		this.workplaces = workplaces;
+	}
+
+	public void setActivitiesCCC(ActivitiesCCC activitiesCCC) {
+		this.activitiesCCC = activitiesCCC;
+	}
+
+	public void setPayMethodsMap(Map<String, String> payMethodsMap) {
+		this.payMethodsMap = payMethodsMap;
 	}
 
 }

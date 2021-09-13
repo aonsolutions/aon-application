@@ -53,8 +53,8 @@ public class WorkplaceCCCServlet extends HttpServlet {
 		try (OutputStream os = resp.getOutputStream()) { 	
 			Collection<WorkplaceCCC> object = new LinkedList<>();
 			try(Connection connection = AonServletUtils.getConnection(domainName)) {
-				object = JooqWorkplace.getWorkplaces(null, domain.getId(), connection).stream().map(wp -> {
-					ActivitiesCCC activity = JooqWorkplace.getActivitiesCCC(wp, domainId, connection);
+				object = JooqWorkplace.getWorkplaces(domain.getId(), connection).stream().map(wp -> {
+					ActivitiesCCC activity = JooqWorkplace.getActivitiesCCC(domainId, connection);
 					Collection<CCCInfo> cccs = activity.getCccs().values().stream().map(ccc -> {
 						ccc.setCccRegimeCode(getCCCRegimeCode(ccc.getType()));
 						return ccc;

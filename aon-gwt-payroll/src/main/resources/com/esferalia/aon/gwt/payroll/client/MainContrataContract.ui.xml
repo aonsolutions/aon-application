@@ -185,7 +185,7 @@
 			</g:center>
 		</g:DockLayoutPanel>
 
-		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
+		<d:ContrataEmployee ui:field="contrataEmployee" />
  		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
  		
  		<g:DockLayoutPanel ui:field="trashDockLayoutPanel" >

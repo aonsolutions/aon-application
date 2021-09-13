@@ -57,6 +57,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
 import com.esferalia.aon.gwt.payroll.jooq.JooqWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -423,24 +424,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public List<Agreement> getAgreements(String domain, int offset, int limit) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainID = AonServletUtils.getDomainID(domain);
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
-
-			return JooqAgreement.getAgreements(connection, offset, limit,
-					domainID, parentDomainID);
-
+			return JooqAgreement.getAgreements(connection, offset, limit, domainID, parentDomainID);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 	
@@ -1577,21 +1566,32 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Workplace> getWorkplaces(Workplace workplace, String domainName) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqWorkplace.getWorkplaces(workplace, domainId, connection);
+	public List<Workplace> getWorkplaces(String domain) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return JooqWorkplace.getWorkplaces(domainId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
+		}
+	}
+
+	@Override
+	public Map<String, String> getPayMethods(String domain) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return JooqWorkplace.getPayMethods(connection, domainId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public ActivitiesCCC getActivityCCC(String domain) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return JooqWorkplace.getActivitiesCCC(domainId, connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -169,8 +170,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setWorkplaceInfo(getCurrentDomainName(), workplaceInfo, asyncCallback);
 	}
 	
-	public void getWorkplaces(Workplace workplace, AsyncCallback<List<Workplace>> asyncCallback) {
-		enterprisesServiceAsync.getWorkplaces(workplace, getCurrentDomainName(), asyncCallback);
+	public void getWorkplaces(AsyncCallback<List<Workplace>> asyncCallback) {
+		enterprisesServiceAsync.getWorkplaces(getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getPayMethods(AsyncCallback<Map<String, String>> asyncCallback) {
+		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void getActivityCCC(AsyncCallback<ActivitiesCCC> asyncCallback) {
+		enterprisesServiceAsync.getActivityCCC(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
