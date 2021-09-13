@@ -95,8 +95,56 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				activitiesCCC = employeeContractData.getActivitiesCCC();
 				workplaces = employeeContractData.getWorkplaces();
 				payMethodsMap = employeeContractData.getPayMethods();
+				
+				enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+					
+					@Override
+					public void onSuccess(List<Agreement> dbAgreements) {
+						agreements = dbAgreements;
+						enterprisesService.getActivityCCC(new AsyncCallback<ActivitiesCCC>() {
 
-				success.accept(employeeContractInfo);	
+							@Override
+							public void onFailure(Throwable caught) {
+								// Failure
+							}
+
+							@Override
+							public void onSuccess(ActivitiesCCC dbActivitiesCCC) {
+								activitiesCCC = dbActivitiesCCC;
+								enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										// Failure
+									}
+
+									@Override
+									public void onSuccess(Map<String, String> dbPayMethods) {
+										payMethodsMap = dbPayMethods;
+										enterprisesService.getWorkplaces(new AsyncCallback<List<Workplace>>() {
+											
+											@Override
+											public void onSuccess(List<Workplace> dbWorkplaces) {
+												workplaces = dbWorkplaces;
+												success.accept(employeeContractInfo);
+											}
+											
+											@Override
+											public void onFailure(Throwable caught) {
+												// Failure
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// Failure
+					}
+				});	
 			}
 
 			@Override
