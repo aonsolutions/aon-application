@@ -40,8 +40,6 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.EnterpriseFilter;
-import com.esferalia.aon.occam.api.model.EnterpriseProperties;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -221,64 +219,10 @@ public class CompanyDAO {
 	 * **********************************************
 	 */
 	
-	private static final EnterprisePropertiesDAO ENTERPRISE_PROPERTIES = new EnterprisePropertiesDAO();
-	
-	
-	private static class EnterprisePropertiesDAO implements EnterpriseProperties {
-
-		private Condition[] getConditions(EnterpriseFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE.DOMAIN);}
-		@Override public Property<Integer> getParentDomainProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.PARENT);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT); }
-	}
-	
 	private static final Rmedia PHONE = RMEDIA.as("rmedia_phone"); 
 	private static final Rmedia FAX = RMEDIA.as("rmedia_fax");
 	private static final Rmedia EMAIL = RMEDIA.as("rmedia_email");
 	private static final Rmedia WEB = RMEDIA.as("rmedia_web");
-	
-	public static LinkedList<Enterprise> getParentEnterprises(AONContext ctx,EnterpriseFilter filter) {
-		LinkedList<Enterprise> list = new LinkedList<>();
-		ctx.getDslContext().select(
-				ENTERPRISE.REGISTRY
-				,ENTERPRISE.DOMAIN
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.DOCUMENT
-				,REGISTRY.NAME
-				,REGISTRY.ALIAS
-			)
-			.from(ENTERPRISE)
-			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
-			.join(DOMAIN).on(
-						 DOMAIN.ID.equal(ENTERPRISE.DOMAIN)
-					.and(DOMAIN.DOMAINMANAGEMENT.equal((byte) 0))
-					.and(DOMAIN.ACTIVE.equal((byte) 1))
-							)
-			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(ENTERPRISE.SCOPE))
-			.where(ENTERPRISE_PROPERTIES.getConditions(filter))
-			.fetch()
-			.forEach( rec -> list.add( new Enterprise()
-						.setId(rec.getValue(ENTERPRISE.REGISTRY))
-						.setDomain(rec.getValue(ENTERPRISE.DOMAIN))
-						.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,rec.getValue(REGISTRY.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-						.setName(rec.getValue(REGISTRY.NAME))
-					)
-				);
-		return list;
-	}
 
 	public static Enterprise getEnterprise(AONContext ctx,int id) {
 		return ctx.getDslContext().select(

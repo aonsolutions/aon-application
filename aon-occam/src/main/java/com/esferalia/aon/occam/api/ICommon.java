@@ -64,7 +64,6 @@ public interface ICommon {
 	// ENTERPRISE
 	// --------------------------------------------
 	public Enterprise getEnterprise(AONContext ctx, int id);
-	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx,String query);
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise);
 	public Company getCompany(AONContext ctx, int domain);
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx);

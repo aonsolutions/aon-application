@@ -1,16 +1,12 @@
 package com.esferalia.aon.occam.test.zOLD;
 
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -29,17 +25,17 @@ public class CompanyTest {
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
-	// @Test
-	public void testEnterprise() throws IOException {
-		List<Enterprise> list = CompanyDAO.getParentEnterprises(ctx,
-				p -> p.getParentDomainProperty().eq(DOMAIN_ID)
-							.and((p.getNameProperty().like("%ine%") )
-							.or(p.getAliasProperty().like("%ine%") )
-							.or(p.getDocumentProperty().like("%ine%"))));
-		for (Enterprise enterprise : list) {
-			System.out.println(enterprise.getId() + " --> " + enterprise.toString());	
-		}
-	}
+// @Test
+//	public void testEnterprise() throws IOException {
+//		List<Enterprise> list = CompanyDAO.getParentEnterprises(ctx,
+//				p -> p.getParentDomainProperty().eq(DOMAIN_ID)
+//							.and((p.getNameProperty().like("%ine%") )
+//							.or(p.getAliasProperty().like("%ine%") )
+//							.or(p.getDocumentProperty().like("%ine%"))));
+//		for (Enterprise enterprise : list) {
+//			System.out.println(enterprise.getId() + " --> " + enterprise.toString());	
+//		}
+//	}
 
 	@AfterClass
 	public static void afterClass() {

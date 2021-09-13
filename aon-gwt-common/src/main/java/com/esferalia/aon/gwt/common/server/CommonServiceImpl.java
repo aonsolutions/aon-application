@@ -50,10 +50,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 	// ************************************* [ENTERPRISE]
 	// **************************************************
-	@Override
-	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,String user,String query) throws AonCoreException {
-		return AON.getParentEnterprises(domainName, domain,user, query);		
-	}
+//	@Override
+//	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,String user,String query) throws AonCoreException {
+//		return AON.getParentEnterprises(domainName, domain,user, query);		
+//	}
 
 	@Override
 	public Enterprise getEnterprise(String domainName, int domain,String user, int id) throws AonCoreException {

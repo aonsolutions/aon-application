@@ -949,18 +949,6 @@ public class AON {
 		}
 	}
 	// --------------------------------- ENTERPRISE
-	public static LinkedList<Enterprise> getParentEnterprises(String domainName,
-			int domain, String login, String query) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			return getCommon().getParentEnterprises(ctx, query);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static Enterprise getEnterprise(String domainName, int domain,
 			String login, int id) {
 		AONContext ctx = null;
