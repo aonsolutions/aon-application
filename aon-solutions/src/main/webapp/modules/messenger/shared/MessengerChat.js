@@ -183,7 +183,16 @@ const addTextAreaChat = (wrapper) => {
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
   divs.divWrite.appendChild(label);
 
+  divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
+    if (ev.ctrlKey && ev.keyCode == 13) {
+      aonMessengerChat.saveTaskWorkflow();
+    } else if(ev.ctrlKey && ev.keyCode == 88){
+      openFullComment(aonMessengerChat, divs.aonTextArea);
+    }
+  });
+
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+ 
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
 }
 
@@ -198,32 +207,6 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   dialog.setContent(textarea);
 
   buildTextareaToolbar(textarea, aonMessengerChat.task, true);
-
-  // const dialogMain = dialog.getMain();
-
-  // const labelMinId = "labelMin";
-  // let labelMin = document.getElementById(labelMinId);
-  // if(!labelMin){
-  //   labelMin = setStyles(document.createElement("label"),{
-  //     color: "grey",
-  //     fontSize: "30px",
-  //     textDecoration: "none",
-  //     float: "right",
-  //     marginTop: "-17px",
-  //     marginRight: "-9px",
-  //     cursor: "pointer",
-  //     padding: "10px"
-  //   })
-  //   labelMin.id = labelMinId;
-  //   labelMin.title = MSG.MINIMIZE;
-  //   const iconMinimize = document.createElement("i");
-  //   iconMinimize.textContent = "close_fullscreen";
-  //   iconMinimize.className ="material-icons";
-  //   iconMinimize.style.fontSize = "21px";
-  //   labelMin.appendChild(iconMinimize);
-  //   dialogMain.insertBefore(labelMin, dialogMain.children[1]);
-  //   iconMinimize.addEventListener(EVENT.CLICK, ()=>dialog.close());
-  // }
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{

@@ -70,7 +70,7 @@ export class AonMessenger extends AonElement {
 				this._filter.task_holder = this.TASK_HOLDER.id;
 				this.applicationEl.addToolbarTitle("Recibidas");
 			} else {
-				this.applicationEl.addToolbarTitle("Enviadas");
+				this.applicationEl.addToolbarTitle(MSG.SENT);
 			}
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
@@ -221,12 +221,12 @@ export class AonMessenger extends AonElement {
 				actions:[
 					{
 						id: 'Delete',
-						icon: 'delete',
+						icon: MATERIAL_ICONS.DELETE,
 						action: () => this.deleteTag(item)
 					},
 					{
 						id: 'Edit',
-						icon: 'edit',
+						icon: MATERIAL_ICONS.EDIT,
 						action: () => this.dialogTag(item)
 					}
 				]
@@ -290,7 +290,7 @@ export class AonMessenger extends AonElement {
 			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
 				let sender =  count.sender || 0;
 				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount("Enviadas", sender);
+				application.updateSidenavCount(MSG.SENT, sender);
 				application.updateSidenavCount("Recibidas", task_holder);
 			});
 		}

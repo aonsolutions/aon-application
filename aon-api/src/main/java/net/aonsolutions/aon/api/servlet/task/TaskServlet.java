@@ -9,10 +9,12 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.esferalia.aon.occam.api.model.office.Tag;
+import java.util.stream.Collectors;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,6 +22,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -38,6 +41,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.Task;
@@ -77,7 +81,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					response(req, resp,  getTasks(api));
 					break;
 				case "/notice":
-					response(req, resp,  getTaskNotice(api));
+					response(req, resp, new JSONObject());
 					break;
 				case "/one":
 					response(req, resp,  getTask(api));
@@ -120,6 +124,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				break;
 				case "/attach":
 					response(req, resp,  saveTaskAttach(api));
+					break;
+				case "/historic-send":
+					response(req, resp,  taskHistoricSend(api));
 					break;
 				case "/workflow":
 					response(req, resp,  saveTaskWorkflow(api));
@@ -225,7 +232,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Object getTask(AonApiData api) {
 		Integer taskId = api.getParams().optInt("id");
-		return TaskJSON.toJSON( AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId)));
+		return TaskJSON.toJSON( AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId) )   );
 	}
 	
 	private Object saveTask(AonApiData api) {
@@ -410,6 +417,24 @@ public class TaskServlet extends AonApiHttpServlet{
 		newThread.start();
 	}
 	
+	private JSONObject taskHistoricSend(AonApiData api) {
+		 Integer workflowId = api.getData().optInt("workflowId");
+		 if(workflowId > 0) {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+			Task task = TaskJSON.fromJSON(api.getData());
+			LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
+					 f->f.getTaskProperty().eq(task.getId())
+					 .and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
+					 .and(f.getIdProperty().le(workflowId))
+			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())) .collect(Collectors.toCollection(LinkedList::new));
+			
+			task.setWorkflows(taskWorkflow);
+			sendHistoricWorkflow(api, task, auth);
+		 }
+
+		return new JSONObject();
+	}
 	private void setCauData(AonApiData api, Task task) {
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
 			try {
@@ -465,14 +490,16 @@ public class TaskServlet extends AonApiHttpServlet{
 				
 				String subject = "SOLICITUD Nº "+ task.getNumber();
 				
+				String url = "https://aon.solutions";
+				
 				TaskMail tm = new TaskMail()
 				.setNumber(task.getNumber().toString())
-				.setDate(AonDateUtils.format(task.getModificationDate(), "dd/MM/yyyy") )
-				.setUrl("https://aon.solutions")
+				.setDate(task.getModificationDate())
+				.setUrl(url)
 				.setTitle(task.getTitle())
 				.setLogo(logo);
 				
-				String body = taskContentEmail(api, tm);
+				String body = taskContentEmail(tm);
 				
 				SESMessage msg = new SESMessage()
 				.setAlias(company.getName())
@@ -485,52 +512,6 @@ public class TaskServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	private String taskContentEmail(AonApiData api, TaskMail taskMail) {
-		VelocityEngine engine = new VelocityEngine();
-		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-		engine.init();	
-		
-		VelocityContext context = new VelocityContext();
-		context.put("task", taskMail);
-		
-		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/task.vm");
-		
-		StringWriter writer = new StringWriter();
-		template.merge(context, writer);
-
-		return writer.toString();
-	}
-	
-	private JSONObject getTaskNotice(AonApiData api) {
-		// Domain domain = api.getDomain();
-		// JSONObject json = new JSONObject();
-		// AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		// AON_SOLUTIONS.getTaskCountSchemas(aonToken,  f -> f.getDomainProperty().eq(domain.getId()) )
-		// .forEach((k,v)->json.put(TaskStatus.safeValueOf(k).getName(), v));
-		
-		return new JSONObject();
-	}
-	
-	private String getLogoCompany(String companyName) {
-		String logo = "https://aon.solutions/assets/aon-logo.png";
-		try {
-			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
-		    final URL url = new URL(urlLogo);
-	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-	        int statusCode = connection.getResponseCode();
-	        if(200 == statusCode) {
-	        	logo = urlLogo;
-	        }
-            connection.disconnect();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return logo;
 	}
 	
 	private void checkFiles(AonApiData api, Task task){
@@ -585,5 +566,86 @@ public class TaskServlet extends AonApiHttpServlet{
 		    }
 	    }
 	    return matcher;
+	}
+	
+	private String getLogoCompany(String companyName) {
+		String logo = "https://aon.solutions/assets/aon-logo.png";
+		try {
+			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
+		    final URL url = new URL(urlLogo);
+	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	        int statusCode = connection.getResponseCode();
+	        if(200 == statusCode) {
+	        	logo = urlLogo;
+	        }
+            connection.disconnect();
+		}catch (Exception e) {}
+
+		return logo;
+	}
+	
+	private String taskContentEmail(TaskMail taskMail) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();	
+		
+		VelocityContext context = new VelocityContext();
+		context.put("task", taskMail);
+		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/task.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private void sendHistoricWorkflow(AonApiData api, Task task, Auth auth) {
+		Thread newThread = new Thread(() -> {
+			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			if(company!=null) {
+				String logo = getLogoCompany(company.getDomain().getName());
+				
+				String to = auth.getEmail();
+	
+				String subject = "SOLICITUD Nº "+ task.getNumber();
+				String url = "https://aon.solutions";
+				
+				TaskMail tm = new TaskMail()
+				.setNumber(task.getNumber().toString())
+				.setDate(task.getStartDate())
+				.setUrl(url)
+				.setTitle(task.getTitle())
+				.setWorkflows(task.getWorkflows())
+				.setLogo(logo);
+				
+				String body = emailTaskWorkflowContent(tm);
+				
+				SESMessage msg = new SESMessage()
+				.setAlias(company.getName())
+				.setSubject(subject)
+				.setBody(body)
+				.setTo(to);
+				
+			    SES.sendEmail(msg);
+			}
+		});
+		newThread.start();
+	}
+	
+	private String emailTaskWorkflowContent(TaskMail taskMail) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();	
+		
+		VelocityContext context = new VelocityContext();
+		context.put("task", taskMail);
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/task-historic.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+		return writer.toString();
 	}
 }

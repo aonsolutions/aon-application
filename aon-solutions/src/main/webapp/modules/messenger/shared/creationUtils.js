@@ -3,8 +3,9 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
+import { taskHistoricSend } from "../../../services/taskService.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
 const fontColor = CSS.variable(COLORS.GRAYSON);
@@ -514,7 +515,17 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK,()=> alert("En desarrollo!"));
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> {
+          let aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+          await taskHistoricSend({...aonMessengerChat.task, workflowId: properties.id});
+
+          //CHANGE STYLE IF SEND MESSAGE
+          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
+          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(new Date())
+          iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
+          iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+
+        });
       } else {
         properties.marginLeft = "20px";
       }
@@ -571,11 +582,11 @@ export const createSectionComment = (div) => {
     divComment.appendChild(divMain);
   
     const iconSend = iconComment(MATERIAL_ICONS.SEND);
-    iconSend.title = MSG.SEND;
+    iconSend.title = `Ctrl+Enter (${MSG.SEND})`;
     divComment.appendChild(iconSend);
   
     const iconOpenFull = iconComment(MATERIAL_ICONS.OPEN_IN_FULL); 
-    iconOpenFull.title = MSG.MAXIMIZE;
+    iconOpenFull.title = `Ctrl+X (${MSG.MAXIMIZE})`;
     divMain.appendChild(iconOpenFull);
   
     const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_COMMENT}...`), {

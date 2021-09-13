@@ -17,6 +17,7 @@ export class Task {
   source_id;
   gtask_id;
   files;
+  start_date;
   constructor() {
       this.id          = undefined;
       this.status      = undefined;
@@ -26,6 +27,7 @@ export class Task {
       this.description = undefined;
       this.source      = TASK_SOURCE.CAU;
       this.source_id   = undefined;
+      this.start_date   = undefined;
       this.workgroup   = {};
       this.registry    = {};
       this.task_holder = {};
@@ -47,6 +49,7 @@ export class Task {
       this.gtask_id    = task.gtask_id || "";
       this.source      = task.source || TASK_SOURCE.CAU;
       this.source_id   = task.source_id || undefined;
+      this.start_date  = task.start_date || undefined;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
         domain:this.domain,
@@ -69,6 +72,7 @@ export class Task {
       if(task.source_id)                          this.source_id     = task.source_id;
       if(task.registry && task.registry.id)       this.registry      = task.registry;
       if(task.description)                        this.description    = task.description;
+      if(task.start_date)                         this.start_date    = task.start_date;
       this.setFiles([]);
       // if(task.domain)                             this.domain      = task.domain;
       // if(task.workflow)                           this.workflow    = task.workflow;

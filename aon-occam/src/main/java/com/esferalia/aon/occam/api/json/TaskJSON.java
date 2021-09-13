@@ -29,7 +29,7 @@ public class TaskJSON {
 			.setTitle(JsonUtils.getString(json, IJsonNames.TITLE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setDueDate(JsonUtils.getDate(json, IJsonNames.DUE_DATE))
-			.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
+			.setStartDate(JsonUtils.getDateTime(json, IJsonNames.START_DATE))
 			.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
 			.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
 			.setParent(JsonUtils.getInteger(json, IJsonNames.PARENT))

@@ -137,7 +137,7 @@ export class AonDesktop extends AonElement {
 
 			let taskOptions = [{
 					name: 'Notificaciones',
-					icon: 'notifications',
+					icon: MATERIAL_ICONS.NOTIFICATIONS,
 					fn: () => {}
 				},{
 					name: 'Facturas Pendientes',
@@ -149,7 +149,7 @@ export class AonDesktop extends AonElement {
 					}
 				}, {
 					name: 'Facturas Rechazadas',
-					icon: 'report',
+					icon: MATERIAL_ICONS.REPORT,
 					fn: (count) => {
 						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');

@@ -21,7 +21,7 @@ export * from './comunicaService.js';
 
 export * from './registryService.js';
 
-export * from './contratoService.js';
+export * from './contractService.js';
 
 export * from './actionMobile.js';
 
