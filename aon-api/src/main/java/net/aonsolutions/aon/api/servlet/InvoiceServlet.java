@@ -402,7 +402,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject json = api.getData();
 		JSONObject file = null;
 		
-		if(json.opt("file")!= null) { 
+		if(json.opt("file")!= null && json.opt("invoice") != null) { 
 			file = json.optJSONObject("file");
 			json = json.opt("invoice") != null ? json.optJSONObject("invoice") : json;
 			if(json.opt("status") == null) {
