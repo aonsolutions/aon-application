@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -54,9 +54,6 @@ public abstract class Enterprise extends ResizeComposite {
 		String warningTB();
 	}
 	
-	@UiField
-	HTMLPanel messageContainer;
-	
 	// TABLA DATOS EMPRESA
 	
 	@UiField
@@ -71,8 +68,8 @@ public abstract class Enterprise extends ResizeComposite {
 	@UiField
 	TextBox document;
 	
-	@UiField 
-	Label documentStatus;
+	@UiField (provided = true)
+	AonToolbarSmallButton documentStatus;
 	
 	@UiField 
 	Label nationalityLabel;
@@ -141,6 +138,8 @@ public abstract class Enterprise extends ResizeComposite {
 		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
 		countries.forEach(c -> oracleCountries.add(c.getName()));
 		this.nationality = new SuggestBox(oracleCountries);
+		
+		documentStatus = new AonToolbarSmallButton("", AON.CSS.aonIconValid());
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
@@ -217,7 +216,7 @@ public abstract class Enterprise extends ResizeComposite {
 			addWarning(enterpriseName);
 			Map<String, String> errorMap = new HashMap<>();
 			errorMap.put("Nombre obligatorio", "Este campo debe ser rellenado obligatoriamente");
-			AonMessagePanel.showError(messageContainer, errorMap);
+			fireErrorMessage(errorMap);
 		}
 	}
 	
@@ -339,9 +338,15 @@ public abstract class Enterprise extends ResizeComposite {
 	public abstract void onEnterpriseAgreementChange();
 	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
+	public abstract void fireErrorMessage(Map<String, String> errorMap);
+	public abstract void fireInfoMessage(Map<String, String> errorMap);
+	
 	// ------------------------------------------------- Auxiliar Methods	
 	
 	public void checkDocument() {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put("Formato documento", "El documento no est\u00E1 definido o tiene un formato err\u00F3neo");
+		
 		if(AonStringUtils.isNotBlank(document.getValue())) {
 			String documentTypeValue = checkDocumentType();
 		
@@ -351,6 +356,7 @@ public abstract class Enterprise extends ResizeComposite {
 			if(checkDocumentValidation()) {
 				documentStatus.removeStyleName(AON.CSS.aonIconValid());
 				documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+				fireInfoMessage(infoMap);
 			}else {
 				documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
 				documentStatus.addStyleName(AON.CSS.aonIconValid());
@@ -358,6 +364,7 @@ public abstract class Enterprise extends ResizeComposite {
 		}else {
 			documentStatus.removeStyleName(AON.CSS.aonIconValid());
 			documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+			fireInfoMessage(infoMap);
 		}
 	}
 	
@@ -400,13 +407,12 @@ public abstract class Enterprise extends ResizeComposite {
 		String value = document.getValue();
 		String documentTypeStr = checkDocumentType();
 		
-		if(AonStringUtils.isBlank(value)) {
+		if(AonStringUtils.isBlank(value))
 			return false;
-		} else if(AonStringUtils.equals(documentTypeStr, "DNI")){
-			Dni dni = new Dni(value);
-			return dni.checkDNI();
-		} else
-			return true;
+		else if(AonStringUtils.equals(documentTypeStr, "DNI"))
+			return !Dni.checkDNI(value);
+		else
+			return false;
 	}
 	
 	// ------------------------------------------------- Initialize ListBoxes

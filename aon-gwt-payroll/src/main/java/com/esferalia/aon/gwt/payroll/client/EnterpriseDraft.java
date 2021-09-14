@@ -158,6 +158,16 @@ public abstract class EnterpriseDraft extends Composite {
 		public void onEnterpriseScopeChange(Integer scopeId) {
 			enterpriseDraftObject.setScope(scopeId);
 		}
+
+		@Override
+		public void fireErrorMessage(Map<String, String> errorMap) {
+			AonMessagePanel.showError(messageContainer, errorMap);
+		}
+		
+		@Override
+		public void fireInfoMessage(Map<String, String> errorMap) {
+			AonMessagePanel.showInfo(messageContainer, errorMap);
+		}
 		
 	}
 	

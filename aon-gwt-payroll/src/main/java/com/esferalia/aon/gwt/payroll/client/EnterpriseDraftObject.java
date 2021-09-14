@@ -52,7 +52,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);		
 			}
 
 			@Override
@@ -80,7 +80,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);	
 			}
 
 			@Override
@@ -126,7 +126,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	private String getNationality(String iso2) {
 		for (int i = 0; i < Country.values().length; i++) {
-			if (Country.values()[i].getIso2() == iso2)
+			if (Country.values()[i].getIso2().equals(iso2))
 				return Country.values()[i].getName();
 		}
 		return null;
@@ -155,10 +155,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	public String getAddressProvince() {
 		return this.enterpriseInfo.getAddressProvince();
 	}
-	
-//	public Integer getAddressProvinceIndex() {
-//		return ProvinceContract.getProvinceIndex(getAddressProvince());
-//	}
 	
 	public String getPhone() {
 		return this.enterpriseInfo.getPhone();
