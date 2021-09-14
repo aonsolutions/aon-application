@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
-import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeSalaryObject {
 	
-	//Starting Service
+	// --------------------------------------------- Variables
+	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
@@ -27,6 +27,8 @@ public class EmployeeSalaryObject {
 	
 	private String emailStatus;
 	
+	// --------------------------------------------- Constructor
+	
 	public EmployeeSalaryObject() {
 		super();
 	}
@@ -37,6 +39,8 @@ public class EmployeeSalaryObject {
 		this.filter = new SalaryInfoFilter();
 		this.emailStatus = "";
 	}
+	
+	// --------------------------------------------- Database Methods
 	
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
@@ -59,10 +63,8 @@ public class EmployeeSalaryObject {
 	}
 	
 	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
-		ArrayList<Integer> ids = new ArrayList<Integer>();
-		for(SalaryInfo salary : salaries) {
-			ids.add(salary.getId());
-		}
+		ArrayList<Integer> ids = new ArrayList<>();
+		salaries.forEach(salary -> ids.add(salary.getId()));
 		
 		employeesService.deleteSalaries(ids, new AsyncCallback<Void>(){
 
@@ -95,6 +97,8 @@ public class EmployeeSalaryObject {
 			
 		});
 	}
+	
+	// --------------------------------------------- Getter Methods
 	
 	public String getEmployeeName(){
 		return this.fullname;
