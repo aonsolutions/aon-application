@@ -25,9 +25,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.DoubleVariable2013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
@@ -148,11 +148,11 @@ public class Mod2002013Reader {
 				
 		// Controlar si la lista está creada en el modelo 200		
 		if (mod200.getAdministrators() == null ) {
-			mod200.setAdministrators( new LinkedList<CompanyAdministrator>());
+			mod200.setAdministrators( new LinkedList<Mod200CompanyAdministrator>());
 		}
 
 	    // Crear un objeto y asignar los datos		
-		CompanyAdministrator ca = new CompanyAdministrator();
+		Mod200CompanyAdministrator ca = new Mod200CompanyAdministrator();
 		ca.setDocument(document);
 		ca.setRepresentative(isRepresentative);
 		ca.setName(name);
@@ -175,7 +175,7 @@ public class Mod2002013Reader {
 		
 		// Controlar si la lista está creada en el modelo 200
 		if (mod200.getParticipationsOut() == null ) {
-			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
+			mod200.setParticipationsOut(new LinkedList<Mod200CompanyParticipation>());
 		}
 
 		Country c = null;
@@ -187,7 +187,7 @@ public class Mod2002013Reader {
 		}
 
 	    // Crear un objeto y asignar los datos		
-		CompanyParticipation cp = new CompanyParticipation();
+		Mod200CompanyParticipation cp = new Mod200CompanyParticipation();
 		cp.setDocument(document);
 		cp.setName(name);
 		cp.setProvince(province);		
@@ -221,7 +221,7 @@ public class Mod2002013Reader {
 		
 		// Controlar si la lista está creada en el modelo 200
 		if (mod200.getParticipationsIn() == null ) {
-			mod200.setParticipationsIn(new LinkedList<CompanyParticipation>());
+			mod200.setParticipationsIn(new LinkedList<Mod200CompanyParticipation>());
 		}
 		Country c = null;
 		int province = 0; 
@@ -232,7 +232,7 @@ public class Mod2002013Reader {
 		}
 
 	    // Crear un objeto y asignar los datos		
-		CompanyParticipation cp = new CompanyParticipation();
+		Mod200CompanyParticipation cp = new Mod200CompanyParticipation();
 		cp.setDocument(document);
 		cp.setRepresentative(isRepresentative);
 		cp.setName(name);
@@ -2129,10 +2129,10 @@ public class Mod2002013Reader {
 		}
 		
 		System.out.println();
-		List<CompanyAdministrator> l2 = mod200.getAdministrators();
+		List<Mod200CompanyAdministrator> l2 = mod200.getAdministrators();
 		System.out.println("-- ADMINISTRADORES -- "+l2.size());		
 		for (int i = 0; i < l2.size(); i++) {
-			CompanyAdministrator ca = l2.get(i);
+			Mod200CompanyAdministrator ca = l2.get(i);
 			System.out.println( AonStringUtils.join(ca.getDocument()
 				,AonStringUtils.SPACE
 				,ca.isRepresentative()
@@ -2145,10 +2145,10 @@ public class Mod2002013Reader {
 		}
 		
 		System.out.println();
-		List<CompanyParticipation> cpo = mod200.getParticipationsOut();
+		List<Mod200CompanyParticipation> cpo = mod200.getParticipationsOut();
 		System.out.println("-- PARTICIPATIONS OUT -- "+cpo.size());		
 		for (int i = 0; i < cpo.size(); i++) {
-			CompanyParticipation cp = cpo.get(i);
+			Mod200CompanyParticipation cp = cpo.get(i);
 			System.out.println( AonStringUtils.join( cp.getDocument()
 													,AonStringUtils.SPACE
 													,cp.getName()
@@ -2181,10 +2181,10 @@ public class Mod2002013Reader {
 		}
 
 		System.out.println();
-		List<CompanyParticipation> cpi = mod200.getParticipationsIn();
+		List<Mod200CompanyParticipation> cpi = mod200.getParticipationsIn();
 		System.out.println("-- PARTICIPATIONS IN -- "+cpi.size());		
 		for (int i = 0; i < cpi.size(); i++) {
-			CompanyParticipation cp = cpi.get(i);
+			Mod200CompanyParticipation cp = cpi.get(i);
 			System.out.println( AonStringUtils.join( cp.getDocument()
 													,AonStringUtils.SPACE
 													,cp.isRepresentative()

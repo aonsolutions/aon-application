@@ -1,9 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -11,8 +15,8 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -91,4 +95,24 @@ public class Mod200DAO extends FiscalModelDAO {
 		}
 	}
 
+	public static LinkedList<Mod200CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
+		return ctx.getDslContext()
+				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE,RDIR_STAFF.REPRESENTATIVE)
+				.from(COMPANY)
+				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
+				.where(COMPANY.DOMAIN.equal(domain))
+				.fetch()
+				.stream()
+				.map( rec -> new Mod200CompanyAdministrator()
+						.setDocument(rec.getValue(RDIR_STAFF.DOCUMENT) )
+						.setName(rec.getValue(RDIR_STAFF.NAME) )
+						.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 )
+						.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 )
+						.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) )
+						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE)) 
+						.setRepresentative( rec.getValue(RDIR_STAFF.REPRESENTATIVE) == 1 )
+					)
+				.collect(Collectors.toCollection(LinkedList::new ));
+	}
+	
 }

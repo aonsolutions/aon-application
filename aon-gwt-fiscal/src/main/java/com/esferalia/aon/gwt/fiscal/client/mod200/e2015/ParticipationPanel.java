@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
@@ -24,7 +24,7 @@ public class ParticipationPanel extends CustomDialog {
 	private static final ParticipationPanelBinder participationPanelBinder = GWT
 			.create(ParticipationPanelBinder.class);
 
-	private CompanyParticipation companyParticipation;
+	private Mod200CompanyParticipation companyParticipation;
 	
 	@UiField
 	TextBox document;
@@ -62,7 +62,7 @@ public class ParticipationPanel extends CustomDialog {
 	@UiField
 	DoubleBox result;
 
-	private CellTable<CompanyParticipation> table;
+	private CellTable<Mod200CompanyParticipation> table;
 
 	public ParticipationPanel() {
 		setVisible(false);
@@ -80,11 +80,11 @@ public class ParticipationPanel extends CustomDialog {
 		setWidget(ui);
 	}
 
-	protected void setTable(CellTable<CompanyParticipation> tableOut) {
+	protected void setTable(CellTable<Mod200CompanyParticipation> tableOut) {
 		this.table = tableOut;
 	}	
 
-	public void dump(CompanyParticipation cp) {
+	public void dump(Mod200CompanyParticipation cp) {
 		this.companyParticipation = cp;
 		this.document.setValue(companyParticipation.getDocument());
 		this.name.setValue(companyParticipation.getName());

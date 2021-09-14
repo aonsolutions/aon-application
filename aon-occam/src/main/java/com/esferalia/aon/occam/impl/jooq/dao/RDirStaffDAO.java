@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -15,6 +17,7 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
@@ -155,6 +158,16 @@ public class RDirStaffDAO {
 			.map(new RDirStaffFiller());
 	}
 	
+	public static LinkedList<RDirStaff> getRepresentativeLabor(AONContext ctx, int domain) {
+		Company company =  CompanyDAO.getCompany(ctx, domain);
+		if (company != null && company.getId() != null) {
+			return getStream(ctx, f -> f.getRegistryProperty().eq(company.getId())
+						.and(f.getRepresentativeLaborProperty().eq((byte) 1)))
+					.collect(Collectors.toCollection(LinkedList::new));
+		}
+		return new LinkedList<>();
+	}
+
 	public static RDirStaff save(AONContext ctx, RDirStaff rDirStaff) {
 		ctx.checkWrite();
 		RDirStaffAutoComplete.autoComplete(ctx, rDirStaff);

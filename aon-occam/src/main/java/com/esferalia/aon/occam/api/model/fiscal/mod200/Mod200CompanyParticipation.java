@@ -1,11 +1,11 @@
-package com.esferalia.aon.occam.api.model;
+package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
 import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompanyParticipation implements Serializable {
+public class Mod200CompanyParticipation implements Serializable {
 
 	private static final long serialVersionUID = 3400183583793598978L;
 	
@@ -36,7 +36,7 @@ public class CompanyParticipation implements Serializable {
 		return document;
 	}
 
-	public CompanyParticipation setDocument(String document) {
+	public Mod200CompanyParticipation setDocument(String document) {
 		this.document = document;
 		return this;
 	}
@@ -45,7 +45,7 @@ public class CompanyParticipation implements Serializable {
 		return name;
 	}
 
-	public CompanyParticipation setName(String name) {
+	public Mod200CompanyParticipation setName(String name) {
 		this.name = name;
 		return this;
 	}
@@ -54,7 +54,7 @@ public class CompanyParticipation implements Serializable {
 		return province;
 	}
 
-	public CompanyParticipation setProvince(int province) {
+	public Mod200CompanyParticipation setProvince(int province) {
 		this.province = province;
 		return this;
 	}
@@ -62,7 +62,7 @@ public class CompanyParticipation implements Serializable {
 		return country;
 	}
 
-	public CompanyParticipation setCountry(String country) {
+	public Mod200CompanyParticipation setCountry(String country) {
 		this.country = country;
 		return this;
 	}
@@ -70,7 +70,7 @@ public class CompanyParticipation implements Serializable {
 	public boolean isRepresentative() {
 		return representative;
 	}
-	public CompanyParticipation setRepresentative(boolean representative) {
+	public Mod200CompanyParticipation setRepresentative(boolean representative) {
 		this.representative = representative;
 		return this;
 	}
@@ -79,7 +79,7 @@ public class CompanyParticipation implements Serializable {
 		return fjo; // F/J/Otra
 	}
 
-	public CompanyParticipation setNotary(String fjo) {
+	public Mod200CompanyParticipation setNotary(String fjo) {
 		this.fjo = fjo; // F/J/Otra
 		return this;
 	}
@@ -88,7 +88,7 @@ public class CompanyParticipation implements Serializable {
 		return percent;
 	}
 
-	public CompanyParticipation setPercent(double percent) {
+	public Mod200CompanyParticipation setPercent(double percent) {
 		this.percent = percent;
 		return this;
 	}
@@ -97,7 +97,7 @@ public class CompanyParticipation implements Serializable {
 		return nominalValue;
 	}
 
-	public CompanyParticipation setNominalValue(double nominalValue) {
+	public Mod200CompanyParticipation setNominalValue(double nominalValue) {
 		this.nominalValue = nominalValue;
 		return this;
 	}
@@ -106,7 +106,7 @@ public class CompanyParticipation implements Serializable {
 		return bookValue;
 	}
 
-	public CompanyParticipation setBookValue(double bookValue) {
+	public Mod200CompanyParticipation setBookValue(double bookValue) {
 		this.bookValue = bookValue;
 		return this;
 	}
@@ -115,7 +115,7 @@ public class CompanyParticipation implements Serializable {
 		return incomes;
 	}
 
-	public CompanyParticipation setIncomes(double incomes) {
+	public Mod200CompanyParticipation setIncomes(double incomes) {
 		this.incomes = incomes;
 		return this;
 	}
@@ -124,7 +124,7 @@ public class CompanyParticipation implements Serializable {
 		return aValue;
 	}
 
-	public CompanyParticipation setaValue(double aValue) {
+	public Mod200CompanyParticipation setaValue(double aValue) {
 		this.aValue = aValue;
 		return this;
 	}
@@ -133,7 +133,7 @@ public class CompanyParticipation implements Serializable {
 		return bValue;
 	}
 
-	public CompanyParticipation setbValue(double bValue) {
+	public Mod200CompanyParticipation setbValue(double bValue) {
 		this.bValue = bValue;
 		return this;
 	}
@@ -142,7 +142,7 @@ public class CompanyParticipation implements Serializable {
 		return cValue;
 	}
 
-	public CompanyParticipation setcValue(double cValue) {
+	public Mod200CompanyParticipation setcValue(double cValue) {
 		this.cValue = cValue;
 		return this;
 	}
@@ -151,7 +151,7 @@ public class CompanyParticipation implements Serializable {
 		return ccValue;
 	}
 
-	public CompanyParticipation setccValue(double ccValue) {
+	public Mod200CompanyParticipation setccValue(double ccValue) {
 		this.ccValue = ccValue;
 		return this;
 	}
@@ -160,7 +160,7 @@ public class CompanyParticipation implements Serializable {
 		return dValue;
 	}
 
-	public CompanyParticipation setdValue(double dValue) {
+	public Mod200CompanyParticipation setdValue(double dValue) {
 		this.dValue = dValue;
 		return this;
 	}
@@ -169,7 +169,7 @@ public class CompanyParticipation implements Serializable {
 		return capital;
 	}
 
-	public CompanyParticipation setCapital(double capital) {
+	public Mod200CompanyParticipation setCapital(double capital) {
 		this.capital = capital;
 		return this;
 	}
@@ -178,7 +178,7 @@ public class CompanyParticipation implements Serializable {
 		return reserve;
 	}
 
-	public CompanyParticipation setReserve(double reserve) {
+	public Mod200CompanyParticipation setReserve(double reserve) {
 		this.reserve = reserve;
 		return this;
 	}
@@ -187,7 +187,7 @@ public class CompanyParticipation implements Serializable {
 		return otherAmounts;
 	}
 
-	public CompanyParticipation setOtherAmounts(double otherAmounts) {
+	public Mod200CompanyParticipation setOtherAmounts(double otherAmounts) {
 		this.otherAmounts = otherAmounts;
 		return this;
 	}
@@ -196,7 +196,7 @@ public class CompanyParticipation implements Serializable {
 		return result;
 	}
 
-	public CompanyParticipation setResult(double result) {
+	public Mod200CompanyParticipation setResult(double result) {
 		this.result = result;
 		return this;
 	}
@@ -221,7 +221,7 @@ public class CompanyParticipation implements Serializable {
 		return ddValue;
 	}
 
-	public CompanyParticipation setddValue(double ddValue) {
+	public Mod200CompanyParticipation setddValue(double ddValue) {
 		this.ddValue = ddValue;
 		return this;
 	}
@@ -230,7 +230,7 @@ public class CompanyParticipation implements Serializable {
 		return eValue;
 	}
 
-	public CompanyParticipation seteValue(double eValue) {
+	public Mod200CompanyParticipation seteValue(double eValue) {
 		this.eValue = eValue;
 		return this;
 	}

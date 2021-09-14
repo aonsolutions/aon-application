@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -36,7 +35,6 @@ import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -340,26 +338,6 @@ public class CompanyDAO {
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 
-	public static LinkedList<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
-		return ctx.getDslContext()
-				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE,RDIR_STAFF.REPRESENTATIVE)
-				.from(COMPANY)
-				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
-				.where(COMPANY.DOMAIN.equal(domain))
-				.fetch()
-				.stream()
-				.map( rec -> new CompanyAdministrator()
-						.setDocument(rec.getValue(RDIR_STAFF.DOCUMENT) )
-						.setName(rec.getValue(RDIR_STAFF.NAME) )
-						.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 )
-						.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 )
-						.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) )
-						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE)) 
-						.setRepresentative( rec.getValue(RDIR_STAFF.REPRESENTATIVE) == 1 )
-					)
-				.collect(Collectors.toCollection(LinkedList::new ));
-	}
-		
 	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
 		LinkedList<CompanyBank> list = new LinkedList<>();
 		list.addAll(

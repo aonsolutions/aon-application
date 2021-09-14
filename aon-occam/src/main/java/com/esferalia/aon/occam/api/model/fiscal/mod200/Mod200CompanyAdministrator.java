@@ -1,11 +1,11 @@
-package com.esferalia.aon.occam.api.model;
+package com.esferalia.aon.occam.api.model.fiscal.mod200;
 
 import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompanyAdministrator implements Serializable {
+public class Mod200CompanyAdministrator implements Serializable {
 	
 	private static final long serialVersionUID = 2561834391482286106L;
 	
@@ -22,63 +22,63 @@ public class CompanyAdministrator implements Serializable {
 	public String getDocument() {
 		return document;
 	}
-	public CompanyAdministrator setDocument(String document) {
+	public Mod200CompanyAdministrator setDocument(String document) {
 		this.document = document;
 		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public CompanyAdministrator setName(String name) {
+	public Mod200CompanyAdministrator setName(String name) {
 		this.name = name;
 		return this;
 	}
 	public boolean isShareholder() {
 		return shareholder;
 	}
-	public CompanyAdministrator setShareholder(boolean shareholder) {
+	public Mod200CompanyAdministrator setShareholder(boolean shareholder) {
 		this.shareholder = shareholder;
 		return this;
 	}
 	public boolean isRepresentative() {
 		return representative;
 	}
-	public CompanyAdministrator setRepresentative(boolean representative) {
+	public Mod200CompanyAdministrator setRepresentative(boolean representative) {
 		this.representative = representative;
 		return this;
 	}
 	public boolean isAdministrator() {
 		return administrator;
 	}
-	public CompanyAdministrator setAdministrator(boolean administrator) {
+	public Mod200CompanyAdministrator setAdministrator(boolean administrator) {
 		this.administrator = administrator;
 		return this;
 	}
 	public double getPercent() {
 		return percent;
 	}
-	public CompanyAdministrator setPercent(double percent) {
+	public Mod200CompanyAdministrator setPercent(double percent) {
 		this.percent = percent;
 		return this;
 	}
 	public double getNominalValue() {
 		return nominalValue;
 	}
-	public CompanyAdministrator setNominalValue(double nominalValue) {
+	public Mod200CompanyAdministrator setNominalValue(double nominalValue) {
 		this.nominalValue = nominalValue;
 		return this;
 	}
 	public String getResidence() {
 		return residence;
 	}
-	public CompanyAdministrator setResidence(String residence) {
+	public Mod200CompanyAdministrator setResidence(String residence) {
 		this.residence = residence;
 		return this;
 	}
 	public int getProvince() {
 		return province;
 	}
-	public CompanyAdministrator setProvince(int province) {
+	public Mod200CompanyAdministrator setProvince(int province) {
 		this.province = province;
 		return this;
 	}

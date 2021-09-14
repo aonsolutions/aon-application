@@ -22,8 +22,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GroupEntitie;
 import com.esferalia.aon.occam.api.model.UteBase;
@@ -37,6 +35,8 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.MinorEntity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
@@ -52,8 +52,8 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2019.Mod2002019DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.jaxb.MOD2002020;
@@ -74,14 +74,14 @@ public class Mod2002020DAO  {
 
 	private static enum Mod2002020RegistryType {
 		 ADMINISTRATOR ( 
-			(mod,reg) -> mod.getAdministrators().add(new CompanyAdministrator()
+			(mod,reg) -> mod.getAdministrators().add(new Mod200CompanyAdministrator()
 				.setDocument( reg.getDocument())
 				.setName( reg.getName())
 				.setRepresentative( reg.getRepresentative() == 1 )
 				.setResidence(reg.getResidence())
 				.setProvince( reg.getProvince() )))
 		,PARTICPATION_OUT( 
-			(mod,reg) -> mod.getParticipationsOut().add(new CompanyParticipation()
+			(mod,reg) -> mod.getParticipationsOut().add(new Mod200CompanyParticipation()
 				.setDocument(reg.getDocument())
 				.setName(reg.getName())
 				.setProvince( reg.getProvince() )
@@ -104,7 +104,7 @@ public class Mod2002020DAO  {
 				))
 		        
 		,PARTICPATION_IN( 
-			(mod,reg) -> mod.getParticipationsIn().add(new CompanyParticipation()				
+			(mod,reg) -> mod.getParticipationsIn().add(new Mod200CompanyParticipation()				
 				.setDocument(reg.getDocument())
 				.setName(reg.getName())
 				.setProvince(reg.getProvince() )
@@ -308,7 +308,7 @@ public class Mod2002020DAO  {
 		
 		// A. Relación de Administradores
 		if (mod200.getAdministrators() != null) {
-			for ( CompanyAdministrator ca : mod200.getAdministrators() ) {
+			for ( Mod200CompanyAdministrator ca : mod200.getAdministrators() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -324,7 +324,7 @@ public class Mod2002020DAO  {
 		
 		// B1. Participaciones directas de la declarante en otras sociedades
 		if (mod200.getParticipationsOut() != null) {
-			for ( CompanyParticipation cp : mod200.getParticipationsOut() ) {
+			for ( Mod200CompanyParticipation cp : mod200.getParticipationsOut() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -354,7 +354,7 @@ public class Mod2002020DAO  {
 		
 		// B2. Participaciones de personas o entidades en la declarante
 		if (mod200.getParticipationsIn() != null) {
-			for ( CompanyParticipation cp : mod200.getParticipationsIn() ) {
+			for ( Mod200CompanyParticipation cp : mod200.getParticipationsIn() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -842,14 +842,14 @@ public class Mod2002020DAO  {
 		try {
 			ctx.log().info("------ [START] INITIALIZE MOD 200");
 			if (!mod200.isInitializedFromLastYear()) {
-				LinkedList<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
+				LinkedList<Mod200CompanyAdministrator> adms = Mod200DAO.getDirStaff(ctx, mod200.getDomain());
 				if ( adms != null && adms.size() > 0 ) {
-					for (CompanyAdministrator ca : adms ) {
+					for (Mod200CompanyAdministrator ca : adms ) {
 						if (ca.isAdministrator()) {
 							mod200.getAdministrators().add(ca);
 						}
 						if (ca.isShareholder()) {
-							CompanyParticipation cp = new CompanyParticipation();
+							Mod200CompanyParticipation cp = new Mod200CompanyParticipation();
 							cp.setDocument(ca.getDocument());
 							cp.setName(ca.getName());
 							cp.setProvince(ca.getProvince());

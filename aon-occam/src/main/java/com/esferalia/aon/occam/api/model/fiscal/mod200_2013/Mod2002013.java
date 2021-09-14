@@ -6,14 +6,14 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -56,9 +56,9 @@ public class Mod2002013 implements IFiscalModel {
 	
 	private Secretary secretary = new Secretary();
 	private List<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
-	private List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
-	private List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
-	private List<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
+	private List<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();
+	private List<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();
+	private List<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>();
 	
 	private String resultType;
 	private String devType;
@@ -218,22 +218,22 @@ public class Mod2002013 implements IFiscalModel {
 	public void setRepresentatives(List<LegalRepresentative> representatives) {
 		this.representatives = representatives;
 	}
-	public List<CompanyAdministrator> getAdministrators() {
+	public List<Mod200CompanyAdministrator> getAdministrators() {
 		return administrators;
 	}
-	public void setAdministrators(List<CompanyAdministrator> administrators) {
+	public void setAdministrators(List<Mod200CompanyAdministrator> administrators) {
 		this.administrators = administrators;
 	}
-	public List<CompanyParticipation> getParticipationsIn() {
+	public List<Mod200CompanyParticipation> getParticipationsIn() {
 		return participationsIn;
 	}
-	public void setParticipationsIn(List<CompanyParticipation> participationsIn) {
+	public void setParticipationsIn(List<Mod200CompanyParticipation> participationsIn) {
 		this.participationsIn = participationsIn;
 	}
-	public List<CompanyParticipation> getParticipationsOut() {
+	public List<Mod200CompanyParticipation> getParticipationsOut() {
 		return participationsOut;
 	}
-	public void setParticipationsOut(List<CompanyParticipation> participationsOut) {
+	public void setParticipationsOut(List<Mod200CompanyParticipation> participationsOut) {
 		this.participationsOut = participationsOut;
 	}
 	public EnumMap<Mod2002013Key, DoubleVariable2013> getKeysMap() {

@@ -6,9 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.DoubleVariable2018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key;
@@ -783,10 +783,10 @@ public class Mod2002019Import2018 {
 		}
 		
 		System.out.println();
-		List<CompanyAdministrator> l2 = mod200.getAdministrators();
+		List<Mod200CompanyAdministrator> l2 = mod200.getAdministrators();
 		System.out.println("-- ADMINISTRADORES -- "+l2.size());		
 		for (int i = 0; i < l2.size(); i++) {
-			CompanyAdministrator ca = l2.get(i);
+			Mod200CompanyAdministrator ca = l2.get(i);
 			System.out.println( AonStringUtils.join(ca.getDocument()
 				,AonStringUtils.SPACE
 				,ca.isRepresentative()
@@ -799,10 +799,10 @@ public class Mod2002019Import2018 {
 		}
 		
 		System.out.println();
-		List<CompanyParticipation> cpo = mod200.getParticipationsOut();
+		List<Mod200CompanyParticipation> cpo = mod200.getParticipationsOut();
 		System.out.println("-- PARTICIPATIONS OUT -- "+cpo.size());		
 		for (int i = 0; i < cpo.size(); i++) {
-			CompanyParticipation cp = cpo.get(i);
+			Mod200CompanyParticipation cp = cpo.get(i);
 			System.out.println( AonStringUtils.join( cp.getDocument()
 													,AonStringUtils.SPACE
 													,cp.getName()
@@ -835,10 +835,10 @@ public class Mod2002019Import2018 {
 		}
 
 		System.out.println();
-		List<CompanyParticipation> cpi = mod200.getParticipationsIn();
+		List<Mod200CompanyParticipation> cpi = mod200.getParticipationsIn();
 		System.out.println("-- PARTICIPATIONS IN -- "+cpi.size());		
 		for (int i = 0; i < cpi.size(); i++) {
-			CompanyParticipation cp = cpi.get(i);
+			Mod200CompanyParticipation cp = cpi.get(i);
 			System.out.println( AonStringUtils.join( cp.getDocument()
 													,AonStringUtils.SPACE
 													,cp.isRepresentative()
