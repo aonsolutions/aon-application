@@ -1418,32 +1418,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		deleteButton = new AonToolbarButton( "Borrar N\u00F3mina", AON.CSS.aonIconDeleteList() );
 		deleteButton.addClickHandler(e -> {
-			employeeSalary.onDelete(e);
+			employeeSalary.onDelete();
 		});
 		hPanel.add(deleteButton);
 		
 		pdfButton = new AonToolbarButton( AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
 		pdfButton.addClickHandler(e -> {
-			employeeSalary.onPDF(e);
+			employeeSalary.onPDF();
 		});	
 		hPanel.add(pdfButton);
 		
 		pdfSettleButton = new AonToolbarButton( "Carta Finiquito", AON.CSS.aonIconPdf());
 		pdfSettleButton.addClickHandler(e -> {
-			employeeSalary.onPDFSettle(e);
+			employeeSalary.onPDFSettle();
 		});	
 		pdfSettleButton.setVisible(false);
 		hPanel.add(pdfSettleButton);
 		
 		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
 		publishButton.addClickHandler(e -> {
-			employeeSalary.onPublish(e);
+			employeeSalary.onPublish();
 		});	
 		hPanel.add(publishButton);
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> {
-			employeeSalary.onBidoqPublish(e);
+			employeeSalary.onBidoqPublish();
 		});	
 		bidoqPublishButton.setVisible(false);
 		hPanel.add(bidoqPublishButton);

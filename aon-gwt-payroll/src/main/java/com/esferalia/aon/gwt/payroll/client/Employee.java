@@ -1279,17 +1279,11 @@ public abstract class Employee extends ResizeComposite {
 			return "Pasaporte";
 	}
 	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return true;
-		}else
-			return true;
+	public boolean checkDocumentValidation(String document_type_string, String document) {
+		if("DNI".equals(document_type_string))
+			return Dni.checkDNI(document);
+		else
+			return AonStringUtils.isBlank(document);
 	}
 	
 	public void showNationality(String document_type_str) {

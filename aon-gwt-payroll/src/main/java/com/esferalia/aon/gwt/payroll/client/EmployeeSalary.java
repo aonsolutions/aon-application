@@ -1,13 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -31,7 +32,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeSalary extends Composite {
 	
-	// --------------------------------------------- Salary Table Impl ----------------------------------------------
+	// --------------------------------------------- Salary Table Impl
 	
 	private class SalaryTableImpl extends SalaryTable {
 
@@ -53,24 +53,29 @@ public class EmployeeSalary extends Composite {
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// --------------------------------------------- UiBinder
 	
 	private static EmployeeSalaryUiBinder uiBinder = GWT.create(EmployeeSalaryUiBinder.class);
 
 	interface EmployeeSalaryUiBinder extends UiBinder<Widget, EmployeeSalary> {}
 	
-	//Listener to Publish Salaries
+	// --------------------------------------------- Listener to Publish Salaries
+	
 	static interface Listener {
 		void onPublishSalaries(SalaryInfo salary, String type);
 	}
 	
-	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	// --------------------------------------------- EmailContextMenu
 	
 	class NewEmailEmployeesCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
 			onEmailEmployees();
+		}
+		
+		private void onEmailEmployees() {
+			sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.EMPLOYEE);
 		}
 	}
 	
@@ -80,33 +85,71 @@ public class EmployeeSalary extends Composite {
 		public void execute() {
 			onEmailEnterprise();
 		}
+		
+		private void onEmailEnterprise() {
+			sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE);
+		}
 	}
 	
-	class NewContextMenu extends ContextMenu {
+	private void sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type) {
+		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
+		
+		HashMap<String, String> params = new HashMap<>();
+		params.put("url", GWT.getModuleBaseURL()+ "salary_exporter/");
+		params.put("type", "salary");
+		params.put("name", "salaries.pdf");
+		params.put("enterprise", String.valueOf(enterpriseID));
+		params.put("domain", Wnd.getCurrentDomainNameURL());
+		params.put("user", Wnd.getCurrentUser());
+		
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++)
+			params.put("id" + i, ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
+		
+		
+		new PayrollEmailDialog(type, params) {
+			
+			@Override
+			protected void onAccept() {
+				String from = this.getFromMAilAccount().getId().toString();
+				String to = this.getSendTo();
+				String cc = this.getCC();
+				String cco = this.getCCO();
+				String bodyHTML = this.getBody();
+				
+				employeeSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
+					s -> {
+						AonMessagePanel.showInfo(messagePanel, employeeSalaryObject.getEmailStatus());
+						hide();
+					},f -> {}
+				);
+			}
+		};
+	}
+	
+	class EmailContextMenu extends ContextMenu {
 				
 		private MenuItem newEmailEmployees = null;
 		private MenuItem newEmailEnterprise = null;
 		
-		public NewContextMenu() {
+		public EmailContextMenu() {
 			
 			newEmailEmployees = addItem("Email empleados", new NewEmailEmployeesCommand(), 
-					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newEmailEmployees.ensureDebugId("newEmailEmployees");
 			
 			newEmailEnterprise = addItem("Email empresa", new NewEmailEnterpriseCommand(), 
-					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newEmailEnterprise.ensureDebugId("newEmailEnterprise");
 		}
 	}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// --------------------------------------------- UiFields
 	
 	@UiField
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String container();
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -114,6 +157,9 @@ public class EmployeeSalary extends Composite {
 	
 	@UiField
 	VerticalPanel mainContainer;
+	
+	@UiField
+	HTMLPanel messagePanel;
 	
 	@UiField
 	HTMLPanel filterSalaryPanel;
@@ -139,20 +185,15 @@ public class EmployeeSalary extends Composite {
 	@UiField
 	Label datesMessage;
 	
-	// -------------------------------------------------- Variables -------------------------------------------------
+	// --------------------------------------------- Variables
 	
 	private EmployeeSalaryObject employeeSalaryObject;
 	
 	private List<Listener> listeners;
 	
-	private List<SalaryInfo> salaries = Collections.emptyList();
-	
 	private SalaryTable salaryTable;
 	
-	private NewContextMenu contextMenu;
-	
-	private Integer settleId = null; // Only used for setlle letter assign on hasSettleSalary()
-	private Integer settleEnterpriseId = null; // Only used for setlle letter assign on hasSettleSalary()
+	private EmailContextMenu contextMenu;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton deleteButton;
@@ -162,28 +203,28 @@ public class EmployeeSalary extends Composite {
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
 
-	// ------------------------------------------------- Constructor ------------------------------------------------
+	// --------------------------------------------- Constructor
 
-	public EmployeeSalary() {
-		toolbar = getToolbarPanel();
+	protected EmployeeSalary() {
+		getToolbarPanel();
 		salaryTable = new SalaryTableImpl();
 		initWidget(uiBinder.createAndBindUi(this)); 
 		
-		contextMenu = new NewContextMenu();
+		contextMenu = new EmailContextMenu();
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		dockLayoutPanel.addStyleName(style.container());
 		
 		mainContainer.add(salaryTable);
-//		mainContainer.setHeight((Window.getClientHeight() - 150) + "px");
 		
 		salaryTable.setEmployeeView();
 		salaryTable.sortTableByStartDate();
 		
-		listeners = new LinkedList<Listener>();
+		listeners = new LinkedList<>();
 		
 		initFilterPanel();
 	}
+	
+	// --------------------------------------------- Filter Panel
 	
 	private void initFilterPanel() {
 		filterSalaryPanel.addStyleName(AON.CSS.aonSearchPanel());
@@ -225,14 +266,14 @@ public class EmployeeSalary extends Composite {
 		dateFilterList.addItem("Personalizado");
 		dateFilterList.addItem("Mes actual");
 		dateFilterList.addItem("Mes anterior");
-		dateFilterList.addItem(String.valueOf("\u00DA") + "ltimo trimestre");
-		dateFilterList.addItem(String.valueOf("\u00DA") + "ltimo semestre");
-		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o actual");
-		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o anterior");
+		dateFilterList.addItem("\u00DAltimo trimestre");
+		dateFilterList.addItem("\u00DAltimo semestre");
+		dateFilterList.addItem("A\u00F1o actual");
+		dateFilterList.addItem("A\u00F1o anterior");
 		dateFilterList.setSelectedIndex(0);
 	}
 
-	// ------------------------------------------ Set EmployeeSalaryObject -----------------------------------------
+	// --------------------------------------------- setEmployeeSalaryObject
 
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
@@ -297,10 +338,10 @@ public class EmployeeSalary extends Composite {
 	
 	private void setNewToolbarTitle() {
 		String employeeName = this.employeeSalaryObject.getEmployeeName();
-		if(AonStringUtils.isNotBlank(employeeName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + employeeName);
+		if(AonStringUtils.isNotBlank(employeeName)) toolbar.setTitle("N\u00F3minas : " + employeeName);
 	}
 
-	// ---------------------------------------------- Init SalaryTable ----------------------------------------------
+	// --------------------------------------------- Init SalaryTable
 
 	private void initSalariesTable() {
 		//Show buttons
@@ -313,7 +354,7 @@ public class EmployeeSalary extends Composite {
 		salaryTable.initSalariesTable();
 	}
 	
-	// ------------------------------------------------ Ui Handlers -------------------------------------------------
+	// --------------------------------------------- UI Handlers
 
 	@UiHandler("typeList")
 	public void onFilterTypeChange(ChangeEvent event) {
@@ -323,13 +364,8 @@ public class EmployeeSalary extends Composite {
 	@UiHandler("dateFilterList")
 	public void onDateFilterListCahnge(ChangeEvent event) {
 		int dateFilterType = dateFilterList.getSelectedIndex();
-		if(dateFilterType == 0)
-			enableDisableDatesListBox(true);
-		else
-			enableDisableDatesListBox(false);
-		
+		enableDisableDatesListBox(dateFilterType == 0);
 		showHideDatesMessage(false);
-		
 		filterSalaries();
 	}
 	
@@ -338,12 +374,11 @@ public class EmployeeSalary extends Composite {
 		if(checkFilterDates()) {
 			showHideDatesMessage(false);
 			filterSalaries();
-		} else {
+		} else
 			showHideDatesMessage(true);
-		}
 	}
 
-	// ---------------------------------------------- Filter Salaries ------------------------------------------------
+	// --------------------------------------------- Filter Salaries
 	
 	private void filterSalaries() {
 		SalaryInfoFilter filter = employeeSalaryObject.getFilter();
@@ -407,7 +442,7 @@ public class EmployeeSalary extends Composite {
 		return DateUtils.getLastDayOfMonth();
 	}
 
-	// --------------------------------------------- Auxiliar Methods ------------------------------------------------
+	// --------------------------------------------- Auxiliar Methods
 	
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -416,7 +451,7 @@ public class EmployeeSalary extends Composite {
 	void onPublish(String type) {
 		for (Listener listener : listeners)
 			for(SalaryInfo salary : salaryTable.getSelectedSalaries())
-			listener.onPublishSalaries(salary, type);
+				listener.onPublishSalaries(salary, type);
 	}
 
 	public void hideEnterpriseSiteButtons() {
@@ -460,15 +495,10 @@ public class EmployeeSalary extends Composite {
 	}
 	
 	private boolean hasSettleSalary() {
-		for(SalaryInfo salaryInfo : this.employeeSalaryObject.getEmployeeSalaries()) {
-			if(salaryInfo.getType() == Type.SETTLE) {
-				settleId = salaryInfo.getId();
-				settleEnterpriseId = salaryInfo.getEnterpriseId();
+		for(SalaryInfo salaryInfo : this.employeeSalaryObject.getEmployeeSalaries())
+			if(salaryInfo.getType() == Type.SETTLE) 
 				return true;
-			}
-		}
-		settleId = null;
-		settleEnterpriseId = null;
+		
 		return false;
 	}
 	
@@ -484,69 +514,72 @@ public class EmployeeSalary extends Composite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	// ------------------------------------------------- Toolbar -----------------------------------------------------
+	// --------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
+	private void getToolbarPanel() {
 
-		AonToolbar toolbar = new AonToolbar("N" + String.valueOf("\u00F3") + "minas");
+		this.toolbar = new AonToolbar("N\u00F3minas");
 
 		deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
-		deleteButton.addClickHandler(e -> {
-			onDelete(e);
-		});	
+		deleteButton.addClickHandler(e -> onDelete());	
 		toolbar.add(deleteButton);
 		
 		pdfButton = new AonToolbarButton( AON.MSG.printPDF(), AON.CSS.aonIconPdf());
-		pdfButton.addClickHandler(e -> {
-			onPDF(e);
-		});	
+		pdfButton.addClickHandler(e -> onPDF());	
 		toolbar.add(pdfButton);
 		
 		pdfSettleButton = new AonToolbarButton( "Carta Finiquito", AON.CSS.aonIconPdf());
-		pdfSettleButton.addClickHandler(e -> {
-			onPDFSettle(e);
-		});	
+		pdfSettleButton.addClickHandler(e -> onPDFSettle());	
 		pdfSettleButton.setVisible(false);
 		toolbar.add(pdfSettleButton);
 		
 		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
-		publishButton.addClickHandler(e -> {
-			onPublish(e);
-		});	
+		publishButton.addClickHandler(e -> onPublish());	
 		toolbar.add(publishButton);
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
-		bidoqPublishButton.addClickHandler(e -> {
-			onBidoqPublish(e);
-		});	
+		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
 		bidoqPublishButton.setVisible(false);
 		toolbar.add(bidoqPublishButton);
 		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
-		email.addClickHandler(e -> {
-			onEmail(e);
-		});	
+		email.addClickHandler(this::onEmail);	
 		toolbar.add(email);
-		
-		return toolbar;
 
 	}
+	
+	// --------------------------------------------- Toolbar Methods
 
-	public void onDelete(ClickEvent e) {
+	public void onDelete() {
 		employeeSalaryObject.deleteSalaries(
 				salaryTable.getSelectedSalaries(), 
+				s -> 
+					reloadTable(success -> {
+						Map<String, String> successMap = new HashMap<>();
+						successMap.put("Borrado", "La(s) n\u00F3minas han sido eliminadas correctamente");
+						AonMessagePanel.showSuccess(messagePanel, successMap);
+					})
+				, f -> {}
+		);
+	}
+	
+	private void reloadTable(Consumer<List<SalaryInfo>> success) {
+		this.employeeSalaryObject.getSalaries(
 				s -> {
-					setEmployeeSalaryObject(employeeSalaryObject);
+					initDatesListBox();
+					setSettlePDFVisibility();
+					filterCurrentYearSalaries();
+					success.accept(s);
 				}, 
 				f -> {}
 		);
 	}
 
-	public void onPDF(ClickEvent e) {
+	public void onPDF() {
 		onPDF("salary", "salaries");
 	}
 	
-	public void onPDFSettle(ClickEvent e) {
+	public void onPDFSettle() {
 		onPDF("settle", "settleLetter");
 	}
 	
@@ -570,24 +603,18 @@ public class EmployeeSalary extends Composite {
 		
 		formPanel.add(flowPanel);
 		
-		formPanel.addSubmitCompleteHandler(e1 -> {
-			mainContainer.remove(formPanel);
-		});
+		formPanel.addSubmitCompleteHandler(e1 -> mainContainer.remove(formPanel));
 		mainContainer.add(formPanel);
 
 		formPanel.submit();
 		
 	}
-	
-	private static native String b64decode(String a) /*-{
-	  return window.btoa(a);
-	}-*/;
 
-	public void onPublish(ClickEvent e) {
+	public void onPublish() {
 		onPublish("drive");
 	}
 
-	public void onBidoqPublish(ClickEvent e) {
+	public void onBidoqPublish() {
 		onPublish("bidoq");
 	}
 
@@ -597,50 +624,6 @@ public class EmployeeSalary extends Composite {
 		contextMenu.show();
 	}
 
-	private void onEmailEnterprise() {
-		sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE);
-	}
-
-	private void onEmailEmployees() {
-		sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.EMPLOYEE);
-	}
-	
-	private void sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type) {
-		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
-		
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("url", GWT.getModuleBaseURL()+ "salary_exporter/");
-		params.put("type", "salary");
-		params.put("name", "salaries.pdf");
-		params.put("enterprise", String.valueOf(enterpriseID));
-		params.put("domain", Wnd.getCurrentDomainNameURL());
-		params.put("user", Wnd.getCurrentUser());
-		
-		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
-			params.put("id" + i, ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
-		}
-		
-		new PayrollEmailDialog(type, params) {
-			
-			@Override
-			protected void onAccept() {
-				String from = this.getFromMAilAccount().getId().toString();
-				String to = this.getSendTo();
-				String cc = this.getCC();
-				String cco = this.getCCO();
-				String bodyHTML = this.getBody();
-				
-				employeeSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
-					s -> {
-						AonDialog dialog = new AonDialog("AVISO", new HTML(employeeSalaryObject.getEmailStatus()));
-						dialog.warning();
-						hide();
-					},f -> {}
-				);
-			}
-		};
-	}
-	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
 	public void hideToolbar(){

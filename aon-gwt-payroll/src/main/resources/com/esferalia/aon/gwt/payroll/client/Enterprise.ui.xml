@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
 
@@ -105,7 +106,6 @@
 
 	<g:VerticalPanel styleName="{style.container}">
 		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="enterpriseHTMLPanel">
-			<g:HTMLPanel ui:field="messageContainer" />
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos empresa</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
@@ -121,7 +121,7 @@
 		    			<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
 		    			<g:Label ui:field="documentType"></g:Label>
 		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:TextBox>
-						<g:Label ui:field="documentStatus"></g:Label>	
+						<aon:AonToolbarSmallButton ui:field="documentStatus"/>	
 		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw-75}">País Emisión</g:Label>
 		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.heightTB} {style.widthAll}'></g:SuggestBox>
 		    		</g:HTMLPanel>
