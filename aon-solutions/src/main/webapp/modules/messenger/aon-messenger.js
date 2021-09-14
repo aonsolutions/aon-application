@@ -9,6 +9,8 @@ import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums
 import { getTaskHolder } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
+import { getDomainUserRoles } from '../../services/companyService.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
@@ -19,14 +21,17 @@ export class AonMessenger extends AonElement {
 	TASK_HOLDER;
 	cau; //BOOLEAN
 	cauData;
+	dur;
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
 		this.initialize();
-		// this.rootPanel(new AonMessengerAyudat());
-    	this.build();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.build();
+		});
  	}
 
 	initialize(){
@@ -77,7 +82,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, MSG.TASKS, new AonApplication());
+		this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 	}
 
 	async buildToolbar(){
@@ -127,7 +132,8 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions(MSG.TASKS, messengerOpts);
+		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
+		this.applicationEl.addSidenavTitleExpandIcon(MSG.REQUESTS);
 	}
 
 	statusNavBar(){
@@ -162,6 +168,7 @@ export class AonMessenger extends AonElement {
 		];
 		
 		this.applicationEl.addSidenavOptions(MSG.STATUS, messengerOpts);
+		this.applicationEl.addSidenavTitleExpandIcon(MSG.STATUS);
 	}
 
     groupNavBar() {
@@ -170,6 +177,7 @@ export class AonMessenger extends AonElement {
 			id: 'Workgroup',
 			name: MSG.WORKGROUP
 		}, []);
+		this.applicationEl.addSidenavTitleExpandIcon('Workgroup');
 		this.loadWorkgroup();
 	}
 
@@ -205,6 +213,7 @@ export class AonMessenger extends AonElement {
 			id: 'Tag',
 			name: MSG.TAG
 		}, [],() =>this.dialogTag());
+		this.applicationEl.addSidenavTitleExpandIcon('Tag');
 		this.loadTag();
 	}
 
@@ -278,8 +287,6 @@ export class AonMessenger extends AonElement {
 		});
 		d.open();
 	}
-
-
 
 	updateCount(){
 		let application = this.applicationEl;

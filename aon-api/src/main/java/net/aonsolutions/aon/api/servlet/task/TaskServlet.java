@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +59,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
+import net.aonsolutions.aon.api.model.mail.WorkflowMail;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.aws.ses.SES;
@@ -417,8 +419,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		newThread.start();
 	}
 	
-	private JSONObject taskHistoricSend(AonApiData api) {
+	private JSONArray taskHistoricSend(AonApiData api) {
 		 Integer workflowId = api.getData().optInt("workflowId");
+		 JSONArray json = new JSONArray();
 		 if(workflowId > 0) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
@@ -430,10 +433,19 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())) .collect(Collectors.toCollection(LinkedList::new));
 			
 			task.setWorkflows(taskWorkflow);
+			
 			sendHistoricWorkflow(api, task, auth);
+			
+			Integer[] ids = taskWorkflow.stream().map(t->t.getId()).toArray(Integer[]::new);
+		
+			AON_SOLUTIONS.updateTaskWorkflowBetween(api.getDomain(), api.getUser(), 
+					 f->f.getIdProperty().in(ids)
+			 );
+			
+			json = TaskWorkflowJSON.toJSON(taskWorkflow);
 		 }
 
-		return new JSONObject();
+		return json;
 	}
 	private void setCauData(AonApiData api, Task task) {
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
@@ -642,10 +654,30 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		VelocityContext context = new VelocityContext();
 		context.put("task", taskMail);
+	
+		context.put("list", paintListWorkflowEmail(taskMail.getWorkflows(), 0));
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/task-historic.vm");
 		
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
 		return writer.toString();
 	}
+	
+	
+	private static String paintListWorkflowEmail(List<WorkflowMail> ws, Integer i) {
+		if(ws.size() <= i) return "";
+		String item = 
+		"<div>" + 
+			"<div>"+
+			 ws.get(i).getDate()+", "+ws.get(i).getName()+" escribió:<br>"+
+			"</div>"+
+			"<div>"+
+			   ws.get(i).getMessage()+"<br/><br/>"+
+			"</div>"+
+			"<blockquote style=\"margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex\">"+
+			paintListWorkflowEmail(ws, i +1) + 
+			"</blockquote>"+
+		"</div>";	
+		return item;
+	} 
 }

@@ -60,6 +60,7 @@ export const MESSENGER_IDS = {
     PROCESS_DIV: "processDiv",
     FIRST_DIV: "firstDiv",
     SECOND_DIV: "secondDiv",
+    DIV_MAIN_MOBILE: "divMainMobile",
     NO_MESSAGES : "noMessages",
     PROCESS_TYPE: "processType",
     WORKGROUP: "workgroupTask",
@@ -70,6 +71,8 @@ export const MESSENGER_IDS = {
     DESCRIPTION_TASK: "descriptionTask",
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
+    SOURCE_TASK: "sourceTask",
+    INTERNAL_TASK: "internalTask",
     BUTTON_SEND: "buttonSend"
 }
 
@@ -145,21 +148,24 @@ export const TASK_FILTER = [
       id: "registry",
       name: "registry",
       title: MSG.CUSTOMER,
-      autocomplete: true
+      autocomplete: true,
+      default:true
     },
     {
         type: "select",
         id: "task_holder",
         name: "task_holder",
         title: MSG.EMPLOYEE,
-        autocomplete: true
+        autocomplete: true,
+        default:true
     },
     {
         type: "select",
         id: "status",
         name: "status",
-        title: MSG.STATUS
-      },
+        title: MSG.STATUS,
+        default:true
+    },
     // {
     //   type: "date",
     //   name: "startDate",

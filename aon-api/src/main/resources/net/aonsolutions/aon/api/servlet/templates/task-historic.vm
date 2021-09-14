@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EMAIL</title>
 
-  <style>
+  <style type="text/css">
     .space {
       margin: 25px;
     }
@@ -42,37 +42,46 @@
 
     .taskTable {
       margin-top: 5px;
-      padding: 10px; 
+      padding: 10px;
       border: 1px solid #bbb;
-      box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 6px; 
-      border-radius: 5px; 
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 6px;
+      border-radius: 5px;
       width: 100%;
-		}
+      position: relative;
+    }
 
-    .taskName{
-      font-size: 14px; 
-      font-weight: 600; 
+    .taskName {
+      font-size: 14px;
+      font-weight: 600;
       color: #787878;
-      text-overflow: ellipsis; 
-      overflow: hidden; 
-      white-space: nowrap; 
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
       width: 80%;
     }
 
-    .taskDate{
-      color: gray; 
-      font-size: 12px; 
+    .taskDate {
+      color: gray;
+      font-size: 12px;
       font-weight: 500;
       width: 20%;
     }
 
-    .taskMessage{
-      font-size: 1em; 
-      text-align: left; 
-      font-weight: 400; 
-      color: #787878; 
+    .taskMessage {
+      font-size: 1em;
+      text-align: left;
+      font-weight: 400;
+      color: #787878;
     }
-		
+
+    .lineStyle{
+      border-left: 1px solid red;
+      position: absolute;
+      content: "";
+      left: 18px;
+      z-index: 888888;
+      height: 95%;
+    }
   </style>
 </head>
 
@@ -124,26 +133,11 @@
           </td>
         </tr>
         <tr>
-          <td>
-            #foreach($workflow in $task.getWorkflows())
-              <table class="taskTable">
-                <tr>
-                  <td class="taskName">
-                    $workflow.getName()
-                  </td>
-                  <td class="taskDate">
-                    $workflow.getDate()
-                  </td>
-                </tr>
-                <tr>
-                  <td class="taskMessage" colspan="2">
-                    $workflow.getMessage()
-                  </td>
-                </tr>
-              </table>
-            #end
-          </td>
-        </tr>
+          <table class="taskTable">
+            <tr>
+            	$list
+            </tr>
+          </table>
         </tr>
         <tr>
           <td>
@@ -156,6 +150,7 @@
               este correo.</div>
           </td>
         </tr>
+        </tbody>
       </table>
     </div>
   </div>

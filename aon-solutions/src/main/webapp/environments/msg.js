@@ -56,7 +56,6 @@ export const ASESOR = MSG.ASESOR;
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
 export const ATTACH_FILES_DRAGGING_DROPPING = "Adjunte archivos arrastrándolos y soltándolos"; //TODO
-
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -195,7 +194,7 @@ export const IRPF = MSG.IRPF;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
-
+export const INTERNAL = "Interno"; //TODO
 // ----- J
 
 // ----- K
@@ -363,6 +362,8 @@ export const TASK_TRAY = "Bandeja Tareas";//TODO
 export const TITLE = "Título" //TODO
 export const TRAY = "Bandeja";//TODO
 export const TYPE_HERE = "Escriba aquí"; //TODO
+export const TYPE_REQUEST = "Tipo solicitud";//TODO
+
 
 // ----- U
 

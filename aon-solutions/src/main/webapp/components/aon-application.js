@@ -383,6 +383,7 @@ export class AonApplication extends AonElement {
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
     div.style.borderBottom = "1px solid #ebebeb";
+    div.style.backgroundColor = "#fff";
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {
@@ -400,20 +401,8 @@ export class AonApplication extends AonElement {
 
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
+    sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
-    sidenavTitle.style.cursor = "pointer";
-    sidenavTitle.style.userSelect = "none";
-    sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
-      const ul = div.querySelector("ul");
-      if(ul){
-       ul.classList.toggle(CSS.ELEMENT_HIDDEN);
-      }
-    });
-
-    // let arrowTitle = this.createElement("i");
-    // arrowTitle.innerHTML = "arrow_right";
-    // arrowTitle.className = "material-icons aonVerticalMiddle";
-    // sidenavTitle.appendChild(arrowTitle);
 
     let span = this.createElement(TAG.SPAN);
     span.innerHTML = data.name;
@@ -600,6 +589,35 @@ export class AonApplication extends AonElement {
         },
         options
       );
+    }
+  }
+
+  addSidenavTitleExpandIcon(id){
+    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    const div = this.getElement(sidenavId+id);
+    if(div){
+      const sidenavTitle = div.querySelector( "#aonSidenavTitle"+id);
+      if(sidenavTitle){
+        sidenavTitle.style.cursor = "pointer";
+        sidenavTitle.style.userSelect = "none";
+        sidenavTitle.style.marginLeft = "2px";
+        
+        let arrowTitle = this.createElement("i");
+        arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+        arrowTitle.className = "material-icons aonVerticalMiddle";
+        sidenavTitle.insertBefore(arrowTitle, sidenavTitle.firstChild);
+
+        sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+          const ul = div.querySelector("ul");
+          if(ul){
+            ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+            if(ul.classList.contains(CSS.ELEMENT_HIDDEN))
+              arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+            else 
+              arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+          }
+        });  
+      }
     }
   }
 

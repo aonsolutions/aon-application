@@ -175,7 +175,7 @@ export class AonSelect extends AonElement {
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
 
-    options.unshift({ name:"-", value:"" }); //EMPTY
+    if(this.default) options.unshift({ name:"-", value:"" }); //EMPTY
 
     let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';

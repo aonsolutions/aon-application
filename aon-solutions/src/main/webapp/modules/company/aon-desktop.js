@@ -156,7 +156,7 @@ export class AonDesktop extends AonElement {
 						} 
 					}
 				}, {
-					name: 'Solicitudes',
+					name: 'Solicitudes Enviadas',
 					icon: MATERIAL_ICONS.OUTBOX,
 					fn: () =>{
 						if(this.isBeta()){
@@ -170,7 +170,7 @@ export class AonDesktop extends AonElement {
 						}
 					} 
 				},{
-					name: 'Tareas',
+					name: 'Solicitudes Recibidas',
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 					fn: () =>{
 						if(this.isBeta()){
@@ -546,8 +546,8 @@ export class AonDesktop extends AonElement {
 
 		getTaskHolder().then(th=>{
 			getTaskCount({task_holder:th.id}).then(count=>{
-				application.updateSidenavCount("Solicitudes", count.sender);
-				application.updateSidenavCount("Tareas", count.task_holder);
+				application.updateSidenavCount("Solicitudes Enviadas", count.sender);
+				application.updateSidenavCount("Solicitudes Recibidas", count.task_holder);
 			});
 		});
 		
@@ -597,7 +597,7 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
-				this.addMessenger(button);
+				this.addMessenger();
 				break;
 			}
 	}
@@ -698,40 +698,42 @@ export class AonDesktop extends AonElement {
 		d.open();
 	}
 
-	addMessenger(button) {		
+	addMessenger() {		
 		let aonMessengerChat = new AonMessenger();	
-		let top  = button.getBoundingClientRect().top;
-		const left = button.getBoundingClientRect().left;
-		let d = this.getApplication().getOptionDialog();
-		let options = [{
-			name: MSG.QUERY,
-			icon: MATERIAL_ICONS.INFO,
-			icon_class: 'material-icons-outlined',
-			fn: () => {
-				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
-				this.rootPanel(aonMessengerChat);
-			}
-		}, {
-			name: MSG.REQUEST,
-			icon: MATERIAL_ICONS.ASSIGNMENT,
-			fn: () => {
-				aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
-				this.rootPanel(aonMessengerChat);
-			}
-		}];
-		if(this.dur.hasCallCenter()){
-			options.push({
-			  name: MSG.CAU,
-			  icon: MATERIAL_ICONS.SUPPORT_AGENT,
-			  fn: () => {
-				aonMessengerChat.data = {source:TASK_SOURCE.CAU};
-				this.rootPanel(aonMessengerChat);
-			  }
-			});
-		}
+		aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+		this.rootPanel(aonMessengerChat);
+	// 	let top  = button.getBoundingClientRect().top;
+	// 	const left = button.getBoundingClientRect().left;
+	// 	let d = this.getApplication().getOptionDialog();
+	// 	let options = [{
+	// 		name: MSG.QUERY,
+	// 		icon: MATERIAL_ICONS.INFO,
+	// 		icon_class: 'material-icons-outlined',
+	// 		fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		}
+	// 	}, {
+	// 		name: MSG.REQUEST,
+	// 		icon: MATERIAL_ICONS.ASSIGNMENT,
+	// 		fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		}
+	// 	}];
+	// 	if(this.dur.hasCallCenter()){
+	// 		options.push({
+	// 		  name: MSG.CAU,
+	// 		  icon: MATERIAL_ICONS.SUPPORT_AGENT,
+	// 		  fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.CAU};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		  }
+	// 		});
+	// 	}
 
-		d.setMenuOptions(options, top, left);
-		d.open();
+	// 	d.setMenuOptions(options, top, left);
+	// 	d.open();
 	}
 }
 

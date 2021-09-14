@@ -91,6 +91,14 @@ public class TaskWorkflowDAO {
 			: insert(ctx, taskWorkflow);
 	}
 	
+	public static void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter) {
+		ctx.getDslContext().update(TASK_WORKFLOW)
+			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
+			.execute();
+	}
+	
+	
 	public static TaskWorkflow update(AONContext ctx, TaskWorkflow taskWorkflow) {
 		taskWorkflow.setModificationDate(AonDateUtils.toTimestamp(new Date()));
 		ctx.getDslContext().update(TASK_WORKFLOW)
@@ -107,15 +115,14 @@ public class TaskWorkflowDAO {
 	}
 	
 	public static TaskWorkflow insert(AONContext ctx, TaskWorkflow taskWorkflow) {
-		taskWorkflow.setModificationDate(AonDateUtils.toTimestamp(new Date()));
 		Integer id = ctx.getDslContext().insertInto(TASK_WORKFLOW)
 				.set(TASK_WORKFLOW.DOMAIN, taskWorkflow.getDomain())
 				.set(TASK_WORKFLOW.TASK, taskWorkflow.getTask())
 				.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 				.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 				.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
-				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
-				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
+				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
+//				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();

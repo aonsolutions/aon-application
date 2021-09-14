@@ -2,10 +2,10 @@ import { AonToolbar } from "../../../components/aon-toolbar";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
-import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { buildFormQuery, buildFormRequest, buildTextareaToolbar, checkFilesAddEventDescription, downChat, getIconJson, upChat } from "./utils";
+import { buildForm, buildTextareaToolbar, downChat, getIconJson, upChat } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -21,14 +21,10 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
 
-  const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
-
-  if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST) 
-    buildRequest(firstDiv, aonMessengerChat);
-  else 
-    buildQuery(firstDiv, aonMessengerChat); 
+  buildForm(firstDiv, aonMessengerChat);
 
   if(aonMessengerChat.task.id){
+    const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
     buildSectionHistoric(secondDiv);
   }
 }
@@ -82,47 +78,6 @@ const buildToolbar = (aonMessengerChat) => {
     status.element.style.marginLeft = "10px";
     status.element.style.marginTop = "-1px";
     status.appendTo(titleSpan);
-}
-
-/**
- * SOURCE QUERY
- * @param {HTMLElement} firstDiv firstDiv
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- */
-const buildQuery = (firstDiv, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
-
-    buildFormQuery(firstDiv, aonMessengerChat);
-
-    const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
-        minHeight: '150x',
-        maxHeight: '300px',
-        position: 'relative'
-    });
-    aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
-    firstDiv.appendChild(aonTextArea);
-    
-    const label = aonTextArea.addLabelTextEnd();
-    label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
-
-    aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
-      task.setFiles(target.FILES);
-    });
-    if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-    checkFilesAddEventDescription(task);//check files description
-    
-    buildTextareaToolbar(aonTextArea, task, false);
-}
-
-/**
- * SOURCE PROCESS
- * @param {HTMLElement} firstDiv firstDiv
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- */
- const buildRequest = (firstDiv, aonMessengerChat) => {
-
-  buildFormRequest(firstDiv, aonMessengerChat);
-
 }
 
 /**
@@ -288,5 +243,29 @@ const addChatButtonsUpDown = (secondDiv) => {
   });
   downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);
-
 }
+
+
+const addTaskDescription = () =>{
+  const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
+  const task = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).task;
+  const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
+      minHeight: '150x',
+      maxHeight: '300px',
+      position: 'relative'
+  });
+  processDiv.id = MESSENGER_IDS.DESCRIPTION_TASK;
+  div.appendChild(aonTextArea);
+  
+  const label = aonTextArea.addLabelTextEnd();
+  label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
+
+  aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
+    task.setFiles(target.FILES);
+    if(target.value) task.setDescriptionJson({observation:target.value})
+  });
+  if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
+  checkFilesAddEventDescription(task);//check files description
+  
+  buildTextareaToolbar(aonTextArea, task, false);
+} 

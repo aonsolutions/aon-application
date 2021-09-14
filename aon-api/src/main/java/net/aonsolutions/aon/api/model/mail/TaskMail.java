@@ -57,7 +57,7 @@ public class TaskMail {
 		for(TaskWorkflow workflow: workflows) {
 			WorkflowMail wemail = new WorkflowMail();
 			wemail.setName(workflow.getTaskHolder().getName());
-			wemail.setDate(workflow.getCreationDate());
+			wemail.setDate(workflow.getModificationDate()!=null ? workflow.getModificationDate() : workflow.getCreationDate() );
 			wemail.setMessage(workflow.getComment());
 			workflowsList.add(wemail);
 		}

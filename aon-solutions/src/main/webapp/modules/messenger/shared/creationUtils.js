@@ -2,6 +2,7 @@ import { AonCard } from "../../../components/aon-card.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
+import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
@@ -203,7 +204,8 @@ const createMessageBox = (properties) =>{
         width: '90%'
     },
     dataset:{
-      id: properties.id
+      id: properties.id,
+      me: properties.direction  ? true : false
     }
   }).element;
   if(properties.direction == RIGHT)
@@ -333,7 +335,6 @@ export const titleFirstDiv  = (title="") => {
     });
     span.textContent = title;
     div.appendChild(span);
-
     return div.element;
 }
 
@@ -418,6 +419,13 @@ const checkProperties = (properties) => {
     return properties;
 }
 
+//----------------TYPE REQUEST   
+export const createRequestType = () =>setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.SOURCE_TASK,
+  name: MESSENGER_IDS.SOURCE_TASK,
+  title: MSG.TYPE_REQUEST
+});
+
 //----------------WORKGROUP   
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.WORKGROUP,
@@ -486,7 +494,6 @@ const iconComment = (icon) => {
     return a;
 }
 
-let messageSend = false;
 /**
  * Create a new message
  * @param {*} properties 
@@ -497,12 +504,14 @@ export const createChatMessage = (properties, chat) => {
 
     let me = properties.direction === RIGHT;
 
+    let messageSend = properties.modification_date; // si el mensaje fue enviado
+
     const message = createMessageBox(properties);
     chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.date)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(messageSend)) : MSG.SEND;
 
       let color = COLORS.AON_BLUE;
 
@@ -515,17 +524,7 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> {
-          let aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-          await taskHistoricSend({...aonMessengerChat.task, workflowId: properties.id});
-
-          //CHANGE STYLE IF SEND MESSAGE
-          message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
-          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(new Date())
-          iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
-          iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
-
-        });
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(message.dataset.id));
       } else {
         properties.marginLeft = "20px";
       }
@@ -659,10 +658,46 @@ export const createInputContact = () =>  setAttributes(new AonInput(),{
 });
 
 export const createLabelFileText = () => {
-  const label =  setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
-  const span  =  setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
+  const label = setStyles(document.createElement(TAG.LABEL),{ color:"grey",  cursor:"pointer", width:"100%", borderTop :"1px dotted grey"});
+  const span  = setStyles(document.createElement(TAG.SPAN),{ margin:"0 5px"});
   span.innerHTML = MSG.ATTACH_FILES_DRAGGING_DROPPING;
   label.appendChild(span);
   return label;
 }
 
+export const createAonSwitch = () => {
+  let btn = new AonSwitch();
+  btn.id = MESSENGER_IDS.INTERNAL_TASK;
+  btn.title = MSG.INTERNAL;
+  btn.style.width = "23%";
+  btn.style.margin = "auto";
+  btn.addEventListener(EVENT.CHANGE, ({target}) => {
+    btn.title = target.checked ? MSG.ASESOR : MSG.INTERNAL;
+  });
+  return btn;
+}
+
+/**
+ * 
+ * @param {Number} workflowId taskworkflow id 
+ */
+const sendHistoric = async (workflowId) => {
+  const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  const workflows  = await taskHistoricSend({...aonMessengerChat.task, workflowId});
+  if(workflows && workflows.length) {
+    for (const workflow of workflows) {
+      const message = document.querySelector( `#${MESSENGER_IDS.MESSENGER_CHAT} ${MESSENGER_COMPONENTS.MESSAGE}[data-id='${workflow.id}']`);
+      if(message){
+        //CHANGE STYLE IF SEND MESSAGE
+        message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
+        const iconSendWorkflow = message.querySelector("i");
+        if(iconSendWorkflow){
+          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.modification_date || workflow.creation_date)
+          iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
+          iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
+        }
+      }
+    }
+  }
+
+}

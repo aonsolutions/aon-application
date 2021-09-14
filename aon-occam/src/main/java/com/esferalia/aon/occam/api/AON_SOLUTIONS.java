@@ -758,6 +758,12 @@ public class AON_SOLUTIONS {
 			return getTask2().getTaskWorkflowStream(ctx, filter);
 		}
 	}
+	
+	public static void updateTaskWorkflowBetween(Domain domain, User user, TaskWorkflowFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getTask2().updateTaskWorkflowBetween(ctx, filter);
+		}
+	}
 
 	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
