@@ -1,9 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
@@ -32,11 +34,19 @@ import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.TaskAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.TaskValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskDAO {
+
+	private TaskDAO() {
+		throw new IllegalStateException("Utility Class");
+	}
+	
+	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 	protected static class TaskPropertiesDAO implements TaskProperties {
@@ -80,7 +90,6 @@ public class TaskDAO {
 	}
 	
 	public static SelectSeekStep1<Record, Timestamp> select(AONContext ctx, TaskFilter filter){	
-		Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
@@ -122,7 +131,8 @@ public class TaskDAO {
 	}
 	
 	public static Task save(AONContext ctx, Task task) {
-		// TODO AUTOCOMPLETE && VALIDATE.
+		TaskAutoComplete.autoComplete(ctx, task);
+		TaskValidation.validate(ctx, task);
 		return task.getId() != null 
 			? update(ctx, task)
 			: insert(ctx, task);
@@ -205,21 +215,19 @@ public class TaskDAO {
 	}
 	
 	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
-		HashMap<Byte, Integer> map = new HashMap<Byte, Integer>();
+		HashMap<Byte, Integer> map = new HashMap<>();
 		ctx.getDslContext()
 		.select(DSL.count(TASK.STATUS).as(DSL.name("count")), TASK.STATUS)
 		.from(TASK)
 		.where(TASK_PROPERTIES.getConditions(filter))
 		.groupBy(TASK.STATUS)
-		.fetch().stream().forEach(r->{
-			map.put(r.get(TASK.STATUS), (Integer) r.get(DSL.name("count")));
-		});
+		.fetch().stream().forEach(r-> map.put(r.get(TASK.STATUS), (Integer) r.get(DSL.name("count"))));
 		return map;
 	}
 	
 	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		Integer sender = (Integer) ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
+		HashMap<String, Integer> map = new HashMap<>();
+		Integer sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.and(TASK.SENDER.eq(taskHolderId))
 				.groupBy(TASK.SENDER)
@@ -227,7 +235,7 @@ public class TaskDAO {
 		if(sender==null) 	
 			sender = 0;
 		
-		Integer taskHolder = (Integer) ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
+		Integer taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.and(TASK.TASK_HOLDER.eq(taskHolderId))
 				.groupBy(TASK.TASK_HOLDER)
@@ -279,8 +287,6 @@ public class TaskDAO {
 
 		@Override
 		public Task apply(Record r) {
-			Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
-
 			return new Task()
 				.setId(r.getValue(TASK.ID))
 				.setDomain(r.getValue(TASK.DOMAIN))
