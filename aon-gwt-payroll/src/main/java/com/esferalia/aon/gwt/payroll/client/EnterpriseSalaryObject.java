@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +17,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseSalaryObject {
 	
-	//Starting Service
-	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	// --------------------------------------------- Variables
+	
+	final DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
 	private Enterprise enterprise;
@@ -32,6 +32,8 @@ public class EnterpriseSalaryObject {
 	
 	private String emailStatus;
 	
+	// --------------------------------------------- Constructor
+	
 	public EnterpriseSalaryObject() {
 		super();
 	}
@@ -41,6 +43,8 @@ public class EnterpriseSalaryObject {
 		this.workplaces = enterprise.getWorkplaces();
 		this.filter = new SalaryInfoFilter();
 	}
+	
+	// --------------------------------------------- Database Methods
 
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
@@ -60,9 +64,8 @@ public class EnterpriseSalaryObject {
 			public void onSuccess(List<SalaryInfo> result) {
 				enterpriseSalaries = result;
 				getEnterpriseEmployeesDB(
-						s -> {
-							success.accept(result);
-						}, f -> {}
+						s -> success.accept(result), 
+						f -> {}
 				);
 			}
 			
@@ -73,7 +76,9 @@ public class EnterpriseSalaryObject {
 		employeesService.getEnterpriseActiveEmployees(enterprise.getId(), new AsyncCallback<List<EmployeeInfo>>() {
 
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
 			public void onSuccess(List<EmployeeInfo> result) {
@@ -84,7 +89,7 @@ public class EnterpriseSalaryObject {
 	}
 	
 	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
-		ArrayList<Integer> ids = new ArrayList<Integer>();
+		ArrayList<Integer> ids = new ArrayList<>();
 		for(SalaryInfo salary : salaries) {
 			ids.add(salary.getId());
 		}
@@ -105,7 +110,7 @@ public class EnterpriseSalaryObject {
 	}
 	
 	public void sendPayrollEmail(Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, Consumer<String> success, Consumer<Throwable> failure) {
-		impl.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML, new AsyncCallback<String>() {
+		enterpriseService.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML, new AsyncCallback<String>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -121,62 +126,15 @@ public class EnterpriseSalaryObject {
 		});
 	}
 	
+	// --------------------------------------------- Get Info Methods
+	
 	public List<SalaryInfo> getEnterpriseSalaries() {
-		this.enterpriseSalaries.sort(new Comparator<SalaryInfo>() {
-
-			@Override
-			public int compare(SalaryInfo o1, SalaryInfo o2) {
-				return AonStringUtils.compare(o1.getEmployeeName(), o2.getEmployeeName());
-			}
-		});
-		
+		this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
 		return this.enterpriseSalaries;
 	}
 	
 	public SalaryInfoFilter getFilter() {
 		return this.filter;
-	}
-	
-	public List<String> getWorkplacesNames(){
-		List<String> workplaceNames = new ArrayList<String>();
-		
-		for(Workplace workplace: workplaces) {
-			if(workplace.getId() >= 0) {
-				workplaceNames.add(workplace.getDescription());
-			}
-		}
-		
-		return workplaceNames;
-	}
-	
-	public ArrayList<String> getEnterpriseEmployeesName(){
-		ArrayList<String> names = new ArrayList<>();
-		for(EmployeeInfo employeeInfo : enterpriseEmployees)
-			if("" != employeeInfo.getName())
-				names.add(employeeInfo.getName() + ", " + employeeInfo.getSurName());
-		return names;
-	}
-	
-	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
-		String name = nameSurname.split(", ")[0].trim();
-		String surname = nameSurname.split(", ")[1].trim();
-		
-		for(EmployeeInfo employee : enterpriseEmployees) {
-			if( AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && 
-				AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim())) {
-				return employee;
-			}
-		}
-		return null;
-	}
-
-	public Workplace getWorkplaceByDescription(String workplaceDescription) {
-		for(Workplace workplace : workplaces) {
-			if(AonStringUtils.equalsIgnoreCase(workplaceDescription, workplace.getDescription()))
-				return workplace;
-		}
-		
-		return null;
 	}
 	
 	public String getEnterpriseName() {
@@ -186,5 +144,55 @@ public class EnterpriseSalaryObject {
 	public String getEmailStatus(){
 		return this.emailStatus;
 	}
+	
+	public List<String> getWorkplacesNames(){
+		List<String> workplaceNames = new ArrayList<>();
+		workplaces.forEach(workplace -> {
+			if(workplace.getId() >= 0) workplaceNames.add(workplace.getDescription());
+		});
+		
+		return workplaceNames;
+	}
+	
+	public ArrayList<String> getEnterpriseEmployeesName(){
+		ArrayList<String> names = new ArrayList<>();
+		enterpriseEmployees.forEach(employeeInfo -> {
+			if(AonStringUtils.isNotBlank(employeeInfo.getName())) names.add(employeeInfo.getName() + ", " + employeeInfo.getSurName());
+		});
+		
+		return names;
+	}
+	
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		if(AonStringUtils.isBlank(nameSurname)) return null;
+		
+		String name = nameSurname.split(", ")[0].trim();
+		String surname = nameSurname.split(", ")[1].trim();
+		
+		for(EmployeeInfo employee : enterpriseEmployees)
+			if(AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim())) 
+				return employee;
+		
+		return null;
+	}
+
+	public Workplace getWorkplaceByDescription(String workplaceDescription) {
+		for(Workplace workplace : workplaces)
+			if(AonStringUtils.equalsIgnoreCase(workplaceDescription, workplace.getDescription()))
+				return workplace;
+		
+		return null;
+	}
+	
+	// --------------------------------------------- Auxiliar Methods
+	
+	private int compareString(Object o1, Object o2, String s1, String s2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return s1.compareTo(s2);
+	}
+	
 		
 }
