@@ -1,24 +1,24 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceSalaryObject {
 	
-	//Starting Service
+	// --------------------------------------------- Variables
+	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
@@ -31,6 +31,8 @@ public class WorkplaceSalaryObject {
 	
 	private String emailStatus;
 	
+	// --------------------------------------------- Constructor
+	
 	public WorkplaceSalaryObject() {
 		super();
 	}
@@ -40,6 +42,8 @@ public class WorkplaceSalaryObject {
 		this.filter = new SalaryInfoFilter();
 		this.workplaceEmployees = new WorkplaceEmployees();
 	}
+	
+	// --------------------------------------------- Database Methods
 
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
@@ -59,9 +63,8 @@ public class WorkplaceSalaryObject {
 			public void onSuccess(List<SalaryInfo> result) {
 				workplaceSalaries = result;
 				getWorkplaceEmployeesDB(
-						s -> {
-							success.accept(result);
-						}, f -> {}
+						s -> success.accept(result), 
+						f -> {}
 				);
 			}
 			
@@ -72,7 +75,9 @@ public class WorkplaceSalaryObject {
 		employeesService.getWorkplaceActiveEmployees(workplace.getId(), new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
@@ -83,10 +88,8 @@ public class WorkplaceSalaryObject {
 	}
 	
 	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
-		ArrayList<Integer> ids = new ArrayList<Integer>();
-		for(SalaryInfo salary : salaries) {
-			ids.add(salary.getId());
-		}
+		ArrayList<Integer> ids = new ArrayList<>();
+		salaries.forEach(salary -> ids.add(salary.getId()));
 		
 		employeesService.deleteSalaries(ids, new AsyncCallback<Void>(){
 
@@ -120,45 +123,52 @@ public class WorkplaceSalaryObject {
 		});
 	}
 	
+	// --------------------------------------------- Getters Methods
+	
 	public String getWorkplaceName() {
 		return this.workplace.getDescription();
-	}
-	
-	public List<SalaryInfo> getWorkplaceSalaries() {
-		this.workplaceSalaries.sort(new Comparator<SalaryInfo>() {
-
-			@Override
-			public int compare(SalaryInfo o1, SalaryInfo o2) {
-				return AonStringUtils.compare(o1.getEmployeeName(), o2.getEmployeeName());
-			}
-		});
-		
-		return this.workplaceSalaries;
-	}
-	
-	public SalaryInfoFilter getFilter() {
-		return this.filter;
 	}
 	
 	public WorkplaceEmployees getWorkplaceEmployees(){
 		return this.workplaceEmployees;
 	}
 	
-	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
-		String name = nameSurname.split(", ")[0].trim();
-		String surname = nameSurname.split(", ")[1].trim();
-		
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()) {
-			if( AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && 
-				AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim())) {
-				return employee;
-			}
-		}
-		return null;
+	public SalaryInfoFilter getFilter() {
+		return this.filter;
 	}
 	
 	public String getEmailStatus(){
 		return this.emailStatus;
+	}
+	
+	public List<SalaryInfo> getWorkplaceSalaries() {
+		this.workplaceSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
+		return this.workplaceSalaries;
+	}
+	
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		if(AonStringUtils.isBlank(nameSurname)) return null;
+		
+		String name = nameSurname.split(", ")[0].trim();
+		String surname = nameSurname.split(", ")[1].trim();
+		
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if( AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && 
+				AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim()))
+				return employee;
+			
+		
+		return null;
+	}
+	
+	// --------------------------------------------- Auxiliar Methods
+	
+	private int compareString(Object o1, Object o2, String s1, String s2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return s1.compareTo(s2);
 	}
 		
 }
