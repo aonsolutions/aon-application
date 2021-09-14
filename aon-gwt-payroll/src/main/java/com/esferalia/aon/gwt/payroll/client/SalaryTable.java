@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +11,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -29,63 +28,63 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class SalaryTable extends ResizeComposite {
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------ UiBinder 
 
 	private static SalaryTableUiBinder uiBinder = GWT.create(SalaryTableUiBinder.class);
 
 	interface SalaryTableUiBinder extends UiBinder<Widget, SalaryTable> {}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
-
-	@UiField
-	ScrollPanel scrollPanel;
+	// ------------------------------------------ UiFields
 	
 	@UiField(provided = true)
 	DataGrid<SalaryInfo> salaryDG;
 	
-	// -------------------------------------------------- Variables -------------------------------------------------
+	// ------------------------------------------ Variables
+	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private MultiSelectionModel<SalaryInfo> selectionModel;
+	
+	private static final String EMPTYDOUBLEVALUE = "00,00";
 	
 	private List<SalaryInfo> salaryInfoList;
 	private List<SalaryInfo> salariesList;
-	private MultiSelectionModel<SalaryInfo> selectionModel;
-	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 
-	// ------------------------------------------------- Constructor ------------------------------------------------
+	// ------------------------------------------ Constructor
 
-	public SalaryTable() {
+	protected SalaryTable() {
 		provideSalaryDataGrid();
 		initWidget(uiBinder.createAndBindUi(this));
 		salariesList = Collections.emptyList();
-		// Set scrollPanel height
-	    setScrollPanelHeight();
+	    setGridHeight();
 	}
 	
-	// ----------------------------------------------- Provied DataGrid ---------------------------------------------
+	private void setGridHeight() {
+		this.salaryDG.setHeight((Window.getClientHeight() - 250) + "px");
+	}
+
+	// ------------------------------------------ Provied DataGrid
 
 	private void provideSalaryDataGrid() {
 		salaryInfoList = Collections.emptyList();
 		
 		// Resource Style CellTable
-		salaryDG = new CustomDataGrid<SalaryInfo>(Integer.MAX_VALUE, SalaryInfo.KEY_PROVIDER);
+		salaryDG = new CustomDataGrid<>(Integer.MAX_VALUE, SalaryInfo.KEY_PROVIDER);
 		
 		//Do not refresh the headers every time the dataGrid is updated.
 		salaryDG.setAutoHeaderRefreshDisabled(true);
 		
 		// Set the message to display when the table is empty.
-		salaryDG.setEmptyTableWidget(new Label(("No existen n" + String.valueOf("\u00F3") + "minas").toUpperCase()));
+		salaryDG.setEmptyTableWidget(new Label(("No existen n\u00F3minas").toUpperCase()));
 		
 		// Add a selection model so we can select cells.
-	    this.selectionModel = new MultiSelectionModel<SalaryInfo>(SalaryInfo.KEY_PROVIDER);
+	    this.selectionModel = new MultiSelectionModel<>(SalaryInfo.KEY_PROVIDER);
 	    salaryDG.setSelectionModel(this.selectionModel, DefaultSelectionEventManager.<SalaryInfo> createCheckboxManager());
 	    
 	    // Initialize the columns.
@@ -98,27 +97,24 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 	
 	public void addStyleToHeader() {
-		salaryDG.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		salaryDG.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDG.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		String headerStyle = "rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header";
+		salaryDG.getHeader(0).setHeaderStyleNames(headerStyle);
+		salaryDG.getHeader(1).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(2).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(3).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(4).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(5).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(6).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(7).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(8).setHeaderStyleNames(headerStyle);
+	    salaryDG.getHeader(9).setHeaderStyleNames(headerStyle);
 	}
 	
 	private void addColumns(MultiSelectionModel<SalaryInfo> selectionModel) {
-		selectionModel.addSelectionChangeHandler(new Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				onSelectionSalaryChange(selectionModel.getSelectedSet().size() > 0);
-			}
-	    });
+		
+		selectionModel.addSelectionChangeHandler(e -> onSelectionSalaryChange(!selectionModel.getSelectedSet().isEmpty()));
 	    
-	   Column<SalaryInfo, Boolean> checkColumn = new Column<SalaryInfo, Boolean>(new CheckboxCell(true, false)) {
+		Column<SalaryInfo, Boolean> checkColumn = new Column<SalaryInfo, Boolean>(new CheckboxCell(true, false)) {
 			@Override
 			public Boolean getValue(SalaryInfo salaryInfo) {
 				return selectionModel.isSelected(salaryInfo);
@@ -129,29 +125,14 @@ public abstract class SalaryTable extends ResizeComposite {
 	    Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB) {
 	    	@Override
 	    	public Boolean getValue() {
-	    		boolean value = false;
-	    	
-	    		if(null != salariesList)
-	    			value = selectionModel.getSelectedSet().size() == salariesList.size();
-	        
-	    		return value; 
+	    		if(null == salariesList) return false;
+	    		return selectionModel.getSelectedSet().size() == salariesList.size();
 	    	}
 	    	
-//	    	@Override
-//	    	public void render(Context context, SafeHtmlBuilder sb) {
-//	    		sb.appendHtmlConstant("<input type=\"checkbox\" tabindex=\"-1\" style=\"margin-left: 0;\">");
-//	    	}
 	    };
 	    
-	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>() {
-	    	@Override
-	    	public void update(Boolean value) {
-		        for (SalaryInfo salary : salariesList)
-		          selectionModel.setSelected(salary, value);
-	    	}
-	    });
+	    selectAllHeader.setUpdater(value -> salariesList.forEach(salary -> selectionModel.setSelected(salary, value)));
 	    
-	    // Add Selection Column to table
 	    salaryDG.addColumn(checkColumn,selectAllHeader);
 	    salaryDG.setColumnWidth(checkColumn, 5, Unit.PCT);
 	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -186,7 +167,6 @@ public abstract class SalaryTable extends ResizeComposite {
 	    	}
 	    };
 
-	    // Make the  start date column sortable.
 	    startDateColumn.setSortable(true);
 	    salaryDG.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
@@ -216,8 +196,8 @@ public abstract class SalaryTable extends ResizeComposite {
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
 	    	@Override
 	    	public String getValue(SalaryInfo salaryInfo) {
-	    		if(null == salaryInfo.getTotalPayment() || AonNumberUtils.equals(0, salaryInfo.getTotalPayment()))
-	    			return "00,00";
+	    		if(isEmptyDoubleValue(salaryInfo.getTotalPayment()))
+	    			return EMPTYDOUBLEVALUE;
 	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalPayment());
 	    	}
 	    };
@@ -229,8 +209,8 @@ public abstract class SalaryTable extends ResizeComposite {
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
 	    	@Override
 	    	public String getValue(SalaryInfo salaryInfo) {
-	    		if(null == salaryInfo.getTotalDecuction() || AonNumberUtils.equals(0, salaryInfo.getTotalPayment()))
-	    			return "00,00";
+	    		if(isEmptyDoubleValue(salaryInfo.getTotalDecuction()))
+	    			return EMPTYDOUBLEVALUE;
 	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalDecuction());
 	    	}
 	    };
@@ -242,26 +222,22 @@ public abstract class SalaryTable extends ResizeComposite {
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
 	    	@Override
 	    	public String getValue(SalaryInfo salaryInfo) {
-	    		if(null == salaryInfo.getTotalLiquid() || AonNumberUtils.equals(0, salaryInfo.getTotalPayment()))
-	    			return "00,00";
-	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid())+" "+String.valueOf("\u20AC");
+	    		if(isEmptyDoubleValue(salaryInfo.getTotalLiquid()))
+	    			return EMPTYDOUBLEVALUE;
+	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid()) + " \u20AC";
 	    	}
 	    };
 	    
 	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 	    salaryDG.setColumnWidth(totalLiquidColumn, 10, Unit.PCT);
 	    
-	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("", new ActionCell.Delegate<SalaryInfo>() {
-			@Override
-			public void execute(SalaryInfo salaryInfo) {
-				EmployeeTree.showSalaryDraft(
-						salaryInfo.getContract(),
-						salaryInfo.getWorkplaceId(), 
-						salaryInfo.getStartDate(),
-						salaryInfo.getEndDate());
-			}
-			
-		});
+	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<>("", salaryInfo ->
+	    	EmployeeTree.showSalaryDraft(
+					salaryInfo.getContract(),
+					salaryInfo.getWorkplaceId(), 
+					salaryInfo.getStartDate(),
+					salaryInfo.getEndDate())
+	    );
 	    
 	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
 
@@ -291,19 +267,23 @@ public abstract class SalaryTable extends ResizeComposite {
 	    
 		salaryDG.addColumn(totalPaymentColumn, "Bruto");
 		salaryDG.addColumn(totalDeductionColumn, "Deducciones");
-		salaryDG.addColumn(totalLiquidColumn, "L"+String.valueOf("\u00ED")+"quido");
+		salaryDG.addColumn(totalLiquidColumn, "L\u00EDquido");
 	    
 		salaryDG.addColumn(draftColumn, "");   
 	}
 	
-	// ------------------------------------------------ Init SalaryDG -----------------------------------------------
+	private boolean isEmptyDoubleValue(Double value) {
+		return null == value || AonNumberUtils.equals(0, value);
+	}
+	
+	// ------------------------------------------ Init SalaryDG
 	
 	public void initSalariesTable() {		
 		//Reset Selection Model 
 		selectionModel.clear();
 		
 		// Create a data provider.
-	    ListDataProvider<SalaryInfo> dataProvider = new ListDataProvider<SalaryInfo>();
+	    ListDataProvider<SalaryInfo> dataProvider = new ListDataProvider<>();
 
 	    // Connect the table to the data provider.
 	    dataProvider.addDataDisplay(salaryDG);
@@ -325,71 +305,47 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 
 	private void addSortColums(List<SalaryInfo> salaryInfoList) {
-		ListHandler<SalaryInfo> columnSortHandler = new ListHandler<SalaryInfo>(salaryInfoList);
+		ListHandler<SalaryInfo> columnSortHandler = new ListHandler<>(salaryInfoList);
 		
-	    columnSortHandler.setComparator(salaryDG.getColumn(1), new Comparator<SalaryInfo>() {
-	    	public int compare(SalaryInfo o1, SalaryInfo o2) {        
-	    		if (o1 == o2) return 0;
-
-	            if (o1 != null)
-	            	return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
-	            
-	            return -1;
-	    	}
-	    });
+	    columnSortHandler.setComparator(salaryDG.getColumn(1),
+	    		(o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(2), new Comparator<SalaryInfo>() {
-	    	public int compare(SalaryInfo o1, SalaryInfo o2) {
-	    		if (o1 == o2) return 0;
-
-	            if (o1 != null)
-	            	return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
-	            
-	            return -1;
-	    	}
-	    });
+	    columnSortHandler.setComparator(salaryDG.getColumn(2),
+	    		(o1, o2) -> compareString(o1, o2, o1.getWorkplaceName(), o2.getWorkplaceName()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(3), new Comparator<SalaryInfo>() {
-	    	public int compare(SalaryInfo o1, SalaryInfo o2) {
-	    		if (o1 == o2) return 0;
-
-	            if (o1 != null)
-	            	return (o2 != null) ? o1.getStartDate().compareTo(o2.getStartDate()) : 1;
-	            
-	            return -1;
-	    	}
-	    });
+	    columnSortHandler.setComparator(salaryDG.getColumn(3),
+	    		(o1, o2) -> compareDates(o1, o2, o1.getStartDate(), o2.getStartDate()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(4), new Comparator<SalaryInfo>() {
-	    	public int compare(SalaryInfo o1, SalaryInfo o2) {
-	    		if (o1 == o2) return 0;
-	            
-	        	if (o1 != null)
-	        		return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
-	            
-	  	        return -1;
-	        }
-	    });
+	    columnSortHandler.setComparator(salaryDG.getColumn(4),
+	    		(o1, o2) -> compareDates(o1, o2, o1.getEndDate(), o2.getEndDate()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(5), new Comparator<SalaryInfo>() {
-	    	public int compare(SalaryInfo o1, SalaryInfo o2) {
-	    		if (o1 == o2) return 0;
-
-	        	if (o1 != null)
-	        		return (o2 != null) ? o1.getType().getDescription().compareTo(o2.getType().getDescription()) : 1;
-	            
-	  	        return -1;
-	        }
-	    });
+	    columnSortHandler.setComparator(salaryDG.getColumn(5),
+	    		(o1, o2) -> compareString(o1, o2, o1.getType().getDescription(), o2.getType().getDescription()));
 	    
 	    salaryDG.addColumnSortHandler(columnSortHandler);
 
 	    // We know that the data is sorted alphabetically by default.
-	    salaryDG.getColumn(5).setDefaultSortAscending(false);
-	    salaryDG.getColumnSortList().push(salaryDG.getColumn(1));   
+	    salaryDG.getColumn(4).setDefaultSortAscending(false);
+	    salaryDG.getColumnSortList().push(salaryDG.getColumn(4));   
+	}
+	
+	private int compareString(Object o1, Object o2, String s1, String s2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return s1.compareTo(s2);
+	}
+	
+	private int compareDates(Object o1, Object o2, Date d1, Date d2) {
+		if (o1 == o2) return 0;
+		else if (o1 == null) return -1;
+		else if (o2 == null) return 1;
+		else
+        	return d1.compareTo(d2);
 	}
 
-	// ----------------------------------------------- Aux Methods ------------------------------------------------
+	// ------------------------------------------ Auxiliar Methods
 
 	public void sortTableByName() {
 		salaryDG.getColumnSortList().push(salaryDG.getColumn(1));
@@ -401,11 +357,6 @@ public abstract class SalaryTable extends ResizeComposite {
 		ColumnSortEvent.fire(salaryDG, salaryDG.getColumnSortList());
 	}
 	
-	private void setScrollPanelHeight() {
-		scrollPanel.setHeight((Window.getClientHeight() - 235) + "px");
-		salaryDG.setHeight((Window.getClientHeight() - 245) + "px");
-	}
-	
 	public void setWorkplaceView() {
 		salaryDG.removeColumn(2);
 	}
@@ -415,7 +366,7 @@ public abstract class SalaryTable extends ResizeComposite {
 		salaryDG.removeColumn(1);
 	}
 	
-	// ---------------------------------------------- Setter Methods ----------------------------------------------
+	// ------------------------------------------ Setter Methods
 	
 	public void setSalariesList(List<SalaryInfo> salariesList) {
 		this.salariesList = salariesList;
@@ -425,7 +376,7 @@ public abstract class SalaryTable extends ResizeComposite {
 		return this.selectionModel.getSelectedSet();
 	}
 	
-	// ---------------------------------------------- Abstract Methods ----------------------------------------------
+	// ------------------------------------------ Abstract Methods
 
 	protected abstract void onSelectionSalaryChange(boolean isSomethingSelected);
 }
