@@ -5,17 +5,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
-import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -453,9 +450,9 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveTimeControlDetail(ctx, tcd);
 		}
 	}
-	public static void deleteTimeControlDetail(Domain domain, String login, TimeControlFilter filter) {
+	public static void deleteTimeControlDetail(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			getTimeControl().deleteTimeControlDetail(ctx, filter);
+			getTimeControl().deleteTimeControlDetail(ctx, id);
 		}
 	}
 	
@@ -482,9 +479,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteLocation(Domain domain, String login, Location lc) {
+	public static void deleteLocation(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			getTimeControl().deleteLocation(ctx, lc);
+			getTimeControl().deleteLocation(ctx, id);
 		}
 	}
 	
@@ -808,9 +805,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
+	public static void deleteTaskAttach(Domain domain, User user, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
-			getTask2().deleteTaskAttach(ctx, filter);
+			getTask2().deleteTaskAttach(ctx, id);
 		}
 	}
 	

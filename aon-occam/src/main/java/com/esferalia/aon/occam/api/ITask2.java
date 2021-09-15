@@ -37,5 +37,5 @@ public interface ITask2 {
 	public Stream<TaskAttach> getTaskAttachStream(AONContext ctx, TaskAttachFilter filter);
 	public LinkedList<TaskAttach> getTaskAttachList(AONContext ctx, TaskAttachFilter filter);
 	public TaskAttach saveTaskAttach(AONContext ctx, TaskAttach task);
-	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter);
+	public void deleteTaskAttach(AONContext ctx, Integer id);
 }

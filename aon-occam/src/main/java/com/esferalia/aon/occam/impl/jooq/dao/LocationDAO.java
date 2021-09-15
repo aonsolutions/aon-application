@@ -31,17 +31,22 @@ public class LocationDAO {
 			.fetch().stream().map(new LocationFiller());
 	}
 	
-	public static Location saveLocation(AONContext ctx, Location lc) {
+	public static Location save(AONContext ctx, Location lc) {
 		Location location  = lc.getId() !=0 ? update(ctx, lc) : insert(ctx, lc);
 		updateLocationUser(ctx, location);
 		return location;
 	}
+	
 	private static Location insert(AONContext ctx, Location lc) {
 		ctx.checkWrite();
-		Integer id = ctx.getDslContext()
-			.insertInto(LOCATION, LOCATION.DOMAIN, LOCATION.DESCRIPTION, LOCATION.RADIO, LOCATION.LATITUDE, LOCATION.LONGITUDE)
-			.values(lc.getDomain().getId(), lc.getDescription(), lc.getRadio(), lc.getCoordinates().getLatitude(), lc.getCoordinates().getLongitude())
-			.returning(LOCATION.ID).fetchOne().getValue(LOCATION.ID);
+		Integer id = ctx.getDslContext().insertInto(LOCATION)
+				.set(LOCATION.DOMAIN, lc.getDomain().getId())
+				.set(LOCATION.DESCRIPTION, lc.getDescription())
+				.set(LOCATION.RADIO, lc.getRadio())
+				.set(LOCATION.LATITUDE, lc.getCoordinates().getLatitude())	
+				.set(LOCATION.LONGITUDE,lc.getCoordinates().getLongitude())
+			.returning(LOCATION.ID).fetchOne().getId();
+		ctx.log().debug("INSERT LOCATION id: " + id);		
 		return lc.setId(id);
 	}
 	
@@ -55,13 +60,15 @@ public class LocationDAO {
 			.set(LOCATION.LONGITUDE, lc.getCoordinates().getLongitude())
 			.where(LOCATION.ID.eq(lc.getId()))
 			.execute();		
+		ctx.log().debug("UPDATE LOCATION id: " + lc.getId());		
 		return lc;
 	}
 	
 	
-	public static void deleteLocation(AONContext ctx, Location lc) {
+	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		ctx.getDslContext().delete(LOCATION).where(LOCATION.ID.eq(lc.getId())).execute();	
+		ctx.getDslContext().delete(LOCATION).where(LOCATION.ID.eq(id)).execute();	
+		ctx.log().debug("DELETE LOCATION id: " + id);		
 	}
 	
 	public static Location getLocation(AONContext ctx, LocationFilter filter) {

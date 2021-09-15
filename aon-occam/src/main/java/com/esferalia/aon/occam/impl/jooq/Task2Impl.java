@@ -133,8 +133,8 @@ public class Task2Impl implements ITask2 {
 	}
 	
 	@Override
-	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter) {
-		ctx.getDslContext().transaction(configuration -> TaskAttachDAO.delete(ctx, filter));
+	public void deleteTaskAttach(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> TaskAttachDAO.delete(ctx, id));
 	}
 
 	@Override

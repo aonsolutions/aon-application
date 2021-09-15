@@ -64,7 +64,8 @@ public class WorkplaceDAO {
 		.set(WORKPLACE.ACTIVE, workplace.getActive())
 		.where(WORKPLACE.ID.eq(workplace.getId()))
 		.execute();
-	};
+		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+	}
 	
 	private static class FullWorkplaceFiller implements Function<WorkplaceRecord, Workplace> {
 		
