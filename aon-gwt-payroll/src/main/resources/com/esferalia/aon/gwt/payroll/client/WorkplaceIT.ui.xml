@@ -5,16 +5,6 @@
 
 	<ui:style>
 		
-		/* UI XML Styles */
-		
-		.widthAll{
-			width: 100%
-		}
-		
-		.heightAll{
-			height: 100%;
-		}
-		
 	</ui:style>
 
 	<aon:ITWidget ui:field="itWidget"></aon:ITWidget>    
