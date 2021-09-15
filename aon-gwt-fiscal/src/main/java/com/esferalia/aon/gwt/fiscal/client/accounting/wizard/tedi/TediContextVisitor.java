@@ -457,13 +457,13 @@ public class TediContextVisitor implements ITediContextVisitor {
 				dialog.setContent("", defaultCreditor);		
 			}
 		}
-		
-		if (callback.getCallback().getResult().getTedi().getRegistry() != null
-//		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getDocument() )
-//		  && AonStringUtils.isNotBlank( callback.getCallback().getResult().getTedi().getRegistry().getName() ) 
+		if (callback.getCallback().getResult().getInvoice().getRegistry() == null
+//		  && AonStringUtils.isNotBlank( reg.getDocument() )
+//		  && AonStringUtils.isNotBlank( reg.getName() ) 
 		  ) {
-			String d = AonStringUtils.defaultString( callback.getCallback().getResult().getTedi().getRegistry().getDocument());
-			String n = AonStringUtils.defaultString(callback.getCallback().getResult().getTedi().getRegistry().getName());
+			TediRegistry reg = callback.getCallback().getResult().getTedi().getRegistry();
+			String d = reg==null?null:AonStringUtils.defaultString( reg.getDocument());
+			String n = reg==null?null:AonStringUtils.defaultString(reg.getName());
 			String t = "";
 			AccountingRegistryType ty = null;
 			if (callback.getCallback().getResult().getInvoice().isExpenses() || callback.getCallback().getResult().getInvoice().isUndeductible()) {
@@ -480,7 +480,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 			}
 			final AccountingRegistryType type = ty;
 			
-			Button newCreditor = new Button("Crear el " + t + " (" + d + " " + n + ")");
+			Button newCreditor = new Button("Crear el " + t + AonStringUtils.defaultString(d) + " " + AonStringUtils.defaultString(n));
 			newCreditor.setStyleName(AON.CSS.aonTabButton());
 			newCreditor.addStyleName(AON.CSS.aonWidthAutoImportant());
 			newCreditor.addStyleName(AON.CSS.aonIconAdd());
