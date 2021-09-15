@@ -25,7 +25,7 @@ export class Task {
       this.title       = undefined;
       this.gtask_id    = undefined;
       this.description = undefined;
-      this.source      = TASK_SOURCE.CAU;
+      this.source      = TASK_SOURCE.REQUEST;
       this.source_id   = undefined;
       this.start_date   = undefined;
       this.workgroup   = {};
@@ -47,7 +47,7 @@ export class Task {
       this.title       = task.title || "";
       this.description = task.description || "";
       this.gtask_id    = task.gtask_id || "";
-      this.source      = task.source || TASK_SOURCE.CAU;
+      this.source      = task.source || TASK_SOURCE.REQUEST;
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.workflow    = task.workflow || [];
@@ -68,14 +68,26 @@ export class Task {
       if(task.gtask_id)                           this.gtask_id    = task.gtask_id;
       if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
       if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
-      if(task.status)                             this.status       = task.status;
-      if(task.source_id)                          this.source_id     = task.source_id;
-      if(task.registry && task.registry.id)       this.registry      = task.registry;
-      if(task.description)                        this.description    = task.description;
-      if(task.start_date)                         this.start_date    = task.start_date;
+      if(task.status)                             this.status      = task.status;
+      if(task.source_id)                          this.source_id   = task.source_id;
+      if(task.registry && task.registry.id)       this.registry    = task.registry;
+      if(task.description)                        this.description = task.description;
+      if(task.start_date)                         this.start_date  = task.start_date;
       this.setFiles([]);
-      // if(task.domain)                             this.domain      = task.domain;
-      // if(task.workflow)                           this.workflow    = task.workflow;
+    }
+  }
+
+  cleanTask(){
+    if(!this.id){
+      this.workgroup   = {};
+      this.registry    = {};
+      this.task_holder = {};
+      this.title       = "";
+      this.description = "";
+      this.gtask_id    = "";
+      this.source_id   = undefined;
+      this.workflow    = [];
+      this.setFiles([]);
     }
   }
 

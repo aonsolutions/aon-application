@@ -6,16 +6,13 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -23,7 +20,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -54,12 +50,10 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
-import net.aonsolutions.aon.api.model.mail.WorkflowMail;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.aws.ses.SES;
@@ -383,6 +377,12 @@ public class TaskServlet extends AonApiHttpServlet{
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		
+		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
+			String email = api.getParams().optString(IJsonNames.EMAIL);
+			if(!email.isEmpty())
+				filter = filter.and(f.getGtaskIdProperty().eq(email));
+		}
+		
 		return filter;
 	}
 	
@@ -423,20 +423,20 @@ public class TaskServlet extends AonApiHttpServlet{
 		 Integer workflowId = api.getData().optInt("workflowId");
 		 JSONArray json = new JSONArray();
 		 if(workflowId > 0) {
-			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+			
 			Task task = TaskJSON.fromJSON(api.getData());
 			LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
 					 f->f.getTaskProperty().eq(task.getId())
 					 .and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
-					 .and(f.getIdProperty().le(workflowId))
+					 .and(f.getModificationDateProperty().isNotNull())
+					 .or(f.getIdProperty().eq(workflowId))
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())) .collect(Collectors.toCollection(LinkedList::new));
 			
 			task.setWorkflows(taskWorkflow);
 			
-			sendHistoricWorkflow(api, task, auth);
+			sendHistoricWorkflow(api, task);
 			
-			Integer[] ids = taskWorkflow.stream().map(t->t.getId()).toArray(Integer[]::new);
+			Integer[] ids = taskWorkflow.stream().map(TaskWorkflow::getId).toArray(Integer[]::new);
 		
 			AON_SOLUTIONS.updateTaskWorkflowBetween(api.getDomain(), api.getUser(), 
 					 f->f.getIdProperty().in(ids)
@@ -613,8 +613,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		return writer.toString();
 	}
 	
-	private void sendHistoricWorkflow(AonApiData api, Task task, Auth auth) {
+	private void sendHistoricWorkflow(AonApiData api, Task task) {
 		Thread newThread = new Thread(() -> {
+			AonToken aonToken = SECURITY.getAonToken(api.getToken());
+			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 			if(company!=null) {
 				String logo = getLogoCompany(company.getDomain().getName());
@@ -654,30 +656,10 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		VelocityContext context = new VelocityContext();
 		context.put("task", taskMail);
-	
-		context.put("list", paintListWorkflowEmail(taskMail.getWorkflows(), 0));
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/task-historic.vm");
 		
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
 		return writer.toString();
 	}
-	
-	
-	private static String paintListWorkflowEmail(List<WorkflowMail> ws, Integer i) {
-		if(ws.size() <= i) return "";
-		String item = 
-		"<div>" + 
-			"<div>"+
-			 ws.get(i).getDate()+", "+ws.get(i).getName()+" escribió:<br>"+
-			"</div>"+
-			"<div>"+
-			   ws.get(i).getMessage()+"<br/><br/>"+
-			"</div>"+
-			"<blockquote style=\"margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex\">"+
-			paintListWorkflowEmail(ws, i +1) + 
-			"</blockquote>"+
-		"</div>";	
-		return item;
-	} 
 }

@@ -135,7 +135,20 @@
         <tr>
           <table class="taskTable">
             <tr>
-            	$list
+            	#foreach($ws in $task.getWorkflows())
+            		<div>
+            			<div>
+            				$ws.getDate(), $ws.getName() escribió:<br>
+            			</div>
+            			<div>
+            				$ws.getMessage()<br/><br/>
+            			</div>
+            			<blockquote style="margin:0px 0px 0px 0.8ex;color:grey;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+            	#end
+            	#foreach($workflow in $task.getWorkflows())
+        			</div>
+        			</blockquote>
+            	#end
             </tr>
           </table>
         </tr>

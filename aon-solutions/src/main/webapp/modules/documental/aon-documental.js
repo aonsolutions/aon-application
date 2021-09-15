@@ -156,7 +156,6 @@ export class AonDocumental extends AonElement {
         }
         let application = this.getApplication();
         application.addSidenavOptions2(DocumentalSidenav.TYPES, typeOptions);
-        application.addSidenavTitleExpandIcon(DocumentalSidenav.TYPES.id);
       }
     }
 
@@ -165,7 +164,6 @@ export class AonDocumental extends AonElement {
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
       } else application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, []);
-      application.addSidenavTitleExpandIcon(DocumentalSidenav.CATEGORIES.id);
       this.loadCategories();
     }
 
@@ -271,7 +269,6 @@ export class AonDocumental extends AonElement {
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         application.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
       } else application.addSidenavOptions2(DocumentalSidenav.TAGS, []);
-      application.addSidenavTitleExpandIcon(DocumentalSidenav.TAGS.id);
       this.loadTags();
     }
 

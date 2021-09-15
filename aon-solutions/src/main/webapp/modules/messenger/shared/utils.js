@@ -527,9 +527,10 @@ export const buildForm = (div, aonMessengerChat) => {
     const requestTypeSelect = createRequestType();
     requestTypeSelect.style.width = "50%";
     rowsDiv.appendChild(requestTypeSelect);
+    if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     requestTypeSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+        task.cleanTask();
         if(detail){
-
             //------------------HTML CLEAN UP
             columnsDivTwo.element.innerHTML = "";
             divProcess.innerHTML = "";

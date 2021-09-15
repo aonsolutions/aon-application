@@ -34,6 +34,10 @@ export class AonMessenger extends AonElement {
 		});
  	}
 
+	disconnectedCallback(){
+		localStorage.removeItem("taskCau");
+	}
+
 	initialize(){
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
@@ -133,7 +137,6 @@ export class AonMessenger extends AonElement {
 		];
 		
 		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
-		this.applicationEl.addSidenavTitleExpandIcon(MSG.REQUESTS);
 	}
 
 	statusNavBar(){
@@ -168,7 +171,6 @@ export class AonMessenger extends AonElement {
 		];
 		
 		this.applicationEl.addSidenavOptions(MSG.STATUS, messengerOpts);
-		this.applicationEl.addSidenavTitleExpandIcon(MSG.STATUS);
 	}
 
     groupNavBar() {
@@ -177,7 +179,6 @@ export class AonMessenger extends AonElement {
 			id: 'Workgroup',
 			name: MSG.WORKGROUP
 		}, []);
-		this.applicationEl.addSidenavTitleExpandIcon('Workgroup');
 		this.loadWorkgroup();
 	}
 
@@ -213,7 +214,6 @@ export class AonMessenger extends AonElement {
 			id: 'Tag',
 			name: MSG.TAG
 		}, [],() =>this.dialogTag());
-		this.applicationEl.addSidenavTitleExpandIcon('Tag');
 		this.loadTag();
 	}
 
@@ -290,17 +290,24 @@ export class AonMessenger extends AonElement {
 
 	updateCount(){
 		let application = this.applicationEl;
+		let filterCount= {};
+		if(this.cauData)
+			filterCount.email = this.cauData.auth.email;
+		else 
+			filterCount.task_holder = this.TASK_HOLDER.id;
+			
+		getTaskCount(filterCount).then(count=>{
+			let sender =  count.sender || 0;
+			let task_holder =  count.task_holder || 0;
+			application.updateSidenavCount(MSG.SENT, sender);
+			application.updateSidenavCount("Recibidas", task_holder);
+		});
+
 		let filter = {};
-		if(this._filter.source) filter.source = this._filter.source;
-		
-		if(this.TASK_HOLDER && this.TASK_HOLDER.id){
-			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
-				let sender =  count.sender || 0;
-				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount(MSG.SENT, sender);
-				application.updateSidenavCount("Recibidas", task_holder);
-			});
+		if(this.cauData){
+			filter.email = this.cauData.auth.email;
 		}
+		if(this._filter.source) filter.source = this._filter.source;
 
 		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];
