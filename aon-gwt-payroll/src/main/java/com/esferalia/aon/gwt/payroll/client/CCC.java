@@ -15,13 +15,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -41,13 +35,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class CCC extends ResizeComposite {
 
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// -------------------------------------------- UiBinder
 
 	private static CCCDraftUiBinder uiBinder = GWT.create(CCCDraftUiBinder.class);
 
 	interface CCCDraftUiBinder extends UiBinder<Widget, CCC> {}
 	
-	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	// -------------------------------------------- TgssContextMenu
 	
 	class EmployeesWorkingCommand implements ScheduledCommand {
 
@@ -73,30 +67,30 @@ public abstract class CCC extends ResizeComposite {
 		}
 	}
 	
-	class AddTgssContextMenu extends ContextMenu {
+	class TgssContextMenu extends ContextMenu {
 				
 		private MenuItem employeesWorking = null;
 		private MenuItem employeePrevMov = null;
 		private MenuItem idc = null;
 		
-		public AddTgssContextMenu() {
+		public TgssContextMenu() {
 			
 			employeesWorking = addItem("Trabajadores en situacion de alta", new EmployeesWorkingCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			employeesWorking.ensureDebugId("employeesWorking");
 			
 			employeePrevMov = addItem("Movimientos previos de trabajadores", new EmployeePrevMovCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			employeePrevMov.ensureDebugId("employeePrevMov");
 			
 			idc = addItem("IDC", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
 		}
 	}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// --------------------------------------------  UiFields
 
 	@UiField
 	MyStyle style;
@@ -106,7 +100,7 @@ public abstract class CCC extends ResizeComposite {
 		String headerStyle();
 		String warningColor();
 		String widthAll();
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -124,22 +118,25 @@ public abstract class CCC extends ResizeComposite {
 	@UiField
 	HTMLPanel footerOptionsToolbar;
 	
-	private AddTgssContextMenu contextMenu;
+	// -------------------------------------------- Variables
+	
+	private static final String UNKNOWN = "DESCONOCIDA";
+	private TgssContextMenu contextMenu;
 	private Integer newId = -1;
 	private String regime;
 	private String ccc;
 	
-	// --------------------------------------------------	 CONSTRUCTOR	--------------------------------------------------------
+	// -------------------------------------------- Constructor
 
-	public CCC() {
+	protected CCC() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initFooterOptionsToolbar();
 		initPreview();
 		calculateScrollPanelHeight();
-		contextMenu = new AddTgssContextMenu();
+		contextMenu = new TgssContextMenu();
 	}
 	
-	// --------------------------------------------------	   PREVIEW		--------------------------------------------------------
+	// -------------------------------------------- Initialize Preview
 	
 	public void resetPreview() {
 		initPreview();
@@ -223,7 +220,7 @@ public abstract class CCC extends ResizeComposite {
 		setSelectedValueLB(cccRegimeLB, cccInfo.getType().toString());
 		
 		Label geozone = new Label();
-		String geozoneValue = "DESCONOCIDA";
+		String geozoneValue = UNKNOWN;
 		if(null != cccInfo.getGeozone()) {
 			geozoneValue = cccInfo.getGeozone();
 			geozone.removeStyleName(style.warningColor());
@@ -246,35 +243,31 @@ public abstract class CCC extends ResizeComposite {
 		account.setMaxLength(11);
 		account.setValue(cccInfo.getCcc());
 		account.addStyleName("aon-inputText");
-		account.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String accountValue = event.getValue();
-				if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
-					String province = ProvinceContract.getName(accountValue.substring(0, 2));
-					String provinceCode = accountValue.substring(0, 2);
-					if(checkCCC(accountValue)) {
-						geozone.setText(province);
-						geozone.removeStyleName(style.warningColor());
-						accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
-						accountStatus.addStyleName(AON.CSS.aonIconValid());
-					}else {
-						province = null == province ? "DESCONOCIDA" : province;
-						geozone.setText(province);
-						geozone.addStyleName(style.warningColor());
-						accountStatus.removeStyleName(AON.CSS.aonIconValid());
-						accountStatus.addStyleName(AON.CSS.aonIconInvalid());
-					}
-					
-					onInsertCCC(
-							cccInfo.getCccId(), 
-							Integer.parseInt(activitiesLB.getSelectedValue()), 
-							Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-							getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-							account.getValue(), 
-							province, 
-							provinceCode);
+		account.addValueChangeHandler(e -> {
+			String accountValue = e.getValue();
+			if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
+				String provinceAux = ProvinceContract.getName(accountValue.substring(0, 2));
+				if(checkCCC(accountValue)) {
+					geozone.setText(provinceAux);
+					geozone.removeStyleName(style.warningColor());
+					accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
+					accountStatus.addStyleName(AON.CSS.aonIconValid());
+				}else {
+					provinceAux = null == province ? UNKNOWN : province;
+					geozone.setText(province);
+					geozone.addStyleName(style.warningColor());
+					accountStatus.removeStyleName(AON.CSS.aonIconValid());
+					accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 				}
+				
+				onInsertCCC(
+						cccInfo.getCccId(), 
+						Integer.parseInt(activitiesLB.getSelectedValue()), 
+						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+						account.getValue(), 
+						province, 
+						provinceCode);
 			}
 		});
 		
@@ -290,56 +283,48 @@ public abstract class CCC extends ResizeComposite {
 		hPanel.add(account);
 		hPanel.add(accountStatus);
 		
-		activitiesLB.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
-				typeCode.setText(newCCCRegimeCode);
-				onInsertCCC(
-						cccInfo.getCccId(), 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
-						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-						account.getValue(), 
-						province, 
-						provinceCode);
-			}
+		activitiesLB.addChangeHandler(e -> {
+			String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
+			typeCode.setText(newCCCRegimeCode);
+			onInsertCCC(
+					cccInfo.getCccId(), 
+					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+					account.getValue(), 
+					province, 
+					provinceCode);
 		});
 		
-		cccRegimeLB.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
-				typeCode.setText(newCCCRegimeCode);
-				onInsertCCC(
-						cccInfo.getCccId(), 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
-						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-						account.getValue(), 
-						province, 
-						provinceCode);
-			}
+		cccRegimeLB.addChangeHandler(e -> {
+			String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
+			typeCode.setText(newCCCRegimeCode);
+			onInsertCCC(
+					cccInfo.getCccId(), 
+					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+					account.getValue(), 
+					province, 
+					provinceCode);
 		});
 		
 		HTMLPanel buttonsPanel = new HTMLPanel("");
 		buttonsPanel.addStyleName(style.flexEvenly());
 		
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
-		delete.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(cccInfo.isUseByContracts()) {
-					AonConfirmDialog dialog = new AonConfirmDialog();
-					dialog.info("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci" + String.valueOf("\u00F3") + "n que esta "
-							+ "siendo usada por un centro de trabajo y/o por un contrato");
-				}else {
-					onDeleteCCC(cccInfo.getCccId());
-					initPreview();
-					onInsertRows();
-				}
+		delete.addClickHandler(e -> {
+			if(Boolean.TRUE.equals(cccInfo.isUseByContracts())) {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
+						+ "siendo usada por un centro de trabajo y/o por un contrato");
+			}else {
+				onDeleteCCC(cccInfo.getCccId());
+				initPreview();
+				onInsertRows();
 			}
 		});
+		
 		buttonsPanel.add(delete);
 	
 		AonTableButton tgssMenu = new AonTableButton("TGSS", AON.CSS.aonIconMoreVertical());
@@ -383,34 +368,31 @@ public abstract class CCC extends ResizeComposite {
 		TextBox account = new TextBox();
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
-		account.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String accountValue = event.getValue();
-				if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
-					String province = ProvinceContract.getName(accountValue.substring(0, 2));
-					String provinceCode = accountValue.substring(0, 2);
-					if(checkCCC(accountValue)) {
-						geozone.setText(province);
-						geozone.removeStyleName(style.warningColor());
-						accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
-						accountStatus.addStyleName(AON.CSS.aonIconValid());
-					}else {
-						province = null == province ? "DESCONOCIDA" : province;
-						geozone.setText(province);
-						geozone.addStyleName(style.warningColor());
-						accountStatus.removeStyleName(AON.CSS.aonIconValid());
-						accountStatus.addStyleName(AON.CSS.aonIconInvalid());
-					}
-					onInsertCCC(
-							newId, 
-							Integer.parseInt(activitiesLB.getSelectedValue()), 
-							Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-							getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-							account.getValue(), 
-							province, 
-							provinceCode);
+		account.addValueChangeHandler(e -> {
+			String accountValue = e.getValue();
+			if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
+				String province = ProvinceContract.getName(accountValue.substring(0, 2));
+				String provinceCode = accountValue.substring(0, 2);
+				if(checkCCC(accountValue)) {
+					geozone.setText(province);
+					geozone.removeStyleName(style.warningColor());
+					accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
+					accountStatus.addStyleName(AON.CSS.aonIconValid());
+				}else {
+					province = null == province ? UNKNOWN : province;
+					geozone.setText(province);
+					geozone.addStyleName(style.warningColor());
+					accountStatus.removeStyleName(AON.CSS.aonIconValid());
+					accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 				}
+				onInsertCCC(
+						newId, 
+						Integer.parseInt(activitiesLB.getSelectedValue()), 
+						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+						account.getValue(), 
+						province, 
+						provinceCode);
 			}
 		});
 		
@@ -418,64 +400,55 @@ public abstract class CCC extends ResizeComposite {
 		hPanel.add(account);
 		hPanel.add(accountStatus);
 		
-		activitiesLB.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				String province = "";
-				String provinceCode = "";
-				String accountValue = account.getValue();
-				if(null != accountValue && !AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
-					province = ProvinceContract.getName(accountValue.substring(0, 2));
-					provinceCode = accountValue.substring(0, 2);
-				}
-				
-				if(null == cccRegimeLB.getSelectedValue())
-					cccRegimeLB.setSelectedIndex(0);
-				
-				String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
-				typeCode.setText(newCCCRegimeCode);
-			
-				onInsertCCC(
-						newId, 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
-						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-						account.getValue(), 
-						province, 
-						provinceCode);
+		activitiesLB.addChangeHandler(e ->{
+			String province = "";
+			String provinceCode = "";
+			String accountValue = account.getValue();
+			if(null != accountValue && !AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
+				province = ProvinceContract.getName(accountValue.substring(0, 2));
+				provinceCode = accountValue.substring(0, 2);
 			}
+			
+			if(null == cccRegimeLB.getSelectedValue())
+				cccRegimeLB.setSelectedIndex(0);
+			
+			String newCCCRegimeCodeAux = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
+			typeCode.setText(newCCCRegimeCodeAux);
+		
+			onInsertCCC(
+					newId, 
+					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+					account.getValue(), 
+					province, 
+					provinceCode);
 		});
 		
-		cccRegimeLB.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				String province = "";
-				String provinceCode = "";
-				if(!AonStringUtils.isBlank(account.getValue()) && account.getValue().length() >= 2) {
-					province = ProvinceContract.getName(account.getValue().substring(0, 2));
-					provinceCode = account.getValue().substring(0, 2);
-				}
-				String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
-				typeCode.setText(newCCCRegimeCode);
-				onInsertCCC(
-						newId, 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
-						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-						account.getValue(), 
-						province, 
-						provinceCode);
+		cccRegimeLB.addChangeHandler(e -> {
+			String province = "";
+			String provinceCode = "";
+			if(!AonStringUtils.isBlank(account.getValue()) && account.getValue().length() >= 2) {
+				province = ProvinceContract.getName(account.getValue().substring(0, 2));
+				provinceCode = account.getValue().substring(0, 2);
 			}
+			String newCCCRegimeCodeAux = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
+			typeCode.setText(newCCCRegimeCodeAux);
+			onInsertCCC(
+					newId, 
+					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
+					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
+					account.getValue(), 
+					province, 
+					provinceCode);
 		});
 		
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
-		delete.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDeleteCCC(newId);
-				initPreview();
-				onInsertRows();
-			}
+		delete.addClickHandler(e -> {
+			onDeleteCCC(newId);
+			initPreview();
+			onInsertRows();
 		});
 	
 		cccDataTable.setWidget(row, 0, activitiesLB);
@@ -492,7 +465,7 @@ public abstract class CCC extends ResizeComposite {
 		return newId;
 	}
 	
-	// --------------------------------------------------	   AUX METHODS		--------------------------------------------------------
+	// -------------------------------------------- Auxiliar Methods
 	
 	public int getRowCount() {
 		return cccDataTable.getRowCount();
@@ -562,11 +535,7 @@ public abstract class CCC extends ResizeComposite {
 			String code = ccc.substring(ccc.length()-2, ccc.length());
 			Integer codeInt = Integer.parseInt(code);
 			Integer cccInt = Integer.parseInt(ccc.substring(0, ccc.length()-2));
-//			Window.alert("CCC : " + cccInt + ", Code : " + codeInt + ", MOD : " + cccInt % 97);
-			if(cccInt % 97 == codeInt)
-				return true;
-			else
-				return false;
+			return cccInt % 97 == codeInt;
 		}else
 			return false;
 	}
@@ -596,7 +565,7 @@ public abstract class CCC extends ResizeComposite {
 		}
 	}
 
-	// --------------------------------------------------	   ABSTRACT METHODS		--------------------------------------------------------
+	// -------------------------------------------- Abstract Methods
 	
 	protected abstract void onInsertRow();
 	
@@ -608,28 +577,26 @@ public abstract class CCC extends ResizeComposite {
 
 	protected abstract Set<Entry<Integer, String>> getActivities();	
 
-	// --------------------------------------------------	   FOOTER PANEL		--------------------------------------------------------
+	// -------------------------------------------- Footer Panel
 	
 	private void initFooterOptionsToolbar() {
 		footerOptionsToolbar.clear();
 		
 		AonTableButton newCCCBtn = new AonTableButton("Nuevo CCC",  AON.CSS.aonIconAdd());
-		newCCCBtn.addClickHandler(e -> {
-			onAddNewCCC(e);
-		});
-		
+		newCCCBtn.addClickHandler(e -> onAddNewCCC());
 		footerOptionsToolbar.add(newCCCBtn);
 	}
 
-	private void onAddNewCCC(ClickEvent e) {
+	private void onAddNewCCC() {
 		if(0 != cccDataTable.getRowCount()) {
 			Label firstGeozone = (Label) cccDataTable.getWidget(0, 3);
-			if(null != firstGeozone && "" != firstGeozone.getText()) {
+			if(null != firstGeozone && AonStringUtils.isNotBlank(firstGeozone.getText()))
 				this.newId = insertNewRow(this.newId);
-			}
-		}else
+		} else
 			this.newId = insertNewRow(this.newId);
 	}
+	
+	// -------------------------------------------- Footer Panel TGSS
 
 	private void submitForm(int type) {
 		String fileDownloadURL = GWT.getModuleBaseURL() + "sistema_red_ccc";
@@ -647,13 +614,10 @@ public abstract class CCC extends ResizeComposite {
 		
 		formPanel.add(flowPanel);
 		
-		formPanel.addSubmitCompleteHandler(e1 -> {
-			centerContainer.remove(formPanel);
-		});
+		formPanel.addSubmitCompleteHandler(e1 -> centerContainer.remove(formPanel));
 
 		centerContainer.add(formPanel);
 
-		formPanel.submit();
-		
+		formPanel.submit();	
 	}
 }

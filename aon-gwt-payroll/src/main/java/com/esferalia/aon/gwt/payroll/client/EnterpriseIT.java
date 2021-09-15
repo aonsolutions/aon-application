@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
@@ -25,9 +24,9 @@ public class EnterpriseIT extends Composite {
 		
 		@Override
 		protected void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
-			enterpriseITObject.getEmployeesInfo(true, itEmployeeList -> {
-				success.accept(itEmployeeList);
-			}, f -> {});
+			enterpriseITObject.getEmployeesInfo(true, 
+					success::accept, 
+					f -> {});
 		}
 
 		@Override
@@ -63,9 +62,7 @@ public class EnterpriseIT extends Composite {
 		@Override
 		protected void setITEmployeeList(List<ITEmployee> itEmployees, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
 			enterpriseITObject.setEmployeesInfo(itEmployees,
-				itEmployeeList -> {
-					success.accept(itEmployeeList);
-				},
+					success::accept,
 				f -> {}
 			);
 		}
@@ -73,20 +70,20 @@ public class EnterpriseIT extends Composite {
 		@Override
 		protected void setITEmployee(ITEmployee itEmployee, Consumer<String> success, Consumer<Throwable> failure) {
 			enterpriseITObject.createUpdateITEmployee(itEmployee,
-				message -> {
-					success.accept(message);
-				},
-				f -> {});
+				success::accept,
+				f -> {}
+			);
 		}
 
 		@Override
 		protected void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			enterpriseITObject.removeIT(itEmployee, it,
 					s -> {
-						if(it.isComunicate() && enterpriseITObject.isUserComunica())
-							enterpriseITObject.deleteComunicateIT(itEmployee, it, t -> {
-								success.accept(t);
-							}, d -> {});
+						if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica())
+							enterpriseITObject.deleteComunicateIT(itEmployee, it, 
+									success::accept, 
+									d -> {}
+							);
 						else
 							success.accept(s);
 					},
@@ -97,10 +94,11 @@ public class EnterpriseIT extends Composite {
 		protected void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			enterpriseITObject.deleteIT(it,
 					s -> {
-						if(it.isComunicate() && enterpriseITObject.isUserComunica())
-							enterpriseITObject.deleteComunicateIT(itEmployee, it, t -> {
-								success.accept(t);
-							}, d -> {});
+						if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica())
+							enterpriseITObject.deleteComunicateIT(itEmployee, it, 
+									success::accept,
+									d -> {}
+							);
 						else
 							success.accept(s);
 					},
@@ -109,28 +107,25 @@ public class EnterpriseIT extends Composite {
 
 		@Override
 		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.comunicateITBaja(itEmployee, it, t -> {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-				success.accept(t);
-			}, d -> {});
+			enterpriseITObject.comunicateITBaja(itEmployee, it, 
+				success::accept,
+				d -> {}
+			);
 		}
 
 		@Override
-		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
-				Consumer<Throwable> failure) {
-			enterpriseITObject.comunicatePaternityIT(itEmployee, it, t -> {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-				success.accept(t);
-			}, d -> {});
+		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+			enterpriseITObject.comunicatePaternityIT(itEmployee, it, 
+				success::accept,
+				d -> {}
+			);
 		}
 
 		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
-			enterpriseITObject.getNafxIpf(itEmployee, employeeSegSocial -> {
-				success.accept(employeeSegSocial);
-			}, f -> {});
+			enterpriseITObject.getNafxIpf(itEmployee, 
+					success::accept, 
+					f -> {});
 		}
 
 	}
