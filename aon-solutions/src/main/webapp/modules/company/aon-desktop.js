@@ -349,15 +349,20 @@ export class AonDesktop extends AonElement {
 
 					// if(Apps[key].options && Apps[key].options.menu) {
 						let menu = new AonIconButton();
+
 						menu.id = li.id + 'Menu';
 						menu.icon = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
 							? "menu_open" : "keyboard_arrow_right";
 
+						
 						menu.title = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
 							? MSG.OPEN_MENU : MSG.OPEN;
 						
 						menu.addEventListener(EVENT.CLICK, (event) => {
-							if(Apps[key].options && Apps[key].options.menu){
+							if(Apps[key].options && Apps[key].options.menu
+								&& this.isOpenMenu(Apps[key])){
 								this.appOption = true;
 								event.preventDefault();
 								this.menuOption(Apps[key]);
@@ -523,6 +528,16 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isInvoice();
 		else if(Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
+		else return false;
+	}
+
+	isOpenMenu(app) {
+		if(Apps.ACCOUNTING.app === app.app)
+			return this.getDur().isAccountingManager();
+		else if(Apps.FISCAL.app === app.app)
+			return this.getDur().isFiscalManager();
+		else if(Apps.PAYROLL.app === app.app)
+			return this.getDur().isPayrollManager();
 		else return false;
 	}
 
