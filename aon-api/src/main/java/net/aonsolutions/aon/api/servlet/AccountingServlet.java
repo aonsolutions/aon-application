@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @WebServlet(name = "AonAccountingServlet", urlPatterns = {"/ms/api/accounting/*"})
@@ -63,7 +65,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 			response(req, resp, getPeriods(api));
 			break;
 		default:
-			throw new Exception("La ruta introducida es incorrecta.");
+			throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 		}
 	}
 

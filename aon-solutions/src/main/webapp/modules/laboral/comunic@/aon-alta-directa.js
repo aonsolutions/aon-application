@@ -138,7 +138,7 @@ export class AonAltaDirecta extends AonElement {
 
     async initLists() {
         await Promise.all([
-            this.listCentroTrabajo(),
+            this.listWorkPlace(),
             this.listTipoContrato(),
             this.listTipoJornada(),
             this.listGrupoCotizacion(),
@@ -218,8 +218,8 @@ export class AonAltaDirecta extends AonElement {
         //seleccionar workplace;
         const centro_trabajo = this.getElement('centro_trabajo');
         const workplaceInput = centro_trabajo.querySelector('aon-input');
-        if (centro_trabajo && workplaceInput && centro_trabajo.options) {
-            const options = JSON.parse(centro_trabajo.options);
+        const options = centro_trabajo.getOptions();
+        if (centro_trabajo && workplaceInput && options) {
             const {name:nameWp} = options.find((r) => r.cccs.some(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti) === true);
             if (nameWp) workplaceInput.value = nameWp;
         }
@@ -303,7 +303,7 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    async listCentroTrabajo() {
+    async listWorkPlace() {
         try {
             const resp = await getCccForActivity();
             if(resp && resp.cccs){
@@ -342,7 +342,10 @@ export class AonAltaDirecta extends AonElement {
             try {
                 const { cccs } = detail;
                 let ctaCti = this.getElement('ctaCti');
-                ctaCti.options = JSON.stringify(cccs.map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc })));
+                let options = cccs
+                .filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index )
+                .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+                ctaCti.options = JSON.stringify(options);
             } catch (error) { }
         }
     }
@@ -366,12 +369,15 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async suggestionConvenio() {
+        const convenios = await getConvenios();
+
         const suggestion = this.getElement(`convenio`);
         suggestion.querySelector("input").autocomplete = "on";
-        suggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
+        
+        suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
             let newValue = value.toString().toUpperCase();
             if (newValue.length > 2) {
-                const resp = await getConvenios(newValue);
+                const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
                 suggestion.buildOptions(resp);
             } else {
                 suggestion.closeOptions();

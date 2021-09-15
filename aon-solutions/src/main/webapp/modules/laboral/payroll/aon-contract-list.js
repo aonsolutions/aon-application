@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 import { getContracts } from "../../../services/service.js";
 import { formatDate, formatDateOrigin, isEmptyObject, setDate } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { CONSTANT, EVENT } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 
@@ -70,13 +70,13 @@ export class AonContractList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Nombre", "string", "name", "20%");
+      aonTable.addColumn(MSG.NAME, "string", "name", "20%");
       aonTable.addColumn("DNI/NIE", "string", "document", "10%");
       aonTable.addColumn("Nª SS", "string", "ssNumber", "10%");
       aonTable.addColumn("Tipo contrato", "string", "contractType", "10%");
       aonTable.addColumn("Centro trabajo", "string", "workplaceName", "10%");
-      aonTable.addColumn("Categoría", "string", "agreementCategory", "10%");
-      aonTable.addColumn("Fecha inicio", "date", "dateParse", "10%");
+      aonTable.addColumn(MSG.CATEGORY, "string", "agreementCategory", "10%");
+      aonTable.addColumn(MSG.START_DATE, "date", "dateParse", "10%");
       aonTable.addColumn("Opción", "fn", "option", "5%");
       try {
         const resp = await this.getData();

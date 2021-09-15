@@ -3,9 +3,9 @@ import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_SOURCE } from "../MessengerEnums.js";
+import {  MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { buildFormQuery, buildFormRequest, buildTextareaToolbar } from "./utils.js";
+import { buildForm, buildTextareaToolbar } from "./utils.js";
 
 /**
  * 
@@ -13,93 +13,21 @@ import { buildFormQuery, buildFormRequest, buildTextareaToolbar } from "./utils.
  */
 export const buildMobile = (aonMessengerChat)=> {
     const mainView = createMobileMainView();
+    const task = aonMessengerChat.task;
     aonMessengerChat.appendChild(mainView);
 
-    buildGeneral(mainView, aonMessengerChat);
+    const wrapper = createFirstDiv(mainView);
+    if(task.id)
+        buildSectionHistoric(aonMessengerChat, wrapper);
 
-    const div = buildForm(aonMessengerChat);
-    
-    if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST)  //BUILD FORM
-        buildRequest(div, aonMessengerChat); 
-    else 
-        buildQuery(div, aonMessengerChat); // SOURCE QUERY 
-}
+    const secondDiv = createSecondDiv(mainView);
 
+    buildForm(secondDiv, aonMessengerChat);
 
-/**
- * Create desktop chat for messenger (mobile)
- * @param {HTMLElement} mainView htmlElement aon-messenger-chat
- * @param {HTMLElement} aonMessengerChat htmlElement aon-messenger-chat
- */
-const buildGeneral = (mainView, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
-
-    const firstDiv = newComponent({
-        classes: [CSS.FLEX_ROW],
-        id: MESSENGER_IDS.FIRST_DIV,
-        styles: {
-          width: "100%",
-          height: "90%",
-          maxWidth: "600px",
-          padding: "0",
-        },
-    });
-    firstDiv.appendTo(mainView);
-    
-    /**
-     * Wrapper 
-     * if some new menus / toolbars needed, here.
-     */
-    const wrapper = newComponent({
-        type: MESSENGER_COMPONENTS.WRAPPER,
-        id:MESSENGER_IDS.MAIN_WRAPPER,
-        classes: [CSS.FLEX_COLUMN],
-        styles: {
-            width: "100%",
-            height: '100%',
-            fontSize: '14px'
-        }
-    }).element;
-    firstDiv.element.appendChild(wrapper);
     if(!task.id)
         showForm(true);
-    else
-        buildSectionHistoric(aonMessengerChat, wrapper);
 }
 
-
-/**
- VIEW CREATE TASK MOBILE
- * @param {HTMLElement} aonMessengerChat 
- */
-const buildForm = (aonMessengerChat)=>{
-    const mainView = document.getElementById(MESSENGER_IDS.MAIN_DIV);
-
-    let secondDiv = newComponent({
-        type: TAG.DIV,
-        id: MESSENGER_IDS.SECOND_DIV,
-        classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
-        styles : {
-            height: '100%',
-            width: '100%',
-            background: CSS.variable(COLORS.AON_WHITE),
-            position: 'absolute',
-            top: '0%',
-            transition: '.5s',
-            opacity: 0,
-            zIndex: -9
-        }
-    });
-    secondDiv.appendTo(mainView);
-
-    buildToolbar(aonMessengerChat, secondDiv, true);
-
-    const div = document.createElement(TAG.DIV);
-    div.className = CSS.AON_MOBILE_SUB_CONTENT;
-    div.style.width = "100%";
-    secondDiv.appendChild(div);
-    return div;
-}
 
 /**
  VIEW EDIT TASK MOBILE
@@ -263,11 +191,12 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
  * @param {Boolean} b true or false 
  */
 const showForm = (b) => {
-    if(b){
-        setTimeout(() => setStyles(secondDiv, {zIndex: 9,opacity: 1,left: 0}), 100);
-    } else {
-        setTimeout(() => setStyles(secondDiv,{zIndex : -9, opacity : 0}), 100);
-    }
+    const  divMainTwo = document.getElementById(MESSENGER_IDS.DIV_MAIN_MOBILE);
+    if(b)
+        setTimeout(() => setStyles(divMainTwo, {zIndex: 9, opacity: 1, left: 0}), 100);
+    else 
+        setTimeout(() => setStyles(divMainTwo, {zIndex : -9, opacity : 0}), 100);
+    
 }
 
 /**
@@ -296,7 +225,7 @@ const showFullComment  = (b) => {
  const buildQuery = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
 
-    buildFormQuery(div, aonMessengerChat);
+    // buildFormQuery(div, aonMessengerChat);
 
     // /**
     //  * Creating text area
@@ -328,18 +257,62 @@ const showFullComment  = (b) => {
     }
 }
 
-/**
- * @param {HTMLElement} div div class aonMobileSubContent
- * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
- */
- const buildRequest = (div, aonMessengerChat) => {
-    buildFormRequest(div, aonMessengerChat);
-    // changeStyleCard(div);
+const createFirstDiv = (mainView) => {
+    const firstDiv = newComponent({
+        classes: [CSS.FLEX_ROW],
+        id: MESSENGER_IDS.FIRST_DIV,
+        styles: {
+          width: "100%",
+          height: "90%",
+          maxWidth: "600px",
+          padding: "0",
+        },
+    });
+    firstDiv.appendTo(mainView);
+    /**
+     * Wrapper 
+     * if some new menus / toolbars needed, here.
+     */
+    const wrapper = newComponent({
+        type: MESSENGER_COMPONENTS.WRAPPER,
+        id:MESSENGER_IDS.MAIN_WRAPPER,
+        classes: [CSS.FLEX_COLUMN],
+        styles: {
+            width: "100%",
+            height: '100%',
+            fontSize: '14px'
+        }
+    }).element;
+    firstDiv.element.appendChild(wrapper);
+    return wrapper;
 }
+  
 
-// const changeStyleCard = (div) => {
-//     [...div.querySelectorAll("aon-card")].map(aonCard=>{
-        // console.log(aonCard);
-        // aonCard.getCard().style.margin = "10px";
-    // })
-// }
+const createSecondDiv = (mainView) => {
+    let div = newComponent({
+        type: TAG.DIV,
+        id:MESSENGER_IDS.DIV_MAIN_MOBILE,
+        classes : [CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER],
+        styles : {
+            height: '100%',
+            width: '100%',
+            background: CSS.variable(COLORS.AON_WHITE),
+            position: 'absolute',
+            top: '0%',
+            transition: '.5s',
+            opacity: 0,
+            zIndex: -9
+        }
+    });
+    div.appendTo(mainView);
+
+    buildToolbar(aonMessengerChat, div, true);
+
+    const secondDiv = document.createElement(TAG.DIV);
+    secondDiv.id = MESSENGER_IDS.SECOND_DIV;
+    secondDiv.className = CSS.AON_MOBILE_SUB_CONTENT;
+    secondDiv.style.width = "100%";
+    div.appendChild(secondDiv);
+    return secondDiv;
+}
+  

@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.core.client.GWT;
@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ParticipationPanel extends CustomDialog {
 	
 	public static interface ParticipationPanelCallback {
-		void onAccept(int index, CompanyParticipation cp);
+		void onAccept(int index, Mod200CompanyParticipation cp);
 		void onCancel();
 		default void onClose() {
 			this.onCancel();
@@ -94,7 +94,7 @@ public class ParticipationPanel extends CustomDialog {
 		setWidget(ui);
 	}
 
-	public void dump(int index, CompanyParticipation companyParticipation) {
+	public void dump(int index, Mod200CompanyParticipation companyParticipation) {
 		this.index = index;
 		this.document.setValue(companyParticipation.getDocument());
 		this.name.setValue(companyParticipation.getName());
@@ -154,7 +154,7 @@ public class ParticipationPanel extends CustomDialog {
 	}
 	
 	public void onAccept() {
-		CompanyParticipation companyParticipation = new CompanyParticipation();
+		Mod200CompanyParticipation companyParticipation = new Mod200CompanyParticipation();
 		companyParticipation.setDocument(this.document.getValue());
 		companyParticipation.setName(this.name.getValue());
 		if (this.province.getSelectedIndex() < Province.values().length) {

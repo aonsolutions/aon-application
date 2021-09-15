@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
@@ -510,6 +512,34 @@ public class Asserts {
 				}
 			}
 		}
+	}
+	
+	public static void assertEqualsRDirStaff(RDirStaff expected, RDirStaff actual) {
+		assertEqualsNulls( "RDirStaff", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Registry",expected.getRegistry(), actual.getRegistry());
+		assertEquals("Document",expected.getDocument(), actual.getDocument());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("ShareHolder", expected.getShareHolder(), actual.getShareHolder());
+		assertEquals("Representative", expected.getRepresentative(), actual.getRepresentative());
+		assertEquals("Director", expected.getDirector(), actual.getDirector());
+		assertEquals("RepresentativeLabor", expected.getRepresentativeLabor(), actual.getRepresentativeLabor());
+		assertEquals("DueDate", expected.getDueDate(), actual.getDueDate());
+		assertEquals("PercentShare", expected.getPercentShare(), actual.getPercentShare(), DELTA);
+		assertEquals("NominalValue", expected.getNominalValue(), actual.getNominalValue());
+		assertEquals("ShareNumber", expected.getShareNumber(), actual.getShareNumber());
+		assertEquals("ChargeDescription", expected.getChargeDescription(), actual.getChargeDescription());
+	}
+	
+	public static void assertEqualsCompany(Company expected, Company actual) {
+		assertEqualsNulls( "Company", expected, actual);
+		assertEqualsRegistry(expected, actual);
+		assertEquals("Active",expected.isActive(),actual.isActive());
+		assertEquals("Surcharge",expected.isSurcharge(),actual.isSurcharge());
+		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+		assertEquals("eInvoice",expected.iseInvoice(),actual.iseInvoice());
 	}
 	
 }

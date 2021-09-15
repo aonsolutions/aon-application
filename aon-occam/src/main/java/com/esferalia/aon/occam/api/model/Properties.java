@@ -929,8 +929,6 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
 		Property<Byte> getEInvoiceProperty();
-		Property<Integer> getScopeIdProperty();
-		Property<String> getScopeDescriptionProperty();	
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
@@ -1326,6 +1324,7 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
+		Property<Integer> getWorkgroupProperty();
 	}
 
 	public interface TimeControlProperties {

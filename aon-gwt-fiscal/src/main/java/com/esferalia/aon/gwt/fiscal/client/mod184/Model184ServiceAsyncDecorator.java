@@ -59,9 +59,9 @@ public class Model184ServiceAsyncDecorator implements Model184ServiceAsync {
 	}
 
 	@Override
-	public void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod184> callback) {
+	public void duplicateMod184(String domainName, String user, Integer domain, Mod184 mod184, AsyncCallback<Mod184> callback) {
 		AON.start();
-		fsa.duplicateNextYear(domainName, user, domain, id, new AsyncCallbackWrapper<Mod184>(callback));
+		fsa.duplicateMod184(domainName, user, domain, mod184, new AsyncCallbackWrapper<Mod184>(callback));
 		
 	}
 }

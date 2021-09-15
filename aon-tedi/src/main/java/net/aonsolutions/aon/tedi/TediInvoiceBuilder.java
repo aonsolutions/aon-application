@@ -72,6 +72,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 			&& !AonStringUtils.equals(ctx.getCompanyDocument(), inv.getInsight().getNifs()[0].getStr() )) {
 			inv.setType(TediInvoiceType.TICKET);
 			fillCompanyData( ctx, inv , inv.ensureReceiver());
+			inv.ensureSender().setDocument( inv.getInsight().getNifs()[0].getStr() );
 		}
 	};
 	

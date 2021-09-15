@@ -189,31 +189,28 @@ export class AonUser extends AonElement {
 	}
 
 	selectionEnterprisePortal() {
-		let roles = [{ role: 'ENTERPRISE', active: true, user: this.user.id}];
+		this.user.roles = [Role.ENTERPRISE];
 		this.apps.forEach((app, i) => {
 			let application = getApp(app);
 			if(application && EnterpriseApps.includes(application.app)){
-				let rol1 = {app:application.app, role: application.app.toUpperCase(), active: true, user: this.user.id};
-				let rol2 = {app:application.app, role: application.app.toUpperCase() + '_PORTAL', active: true, user: this.user.id};
-				roles.push(rol1);
-				roles.push(rol2);
+				this.user.roles.push(application.app.toUpperCase());
+				this.user.roles.push(application.app.toUpperCase() + '_PORTAL');
 			}
 		});
-		this.updateRoles(roles);
+		this.initApps();
+		this.buildPermissionButtons();
 	}
 
 	selectionEmployeePortal() {
-		let enterprise = { role: 'ENTERPRISE', active: false, user: this.user.id};
-		let employee = { role: 'EMPLOYEE', active: true, user: this.user.id};
-		let roles = [enterprise, employee];
+		this.user.roles = [Role.EMPLOYEE];
 		this.apps.forEach((app, i) => {
 			let application = getApp(app);
 			if(application && EmployeeApps.includes(application.app)){
-				let rol = {app:application.app, role: application.app.toUpperCase(), active: true, user: this.user.id};
-				roles.push(rol);
+				this.user.roles.push(application.app.toUpperCase());
 			}
 		});
-		this.updateRoles(roles);
+		this.initApps();
+		this.buildPermissionButtons();
 	}
 
 	buildUserToolbar() {

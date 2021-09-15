@@ -46,6 +46,8 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
@@ -78,7 +80,7 @@ public class UserServlet extends AonApiHttpServlet {
 				response(req, resp, getDomainUser(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -98,7 +100,7 @@ public class UserServlet extends AonApiHttpServlet {
 				response(req, resp, sendAuthInfoMail(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -115,7 +117,7 @@ public class UserServlet extends AonApiHttpServlet {
 				response(req, resp);
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -132,17 +134,17 @@ public class UserServlet extends AonApiHttpServlet {
 				if(auth.getEmail() == null) {
 					auth = AON_SOLUTIONS.getAuth(r.getAuth());
 				}
-				json.put("id", r.getId());
-				json.put("email", auth.getEmail());
-				json.put("uuid", auth.getUuid());
-				json.put("name", auth.getName() != null ? auth.getName() : r.getName());
-				json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
-				json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
-				json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				json.put("roles", getUserRoles(api.getDomain(), r));
-				json.put("portal", r.isPortal());
-				json.put("shared", r.isShared());
-				json.put("login", r.getLogin());
+				json.put(IJsonNames.ID, r.getId());
+				json.put(IJsonNames.EMAIL, auth.getEmail());
+				json.put(IJsonNames.UUID, auth.getUuid());
+				json.put(IJsonNames.NAME, auth.getName() != null ? auth.getName() : r.getName());
+				json.put(IJsonNames.SURNAME, auth.getSurname() != null ? auth.getSurname() : "");
+				json.put(IJsonNames.DOCUMENT, auth.getDocument() != null ? auth.getDocument() : "");
+				json.put(IJsonNames.PHONE, auth.getPhone() != null ? auth.getPhone() : "");
+				json.put(IJsonNames.ROLES, getUserRoles(api.getDomain(), r));
+				json.put(IJsonNames.PORTAL, r.isPortal());
+				json.put(IJsonNames.SHARED, r.isShared());
+				json.put(IJsonNames.LOGIN, r.getLogin());
 				jsArray.put(json);
 			} else jsArray.put(userToJSON(r, json));
 		});
@@ -151,7 +153,7 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private Filter userFilter(AonApiData api, UserProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-
+		
 		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null 
 				&& api.getParams().optString("filter").equals("entorno")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getParentId());
@@ -166,6 +168,10 @@ public class UserServlet extends AonApiHttpServlet {
 			Filter valueFilter = f.getLoginProperty().like("%" + value + "%")
 					.or(f.getNameProperty().like("%" + value + "%"));
 			filter = valueFilter;
+		}
+		
+		if(api.getParams().opt(IJsonNames.WORKGROUP) != null) {
+			filter = filter.and(f.getWorkgroupProperty().eq(api.getParams().optInt(IJsonNames.WORKGROUP)));
 		}
 		
 		return filter;

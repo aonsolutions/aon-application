@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
 import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage.ValidationMessages;
-import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
@@ -23,7 +22,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -45,7 +43,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -130,9 +127,6 @@ public class Model3902014 extends ResizeComposite {
 	@UiField
 	Panel formContainer;
 
-	@UiField(provided=true)
-	EnterpriseSuggestBox enterpriseSuggest;
-
 	FormPanel diskForm;
 	Hidden mod390Hidden;
 	Hidden domainIdHidden;
@@ -147,7 +141,6 @@ public class Model3902014 extends ResizeComposite {
 		
 		Mod3902014ServiceAsync mod3902014ServiceRaw = GWT.create(Mod3902014Service.class);
 		MOD390_SERVICE = new Mod3902014ServiceAsyncDecorator(mod3902014ServiceRaw);
-		enterpriseSuggest = new EnterpriseSuggestBox(getCurrentDomainName(), getCurrentDomain(), getCurrentUser());
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 		
@@ -258,12 +251,10 @@ public class Model3902014 extends ResizeComposite {
 		wfp.showPage();
 		enterprise = m390.getEnterprise();
 		domain = m390.getDomain();
-		enterpriseSuggest.setValue(mod390.getDocument(), m390.getEnterpriseName());
 		refreshPages(mod390);
 		// Toolbar states
 		deleteButton.setVisible(mod390.getId() != null);
 		newButton.setVisible(mod390.getId() != null);
-		//cancelButton.setVisible(table.getRowCount() > 0);
 		cancelButton.setVisible(true);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
@@ -352,17 +343,9 @@ public class Model3902014 extends ResizeComposite {
 		mod390CallBack.onCancel();
 	}
 
-	@UiHandler("enterpriseSuggest")
-	void onSelectEnterprise(SelectionEvent<Suggestion> event) {
-		domain = enterpriseSuggest.getDomainId();
-		onNewButtonClick(null);
-	}
-
 	private void populateMod390() {
 		mod390.setDomain(domain);
 		mod390.setEnterprise(enterprise);
-		mod390.setDocument(enterpriseSuggest.getValue());
-		mod390.setEnterpriseName(enterpriseSuggest.getName().getValue());
 		mod390.setAdministration( Administration.COMMON_TERRITORY);
 		mod390.setConfidential(false);
 		mod390.setComments(null);

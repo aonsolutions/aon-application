@@ -1,14 +1,19 @@
 package net.aonsolutions.aon.api.model.mail;
 
+import java.util.LinkedList;
+import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import java.util.Date;
+
 public class TaskMail {
 	String number;
 	String date;
 	String url; 
 	String title;
 	String logo;
+	LinkedList<TaskWorkflow> workflows;
 	
-	public TaskMail() {
-	}
+	public TaskMail() {}
 
 	public String getNumber() {
 		return number;
@@ -23,8 +28,8 @@ public class TaskMail {
 		return date;
 	}
 
-	public TaskMail setDate(String date) {
-		this.date = date;
+	public TaskMail setDate(Date date) {
+		this.date = AonDateUtils.format(date, "dd/MM/yyyy");
 		return this;
 	}
 
@@ -43,6 +48,25 @@ public class TaskMail {
 
 	public TaskMail setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+	
+	public LinkedList<WorkflowMail> getWorkflows() {
+		LinkedList<WorkflowMail> workflowsList = new LinkedList<WorkflowMail>();
+		
+		for(TaskWorkflow workflow: workflows) {
+			WorkflowMail wemail = new WorkflowMail();
+			wemail.setName(workflow.getTaskHolder().getName());
+			wemail.setDate(workflow.getModificationDate()!=null ? workflow.getModificationDate() : workflow.getCreationDate() );
+			wemail.setMessage(workflow.getComment());
+			workflowsList.add(wemail);
+		}
+	
+		return workflowsList;
+	}
+
+	public TaskMail setWorkflows(LinkedList<TaskWorkflow> workflows) {
+		this.workflows = workflows;
 		return this;
 	}
 	

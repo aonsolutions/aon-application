@@ -381,8 +381,9 @@ export class AonApplication extends AonElement {
       : this.getElement(this.SIDENAV);
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
-    div.style.paddingBottom = "25px";
+    div.style.paddingBottom = "10px";
     div.style.borderBottom = "1px solid #ebebeb";
+    div.style.backgroundColor = "#fff";
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {
@@ -400,27 +401,32 @@ export class AonApplication extends AonElement {
 
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
+    sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
     sidenavTitle.style.cursor = "pointer";
     sidenavTitle.style.userSelect = "none";
+    sidenavTitle.style.marginLeft = "2px";
+    let arrowTitle = this.createElement("i");
+    arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+    arrowTitle.className = "material-icons aonVerticalMiddle";
+    sidenavTitle.appendChild(arrowTitle);
+
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
       const ul = div.querySelector("ul");
       if(ul){
-       ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+        ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+        if(ul.classList.contains(CSS.ELEMENT_HIDDEN))
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+        else 
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
       }
-    });
-
-    // let arrowTitle = this.createElement("i");
-    // arrowTitle.innerHTML = "arrow_right";
-    // arrowTitle.className = "material-icons aonVerticalMiddle";
-    // sidenavTitle.appendChild(arrowTitle);
+    });  
 
     let span = this.createElement(TAG.SPAN);
     span.innerHTML = data.name;
     sidenavTitle.appendChild(span);
 
     div.appendChild(sidenavTitle);
-
     return div;
   }
 
@@ -562,7 +568,7 @@ export class AonApplication extends AonElement {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
             else {
-              console.log(el.style.backgroundColor);
+              // console.log(el.style.backgroundColor);
             }
         });
         
@@ -603,6 +609,34 @@ export class AonApplication extends AonElement {
     }
   }
 
+  // addSidenavTitleExpandIcon(id){
+  //   let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+  //   const div = this.getElement(sidenavId+id);
+  //   if(div){
+  //     const sidenavTitle = div.querySelector( "#aonSidenavTitle"+id);
+  //     if(sidenavTitle){
+  //       sidenavTitle.style.cursor = "pointer";
+  //       sidenavTitle.style.userSelect = "none";
+  //       sidenavTitle.style.marginLeft = "2px";
+        
+  //       let arrowTitle = this.createElement("i");
+  //       arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+  //       arrowTitle.className = "material-icons aonVerticalMiddle";
+  //       sidenavTitle.insertBefore(arrowTitle, sidenavTitle.firstChild);
+
+  //       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+  //         const ul = div.querySelector("ul");
+  //         if(ul){
+  //           ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+  //           if(ul.classList.contains(CSS.ELEMENT_HIDDEN))
+  //             arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+  //           else 
+  //             arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+  //         }
+  //       });  
+  //     }
+  //   }
+  // }
 
   addSidenavOptions2(data, options, newButton) {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
@@ -649,7 +683,12 @@ export class AonApplication extends AonElement {
 
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
-    if (toolbar) toolbar.setAttribute("option", title);
+    if (toolbar) {
+      toolbar.setAttribute("option", title);
+      //----------ADD COLOR SIDENAV SELECTED---------
+      let li = this.getElement(this.SIDENAV+title);
+      if(li) li.style.backgroundColor = "#ddd";  
+    } 
   }
 
   addTitleToolSection(title) {

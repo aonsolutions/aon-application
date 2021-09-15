@@ -166,10 +166,6 @@ public class CreditorDAO {
 	}
 	
 	private static Creditor update(AONContext ctx, Creditor creditor){
-		ctx.checkWrite();
-		CreditorAutoComplete.autoComplete(ctx, creditor);
-		CreditorValidation.validate(ctx, creditor);
-		creditor = RegistryDAO.save(ctx, creditor);
 		int count = ctx.getDslContext().update(CREDITOR)
 			.set(CREDITOR.DOMAIN,creditor.getDomain().getId())
 			.set(CREDITOR.WITHHOLDING,AonEnumUtils.getByte(creditor.isWithholding()))

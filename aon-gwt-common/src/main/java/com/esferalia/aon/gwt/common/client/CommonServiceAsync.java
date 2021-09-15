@@ -31,7 +31,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	// ************************************* [ENTERPRISE]
 	// **************************************************
-	void getParentEnterprises(String domainName, int domain, String user, String query,AsyncCallback<LinkedList<Enterprise>> callback);
+//	void getParentEnterprises(String domainName, int domain, String user, String query,AsyncCallback<LinkedList<Enterprise>> callback);
 	void getEnterprise(String domainName, int domain, String user, int id,AsyncCallback<Enterprise> callback);
 	void getCompanyBanks(String domainName, int domain, String user, int enterprise,AsyncCallback<LinkedList<CompanyBank>> callback);
 	void getCompanyBanks(String domainName, int domain, String user,AsyncCallback<LinkedList<CompanyBank>> callback);

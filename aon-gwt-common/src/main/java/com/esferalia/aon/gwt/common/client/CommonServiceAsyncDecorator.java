@@ -49,11 +49,11 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 	// ************************************* [ENTERPRISE]
 	// **************************************************
-	@Override
-	public void getParentEnterprises(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<Enterprise>> callback) {
-		AON.start();
-		serviceAsync.getParentEnterprises(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<Enterprise>>(callback));
-	}
+//	@Override
+//	public void getParentEnterprises(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<Enterprise>> callback) {
+//		AON.start();
+//		serviceAsync.getParentEnterprises(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<Enterprise>>(callback));
+//	}
 
 	@Override
 	public void getEnterprise(String domainName, int domain, String user, int id, AsyncCallback<Enterprise> callback) {

@@ -15,3 +15,14 @@ export const getCompanyCostsExcel = (data) => openFile(`${API_URL}/contract/comp
 export const getCccForActivity = (data) => get(`${API_URL}/contract/ccc/activity`, data);
 
 export const getCccLife = (data) => get(`${API_URL}/contract/seg-social/ccc-life`, data);
+
+export const getConvenios = async (data) => {
+    let convenios = [
+        { id: "1", name: "- Sin convenio definido", value: "60888888888888" },
+    ];
+
+    let resp = await get(`${API_URL}/contract/agreements`, data);
+    resp.map(c =>  convenios.push({ id: c.ssNumber, name: `${c.ssNumber} - ${c.description}`, value: c.ssNumber }) );
+
+    return convenios;
+  }

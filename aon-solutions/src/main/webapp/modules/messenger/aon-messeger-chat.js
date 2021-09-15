@@ -79,9 +79,6 @@ export class AonMessengerChat extends AonElement {
 
   build() {
     this.paintView();
-
-    this.eventListenerAll();
-
     //FILL CHATS WORKFLOW
     if (this.task.id) this.getTaskWorkflow();
   }
@@ -127,51 +124,19 @@ export class AonMessengerChat extends AonElement {
       this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
     }
   }
-  
-  eventListenerAll(){
-    let titleEl = this.getElement(MESSENGER_IDS.TITLE_TASK);
-    if(titleEl) titleEl.addEventListener(EVENT.KEYUP, ({target})=> this.task.setTitle(target.innerText));
-    
-    let workgroupEl = this.getElement(MESSENGER_IDS.WORKGROUP);
-    if(workgroupEl) workgroupEl.addEventListener(EVENT.CHANGE, ({detail})=> {
-      if(detail) this.task.setWorkgroup(detail);
-    });
-
-    let taskHolderEl = this.getElement(MESSENGER_IDS.TASKHOLDER);
-    if(taskHolderEl) taskHolderEl.addEventListener(EVENT.CHANGE, ({detail})=>{
-      if(detail) this.task.setTaskHolder(detail)
-    });
-
-    let customerEl = this.getElement(MESSENGER_IDS.CUSTOMER_TASK);
-    if(customerEl) customerEl.addEventListener(EVENT.CHANGE, ({detail})=>{
-      if(detail) this.task.setRegistry(detail);
-    });
-
-    let descriptionTask = this.getElement(MESSENGER_IDS.DESCRIPTION_TASK);
-    if(descriptionTask) descriptionTask.addEventListener(EVENT.INPUT, ({target})=>{
-      if(target.value) this.task.setDescriptionJson({observation:target.value})
-    });
-
-    let gtaskIdTask = this.getElement(MESSENGER_IDS.GTASK_ID_TASK);
-    if(gtaskIdTask) gtaskIdTask.addEventListener(EVENT.INPUT, ({target})=>{
-      if(target.value) this.task.setGTaskId(target.value)
-    });
-
-    let processTypeEl = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
-    if(processTypeEl) processTypeEl.addEventListener(EVENT.CHANGE, ({detail})=>{
-      if(detail && detail.value) this.task.setSourceId(detail.value)
-    });
-  }
 
   async saveTaskWorkflow() {
     let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    const comment = await sendMessage(aonTextArea); 
+    const [comment, messengeEl] = await sendMessage(aonTextArea); 
     try {
       if(comment){
-        await saveTaskWorkflow({
+        const workflow = await saveTaskWorkflow({
           ...this.task.getWorkflowTmp(),
           comment
         });
+        if(workflow){
+          messengeEl.dataset["id"] = workflow.id;
+        }
       }
     } catch (error) {
       console.log(error);
@@ -251,17 +216,15 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceQuery(){
     try {
-      if (this.task.getTitle()) {
-        const data = await saveTask(this.task);
-        this.task.editTask(data);
-        checkFilesAddEventDescription(this.task);//check files description
+      const data = await saveTask(this.task);
+      this.task.editTask(data);
+      checkFilesAddEventDescription(this.task);//check files description
 
-        if(this.getData().id){
-          this.setData(data);
-          if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
-        } else {
-          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
-        }
+      if(this.getData().id){
+        this.setData(data);
+        if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+      } else {
+        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
     } catch (error) {
       this.showError(error);

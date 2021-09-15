@@ -108,7 +108,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RDirStaffPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
@@ -133,7 +132,6 @@ public class RegistryOldDAO {
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
 	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
-	private static final RDirStaffPropertiesDAO RDIRSTAFF_PROPERTIES = new RDirStaffPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
@@ -1048,19 +1046,19 @@ public class RegistryOldDAO {
 	
 	// ------------------- RDIRSTAFF
 	
-	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
-		return ctx.getDslContext().select()
-				.from(RDIR_STAFF)
-				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new RDirStaffFiller());
-	}
-	
-	public static RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff){
-		return ctx.getDslContext().insertInto(RDIR_STAFF,RDIR_STAFF.DOMAIN, RDIR_STAFF.REGISTRY, RDIR_STAFF.NAME, RDIR_STAFF.DOCUMENT)
-			.values(rdirstaff.getDomain(), rdirstaff.getRegistry(), rdirstaff.getName(), rdirstaff.getDocument())
-			.returning()
-			.fetch().stream().map(new RDirStaffFiller()).findFirst().orElse(new RDirStaff());
-	}
+//	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
+//		return ctx.getDslContext().select()
+//				.from(RDIR_STAFF)
+//				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
+//				.fetch().stream().map(new RDirStaffFiller());
+//	}
+//	
+//	public static RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff){
+//		return ctx.getDslContext().insertInto(RDIR_STAFF,RDIR_STAFF.DOMAIN, RDIR_STAFF.REGISTRY, RDIR_STAFF.NAME, RDIR_STAFF.DOCUMENT)
+//			.values(rdirstaff.getDomain(), rdirstaff.getRegistry(), rdirstaff.getName(), rdirstaff.getDocument())
+//			.returning()
+//			.fetch().stream().map(new RDirStaffFiller()).findFirst().orElse(new RDirStaff());
+//	}
 	
 	
 	// ------------------- REGISTRY PROFILE
@@ -1160,27 +1158,6 @@ public class RegistryOldDAO {
 					.setAttribute(r.getValue(RADDINFO.ATTRIBUTE))
 					.setValue(r.getValue(RADDINFO.VALUE))
 					.setDate(r.getValue(RADDINFO.VALUE_DATE));
-		}
-	}
-	
-	public static class RDirStaffFiller  implements Function<Record, RDirStaff> {
-
-		@Override
-		public RDirStaff apply(Record r) {
-			return new RDirStaff()
-					.setId(r.getValue(RDIR_STAFF.ID))
-					.setRegistry(r.getValue(RDIR_STAFF.REGISTRY))
-					.setDomain(r.getValue(RDIR_STAFF.DOMAIN))
-					.setChargeDescription(r.getValue(RDIR_STAFF.CHARGE_DESCRIPTION))
-					.setDirector(r.getValue(RDIR_STAFF.DIRECTOR) == 1)
-					.setDocument(r.getValue(RDIR_STAFF.DOCUMENT))
-					.setName(r.getValue(RDIR_STAFF.NAME))
-					.setDueDate(r.getValue(RDIR_STAFF.DUE_DATE))
-					.setNominalValue(r.getValue(RDIR_STAFF.NOMINAL_VALUE))
-					.setPercentShare(r.getValue(RDIR_STAFF.PERCENT_SHARE))
-					.setRepresentative(r.getValue(RDIR_STAFF.REPRESENTATIVE) == 1)
-					.setRepresentativeLabor(r.getValue(RDIR_STAFF.REPRESENTATIVE_LABOR) == 1)
-					.setShareHolder(r.getValue(RDIR_STAFF.SHAREHOLDER) == 1);
 		}
 	}
 

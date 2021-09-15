@@ -1,20 +1,20 @@
 import { API_URL, SIG_URL } from "../environments/environments.js";
 import { get, post, remove, requestSig } from "./request.js";
 
-export const isSigGet = (data, url) => {
-    const isCau = parseInt(localStorage.getItem("taskCau"));
+export const isSigGet = (url, data) => {
+    const isCau = parseInt(localStorage.getItem("taskCau") || 0);
     if(data) data.cau = isCau;
     return isCau ?  getSig(`${SIG_URL}/${url}`, data) : get(`${API_URL}/${url}`, data);
 }  
   
-export const isSigPost = (data, url) => {
-    const isCau = parseInt(localStorage.getItem("taskCau"));
-     if(data) data.cau = isCau;
+export const isSigPost = (url, data) => {
+    const isCau = parseInt(localStorage.getItem("taskCau") || 0);
+    if(data) data.cau = isCau;
     return isCau ? postSig(`${SIG_URL}/${url}`, data) : post(`${API_URL}/${url}`, data);
 } 
     
-export const isSigRemove = (data, url) => {
-    const isCau = parseInt(localStorage.getItem("taskCau"));
+export const isSigRemove = (url, data) => {
+    const isCau = parseInt(localStorage.getItem("taskCau") || 0);
      if(data) data.cau = isCau;
     return isCau ? removeSig(`${SIG_URL}/${url}`, data) : remove(`${API_URL}/${url}`, data);
 } 

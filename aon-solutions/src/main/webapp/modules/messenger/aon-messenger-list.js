@@ -1,9 +1,7 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
-import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getDomainUserRoles } from "../../services/companyService.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
@@ -20,7 +18,6 @@ export class AonMessengerList extends AonElement {
   MORE;
   KEY_VIEW;
   TASK_HOLDER;
-  dur;
   static get observedAttributes() {
     return [];
   }
@@ -41,10 +38,7 @@ export class AonMessengerList extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    getDomainUserRoles({}).then(r => {
-      this.dur = new DomainUserRoles(r);
-      this.build();
-    });
+    this.build();
   }
 
   disconnectedCallback() {
@@ -87,7 +81,7 @@ export class AonMessengerList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "2%");
       aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
-      aonTable.addColumn(MSG.TITLE, "string", "newTitle", "30%");
+      aonTable.addColumn(MSG.ISSUE, "string", "newTitle", "30%");
       aonTable.addColumn("Asignado", "string", "assigned", "20%");
       aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
@@ -108,14 +102,10 @@ export class AonMessengerList extends AonElement {
     this.applicationEl.removeToolbarOptions();
     if(this.isBeta()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, ({target}) =>  this.addTask(target));
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST}));
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, ({target}) =>{
-          if(TASK_SOURCE.CAU === this.applicationParentEl._filter.source){
-            this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
-          } else {
-            this.addTask(target);
-          }
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST});
         });
       }
     }
@@ -231,37 +221,6 @@ export class AonMessengerList extends AonElement {
     }
     return data;
   }
-
-  addTask(button){
-		const left = button.getBoundingClientRect().left;
-    let top    = button.getBoundingClientRect().top;
-    if(this.isMobile()) top = top - 80;
-
-    let options = [];
-    options.push({
-      name: MSG.QUERY,
-      icon: MATERIAL_ICONS.ASSESSMENT,
-      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
-    });
-    options.push({
-      name: MSG.REQUEST,
-      icon: MATERIAL_ICONS.OUTBOX,
-      fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST})
-    });
-
-    if(this.dur.hasCallCenter()){
-      options.push({
-        name: MSG.CAU,
-        icon: MATERIAL_ICONS.SUPPORT_AGENT,
-        fn: () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.CAU})
-      });
-    }
-
-    const d = this.applicationEl.getOptionDialog();
-    d.setMenuOptions(options, top, left);
-    d.open();
-  }
-
 
   getIconList(res){      
     return {

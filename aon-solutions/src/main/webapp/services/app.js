@@ -180,8 +180,8 @@ export const CONFIGURATION = {
 
 export const MESSENGER = {
   app: CONSTANT.MESSENGER,
-  title: MSG.TASKS,
-  description: MSG.TASKS,
+  title: MSG.REQUESTS,
+  description: MSG.REQUESTS,
   icon: AON_ICONS.AON_APP,
   color: '#CADEFF',
   access: [{

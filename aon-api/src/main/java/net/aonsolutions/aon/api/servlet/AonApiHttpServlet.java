@@ -41,10 +41,6 @@ public class AonApiHttpServlet extends HttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(AonApiHttpServlet.class.getName());
 	
-	public AonApiHttpServlet() {
-	
-	}
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		initialize(req, resp);
@@ -81,7 +77,9 @@ public class AonApiHttpServlet extends HttpServlet{
 			domain = AonStringUtils.isBlank(domainName)
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		api.setDomain(domain);
 		
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
@@ -106,7 +104,9 @@ public class AonApiHttpServlet extends HttpServlet{
 		try {
 			DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
 			api.setDur(dur);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return api;
 	}
 	
@@ -216,7 +216,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	    @SuppressWarnings("unchecked")
 		Map<String,String[]> params = req.getParameterMap();
 	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
-	      String v[] = entry.getValue();
+	      String[] v = entry.getValue();
 	      Object o = (v.length == 1) ? v[0] : v;
 	      jsonObj.put(entry.getKey(), o);
 	    }

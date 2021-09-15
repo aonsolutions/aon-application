@@ -13,6 +13,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -32,7 +35,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, getWorkgroups(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -49,7 +52,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, saveWorkgroup(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -66,7 +69,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, deleteWorkgroup(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);

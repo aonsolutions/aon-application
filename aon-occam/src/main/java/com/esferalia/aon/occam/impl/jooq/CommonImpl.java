@@ -108,14 +108,14 @@ public class CommonImpl implements ICommon {
 		return CompanyDAO.getEnterprise(ctx, id);
 	}
 
-	@Override
-	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
-		return CompanyDAO.getParentEnterprises(ctx, p -> (p.getDomainProperty()
-				.eq(ctx.getDomainId()).or(p.getParentDomainProperty().eq(
-				ctx.getDomainId()))).and(p.getNameProperty().like(query)
-				.or(p.getAliasProperty().like(query))
-				.or(p.getDocumentProperty().like(query))));
-	}
+//	@Override
+//	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx, String query) {
+//		return CompanyDAO.getParentEnterprises(ctx, p -> (p.getDomainProperty()
+//				.eq(ctx.getDomainId()).or(p.getParentDomainProperty().eq(
+//				ctx.getDomainId()))).and(p.getNameProperty().like(query)
+//				.or(p.getAliasProperty().like(query))
+//				.or(p.getDocumentProperty().like(query))));
+//	}
 
 	@Override
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise) {
@@ -284,8 +284,8 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
-	public void updateTag(AONContext ctx, Tag tag){
-		 ctx.getDslContext().transaction(configuration -> 
+	public Tag updateTag(AONContext ctx, Tag tag){
+		return ctx.getDslContext().transactionResult(configuration -> 
 		 	TagDAO.updateTag(ctx, tag));
 	}
 	

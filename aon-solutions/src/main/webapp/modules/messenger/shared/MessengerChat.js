@@ -2,10 +2,10 @@ import { AonToolbar } from "../../../components/aon-toolbar";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
-import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { buildFormQuery, buildFormRequest, buildTextareaToolbar, checkFilesAddEventDescription, downChat, getIconJson, upChat } from "./utils";
+import { buildForm, buildTextareaToolbar, downChat, getIconJson, upChat } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -21,14 +21,10 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
 
-  const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
-
-  if(aonMessengerChat.task.source === TASK_SOURCE.REQUEST) 
-    buildRequest(firstDiv, aonMessengerChat);
-  else 
-    buildQuery(firstDiv, aonMessengerChat); 
+  buildForm(firstDiv, aonMessengerChat);
 
   if(aonMessengerChat.task.id){
+    const secondDiv = createSecondDiv(mainView); //-------------------------DIV RIGHT
     buildSectionHistoric(secondDiv);
   }
 }
@@ -85,47 +81,6 @@ const buildToolbar = (aonMessengerChat) => {
 }
 
 /**
- * SOURCE QUERY
- * @param {HTMLElement} firstDiv firstDiv
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- */
-const buildQuery = (firstDiv, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
-
-    buildFormQuery(firstDiv, aonMessengerChat);
-
-    const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
-        minHeight: '150x',
-        maxHeight: '300px',
-        position: 'relative'
-    });
-    aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
-    firstDiv.appendChild(aonTextArea);
-    
-    const label = aonTextArea.addLabelTextEnd();
-    label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
-
-    aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
-      task.setFiles(target.FILES);
-    });
-    if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-    checkFilesAddEventDescription(task);//check files description
-    
-    buildTextareaToolbar(aonTextArea, task, false);
-}
-
-/**
- * SOURCE PROCESS
- * @param {HTMLElement} firstDiv firstDiv
- * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- */
- const buildRequest = (firstDiv, aonMessengerChat) => {
-
-  buildFormRequest(firstDiv, aonMessengerChat);
-
-}
-
-/**
  * Create desktop chat for messenger
  * @param {HTMLElement} secondDiv secondDiv
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
@@ -139,7 +94,7 @@ const buildSectionHistoric = (secondDiv) => {
         type: MESSENGER_COMPONENTS.WRAPPER,
         classes: [CSS.FLEX_COLUMN],
         styles: {
-            width: "90%",
+            width:'100%',
             height: '100%',
         }
     });
@@ -166,8 +121,6 @@ const buildSectionHistoric = (secondDiv) => {
     addTextAreaChat(wrapper); //
 
     addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
-
-    downChat();
 }
 
 const addTextAreaChat = (wrapper) => {
@@ -183,7 +136,16 @@ const addTextAreaChat = (wrapper) => {
   label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
   divs.divWrite.appendChild(label);
 
+  divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
+    if (ev.ctrlKey && ev.keyCode == 13) {
+      aonMessengerChat.saveTaskWorkflow();
+    } else if(ev.ctrlKey && ev.keyCode == 88){
+      openFullComment(aonMessengerChat, divs.aonTextArea);
+    }
+  });
+
   divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+ 
   divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
 }
 
@@ -198,32 +160,6 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   dialog.setContent(textarea);
 
   buildTextareaToolbar(textarea, aonMessengerChat.task, true);
-
-  // const dialogMain = dialog.getMain();
-
-  // const labelMinId = "labelMin";
-  // let labelMin = document.getElementById(labelMinId);
-  // if(!labelMin){
-  //   labelMin = setStyles(document.createElement("label"),{
-  //     color: "grey",
-  //     fontSize: "30px",
-  //     textDecoration: "none",
-  //     float: "right",
-  //     marginTop: "-17px",
-  //     marginRight: "-9px",
-  //     cursor: "pointer",
-  //     padding: "10px"
-  //   })
-  //   labelMin.id = labelMinId;
-  //   labelMin.title = MSG.MINIMIZE;
-  //   const iconMinimize = document.createElement("i");
-  //   iconMinimize.textContent = "close_fullscreen";
-  //   iconMinimize.className ="material-icons";
-  //   iconMinimize.style.fontSize = "21px";
-  //   labelMin.appendChild(iconMinimize);
-  //   dialogMain.insertBefore(labelMin, dialogMain.children[1]);
-  //   iconMinimize.addEventListener(EVENT.CLICK, ()=>dialog.close());
-  // }
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{
@@ -268,9 +204,10 @@ const createSecondDiv = (mainView) => {
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
         width: "50%",
-        minWidth: "400px",
+        // minWidth: "400px",
         paddingTop: "4px",
-        paddingBottom: "30px"
+        paddingBottom: "30px",
+        paddingRight: "44px"
     },
   }).element;
 
@@ -285,12 +222,7 @@ const createSecondDiv = (mainView) => {
  */
 const addChatButtonsUpDown = (secondDiv) => {
   const leftButtonBar = newComponent({
-      classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER],
-      styles: {
-          position: 'relative',
-          width: "10%",
-          height: "100%"
-      }
+    classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_CENTER]
   });
   leftButtonBar.appendTo(secondDiv);
 
@@ -309,5 +241,29 @@ const addChatButtonsUpDown = (secondDiv) => {
   });
   downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);
-
 }
+
+
+const addTaskDescription = () =>{
+  const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
+  const task = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).task;
+  const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
+      minHeight: '150x',
+      maxHeight: '300px',
+      position: 'relative'
+  });
+  processDiv.id = MESSENGER_IDS.DESCRIPTION_TASK;
+  div.appendChild(aonTextArea);
+  
+  const label = aonTextArea.addLabelTextEnd();
+  label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
+
+  aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
+    task.setFiles(target.FILES);
+    if(target.value) task.setDescriptionJson({observation:target.value})
+  });
+  if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
+  checkFilesAddEventDescription(task);//check files description
+  
+  buildTextareaToolbar(aonTextArea, task, false);
+} 

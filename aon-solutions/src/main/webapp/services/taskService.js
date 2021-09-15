@@ -4,27 +4,28 @@ import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 
 
 //---------------------------TASK
-export const getTasks = (data) =>  isSigGet(data, "task");
-export const getTaskOne = (data) => isSigGet(data, "task/one");
-export const saveTask = (data) =>  isSigPost(data, "task"); 
-export const deleteTask = (data) => isSigRemove(data, "task"); 
-export const saveTaskAttach = (data) => isSigPost(data, "task/attach");
-export const getTaskAttach = (data) =>  isSigGet(data, "task/attach");
-export const getTaskStatusCount = (data) => isSigGet(data, "task/status/count");
-export const getTaskCount = (data) => isSigGet(data, "task/count");
-export const getTaskNotice = (data) => isSigGet(data, "task/notice");
+export const getTasks = (data) =>  isSigGet("task", data);
+export const getTaskOne = (data) => isSigGet("task/one",data);
+export const saveTask = (data) =>  isSigPost("task",data); 
+export const deleteTask = (data) => isSigRemove("task",data); 
+export const saveTaskAttach = (data) => isSigPost("task/attach",data);
+export const getTaskAttach = (data) =>  isSigGet("task/attach",data);
+export const getTaskStatusCount = (data) => isSigGet("task/status/count",data);
+export const getTaskCount = (data) => isSigGet("task/count",data);
+export const getTaskNotice = (data) => isSigGet("task/notice",data);
+export const taskHistoricSend = (data) => isSigPost(`task/historic-send`,data);
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
 
 //----------------TASK WORKFLOW
-export const getTaskWorkflow = (data) => isSigGet(data, "task/workflow");
-export const saveTaskWorkflow = (data) => isSigPost(data, "task/workflow"); 
+export const getTaskWorkflow = (data) => isSigGet("task/workflow",data);
+export const saveTaskWorkflow = (data) => isSigPost("task/workflow" ,data); 
 
 
 //----------------TASK TAG
-export const getTaskTag = (data) => isSigGet(data, "task/tag");
-export const getTaskTags = (data) => isSigGet(data, "task/tags");
-export const saveTaskTag = (data) => isSigPost(data, "task/tag"); 
-export const deleteTaskTag = (data) => isSigRemove(data, "task/tag"); 
+export const getTaskTag = (data) => isSigGet("task/tag",data);
+export const getTaskTags = (data) => isSigGet("task/tags",data);
+export const saveTaskTag = (data) => isSigPost("task/tag",data); 
+export const deleteTaskTag = (data) => isSigRemove("task/tag",data); 
 
 
 

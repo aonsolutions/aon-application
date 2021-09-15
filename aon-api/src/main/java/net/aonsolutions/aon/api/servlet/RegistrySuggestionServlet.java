@@ -16,6 +16,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -35,7 +37,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 				response(req, resp, getRegistries(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}			
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -98,9 +100,5 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 				.put("document", reg.getDocument())
 				.put("name", reg.getName())
 				.put("global", global);
-	}
-	
-	private JSONObject getResponseObject() {
-		return new JSONObject();
 	}
 }

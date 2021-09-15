@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014.BalanceType;
@@ -24,8 +24,8 @@ public class Mod2002014File {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	private static final DateFormat DATE_FORMAT2 = new SimpleDateFormat("ddMMyy");
 	private static final String EMPTY_DATE = "00000000";
-	private static final CompanyAdministrator EMPTY_COMPANY_ADMINISTRATOR = new CompanyAdministrator();
-	private static final CompanyParticipation EMPTY_COMPANY_PARTICIPATION = new CompanyParticipation();
+	private static final Mod200CompanyAdministrator EMPTY_COMPANY_ADMINISTRATOR = new Mod200CompanyAdministrator();
+	private static final Mod200CompanyParticipation EMPTY_COMPANY_PARTICIPATION = new Mod200CompanyParticipation();
 	
 	private Mod2002014 mod200;
 	private Map<String,Double> keys;
@@ -156,65 +156,65 @@ public class Mod2002014File {
 		}
 		return EMPTY_DATE;
 	}
-	public CompanyAdministrator getCompanyAdministrator(int index) {
+	public Mod200CompanyAdministrator getCompanyAdministrator(int index) {
 		if (getMod200().getAdministrators() != null && getMod200().getAdministrators().size() > index) {
 			return getMod200().getAdministrators().get(index);
 		}
 		return EMPTY_COMPANY_ADMINISTRATOR;
 	}
-	public CompanyAdministrator getAdm0() {
+	public Mod200CompanyAdministrator getAdm0() {
 		return getCompanyAdministrator(0);
 	}
-	public CompanyAdministrator getAdm1() {
+	public Mod200CompanyAdministrator getAdm1() {
 		return getCompanyAdministrator(1);
 	}
-	public CompanyAdministrator getAdm2() {
+	public Mod200CompanyAdministrator getAdm2() {
 		return getCompanyAdministrator(2);
 	}
-	public CompanyAdministrator getAdm3() {
+	public Mod200CompanyAdministrator getAdm3() {
 		return getCompanyAdministrator(3);
 	}
-	public CompanyAdministrator getAdm4() {
+	public Mod200CompanyAdministrator getAdm4() {
 		return getCompanyAdministrator(4);
 	}
-	public CompanyAdministrator getAdm5() {
+	public Mod200CompanyAdministrator getAdm5() {
 		return getCompanyAdministrator(5);
 	}
 	
-	private CompanyParticipation getCompanyParticipation(List<CompanyParticipation> list, int index) {
+	private Mod200CompanyParticipation getCompanyParticipation(List<Mod200CompanyParticipation> list, int index) {
 		if (list != null && list.size() > index) {
 			return list.get(index);
 		}
 		return EMPTY_COMPANY_PARTICIPATION;
 	}
-	public CompanyParticipation getParOut0() {
+	public Mod200CompanyParticipation getParOut0() {
 		return getCompanyParticipation(getMod200().getParticipationsOut(),0);
 	}
-	public CompanyParticipation getParOut1() {
+	public Mod200CompanyParticipation getParOut1() {
 		return getCompanyParticipation(getMod200().getParticipationsOut(),1);
 	}
-	public CompanyParticipation getParOut2() {
+	public Mod200CompanyParticipation getParOut2() {
 		return getCompanyParticipation(getMod200().getParticipationsOut(),2);
 	}
-	public CompanyParticipation getParOut3() {
+	public Mod200CompanyParticipation getParOut3() {
 		return getCompanyParticipation(getMod200().getParticipationsOut(),3);
 	}
-	public CompanyParticipation getParIn0() {
+	public Mod200CompanyParticipation getParIn0() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),0);
 	}
-	public CompanyParticipation getParIn1() {
+	public Mod200CompanyParticipation getParIn1() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),1);
 	}
-	public CompanyParticipation getParIn2() {
+	public Mod200CompanyParticipation getParIn2() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),2);
 	}
-	public CompanyParticipation getParIn3() {
+	public Mod200CompanyParticipation getParIn3() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),3);
 	}
-	public CompanyParticipation getParIn4() {
+	public Mod200CompanyParticipation getParIn4() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),4);
 	}
-	public CompanyParticipation getParIn5() {
+	public Mod200CompanyParticipation getParIn5() {
 		return getCompanyParticipation(getMod200().getParticipationsIn(),5);
 	}
 	

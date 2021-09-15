@@ -30,11 +30,12 @@ public interface ITask2 {
 	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
 	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
+	public void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter);
 	
 	//TASKATTACH
 	public TaskAttach getTaskAttach(AONContext ctx, TaskAttachFilter filter);
 	public Stream<TaskAttach> getTaskAttachStream(AONContext ctx, TaskAttachFilter filter);
 	public LinkedList<TaskAttach> getTaskAttachList(AONContext ctx, TaskAttachFilter filter);
 	public TaskAttach saveTaskAttach(AONContext ctx, TaskAttach task);
-	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter);
+	public void deleteTaskAttach(AONContext ctx, Integer id);
 }

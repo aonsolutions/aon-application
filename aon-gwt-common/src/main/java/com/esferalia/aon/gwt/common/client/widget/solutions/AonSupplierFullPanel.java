@@ -6,9 +6,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -55,6 +58,19 @@ public class AonSupplierFullPanel extends AonRegistryFullPanel<SupplierFull> imp
 		AonDisplayTable displayTab = getNewTab();
 		getRootPanel().add(displayTab);
 		Supplier supplier = supplierFull.ensureSupplier();
+
+		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
+		transactionBox.setValue(supplier.getTransaction());
+		transactionBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				supplier.setTransaction(transactionBox.getValue());
+			}
+		});
+		
+		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
+
 		final CheckBox vatAccualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
 		final CheckBox withholdingFarmer = new CheckBox(AON.MSG.withholdingFarmer());
 		final CheckBox withholding = new CheckBox(AON.MSG.withholding());

@@ -148,6 +148,8 @@ export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
 export const MOVE_TO_INBOX = "move_to_inbox";
 export const MARK_EMAIL_READ = "mark_email_read";
+
+export const NOTIFICATIONS = "notifications";
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';

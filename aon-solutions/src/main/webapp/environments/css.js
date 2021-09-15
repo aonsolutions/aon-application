@@ -280,6 +280,9 @@ export const RESIZE_VERTICAL = "resizeVertical";
 
 export const ELEMENT_HIDDEN = "elementHidden";
 
+export const MESSAGE_AFTER = "messageAfter";
+
+
 // aon-textarea 
 
 export const AON_TEXTAREA = 'aonTextarea';

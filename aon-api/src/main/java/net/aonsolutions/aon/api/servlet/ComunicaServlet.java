@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +31,9 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import solutions.aon.aws.ses.SES;
@@ -71,7 +77,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					jsonInString = gjson.toJson(this.nafxipf(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
@@ -110,7 +116,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					jsonInString = gjson.toJson(updateContrato(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
@@ -124,11 +130,16 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		ArrayList<Employee> employees = new ArrayList<>();
 	
 		byte[] cert = certificateInputStream.readAllBytes();
-		List<String> errors = new ArrayList<String>();
-        PAYROLL.getCCCStream(domain.getName(), domain.getId(), login).forEach(ccc -> {
+		List<String> errors = new ArrayList<>();
+		
+		
+
+		PAYROLL.getCCCStream(domain.getName(), domain.getId(), login)
+		.filter(distinctByKey(ci -> ci.getCccAccount()))
+		.forEach(ccc -> {
             String cti = ccc.getCccAccount();
             String regimen = ccc.getCccRegimeCode();
-            try{
+            try{            	
                 employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
             } catch(InvalidCertificateException e) {
                 e.printStackTrace();
@@ -138,7 +149,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
             }
         });	
         
-        if(errors.size() > 0) throw new Exception(errors.get(0));
+        if(!errors.isEmpty()) throw new Exception(errors.get(0));
         
 		return employees;
 	}
@@ -330,10 +341,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private void getAgreements(AonApiData api) {
-//		AON_SOLUTIONS.getA
-	}
-	
 	private void updateGrupCtz(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, Map<String, Object> map, List<String> errors){
 		JSONObject data = api.getData();
@@ -466,5 +473,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			}
 		});
 		newThread.start();
+	}
+	
+	// predicate to filter the duplicates by the given key extractor.
+	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
+		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}
 }

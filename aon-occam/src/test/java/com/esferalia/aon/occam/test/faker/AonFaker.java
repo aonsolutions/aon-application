@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -74,6 +77,18 @@ public class AonFaker {
 			.setConfidential( !AonRandom.gt(3) );
 	}
 
+	public static Company getCompany( AONContext ctx , Registry registry) {
+		return  new Company()
+			.copy(registry)
+			.setActive( AonRandom.gt(2) )
+			.setSurcharge( AonRandom.gt(95) )
+			.setWithholding( AonRandom.gt(85) )
+			.setWithholding( AonRandom.gt(85) )
+			.setVatAccrualPayment( AonRandom.gt(99) )
+			.seteInvoice( AonRandom.gt(50) )
+			;
+	}
+	
 	public static Customer getCustomer( AONContext ctx ) {
 		return getCustomer(ctx, getRegistry(ctx));
 	}
@@ -237,6 +252,34 @@ public class AonFaker {
 			}
 		}
 		return media;
+	}
+
+	public static RDirStaff getRDirStaff( AONContext ctx) {
+		return getRDirStaff(ctx, null); 
+	}
+	public static RDirStaff getRDirStaff( AONContext ctx, Registry registry ) {
+		if (registry == null) {
+			registry = AonRandom.getRegistry(ctx);
+		}
+		
+		RDirStaff rDirStaff = new RDirStaff()
+			.setDomain(ctx.getDomainId())
+			.setRegistry(registry.getId())
+			.setDocument( AonRandom.name(-1, RDIR_STAFF.DOCUMENT.getDataType().length()) )
+			.setName( AonRandom.name(-1, RDIR_STAFF.NAME.getDataType().length()) )
+			.setShareHolder( AonRandom.gt(50) )
+			.setRepresentative( AonRandom.gt(50) )
+			.setDirector( AonRandom.gt(50) )
+			.setRepresentativeLabor( AonRandom.gt(50) )
+			.setDueDate( AonRandom.getFutureDate(10) )
+			.setPercentShare( AonRandom.getDouble(0, 100, 2))
+			.setShareNumber( AonRandom.number(20 ,0, 100))
+			.setNominalValue( AonRandom.getDouble(20 ,0, 1000000, 2))
+			.setChargeDescription(AonRandom.gt(60)
+				?AonStringUtils.abbreviate( faker.name().username(), RDIR_STAFF.CHARGE_DESCRIPTION.getDataType().length())
+				:null
+			);
+		return rDirStaff;
 	}
 
 	public static Tariff getTariff( AONContext ctx ) {

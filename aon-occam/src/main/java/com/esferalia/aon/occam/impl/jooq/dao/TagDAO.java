@@ -40,7 +40,7 @@ public class TagDAO {
 				.fetchInto(TAG).stream().map(new FullTagFiller());
 	}
 	
-	public static void updateTag(AONContext ctx, Tag tag){
+	public static Tag updateTag(AONContext ctx, Tag tag){
 		ctx.getDslContext().update(TAG)
 			.set(TAG.NAME, tag.getName())
 			.set(TAG.COLOR, tag.getColor())
@@ -48,6 +48,7 @@ public class TagDAO {
 			.set(TAG.TYPE, tag.getType())
 			.where(TAG.ID.eq(tag.getId()))
 			.execute();
+		return tag;
 	}
 	
 	public static Tag insertTag(AONContext ctx, Tag tag) {

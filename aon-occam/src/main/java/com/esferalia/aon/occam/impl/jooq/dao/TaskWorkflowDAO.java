@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
-import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -91,6 +91,14 @@ public class TaskWorkflowDAO {
 			: insert(ctx, taskWorkflow);
 	}
 	
+	public static void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter) {
+		ctx.getDslContext().update(TASK_WORKFLOW)
+			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
+			.execute();
+	}
+	
+	
 	public static TaskWorkflow update(AONContext ctx, TaskWorkflow taskWorkflow) {
 		taskWorkflow.setModificationDate(AonDateUtils.toTimestamp(new Date()));
 		ctx.getDslContext().update(TASK_WORKFLOW)
@@ -107,29 +115,33 @@ public class TaskWorkflowDAO {
 	}
 	
 	public static TaskWorkflow insert(AONContext ctx, TaskWorkflow taskWorkflow) {
-		taskWorkflow.setModificationDate(AonDateUtils.toTimestamp(new Date()));
 		Integer id = ctx.getDslContext().insertInto(TASK_WORKFLOW)
 				.set(TASK_WORKFLOW.DOMAIN, taskWorkflow.getDomain())
 				.set(TASK_WORKFLOW.TASK, taskWorkflow.getTask())
 				.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 				.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 				.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
-				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
-				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
+				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
+//				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
+		ctx.log().debug("INSERT TASK_WORKFLOW id: " + id);			
 		return taskWorkflow.setId(id);
 	}	
-
+	
 	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
+		ctx.getDslContext().delete(TASK_WORKFLOW)
+		.where(TASK_WORKFLOW.ID.eq(id))
+		.execute();
+		ctx.log().debug("DELETE TASK_WORKFLOW id:" + id);
 	}
 	
-	public static void delete(AONContext ctx, TaskWorkflowFilter filter){
+	public static void deleteByTask(AONContext ctx, Integer id){
 		ctx.getDslContext().delete(TASK_WORKFLOW)
-		.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
+		.where(TASK_WORKFLOW.TASK.eq(id))
 		.execute();
+		ctx.log().debug("DELETE TASK_WORKFLOW task:" + id);
 	}
 	
 	public static class TaskWorkflowFiller implements Function<Record, TaskWorkflow> {

@@ -3,9 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod200_2018;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key.*;
 import java.text.MessageFormat;
 import java.util.LinkedList;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.DoubleVariable2018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018.BalanceType;
@@ -819,7 +820,7 @@ public class Mod2002018Validation {
 			mod200.getMessages().add(new ValidationMessage2018(PAGE01,"Debe rellenar al menos un administrador."));
 		} else {
 			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
-				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
+				Mod200CompanyAdministrator ca = mod200.getAdministrators().get(i); 
 				if (!AonDocumentUtil.isValid(ca.getDocument())) {
 					mod200.getMessages().add(new ValidationMessage2018(PAGE01,"NIF del administrador n\u00BA "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
 				}
@@ -833,12 +834,12 @@ public class Mod2002018Validation {
 	private static void validateParticipationsIn(Mod2002018 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
 			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
-			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsIn();
+			 LinkedList<Mod200CompanyParticipation> participations = mod200.getParticipationsIn();
 			if (participations == null || participations.size() == 0) {
 				mod200.getMessages().add(new ValidationMessage2018(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
+					Mod200CompanyParticipation cp = participations.get(i); 
 					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						mod200.getMessages().add(new ValidationMessage2018(PAGE02,"NIF de la participaci\u00F3n en la declarante n\u00BA "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}
@@ -855,11 +856,11 @@ public class Mod2002018Validation {
 	
 	private static void validateParticipationsOut(Mod2002018 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			 LinkedList<CompanyParticipation> participations = mod200.getParticipationsOut();
+			 LinkedList<Mod200CompanyParticipation> participations = mod200.getParticipationsOut();
 			if (participations == null || participations.size() == 0) {
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
+					Mod200CompanyParticipation cp = participations.get(i); 
 					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						mod200.getMessages().add(new ValidationMessage2018(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras n\u00BA "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}

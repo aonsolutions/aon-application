@@ -24,14 +24,14 @@ import com.esferalia.aon.jooq.tables.records.FsModel200RegistryRecord;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -43,7 +43,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb.MOD2002013;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
@@ -127,7 +127,7 @@ public class Mod2002014DAO  {
 		List<FsModel200RegistryRecord> list = new LinkedList<FsModel200RegistryRecord>();
 		FsModel200RegistryRecord detail = null;
 		if (mod200.getAdministrators() != null) {
-			for ( CompanyAdministrator ca : mod200.getAdministrators() ) {
+			for ( Mod200CompanyAdministrator ca : mod200.getAdministrators() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -140,7 +140,7 @@ public class Mod2002014DAO  {
 			}
 		}
 		if (mod200.getParticipationsOut() != null) {
-			for ( CompanyParticipation cp : mod200.getParticipationsOut() ) {
+			for ( Mod200CompanyParticipation cp : mod200.getParticipationsOut() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -165,7 +165,7 @@ public class Mod2002014DAO  {
 			}
 		}
 		if (mod200.getParticipationsIn() != null) {
-			for ( CompanyParticipation cp : mod200.getParticipationsIn() ) {
+			for ( Mod200CompanyParticipation cp : mod200.getParticipationsIn() ) {
 				detail = new FsModel200RegistryRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -412,19 +412,19 @@ public class Mod2002014DAO  {
 				.selectFrom(FS_MODEL200_REGISTRY)
 			 	.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
 			 	.fetch();
-		CompanyAdministrator ca = null;
-		CompanyParticipation cp = null;
+		Mod200CompanyAdministrator ca = null;
+		Mod200CompanyParticipation cp = null;
 		LegalRepresentative lr  = null;
 		for (FsModel200RegistryRecord reg : res) {
 			if (reg.getType() == 0) {
-				ca = new CompanyAdministrator();
+				ca = new Mod200CompanyAdministrator();
 				ca.setDocument( reg.getDocument());
 				ca.setName( reg.getName());
 				ca.setRepresentative( reg.getRepresentative() == 1 );
 				ca.setProvince( reg.getProvince() );
 				mod200.getAdministrators().add(ca);
 			} else if (reg.getType() == 1) {
-				cp = new CompanyParticipation();
+				cp = new Mod200CompanyParticipation();
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
 				cp.setProvince( reg.getProvince() );
@@ -443,7 +443,7 @@ public class Mod2002014DAO  {
 				cp.setResult(reg.getResult());
 				mod200.getParticipationsOut().add(cp);
 			} if (reg.getType() == 2) {
-				cp = new CompanyParticipation();					
+				cp = new Mod200CompanyParticipation();					
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
 				cp.setProvince(reg.getProvince() );
@@ -494,14 +494,14 @@ public class Mod2002014DAO  {
 	
 	public static Mod2002014 initializeMod200(AONContext ctx, Mod2002014 mod200) {
 		if (!mod200.isInitializedFromLastYear()) {
-			List<CompanyAdministrator> adms = CompanyDAO.getDirStaff(ctx, mod200.getDomain());
+			List<Mod200CompanyAdministrator> adms = Mod200DAO.getDirStaff(ctx, mod200.getDomain());
 			if ( adms != null && adms.size() > 0 ) {
-				for (CompanyAdministrator ca : adms ) {
+				for (Mod200CompanyAdministrator ca : adms ) {
 					if (ca.isAdministrator()) {
 						mod200.getAdministrators().add(ca);
 					}
 					if (ca.isShareholder()) {
-						CompanyParticipation cp = new CompanyParticipation();
+						Mod200CompanyParticipation cp = new Mod200CompanyParticipation();
 						cp.setDocument(ca.getDocument());
 						cp.setName(ca.getName());
 						cp.setProvince(ca.getProvince());
@@ -754,7 +754,7 @@ public class Mod2002014DAO  {
 			list.add(new ValidationMessage2014(PAGE01,"Debe rellenar al menos un administrador."));
 		} else {
 			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
-				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
+				Mod200CompanyAdministrator ca = mod200.getAdministrators().get(i); 
 				if (!AonDocumentUtil.isValid(ca.getDocument())) {
 					list.add(new ValidationMessage2014(PAGE01,"NIF del administrador nº "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
 				}
@@ -814,12 +814,12 @@ public class Mod2002014DAO  {
 	private static void validateParticipationsIn(List<ValidationMessage2014> list,Mod2002014 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())
 			&& !AonDocumentUtil.isCulturalAssociation(mod200.getEnterpriseDocument())) {
-			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
+			 List<Mod200CompanyParticipation> participations = mod200.getParticipationsIn();
 			if (participations == null || participations.size() == 0) {
 				list.add(new ValidationMessage2014(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
+					Mod200CompanyParticipation cp = participations.get(i); 
 					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						list.add(new ValidationMessage2014(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}
@@ -836,11 +836,11 @@ public class Mod2002014DAO  {
 	
 	private static void validateParticipationsOut(List<ValidationMessage2014> list,Mod2002014 mod200) {
 		 if (AonDocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
-			 List<CompanyParticipation> participations = mod200.getParticipationsOut();
+			 List<Mod200CompanyParticipation> participations = mod200.getParticipationsOut();
 			if (participations == null || participations.size() == 0) {
 			} else {
 				for (int i = 0; i < participations.size(); i++ ) {
-					CompanyParticipation cp = participations.get(i); 
+					Mod200CompanyParticipation cp = participations.get(i); 
 					if (!AonDocumentUtil.isValid(cp.getDocument())) {
 						list.add(new ValidationMessage2014(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
 					}

@@ -187,7 +187,7 @@ export class AonCompanyCostsList extends AonElement {
         let button = this.createElement(TAG.BUTTON);
         button.className = "aonButton";
         button.id = `${this.id}Nomina`;
-        button.innerHTML = MSG.VIEW_PAYROLL;
+        button.innerHTML = MSG.VIEW_PAYROLLS;
         button.style.marginTop = "10px";
         div.appendChild(button);
         button.addEventListener(EVENT.CLICK,()=> this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST));

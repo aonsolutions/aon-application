@@ -33,7 +33,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	// ************************************* [ENTERPRISE]
 	// **************************************************
-	LinkedList<Enterprise> getParentEnterprises(String domainName, int domain, String user,String query) throws AonCoreException;
+//	LinkedList<Enterprise> getParentEnterprises(String domainName, int domain, String user,String query) throws AonCoreException;
 	Enterprise getEnterprise(String domainName, int domain, String user, int id) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain, String user) throws AonCoreException;
 	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain, String user,int enterprise) throws AonCoreException;

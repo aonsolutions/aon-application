@@ -82,6 +82,12 @@ public class Task2Impl implements ITask2 {
 	}
 	
 	@Override
+	public void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter) {
+		ctx.getDslContext().transaction(configuration -> TaskWorkflowDAO.updateTaskWorkflowBetween(ctx, filter));
+	}
+	
+	
+	@Override
 	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		TaskWorkflowDAO.getStream(ctx, filter, page, perPage));	
@@ -127,8 +133,8 @@ public class Task2Impl implements ITask2 {
 	}
 	
 	@Override
-	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter) {
-		ctx.getDslContext().transaction(configuration -> TaskAttachDAO.delete(ctx, filter));
+	public void deleteTaskAttach(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> TaskAttachDAO.delete(ctx, id));
 	}
 
 	@Override

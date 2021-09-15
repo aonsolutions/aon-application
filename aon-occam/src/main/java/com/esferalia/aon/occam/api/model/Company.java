@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.security.Scope;
 
 public class Company extends Registry implements Serializable {
 
@@ -14,7 +13,6 @@ public class Company extends Registry implements Serializable {
 	private boolean withholding;
 	private boolean vatAccrualPayment;
 	private boolean eInvoice;
-	private Scope scope;
 	
 	public Company copy(Registry registry) {
 		return super.copy( registry, this);
@@ -63,14 +61,6 @@ public class Company extends Registry implements Serializable {
 	public Company seteInvoice(boolean eInvoice) {
 		this.eInvoice = eInvoice;
 		return this;
-	}
-
-	public Scope getScope() {
-		return scope;
-	}
-
-	public void setScope(Scope scope) {
-		this.scope = scope;
 	}
 
 }

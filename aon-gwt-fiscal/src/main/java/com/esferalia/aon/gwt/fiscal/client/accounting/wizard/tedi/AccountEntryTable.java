@@ -660,6 +660,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		}
 		wizardContent.getMainEntry().getDetails().add(newDetail);
 		paintRow(options, newDetail);
+		refreshTotals();
 		if (newDetail.getAccount() != null) {
 			ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 		}

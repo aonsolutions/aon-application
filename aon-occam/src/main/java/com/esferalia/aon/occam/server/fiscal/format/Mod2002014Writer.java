@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -148,7 +148,7 @@ public class Mod2002014Writer {
 	
 	// Devuelve el codigo de provincia (por defecto) o el pais, según este cumplimentado 
 	// uno u otro campo (province o country) de participaciones
-	private static String getProvinceCountry(CompanyParticipation cp) {
+	private static String getProvinceCountry(Mod200CompanyParticipation cp) {
 		
 		int province = cp.getProvince();
 		if (province==0)

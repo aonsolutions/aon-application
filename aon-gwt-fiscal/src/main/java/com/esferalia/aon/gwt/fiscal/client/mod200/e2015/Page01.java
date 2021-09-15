@@ -11,9 +11,9 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -51,9 +51,9 @@ public class Page01 extends PageAbs {
 	@UiField(provided = true)
 	CellTable<LegalRepresentative> table1;
 
-	private ListDataProvider<CompanyAdministrator> dataProvider2;
+	private ListDataProvider<Mod200CompanyAdministrator> dataProvider2;
 	@UiField(provided = true)
-	CellTable<CompanyAdministrator> table2;
+	CellTable<Mod200CompanyAdministrator> table2;
 
 	@UiField
 	DocumentTextBox secretaryDocument;
@@ -90,11 +90,11 @@ public class Page01 extends PageAbs {
 		addLegalNotaryDateColumn();
 		addLegalRemoveColumn();
 
-		table2 = new CellTable<CompanyAdministrator>(50, Model200Table.TABLE_STYLE);
+		table2 = new CellTable<Mod200CompanyAdministrator>(50, Model200Table.TABLE_STYLE);
 		table2.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table2.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		table2.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		dataProvider2 = new ListDataProvider<CompanyAdministrator>();
+		dataProvider2 = new ListDataProvider<Mod200CompanyAdministrator>();
 		dataProvider2.addDataDisplay(table2);
 		addAdmDocumentColumn();
 		addAdmRepresentativeColumn();
@@ -113,7 +113,7 @@ public class Page01 extends PageAbs {
 		dataProvider1.addDataDisplay(table1);
 		table1.redraw();
 
-		dataProvider2 = new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
+		dataProvider2 = new ListDataProvider<Mod200CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
 		dataProvider2.addDataDisplay(table2);
 		table2.redraw();
 		
@@ -161,8 +161,8 @@ public class Page01 extends PageAbs {
 		}
 		this.mod200Object.getMod200().setRepresentatives(list1);
 		
-		List<CompanyAdministrator> list2 = new LinkedList<CompanyAdministrator>();
-		for (CompanyAdministrator cp : dataProvider2.getList()) {
+		List<Mod200CompanyAdministrator> list2 = new LinkedList<Mod200CompanyAdministrator>();
+		for (Mod200CompanyAdministrator cp : dataProvider2.getList()) {
 			list2.add(cp);
 		}
 		this.mod200Object.getMod200().setAdministrators(list2);
@@ -297,16 +297,16 @@ public class Page01 extends PageAbs {
 
 	private void addAdmDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
-		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
+		Column<Mod200CompanyAdministrator, String> col = new Column<Mod200CompanyAdministrator, String>(
 				input) {
 			@Override
-			public String getValue(CompanyAdministrator ca) {
+			public String getValue(Mod200CompanyAdministrator ca) {
 				return ca.getDocument();
 			}
 		};
 		
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
-		    public void update(int index, CompanyAdministrator ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, String>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, String value) {
 		    	dataProvider2.getList().get(index).setDocument(value);
 		    }
 		});		
@@ -317,15 +317,15 @@ public class Page01 extends PageAbs {
 
 	private void addAdmNameColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(40);
-		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
+		Column<Mod200CompanyAdministrator, String> col = new Column<Mod200CompanyAdministrator, String>(
 				input) {
 			@Override
-			public String getValue(CompanyAdministrator ca) {
+			public String getValue(Mod200CompanyAdministrator ca) {
 				return ca.getName();
 			}
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
-		    public void update(int index, CompanyAdministrator ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, String>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, String value) {
 		    	dataProvider2.getList().get(index).setName(value);
 		    }
 		});		
@@ -334,15 +334,15 @@ public class Page01 extends PageAbs {
 	}
 
 	private void addAdmRepresentativeColumn() {
-		Column<CompanyAdministrator, Boolean> col = new Column<CompanyAdministrator, Boolean>(
+		Column<Mod200CompanyAdministrator, Boolean> col = new Column<Mod200CompanyAdministrator, Boolean>(
 				new TabCheckboxCell()) {
 			@Override
-			public Boolean getValue(CompanyAdministrator ca) {
+			public Boolean getValue(Mod200CompanyAdministrator ca) {
 				return ca.isRepresentative();
 			}
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, Boolean>() {
-		    public void update(int index, CompanyAdministrator ca, Boolean value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, Boolean>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, Boolean value) {
 		    	dataProvider2.getList().get(index).setRepresentative(value);
 		    }
 		});		
@@ -353,15 +353,15 @@ public class Page01 extends PageAbs {
 
 	private void addAdmResidenceColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(20);
-		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
+		Column<Mod200CompanyAdministrator, String> col = new Column<Mod200CompanyAdministrator, String>(
 				input) {
 			@Override
-			public String getValue(CompanyAdministrator ca) {
+			public String getValue(Mod200CompanyAdministrator ca) {
 				return ca.getResidence();
 			}
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
-		    public void update(int index, CompanyAdministrator ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, String>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, String value) {
 		    	dataProvider2.getList().get(index).setResidence(value);
 		    }
 		});		
@@ -376,15 +376,15 @@ public class Page01 extends PageAbs {
 			options.add( prov.getName() );
 		}
 		TabSelectionCell provinceCell = new TabSelectionCell(options);
-		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
+		Column<Mod200CompanyAdministrator, String> col = new Column<Mod200CompanyAdministrator, String>(
 				provinceCell) {
 			@Override
-			public String getValue(CompanyAdministrator ca) {
+			public String getValue(Mod200CompanyAdministrator ca) {
 				return Province.values()[ca.getProvince()].getName();
 			}
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
-		    public void update(int index, CompanyAdministrator ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, String>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, String value) {
 		    	Province p = null;
 		    	if (AonStringUtils.isNotEmpty(value)) {
 		    		p = Province.values()[options.indexOf(value)]; 
@@ -399,7 +399,7 @@ public class Page01 extends PageAbs {
 	
 	@UiHandler("newAdministrator")
 	void onNewAdministrator(ClickEvent event) {
-		dataProvider2.getList().add(new CompanyAdministrator());
+		dataProvider2.getList().add(new Mod200CompanyAdministrator());
 		table2.redraw();		    		
 	}
 	
@@ -413,13 +413,13 @@ public class Page01 extends PageAbs {
 			    }
 			  }
 		};
-		Column<CompanyAdministrator,String> col = new Column<CompanyAdministrator,String>(removeButton) {
-		  public String getValue(CompanyAdministrator object) {
+		Column<Mod200CompanyAdministrator,String> col = new Column<Mod200CompanyAdministrator,String>(removeButton) {
+		  public String getValue(Mod200CompanyAdministrator object) {
 		    return AON.MSG.deleteAction();
 		  }
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
-		    public void update(int index, CompanyAdministrator ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyAdministrator, String>() {
+		    public void update(int index, Mod200CompanyAdministrator ca, String value) {
 		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 		    		dataProvider2.getList().remove(index);
 		    		table2.redraw();

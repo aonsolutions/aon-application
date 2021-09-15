@@ -9,6 +9,8 @@ import { MessengerOptions, MESSENGER_VIEWS, TASK_STATUS } from './MessengerEnums
 import { getTaskHolder } from '../../services/taskHolderService.js';
 import { getTaskStatusCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
 import { AonInput } from '../../components/aon-input.js';
+import { getDomainUserRoles } from '../../services/companyService.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 // import { AonMessengerAyudat } from './aon-messenger-ayudat.js';
 
 export class AonMessenger extends AonElement {
@@ -19,15 +21,22 @@ export class AonMessenger extends AonElement {
 	TASK_HOLDER;
 	cau; //BOOLEAN
 	cauData;
+	dur;
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
 		this.initialize();
-		// this.rootPanel(new AonMessengerAyudat());
-    	this.build();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.build();
+		});
  	}
+
+	disconnectedCallback(){
+		localStorage.removeItem("taskCau");
+	}
 
 	initialize(){
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
@@ -46,8 +55,8 @@ export class AonMessenger extends AonElement {
 	}
 
  	async build() {
-		if(this.cau)
-			this.cauData = await getCauInfo();
+
+		this.cauData = await getCauInfo();
 			
 		localStorage.setItem("taskCau", this.cau ? 1 : 0);
 
@@ -66,14 +75,18 @@ export class AonMessenger extends AonElement {
 			const task = await getTaskOne({id:this.value});
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
 		} else {
-			this._filter.task_holder = this.TASK_HOLDER.id;
+			if(!this._filter.sender){
+				this._filter.task_holder = this.TASK_HOLDER.id;
+				this.applicationEl.addToolbarTitle("Recibidas");
+			} else {
+				this.applicationEl.addToolbarTitle(MSG.SENT);
+			}
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
-			this.applicationEl.addToolbarTitle("Recibidas");
 		}
 	}
 
 	paintView(){
-		this.createApplication(this.AON_MESSENGER, `${MSG.REQUESTS} / ${MSG.TASKS}`, new AonApplication());
+		this.createApplication(this.AON_MESSENGER, MSG.REQUESTS, new AonApplication());
 	}
 
 	async buildToolbar(){
@@ -83,10 +96,10 @@ export class AonMessenger extends AonElement {
 
 		this.taskNavBar();
 		this.statusNavBar();
-		if(!this.cau)
+		if(!this.cau){
 			this.groupNavBar();
-
-		this.tagNavBar();
+			this.tagNavBar();
+		}
 	}
 
 	taskNavBar(){
@@ -123,7 +136,7 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions(MSG.TASKS, messengerOpts);
+		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
 	}
 
 	statusNavBar(){
@@ -217,12 +230,12 @@ export class AonMessenger extends AonElement {
 				actions:[
 					{
 						id: 'Delete',
-						icon: 'delete',
+						icon: MATERIAL_ICONS.DELETE,
 						action: () => this.deleteTag(item)
 					},
 					{
 						id: 'Edit',
-						icon: 'edit',
+						icon: MATERIAL_ICONS.EDIT,
 						action: () => this.dialogTag(item)
 					}
 				]
@@ -275,21 +288,26 @@ export class AonMessenger extends AonElement {
 		d.open();
 	}
 
-
-
 	updateCount(){
 		let application = this.applicationEl;
+		let filterCount= {};
+		if(this.cau && this.cauData)
+			filterCount.email = this.cauData.auth.email;
+		else 
+			filterCount.task_holder = this.TASK_HOLDER.id;
+			
+		getTaskCount(filterCount).then(count=>{
+			let sender =  count.sender || 0;
+			let task_holder =  count.task_holder || 0;
+			application.updateSidenavCount(MSG.SENT, sender);
+			application.updateSidenavCount("Recibidas", task_holder);
+		});
+
 		let filter = {};
-		if(this._filter.source) filter.source = this._filter.source;
-		
-		if(this.TASK_HOLDER && this.TASK_HOLDER.id){
-			getTaskCount({task_holder:this.TASK_HOLDER.id}).then(count=>{
-				let sender =  count.sender || 0;
-				let task_holder =  count.task_holder || 0;
-				application.updateSidenavCount("Enviadas", sender);
-				application.updateSidenavCount("Recibidas", task_holder);
-			});
+		if(this.cau && this.cauData){
+			filter.email = this.cauData.auth.email;
 		}
+		if(this._filter.source) filter.source = this._filter.source;
 
 		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];

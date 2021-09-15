@@ -16,7 +16,6 @@ import '../invoice/aon-invoice-panel.js';
 import '../laboral/aon-laboral.js';
 import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
-
 import './aon-stat.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
@@ -25,6 +24,7 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import * as GWT from "../../gwt/gwt.js";
+import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 
 export class AonDesktop extends AonElement {
 
@@ -135,11 +135,8 @@ export class AonDesktop extends AonElement {
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
-			let taskOptions = [{
-					name: 'Notificaciones',
-					icon: 'notifications',
-					fn: () => {}
-				},{
+			let taskOptions = [
+				{
 					name: 'Facturas Pendientes',
 					icon: 'inbox',
 					fn: (count) => {
@@ -149,14 +146,14 @@ export class AonDesktop extends AonElement {
 					}
 				}, {
 					name: 'Facturas Rechazadas',
-					icon: 'report',
+					icon: MATERIAL_ICONS.REPORT,
 					fn: (count) => {
 						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 						} 
 					}
 				}, {
-					name: 'Solicitudes',
+					name: 'Solicitudes Enviadas',
 					icon: MATERIAL_ICONS.OUTBOX,
 					fn: () =>{
 						if(this.isBeta()){
@@ -170,7 +167,7 @@ export class AonDesktop extends AonElement {
 						}
 					} 
 				},{
-					name: 'Tareas',
+					name: 'Solicitudes Recibidas',
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 					fn: () =>{
 						if(this.isBeta()){
@@ -349,15 +346,20 @@ export class AonDesktop extends AonElement {
 
 					// if(Apps[key].options && Apps[key].options.menu) {
 						let menu = new AonIconButton();
+
 						menu.id = li.id + 'Menu';
 						menu.icon = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
 							? "menu_open" : "keyboard_arrow_right";
 
+						
 						menu.title = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
 							? MSG.OPEN_MENU : MSG.OPEN;
 						
 						menu.addEventListener(EVENT.CLICK, (event) => {
-							if(Apps[key].options && Apps[key].options.menu){
+							if(Apps[key].options && Apps[key].options.menu
+								&& this.isOpenMenu(Apps[key])){
 								this.appOption = true;
 								event.preventDefault();
 								this.menuOption(Apps[key]);
@@ -526,6 +528,16 @@ export class AonDesktop extends AonElement {
 		else return false;
 	}
 
+	isOpenMenu(app) {
+		if(Apps.ACCOUNTING.app === app.app)
+			return this.getDur().isAccountingManager();
+		else if(Apps.FISCAL.app === app.app)
+			return this.getDur().isFiscalManager();
+		else if(Apps.PAYROLL.app === app.app)
+			return this.getDur().isPayrollManager();
+		else return false;
+	}
+
 	updateCount(){
 		let application = this.getApplication();
 			
@@ -546,8 +558,8 @@ export class AonDesktop extends AonElement {
 
 		getTaskHolder().then(th=>{
 			getTaskCount({task_holder:th.id}).then(count=>{
-				application.updateSidenavCount("Solicitudes", count.sender);
-				application.updateSidenavCount("Tareas", count.task_holder);
+				application.updateSidenavCount("Solicitudes Enviadas", count.sender);
+				application.updateSidenavCount("Solicitudes Recibidas", count.task_holder);
 			});
 		});
 		
@@ -597,6 +609,7 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
+				this.addMessenger();
 				break;
 			}
 	}
@@ -668,8 +681,6 @@ export class AonDesktop extends AonElement {
 
 	addInvoice(button) {		
 		let invoicePanel = new AonInvoicePanel();	
-
-		let height = window.innerHeight;
 		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 		let d = this.getApplication().getOptionDialog();
@@ -697,6 +708,44 @@ export class AonDesktop extends AonElement {
 		}];
 		d.setMenuOptions(options, top, left);
 		d.open();
+	}
+
+	addMessenger() {		
+		let aonMessengerChat = new AonMessenger();	
+		aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+		this.rootPanel(aonMessengerChat);
+	// 	let top  = button.getBoundingClientRect().top;
+	// 	const left = button.getBoundingClientRect().left;
+	// 	let d = this.getApplication().getOptionDialog();
+	// 	let options = [{
+	// 		name: MSG.QUERY,
+	// 		icon: MATERIAL_ICONS.INFO,
+	// 		icon_class: 'material-icons-outlined',
+	// 		fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		}
+	// 	}, {
+	// 		name: MSG.REQUEST,
+	// 		icon: MATERIAL_ICONS.ASSIGNMENT,
+	// 		fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.REQUEST};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		}
+	// 	}];
+	// 	if(this.dur.hasCallCenter()){
+	// 		options.push({
+	// 		  name: MSG.CAU,
+	// 		  icon: MATERIAL_ICONS.SUPPORT_AGENT,
+	// 		  fn: () => {
+	// 			aonMessengerChat.data = {source:TASK_SOURCE.CAU};
+	// 			this.rootPanel(aonMessengerChat);
+	// 		  }
+	// 		});
+	// 	}
+
+	// 	d.setMenuOptions(options, top, left);
+	// 	d.open();
 	}
 }
 

@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 
@@ -36,14 +38,14 @@ public class NotificationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, getNotification(api));
+			case "/":
+				response(req, resp, getNotification(api));
 				break;
-				case "/total-notification":
-					response(req, resp, getTotalNotification(api));
+			case "/total-notification":
+				response(req, resp, getTotalNotification(api));
 				break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -56,17 +58,17 @@ public class NotificationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/mark-read-notification":
-					response(req, resp, markReadNotification(api));
-					break;
-				case "/send":
-					response(req, resp, sendNotification(api));
-					break;
-				case "/save-test":
-					response(req, resp, saveNotificationTest(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/mark-read-notification":
+				response(req, resp, markReadNotification(api));
+				break;
+			case "/send":
+				response(req, resp, sendNotification(api));
+				break;
+			case "/save-test":
+				response(req, resp, saveNotificationTest(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -101,7 +103,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 			}
 		} 
 		
-		if(auths.size()>0) {
+		if(!auths.isEmpty()) {
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(api.getData().optString("title"));
 	    	notification.setBody(api.getData().optString("body"));
@@ -129,7 +131,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 
 	private JSONObject saveNotificationTest(AonApiData api) {
 		AonToken authToken = SECURITY.getAonToken(api.getToken());
-		LinkedList<Auth> auths = new LinkedList<Auth>();
+		LinkedList<Auth> auths = new LinkedList<>();
 		auths.add(new Auth().setAuth(authToken.getAuth()));
     	NotificationRequest notification = new NotificationRequest();
     	notification.setTitle("TITULO DE PRUEBA");

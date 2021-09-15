@@ -51,20 +51,20 @@ public class TimeControlImpl implements ITimeControl {
 	@Override
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TimeControlDAO.saveTimeControlDetail(ctx, tcd));
+				configuration -> TimeControlDAO.save(ctx, tcd));
 	}
 	
 	@Override
-	public void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+	public void deleteTimeControlDetail(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(
-				configuration -> TimeControlDAO.deleteTimeControlDetail(ctx, filter)
+				configuration -> TimeControlDAO.delete(ctx, id)
 		);
 	}
 	
 	@Override
 	public Location saveLocation(AONContext ctx, Location lc) {
 		return  ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.saveLocation(ctx, lc));
+				configuration -> LocationDAO.save(ctx, lc));
 	}
 	
 	
@@ -82,9 +82,9 @@ public class TimeControlImpl implements ITimeControl {
 	}
 
 	@Override
-	public void deleteLocation(AONContext ctx, Location lc) {
+	public void deleteLocation(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(
-				configuration -> LocationDAO.deleteLocation(ctx, lc)
+				configuration -> LocationDAO.delete(ctx, id)
 		);
 	}
 	

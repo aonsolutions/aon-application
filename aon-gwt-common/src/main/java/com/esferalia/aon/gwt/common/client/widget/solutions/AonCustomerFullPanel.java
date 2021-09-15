@@ -3,9 +3,12 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -51,6 +54,19 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 		getRootPanel().add(displayTab);
 		
 		Customer customer = customerFull.ensureCustomer();
+		
+		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
+		transactionBox.setValue(customer.getTransaction());
+		transactionBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				customer.setTransaction(transactionBox.getValue());
+			}
+		});
+		
+		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
+
 		final CheckBox surcharge = new CheckBox(AON.MSG.surcharge());
 		final CheckBox withholding = new CheckBox(AON.MSG.withholding());
 		

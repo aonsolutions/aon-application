@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.TaskAttach.TASK_ATTACH;
+
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -75,6 +76,7 @@ public class TaskAttachDAO {
 			.set(TASK_ATTACH.MIMETYPE, taskAttach.getMimetype().value())	
 			.set(TASK_ATTACH.DATA, taskAttach.getData())
 			.execute();
+		ctx.log().debug("UPDATE TASK_ATTACH id: " + taskAttach.getId());		
 		return taskAttach;
 	}
 	
@@ -86,21 +88,26 @@ public class TaskAttachDAO {
 				.set(TASK_ATTACH.MIMETYPE, taskAttach.getMimetype().value())	
 				.set(TASK_ATTACH.DATA, taskAttach.getData())
 			.returning(TASK_ATTACH.ID).fetchOne().getId();
+		ctx.log().debug("INSERT TASK_ATTACH id: " + id);			
 		return taskAttach.setId(id);
 	}	
 
 	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
+		ctx.getDslContext().delete(TASK_ATTACH)
+		.where(TASK_ATTACH.ID.eq(id))
+		.execute();
+		ctx.log().debug("DELETE TASK_ATTACH id:" + id);
 	}
 	
-	public static void delete(AONContext ctx, TaskAttachFilter filter){
+	public static void deleteByTask(AONContext ctx, Integer id){
 		ctx.getDslContext().delete(TASK_ATTACH)
-		.where(TASK_ATTACH_PROPERTIES.getConditions(filter))
+		.where(TASK_ATTACH.TASK.eq(id))
 		.execute();
+		ctx.log().debug("DELETE TASK_ATTACH task:" + id);
 	}
+	
 	
 	public static class TaskAttachFiller implements Function<Record, TaskAttach> {
-
 		@Override
 		public TaskAttach apply(Record r) {
 			return new TaskAttach()

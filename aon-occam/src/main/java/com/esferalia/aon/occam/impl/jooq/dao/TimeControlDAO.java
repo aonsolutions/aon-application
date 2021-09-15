@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -13,12 +12,11 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
@@ -36,31 +34,29 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class TimeControlDAO {	
 
 	private static final TimeControlPropertiesDAO TIMECONTROL_PROPERTIES = new TimeControlPropertiesDAO();
-
+	
+	public static  SelectConditionStep<Record> select(AONContext ctx, TimeControlFilter filter){	
+		return ctx.getDslContext()
+				.select()
+				.from(TIMECONTROL)
+				.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
+				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
+				.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
+				.where(TIMECONTROL_PROPERTIES.getConditions(filter));
+	}
+	
+	
 	public static Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-			.select()
-			.from(TIMECONTROL)
-			.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
-			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-			.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
-			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
-			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
+		return select(ctx, filter)
 			.orderBy(TIMECONTROL.DATE.asc())
 			.fetch().stream().map(new TimeControlDetailFiller());
 	}
 	
 	public static TimeControlDetail getLastTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-			.select()
-			.from(TIMECONTROL)
-			.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
-			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-			.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
-			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
-			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
+		return select(ctx, filter)
 			.orderBy(TIMECONTROL.DATE.desc()).limit(1)
 			.fetch().stream().map(new TimeControlDetailFiller()).findFirst().orElse(new TimeControlDetail());
 	}
@@ -227,13 +223,13 @@ public class TimeControlDAO {
 				.and(f.getTaskHolderProperty().eq(taskHolderId))), null, null, null);
 	}
 	
-	public static TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+	public static TimeControlDetail save(AONContext ctx, TimeControlDetail tcd) {
 		return tcd.getId() != null 
-			? updateTimeControlDetail(ctx, tcd)
-			: insertTimeControlDetail(ctx, tcd);
+			? update(ctx, tcd)
+			: insert(ctx, tcd);
 	}
 	
-	public static TimeControlDetail insertTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+	private static TimeControlDetail insert(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		Integer id = ctx.getDslContext()
 			.insertInto(TIMECONTROL, TIMECONTROL.DOMAIN, TIMECONTROL.TASK_HOLDER, TIMECONTROL.STATUS,
@@ -242,17 +238,17 @@ public class TimeControlDAO {
 					new Timestamp(tcd.getDate().getTime()), tcd.getComments(), tcd.getLocation().getId(),
 					tcd.getCoordinates().getLatitude(), tcd.getCoordinates().getLongitude())
 			.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
-		
+		ctx.log().debug("INSERT TIMECONTROL id: " + id);	
 		return tcd.setId(id);
 	}
 	
-	public static void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		ctx.getDslContext().delete(TIMECONTROL).where(TIMECONTROL_PROPERTIES.getConditions(filter)).execute();	
+		ctx.getDslContext().delete(TIMECONTROL).where(TIMECONTROL.ID.eq(id)).execute();	
+		ctx.log().debug("DELELETE TIMECONTROL id: " +id);	
 	}
 	
-	
-	public static TimeControlDetail updateTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+	private static TimeControlDetail update(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		ctx.getDslContext()
 			.update(TIMECONTROL)
@@ -262,6 +258,7 @@ public class TimeControlDAO {
 			.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
 			.where(TIMECONTROL.ID.eq(tcd.getId()))
 			.execute();		
+		ctx.log().debug("UPDATE TIMECONTROL id: " + tcd.getId());	
 		return tcd;
 	}
 	

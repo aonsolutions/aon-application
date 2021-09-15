@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.DeviceType;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -25,7 +27,6 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			LOGGER.info("AON AUTHDEVICE SERVLET - GET METHOD");
-			AonApiData api = initialize(req, resp);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -46,7 +47,7 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 				responseObject = delete(api);
 			break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			
 			response(req, resp, responseObject);

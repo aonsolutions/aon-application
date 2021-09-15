@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.GroupEntitie;
 import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
@@ -18,6 +16,8 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.MinorEntity;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -78,9 +78,9 @@ public class Mod2002020 implements IFiscalModel {
 	
 	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
-	private LinkedList<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();    // A. Relación de administradores 
-	private LinkedList<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>(); // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
-	private LinkedList<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();  // C. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B. Participaciones directas e indirectas de la declarante en otras sociedades a la fecha de cierre del período declarado 
+	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // C. Participaciones directas de otras personas o entidades en la declarante a la fecha de cierre del período declarado
 
 	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // D. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	
@@ -276,22 +276,22 @@ public class Mod2002020 implements IFiscalModel {
 	public void setRepresentatives(LinkedList<LegalRepresentative> representatives) {
 		this.representatives = representatives;
 	}
-	public LinkedList<CompanyAdministrator> getAdministrators() {
+	public LinkedList<Mod200CompanyAdministrator> getAdministrators() {
 		return administrators;
 	}
-	public void setAdministrators(LinkedList<CompanyAdministrator> administrators) {
+	public void setAdministrators(LinkedList<Mod200CompanyAdministrator> administrators) {
 		this.administrators = administrators;
 	}
-	public LinkedList<CompanyParticipation> getParticipationsIn() {
+	public LinkedList<Mod200CompanyParticipation> getParticipationsIn() {
 		return participationsIn;
 	}
-	public void setParticipationsIn(LinkedList<CompanyParticipation> participationsIn) {
+	public void setParticipationsIn(LinkedList<Mod200CompanyParticipation> participationsIn) {
 		this.participationsIn = participationsIn;
 	}
-	public LinkedList<CompanyParticipation> getParticipationsOut() {
+	public LinkedList<Mod200CompanyParticipation> getParticipationsOut() {
 		return participationsOut;
 	}
-	public void setParticipationsOut(LinkedList<CompanyParticipation> participationsOut) {
+	public void setParticipationsOut(LinkedList<Mod200CompanyParticipation> participationsOut) {
 		this.participationsOut = participationsOut;
 	}
 	public LinkedList<MinorEntity> getMinorEntities() {

@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.test;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
-import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
@@ -33,15 +32,15 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -218,31 +217,18 @@ public class AbstractOccamTest {
 				.execute();
 		}
 
-		Registry registry = AonFaker.getRegistry(ctx);
-		registry.setDocumentType(DocumentType.CIF);
-		registry.setDocumentCountry(Country.ES);
-		registry.setDocument("B01487271");
-		registry.setName("AON Solutions, S.L.");
-		registry.setAlias("AON");
-		registry.setDomain(domain);
-		registry = RegistryDAO.save(ctx, registry);
-		ctx.log().info("Registry insertado correctamente");
-
-		RegistryAddress address = AonFaker.getRegistryAddress(ctx,registry);
-		address.setDomain(newDomainId);
-		address = RegistryAddressDAO.save(ctx, address);
-		ctx.log().info("Registry Address insertado correctamente");
-		
-		ctx.getDslContext().insertInto(COMPANY)
-				.set(COMPANY.REGISTRY, registry.getId())
-				.set(COMPANY.DOMAIN, newDomainId)
-				.set(COMPANY.ACTIVE, (byte) 1)
-				.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(AonRandom.gt(95)))
-				.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(AonRandom.gt(85)))
-				.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(AonRandom.gt(99)))
-				.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(AonRandom.gt(50)))
-				.execute();
-		ctx.log().info("Company insertada correctamente");
+		Registry r = AonFaker.getRegistry(ctx) 
+				.setDocumentType(DocumentType.CIF)
+				.setDocumentCountry(Country.ES)
+				.setDocument("B01487271")
+				.setName("AON Solutions, S.L.")
+				.setAlias("AON");
+		CompanyFull companyFull = new CompanyFull();
+		companyFull.setRegistry(AonFaker.getCompany(ctx, r));
+		companyFull.getRegistry().setDomain(domain);
+		RegistryAddress address = AonFaker.getRegistryAddress(ctx,companyFull.getRegistry()).setDomain(newDomainId); 
+		companyFull.addAddress( address );
+		CompanyDAO.save(ctx, companyFull);
 		
 		int newScopeId = ctx.getDslContext().insertInto(SCOPE)
 				.set(SCOPE.DESCRIPTION, "DEFAULT")
@@ -269,6 +255,13 @@ public class AbstractOccamTest {
 				.execute();
 		ctx.log().info("User Scope insertado correctamente");
 
+		ctx.getDslContext().insertInto(ENTERPRISE)
+			.set(ENTERPRISE.REGISTRY, companyFull.getRegistry().getId())
+			.set(ENTERPRISE.DOMAIN, newDomainId)
+			.set(ENTERPRISE.SCOPE, newScopeId)
+			.execute();
+		ctx.log().info("Enterprise insertada correctamente");
+
 		int applicationUserId = ctx.getDslContext().insertInto(APPLICATION_USER)
 				.set(APPLICATION_USER.DOMAIN, newDomainId)
 				.set(APPLICATION_USER.USER_ID, newUserId)
@@ -287,20 +280,12 @@ public class AbstractOccamTest {
 			.fetchOne()
 			.getId();
 		ctx.log().info("Perfil de usuario en la aplicación insertada correctamente");
-		
-		ctx.getDslContext()
-				.insertInto(ENTERPRISE)
-				.set(ENTERPRISE.REGISTRY, registry.getId())
-				.set(ENTERPRISE.DOMAIN, newDomainId)
-				.set(ENTERPRISE.SCOPE, newScopeId)
-				.execute();
-		ctx.log().info("Enterprise insertada correctamente");
 
 		ctx.getDslContext().insertInto(WORKPLACE)
 		.set(WORKPLACE.DOMAIN, newDomainId)
 		.set(WORKPLACE.DESCRIPTION, "DEFAULT")
 		.set(WORKPLACE.ADDRESS, address.getId())
-		.set(WORKPLACE.ENTERPRISE, registry.getId())
+		.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
 		.set(WORKPLACE.SCOPE, newScopeId)
 		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.randomEnum( Administration.class, 10) ))
 		.execute();

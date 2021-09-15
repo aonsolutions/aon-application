@@ -17,6 +17,7 @@ export class Task {
   source_id;
   gtask_id;
   files;
+  start_date;
   constructor() {
       this.id          = undefined;
       this.status      = undefined;
@@ -24,15 +25,21 @@ export class Task {
       this.title       = undefined;
       this.gtask_id    = undefined;
       this.description = undefined;
-      this.source      = TASK_SOURCE.CAU;
+      this.source      = TASK_SOURCE.REQUEST;
       this.source_id   = undefined;
+      this.start_date   = undefined;
       this.workgroup   = {};
       this.registry    = {};
       this.task_holder = {};
       this.workflow    = [];
       this.workflowTmp = {};
       this.files = [];
+      // this._onPropertyChanged = (propName, val) => {};
   }
+
+  // task._onPropertyChanged = ("source", val) => {
+  //   console.log(s);
+  // }
 
   createTask(task) {
     if(task) {
@@ -45,8 +52,9 @@ export class Task {
       this.title       = task.title || "";
       this.description = task.description || "";
       this.gtask_id    = task.gtask_id || "";
-      this.source      = task.source || TASK_SOURCE.CAU;
+      this.source      = task.source || TASK_SOURCE.REQUEST;
       this.source_id   = task.source_id || undefined;
+      this.start_date  = task.start_date || undefined;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
         domain:this.domain,
@@ -65,13 +73,25 @@ export class Task {
       if(task.gtask_id)                           this.gtask_id    = task.gtask_id;
       if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
       if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
-      if(task.status)                             this.status       = task.status;
-      if(task.source_id)                          this.source_id     = task.source_id;
-      if(task.registry && task.registry.id)       this.registry      = task.registry;
-      if(task.description)                        this.description    = task.description;
+      if(task.status)                             this.status      = task.status;
+      if(task.source_id)                          this.source_id   = task.source_id;
+      if(task.registry && task.registry.id)       this.registry    = task.registry;
+      if(task.description)                        this.description = task.description;
+      if(task.start_date)                         this.start_date  = task.start_date;
       this.setFiles([]);
-      // if(task.domain)                             this.domain      = task.domain;
-      // if(task.workflow)                           this.workflow    = task.workflow;
+    }
+  }
+
+  cleanTask(){
+    if(!this.id){
+      this.workgroup   = {};
+      this.registry    = {};
+      this.task_holder = {};
+      this.title       = "";
+      this.description = "";
+      this.source_id   = undefined;
+      this.workflow    = [];
+      this.setFiles([]);
     }
   }
 
@@ -119,8 +139,9 @@ export class Task {
     return this.source;
   }
 
-  setSource(source) {
-    this.source = source;
+  setSource(v) {
+    this.source = v;
+    // this._onPropertyChanged('source', v);
   }
 
   getSourceId() {
