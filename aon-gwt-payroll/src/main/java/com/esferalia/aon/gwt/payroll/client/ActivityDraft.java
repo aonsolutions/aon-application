@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,6 +10,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -16,7 +18,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -31,6 +32,8 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ActivityDraft extends Composite{
+	
+	// ---------------------------------------------- Activity
 
 	private class ActivityImplementation extends Activity{
 
@@ -87,10 +90,15 @@ public class ActivityDraft extends Composite{
 		public Set<Entry<Integer, String>> getActivities() {
 			return activityDraftObject.getActivities();
 		}
+
+		@Override
+		public void fireWarningMessage(Map<String, String> warningMap) {
+			AonMessagePanel.showWarning(messagePanel, warningMap);
+		}
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ---------------------------------------------- UiBinder
 	
 	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDraft> {}
 	
@@ -109,21 +117,22 @@ public class ActivityDraft extends Composite{
 	@UiField
 	HTMLPanel centerContainer;
 	
-	// -------------------------------------------- Variables de la clase---------------------------------------------
+	@UiField
+	HTMLPanel messagePanel;
+	
+	// ---------------------------------------------- Variables
 	
 	private ActivityDraftObject activityDraftObject;
 	
 	private Activity activity;
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton accept;
-	private AonToolbarButton checkUpdateCert;
 	
-	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
+	// ---------------------------------------------- Constructor
 
 	public ActivityDraft() {	
 		activity = new ActivityImplementation();
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		
 		// Inicializamos la vista de la actividad
 		initWidget(uiBinder.createAndBindUi(this));
@@ -135,10 +144,9 @@ public class ActivityDraft extends Composite{
 		
 		centerContainer.add(activity);
 		centerContainer.getElement().getStyle().setMarginTop(40, Unit.PX);
-		
 	}
 	
-	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	// ---------------------------------------------- setActivityDraftObject
 
 	public void setActivityDraftObject(ActivityDraftObject activityDraftObject) {
 		this.activityDraftObject = activityDraftObject;
@@ -152,13 +160,12 @@ public class ActivityDraft extends Composite{
 					fillActivityInfo();
 					activity.cccWidget.resetPreview();
 					activity.onInsertRows();
-					
 				}, t -> {}
 			);
 	}
 	
 	private void initSuggestBox() {
-		List<String> cnae2009Suggest = new ArrayList<String>();
+		List<String> cnae2009Suggest = new ArrayList<>();
 		for(Entry<String, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
 			cnae2009Suggest.add(entry.getKey() + " - " + entry.getValue());
 	
@@ -176,27 +183,24 @@ public class ActivityDraft extends Composite{
 		activity.activityActive.setValue(activityDraftObject.getActivityActive());
 	}
 	
-	private AonToolbar getToolbarPanel() {
+	// ---------------------------------------------- Toolbar
+	
+	private void getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Actividad");
+		toolbar = new AonToolbar("Actividad");
 
-		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.addClickHandler(e -> {
-			onAccept(e);
-		});
+		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.addClickHandler(e -> onAccept());
 		toolbar.add(accept);
 		
-		checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
-		checkUpdateCert.addClickHandler(e -> {
-			onCheckUpdateCert(e);
-		});
+		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
-
-		return toolbar;
-
 	}
+	
+	// ---------------------------------------------- Toolbar.Methods
 
-	private void onAccept(ClickEvent event) {
+	private void onAccept() {
 		if(checkIfSaveIsPossible()){
 			Map<Integer, CCCInfo> deleteCCCs = activityDraftObject.getDeleteCCCs();
 			if(!deleteCCCs.isEmpty()) {
@@ -236,31 +240,27 @@ public class ActivityDraft extends Composite{
 
 	private void updateActivity() {
 		activityDraftObject.updateActivity(
-				s -> {
-					this.activityDraftObject.initializeActivity(
-							r -> {
-								initSuggestBox();
-								fillActivityInfo();
-								activity.cccWidget.resetPreview();
-								activity.onInsertRows();
-							}, t -> {}
-						);
-				},
-				f -> {}
+			s -> reloadActivity(),
+			f -> {}
 		);
 	}
 	
+	private void reloadActivity() {
+		initializeActivity();
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Actividad actualizada", "Los cambios realizados se han guardado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+
 	private boolean checkIfSaveIsPossible() {
-		if( !AonStringUtils.isBlank(activity.activityDescription.getValue()) && 
+		return !AonStringUtils.isBlank(activity.activityDescription.getValue()) && 
 			!AonStringUtils.isBlank(activity.activityCNAE2009.getValue()) && 
-			!AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-"))
-		{
-			return true;
-		}else
-			return false;
+			!AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-");
 	}
 	
-	private void onCheckUpdateCert(ClickEvent e) {
+	// ---------------------------------------------- Toolbar.Methods TGSS
+	
+	private void onCheckUpdateCert() {
 		submitForm(0);
 	}
 	
@@ -282,14 +282,11 @@ public class ActivityDraft extends Composite{
 		
 		formPanel.add(flowPanel);
 		
-		formPanel.addSubmitCompleteHandler(e1 -> {
-			centerContainer.remove(formPanel);
-		});
+		formPanel.addSubmitCompleteHandler(e1 -> centerContainer.remove(formPanel));
 
 		centerContainer.add(formPanel);
 
 		formPanel.submit();
-		
 	}
 	
 }

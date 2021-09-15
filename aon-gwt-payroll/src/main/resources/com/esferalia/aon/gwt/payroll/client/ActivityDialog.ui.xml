@@ -20,11 +20,17 @@
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
+			gap: 10px;
 			margin: 5px 10px;
+		}
+		
+		.messagePanel{
+			margin: 10px 0;
 		}
 	</ui:Style>
 
 	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}"> 
+		<g:HTMLPanel ui:field="messagePanel" styleName="{style.messagePanel}"/>
 		<a:Activity ui:field="activity"/>
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 	</g:VerticalPanel>
