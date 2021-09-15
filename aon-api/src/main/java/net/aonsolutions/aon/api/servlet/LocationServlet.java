@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -94,8 +93,8 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject deleteLocation(AonApiData api) {
-		Location location = new Location().setId(api.getData().optInt("id"));
-		AON_SOLUTIONS.deleteLocation(api.getDomain(), "", location);
+		Integer locatioId = api.getData().optInt("id");
+		AON_SOLUTIONS.deleteLocation(api.getDomain(), "", locatioId);
 		return new JSONObject();
 	}
 	

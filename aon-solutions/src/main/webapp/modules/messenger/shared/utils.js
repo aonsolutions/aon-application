@@ -356,13 +356,8 @@ export const sendMessage = async (aonTextArea) => {
         date: message.creation_date,
         direction : RIGHT
     });
-
-    addLine();
-
+    
     aonMessengerChat.data = task;
-
-    const chat = document.querySelector(MESSENGER_COMPONENTS.CHAT);
-    chat.scrollTo(0, chat.scrollHeight); //GO DOWN
 
     return [value, messageEl];
 }
@@ -498,9 +493,13 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-    if(task.source !== TASK_SOURCE.CAU && applicationParent.cauData && task.registry && task.registry.name){ // CARD TITLE REGISTRY
+    if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
+    }
+
+    if(applicationParent.cauData && applicationParent.cauData.auth && applicationParent.cauData.auth.email){
+        task.setGTaskId(applicationParent.cauData.auth.email);
     }
    //-----------------------END CREATE FIRST CARD
 
@@ -565,10 +564,8 @@ const formQuery = (columnsDiv, aonMessengerChat) => {
     const application = aonMessengerChat.applicationEl;
     const applicationParent = aonMessengerChat.applicationParentEl;
 
-    //-------------------------TYPE REQUEST
-
     //-------------------------CAU--------------------------
-    if(task.source === TASK_SOURCE.CAU && !applicationParent.cauData){
+    if(task.source === TASK_SOURCE.CAU && !applicationParent.cau){
         // DIV CUSTOMER
         const rowsDivTwo = createStartJustifiedColumn();
         rowsDivTwo.element.style.width = "100%";
@@ -600,7 +597,7 @@ const formQuery = (columnsDiv, aonMessengerChat) => {
         fillTag(task);
     } 
 
-    if(!applicationParent.cauData){
+    if(!applicationParent.cau){
       //DIV WORKGROUP AND TASKHOLDER
       const rowsDiv = createStartJustifiedRow();
       rowsDiv.element.style.width = "100%";
@@ -680,27 +677,18 @@ export const getIconJson =({source,status}) => {
 
 export const downChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
-    if(chat)
+    if(chat){
         chat.scrollTo(0, chat.scrollHeight); //GO DOWN
-
-    addLine();
-
+        addLine(chat);
+    }
 }
 export const upChat = () => {
     const chat = document.getElementById(MESSENGER_IDS.MESSENGER_CHAT);
     if(chat)
-        chat.scrollTo(0,0) //GO UP
-    
+        chat.scrollTo(0,0) //GO UP   
 }
 
-const addLine = () => {
-    /**
-     * Setting the chat line once all is rendered
-     * DO NOT change this, is compulsory.
-     */
-    const lined = document.querySelector(".continueLined");
-    if (lined) lined.style.setProperty("--height", lined.scrollHeight + "px");
-}
+const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight + "px");
 
 const addTaskDescription = (aonMessengerChat) => {
     const task = aonMessengerChat.task;

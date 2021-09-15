@@ -135,11 +135,8 @@ export class AonDesktop extends AonElement {
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
-			let taskOptions = [{
-					name: 'Notificaciones',
-					icon: MATERIAL_ICONS.NOTIFICATIONS,
-					fn: () => {}
-				},{
+			let taskOptions = [
+				{
 					name: 'Facturas Pendientes',
 					icon: 'inbox',
 					fn: (count) => {
