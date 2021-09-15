@@ -1,30 +1,23 @@
 package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 
 import org.jooq.DSLContext;
-import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class CRA0058Update implements Update {
 
-	public static CRA0058Update CRA0058UPDATE = new CRA0058Update();
+	public static final CRA0058Update CRA0058UPDATE = new CRA0058Update();
 	private static final String HORAS_COMPL_PACTADAS = "HORAS_COMPL";
 
 	private CRA0058Update() {
@@ -65,8 +58,7 @@ public class CRA0058Update implements Update {
 		;
 		
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			update0058.execute();

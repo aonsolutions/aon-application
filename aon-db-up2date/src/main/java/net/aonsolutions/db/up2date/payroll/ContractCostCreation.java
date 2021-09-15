@@ -13,7 +13,7 @@ import net.aonsolutions.db.up2date.Update;
 public class ContractCostCreation implements Update {
 
 
-	public static ContractCostCreation CONTRACTCOSTCREATION = new ContractCostCreation();
+	public static final ContractCostCreation CONTRACTCOSTCREATION = new ContractCostCreation();
 
 	@Override
 	public void upgrade(Connection connection) {

@@ -54,7 +54,7 @@ public class IndemnizacionEditableUpdate implements Update {
 			return;
 		
 		
-		dslContext.transaction( (config) -> {	
+		dslContext.transaction(config -> {	
 			
 			dslContext
 			.update(PAYMENT_CONCEPT)

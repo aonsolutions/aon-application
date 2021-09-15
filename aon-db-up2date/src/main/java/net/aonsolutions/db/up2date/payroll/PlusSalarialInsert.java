@@ -1,29 +1,23 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
-
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class PlusSalarialInsert implements Update {
 
 	public static final PlusSalarialInsert PLUSSALARIALINSERT = new PlusSalarialInsert();
-	
+	public static final String PLUS_SALARIAL = "PLUS_SALARIAL";
 	private PlusSalarialInsert() {
+	
 	}
 	
 	@Override
@@ -43,7 +37,7 @@ public class PlusSalarialInsert implements Update {
 		.select(PAYMENT_CONCEPT.ID)
 		.from(PAYMENT_CONCEPT)
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
-		.and(PAYMENT_CONCEPT.CODE.like("PLUS_SALARIAL"))
+		.and(PAYMENT_CONCEPT.CODE.like(PLUS_SALARIAL))
 		) > 2;
 		
 		if ( upgraded )
@@ -54,7 +48,7 @@ public class PlusSalarialInsert implements Update {
 		.select(PAYMENT_CONCEPT.ID)
 		.from(PAYMENT_CONCEPT)
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
-		.and(PAYMENT_CONCEPT.CODE.eq("PLUS_SALARIAL"))
+		.and(PAYMENT_CONCEPT.CODE.eq(PLUS_SALARIAL))
 		.fetchOne(PAYMENT_CONCEPT.ID);
 
 		Integer plusExtraSalarialConceptId = 
@@ -65,8 +59,7 @@ public class PlusSalarialInsert implements Update {
 		.and(PAYMENT_CONCEPT.CODE.eq("PLUS_EXTRA_SALARIAL"))
 		.fetchOne(PAYMENT_CONCEPT.ID);
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			dslContext
@@ -80,7 +73,7 @@ public class PlusSalarialInsert implements Update {
 			.insertInto(PAYMENT_CONCEPT)
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "PLUS_SALARIAL")
+			.set(PAYMENT_CONCEPT.CODE, PLUS_SALARIAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "FRACCIONAR(/*user*/0.00/**/)")
@@ -88,7 +81,7 @@ public class PlusSalarialInsert implements Update {
 			.newRecord()
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "PLUS_SALARIAL")
+			.set(PAYMENT_CONCEPT.CODE, PLUS_SALARIAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "(PLUS_HORA=/*user*/0.00/**/) * HORAS_TRABAJADAS")
@@ -96,7 +89,7 @@ public class PlusSalarialInsert implements Update {
 			.newRecord()
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "PLUS_SALARIAL")
+			.set(PAYMENT_CONCEPT.CODE, PLUS_SALARIAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "(PLUS_DIARIO=/*user*/0.00/**/) * DIAS_TRABAJADOS")
@@ -104,7 +97,7 @@ public class PlusSalarialInsert implements Update {
 			.newRecord()
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "PLUS_SALARIAL")
+			.set(PAYMENT_CONCEPT.CODE, PLUS_SALARIAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "(PLUS_DIARIO=/*user*/0.00/**/) * DIAS_EFECTIVOS")

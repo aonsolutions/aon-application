@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.timecontrol;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -12,8 +13,8 @@ import net.aonsolutions.db.up2date.Update;
 
 public class CoordinatesUpdate implements Update {
 
-	
-	public static CoordinatesUpdate COORDINATES_UPDATE = new CoordinatesUpdate();
+	private static final Logger LOGGER  = Logger.getLogger(CoordinatesUpdate.class.getName());
+	public static final CoordinatesUpdate COORDINATES_UPDATE = new CoordinatesUpdate();
 
 	private CoordinatesUpdate() {
 		super();
@@ -28,8 +29,8 @@ public class CoordinatesUpdate implements Update {
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		
-		System.out.println("[START]");
-		System.out.println( "ALTER TABLE `location`" );
+		LOGGER.info("[START]");
+		LOGGER.info( "ALTER TABLE `location`" );
 			
 		String dropCoordinates = "ALTER TABLE `location` DROP `coordinates`;";
 		String addLatitude = "ALTER TABLE `location` ADD `latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.';";
@@ -39,7 +40,7 @@ public class CoordinatesUpdate implements Update {
 		dslContext.execute(addLatitude);
 		dslContext.execute(addLongitude);
 
-		System.out.println( "ALTER TABLE `timecontrol`" );
+		LOGGER.info( "ALTER TABLE `timecontrol`" );
 		
 		String dropCoordinates2 = "ALTER TABLE `timecontrol` DROP `coordinates`;";
 		String addLatitude2 = "ALTER TABLE `timecontrol` ADD `latitude` double DEFAULT NULL COMMENT 'Latitud de las coordenadas.';";
@@ -49,7 +50,7 @@ public class CoordinatesUpdate implements Update {
 		dslContext.execute(addLatitude2);
 		dslContext.execute(addLongitude2);
 
-		System.out.println("[END]");
+		LOGGER.info("[END]");
 	}
 
 }

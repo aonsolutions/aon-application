@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -16,7 +17,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Bases2021Rollback implements Update {
 
-	public static Bases2021Rollback BASES2021ROLLBACK = new Bases2021Rollback();
+	public static final Bases2021Rollback BASES2021ROLLBACK = new Bases2021Rollback();
 
 	private static final String BASE_CGC_MIN = "BASE_CGC_MIN";
 	private static final String BASE_CGP_MIN = "BASE_CGP_MIN";
@@ -43,13 +44,13 @@ public class Bases2021Rollback implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.YEAR, 2021);
-		Date _2021StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2021 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
@@ -57,16 +58,16 @@ public class Bases2021Rollback implements Update {
 			.delete(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-			.and(SYSTEM_DATA.START_DATE.eq(_2021StartDate))
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2021))
 			.execute()
 			;
 			
 			dslContext
 			.update(SYSTEM_DATA)
-			.set(SYSTEM_DATA.END_DATE, DSL.castNull(Date.class)) 
+			.set(SYSTEM_DATA.END_DATE, DSL.castNull(LocalDate.class)) 
 			.where(SYSTEM_DATA.DOMAIN.eq(0) )
 			.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-			.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2019))
 			.execute()
 			;
 			

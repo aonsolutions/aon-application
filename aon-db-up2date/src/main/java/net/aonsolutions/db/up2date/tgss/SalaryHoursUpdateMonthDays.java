@@ -1,30 +1,23 @@
 package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
-import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
-import com.esferalia.aon.jooq.tables.records.SystemDeductionRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class SalaryHoursUpdateMonthDays implements Update {
 
-	public static SalaryHoursUpdateMonthDays SALARYHOURSUPDATEMONTHDAYS = new SalaryHoursUpdateMonthDays();
+	public static final SalaryHoursUpdateMonthDays SALARYHOURSUPDATEMONTHDAYS = new SalaryHoursUpdateMonthDays();
 
 	private static final String SALARY_HOURS = "HORAS_NOMINA";
 	
@@ -65,7 +58,7 @@ public class SalaryHoursUpdateMonthDays implements Update {
 		.and(SYSTEM_DATA.NAME.eq(SALARY_HOURS))
 		;
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

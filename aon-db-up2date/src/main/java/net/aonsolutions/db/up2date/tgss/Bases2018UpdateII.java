@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -21,7 +22,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Bases2018UpdateII implements Update {
 
-	public static Bases2018UpdateII BASES2018UPDATEII = new Bases2018UpdateII();
+	public static final Bases2018UpdateII BASES2018UPDATEII = new Bases2018UpdateII();
 
 	private static final String BASE_CGC_MAX = "BASE_CGC_MAX";
 	private static final String BASE_CGP_MAX = "BASE_CGP_MAX";
@@ -57,17 +58,17 @@ public class Bases2018UpdateII implements Update {
 		calendar.set(Calendar.YEAR, 2018);
 		
 		
-		Date _2018AugustStartDate = new Date(calendar.getTimeInMillis());
+		LocalDate augustStartDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.set(Calendar.YEAR, 2017);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
-		Date _2017StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2017 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(Calendar.YEAR, 2018);
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.JULY);
-		Date _2018JulyEndDate = new Date(calendar.getTimeInMillis());
+		LocalDate julyEndDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		// General 
 		boolean upgraded =
@@ -76,7 +77,7 @@ public class Bases2018UpdateII implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MAX))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate))) == 1;
+		.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018))) == 1;
 		
 		if ( upgraded )
 			upgraded =
@@ -85,7 +86,7 @@ public class Bases2018UpdateII implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGP_MAX))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018))) == 1;
 		
 		if ( upgraded )
 			upgraded =
@@ -94,7 +95,7 @@ public class Bases2018UpdateII implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.in(-107))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MAX_DAY))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -103,7 +104,7 @@ public class Bases2018UpdateII implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.in(-107))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MAX_MONTH))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -112,7 +113,7 @@ public class Bases2018UpdateII implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.in(-107))
 			.and(SYSTEM_DATA.NAME.eq(REDUCCION_CGC_E_02))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018))) == 1;
 
 		//if ( upgraded ) 
 		//	return;
@@ -122,28 +123,28 @@ public class Bases2018UpdateII implements Update {
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MAX, BASE_CGP_MAX))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018));
 		
 		DeleteConditionStep<SystemDataRecord> deleteAgrarian = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-107))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MAX_DAY, BASE_CGC_MAX_MONTH, REDUCCION_CGC_E_02))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018AugustStartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(augustStartDate2018));
 		
 		// CLOSE 2017 
 		UpdateConditionStep<SystemDataRecord> updateGeneral = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2018JulyEndDate)
+		.set( SYSTEM_DATA.END_DATE, julyEndDate2018)
 		.where(SYSTEM_DATA.DOMAIN.in(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MAX, BASE_CGP_MAX))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017));
 
 		UpdateConditionStep<SystemDataRecord> updateAgrarian = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2018JulyEndDate)
+		.set( SYSTEM_DATA.END_DATE, julyEndDate2018)
 		.where(SYSTEM_DATA.DOMAIN.eq(-107))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MAX_DAY, BASE_CGC_MAX_MONTH, REDUCCION_CGC_E_02))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 
 		// DOMAIN = 0 , GENERAL
@@ -151,8 +152,8 @@ public class Bases2018UpdateII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX)
-		.set(SYSTEM_DATA.START_DATE, _2018AugustStartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, augustStartDate2018)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":(3803.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)) ,"
 		+"\"02\":(3803.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)) ,"
@@ -171,8 +172,8 @@ public class Bases2018UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MAX)
-		.set(SYSTEM_DATA.START_DATE, _2018AugustStartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, augustStartDate2018)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "3803.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)" 
 		)
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
@@ -185,24 +186,24 @@ public class Bases2018UpdateII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX_DAY)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018AugustStartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, augustStartDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "165.36 * JORNADAS_REALES")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX_MONTH)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018AugustStartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, augustStartDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "3803.70 * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, REDUCCION_CGC_E_02)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018AugustStartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, augustStartDate2018)
 		.set(SYSTEM_DATA.EXPRESSION,
 		"COTIZACION_MENSUAL ? "
 		+ "((BASE_CGC <= 986.70) ? 7.11 : ((BASE_CGC <= 3803.70) ? (7.11 * ( 1 + (BASE_CGC - 986.70)/ BASE_CGC * 2.52 * 6.15 / 7.11)) : 0.00))"
@@ -215,7 +216,7 @@ public class Bases2018UpdateII implements Update {
 		;
 		
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

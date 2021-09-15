@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -40,7 +41,7 @@ public class AgriculturalITInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
@@ -78,7 +79,7 @@ public class AgriculturalITInsert implements Update {
 		if ( upgraded )
 			return;
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
@@ -92,7 +93,7 @@ public class AgriculturalITInsert implements Update {
 			.insertInto(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.DOMAIN, -107)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0 )
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.EXPRESSION, "HIDE()")
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, prestItConceptId)
 			.execute()
@@ -102,7 +103,7 @@ public class AgriculturalITInsert implements Update {
 			.insertInto(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.DOMAIN, -107)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0 )
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.EXPRESSION, "HIDE()")
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, mtndadConceptId)
 			.execute()
@@ -111,7 +112,7 @@ public class AgriculturalITInsert implements Update {
 			dslContext
 			.insertInto(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.DOMAIN, -107)
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0 )
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, pagoDirectoConceptId)
 			.set(SYSTEM_PAYMENT.EXPRESSION, "/*read-only*/0.00 * DIAS_IT/**/")

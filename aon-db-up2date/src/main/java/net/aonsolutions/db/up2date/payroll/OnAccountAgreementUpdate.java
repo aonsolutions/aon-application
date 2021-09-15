@@ -1,13 +1,8 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
@@ -16,7 +11,6 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 
 import net.aonsolutions.db.up2date.Update;
@@ -24,7 +18,7 @@ import net.aonsolutions.db.up2date.Update;
 public class OnAccountAgreementUpdate implements Update {
 
 	private static final String A_CUENTA_CONVENIO = "A_CUENTA_CONVENIO";
-	public static OnAccountAgreementUpdate ONACCOUNTAGREEMENTUPDATE = new OnAccountAgreementUpdate();
+	public static final OnAccountAgreementUpdate ONACCOUNTAGREEMENTUPDATE = new OnAccountAgreementUpdate();
 
 	private OnAccountAgreementUpdate() {
 		super();
@@ -67,7 +61,7 @@ public class OnAccountAgreementUpdate implements Update {
 		;
 		
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

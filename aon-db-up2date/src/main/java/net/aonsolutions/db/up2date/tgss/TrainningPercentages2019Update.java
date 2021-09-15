@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -13,8 +14,6 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-
-import com.esferalia.aon.jooq.tables.SystemDeduction;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -47,10 +46,10 @@ public class TrainningPercentages2019Update implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.add(Calendar.YEAR, -1);
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		boolean	upgraded =
@@ -64,7 +63,7 @@ public class TrainningPercentages2019Update implements Update {
 		if ( upgraded )
 			return;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
@@ -72,38 +71,38 @@ public class TrainningPercentages2019Update implements Update {
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_IT")
 			.set(SYSTEM_DATA.EXPRESSION, "3.27 * 100 / BASE_CGP_E")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_IMS")
 			.set(SYSTEM_DATA.EXPRESSION, "2.58 * 100 / BASE_CGP_E")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_CGC_E")
 			.set(SYSTEM_DATA.EXPRESSION, "51.05 * 100 / BASE_CGC_E")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_FOGASA")
 			.set(SYSTEM_DATA.EXPRESSION, "3.23 * 100 / BASE_CGP_E")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_FP_E")
 			.set(SYSTEM_DATA.EXPRESSION, "1.28 * 100 / BASE_CGP_E")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_CGC")
 			.set(SYSTEM_DATA.EXPRESSION, "8.49 * 100 / BASE_CGC")
-			.set(SYSTEM_DATA.START_DATE, _2019StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2019 )
 			.newRecord()
 			.set(SYSTEM_DATA.DOMAIN, -101)
 			.set(SYSTEM_DATA.NAME, "PORCENTAJE_FP")
 			.set(SYSTEM_DATA.EXPRESSION, "0.17 * 100 / BASE_CGP")
-			.set(SYSTEM_DATA.START_DATE, _2018StartDate )
+			.set(SYSTEM_DATA.START_DATE, startDate2018 )
 			.execute()
 			;
 			

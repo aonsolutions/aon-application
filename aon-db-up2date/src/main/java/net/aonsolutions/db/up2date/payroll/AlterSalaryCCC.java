@@ -6,12 +6,10 @@ import static org.jooq.impl.SQLDataType.VARCHAR;
 import java.sql.Connection;
 
 import org.jooq.DSLContext;
-import org.jooq.DataType;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 
 import net.aonsolutions.db.up2date.Update;
 

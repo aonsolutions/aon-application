@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -54,9 +55,9 @@ public class EreFzaInsert implements Update {
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 
@@ -77,7 +78,7 @@ public class EreFzaInsert implements Update {
 			.set(SYSTEM_PAYMENT.DOMAIN, 0)
 			.set(SYSTEM_PAYMENT.TYPE, (byte)1)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 1)
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, ereFzaConceptId)
 			.set(SYSTEM_PAYMENT.DESCRIPTION, "EXPDTE. REGULARIZACI\u00D3N DE EMPLEO POR FUERZA MAYOR")
 			.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "DIAS_ERE_FZA * BASE_REGULADORA")

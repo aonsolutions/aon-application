@@ -2,16 +2,15 @@ package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
@@ -20,7 +19,6 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.SystemCostRecord;
-import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
 import com.esferalia.aon.jooq.tables.records.SystemDeductionRecord;
 
 import net.aonsolutions.db.up2date.Update;
@@ -29,7 +27,7 @@ public class TrainningBases2019Fix implements Update {
 
 
 	public static final TrainningBases2019Fix TRAINNINGBASES2019FIX = new TrainningBases2019Fix();
-	
+	private static final String CGC_E = "CGC_E";
 	private TrainningBases2019Fix() {
 	}
 	
@@ -53,14 +51,14 @@ public class TrainningBases2019Fix implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.add(Calendar.YEAR, -1);
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2018EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		
 		List<Integer> cgcDeductions = 
@@ -70,8 +68,6 @@ public class TrainningBases2019Fix implements Update {
 		.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
 		.and(DEDUCTION_CONCEPT.CODE.eq("CGC"))
 		.fetch(DEDUCTION_CONCEPT.ID);
-		;
-
 		
 		boolean upgraded =
 			dslContext.fetchCount(
@@ -79,7 +75,7 @@ public class TrainningBases2019Fix implements Update {
 			.from(SYSTEM_DEDUCTION)
 			.where(SYSTEM_DEDUCTION.DOMAIN.eq(-101))
 			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(cgcDeductions))
-			.and(SYSTEM_DEDUCTION.START_DATE.eq(_2019StartDate))) == 1;
+			.and(SYSTEM_DEDUCTION.START_DATE.eq(startDate2019))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -87,8 +83,8 @@ public class TrainningBases2019Fix implements Update {
 			dslContext.select()
 			.from(SYSTEM_COST)
 			.where(SYSTEM_COST.DOMAIN.eq(-101))
-			.and(SYSTEM_COST.CODE.eq("CGC_E"))
-			.and(SYSTEM_COST.START_DATE.eq(_2019StartDate))) == 1;
+			.and(SYSTEM_COST.CODE.eq(CGC_E))
+			.and(SYSTEM_COST.START_DATE.eq(startDate2019))) == 1;
 
 
 		if ( upgraded ) 
@@ -97,7 +93,7 @@ public class TrainningBases2019Fix implements Update {
 		// CLOSE 2018 CGC
 		UpdateConditionStep<SystemDeductionRecord> closeCgcDeductions = dslContext
 		.update(SYSTEM_DEDUCTION)
-		.set( SYSTEM_DEDUCTION.END_DATE, _2018EndDate)
+		.set( SYSTEM_DEDUCTION.END_DATE, endDate2018)
 		.where(SYSTEM_DEDUCTION.DOMAIN.in(-101))
 		.and(SYSTEM_DEDUCTION.END_DATE.isNull())
 		.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(cgcDeductions))
@@ -106,16 +102,16 @@ public class TrainningBases2019Fix implements Update {
 		// CLOSE 2018 CGC_E
 		UpdateConditionStep<SystemCostRecord> closeCgcCosts = dslContext
 		.update(SYSTEM_COST)
-		.set( SYSTEM_COST.END_DATE, _2018EndDate)
+		.set( SYSTEM_COST.END_DATE, endDate2018)
 		.where(SYSTEM_COST.DOMAIN.in(-101))
-		.and(SYSTEM_COST.CODE.eq("CGC_E"))
+		.and(SYSTEM_COST.CODE.eq(CGC_E))
 		.and(SYSTEM_COST.END_DATE.isNull())
 		;
 		
 		// CLOSE 2018 FOGASA_E
 		UpdateConditionStep<SystemCostRecord> closeFogasaCosts = dslContext
 		.update(SYSTEM_COST)
-		.set( SYSTEM_COST.END_DATE, _2018EndDate)
+		.set( SYSTEM_COST.END_DATE, endDate2018)
 		.where(SYSTEM_COST.DOMAIN.in(-101))
 		.and(SYSTEM_COST.CODE.eq("FOGASA_E"))
 		.and(SYSTEM_COST.END_DATE.isNull())
@@ -124,7 +120,7 @@ public class TrainningBases2019Fix implements Update {
 		InsertSetMoreStep<SystemDeductionRecord> insertCgcDeduction = dslContext
 		.insertInto(SYSTEM_DEDUCTION)
 		.set(SYSTEM_DEDUCTION.DOMAIN, -101)
-		.set(SYSTEM_DEDUCTION.START_DATE, _2019StartDate)
+		.set(SYSTEM_DEDUCTION.START_DATE, startDate2019)
 		.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, cgcDeductions.get(0))
 		.set(SYSTEM_DEDUCTION.EXPRESSION, "8.49" )
 		.set(SYSTEM_DEDUCTION.DESCRIPTION_DECORABLE, ( byte) 1 )
@@ -139,8 +135,8 @@ public class TrainningBases2019Fix implements Update {
 		.insertInto(SYSTEM_COST)
 		.set(SYSTEM_COST.DOMAIN, -101)
 		.set(SYSTEM_COST.TYPE, (byte) 0 )
-		.set(SYSTEM_COST.CODE, "CGC_E" )
-		.set(SYSTEM_COST.START_DATE, _2019StartDate)
+		.set(SYSTEM_COST.CODE, CGC_E )
+		.set(SYSTEM_COST.START_DATE, startDate2019)
 		.set(SYSTEM_COST.DESCRIPTION, "Contingencias Comunes")
 		.set(SYSTEM_COST.EXPRESSION, "42.56" )
 		.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
@@ -151,13 +147,13 @@ public class TrainningBases2019Fix implements Update {
 		.set(SYSTEM_COST.DOMAIN, -101)
 		.set(SYSTEM_COST.TYPE, (byte) 3 )
 		.set(SYSTEM_COST.CODE, "FOGASA_E" )
-		.set(SYSTEM_COST.START_DATE, _2019StartDate)
+		.set(SYSTEM_COST.START_DATE, startDate2019)
 		.set(SYSTEM_COST.DESCRIPTION, "FOGASA")
 		.set(SYSTEM_COST.EXPRESSION, "3.23" )
 		.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
 		;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -52,33 +53,28 @@ public class PrestITCommonDiseaseAtLackInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-
 
 			dslContext
 			.delete(SYSTEM_PAYMENT)
 			.where(SYSTEM_PAYMENT.EXPRESSION.like("%DIAS_ENFERMEDAD_COMUN_CARENCIA%") )
-			.execute()
-			;
+			.execute();
 
 			dslContext
 			.insertInto(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.DOMAIN, 0 )
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte)0 )
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate )
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, prestItConceptId )
 			.set(SYSTEM_PAYMENT.DESCRIPTION, "PREST. POR ENFERMEDAD COMÚN" )
 			.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "DIAS_COTIZADOS * BASE_REGULADORA" )
 			.set(SYSTEM_PAYMENT.EXPRESSION, "/*read-only*/DIAS_ENFERMEDAD_COMUN_CARENCIA * 0.00 * BASE_REGULADORA/**/" )
-			.execute()
-			;
-			
+			.execute();
+
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		});
 	}
-
 }

@@ -1,13 +1,11 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
-import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
-import org.jooq.Name;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
@@ -19,9 +17,15 @@ import net.aonsolutions.db.up2date.Update;
 
 public class FixERESalaries implements Update {
 
+	private static final Logger LOGGER  = Logger.getLogger(FixERESalaries.class.getName());
+
 	public static final FixERESalaries FIXERESALARIES = new FixERESalaries();
+	private static final SalaryData ERE_DAYS = SALARY_DATA.as(DSL.name("ERE_DAYS"));
+	private static final SalaryData ERE_FACTOR = SALARY_DATA.as(DSL.name("ERE_FACTOR"));
+	private static final SalaryData QUOTE_DAYS =SALARY_DATA.as(DSL.name("QUOTE_DAYS"));
 	
 	private FixERESalaries() {
+	
 	}
 	
 	@Override
@@ -36,11 +40,9 @@ public class FixERESalaries implements Update {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
-			SalaryData ERE_DAYS = SALARY_DATA.as(DSL.name("ERE_DAYS"));
-			SalaryData ERE_FACTOR = SALARY_DATA.as(DSL.name("ERE_FACTOR"));
-			SalaryData QUOTE_DAYS =SALARY_DATA.as(DSL.name("QUOTE_DAYS"));
+			
 			
 			int updated =
 			dslContext
@@ -77,11 +79,9 @@ public class FixERESalaries implements Update {
 			.where(ERE_DAYS.NAME.startsWith("DIAS_ERE"))
 			.and(QUOTE_DAYS.ID.isNull())
 			)
-			.execute()
-			;
+			.execute();
 			
-			System.out.print(updated);
-			
+			LOGGER.info(Integer.toString(updated));		
 		});
 	}
 

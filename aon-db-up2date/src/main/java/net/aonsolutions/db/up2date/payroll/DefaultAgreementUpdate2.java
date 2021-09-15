@@ -1,12 +1,11 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -14,14 +13,11 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.AgreementData;
-
 import net.aonsolutions.db.up2date.Update;
 
 public class DefaultAgreementUpdate2 implements Update {
 	
-	private static final Date EPOCH = new Date(0);
-	private static final String ESTATUTO_DE_LOS_TRABAJADORES = "ESTATUTO DE LOS TRABAJADORES";
+	private static final LocalDate EPOCH = new Date(0).toLocalDate();
 
 	public static final DefaultAgreementUpdate2 DEFAULTAGREEMENTUPDATE2 = new DefaultAgreementUpdate2();
 	
@@ -67,7 +63,7 @@ public class DefaultAgreementUpdate2 implements Update {
 		
 
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.task;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -12,29 +13,33 @@ import net.aonsolutions.db.up2date.Update;
 
 public class TaskWorkflowCreation implements Update {
 
-//	#
-//	# Structure for the `task_workflow` table : 
-//	#
-//
-//	CREATE TABLE `task_workflow` (
-//	  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-//	  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-//	  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
-//	  `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Operario',
-//	  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo del flujo de Tareas',
-//	  `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
-//	  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
-//	  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
-//	  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
-//	  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
-//	  PRIMARY KEY (`id`),
-//	  KEY `IDX_TASK_WORKFLOW_DOMAIN` (`domain`),
-//	  KEY `IDX_TASK_WORKFLOW_TASK` (`task`),
-//	  KEY `IDX_TASK_WORKFLOW_TASK_HOLDER` (`task_holder`),
-//	  CONSTRAINT `FK_TASK_WORKFLOW_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-//	  CONSTRAINT `FK_TASK_WORKFLOW_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
-//	  CONSTRAINT `FK_TASK_WORKFLOW_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
-//	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Flujo de Tareas';
+	/**
+	#
+	# Structure for the `task_workflow` table : 
+	#
+
+	CREATE TABLE `task_workflow` (
+	  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+	  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+	  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+	  `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Operario',
+	  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo del flujo de Tareas',
+	  `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
+	  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+	  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+	  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+	  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+	  PRIMARY KEY (`id`),
+	  KEY `IDX_TASK_WORKFLOW_DOMAIN` (`domain`),
+	  KEY `IDX_TASK_WORKFLOW_TASK` (`task`),
+	  KEY `IDX_TASK_WORKFLOW_TASK_HOLDER` (`task_holder`),
+	  CONSTRAINT `FK_TASK_WORKFLOW_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	  CONSTRAINT `FK_TASK_WORKFLOW_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+	  CONSTRAINT `FK_TASK_WORKFLOW_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Flujo de Tareas';
+	*/
+
+	private static final Logger LOGGER  = Logger.getLogger(TaskWorkflowCreation.class.getName());
 
 	public static final TaskWorkflowCreation TASK_WORKFLOW_CREATION = new TaskWorkflowCreation();
 
@@ -50,12 +55,10 @@ public class TaskWorkflowCreation implements Update {
 
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-		System.out.println("[START]");
-		System.out.println( "Creacion table `task_workflow`" );
+		LOGGER.info("[START]");
+		LOGGER.info( "Creacion table `task_workflow`" );
 		
-
-
-		String SQL = 
+		String sql = 
 				"CREATE TABLE IF NOT EXISTS `task_workflow` (" + 
 				"  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico'," + 
 				"  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'," + 
@@ -75,11 +78,10 @@ public class TaskWorkflowCreation implements Update {
 				"  CONSTRAINT `FK_TASK_WORKFLOW_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`)," + 
 				"  CONSTRAINT `FK_TASK_WORKFLOW_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)" + 
 				") ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Flujo de Tareas';";
-		;
 
-		dslContext.execute(SQL);
+		dslContext.execute(sql);
 		
-		System.out.println("[END]");
+		LOGGER.info("[END]");
 	}
 
 }

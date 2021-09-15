@@ -20,14 +20,15 @@ import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
@@ -44,11 +45,13 @@ import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import net.aonsolutions.db.up2date.Update;
 
 public class AgreementUpdate implements Update {
+
+	private static final Logger LOGGER  = Logger.getLogger(AgreementUpdate.class.getName());
 	
 	public static final AgreementUpdate AGREEMENTUPDATE = new AgreementUpdate();
 	
-	private static final Date EPOCH = new Date(0);
-	private static final Date FOREVER = null;
+	private static final LocalDate EPOCH = new Date(0).toLocalDate();
+	private static final LocalDate FOREVER = null;
 	
 	private static final String WARNNING = "HIDE(\""
 	+"<div>Este convenio ha sido modificado en la &uacute;ltima actualizaci&oacute;n."
@@ -84,10 +87,10 @@ public class AgreementUpdate implements Update {
 		// Establish context
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
-		dslContext.transaction( (config) -> {
-			//move2Trash(dslContext);
-			//checkTrash(dslContext);
-			//fixUpPayments(dslContext);
+		dslContext.transaction(config -> {			
+//			move2Trash(dslContext);
+//			checkTrash(dslContext);
+//			fixUpPayments(dslContext);
 			cleanWarnPayments(dslContext);
 		});
 	}
@@ -224,14 +227,12 @@ public class AgreementUpdate implements Update {
 		})
 		;
 
-		int levels = 
 		dslContext
 		.insertInto(AGREEMENT_LEVEL)
 		.columns(AGREEMENT_LEVEL.ID, AGREEMENT_LEVEL.DOMAIN, AGREEMENT_LEVEL.AGREEMENT, AGREEMENT_LEVEL.DESCRIPTION)
 		.select(dslContext.select(AGREEMENT_LEVEL.ID.mul(-1), AGREEMENT_LEVEL.DOMAIN, AGREEMENT_LEVEL.AGREEMENT.mul(-1), AGREEMENT_LEVEL.DESCRIPTION)
 				.from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.gt(0)).and(AGREEMENT_LEVEL.AGREEMENT.notIn(AGREEMENT_UPDATED)))
-		.execute()
-		;
+		.execute();
 
 		// Re-index 'deleted' AGREEMENT_LEVEL_CATEGORY
 		dslContext
@@ -247,7 +248,6 @@ public class AgreementUpdate implements Update {
 		})
 		;
 
-		int categories = 
 		dslContext
 		.insertInto(AGREEMENT_LEVEL_CATEGORY)
 		.columns(AGREEMENT_LEVEL_CATEGORY.ID, AGREEMENT_LEVEL_CATEGORY.DOMAIN, AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, AGREEMENT_LEVEL_CATEGORY.DESCRIPTION)
@@ -255,8 +255,7 @@ public class AgreementUpdate implements Update {
 				.from(AGREEMENT_LEVEL_CATEGORY)
 				.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.gt(0)).and(AGREEMENT_LEVEL.AGREEMENT.notIn(AGREEMENT_UPDATED)))
-		.execute()
-		;
+		.execute();
 
 		// Re-index 'deleted' AGREEMENT_LEVEL_DATA
 		dslContext
@@ -283,7 +282,8 @@ public class AgreementUpdate implements Update {
 		.execute()
 		;
 		
-		System.out.print("Moved to trash : " + agreements + " agreements (" + payments + " payments, " + extras + " extras, " + datas  + " datas ) ");
+		String msg = "Moved to trash : " + agreements + " agreements (" + payments + " payments, " + extras + " extras, " + datas  + " datas ) ";
+		LOGGER.info(msg);
 	}
 
 	protected void checkTrash(DSLContext dslContext) {
@@ -299,9 +299,8 @@ public class AgreementUpdate implements Update {
 		.where(AGREEMENT.ID.gt(0))
 		.and(AGREEMENT.ID.notIn(selectInTrash))
 		.and(AGREEMENT.ID.notIn(AGREEMENT_UPDATED))
-		.fetchInto(AGREEMENT)
-		;
-		if ( agreements.size() > 0 ) 
+		.fetchInto(AGREEMENT);
+		if(!agreements.isEmpty()) 
 			throw new RuntimeException("Some agreements haven't got bakcup.");
 		
 
@@ -317,11 +316,11 @@ public class AgreementUpdate implements Update {
 		calendar.set(Calendar.MILLISECOND,0);
 		
 		calendar.set(DAY_OF_MONTH, 1);
-		Date firstDayOfMonth = new Date ( calendar.getTimeInMillis());
+		LocalDate firstDayOfMonth = new Date ( calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
-		Date lastDayOfMonth = new Date ( calendar.getTimeInMillis());
+		LocalDate lastDayOfMonth = new Date ( calendar.getTimeInMillis()).toLocalDate();
 		
-		Cursor<Record4<Integer, Integer, Date,Date>> agreements = 
+		Cursor<Record4<Integer, Integer, LocalDate, LocalDate>> agreements = 
 		dslContext
 		.select(AGREEMENT.ID, 
 				AGREEMENT.DOMAIN,
@@ -338,19 +337,19 @@ public class AgreementUpdate implements Update {
 		;
 		
 		while ( agreements.hasNext() ) {
-			Record4<Integer, Integer, Date,Date> record = agreements.fetchOne();
+			Record4<Integer, Integer, LocalDate, LocalDate> r = agreements.fetchOne();
 			
-			Date endDate = record.get(SALARY.END_DATE);
-			Date startDate = record.get(SALARY.START_DATE);
-			Integer agreement = record.get(AGREEMENT.ID);
-			Integer domain = record.get(AGREEMENT.DOMAIN);
+			LocalDate endDate = r.get(SALARY.END_DATE);
+			LocalDate startDate = r.get(SALARY.START_DATE);
+			Integer agreement = r.get(AGREEMENT.ID);
+			Integer domain = r.get(AGREEMENT.DOMAIN);
 			
-			if ( startDate == null || startDate.after(lastDayOfMonth))
+			if ( startDate == null || startDate.isAfter(lastDayOfMonth))
 				startDate = firstDayOfMonth;
-			if ( endDate == null || endDate.after(lastDayOfMonth) )
+			if ( endDate == null || endDate.isAfter(lastDayOfMonth) )
 				endDate = lastDayOfMonth;
 			
-			AgreementPaymentRecord activePayments [] =
+			AgreementPaymentRecord[] activePayments =
 			dslContext
 			.select()
 			.from(AGREEMENT_PAYMENT)
@@ -359,9 +358,9 @@ public class AgreementUpdate implements Update {
 			.and(AGREEMENT_PAYMENT.END_DATE.isNull().or(AGREEMENT_PAYMENT.END_DATE.ge(startDate)))
 			.fetchInto(AGREEMENT_PAYMENT)
 			.stream()
-			.peek(p->p.setStartDate(EPOCH))
-			.peek(p->p.setEndDate(FOREVER))
-			.peek(p-> p.update())
+			.peek(p -> p.setStartDate(EPOCH))
+			.peek(p -> p.setEndDate(FOREVER))
+			.peek(p -> p.update())
 			.toArray(AgreementPaymentRecord[]::new)
 			;
 			
@@ -379,15 +378,13 @@ public class AgreementUpdate implements Update {
 			.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, getExtraCounterPart(p, activePayments))
 			.where(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(p.getId()))
 			.execute()
-			)
-			;
-			int deleted =
+			);
+
 			dslContext
 			.delete(AGREEMENT_PAYMENT)
 			.where(AGREEMENT_PAYMENT.START_DATE.ne(EPOCH))
 			.and(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement))
-			.execute()
-			;
+			.execute();
 			
 			dslContext.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN,domain)
@@ -398,17 +395,10 @@ public class AgreementUpdate implements Update {
 			.set(AGREEMENT_PAYMENT.EXPRESSION, WARNNING)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "WARNNING")
 			.execute();
-			
 		}
-		
-		
-		
-	
 	}
 	
 	protected void cleanWarnPayments(DSLContext dslContext) {
-		
-		
 		Cursor<Record1<Integer>> agreements = 
 		dslContext
 		.select(AGREEMENT.ID)
@@ -419,30 +409,23 @@ public class AgreementUpdate implements Update {
 		.and(AGREEMENT_PAYMENT.END_DATE.isNull())
 		.groupBy(AGREEMENT.ID)
 		.fetchLazy();
-		;
 		
 		while ( agreements.hasNext() ) {
-			Record1<Integer> record = agreements.fetchOne();
+			Record1<Integer> r = agreements.fetchOne();
 			
-			Integer agreement = record.get(AGREEMENT.ID);
+			Integer agreement = r.get(AGREEMENT.ID);
 			
 			dslContext
 			.delete(AGREEMENT_PAYMENT)
 			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement))
 			.and(AGREEMENT_PAYMENT.EXPRESSION.eq(WARNNING))
-			.execute()
-			;
-			
+			.execute();
 		}
-		
-		
-		
-	
 	}
 
-	private Integer getExtraCounterPart(AgreementPaymentRecord extraPayment, AgreementPaymentRecord agreementPayments[] ) {
+	private Integer getExtraCounterPart(AgreementPaymentRecord extraPayment, AgreementPaymentRecord[] agreementPayments) {
 		
-		AgreementPaymentRecord sameMonthPayments [] =
+		AgreementPaymentRecord[] sameMonthPayments =
 		Arrays.stream(agreementPayments)
 		.filter( p -> p.getMonth() != null )
 		.filter(p -> p.getMonth().equals(extraPayment.getMonth()))
@@ -455,7 +438,7 @@ public class AgreementUpdate implements Update {
 		if ( sameMonthPayments.length == 1 )
 			return sameMonthPayments[0].getId();
 		
-		AgreementPaymentRecord soundsEqualPayments [] =
+		AgreementPaymentRecord[] soundsEqualPayments =
 		Arrays.stream(sameMonthPayments)
 		.filter( p -> soundsEqual(extraPayment, p))
 		.toArray(AgreementPaymentRecord[]::new)

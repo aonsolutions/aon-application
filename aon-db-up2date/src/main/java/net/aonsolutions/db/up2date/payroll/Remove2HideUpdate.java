@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -16,7 +17,7 @@ import org.jooq.impl.DSL;
 import net.aonsolutions.db.up2date.Update;
 
 public class Remove2HideUpdate implements Update {
-
+	private static final Logger LOGGER  = Logger.getLogger(Remove2HideUpdate.class.getName());
 	public static final Remove2HideUpdate REMOVE2HIDEUPDATE = new Remove2HideUpdate();
 	
 	private Remove2HideUpdate() {
@@ -33,7 +34,7 @@ public class Remove2HideUpdate implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			List<Integer> indemnizaciones = 
 			dslContext
@@ -51,7 +52,7 @@ public class Remove2HideUpdate implements Update {
 			.execute()
 			;
 			
-			System.out.print("Hide " + updated + " 'INDEMNIZACIONES...' payments. ");
+			LOGGER.info("Hide " + updated + " 'INDEMNIZACIONES...' payments. ");
 			
 			List<Integer> mejoras = 
 			dslContext
@@ -65,10 +66,9 @@ public class Remove2HideUpdate implements Update {
 			.update(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.replace(AGREEMENT_PAYMENT.EXPRESSION, "REMOVE","HIDE" ))
 			.where( AGREEMENT_PAYMENT.PAYMENT_CONCEPT.in(mejoras ))
-			.execute()
-			;
+			.execute();
 			
-			System.out.print("Hide " + updated + " 'MEJORAS...' payments.");
+			LOGGER.info("Hide " + updated + " 'MEJORAS...' payments.");
 			
 		});
 	}

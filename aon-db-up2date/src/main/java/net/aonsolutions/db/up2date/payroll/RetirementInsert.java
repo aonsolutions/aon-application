@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Optional;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -63,9 +63,9 @@ public class RetirementInsert implements Update {
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 
@@ -73,7 +73,7 @@ public class RetirementInsert implements Update {
 			.insertInto(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.DOMAIN, 0)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 2)
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, indemnizacionConceptId)
 			.set(SYSTEM_PAYMENT.EXPRESSION, RETIREMENT_EXPRESSION)
 			.set(SYSTEM_PAYMENT.DESCRIPTION, RETIREMENT_DESCRIPTIOIN)

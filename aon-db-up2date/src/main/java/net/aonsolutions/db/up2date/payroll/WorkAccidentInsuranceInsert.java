@@ -1,13 +1,8 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -45,12 +40,12 @@ public class WorkAccidentInsuranceInsert implements Update {
 		.fetch(PAYMENT_CONCEPT.ID)
 		;
 
-		boolean upgraded = insurancePaymentConcept.size() > 0 ;
+		boolean upgraded = !insurancePaymentConcept.isEmpty();
 		
 		if ( upgraded )
 			return;
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

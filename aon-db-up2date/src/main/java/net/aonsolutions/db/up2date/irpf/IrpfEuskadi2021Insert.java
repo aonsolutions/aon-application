@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HAN
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -28,7 +29,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class IrpfEuskadi2021Insert implements Update {
 	
-	private static final Double LEVELS [] = {
+	private static final Double[] LEVELS = {
 			0.00,
 			14000.01,
 			14690.01,
@@ -68,7 +69,7 @@ public class IrpfEuskadi2021Insert implements Update {
 			209480.01,
 	};
 
-	private static final double DESCENDANTS_IRPFS [] [] = {
+	private static final double[][] DESCENDANTS_IRPFS = {
 			{0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40},
 			{0,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40},
 			{0,0,2,3,4,5,7,8,9,10,11,13,14,15,16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40},
@@ -78,7 +79,7 @@ public class IrpfEuskadi2021Insert implements Update {
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,5,7,9,11,12,14,16,17,19,20,22,23,25,26,28,29,31,32,33,35,36,37}
 	};
 	
-	private static final double HANDICAP_IRPFS [] [] = {
+	private static final double[][] HANDICAP_IRPFS = {
 			{ 9, 9, 9, 9, 9, 9, 9, 9, 9, 7, 7, 7, 6, 6, 6, 6, 5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1},
 			{12,12,12,12,12,12,12,12,12,12,12,12,10,10,10,10,10,10, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 3, 3, 3},
 			{12,12,12,12,12,12,12,12,12,12,12,12,10,10,10,10,10,10, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 3, 3, 3},
@@ -88,10 +89,10 @@ public class IrpfEuskadi2021Insert implements Update {
 	private static final String BIZKAIA 	= "48";
 	private static final String GIPUZKOA 	= "20";
 	
-	private static final String GEOZONES [] = { ARABA, BIZKAIA, GIPUZKOA };
+	private static final String[] GEOZONES = { ARABA, BIZKAIA, GIPUZKOA };
 	
 
-	public static IrpfEuskadi2021Insert IRPFEUSKADI2021INSERT = new IrpfEuskadi2021Insert();
+	public static final IrpfEuskadi2021Insert IRPFEUSKADI2021INSERT = new IrpfEuskadi2021Insert();
 	
 	private IrpfEuskadi2021Insert() {
 	}
@@ -119,15 +120,15 @@ public class IrpfEuskadi2021Insert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2021);
 		
-		Date _2021startDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2021 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded = true;
 		for ( String geozoneCode : GEOZONES ) { 
-			Double amounts [] = dslContext
+			Double[] amounts = dslContext
 				.select(GEOZONE_IRPF.AMOUNT)
 				.from(GEOZONE_IRPF)
 				.where(GEOZONE_IRPF.GEOZONE_CODE.eq(geozoneCode)
-				.and(GEOZONE_IRPF.START_DATE.eq(_2021startDate)))
+				.and(GEOZONE_IRPF.START_DATE.eq(startDate2021)))
 				.orderBy(GEOZONE_IRPF.AMOUNT.asc())
 				.fetchArray(GEOZONE_IRPF.AMOUNT);
 			 upgraded &= Arrays.equals(amounts, LEVELS); 
@@ -138,11 +139,11 @@ public class IrpfEuskadi2021Insert implements Update {
 		
 
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		Date _2020EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2020 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		UpdateConditionStep<GeozoneIrpfRecord> close2019Update = dslContext
 		.update(GEOZONE_IRPF)
-		.set(GEOZONE_IRPF.END_DATE, _2020EndDate)
+		.set(GEOZONE_IRPF.END_DATE, endDate2020)
 		.where(GEOZONE_IRPF.END_DATE.isNull())
 		.and(GEOZONE_IRPF.GEOZONE_CODE.in(GEOZONES));
 
@@ -150,7 +151,7 @@ public class IrpfEuskadi2021Insert implements Update {
 			dslContext
 			.select(GEOZONE_IRPF.ID)
 			.from(GEOZONE_IRPF)
-			.where(GEOZONE_IRPF.START_DATE.eq(_2021startDate))
+			.where(GEOZONE_IRPF.START_DATE.eq(startDate2021))
 			.and(GEOZONE_IRPF.GEOZONE_CODE.in(GEOZONES));
 		
 		dslContext
@@ -163,7 +164,7 @@ public class IrpfEuskadi2021Insert implements Update {
 			.execute();
 		dslContext
 			.delete(GEOZONE_IRPF)
-			.where(GEOZONE_IRPF.START_DATE.eq(_2021startDate))
+			.where(GEOZONE_IRPF.START_DATE.eq(startDate2021))
 			.and(GEOZONE_IRPF.GEOZONE_CODE.in(GEOZONES))
 			.execute();
 		
@@ -192,7 +193,7 @@ public class IrpfEuskadi2021Insert implements Update {
 					.set(GEOZONE_IRPF.ID, ++geozoneIrpfID)
 					.set(GEOZONE_IRPF.GEOZONE_CODE, geozone)
 					.set(GEOZONE_IRPF.GEOZONE_CODE, geozone)
-					.set(GEOZONE_IRPF.START_DATE, _2021startDate)
+					.set(GEOZONE_IRPF.START_DATE, startDate2021)
 					.set(GEOZONE_IRPF.END_DATE, DSL.castNull(GEOZONE_IRPF.END_DATE))
 					.set(GEOZONE_IRPF.AMOUNT, LEVELS[level]);
 				geozoneIrpfInsertSetStep = geozoneIrpfInsertSetMoreStep.newRecord();
@@ -220,7 +221,7 @@ public class IrpfEuskadi2021Insert implements Update {
 		InsertSetMoreStep<GeozoneIrpfDescendantRecord> descendantInsertSetMoreStep = irpfDescendantInsertSetMoreStep; 
 		InsertSetMoreStep<GeozoneIrpfHandicapRecord> handicapInsertSetMoreStep = irpfHandicapInsertSetMoreStep; 
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			close2019Update.execute();
 			geozoneInsertSetMoreStep.execute();
 			descendantInsertSetMoreStep.execute();

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -21,7 +22,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Bases2018Update implements Update {
 
-	public static Bases2018Update BASES2018UPDATE = new Bases2018Update();
+	public static final Bases2018Update BASES2018UPDATE = new Bases2018Update();
 
 	private static final String IPREM = "IPREM";
 	private static final String SMI = "SMI";
@@ -56,14 +57,14 @@ public class Bases2018Update implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.add(Calendar.YEAR, -1);
-		Date _2017StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2017 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2017EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2017 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded =
 		dslContext.fetchCount(
@@ -71,7 +72,7 @@ public class Bases2018Update implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 		
 		if ( upgraded )
 			upgraded =
@@ -80,7 +81,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGP_MIN))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -89,7 +90,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(-106))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -98,7 +99,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.in(-107))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN_DAY))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -107,7 +108,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.in(-107))
 			.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN_MONTH))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -116,7 +117,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.NAME.eq(SMI))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded )
 			upgraded =
@@ -125,7 +126,7 @@ public class Bases2018Update implements Update {
 			.from(SYSTEM_DATA)
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.NAME.eq(IPREM))
-			.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate))) == 1;
+			.and(SYSTEM_DATA.START_DATE.eq(startDate2018))) == 1;
 
 		if ( upgraded ) 
 			return;
@@ -135,71 +136,71 @@ public class Bases2018Update implements Update {
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018));
 		
 		DeleteConditionStep<SystemDataRecord> deleteHome = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-106))
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018));
 
 		DeleteConditionStep<SystemDataRecord> deleteAgrarian = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-107))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN_DAY, BASE_CGC_MIN_MONTH))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018));
 		
 		DeleteConditionStep<SystemDataRecord> deleteSMI = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(SMI))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018));
 		
 		DeleteConditionStep<SystemDataRecord> deleteIPREM = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(IPREM))
-		.and(SYSTEM_DATA.START_DATE.eq(_2018StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2018));
 
 		// CLOSE 2017
 		UpdateConditionStep<SystemDataRecord> updateGeneral = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2017EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2017)
 		.where(SYSTEM_DATA.DOMAIN.in(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 		
 		UpdateConditionStep<SystemDataRecord> updateHome = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2017EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2017)
 		.where(SYSTEM_DATA.DOMAIN.eq(-106))
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 
 		UpdateConditionStep<SystemDataRecord> updateAgrarian = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2017EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2017)
 		.where(SYSTEM_DATA.DOMAIN.eq(-107))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN_DAY, BASE_CGC_MIN_MONTH))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 
 		UpdateConditionStep<SystemDataRecord> updateSMI = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2017EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2017)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(SMI))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 
 		UpdateConditionStep<SystemDataRecord> updateIPREM = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2017EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2017)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(IPREM))
-		.and(SYSTEM_DATA.START_DATE.eq(_2017StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2017))
 		;
 
 		// DOMAIN = 0 , GENERAL
@@ -207,8 +208,8 @@ public class Bases2018Update implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":(TIEMPO_COMPLETO ? 1199.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 7.22 * HORAS_NOMINA) ,"
 		+"\"02\":(TIEMPO_COMPLETO ?  994.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.99 * HORAS_NOMINA) ,"
@@ -227,8 +228,8 @@ public class Bases2018Update implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MIN)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "TIEMPO_COMPLETO ? 858.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.17 * HORAS_NOMINA" 
 		)
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
@@ -240,8 +241,8 @@ public class Bases2018Update implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "($ in [ "
 		+"[196.15,167.74], "
 		+"[306.40,277.51], "
@@ -260,8 +261,8 @@ public class Bases2018Update implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN_DAY)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":52.13, "
 		+"\"02\":43.23, "
@@ -279,8 +280,8 @@ public class Bases2018Update implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN_MONTH)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":1199.10,"
 		+"\"02\":994.20 ,"
@@ -302,8 +303,8 @@ public class Bases2018Update implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, SMI)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "735.90" )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
@@ -314,15 +315,13 @@ public class Bases2018Update implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, IPREM)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.EXPRESSION, "537.84 " )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
-		.set(SYSTEM_DATA.COMMENTS, (String) null)
-		;
+		.set(SYSTEM_DATA.COMMENTS, (String) null);
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			deleteGeneral.execute();

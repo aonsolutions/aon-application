@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -20,7 +21,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Bases2019UpdateIII implements Update {
 
-	public static Bases2019UpdateIII BASES2019UPDATEIII = new Bases2019UpdateIII();
+	public static final Bases2019UpdateIII BASES2019UPDATEIII = new Bases2019UpdateIII();
 
 	private static final String BASE_CGC_MIN = "BASE_CGC_MIN";
 	private static final String BASE_CGP_MIN = "BASE_CGP_MIN";
@@ -51,7 +52,7 @@ public class Bases2019UpdateIII implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 //		boolean upgraded =
@@ -60,7 +61,7 @@ public class Bases2019UpdateIII implements Update {
 //		.from(SYSTEM_DATA)
 //		.where(SYSTEM_DATA.DOMAIN.eq(0))
 //		.and(SYSTEM_DATA.NAME.eq("POR_HORAS"))
-//		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
+//		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))) == 1;
 //		
 //
 //
@@ -71,7 +72,7 @@ public class Bases2019UpdateIII implements Update {
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("POR_HORAS"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))
 		.execute()
 		;
 		
@@ -79,8 +80,8 @@ public class Bases2019UpdateIII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, "POR_HORAS")
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "def () { isdef CONTEXT ? UTILIZADA('HORAS_TRABAJADAS') : FALSO() }")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
@@ -103,7 +104,7 @@ public class Bases2019UpdateIII implements Update {
 		)
 		.where(SYSTEM_DATA.DOMAIN.eq(0) )
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))
 		;
 
 		UpdateConditionStep<SystemDataRecord> updateBaseCgpMin = dslContext
@@ -111,11 +112,10 @@ public class Bases2019UpdateIII implements Update {
 		.set(SYSTEM_DATA.EXPRESSION, "(POR_HORAS() ? 6.33 * HORAS_NOMINA : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD)") 
 		.where(SYSTEM_DATA.DOMAIN.eq(0) )
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGP_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))
 		;
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			insertByHours.execute();

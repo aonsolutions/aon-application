@@ -1,21 +1,10 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
-import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
-import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -28,9 +17,10 @@ import net.aonsolutions.db.up2date.Update;
 public class FundUpvUpdateIV implements Update {
 
 	public static final FundUpvUpdateIV FUNDUPV_UPDATE_IV = new FundUpvUpdateIV();
-	
+	public static final String SALARIO_MENSUAL = "SALARIO_MENSUAL";
 
 	private FundUpvUpdateIV() {
+	
 	}
 	
 	@Override
@@ -81,13 +71,13 @@ public class FundUpvUpdateIV implements Update {
 		;
 		
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext
 			.update(AGREEMENT_LEVEL_DATA)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1753.61")
 			.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.eq(agreementLevelIIIId))
-			.and(AGREEMENT_LEVEL_DATA.NAME.eq("SALARIO_MENSUAL"))
+			.and(AGREEMENT_LEVEL_DATA.NAME.eq(SALARIO_MENSUAL))
 			.execute()
 			;
 			
@@ -95,7 +85,7 @@ public class FundUpvUpdateIV implements Update {
 			.update(AGREEMENT_LEVEL_DATA)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1544.79")
 			.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.eq(agreementLevelIVId))
-			.and(AGREEMENT_LEVEL_DATA.NAME.eq("SALARIO_MENSUAL"))
+			.and(AGREEMENT_LEVEL_DATA.NAME.eq(SALARIO_MENSUAL))
 			.execute()
 			;
 
@@ -103,7 +93,7 @@ public class FundUpvUpdateIV implements Update {
 			.update(AGREEMENT_LEVEL_DATA)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1269.61")
 			.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.eq(agreementLevelVId))
-			.and(AGREEMENT_LEVEL_DATA.NAME.eq("SALARIO_MENSUAL"))
+			.and(AGREEMENT_LEVEL_DATA.NAME.eq(SALARIO_MENSUAL))
 			.execute()
 			;
 			

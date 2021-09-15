@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -47,7 +48,7 @@ public class DropDays2019Insert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		// DELETE @{CAUSA_INACTIVIDAD} ¿POR QUE ESTABA EN LA BD?
 		dslContext.delete(SYSTEM_PAYMENT)
@@ -58,7 +59,7 @@ public class DropDays2019Insert implements Update {
 		boolean upgraded = dslContext.fetchCount(
 				dslContext.select().from(SYSTEM_PAYMENT)
 					.where(SYSTEM_PAYMENT.DOMAIN.eq(0))
-					.and(SYSTEM_PAYMENT.START_DATE.eq(_2018StartDate))
+					.and(SYSTEM_PAYMENT.START_DATE.eq(startDate2018))
 					.and(SYSTEM_PAYMENT.DESCRIPTION.eq("DIAS DE AUSENCIA"))
 				) == 1;
 
@@ -78,15 +79,15 @@ public class DropDays2019Insert implements Update {
 			.set(SYSTEM_PAYMENT.EXPRESSION, "/*read_only*/DIAS_AUSENCIA * 0.00/**/")
 			.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, "_P")
 			.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "BASE_CGC_MIN")
-			.set(SYSTEM_PAYMENT.START_DATE, _2018StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2018)
 			.set(SYSTEM_PAYMENT.MONTH, (Byte) null)
-			.set(SYSTEM_PAYMENT.END_DATE, (Date) null)
+			.set(SYSTEM_PAYMENT.END_DATE, (LocalDate) null)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0);
 			
 		
 		// DISABLED FOREING_KEY FOR INSERT
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

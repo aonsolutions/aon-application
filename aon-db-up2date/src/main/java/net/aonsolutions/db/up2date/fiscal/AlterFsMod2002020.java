@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -18,6 +19,8 @@ import org.jooq.impl.SQLDataType;
 import net.aonsolutions.db.up2date.Update;
 
 public class AlterFsMod2002020 implements Update {
+	
+	private static final Logger LOGGER  = Logger.getLogger(AlterFsMod2002020.class.getName());
 
 	public static final AlterFsMod2002020 ALTER_FS_MODEL_200_2020 = new AlterFsMod2002020();
 
@@ -52,36 +55,34 @@ public class AlterFsMod2002020 implements Update {
 					nrsExists = true;
 				}				
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			t.printStackTrace();
 		} finally {
 			if (stmt != null)
 				try {
 					stmt.close();
 				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			;
 			if (rs != null)
 				try {
 					rs.close();
 				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			;
 		}
-		
-		System.out.println();
 		
 		if (!nrsExists) {
 			try {
-				System.out.println("\tAlterFsMod2002020. nrs_anexoV_ric must be created.");
+				LOGGER.info("\tAlterFsMod2002020. nrs_anexoV_ric must be created.");
 				dslContext.alterTable(FS_MODEL200).addColumn("nrs_anexoV_ric", SQLDataType.VARCHAR.length(22)).execute();
-				System.out.println("\tAlterFsMod2002020. nrs_anexoV_ric CREATED!");
-			} catch (Throwable e) {
-				System.out.println("\tAlterFsMod2002020. nrs_anexoV_ric NOT CREATED!");
+				LOGGER.info("\tAlterFsMod2002020. nrs_anexoV_ric CREATED!");
+			} catch (Exception e) {
+				LOGGER.info("\tAlterFsMod2002020. nrs_anexoV_ric NOT CREATED!");
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("\tAlterFsMod2002020. nrs_anexoV_ric already exists.");
+			LOGGER.info("\tAlterFsMod2002020. nrs_anexoV_ric already exists.");
 		}
 	}
 

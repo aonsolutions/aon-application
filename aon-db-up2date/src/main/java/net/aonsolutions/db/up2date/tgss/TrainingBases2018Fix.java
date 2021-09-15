@@ -7,15 +7,14 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
-import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
-import org.jooq.UpdateSetMoreStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -55,7 +54,7 @@ public class TrainingBases2018Fix implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded =
 		dslContext.fetchCount(
@@ -71,7 +70,6 @@ public class TrainingBases2018Fix implements Update {
 		.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
 		.and(DEDUCTION_CONCEPT.CODE.eq("CGC"))
 		.fetch(DEDUCTION_CONCEPT.ID);
-		;
 
 		if ( upgraded ) 
 			return;
@@ -88,7 +86,7 @@ public class TrainingBases2018Fix implements Update {
 		.update(SYSTEM_DEDUCTION)
 		.set(SYSTEM_DEDUCTION.EXPRESSION, "6.94" )
 		.where(SYSTEM_DEDUCTION.DOMAIN.eq(-101))
-		.and(SYSTEM_DEDUCTION.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_DEDUCTION.START_DATE.eq(startDate2018))
 		.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(cgcDeductions.get(0)))
 		;
 
@@ -98,7 +96,7 @@ public class TrainingBases2018Fix implements Update {
 		.set(SYSTEM_COST.EXPRESSION, "34.80")
 		.where(SYSTEM_COST.DOMAIN.eq(-101))
 		.and(SYSTEM_COST.CODE.eq("CGC_E"))
-		.and(SYSTEM_COST.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_COST.START_DATE.eq(startDate2018))
 		;
 
 		UpdateConditionStep<SystemCostRecord> updateITCosts = 
@@ -107,7 +105,7 @@ public class TrainingBases2018Fix implements Update {
 		.set(SYSTEM_COST.EXPRESSION, "2.67")
 		.where(SYSTEM_COST.DOMAIN.eq(-101))
 		.and(SYSTEM_COST.CODE.eq("IT_E"))
-		.and(SYSTEM_COST.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_COST.START_DATE.eq(startDate2018))
 		;
 
 		UpdateConditionStep<SystemCostRecord> updateIMSCosts = 
@@ -116,7 +114,7 @@ public class TrainingBases2018Fix implements Update {
 		.set(SYSTEM_COST.EXPRESSION, "2.11")
 		.where(SYSTEM_COST.DOMAIN.eq(-101))
 		.and(SYSTEM_COST.CODE.eq("IMS_E"))
-		.and(SYSTEM_COST.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_COST.START_DATE.eq(startDate2018))
 		;
 
 		UpdateConditionStep<SystemCostRecord> updateFOGASACosts = 
@@ -125,7 +123,7 @@ public class TrainingBases2018Fix implements Update {
 		.set(SYSTEM_COST.EXPRESSION, "2.64")
 		.where(SYSTEM_COST.DOMAIN.eq(-101))
 		.and(SYSTEM_COST.CODE.eq("FOGASA_E"))
-		.and(SYSTEM_COST.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_COST.START_DATE.eq(startDate2018))
 		;
 
 		UpdateConditionStep<SystemCostRecord> updateFPCosts = 
@@ -134,10 +132,10 @@ public class TrainingBases2018Fix implements Update {
 		.set(SYSTEM_COST.EXPRESSION, "1.28")
 		.where(SYSTEM_COST.DOMAIN.eq(-101))
 		.and(SYSTEM_COST.CODE.eq("FP_E"))
-		.and(SYSTEM_COST.START_DATE.eq(_2018StartDate))
+		.and(SYSTEM_COST.START_DATE.eq(startDate2018))
 		;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 

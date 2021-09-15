@@ -4,12 +4,12 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
-import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -20,9 +20,8 @@ import net.aonsolutions.db.up2date.Update;
 
 public class TrainningBases2020Fix implements Update {
 
-	public static TrainningBases2020Fix TRAINNINGBASES2020FIX = new TrainningBases2020Fix();
-
-	private static final String DIAS_MES = "DIAS_MES";
+	public static final TrainningBases2020Fix TRAINNINGBASES2020FIX = new TrainningBases2020Fix();
+	
 	private static final String BASE_CGP_MIN = "BASE_CGP_MIN";
 	private static final String BASE_REGULADORA = "BASE_REGULADORA";
 	
@@ -52,7 +51,7 @@ public class TrainningBases2020Fix implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		boolean upgraded =
@@ -60,8 +59,8 @@ public class TrainningBases2020Fix implements Update {
 		dslContext.select()
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-101))
-		.and(SYSTEM_DATA.NAME.eq("BASE_CGP_MIN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
+		.and(SYSTEM_DATA.NAME.eq(BASE_CGP_MIN))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))) == 1;
 		
 
 
@@ -72,17 +71,15 @@ public class TrainningBases2020Fix implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN , -101)
 		.set(SYSTEM_DATA.NAME , BASE_CGP_MIN)
-		.set(SYSTEM_DATA.START_DATE , _2019StartDate)
+		.set(SYSTEM_DATA.START_DATE , startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "(POR_HORAS() ? 6.33 * HORAS_NOMINA : 1050.00 * (DIAS_NOMINA/DIAS_MES) * COEFICIENTE_PARCIALIDAD)") 
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN , -101)
 		.set(SYSTEM_DATA.NAME , BASE_REGULADORA)
-		.set(SYSTEM_DATA.START_DATE , _2019StartDate)
-		.set(SYSTEM_DATA.EXPRESSION, "BASE_CGP_MIN / DIAS_NOMINA") 
-		
-		;
+		.set(SYSTEM_DATA.START_DATE , startDate2019)
+		.set(SYSTEM_DATA.EXPRESSION, "BASE_CGP_MIN / DIAS_NOMINA");
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

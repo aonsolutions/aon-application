@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -16,7 +17,6 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.SystemPaymentRecord;
 
@@ -52,10 +52,7 @@ public class PermissionNotPaidDaysInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
-		
-		
-		
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		// IF ALREADY EXISTS
 		DeleteConditionStep<SystemPaymentRecord> deletePermissionNonPaidSystemPayment = dslContext.deleteFrom(SYSTEM_PAYMENT)
@@ -73,9 +70,9 @@ public class PermissionNotPaidDaysInsert implements Update {
 			.set(SYSTEM_PAYMENT.EXPRESSION, "/*read_only*/(CAUSA_INACTIVIDAD == PERMISO_NO_RETRIBUIDO)? DIAS_INACTIVIDAD * 0.00 : __HIDE_ /**/")
 			.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, "_P")
 			.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "BASE_CGC_MIN")
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.MONTH, (Byte) null)
-			.set(SYSTEM_PAYMENT.END_DATE, (Date) null)
+			.set(SYSTEM_PAYMENT.END_DATE, (LocalDate) null)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0);
 			
 		
@@ -93,10 +90,9 @@ public class PermissionNotPaidDaysInsert implements Update {
 		dslContext.update(CONTRACT_DATA)
 		.set(CONTRACT_DATA.EXPRESSION, "PERMISO_NO_RETRIBUIDO")
 		.where(CONTRACT_DATA.NAME.eq("CAUSA_INACTIVIDAD"))
-		.and(CONTRACT_DATA.EXPRESSION.eq("Permiso no Retribuido"))
-		;
+		.and(CONTRACT_DATA.EXPRESSION.eq("Permiso no Retribuido"));
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

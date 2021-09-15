@@ -4,9 +4,9 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
-import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.SQLDialect;
 import org.jooq.Table;
@@ -20,6 +20,8 @@ import com.esferalia.aon.jooq.tables.SalaryData;
 import net.aonsolutions.db.up2date.Update;
 
 public class FixERESalariesII implements Update {
+
+	private static final Logger LOGGER  = Logger.getLogger(FixERESalariesII.class.getName());
 
 	public static final FixERESalariesII FIXERESALARIESII = new FixERESalariesII();
 	
@@ -66,12 +68,9 @@ public class FixERESalariesII implements Update {
 			)
 			.where(SALARY_HOURS.field(NAME).eq("HORAS_NOMINA"))
 			.and(DSL.not(SALARY_HOURS.field(EXPRESSION).endsWith(".0000")))
-			.execute()
-			;
+			.execute();
 			
-			System.out.println(updated);
-
-			
+			LOGGER.info(Integer.toString(updated));
 		});
 	}
 

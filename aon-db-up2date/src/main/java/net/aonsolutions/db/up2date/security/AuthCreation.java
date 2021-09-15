@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.security;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -15,21 +16,24 @@ import net.aonsolutions.db.up2date.Update;
 
 public class AuthCreation implements Update {
 
-//	#
-//	# Structure for the `auth` table :
-//	#
-//
-//	CREATE TABLE `auth` (
-//	  `id` BINARY(16) NOT NULL COMMENT 'Identificador unico',
-//	  `email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',
-//	  `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
-//	  PRIMARY KEY (`id`)
-//	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
-//
-// 	ALTER TABLE `user` ADD `auth` binary(16) DEFAULT NULL COMMENT `uuid auth`;
+	/**
+	#
+	# Structure for the `auth` table :
+	#
 
+	CREATE TABLE `auth` (
+	  `id` BINARY(16) NOT NULL COMMENT 'Identificador unico',
+	  `email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',
+	  `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
+	  PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
 
-	public static AuthCreation AUTH_CREATION = new AuthCreation();
+ 	ALTER TABLE `user` ADD `auth` binary(16) DEFAULT NULL COMMENT `uuid auth`;
+	*/
+	
+	private static final Logger LOGGER  = Logger.getLogger(AuthCreation.class.getName());
+
+	public static final AuthCreation AUTH_CREATION = new AuthCreation();
 
 	private AuthCreation() {
 		super();
@@ -43,10 +47,10 @@ public class AuthCreation implements Update {
 
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-		System.out.println("[START]");
-		System.out.println( "Creacion table AUTH" );
+		LOGGER.info("[START]");
+		LOGGER.info( "Creacion table AUTH" );
 
-		String SQL =
+		String sql =
 		"CREATE TABLE IF NOT EXISTS `auth` ("
 			  + "`id` BINARY(16) NOT NULL COMMENT 'Identificador unico',"
 			  + "`email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',"
@@ -55,10 +59,10 @@ public class AuthCreation implements Update {
 		+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';"
 		;
 
-		dslContext.execute(SQL);
+		dslContext.execute(sql);
 
 		dslContext.alterTable(User.USER).addColumn("auth", SQLDataType.BINARY(16).nullable(true)).execute();
-		System.out.println("[END]");
+		LOGGER.info("[END]");
 	}
 
 }

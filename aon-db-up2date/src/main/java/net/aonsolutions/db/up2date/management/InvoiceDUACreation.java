@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.management;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -12,44 +13,10 @@ import net.aonsolutions.db.up2date.Update;
 
 public class InvoiceDUACreation implements Update {
 	
-	public static InvoiceDUACreation INVOICEDUACREATION = new InvoiceDUACreation();
-	
-	private class Counters {
-		int f_read;
-		int f_updated;
-		int bs_updated;
-		int ft_deleted;
-		int bsl_deleted;
-	}
+	private static final Logger LOGGER  = Logger.getLogger(InvoiceDUACreation.class.getName());
 
-	private static enum FinanceStatus {
-		PENDING,
-		BATCHED,
-		RETURNED,
-		PAID,
-		SETTLED;
-
-		public Byte value() {
-			return (byte) this.ordinal();
-		}
-	}
+	public static final InvoiceDUACreation INVOICEDUACREATION = new InvoiceDUACreation();
 	
-	private static enum FinanceTrackingType {
-		BATCHED ( FinanceStatus.BATCHED),
-		PAID ( FinanceStatus.PAID),
-		RETURNED ( FinanceStatus.RETURNED),
-	    FRACTIONED ( FinanceStatus.PENDING),
-	    SETTLED( FinanceStatus.SETTLED);
-		
-		private FinanceStatus financeStatus;
-		private FinanceTrackingType (FinanceStatus financeStatus) {
-			this.financeStatus = financeStatus;
-		}
-		
-		public FinanceStatus getFinanceStatus() {
-			return financeStatus;
-		}
-	}	
 	public static final int KALDEVI_DOMAIN = 8353;
 	public static final int KALDEVI_BANK_STATEMENT_ID = 2433681; 
 	
@@ -70,10 +37,10 @@ public class InvoiceDUACreation implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
-		System.out.println("[START]");
-		System.out.println( "Creacion table INVOICE_DUA" );
+		LOGGER.info("[START]");
+		LOGGER.info( "Creacion table INVOICE_DUA" );
 		
-		String SQL = 
+		String sql = 
 		"CREATE TABLE IF NOT EXISTS `invoice_dua` ("
 			  + "`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',"
 			  + "`domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',"
@@ -101,10 +68,8 @@ public class InvoiceDUACreation implements Update {
 		  + "CONSTRAINT `FK_INVOICE_DUA_VAT_ACCOUNT` FOREIGN KEY (`vat_account`) REFERENCES `account` (`id`)"
 		+ ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vinculo Factura DUA';"
 		;		
-		dslContext.execute(SQL);
-		System.out.println("[END]");
-		
-		
+		dslContext.execute(sql);
+		LOGGER.info("[END]");
 	}
 
 }

@@ -1,7 +1,5 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
@@ -9,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
@@ -23,7 +22,8 @@ import net.aonsolutions.db.up2date.Update;
 public class GeroaInsert implements Update {
 
 	public static final GeroaInsert GEROA_INSERT = new GeroaInsert();
-	
+	private static final String GEROA = "GEROA";
+	private static final String GEROA_PENTSIOAK_BGAE_EPSV = "GEROA PENTSIOAK BGAE/EPSV";
 	private GeroaInsert() {
 	}
 	
@@ -43,7 +43,7 @@ public class GeroaInsert implements Update {
 		.select(PAYMENT_CONCEPT.ID)
 		.from(PAYMENT_CONCEPT)
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
-		.and(PAYMENT_CONCEPT.CODE.eq("GEROA"))
+		.and(PAYMENT_CONCEPT.CODE.eq(GEROA))
 		.fetch(PAYMENT_CONCEPT.ID)
 		;
 
@@ -52,12 +52,12 @@ public class GeroaInsert implements Update {
 		.select(DEDUCTION_CONCEPT.ID)
 		.from(DEDUCTION_CONCEPT)
 		.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
-		.and(DEDUCTION_CONCEPT.CODE.eq("GEROA"))
+		.and(DEDUCTION_CONCEPT.CODE.eq(GEROA))
 		.fetch(DEDUCTION_CONCEPT.ID)
 		;
 
-		boolean upgraded = oldPaymentConcepts.size() > 0 
-				&& oldDeductionConcepts.size() > 0;
+		boolean upgraded = !oldPaymentConcepts.isEmpty() 
+				&& !oldDeductionConcepts.isEmpty();
 		
 		if ( upgraded )
 			return;
@@ -71,19 +71,18 @@ public class GeroaInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
-			int newPaymentConcept = 
 			dslContext
 			.insertInto(PAYMENT_CONCEPT)
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)33)
-			.set(PAYMENT_CONCEPT.CODE, "GEROA")
-			.set(PAYMENT_CONCEPT.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
+			.set(PAYMENT_CONCEPT.CODE, GEROA)
+			.set(PAYMENT_CONCEPT.DESCRIPTION, GEROA_PENTSIOAK_BGAE_EPSV)
 			.set(PAYMENT_CONCEPT.EXPRESSION, "/*read-only*/TOTAL_DEVENGADO * PORCENTAJE_GEROA * 0.00/**/")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "BASE_CGC * PORCENTAJE_GEROA/100.00")
 			.returning()
@@ -111,7 +110,7 @@ public class GeroaInsert implements Update {
 			.insertInto(DEDUCTION_CONCEPT)
 			.set(DEDUCTION_CONCEPT.DOMAIN, 0)
 			.set(DEDUCTION_CONCEPT.TYPE, (byte)9)
-			.set(DEDUCTION_CONCEPT.CODE, "GEROA")
+			.set(DEDUCTION_CONCEPT.CODE, GEROA)
 			.returning()
 			.fetchOne()
 			.getId()
@@ -130,9 +129,9 @@ public class GeroaInsert implements Update {
 			dslContext
 			.insertInto(SYSTEM_DEDUCTION)
 			.set(SYSTEM_DEDUCTION.DOMAIN, 0)
-			.set(SYSTEM_DEDUCTION.START_DATE, _2010StartDate)
+			.set(SYSTEM_DEDUCTION.START_DATE, startDate2010)
 			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, newDeductionConcept )
-			.set(SYSTEM_DEDUCTION.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
+			.set(SYSTEM_DEDUCTION.DESCRIPTION, GEROA_PENTSIOAK_BGAE_EPSV)
 			.set(SYSTEM_DEDUCTION.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAJE_GEROA/100.00 : HIDE() /**/")
 			.execute();
 			
@@ -146,11 +145,10 @@ public class GeroaInsert implements Update {
 			.set(SYSTEM_COST.DOMAIN, 0)
 			.set(SYSTEM_COST.TYPE, (byte)9)
 			.set(SYSTEM_COST.CODE, "GEROA_E")
-			.set(SYSTEM_COST.START_DATE, _2010StartDate)
-			.set(SYSTEM_COST.DESCRIPTION, "GEROA PENTSIOAK BGAE/EPSV")
+			.set(SYSTEM_COST.START_DATE, startDate2010)
+			.set(SYSTEM_COST.DESCRIPTION, GEROA_PENTSIOAK_BGAE_EPSV)
 			.set(SYSTEM_COST.EXPRESSION, "/*read-only*/ isdef BASE_GEROA ? (BASE_CGC - BASE_GEROA) * PORCENTAJE_GEROA/100.00 : HIDE() /**/")
 			.execute();
-			;
 			
 //			dslContext
 //			.insertInto(SYSTEM_DATA)

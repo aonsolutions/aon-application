@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import net.aonsolutions.db.up2date.Update;
 public class FundUpvUpdate implements Update {
 
 	public static final FundUpvUpdate FUNDUPV_UPDATE = new FundUpvUpdate();
-	
+	public static final String SALARIO_MENSUAL = "SALARIO_MENSUAL";
 	private static final String WARNNING = "HIDE(\""
 	+"<div>Existe una nueva versi&oacute;n de este convenio 'FUNDACI&Oacute;N CURSOS DE VERANO DE LA UPV/EHU'.</div>"
 	+"<div>Si encuentra alg&uacute;n error comun&iacute;quese con nosotros.</div>"
@@ -71,18 +72,18 @@ public class FundUpvUpdate implements Update {
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 1970);
-		Date _1970StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate1970 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.YEAR, 2017);
-		Date _2017StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2017 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.DAY_OF_MONTH, 18);
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
 		calendar.set(Calendar.YEAR, 2018);
-		Date _2018_3_18_Date = new Date(calendar.getTimeInMillis());
+		LocalDate date2018_3_18 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.DAY_OF_MONTH, 19);
-		Date _2018_3_19_Date = new Date(calendar.getTimeInMillis());
+		LocalDate date2018_3_19 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		dslContext.transaction( (config) -> {
 			
@@ -104,29 +105,29 @@ public class FundUpvUpdate implements Update {
 			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
 			.set(AGREEMENT_DATA.NAME, "PORCENTAJE_GEROA")
 			.set(AGREEMENT_DATA.EXPRESSION, "0.20")
-			.set(AGREEMENT_DATA.START_DATE, _2017StartDate )
-			.set(AGREEMENT_DATA.END_DATE, _2018_3_18_Date )
+			.set(AGREEMENT_DATA.START_DATE, startDate2017)
+			.set(AGREEMENT_DATA.END_DATE, date2018_3_18 )
 			.newRecord()
 			.set(AGREEMENT_DATA.DOMAIN, 0)
 			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
 			.set(AGREEMENT_DATA.NAME, "PORCENTAJE_GEROA")
 			.set(AGREEMENT_DATA.EXPRESSION, "0.20")
-			.set(AGREEMENT_DATA.START_DATE, _2018_3_19_Date)
-			.set(AGREEMENT_DATA.END_DATE, DSL.castNull(Date.class) )
+			.set(AGREEMENT_DATA.START_DATE, date2018_3_19)
+			.set(AGREEMENT_DATA.END_DATE, DSL.castNull(LocalDate.class))
 			.newRecord()
 			.set(AGREEMENT_DATA.DOMAIN, 0)
 			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
 			.set(AGREEMENT_DATA.NAME, "HORAS_CONVENIO")
 			.set(AGREEMENT_DATA.EXPRESSION, "37.50")
-			.set(AGREEMENT_DATA.START_DATE, _2017StartDate )
-			.set(AGREEMENT_DATA.END_DATE, _2018_3_18_Date )
+			.set(AGREEMENT_DATA.START_DATE, startDate2017)
+			.set(AGREEMENT_DATA.END_DATE, date2018_3_18 )
 			.newRecord()
 			.set(AGREEMENT_DATA.DOMAIN, 0)
 			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
 			.set(AGREEMENT_DATA.NAME, "HORAS_CONVENIO")
 			.set(AGREEMENT_DATA.EXPRESSION, "37.50")
-			.set(AGREEMENT_DATA.START_DATE, _2018_3_19_Date )
-			.set(AGREEMENT_DATA.END_DATE, DSL.castNull(Date.class) )
+			.set(AGREEMENT_DATA.START_DATE, date2018_3_19)
+			.set(AGREEMENT_DATA.END_DATE, DSL.castNull(LocalDate.class) )
 			.execute()
 			;
 			
@@ -171,7 +172,7 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0) // SALARY 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, salarioBaseConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[1] SALARIO BASE MENSUAL") 
@@ -179,7 +180,7 @@ public class FundUpvUpdate implements Update {
 			.newRecord()
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0) // SALARY 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, antiguedadConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[2] COMPLEMENTO PERSONAL DE ANTIG\u00DCEDAD") 
@@ -187,7 +188,7 @@ public class FundUpvUpdate implements Update {
 			.newRecord()
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0) // GEROA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, geroaConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[60] GEROA PENTSIOAK BGAE/EPSV") 
@@ -200,7 +201,7 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[53] PAGA EXTRAORDINARIA NAVIDAD") 
@@ -215,7 +216,7 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[52] PAGA EXTRAORDINARIA OTO\u00D1O") 
@@ -230,7 +231,7 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[50] PAGA EXTRAORDINARIA MARZO") 
@@ -245,7 +246,7 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[51] PAGA EXTRAORDINARIA VERANO") 
@@ -296,7 +297,6 @@ public class FundUpvUpdate implements Update {
 			.returning()
 			.fetchOne()
 			.getId();
-			;
 
 			int levelII =
 			dslContext
@@ -307,7 +307,6 @@ public class FundUpvUpdate implements Update {
 			.returning()
 			.fetchOne()
 			.getId();
-			;
 
 			int levelIII =
 			dslContext
@@ -318,7 +317,6 @@ public class FundUpvUpdate implements Update {
 			.returning()
 			.fetchOne()
 			.getId();
-			;
 			
 			dslContext
 			.insertInto(AGREEMENT_LEVEL_CATEGORY)
@@ -343,37 +341,37 @@ public class FundUpvUpdate implements Update {
 			.insertInto(AGREEMENT_LEVEL_DATA)
 			.set(AGREEMENT_LEVEL_DATA.DOMAIN, 0)
 			.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, levelI)
-			.set(AGREEMENT_LEVEL_DATA.START_DATE, _2018_3_19_Date)
-			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(Date.class) )
-			.set(AGREEMENT_LEVEL_DATA.NAME, "SALARIO_MENSUAL")
+			.set(AGREEMENT_LEVEL_DATA.START_DATE, date2018_3_19)
+			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(LocalDate.class) )
+			.set(AGREEMENT_LEVEL_DATA.NAME, SALARIO_MENSUAL)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "2286.98")
 			.newRecord()
 			.set(AGREEMENT_LEVEL_DATA.DOMAIN, 0)
 			.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, levelII)
-			.set(AGREEMENT_LEVEL_DATA.START_DATE, _2017StartDate)
-			.set(AGREEMENT_LEVEL_DATA.END_DATE, _2018_3_18_Date)
-			.set(AGREEMENT_LEVEL_DATA.NAME, "SALARIO_MENSUAL")
+			.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate2017)
+			.set(AGREEMENT_LEVEL_DATA.END_DATE, date2018_3_18)
+			.set(AGREEMENT_LEVEL_DATA.NAME, SALARIO_MENSUAL)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1498.5")
 			.newRecord()
 			.set(AGREEMENT_LEVEL_DATA.DOMAIN, 0)
 			.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, levelII)
-			.set(AGREEMENT_LEVEL_DATA.START_DATE, _2018_3_19_Date)
-			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(Date.class) )
-			.set(AGREEMENT_LEVEL_DATA.NAME, "SALARIO_MENSUAL")
+			.set(AGREEMENT_LEVEL_DATA.START_DATE, date2018_3_19)
+			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(LocalDate.class) )
+			.set(AGREEMENT_LEVEL_DATA.NAME, SALARIO_MENSUAL)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1869.72")
 			.newRecord()
 			.set(AGREEMENT_LEVEL_DATA.DOMAIN, 0)
 			.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, levelIII)
-			.set(AGREEMENT_LEVEL_DATA.START_DATE, _2017StartDate)
-			.set(AGREEMENT_LEVEL_DATA.END_DATE, _2018_3_18_Date)
-			.set(AGREEMENT_LEVEL_DATA.NAME, "SALARIO_MENSUAL")
+			.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate2017)
+			.set(AGREEMENT_LEVEL_DATA.END_DATE, date2018_3_18)
+			.set(AGREEMENT_LEVEL_DATA.NAME, SALARIO_MENSUAL)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1389.96")
 			.newRecord()
 			.set(AGREEMENT_LEVEL_DATA.DOMAIN, 0)
 			.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, levelIII)
-			.set(AGREEMENT_LEVEL_DATA.START_DATE, _2018_3_19_Date)
-			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(Date.class) )
-			.set(AGREEMENT_LEVEL_DATA.NAME, "SALARIO_MENSUAL")
+			.set(AGREEMENT_LEVEL_DATA.START_DATE, date2018_3_19)
+			.set(AGREEMENT_LEVEL_DATA.END_DATE, DSL.castNull(LocalDate.class) )
+			.set(AGREEMENT_LEVEL_DATA.NAME, SALARIO_MENSUAL)
 			.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "1742.83")
 			.execute();
 			
@@ -407,7 +405,7 @@ public class FundUpvUpdate implements Update {
 					.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 					.set(AGREEMENT_PAYMENT.AGREEMENT,oldAgreementId)
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) 1)
-					.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+					.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, WARNNING)
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, "WARNNING")

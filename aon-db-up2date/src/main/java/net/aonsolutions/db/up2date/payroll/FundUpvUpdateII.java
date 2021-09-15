@@ -1,21 +1,14 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
-import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
-import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -65,21 +58,20 @@ public class FundUpvUpdateII implements Update {
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 1970);
-		Date _1970StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate1970 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.YEAR, 2017);
-		Date _2017StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2017 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.DAY_OF_MONTH, 18);
 		calendar.set(Calendar.MONTH, Calendar.MARCH);
 		calendar.set(Calendar.YEAR, 2018);
-		Date _2018_3_18_Date = new Date(calendar.getTimeInMillis());
+		LocalDate date2018_3_18 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.DAY_OF_MONTH, 19);
-		Date _2018_3_19_Date = new Date(calendar.getTimeInMillis());
+		LocalDate date2018_3_19 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			int agreementId = 
@@ -88,18 +80,15 @@ public class FundUpvUpdateII implements Update {
 			.from(AGREEMENT)
 			.where(AGREEMENT.DOMAIN.eq(0))
 			.and(AGREEMENT.DESCRIPTION.eq("FUNDACI\u00D3N CURSOS DE VERANO DE LA UPV/EHU"))
-			.fetchOne(AGREEMENT.ID)
-			;
+			.fetchOne(AGREEMENT.ID);
 			
-
 			int pagaExtraConcept = 
 			dslContext
 			.select(PAYMENT_CONCEPT.ID)
 			.from(PAYMENT_CONCEPT)
 			.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 			.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
-			.fetchOne(PAYMENT_CONCEPT.ID)
-			;
+			.fetchOne(PAYMENT_CONCEPT.ID);
 			
 			int extraSeptiembreId = 
 			dslContext
@@ -126,7 +115,7 @@ public class FundUpvUpdateII implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[52] PAGA EXTRAORDINARIA OTO\u00D1O") 
@@ -141,7 +130,7 @@ public class FundUpvUpdateII implements Update {
 			.insertInto(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.DOMAIN, 0)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-			.set(AGREEMENT_PAYMENT.START_DATE, _1970StartDate)
+			.set(AGREEMENT_PAYMENT.START_DATE, startDate1970)
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1) // EXTRA 
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, pagaExtraConcept)
 			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[52] PAGA EXTRAORDINARIA OTO\u00D1O") 

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -19,7 +20,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Artist2019Insert implements Update {
 	
-	public static Artist2019Insert ARTIST2019INSERT = new Artist2019Insert();
+	public static final Artist2019Insert ARTIST2019INSERT = new Artist2019Insert();
 
 	private Artist2019Insert() {
 		super();
@@ -47,12 +48,12 @@ public class Artist2019Insert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		boolean upgraded = dslContext.fetchCount(
 				dslContext.select().from(SYSTEM_DATA)
 					.where(SYSTEM_DATA.DOMAIN.eq(-108))
-					.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))
+					.and(SYSTEM_DATA.START_DATE.eq(startDate2019))
 				) >= 1;
 
 		// IF ALREADY EXISTS
@@ -62,20 +63,20 @@ public class Artist2019Insert implements Update {
 		
 		// DOMAIN = -109, ARTIST
 		
-		InsertValuesStep7<SystemDataRecord, Integer, String, String, Date, Date, Byte, String> insertArtist = 
+		InsertValuesStep7<SystemDataRecord, Integer, String, String, LocalDate, LocalDate, Byte, String> insertArtist = 
 			dslContext.insertInto(SYSTEM_DATA, SYSTEM_DATA.DOMAIN, SYSTEM_DATA.NAME, SYSTEM_DATA.EXPRESSION, SYSTEM_DATA.START_DATE, SYSTEM_DATA.END_DATE, SYSTEM_DATA.READ_ONLY, SYSTEM_DATA.COMMENTS)
-				.values(-108, "BASE_CGP_MIN", "BASE_CGC_MIN", _2019StartDate, (Date) null, (byte) 1, (String) null)
-				.values(-108, "BASE_CGP_MAX", "BASE_CGC_MAX", _2019StartDate, (Date) null, (byte) 1, (String) null)
-				.values(-108, "BASE_CGC_MIN", "[\"01\":48.88, \"02\":40.53, \"03\":35.26, \"05\":35.00, \"07\":35.00][GRUPO_COTIZACION] * DIAS_NOMINA", _2019StartDate, (Date) null, (byte) 1, (String) null)
-				.values(-108, "BASE_CGC_MAX_DIA", "(($ in [ [461.00,270.00], [829.00,341.00], [1386.00,407.00], [Double.MAX_VALUE,542.00] ] if $[0] >= BASE_CGC_BRUTA/DIAS_NOMINA)[0][1]) * DIAS_NOMINA", _2019StartDate, (Date) null, (byte) 1, (String) null)
-				.values(-108, "BASE_CGC_MAX_MES", "MAX(4070.10 - SUM(\"BASE_CGC\"), 0)", _2019StartDate, (Date) null, (byte) 1, (String) null)
-				.values(-108, "BASE_CGC_MAX", "MIN(BASE_CGC_MAX_DIA , BASE_CGC_MAX_MES)", _2019StartDate, (Date) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGP_MIN", "BASE_CGC_MIN", startDate2019, (LocalDate) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGP_MAX", "BASE_CGC_MAX", startDate2019, (LocalDate) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MIN", "[\"01\":48.88, \"02\":40.53, \"03\":35.26, \"05\":35.00, \"07\":35.00][GRUPO_COTIZACION] * DIAS_NOMINA", startDate2019, (LocalDate) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MAX_DIA", "(($ in [ [461.00,270.00], [829.00,341.00], [1386.00,407.00], [Double.MAX_VALUE,542.00] ] if $[0] >= BASE_CGC_BRUTA/DIAS_NOMINA)[0][1]) * DIAS_NOMINA", startDate2019, (LocalDate) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MAX_MES", "MAX(4070.10 - SUM(\"BASE_CGC\"), 0)", startDate2019, (LocalDate) null, (byte) 1, (String) null)
+				.values(-108, "BASE_CGC_MAX", "MIN(BASE_CGC_MAX_DIA , BASE_CGC_MAX_MES)", startDate2019, (LocalDate) null, (byte) 1, (String) null)
 			;
 		
 		
 		// DISABLED FOREING_KEY FOR INSERT
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

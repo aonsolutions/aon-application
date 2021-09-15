@@ -8,6 +8,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -19,10 +21,13 @@ import org.jooq.impl.SQLDataType;
 import net.aonsolutions.db.up2date.Update;
 
 public class AlterAccountEntryDetailConcept implements Update {
+	
+	private static final Logger LOGGER  = Logger.getLogger(AlterAccountEntryDetailConcept.class.getName());
 
 	public static final AlterAccountEntryDetailConcept ALTER_ACCOUNT_ENTRY_DETAIL_CONCEPT = new AlterAccountEntryDetailConcept();
 
 	private AlterAccountEntryDetailConcept() {
+		
 	}
 
 	@Override
@@ -48,45 +53,43 @@ public class AlterAccountEntryDetailConcept implements Update {
 			ResultSetMetaData rsmd = rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				String name = rsmd.getColumnName(i);				
-				if ("concept".equals(name)) {
-					if (rsmd.getPrecision(i) != 64) {
-						updateConcept = true;
-					};	
+				if ("concept".equals(name) && rsmd.getPrecision(i) != 64) {
+					updateConcept = true;
 				}				
 			}
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			if (stmt != null)
 				try {
 					stmt.close();
 				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			;
 			if (rs != null)
 				try {
 					rs.close();
 				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			;
+			
 		}
 		
-		System.out.println();
 		if (updateConcept) {
 			try {
 				Date now = new Date();
-				System.out.println("\tAlterAccountEntryDetailConcept. concept must be updated.");
+				LOGGER.info("\tAlterAccountEntryDetailConcept. concept must be updated.");
 				dslContext.alterTable(ACCOUNT_ENTRY_DETAIL).alterColumn("concept")
 					.set(SQLDataType.VARCHAR.length(64))
 					.execute();
 				long millis = (new Date()).getTime() - now.getTime(); 
-				System.out.println("\tAlterAccountEntryDetailConcept. concept UPDATED! [" + (millis / 1000) + " sec.]");
-			} catch (Throwable e) {
-				System.out.println("\tAlterAccountEntryDetailConcept. concept NOT UPDATED!");
+				LOGGER.log(Level.INFO, "\tAlterAccountEntryDetailConcept. concept UPDATED! [ {0} sec.]", (millis / 1000));
+			} catch (Exception e) {
+				LOGGER.warning("\tAlterAccountEntryDetailConcept. concept NOT UPDATED!");
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("\tAlterAccountEntryDetailConcept. concept has right length.");
+			LOGGER.info("\tAlterAccountEntryDetailConcept. concept has right length.");
 		}
 
 	}

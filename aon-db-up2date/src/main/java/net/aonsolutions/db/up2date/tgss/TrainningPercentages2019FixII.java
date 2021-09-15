@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -47,12 +48,12 @@ public class TrainningPercentages2019FixII implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
 		calendar.set(Calendar.YEAR, 2018);
-		Date _2018EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		dslContext.transaction( (config) -> {
@@ -69,37 +70,37 @@ public class TrainningPercentages2019FixII implements Update {
 			dslContext
 			.delete(SYSTEM_COST)
 			.where(SYSTEM_COST.DOMAIN.eq(-101))
-			.and(SYSTEM_COST.START_DATE.ge(_2019StartDate))
+			.and(SYSTEM_COST.START_DATE.ge(startDate2019))
 			.and(SYSTEM_COST.CODE.eq("FP_E"))
 			.execute();
 
 			dslContext
 			.update(SYSTEM_COST)
-			.set(SYSTEM_COST.END_DATE, _2018EndDate)
+			.set(SYSTEM_COST.END_DATE, endDate2018)
 			.where(SYSTEM_COST.DOMAIN.eq(-101))
 			.and(SYSTEM_COST.CODE.eq("FP_E"))
-			.and(SYSTEM_COST.END_DATE.isNull().or(SYSTEM_COST.END_DATE.ge(_2019StartDate)))
+			.and(SYSTEM_COST.END_DATE.isNull().or(SYSTEM_COST.END_DATE.ge(startDate2019)))
 			.execute();
 
 			dslContext
 			.delete(SYSTEM_DEDUCTION)
 			.where(SYSTEM_DEDUCTION.DOMAIN.eq(-101))
-			.and(SYSTEM_DEDUCTION.START_DATE.ge(_2019StartDate))
+			.and(SYSTEM_DEDUCTION.START_DATE.ge(startDate2019))
 			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(fpDeductionConcept))
 			.execute();
 			
 			dslContext
 			.update(SYSTEM_DEDUCTION)
-			.set(SYSTEM_DEDUCTION.END_DATE, _2018EndDate)
+			.set(SYSTEM_DEDUCTION.END_DATE, endDate2018)
 			.where(SYSTEM_DEDUCTION.DOMAIN.eq(-101))
 			.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.eq(fpDeductionConcept))
-			.and(SYSTEM_DEDUCTION.END_DATE.isNull().or(SYSTEM_DEDUCTION.END_DATE.ge(_2019StartDate)))
+			.and(SYSTEM_DEDUCTION.END_DATE.isNull().or(SYSTEM_DEDUCTION.END_DATE.ge(startDate2019)))
 			.execute();
 			
 			dslContext
 			.insertInto(SYSTEM_DEDUCTION)
 			.set(SYSTEM_DEDUCTION.DOMAIN, -101)
-			.set(SYSTEM_DEDUCTION.START_DATE, _2019StartDate)
+			.set(SYSTEM_DEDUCTION.START_DATE, startDate2019)
 			.set(SYSTEM_DEDUCTION.EXPRESSION, "REMOVE()" )
 			.set(SYSTEM_DEDUCTION.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
 			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, fpDeductionConcept)
@@ -111,7 +112,7 @@ public class TrainningPercentages2019FixII implements Update {
 			.set(SYSTEM_COST.DOMAIN, -101)
 			.set(SYSTEM_COST.TYPE, (byte) 3 )
 			.set(SYSTEM_COST.CODE, "FP_E" )
-			.set(SYSTEM_COST.START_DATE, _2019StartDate)
+			.set(SYSTEM_COST.START_DATE, startDate2019)
 			.set(SYSTEM_COST.DESCRIPTION, "FP")
 			.set(SYSTEM_COST.EXPRESSION, "REMOVE()" )
 			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_COST.END_DATE))

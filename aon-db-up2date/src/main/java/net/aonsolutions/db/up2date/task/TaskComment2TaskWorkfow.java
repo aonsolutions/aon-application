@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.task;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -9,13 +10,13 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.TaskComment;
-import com.esferalia.aon.jooq.tables.TaskEvent;
 import com.esferalia.aon.jooq.tables.TaskWorkflow;
-import com.esferalia.aon.jooq.tables.User;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class TaskComment2TaskWorkfow implements Update{
+	
+	private static final Logger LOGGER  = Logger.getLogger(TaskComment2TaskWorkfow.class.getName());
 	public static final TaskComment2TaskWorkfow TASK_EVEMT_2_TASK_WORKFLOW = new TaskComment2TaskWorkfow();
 
 	private TaskComment2TaskWorkfow() {
@@ -30,9 +31,9 @@ public class TaskComment2TaskWorkfow implements Update{
 
 		DSLContext dslContext = DSL.using(conn, SQLDialect.MARIADB, settings);
 
-		System.out.println("[START]");
+		LOGGER.info("[START]");
 		
-		dslContext.select().from(TaskComment.TASK_COMMENT).fetchInto(TaskComment.TASK_COMMENT).stream().forEach(r ->{
+		dslContext.select().from(TaskComment.TASK_COMMENT).fetchInto(TaskComment.TASK_COMMENT).stream().forEach(r -> 
 			dslContext.insertInto(TaskWorkflow.TASK_WORKFLOW)
 			.set(TaskWorkflow.TASK_WORKFLOW.DOMAIN, r.getDomain())
 			.set(TaskWorkflow.TASK_WORKFLOW.TASK, r.getTask())
@@ -43,7 +44,8 @@ public class TaskComment2TaskWorkfow implements Update{
 			.set(TaskWorkflow.TASK_WORKFLOW.CREATION_DATE, r.getCreationDate())
 			.set(TaskWorkflow.TASK_WORKFLOW.MODIFICATION_USER, r.getModificationUser())
 			.set(TaskWorkflow.TASK_WORKFLOW.MODIFICATION_DATE, r.getModificationDate())
-			.execute();
-		});
+			.execute());
+		LOGGER.info("[END]");
+
 	}
 }

@@ -7,7 +7,6 @@ import java.sql.Connection;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Name;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;

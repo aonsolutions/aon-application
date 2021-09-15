@@ -1,32 +1,27 @@
 package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
-import org.jooq.Field;
 import org.jooq.InsertOnDuplicateStep;
-import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
-import com.esferalia.aon.jooq.tables.records.SystemDeductionRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class Bases2021Update implements Update {
 
-	public static Bases2021Update BASES2021UPDATE = new Bases2021Update();
+	public static final Bases2021Update BASES2021UPDATE = new Bases2021Update();
 
 	private static final String SMI = "SMI";
 	private static final String ROUND = "ROUND";
@@ -58,26 +53,26 @@ public class Bases2021Update implements Update {
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2021);
-		
-		Date _2021StartDate = new Date(calendar.getTimeInMillis());
+
+		LocalDate startDate2021 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.YEAR, 2020);
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2020EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2020 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.YEAR, 2019);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded =
 		dslContext.fetchCount(
 		dslContext.select()
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
-		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2021StartDate))) > 0;
+		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2021))) > 0;
 
 		if ( upgraded ) 
 			return;
@@ -85,12 +80,10 @@ public class Bases2021Update implements Update {
 		UpdateConditionStep<SystemDataRecord> close2019BasesMin =
 		dslContext
 		.update(SYSTEM_DATA)
-		.set(SYSTEM_DATA.END_DATE, _2020EndDate)
+		.set(SYSTEM_DATA.END_DATE, endDate2020)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
-		;
-		
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 		
 		InsertOnDuplicateStep<SystemDataRecord> insert2021Bases = 
 		dslContext
@@ -106,18 +99,18 @@ public class Bases2021Update implements Update {
 		SYSTEM_DATA.DOMAIN,
 		SYSTEM_DATA.NAME,
 		DSL.replace(DSL.replace(SYSTEM_DATA.EXPRESSION, "1050.00", String.format("%s(%s*14/12,2)", ROUND, SMI)), "35.00", String.format("%s((%s*14/12)/30,2)", ROUND, SMI)),
-		DSL.date(_2021StartDate),
+		DSL.localDate(startDate2021),
 		DSL.castNull(SYSTEM_DATA.END_DATE)
 		)
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate)))
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019)))
 		;
 		
 		// DOMAIN = 0 , GENERAL
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

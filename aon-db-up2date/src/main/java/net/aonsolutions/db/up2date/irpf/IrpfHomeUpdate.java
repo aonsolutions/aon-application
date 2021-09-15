@@ -1,17 +1,16 @@
 package net.aonsolutions.db.up2date.irpf;
 
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
-import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -49,7 +48,7 @@ public class IrpfHomeUpdate implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		// CLEAN OLD 
 		DeleteConditionStep<SystemDataRecord> deleteIrpfPercentage = dslContext
@@ -61,14 +60,14 @@ public class IrpfHomeUpdate implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, PORCENTAJE_IRPF)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2010StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2010)
 		.set(SYSTEM_DATA.EXPRESSION, "0.00" )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

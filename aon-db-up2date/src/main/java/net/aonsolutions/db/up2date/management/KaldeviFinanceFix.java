@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -18,18 +19,20 @@ import org.jooq.impl.DSL;
 import net.aonsolutions.db.up2date.Update;
 
 public class KaldeviFinanceFix implements Update {
-	
-	public static KaldeviFinanceFix KALDEVIFINANCEFIX = new KaldeviFinanceFix();
+
+	private static final Logger LOGGER  = Logger.getLogger(KaldeviFinanceFix.class.getName());
+
+	public static final KaldeviFinanceFix KALDEVIFINANCEFIX = new KaldeviFinanceFix();
 	
 	private class Counters {
-		int f_read;
-		int f_updated;
-		int bs_updated;
-		int ft_deleted;
-		int bsl_deleted;
+		int fRead;
+		int fUpdated;
+		int bsUpdated;
+		int ftDeleted;
+		int bslDeleted;
 	}
 
-	private static enum FinanceStatus {
+	private enum FinanceStatus {
 		PENDING,
 		BATCHED,
 		RETURNED,
@@ -41,7 +44,7 @@ public class KaldeviFinanceFix implements Update {
 		}
 	}
 	
-	private static enum FinanceTrackingType {
+	private enum FinanceTrackingType {
 		BATCHED ( FinanceStatus.BATCHED),
 		PAID ( FinanceStatus.PAID),
 		RETURNED ( FinanceStatus.RETURNED),
@@ -77,13 +80,13 @@ public class KaldeviFinanceFix implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
-		System.out.println("[START]");
-		System.out.println( "Arreglo vencimientos de Kaldevi" );
+		LOGGER.info("[START]");
+		LOGGER.info( "Arreglo vencimientos de Kaldevi" );
 		
 		final Counters c = new Counters();
 		
-		Field<Integer> COUNT = DSL.count(BANK_STATEMENT_LINK.ID); 
-		Record1<Integer> count = dslContext.select( DSL.count() )
+		Field<Integer> count1 = DSL.count(BANK_STATEMENT_LINK.ID); 
+		Record1<Integer> count2 = dslContext.select( DSL.count() )
 			.from(BANK_STATEMENT_LINK)
 			.where(BANK_STATEMENT_LINK.DOMAIN.eq(KALDEVI_DOMAIN))
 			.and(BANK_STATEMENT_LINK.BANK_STATEMENT.eq(KALDEVI_BANK_STATEMENT_ID))
@@ -92,11 +95,10 @@ public class KaldeviFinanceFix implements Update {
 			.stream()
 			.findFirst()
 			.orElse(null);
-			;
-		int counted = (count != null) ? count.get(COUNT) : 0; 
+		int counted = (count2 != null) ? count2.get(count1) : 0; 
 		if  (counted>4000) {
 			
-			dslContext.transaction( (config) -> {
+			dslContext.transaction(config -> {
 				dslContext.select(BANK_STATEMENT_LINK.ID,BANK_STATEMENT_LINK.SOURCE_ID)
 					.from(BANK_STATEMENT_LINK)
 					.where(BANK_STATEMENT_LINK.DOMAIN.eq(KALDEVI_DOMAIN))
@@ -107,16 +109,16 @@ public class KaldeviFinanceFix implements Update {
 						int bslId = rec.get(BANK_STATEMENT_LINK.ID);
 						int ftId = rec.get(BANK_STATEMENT_LINK.SOURCE_ID);
 						
-						c.ft_deleted += dslContext.delete(FINANCE_TRACKING)
+						c.ftDeleted += dslContext.delete(FINANCE_TRACKING)
 								.where(FINANCE_TRACKING.DOMAIN.eq(KALDEVI_DOMAIN))
 								.and(FINANCE_TRACKING.BANK_STATEMENT_LINK.eq(bslId))
 								.execute();
-						c.bsl_deleted += dslContext.delete(BANK_STATEMENT_LINK)
+						c.bslDeleted += dslContext.delete(BANK_STATEMENT_LINK)
 								.where(BANK_STATEMENT_LINK.DOMAIN.eq(KALDEVI_DOMAIN))
 								.and(BANK_STATEMENT_LINK.ID.eq(bslId))
 								.execute();
 					});
-				c.bs_updated = dslContext.update(BANK_STATEMENT)
+				c.bsUpdated = dslContext.update(BANK_STATEMENT)
 					.set(BANK_STATEMENT.STATUS,(byte) 0)
 					.where(BANK_STATEMENT.DOMAIN.eq(KALDEVI_DOMAIN))
 					.and(BANK_STATEMENT.ID.eq(KALDEVI_BANK_STATEMENT_ID))
@@ -153,29 +155,30 @@ public class KaldeviFinanceFix implements Update {
 							.where(FINANCE.DOMAIN.eq(KALDEVI_DOMAIN))
 							.and(FINANCE.ID.eq(id))
 							.execute();
-						c.f_updated += updated;
+						c.fUpdated += updated;
 					}
-					c.f_read++;
-					if (c.f_read % 100 == 0) {
-						System.out.print('.');
+					c.fRead++;
+					if (c.fRead % 100 == 0) {
+						LOGGER.info(".");
 					}
-					if (c.f_read % 5000 == 0) {
-						System.out.println (" " + c.f_read + "(" + c.f_updated + " updated)");
+					if (c.fRead % 5000 == 0) {
+						LOGGER.info (" " + c.fRead + "(" + c.fUpdated + " updated)");
 					}
 				});
 	
 			})
 			;
-			System.out.println (" ");
-			System.out.println (" [END] \n "
-					+ " \t FINANCE_TRACKING:" + c.ft_deleted+ " deleted \n"
-					+ " \t BANK_STATEMENT_LINK :" + c.bsl_deleted + " deleted \n"
-					+ " \t BANK_STATEMENT :" + c.bs_updated  + " updated \n"
-					+ " \t FINANCE:" + c.f_read + "(" + c.f_updated + " updated) \n" 
-					);
+			LOGGER.info (" ");
+			String msg = " [END] \n "
+					+ " \t FINANCE_TRACKING:" + c.ftDeleted+ " deleted \n"
+				+ " \t BANK_STATEMENT_LINK :" + c.bslDeleted + " deleted \n"
+				+ " \t BANK_STATEMENT :" + c.bsUpdated  + " updated \n"
+				+ " \t FINANCE:" + c.fRead + "(" + c.fUpdated + " updated) \n";
+			LOGGER.info (msg);
 		} else {
-			System.out.println (" ");
-			System.out.println (" [END] Nothing done ("+ counted +")");
+			LOGGER.info (" ");
+			String msg2 = " [END] Nothing done ("+ counted +")";
+			LOGGER.info (msg2);
 		}
 	
 	}

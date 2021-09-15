@@ -13,8 +13,6 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.AgreementPayment;
-
 import net.aonsolutions.db.up2date.Update;
 
 public class SalarioBaseReadOnlyUpdate implements Update {
@@ -43,9 +41,7 @@ public class SalarioBaseReadOnlyUpdate implements Update {
 		.and(PAYMENT_CONCEPT.CODE.eq("SALARIO_BASE"))
 		.fetch(PAYMENT_CONCEPT.ID);
 		
-		dslContext.transaction( (config) -> {
-			
-			
+		dslContext.transaction(config -> {
 			dslContext
 			.update(CONTRACT_PAYMENT)
 			.set(CONTRACT_PAYMENT.EXPRESSION, DSL.castNull(CONTRACT_PAYMENT.EXPRESSION))  

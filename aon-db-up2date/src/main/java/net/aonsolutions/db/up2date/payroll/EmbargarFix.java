@@ -3,7 +3,6 @@ package net.aonsolutions.db.up2date.payroll;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
-import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 
@@ -13,8 +12,6 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
-
-import com.esferalia.aon.jooq.tables.ContractDeduction;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -37,7 +34,7 @@ public class EmbargarFix implements Update {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 

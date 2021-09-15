@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -20,13 +22,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.tgss.BaseCgcMin2019Fix;
-import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019FixII;
 
 public class Up2Date {
 
+	private static final Logger LOGGER  = Logger.getLogger(Up2Date.class.getName());
 
-
-    private static Update [] UPDATES  = {
+    private static final Update [] UPDATES  = {
     		//IRPF2018UPDATE,
     		//AGREEMENTUPDATE,
     		//BASES2018UPDATE,
@@ -173,11 +174,7 @@ public class Up2Date {
     		BaseCgcMin2019Fix.BASECGCMIN2019FIX
     };
 
-
 	// ------------------------------------------------------------------------
-
-
-
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) {
@@ -246,22 +243,22 @@ public class Up2Date {
 
 			statement = connection.createStatement();
 			databasesRs = statement.executeQuery("SELECT `TABLE_SCHEMA` FROM `TABLES` WHERE `TABLE_NAME`='registry'");
-			List<String> databases = new ArrayList<String>();
+			List<String> databases = new ArrayList<>();
 			while ( databasesRs.next() )
 				databases.add(databasesRs.getString(1));
 
 			for ( String database : databases ) {
 
-				System.out.print(String.format("Updating database  `%s`" ,database  ));
+				LOGGER.log(Level.INFO, "Updating database  `{0}`" ,database);
 
 				statement.executeQuery(String.format("USE `%s`", database));
 
 				for ( Update update : UPDATES ) {
 					try {
 						update.upgrade(connection);
-						System.out.println("Success." );
-					} catch ( Throwable t) {
-						System.out.println("Error: " + t.getLocalizedMessage());
+						LOGGER.info("Success.");
+					} catch(Exception e) {
+						e.printStackTrace();
 					}
 				}
 
@@ -270,12 +267,10 @@ public class Up2Date {
 
 		} catch (ParseException e) {
 			// oops, somthing went wrong
-			System.out.println("Error: " + e.getLocalizedMessage());
+			e.printStackTrace();
 			new HelpFormatter().printHelp(Up2Date.class.getSimpleName(), options);
-		} catch (SQLException e) {
-			System.out.println("Error: " + e.getLocalizedMessage());
-		} catch (ClassNotFoundException e) {
-			System.out.println("Error: " + e.getLocalizedMessage());
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
 		} finally {
 			try {
 				if ( databasesRs != null )
@@ -285,10 +280,9 @@ public class Up2Date {
 				if ( connection != null )
 					connection.close();
 			} catch ( SQLException e ) {
-				System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
+				e.printStackTrace();
 			}
 		}
-
 	}
 
 }

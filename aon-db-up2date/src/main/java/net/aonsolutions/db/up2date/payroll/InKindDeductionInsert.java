@@ -1,12 +1,11 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class InKindDeductionInsert implements Update {
 		.fetch(DEDUCTION_CONCEPT.ID)
 		;
 
-		boolean upgraded = oldDeductionConcepts.size() > 0;
+		boolean upgraded = !oldDeductionConcepts.isEmpty();
 		
 		if ( upgraded )
 			return;
@@ -59,10 +58,9 @@ public class InKindDeductionInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 
 			int newDeductionConcept = dslContext
@@ -78,7 +76,7 @@ public class InKindDeductionInsert implements Update {
 			dslContext
 			.insertInto(SYSTEM_DEDUCTION)
 			.set(SYSTEM_DEDUCTION.DOMAIN, 0)
-			.set(SYSTEM_DEDUCTION.START_DATE, _2010StartDate)
+			.set(SYSTEM_DEDUCTION.START_DATE, startDate2010)
 			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, newDeductionConcept )
 			.set(SYSTEM_DEDUCTION.DESCRIPTION, "Valor de los Productos Recibidos en Especie")
 			.set(SYSTEM_DEDUCTION.EXPRESSION, "/*read-only*/ isdef _EN_ESPECIE ? _EN_ESPECIE : HIDE() /**/")

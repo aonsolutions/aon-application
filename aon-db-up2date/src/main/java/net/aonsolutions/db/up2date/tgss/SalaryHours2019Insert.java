@@ -1,30 +1,26 @@
 package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
-import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
-import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
-import com.esferalia.aon.jooq.tables.records.SystemDeductionRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class SalaryHours2019Insert implements Update {
 
-	public static SalaryHours2019Insert SALARYHOURS2019INSERT = new SalaryHours2019Insert();
+	public static final SalaryHours2019Insert SALARYHOURS2019INSERT = new SalaryHours2019Insert();
 
 	private static final String SALARY_HOURS = "HORAS_NOMINA";
 	
@@ -54,14 +50,14 @@ public class SalaryHours2019Insert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.add(Calendar.YEAR, -1);
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2018EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded =
 		dslContext.fetchCount(
@@ -69,7 +65,7 @@ public class SalaryHours2019Insert implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(SALARY_HOURS))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))) == 1;
 
 		if ( upgraded ) 
 			return;
@@ -79,8 +75,8 @@ public class SalaryHours2019Insert implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, SALARY_HOURS)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "FLOOR([ "
 		+"\"01\":(POR_HORAS() ? HORAS_TRABAJADAS : 1466.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 8.83 * COEFICIENTE_PARCIALIDAD) ,"
 		+"\"02\":(POR_HORAS() ? HORAS_TRABAJADAS : 1215.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 7.32 * COEFICIENTE_PARCIALIDAD) ,"
@@ -112,7 +108,7 @@ public class SalaryHours2019Insert implements Update {
 //		+"\"10\":(POR_HORAS() ? 6.33 * HORAS_NOMINA : (MODALIDAD_MENSUAL ? 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 35.00 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD)) ,"
 //		+"\"11\":(POR_HORAS() ? 6.33 * HORAS_NOMINA : (MODALIDAD_MENSUAL ? 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 35.00 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD))] [GRUPO_COTIZACION]" 
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

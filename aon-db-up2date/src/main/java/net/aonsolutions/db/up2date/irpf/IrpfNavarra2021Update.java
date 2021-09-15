@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HAN
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -28,7 +29,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class IrpfNavarra2021Update implements Update {
 	
-	private static final Double LEVELS [] = {
+	private static final Double[] LEVELS = {
 			0.00,
 			11251.00,
 			12751.00,
@@ -57,7 +58,7 @@ public class IrpfNavarra2021Update implements Update {
 			350001.00,
 	};
 
-	private static final double DESCENDANTS_IRPFS [] [] = {
+	private static final double[][] DESCENDANTS_IRPFS = {
 			{0,4,6,8,10,12,13.5,14.6,15.8,17,18.1,20,22.1,24.1,26.1,28.3,29.6,30.8,32.2,33.5,35.1,36.2,38,40,42,43},
 			{0,2,4,6,8,11,12.2,13.3,14.5,16,17.1,19,21.5,23.5,25.5,27.7,29.2,30.5,31.7,33,34.8,36,37.5,39.8,41.5,42.9},
 			{0,0,2,4,6,9,11.5,12.6,13.7,15,16.5,18.3,20.9,23,24.5,27,28.3,30,31.2,32.6,34.6,35.8,37,39.4,41.2,42.8},
@@ -71,18 +72,18 @@ public class IrpfNavarra2021Update implements Update {
 			{0,0,0,0,0,0,0,0,0,2,6.1,9.2,12.3,15,17.2,19.3,21.3,23.9,25.7,28,29.1,30,31.5,33,34.5,36},
 	};
 	
-	private static final double HANDICAP_IRPFS [] [] = {
+	private static final double[][] HANDICAP_IRPFS = {
 			{ 5,  5,  5,  5,  5,   5, 3,  3,  3,  3,  3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 			{15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
 			{15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
 	};
 
-	private static final String NAVARRA 		= "31";
+	private static final String NAVARRA = "31";
 	
-	private static final String GEOZONES [] = { NAVARRA };
+	private static final String[] GEOZONES = { NAVARRA };
 	
 
-	public static IrpfNavarra2021Update IRPFNAVARRA2021UPDATE = new IrpfNavarra2021Update();
+	public static final IrpfNavarra2021Update IRPFNAVARRA2021UPDATE = new IrpfNavarra2021Update();
 	
 	private IrpfNavarra2021Update() {
 	}
@@ -110,11 +111,11 @@ public class IrpfNavarra2021Update implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2021);
 		
-		Date startDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded = false;
 		for ( String geozoneCode : GEOZONES ) { 
-			Double amounts [] = dslContext
+			Double[] amounts = dslContext
 				.select(GEOZONE_IRPF.AMOUNT)
 				.from(GEOZONE_IRPF)
 				.where(GEOZONE_IRPF.GEOZONE_CODE.eq(geozoneCode)
@@ -129,11 +130,11 @@ public class IrpfNavarra2021Update implements Update {
 		
 
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		Date _2020EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2020 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		UpdateConditionStep<GeozoneIrpfRecord> close2019Update = dslContext
 		.update(GEOZONE_IRPF)
-		.set(GEOZONE_IRPF.END_DATE, _2020EndDate)
+		.set(GEOZONE_IRPF.END_DATE, endDate2020)
 		.where(GEOZONE_IRPF.END_DATE.isNull())
 		;
 
@@ -209,7 +210,7 @@ public class IrpfNavarra2021Update implements Update {
 		InsertSetMoreStep<GeozoneIrpfDescendantRecord> descendantInsertSetMoreStep = irpfDescendantInsertSetMoreStep; 
 		InsertSetMoreStep<GeozoneIrpfHandicapRecord> handicapInsertSetMoreStep = irpfHandicapInsertSetMoreStep; 
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			close2019Update.execute();
 			geozoneInsertSetMoreStep.execute();
 			descendantInsertSetMoreStep.execute();

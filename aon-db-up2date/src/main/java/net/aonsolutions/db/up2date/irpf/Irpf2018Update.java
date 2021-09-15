@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HAN
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -27,7 +28,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Irpf2018Update implements Update {
 	
-	private static final Double LEVELS [] = {
+	private static final Double[] LEVELS = {
 			0.00, //0.01,
 			11780.01,
 			12250.01,
@@ -71,7 +72,7 @@ public class Irpf2018Update implements Update {
 			206710.01
 	};
 
-	private static final double DESCENDANTS_IRPFS [] [] = {
+	private static final double[][] DESCENDANTS_IRPFS = {
 			{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40},
 			{0,0,0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40},
 			{0,0,0,0,0,0,2,3,4,5,7,8,9,10,11,13,14,15,16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40},
@@ -81,7 +82,7 @@ public class Irpf2018Update implements Update {
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,5,7,9,11,12,14,16,17,19,20,22,23,25,26,28,29,31,32,33,35,36,37}
 	};
 	
-	private static final double HANDICAP_IRPFS [] [] = {
+	private static final double[][] HANDICAP_IRPFS = {
 			{ 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 7, 7, 7, 6, 6, 6, 6, 5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1},
 			{12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,10,10,10,10,10,10, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 3, 3, 3},
 			{12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,10,10,10,10,10,10, 8, 8, 8, 8, 8, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 3, 3, 3},
@@ -91,10 +92,10 @@ public class Irpf2018Update implements Update {
 	private static final String BIZKAIA 	= "48";
 	private static final String GIPUZKOA 	= "20";
 	
-	private static final String GEOZONES [] = { ARABA, BIZKAIA, GIPUZKOA };
+	private static final String[] GEOZONES = { ARABA, BIZKAIA, GIPUZKOA };
 	
 
-	public static Irpf2018Update IRPF2018UPDATE = new Irpf2018Update();
+	public static final Irpf2018Update IRPF2018UPDATE = new Irpf2018Update();
 	
 	private Irpf2018Update() {
 	}
@@ -122,11 +123,11 @@ public class Irpf2018Update implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		Date startDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date endDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		boolean upgraded = false;
 		for ( String geozoneCode : GEOZONES ) { 

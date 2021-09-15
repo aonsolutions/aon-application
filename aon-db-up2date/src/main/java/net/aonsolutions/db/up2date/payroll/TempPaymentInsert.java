@@ -15,8 +15,10 @@ import net.aonsolutions.db.up2date.Update;
 public class TempPaymentInsert implements Update {
 
 	public static final TempPaymentInsert TEMPPAYMENTINSERT = new TempPaymentInsert();
-	
+	private static final String DEVENGO_TEMPORAL = "DEVENGO_TEMPORAL";
+
 	private TempPaymentInsert() {
+	
 	}
 	
 	@Override
@@ -36,18 +38,18 @@ public class TempPaymentInsert implements Update {
 		.select(PAYMENT_CONCEPT.ID)
 		.from(PAYMENT_CONCEPT)
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
-		.and(PAYMENT_CONCEPT.CODE.like("DEVENGO_TEMPORAL"))
+		.and(PAYMENT_CONCEPT.CODE.like(DEVENGO_TEMPORAL))
 		) > 0;
 		
 		if ( upgraded )
 			return;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config ->
 			dslContext
 			.insertInto(PAYMENT_CONCEPT)
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "DEVENGO_TEMPORAL")
+			.set(PAYMENT_CONCEPT.CODE, DEVENGO_TEMPORAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "")
@@ -55,14 +57,13 @@ public class TempPaymentInsert implements Update {
 			.newRecord()
 			.set(PAYMENT_CONCEPT.DOMAIN, 0)
 			.set(PAYMENT_CONCEPT.TYPE, (byte)1)
-			.set(PAYMENT_CONCEPT.CODE, "DEVENGO_TEMPORAL")
+			.set(PAYMENT_CONCEPT.CODE, DEVENGO_TEMPORAL)
 			.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 			.set(PAYMENT_CONCEPT.EXPRESSION, "/*user*/0.00/**/ * DIAS_TRABAJADOS / DIAS_MES")
 			.set(PAYMENT_CONCEPT.DESCRIPTION, "DEVENGO TEMPORAL MENSUAL")
 			.execute()
-			;
-		});
+		);
 	}
 
 }

@@ -33,7 +33,7 @@ public class EresUpdateII implements Update {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			dslContext
@@ -46,7 +46,7 @@ public class EresUpdateII implements Update {
 			.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 			.and(PAYMENT_CONCEPT.CODE.in("ERE", "ERE_FZA", "ERE_FZA_EXONERADO"))
 			.fetchInto(PAYMENT_CONCEPT)
-			.forEach(concept -> {
+			.forEach(concept ->
 				dslContext
 				.update(SYSTEM_PAYMENT)
 				.set(SYSTEM_PAYMENT.DESCRIPTION, 
@@ -54,10 +54,9 @@ public class EresUpdateII implements Update {
 				String.format("@{DIAS_%s} D\u00CDAS DE ",concept.getCode()), 
 				String.format("@{ENTERO(DIAS_%1$s/COEFICIENTE_%1$s)} D\u00CDAS @if{ COEFICIENTE_%1$s < 1.00}AL @{ENTERO(100.00 * COEFICIENTE_%1$s)}%2$s@end{} DE ",concept.getCode(),"%") )) 
 				.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(concept.getId()))
-				.execute(); 
-
-			});
-			;
+				.execute()
+			);
+			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		});
 	}

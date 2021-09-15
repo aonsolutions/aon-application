@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -21,7 +22,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class SMIWarn2020Delete implements Update {
 
-	public static SMIWarn2020Delete SMIWARN2020DELETE = new SMIWarn2020Delete();
+	public static final SMIWarn2020Delete SMIWARN2020DELETE = new SMIWarn2020Delete();
 
 	private SMIWarn2020Delete() {
 		super();
@@ -49,7 +50,7 @@ public class SMIWarn2020Delete implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2020);
 		
-		Date _2020StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2020 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		boolean upgraded =
@@ -58,7 +59,7 @@ public class SMIWarn2020Delete implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_WARN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2020StartDate))) == 0;
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2020))) == 0;
 
 		if ( upgraded ) 
 			return;
@@ -69,20 +70,18 @@ public class SMIWarn2020Delete implements Update {
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_WARN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2020StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2020));
 		
 		DeleteConditionStep<SystemDeductionRecord> deleteCgcMinWarningDeduction = 
 		dslContext
 		.delete(SYSTEM_DEDUCTION)
 		.where(SYSTEM_DEDUCTION.DOMAIN.eq(0))
-		.and(SYSTEM_DEDUCTION.START_DATE.eq(_2020StartDate))
+		.and(SYSTEM_DEDUCTION.START_DATE.eq(startDate2020))
 		.and(SYSTEM_DEDUCTION.EXPRESSION.eq(
 		"( BASE_CGC_BRUTA < BASE_CGC ) ? HIDE(BASE_CGC_MIN_WARN) : HIDE();"
-		))
-		
-		;
+		));
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

@@ -18,11 +18,13 @@ import static java.util.stream.Collectors.summingDouble;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -40,13 +42,14 @@ import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import net.aonsolutions.db.up2date.Update;
 
 public class AyudaTUpdate implements Update {
-	
+
+	private static final Logger LOGGER  = Logger.getLogger(AyudaTUpdate.class.getName());
+
 	private static final double DELTA = 0.01;
 
 	public static final AyudaTUpdate AYUDATUPDATE = new AyudaTUpdate();
 	
-	private static final Date EPOCH = new Date(0);
-	private static final Date FOREVER = null;
+	private static final LocalDate EPOCH = new Date(0).toLocalDate();
 	
 	private static final String WARNNING = "HIDE(\""
 	+"<div>Este convenio ha sido modificado en la &uacute;ltima actualizaci&oacute;n."
@@ -87,7 +90,7 @@ public class AyudaTUpdate implements Update {
 		
 		
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> 
 			dslContext
 			.select()
 			.from(AGREEMENT)
@@ -95,14 +98,13 @@ public class AyudaTUpdate implements Update {
 			.and(AGREEMENT.DOMAIN.gt(0))
 			.fetchStreamInto(AGREEMENT)
 			.forEach(a -> {
-				fixPluses(dslContext, a);
+				fixPluses(dslContext);
 				fixExtras(dslContext, a);
 			})
-			;
-		});
+		);
 	}
 	
-	private void fixPluses(DSLContext dslContext, AgreementRecord a ) {
+	private void fixPluses(DSLContext dslContext) {
 		dslContext
 		.select()
 		.from(AGREEMENT_PAYMENT)
@@ -112,7 +114,7 @@ public class AyudaTUpdate implements Update {
 		.and(PAYMENT_CONCEPT.EXPRESSION.likeRegex("^PLUS_"))
 		.fetchStreamInto(PAYMENT_CONCEPT)
 		.forEach( (paymentConcept) -> {
-//		System.out.println(paymentConcept.getExpression() + ", " + paymentConcept.getCode() );
+//		LOGGER.info(paymentConcept.getExpression() + ", " + paymentConcept.getCode() );
 		 dslContext
 		.update(PAYMENT_CONCEPT)
 		.set(PAYMENT_CONCEPT.CODE, DSL.replace(PAYMENT_CONCEPT.EXPRESSION, "PLUS_", ""))
@@ -135,7 +137,7 @@ public class AyudaTUpdate implements Update {
 		;
 		
 		
-		AgreementPaymentRecord extras []= 
+		AgreementPaymentRecord[] extras = 
 		dslContext
 		.select()
 		.from(AGREEMENT_PAYMENT)
@@ -151,7 +153,7 @@ public class AyudaTUpdate implements Update {
 		//INPUT("/*user*/<VAR>/**/",PAGA_EXTRA_HELP)
 		Pattern extraPattern = Pattern.compile("INPUT\\(\"/\\*user\\*/(.*)/\\*\\*/\",PAGA_EXTRA_HELP\\)");
 		
-		String extraVars []= 
+		String[] extraVars = 
 		Arrays.stream(extras)
 		.map(p -> p.getExpression())
 		.map(d -> extraPattern.matcher(d))
@@ -195,7 +197,7 @@ public class AyudaTUpdate implements Update {
 				for ( String extraVar: extraVars ) {
 					double extraValue = vars.getOrDefault(extraVar, 0.00);
 					if ( Math.abs(extraValue - salarioMensual) > DELTA && calculateEditInstance(extraValue, salarioMensual) > 1) {
-//						System.out.println(a.getDescription() + " , " + extraValue + " = " + salarioMensual );
+//						LOGGER.info(a.getDescription() + " , " + extraValue + " = " + salarioMensual );
 						diffs++;
 						break;
 					}
@@ -217,7 +219,7 @@ public class AyudaTUpdate implements Update {
 			;
 			
 			Set<Integer> extraIds = Arrays.stream(extras)
-			.map(e->e.getId()).collect(Collectors.toSet());
+			.map(e -> e.getId()).collect(Collectors.toSet());
 			
 			dslContext.update(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE" )
@@ -235,9 +237,10 @@ public class AyudaTUpdate implements Update {
 			.execute()
 			;
 			
-			System.out.println("Agreement '" + a.getDescription() +"' fixed." );
+			LOGGER.info("Agreement '" + a.getDescription() +"' fixed." );
 
 		} catch ( InterruptedException e ) {
+			e.printStackTrace();
 		} 
 		
 	}

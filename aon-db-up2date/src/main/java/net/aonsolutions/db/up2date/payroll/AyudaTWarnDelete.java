@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
-import java.sql.Date;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -23,14 +22,9 @@ import org.jooq.impl.DSL;
 import net.aonsolutions.db.up2date.Update;
 
 public class AyudaTWarnDelete implements Update {
-	
-	private static final double DELTA = 0.01;
 
 	public static final AyudaTWarnDelete AYUDATWARNDELETE = new AyudaTWarnDelete();
-	
-	private static final Date EPOCH = new Date(0);
-	private static final Date FOREVER = null;
-	
+
 	private static final String WARNNING = "HIDE(\""
 	+"<div>Este convenio ha sido modificado en la &uacute;ltima actualizaci&oacute;n."
 	+"El convenio original est&aacute; disponible en la papelera.</div>"
@@ -71,7 +65,7 @@ public class AyudaTWarnDelete implements Update {
 		
 
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			SelectConditionStep<Record1<Integer>> warnAgreements = 
 			DSL
 			.select(AGREEMENT_PAYMENT.AGREEMENT.mul(-1))

@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static org.jooq.impl.SQLDataType.VARCHAR;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -14,7 +15,8 @@ import org.jooq.impl.DSL;
 import net.aonsolutions.db.up2date.Update;
 
 public class SystemPaymentReadOnlyUpdate implements Update {
-
+	
+	private static final Logger LOGGER  = Logger.getLogger(SystemPaymentReadOnlyUpdate.class.getName());
 	public static final SystemPaymentReadOnlyUpdate SYSTEMPAYMENTREADONLYUPDATE = new SystemPaymentReadOnlyUpdate();
 	
 	private SystemPaymentReadOnlyUpdate() {
@@ -38,7 +40,7 @@ public class SystemPaymentReadOnlyUpdate implements Update {
 		.execute()
 		;
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 
 			int updated = dslContext
@@ -46,10 +48,9 @@ public class SystemPaymentReadOnlyUpdate implements Update {
 			.set(SYSTEM_PAYMENT.EXPRESSION, DSL.concat(DSL.concat("/*read-only*/", SYSTEM_PAYMENT.EXPRESSION), "/**/") )
 			.where(SYSTEM_PAYMENT.EXPRESSION.isNotNull())
 			.and(SYSTEM_PAYMENT.EXPRESSION.notLike("%/*read-only*/%"))
-			.execute()
-			;
-			System.out.print("Set read-only: " + updated + " system payments ");
+			.execute();
 			
+			LOGGER.info("Set read-only: " + updated + " system payments ");
 		});
 	}
 

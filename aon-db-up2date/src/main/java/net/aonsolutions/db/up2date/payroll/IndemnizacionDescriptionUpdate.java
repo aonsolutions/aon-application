@@ -1,10 +1,8 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -35,15 +33,14 @@ public class IndemnizacionDescriptionUpdate implements Update {
 
 		
 			
-		dslContext.transaction( (config) -> {	
-			
+		dslContext.transaction(config -> 	
 			dslContext
 			.update(PAYMENT_CONCEPT)
 			.set(PAYMENT_CONCEPT.DESCRIPTION, "INDEMNIZACIONES POR DESPIDO O CESE ( @{SALARIO_DIA} \u20AC X @{20 * A\u00D1OS_TRABAJADOS} D\u00CDAS )" )  
 			.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 			.and(PAYMENT_CONCEPT.CODE.eq("INDEMNIZACION"))
-			.execute();		
-		});			
+			.execute()
+		);			
 	}
 
 }

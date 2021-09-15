@@ -1,21 +1,10 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
-import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
-import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
-import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -44,7 +33,7 @@ public class FundUpvUpdateIII implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

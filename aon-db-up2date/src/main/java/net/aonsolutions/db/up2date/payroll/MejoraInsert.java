@@ -1,11 +1,8 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -46,7 +43,7 @@ public class MejoraInsert implements Update {
 		if ( upgraded )
 			return;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 

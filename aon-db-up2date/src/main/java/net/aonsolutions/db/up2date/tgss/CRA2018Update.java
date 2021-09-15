@@ -1,13 +1,8 @@
 package net.aonsolutions.db.up2date.tgss;
 
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
@@ -16,14 +11,13 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
 public class CRA2018Update implements Update {
 
-	public static CRA2018Update CRA2018UPDATE = new CRA2018Update();
+	public static final CRA2018Update CRA2018UPDATE = new CRA2018Update();
 
 	private CRA2018Update() {
 		super();
@@ -40,9 +34,6 @@ public class CRA2018Update implements Update {
 
 		// Establish context
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
-		
-		Collection<Byte> types = Arrays.asList((byte)57, (byte)58, (byte)59, (byte)60, (byte)61);
-
 		
 		boolean upgraded57 =
 		dslContext.fetchCount(
@@ -131,10 +122,9 @@ public class CRA2018Update implements Update {
 		.set(PAYMENT_CONCEPT.EXPRESSION,"")
 		.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,"_P")
 		.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,"_P")
-		.set(PAYMENT_CONCEPT.DESCRIPTION,"PLUS DE TRANSPORTE Y DE DISTANCIA. UTILIZACI\u00D3N DE MEDIOS COLECTIVOS APORTADOS POR LA EMPRESA")
-		;
+		.set(PAYMENT_CONCEPT.DESCRIPTION,"PLUS DE TRANSPORTE Y DE DISTANCIA. UTILIZACI\u00D3N DE MEDIOS COLECTIVOS APORTADOS POR LA EMPRESA");
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

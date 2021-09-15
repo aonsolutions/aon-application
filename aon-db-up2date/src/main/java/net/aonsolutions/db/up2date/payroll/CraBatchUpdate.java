@@ -5,7 +5,7 @@ import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class CraBatchUpdate implements Update {
 
 	private void fixCraBatch(DSLContext dslContext) {
 		// List of craBatch should be deleted
-		List<Integer> craBatchDeleteIds = new ArrayList<Integer>();
+		List<Integer> craBatchDeleteIds = new ArrayList<>();
 		
 		// Get all craBatchRecords
 		Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH).fetch();
@@ -58,8 +58,8 @@ public class CraBatchUpdate implements Update {
 			Integer craDomian = craBatchRecord.get(CRA_BATCH.DOMAIN);
 			
 			// Check if dates are null, if they are set to deleted them
-			Timestamp creationDate = craBatchRecord.get(CRA_BATCH.DATE);
-			Timestamp craPeriod = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE_DATE);
+			LocalDateTime creationDate = craBatchRecord.get(CRA_BATCH.DATE);
+			LocalDateTime craPeriod = craBatchRecord.get(CRA_BATCH.OUTCOME_FILE_DATE);
 			
 			if(null == creationDate || null == craPeriod) {
 				craBatchDeleteIds.add(craBarchId);
@@ -101,7 +101,7 @@ public class CraBatchUpdate implements Update {
 	}
 
 	private List<String> getCCCCodesFromOutcomeFile(byte[] craOutcomeFile) {
-		List<String> cccCodes = new ArrayList<String>();
+		List<String> cccCodes = new ArrayList<>();
 		
 		String dataStr = new String(craOutcomeFile);
 		
@@ -126,7 +126,7 @@ public class CraBatchUpdate implements Update {
 	}
 	
 	private List<Integer> getCCCIdsFromCCCCodes(DSLContext dslContext, List<String> cccCodes) {
-		List<Integer> cccIds = new ArrayList<Integer>();
+		List<Integer> cccIds = new ArrayList<>();
 		
 		for(String cccCode : cccCodes) {
 			Integer cccId = dslContext.select(ENTERPRISE_CCC.ID).from(ENTERPRISE_CCC)

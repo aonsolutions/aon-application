@@ -1,12 +1,11 @@
 package net.aonsolutions.db.up2date.payroll;
 
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
@@ -16,8 +15,6 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SystemData;
-import com.esferalia.aon.jooq.tables.SystemPayment;
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
 
 import net.aonsolutions.db.up2date.Update;
@@ -75,9 +72,8 @@ public class Unemployment implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2018);
 		
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
-		
 		DeleteConditionStep<SystemDataRecord> delete = 
 		dslContext
 		.delete(SYSTEM_DATA)
@@ -95,7 +91,7 @@ public class Unemployment implements Update {
 		InsertSetMoreStep<SystemDataRecord> insert = dslContext
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.NAME, PORCENTAJE_DESEMPLEO)
 		.set(SYSTEM_DATA.EXPRESSION, 
 		"[ "
@@ -156,7 +152,7 @@ public class Unemployment implements Update {
 		InsertSetMoreStep<SystemDataRecord> insertE = dslContext
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
-		.set(SYSTEM_DATA.START_DATE, _2018StartDate)
+		.set(SYSTEM_DATA.START_DATE, startDate2018)
 		.set(SYSTEM_DATA.NAME, PORCENTAJE_DESEMPLEO_E)
 		.set(SYSTEM_DATA.EXPRESSION, 
 		"[ "
@@ -211,11 +207,9 @@ public class Unemployment implements Update {
 		+"\"980\": 6.70,"
 		+"\"990\": 6.70"
 		+" ][TC2]"
-		)
-		;
+		);
 
-		dslContext.transaction( (config) -> {
-			
+		dslContext.transaction(config -> {
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
 			delete.execute();

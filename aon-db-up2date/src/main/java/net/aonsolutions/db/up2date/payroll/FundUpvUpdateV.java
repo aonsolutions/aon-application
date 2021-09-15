@@ -7,16 +7,9 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -25,8 +18,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-
-import com.esferalia.aon.jooq.tables.Contract;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -75,7 +66,7 @@ public class FundUpvUpdateV implements Update {
 		.from(AGREEMENT_LEVEL)
 		.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId));
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			if ( domainId != null ) {
 				dslContext

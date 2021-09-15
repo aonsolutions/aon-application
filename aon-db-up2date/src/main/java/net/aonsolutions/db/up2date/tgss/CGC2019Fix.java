@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -49,13 +50,13 @@ public class CGC2019Fix implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.add(Calendar.YEAR, -1);
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2018EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		boolean upgraded =
@@ -64,7 +65,7 @@ public class CGC2019Fix implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(PORCENTAJE_CORTA_DURACION))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 1;
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))) == 1;
 
 		if ( upgraded )
 			return;
@@ -73,7 +74,7 @@ public class CGC2019Fix implements Update {
 		// CLOSE ... 
 		UpdateConditionStep<SystemDataRecord> close2018 = dslContext
 		.update(SYSTEM_DATA)
-		.set( SYSTEM_DATA.END_DATE, _2018EndDate)
+		.set( SYSTEM_DATA.END_DATE, endDate2018)
 		.where(SYSTEM_DATA.DOMAIN.in(0))
 		.and(SYSTEM_DATA.NAME.eq(PORCENTAJE_CORTA_DURACION))
 		;
@@ -83,15 +84,15 @@ public class CGC2019Fix implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, PORCENTAJE_CORTA_DURACION)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "40.00" )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 0)
 		.set(SYSTEM_DATA.COMMENTS, "Porcentaje (Empresa)")
 		;
 
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 

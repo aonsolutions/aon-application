@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.accounting;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -11,6 +12,8 @@ import org.jooq.impl.DSL;
 import net.aonsolutions.db.up2date.Update;
 
 public class RawdocCreation implements Update {
+	
+	private static final Logger LOGGER  = Logger.getLogger(RawdocCreation.class.getName());
 
 //	#
 //	# Structure for the rawdoc :
@@ -38,7 +41,7 @@ public class RawdocCreation implements Update {
 // 	ALTER TABLE `user` ADD `auth` binary(16) DEFAULT NULL COMMENT `uuid auth`;
 
 
-	public static RawdocCreation RAWDOC_CREATION = new RawdocCreation();
+	public static final RawdocCreation RAWDOC_CREATION = new RawdocCreation();
 
 	private RawdocCreation() {
 		super();
@@ -52,11 +55,10 @@ public class RawdocCreation implements Update {
 
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-		System.out.println("[START]");
-		System.out.println( "Creacion table AUTH" );
+		LOGGER.info("[START]");
+		LOGGER.info("Creacion table AUTH");
 
-		String SQL =
-				 "CREATE TABLE `rawdoc` ("
+		String SQL = "CREATE TABLE `rawdoc` ("
 				+"		  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del documento',"
 				+"		  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',"
 				+"		  `nature` tinyint(2) DEFAULT '0' COMMENT 'Naturaleza del documento (Factura, Nomina, etc )',"
@@ -73,13 +75,13 @@ public class RawdocCreation implements Update {
 				+"		  PRIMARY KEY (`id`),"
 				+"		  KEY `IDX_RAW_DOCUMENT_DOMAIN` (`domain`),"
 				+"		  CONSTRAINT `FK_RAW_DOCUMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)"
-				+"		) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos a procesar';"
-		;
+				+"		) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos a procesar';";
 		try {
 			dslContext.execute(SQL);
-			System.out.println("[table 'rawdoc' CREATED!]");
-		} catch (Throwable t) {
-			System.out.println("[table 'rawdoc' NOT CREATED!]");
+			LOGGER.info("[table 'rawdoc' CREATED!]");
+		} catch (Exception e) {
+			LOGGER.warning("[table 'rawdoc' NOT CREATED!]");
+			e.printStackTrace();
 		}
 	}
 

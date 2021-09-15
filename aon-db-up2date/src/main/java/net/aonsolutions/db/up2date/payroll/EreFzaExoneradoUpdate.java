@@ -4,8 +4,6 @@ import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -34,7 +32,7 @@ public class EreFzaExoneradoUpdate implements Update {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 
@@ -44,7 +42,7 @@ public class EreFzaExoneradoUpdate implements Update {
 			.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 			.and(PAYMENT_CONCEPT.CODE.eq("ERE_FZA_EXONERADO"))
 			.fetchOptional(PAYMENT_CONCEPT.ID)
-			.ifPresent(ereFzaConceptId -> {
+			.ifPresent(ereFzaConceptId -> 
 				dslContext
 				.update(SYSTEM_PAYMENT)
 				.set(SYSTEM_PAYMENT.EXPRESSION, 
@@ -52,11 +50,9 @@ public class EreFzaExoneradoUpdate implements Update {
 				+ "( SELF.addBonus('EXPDTE. REG. DE EMPLEO POR FZA. MAYOR EXONERADO','CUOTA_EMPRESARIAL * COEFICIENTE_ERE_FZA_EXONERADO * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.00)/100.00');0.00 ) "
 				+ ": HIDE()")
 				.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(ereFzaConceptId))
-				.execute(); 
-			});
-			;
-
-
+				.execute() 
+			);
+			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		});
 	}

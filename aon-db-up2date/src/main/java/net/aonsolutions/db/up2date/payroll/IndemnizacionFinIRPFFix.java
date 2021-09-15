@@ -33,16 +33,15 @@ public class IndemnizacionFinIRPFFix implements Update {
 
 		
 			
-		dslContext.transaction( (config) -> {	
-			
+		dslContext.transaction(config -> 
 			dslContext
 			.update(SYSTEM_PAYMENT)
 			.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, "_P" )  
 			.where(SYSTEM_PAYMENT.DOMAIN.eq(0))
 			.and(SYSTEM_PAYMENT.SALARY_TYPE.eq((byte)2))
 			.and(SYSTEM_PAYMENT.EXPRESSION.likeIgnoreCase("%(CAUSA_INDEMNIZACION == FIN)%"))
-			.execute();		
-		});			
+			.execute()	
+		);			
 	}
 
 }

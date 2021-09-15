@@ -5,18 +5,17 @@ import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
-import org.jooq.UpdateConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SystemDeduction;
 import com.esferalia.aon.jooq.tables.records.SystemDataRecord;
 import com.esferalia.aon.jooq.tables.records.SystemDeductionRecord;
 
@@ -24,7 +23,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class Bases2019UpdateII implements Update {
 
-	public static Bases2019UpdateII BASES2019UPDATEII = new Bases2019UpdateII();
+	public static final Bases2019UpdateII BASES2019UPDATEII = new Bases2019UpdateII();
 
 	private static final String SMI = "SMI";
 	private static final String BASE_CGC_MIN = "BASE_CGC_MIN";
@@ -64,14 +63,14 @@ public class Bases2019UpdateII implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2019);
 		
-		Date _2019StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2019 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 
 		calendar.add(Calendar.YEAR, -1);
-		Date _2018StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		Date _2018EndDate = new Date(calendar.getTimeInMillis());
+		LocalDate endDate2018 = new Date(calendar.getTimeInMillis()).toLocalDate();
 
 		boolean upgraded =
 		dslContext.fetchCount(
@@ -79,7 +78,7 @@ public class Bases2019UpdateII implements Update {
 		.from(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_WARN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate))) == 0;
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019))) == 0;
 		
 
 
@@ -91,44 +90,44 @@ public class Bases2019UpdateII implements Update {
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN, BASE_CGC_MAX, BASE_CGP_MAX))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 		
 		DeleteConditionStep<SystemDataRecord> deleteHome = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-106))
 		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 
 		DeleteConditionStep<SystemDataRecord> deleteAgrarian = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(-107))
 		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN_DAY, BASE_CGC_MIN_MONTH, BASE_CGC_MAX_DAY, BASE_CGC_MAX_MONTH, REDUCCION_CGC_E_02, PORCENTAJE_CGC_E))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 		
 		DeleteConditionStep<SystemDataRecord> deleteSMI = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq(SMI))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 
 		DeleteConditionStep<SystemDataRecord> deleteCgcMinWarningMsg = dslContext
 		.delete(SYSTEM_DATA)
 		.where(SYSTEM_DATA.DOMAIN.eq(0))
 		.and(SYSTEM_DATA.NAME.eq("BASE_CGC_MIN_WARN"))
-		.and(SYSTEM_DATA.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DATA.START_DATE.eq(startDate2019));
 
 		DeleteConditionStep<SystemDeductionRecord> deleteCgcMinWarningDeduction = dslContext
 		.delete(SYSTEM_DEDUCTION)
 		.where(SYSTEM_DEDUCTION.DOMAIN.eq(0))
-		.and(SYSTEM_DEDUCTION.START_DATE.eq(_2019StartDate));
+		.and(SYSTEM_DEDUCTION.START_DATE.eq(startDate2019));
 
 		// DOMAIN = 0 , GENERAL
 		InsertSetMoreStep<SystemDataRecord> insertGeneral = dslContext
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":(TIEMPO_COMPLETO ? 1466.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 8.83 * HORAS_NOMINA) ,"
 		+"\"02\":(TIEMPO_COMPLETO ? 1215.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 7.32 * HORAS_NOMINA) ,"
@@ -147,8 +146,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MIN)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "(TIEMPO_COMPLETO ? 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.33 * HORAS_NOMINA)" 
 		)
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
@@ -156,8 +155,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":(4070.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)) ,"
 		+"\"02\":(4070.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)) ,"
@@ -176,8 +175,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MAX)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
 		.set(SYSTEM_DATA.EXPRESSION, "4070.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)" 
 		)
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
@@ -189,8 +188,8 @@ public class Bases2019UpdateII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "($ in [ "
 		+"[240.00,206.00], "
 		+"[375.00,340.00], "
@@ -207,8 +206,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MIN)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "($ in [ "
 		+"[240.00,206.00], "
 		+"[375.00,340.00], "
@@ -225,8 +224,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "($ in [ "
 		+"[240.00,206.00], "
 		+"[375.00,340.00], "
@@ -243,8 +242,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -106)
 		.set(SYSTEM_DATA.NAME, BASE_CGP_MAX)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "($ in [ "
 		+"[240.00,206.00], "
 		+"[375.00,340.00], "
@@ -265,8 +264,8 @@ public class Bases2019UpdateII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN_DAY)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":63.76, "
 		+"\"02\":52.87, "
@@ -284,8 +283,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MIN_MONTH)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "[ "
 		+"\"01\":1466.40,"
 		+"\"02\":1215.90,"
@@ -303,24 +302,24 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX_DAY)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "176.96 * JORNADAS_REALES")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, BASE_CGC_MAX_MONTH)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "4070.10 * ( DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30 )")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, REDUCCION_CGC_E_02)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION,
 		"COTIZACION_MENSUAL ? "
 		+ "((BASE_CGC <= 986.70) ? 7.20 : ((BASE_CGC <= 3803.70) ? (7.20 * ( 1 + (BASE_CGC - 986.70)/ BASE_CGC * 2.52 * 6.15 / 7.20)) : 0.00))"
@@ -333,8 +332,8 @@ public class Bases2019UpdateII implements Update {
 		.newRecord()
 		.set(SYSTEM_DATA.DOMAIN, -107)
 		.set(SYSTEM_DATA.NAME, PORCENTAJE_CGC_E)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "(GRUPO_COTIZACION == \"01\") ? (23.60 - REDUCCION_CGC_E_01) : (19.10 - REDUCCION_CGC_E_02)")
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
 		.set(SYSTEM_DATA.COMMENTS, (String) null)
@@ -345,17 +344,14 @@ public class Bases2019UpdateII implements Update {
 		.insertInto(SYSTEM_DATA)
 		.set(SYSTEM_DATA.DOMAIN, 0)
 		.set(SYSTEM_DATA.NAME, SMI)
-		.set(SYSTEM_DATA.END_DATE, (Date) null)
-		.set(SYSTEM_DATA.START_DATE, _2019StartDate)
+		.set(SYSTEM_DATA.END_DATE, (LocalDate) null)
+		.set(SYSTEM_DATA.START_DATE, startDate2019)
 		.set(SYSTEM_DATA.EXPRESSION, "900.00" )
 		.set(SYSTEM_DATA.READ_ONLY, (byte) 1)
-		.set(SYSTEM_DATA.COMMENTS, (String) null)
-		;
+		.set(SYSTEM_DATA.COMMENTS, (String) null);
 		
-		
-		;
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			

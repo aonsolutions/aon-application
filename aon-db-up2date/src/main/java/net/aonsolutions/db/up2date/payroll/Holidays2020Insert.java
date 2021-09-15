@@ -3,25 +3,20 @@ package net.aonsolutions.db.up2date.payroll;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.jooq.DSLContext;
-import org.jooq.InsertSetStep;
 import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-
-import com.esferalia.aon.jooq.tables.Holiday;
-import com.esferalia.aon.jooq.tables.records.HolidayDetailRecord;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -52,7 +47,7 @@ public class Holidays2020Insert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2020);
 
-		Date _2020StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2020 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		boolean upgraded =
 		dslContext.fetchCount(
@@ -60,7 +55,7 @@ public class Holidays2020Insert implements Update {
 		.select(HOLIDAY_DETAIL.ID)
 		.from(HOLIDAY_DETAIL)
 		.where(HOLIDAY_DETAIL.DOMAIN.eq(0))
-		.and(HOLIDAY_DETAIL.DATE.ge(_2020StartDate))
+		.and(HOLIDAY_DETAIL.DATE.ge(startDate2020))
 		) >= 1;
 		
 		
@@ -68,7 +63,7 @@ public class Holidays2020Insert implements Update {
 			return;
 
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
@@ -95,7 +90,7 @@ public class Holidays2020Insert implements Update {
 				.where(HOLIDAY.DOMAIN.eq(0))
 				.and(HOLIDAY.DESCRIPTION.like(holiday))
 				.fetchOptional(HOLIDAY.ID)
-				.ifPresent(( holidayId ) -> {
+				.ifPresent(holidayId -> {
 
 					calendar.set(Calendar.YEAR , year);
 					calendar.set(Calendar.MONTH , month -1 );
@@ -106,11 +101,9 @@ public class Holidays2020Insert implements Update {
 					.set(HOLIDAY_DETAIL.DOMAIN, 0)
 					.set(HOLIDAY_DETAIL.HOLIDAY, holidayId)
 					.set(HOLIDAY_DETAIL.DESCRIPTION, description)
-					.set(HOLIDAY_DETAIL.DATE, new java.sql.Date(calendar.getTimeInMillis()))
-					.execute()
-					;
-				})
-				;
+					.set(HOLIDAY_DETAIL.DATE, new java.sql.Date(calendar.getTimeInMillis()).toLocalDate())
+					.execute();
+				});
 			} while ( scanner.hasNextLine() );
 			
 			scanner.close();

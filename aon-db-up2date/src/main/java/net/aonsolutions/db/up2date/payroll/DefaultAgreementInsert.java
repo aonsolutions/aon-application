@@ -7,11 +7,11 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -25,7 +25,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class DefaultAgreementInsert implements Update {
 	
-	private static final Date EPOCH = new Date(0);
+	private static final LocalDate EPOCH = new Date(0).toLocalDate();
 	private static final String ESTATUTO_DE_LOS_TRABAJADORES = "ESTATUTO DE LOS TRABAJADORES";
 
 	public static final DefaultAgreementInsert DEFAULTAGREEMENTINSERT = new DefaultAgreementInsert();
@@ -69,7 +69,7 @@ public class DefaultAgreementInsert implements Update {
 		.from(AGREEMENT_LEVEL)
 		.where(AGREEMENT_LEVEL.AGREEMENT.eq(defAgreemetId));
 
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
@@ -133,7 +133,7 @@ public class DefaultAgreementInsert implements Update {
 			.where(AGREEMENT.ID.eq(defAgreementId))
 			.execute();
 			
-			String levels [] = {
+			String[] levels = {
 			"-",
 			"I",
 			"II",
@@ -147,7 +147,7 @@ public class DefaultAgreementInsert implements Update {
 			"X",
 			"XI"
 			};
-			int agreementLevelsIds [] = new int [12];
+			int[] agreementLevelsIds = new int [12];
 			for ( int i = 1; i < 12; i++ )
 				agreementLevelsIds[i] =
 				dslContext

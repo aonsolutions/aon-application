@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
@@ -51,14 +52,14 @@ public class IfDaysInsert implements Update {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2010);
 		
-		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		LocalDate startDate2010 = new Date(calendar.getTimeInMillis()).toLocalDate();
 		
 		
 		
 		boolean upgraded = dslContext.fetchCount(
 				dslContext.select().from(SYSTEM_PAYMENT)
 					.where(SYSTEM_PAYMENT.DOMAIN.eq(-107))
-					.and(SYSTEM_PAYMENT.START_DATE.eq(_2010StartDate))
+					.and(SYSTEM_PAYMENT.START_DATE.eq(startDate2010))
 					.and(SYSTEM_PAYMENT.DESCRIPTION.eq("PEONADAS/JORNADAS TEÓRICAS"))
 				) == 1;
 
@@ -78,9 +79,9 @@ public class IfDaysInsert implements Update {
 			.set(SYSTEM_PAYMENT.EXPRESSION, "/*read_only*/JORNADAS_TEORICAS*0.00/**/")
 			.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, "_P")
 			.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "JORNADAS_TEORICAS * BASE_REGULADORA")
-			.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+			.set(SYSTEM_PAYMENT.START_DATE, startDate2010)
 			.set(SYSTEM_PAYMENT.MONTH, (Byte) null)
-			.set(SYSTEM_PAYMENT.END_DATE, (Date) null)
+			.set(SYSTEM_PAYMENT.END_DATE, (LocalDate) null)
 			.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0);
 			
 		
@@ -93,7 +94,7 @@ public class IfDaysInsert implements Update {
 		.where(CONTRACT_DATA.NAME.eq("PEONADAS"))
 		;
 		
-		dslContext.transaction( (config) -> {
+		dslContext.transaction(config -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 			
