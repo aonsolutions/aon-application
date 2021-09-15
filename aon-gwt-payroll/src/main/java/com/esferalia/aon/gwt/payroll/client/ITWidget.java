@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -82,7 +83,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -106,23 +106,18 @@ public abstract class ITWidget extends ResizeComposite {
 	interface MyStyle extends CssResource {
 		String filterPanel();
 		String flexPanel();
-		String cmd_btn();
+		String cmdBtn();
+		String mt10();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	ScrollPanel scrollPanelTimeline;
-	
-	@UiField
-	DockLayoutPanel mainContainerDockLPanel;
+	HTMLPanel messagePanel;
 	
 	@UiField
 	HTMLPanel filterITListPanel;
-	
-	@UiField
-	HTMLPanel mainITContainer;
 	
 	@UiField
 	DeckPanel deckPanel;
@@ -133,8 +128,7 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
-	
-	private List<ITEmployee> itEmployeeList = Collections.emptyList();
+	private static final String CONTRACT_EXP = "{\"type\":\"bar\"";
 	
 	private SuggestBox employeeSB;
 	private ListBox dateListBox;
@@ -146,7 +140,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private static final String ACTIVE = "Activo";
 	
-	private static int selectedYear;
+	private int selectedYear;
 	private Date startYear;
 	private Date endYear;
 	
@@ -158,11 +152,10 @@ public abstract class ITWidget extends ResizeComposite {
 
 	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();
 
-	private static TimeLineChart timelineChart;
+	private TimeLineChart timelineChart;
 
 	private ITTooltip tooltip;
 	private DataTableWrapper data;
-	private Options options;
 	
 	private int posCell; // vR
 	private int posColumn; // uR
@@ -177,24 +170,17 @@ public abstract class ITWidget extends ResizeComposite {
 	// --------------------------------------------------- Toolbar.Variables
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton addIT;
-	private AonToolbarButton leyend;
-	
-	private AonToolbarButton msjFIE;
-	private FormPanel msjFIEFormPanel;
-	private Hidden userNameHidden;
-	private Hidden domainNameHidden;
 	private MultiFileUpload msjFIEFileUpload;
 
 	// --------------------------------------------------- Constructor
 
-	public ITWidget() {
+	protected ITWidget() {
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 	}
 
@@ -220,33 +206,31 @@ public abstract class ITWidget extends ResizeComposite {
 				
 			try {	
 				
-				if (cadenaTooltip.contains("{\"type\":\"bar\"")) {
+				if (AonStringUtils.isNotBlank(cadenaTooltip) && AonStringUtils.containsIgnoreCase(cadenaTooltip, CONTRACT_EXP)) {
 					
-					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
+					tratarContrato();
 					
 					int contractId = data.getContractId(posColumn, posCell);
 					int leaveId = data.getContractLeaveId(posColumn, posCell);
 					
-					if(AonNumberUtils.equals(contractId, leaveId)) {
+					if(AonNumberUtils.equals(contractId, leaveId))
 						checkTooltipCB();
-					} else {
+					else {
 						tooltipCallback.setProperties(mouseClientX, mouseClientY);
 						evalTooltip();
 					}
-				} else {
+				} else
 					checkTooltipCB();
-				}
-
-			} catch (Throwable ex) {
 
 			} finally {
 				event.preventDefault();
 				event.stopPropagation();
 				event.getNativeEvent();
 			}
+			
 		}
-		
-		@Override
+
+	   @Override
 		public void onContextMenu(ContextMenuEvent event) {
 			
 			Element element = Element.as(event.getNativeEvent().getEventTarget());
@@ -262,21 +246,18 @@ public abstract class ITWidget extends ResizeComposite {
 					
 					checkTooltipCB();
 					
-					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
+					tratarContrato();
 					
 					int leaveId = data.getContractLeaveId(posColumn, posCell);
-					IT it = getIT(leaveId); //mainContrataITObject.getITs(leaveId);
+					IT it = getIT(leaveId);
 					
-					if(!isUserComunica() /*mainContrataITObject.isUserComunica()*/ && itIsNotComunicate(it)){
+					if(!isUserComunica() && itIsNotComunicate(it)){
 						popupPanel = new PopupPanel(true);					
 						new ITContextMenu();					
 						popupPanel.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());					
 						popupPanel.show();							
-					}
-					
+					}	
 				}
-				
-			} catch (Throwable ex) {
 				
 			} finally {
 				event.preventDefault();
@@ -300,9 +281,9 @@ public abstract class ITWidget extends ResizeComposite {
 				
 				checkTooltipCB();
 				
-				if (cadenaTooltip.contains("{\"type\":\"bar\"")) {
+				if (AonStringUtils.isNotBlank(cadenaTooltip) && AonStringUtils.containsIgnoreCase(cadenaTooltip, CONTRACT_EXP)) {
 					
-					tratarContrato(cadenaTooltip, mouseClientX, mouseClientY);
+					tratarContrato();
 					
 					int contractId = data.getContractId(posColumn, posCell);
 					int leaveId = data.getContractLeaveId(posColumn, posCell);
@@ -313,13 +294,20 @@ public abstract class ITWidget extends ResizeComposite {
 						openITDialog(contractId, leaveId);
 				}
 
-			} catch (Throwable ex) {
-
 			} finally {
 				event.preventDefault();
 				event.stopPropagation();
 				event.getNativeEvent();
 			}
+		}
+		
+		 private void evalTooltip() {
+			tooltipCallback.cancel();
+			tooltipCallback.schedule(750);
+		}
+		
+		private void tratarContrato() {
+			getPosStatusEmployee();
 		}
 		
 		private boolean itIsNotComunicate(IT it) {
@@ -332,6 +320,12 @@ public abstract class ITWidget extends ResizeComposite {
 			tooltip.hide();
 		}
 		
+		private void openNewITDialog(int contractId) {
+			ITEmployee itEmployee = getITEmployee(contractId);
+	    	ITDialog itDialog = newITDialog();
+	    	itDialog.setITEmployee(itEmployee);
+		}
+		
 	}
     
     // --------------------------------------------------- ExpressionCallback
@@ -341,9 +335,7 @@ public abstract class ITWidget extends ResizeComposite {
 		public void run() {
 			String container = employeeSB.getText().toUpperCase();
 			
-			if (AonStringUtils.isEmpty(container))
-				reloadTimeline();
-			else if (container.length() > 2)
+			if (AonStringUtils.isEmpty(container) || container.length() > 2)
 				reloadTimeline();
 		}
 	}
@@ -355,11 +347,13 @@ public abstract class ITWidget extends ResizeComposite {
 		private int mouseClientX;
 		private int mouseClientY;
 		
-		public TooltipCallBack() {}
+		public TooltipCallBack() {
+			super();
+		}
 		
-		public void setProperties(int ClientX, int ClientY) {
-			this.mouseClientX = ClientX;
-			this.mouseClientY = ClientY;
+		public void setProperties(int clientX, int clientY) {
+			this.mouseClientX = clientX;
+			this.mouseClientY = clientY;
 		}
 	
 		@Override
@@ -367,8 +361,8 @@ public abstract class ITWidget extends ResizeComposite {
 			int contractId = data.getContractId(posColumn, posCell);
 			int itId = data.getContractLeaveId(posColumn, posCell);
 			
-			IT itInfo = getIT(itId); //mainContrataITObject.getITs(itId);
-	    	ITEmployee itEmployee = getITEmployee(contractId); //mainContrataITObject.getITEmployee(contractId);
+			IT itInfo = getIT(itId);
+	    	ITEmployee itEmployee = getITEmployee(contractId);
 	    	
 	    	tooltip.setFullName(itEmployee.getEmployeeInfo().getFullName());
 	    	tooltip.setDocument(itEmployee.getEmployeeInfo().getDocument());
@@ -388,33 +382,27 @@ public abstract class ITWidget extends ResizeComposite {
 
 	}
     
-    private void evalTooltip() {
-		tooltipCallback.cancel();
-		tooltipCallback.schedule(750);
-	}
-    
     // --------------------------------------------------- ContextMenu
 	
 	class ITContextMenu extends ContextMenu {
 		
-		DeleteContractCommand deleteContract;
-		ComunicateITCommand comunicateIT;
+		DeleteContractCommand deleteContract = new DeleteContractCommand();
+		ComunicateITCommand comunicateIT = new ComunicateITCommand();
 		
 		public ITContextMenu() {
 			MenuBar popupMenuBar = new MenuBar(true);
 			
 			MenuItem deleteMenuItem = addItem(
 					"Eliminar Baja",
-					deleteContract = new DeleteContractCommand(),
-					AON.CSS.aonIconDelete(), style.cmd_btn());
+					deleteContract,
+					AON.CSS.aonIconDelete(), style.cmdBtn());
 			
-			// TODO : to add delete option
-			// popupMenuBar.addItem(deleteMenuItem);
+			popupMenuBar.addItem(deleteMenuItem);
 			
 			MenuItem comunicateMenuItem = addItem(
 					"Comunicar IT",
-					comunicateIT = new ComunicateITCommand(),
-					AON.CSS.aonIconSend(), style.cmd_btn());
+					comunicateIT,
+					AON.CSS.aonIconSend(), style.cmdBtn());
 			
 			popupMenuBar.addItem(comunicateMenuItem);
 			
@@ -433,12 +421,13 @@ public abstract class ITWidget extends ResizeComposite {
 				int contractId = data.getContractId(posColumn, posCell);				
 				int leaveId = data.getContractLeaveId(posColumn, posCell);
 				
-				IT it = getIT(leaveId); //mainContrataITObject.getITs(leaveId);
-				ITEmployee itEmployee = getITEmployee(contractId); //mainContrataITObject.getITEmployee(contractId);
+				IT it = getIT(leaveId);
+				ITEmployee itEmployee = getITEmployee(contractId);
 				
-				deleteLeave(itEmployee, it);
-				
-			} catch (Exception ex) {}
+				deleteLeave(itEmployee, it);	
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -453,8 +442,8 @@ public abstract class ITWidget extends ResizeComposite {
 				int contractId = data.getContractId(posColumn, posCell);				
 				int leaveId = data.getContractLeaveId(posColumn, posCell);
 				
-				IT it = getIT(leaveId); //mainContrataITObject.getITs(leaveId);
-				ITEmployee itEmployee = getITEmployee(contractId); //mainContrataITObject.getITEmployee(contractId);
+				IT it = getIT(leaveId);
+				ITEmployee itEmployee = getITEmployee(contractId);
 				
 				// Paternidad / Maternidad
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
@@ -462,7 +451,9 @@ public abstract class ITWidget extends ResizeComposite {
 				else
 					cominicateIT(itEmployee, it);
 				
-			} catch (Exception ex) {}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -471,7 +462,6 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	public void loadITWidget() {
 		getITEmployeeListDB(itEmployeeList -> {
-			setITEmployees(itEmployeeList);
 			
 			this.expressionCallback = new ExpressionCallback();
 			this.tooltipCallback = new TooltipCallBack();
@@ -500,6 +490,7 @@ public abstract class ITWidget extends ResizeComposite {
 		filterITListPanel.addStyleName(AON.CSS.aonMarginLeft());
 		filterITListPanel.addStyleName(AON.CSS.aonMarginRight());
 		filterITListPanel.addStyleName(AON.CSS.aonBlockCenter());
+		filterITListPanel.addStyleName(style.mt10());
 		
 		HTMLPanel filterPanel = new HTMLPanel("");
 		filterPanel.addStyleName(style.filterPanel());
@@ -515,9 +506,7 @@ public abstract class ITWidget extends ResizeComposite {
 		employeeSB.getElement().getStyle().setMarginRight(10, Unit.PX);
 		itPanel.add(employeeSB);
 		AonTableButton cleanSB = new AonTableButton("Limpiar", AON.CSS.aonIconClear());
-		cleanSB.addClickHandler(e -> {
-			employeeSB.setValue("", true);
-		});
+		cleanSB.addClickHandler(e -> employeeSB.setValue("", true));
 		itPanel.add(cleanSB);
 		
 		HTMLPanel showPanel = new HTMLPanel("");
@@ -550,7 +539,7 @@ public abstract class ITWidget extends ResizeComposite {
 	private void initDateListBox() {
 		dateListBox.clear();
 
-		for (Integer year : getAviableYears() /*mainContrataITObject.getAviableYears()*/)
+		for (Integer year : getAviableYears())
 			dateListBox.addItem(String.valueOf(year));
 
 		dateListBox.setSelectedIndex(0);
@@ -587,17 +576,17 @@ public abstract class ITWidget extends ResizeComposite {
 	private final void initSuggestBox() {
 		names.clear();
 		
-		centineels = new LinkedHashMap<Integer, ITEmployee>();
+		centineels = new LinkedHashMap<>();
 		
-		Date startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
-		Date endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
+		Date startYearAux = DateUtils.getFirstDayOfYear(DateUtils.getDate(0, selectedYear));
+		Date endYearAux = DateUtils.getLastDayOfYear(DateUtils.getDate(11, selectedYear));
 		
-		for (ITEmployee itEmployee : getFilterITEmployeeList(allContracts.getValue(), startYear, endYear) /*mainContrataITObject.getEmployeesList(allContracts.getValue(), startYear, endYear)*/) {
+		for (ITEmployee itEmployee : getFilterITEmployeeList(allContracts.getValue(), startYearAux, endYearAux)) {
 
 			int contractId = itEmployee.getContractInfo().getContractId();
 
-			if ((DateUtils.compare(itEmployee.getContractInfo().getStartDate(), endYear) <= 0) && 
-				(DateUtils.compare(itEmployee.getContractInfo().getEndDate(), startYear) >= 0)) {
+			if ((DateUtils.compare(itEmployee.getContractInfo().getStartDate(), endYearAux) <= 0) && 
+				(DateUtils.compare(itEmployee.getContractInfo().getEndDate(), startYearAux) >= 0)) {
 				
 				names.add(itEmployee.getEmployeeInfo().getFullName());
 				centineels.put(contractId, itEmployee);
@@ -616,25 +605,23 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private final void printTimelineChart() {		
-		Runnable onLoadCallback = new Runnable() {
-			public void run() {
-				try {
-					data = new DataTableWrapper();					
-					AbstractDataTable dataTable = createTable();					 
-					Options options = createOptions(dataTable);					
-					timelineChart = new TimeLineChart(dataTable, options);
-					
-					if (ifNull)
-						timelinePanel.clear();
-					else {
-						timelinePanel.clear();
-						timelinePanel.add(timelineChart);
-						new MouseEventsHandlers(timelineChart);
-					}
-					
-				} catch (Throwable ex) {
-					Window.alert(ex + " Se ha producido un error, printTimelineChart");
+		Runnable onLoadCallback = () -> {
+			try {
+				data = new DataTableWrapper();					
+				AbstractDataTable dataTable = createTable();					 
+				Options options = createOptions(dataTable);					
+				timelineChart = new TimeLineChart(dataTable, options);
+				
+				if (ifNull)
+					timelinePanel.clear();
+				else {
+					timelinePanel.clear();
+					timelinePanel.add(timelineChart);
+					new MouseEventsHandlers(timelineChart);
 				}
+				
+			} catch (Exception ex) {
+				Window.alert(ex + " Se ha producido un error, printTimelineChart");
 			}
 		};
 		
@@ -653,10 +640,10 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private Options createOptions(AbstractDataTable dataTable) {
-		options = Options.create();
+		Options options = Options.create();
 		
-		options.setWidth(scrollPanelTimeline.getOffsetWidth() - 30);
-		options.setHeight(scrollPanelTimeline.getOffsetHeight() - 70);
+		options.setWidth(deckPanel.getOffsetWidth() - 20);
+		options.setHeight(Window.getClientHeight() - 240);
 
 		Timeline timeline = Timeline.create();
 		options.setAvoidOverlappingGridLines(false);
@@ -678,7 +665,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 		options.setTimeline(timeline);
 
-		List<String> statusList = new LinkedList<String>();
+		List<String> statusList = new LinkedList<>();
 		
 		for (int row = 0; row < dataTable.getNumberOfRows(); row++) {
 			String status = dataTable.getValueString(row, 1);
@@ -687,7 +674,7 @@ public abstract class ITWidget extends ResizeComposite {
 		}
 
 		int i = 0;
-		String colors[] = new String[statusList.size()];
+		String[] colors = new String[statusList.size()];
 		for (String status : statusList)
 			colors[i++] = getColor(status);
 
@@ -720,7 +707,7 @@ public abstract class ITWidget extends ResizeComposite {
 				start = DateUtils.after(start, startYear);
 				end = DateUtils.before(end, endYear);
 
-				if (itEmployee.getIts().size() > 0)
+				if (!itEmployee.getIts().isEmpty())
 					addLeaveRows(itEmployee, 
 							contractId, 
 							start, 
@@ -758,14 +745,13 @@ public abstract class ITWidget extends ResizeComposite {
 				leaveEndAux = end;
 
 			Date itStartDate = getRealStartDate(it);
-					
-//			leaveStart = DateUtils.after(it.getStartDate(), startYear);
+
 			leaveStart = DateUtils.after(itStartDate, startYear);
 			leaveEnd = DateUtils.before(leaveEndAux, endYear);
 
 			int contractLeaveId = it.getId();
 			
-			// skip previous IT
+			// Skip previous IT
 			if (start.before(leaveStart))
 				data.addRow(itEmployee.getEmployeeInfo().getFullName(), 
 						ACTIVE, 
@@ -802,7 +788,7 @@ public abstract class ITWidget extends ResizeComposite {
 		return JsonUtils.safeEval(json);
 	}
 
-	private void getPosStatusEmployee(String element) {
+	private void getPosStatusEmployee() {
 		
 		JSONObject json = new JSONObject(parseJson(cadenaTooltip));
 		String values = json.get("data").toString();		
@@ -819,19 +805,10 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	protected boolean isLeaveEmployee(String pElement) {
-
 		String cadena = pElement;
-		getPosStatusEmployee(pElement);
-
-		if (cadena.contains("{\"type\":\"bar\"") && !AonStringUtils.equals(data.getStatus(posColumn, posCell), ACTIVE)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private void tratarContrato(String pElement, int mouseClientX, int mouseClientY) {
-		getPosStatusEmployee(pElement);
+		getPosStatusEmployee();
+		
+		return AonStringUtils.containsIgnoreCase(cadena, CONTRACT_EXP) && !AonStringUtils.equals(data.getStatus(posColumn, posCell), ACTIVE);
 	}
 	
 	private static String getColor(String status) {
@@ -907,7 +884,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 		public DataTableWrapper() {
 			row = 0;
-			myEmployees = new LinkedList<LinkedList<Status>>();
+			myEmployees = new LinkedList<>();
 			data = DataTable.create();
 			initColumns();
 		}
@@ -934,15 +911,11 @@ public abstract class ITWidget extends ResizeComposite {
 
 			this.row++;
 
-			if (myEmployees.isEmpty()) {
-				statusList = new LinkedList<Status>();
+			if (myEmployees.isEmpty() || !AonStringUtils.equalsIgnoreCase(myEmployees.getLast().getLast().getFullName(), pName)) {
+				statusList = new LinkedList<>();
 				myEmployees.add(statusList);
-			} else {
-				if (myEmployees.getLast().getLast().getFullName().equals(pName) == false) {
-					statusList = new LinkedList<Status>();
-					myEmployees.add(statusList);
-				}
 			}
+			
 			statusList.add(new Status());
 			myEmployees.getLast().getLast().setFullName(pName);
 			myEmployees.getLast().getLast().setEstado(pStatus);
@@ -978,7 +951,9 @@ public abstract class ITWidget extends ResizeComposite {
 		private int contractLeaveId;
 		private String estado;
 		
-		public Status() {}
+		public Status() {
+			super();
+		}
 
 		public String getFullName() {
 			return fullName;
@@ -1045,10 +1020,10 @@ public abstract class ITWidget extends ResizeComposite {
 	private static String getLogicalName(Element el, int x, int y) {
 		String json = el.getPropertyString("logicalname");
 		if (json != null)
-			return json; // JsonUtils.safeEval(json);
+			return json;
 
 		Document doc = Document.get();
-		//
+
 		if (IFrameElement.is(el)) {
 			x -= el.getAbsoluteLeft();
 			y -= el.getAbsoluteTop();
@@ -1060,14 +1035,13 @@ public abstract class ITWidget extends ResizeComposite {
 		for (int i = 0; i < rects.getLength(); i++) {
 
 			Element rect = rects.getItem(i);
-
 			json = rect.getPropertyString("logicalname");
-			if (json == null)
-				continue;
+			JsLogicalName logicalName = null;
+			
+			if (json != null)
+				logicalName = JsonUtils.safeEval(json);
 
-			JsLogicalName logicalName = JsonUtils.safeEval(json);
-
-			if (!"bar".equals(logicalName.getType()))
+			if (null == json || null == logicalName || !"bar".equals(logicalName.getType()))
 				continue;
 
 			if (isElementAt(rect, x, y))
@@ -1078,15 +1052,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private static boolean isElementAt(Element el, int x, int y) {
-		if (x < el.getAbsoluteLeft())
-			return false;
-		if (x > el.getAbsoluteLeft() + el.getOffsetWidth())
-			return false;
-		if (y < el.getAbsoluteTop())
-			return false;
-		if (y > el.getAbsoluteTop() + el.getOffsetHeight())
-			return false;
-		return true;
+		return !(x < el.getAbsoluteLeft() || x > el.getAbsoluteLeft() + el.getOffsetWidth() || y < el.getAbsoluteTop() || y > el.getAbsoluteTop() + el.getOffsetHeight());
 	}
 
 	// --------------------------------------------------- FromJS to ITEmployee, IT, ContractInfo, EmployeeInfo
@@ -1101,10 +1067,9 @@ public abstract class ITWidget extends ResizeComposite {
 		ContractInfo contractInfo = fromJsContractInfo(jsContractInfo);
 		
 		JsArray<JsIT> jsITs = jsITEmployee.getITs();
-		List<IT> its = new ArrayList<IT>();
-		for ( int i = 0; i < jsITs.length(); i++ ) {
+		List<IT> its = new ArrayList<>();
+		for ( int i = 0; i < jsITs.length(); i++ )
 			its.add(fromJsIT(jsITs.get(i)));
-		}
 
 		itEmployee.setEmployeeInfo(employeeInfo);
 		itEmployee.setContractInfo(contractInfo);
@@ -1139,7 +1104,7 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private static List<ITPart> createDefaultITParts(JsIT jsIT) {
-		List<ITPart> itParts = new ArrayList<ITPart>();
+		List<ITPart> itParts = new ArrayList<>();
 		
 		// Low ITPart
 		ITPart itPart = new ITPart();
@@ -1233,10 +1198,9 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private static Date parseDate(String str) {
-		if ( str == null )
+		if ( str == null || str.trim().length() == 0)
 			return null;
-		if (str.trim().length() == 0 )
-			return null;
+		
 		try {
 			return DateTimeFormat.getFormat("yyyy-MM-dd").parse(str);
 		} catch ( IllegalArgumentException e ) {
@@ -1264,43 +1228,45 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	public void openLeyend() {
 		String leyend = "<div style=\"display: flex; flex-direction: column; width: 390px;\">";
+		String divFlex  = "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		String divEnd  = "</div>";
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #A0C3FF;\" title=\"Periodo Activo del Empleado\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Activo</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FFA500;\" title=\"Enfermedad Com&uacute;n, Accidente no Laboral\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Accidente no Laboral</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #AA0033;\" title=\"Enfermedad Profesional\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Profesional</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FF66CC;\" title=\"Maternidad, Lactancia, Riesgo Durante el Embarazo\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Maternidad</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #36C;\" title=\"Baja por Paternidad\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Paternidad</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #FFA500;\" title=\"Enfermedad Com&uacute;n, Periodo de Carencia\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Periodo de Carencia</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "<div style=\"display: flex; align-items: center; gap: 10px; padding: 2px 5px;\">";
+		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #E3DC14;\" title=\"Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</a>";
-		leyend += "</div>";
+		leyend += divEnd;
 		
-		leyend += "</div>";
+		leyend += divEnd;
 		
 		AonDialog leyendDialog = new AonDialog("Leyenda", new HTML(leyend));
 		leyendDialog.info();
@@ -1308,31 +1274,29 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	// --------------------------------------------------- Toolbar
 
-	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Partes IT");
+	private void getToolbarPanel() {
+		this.toolbar = new AonToolbar("Partes IT");
 		
 		// FORM
-		msjFIEFormPanel = new FormPanel();
+		FormPanel msjFIEFormPanel = new FormPanel();
 		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
 		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		msjFIEFormPanel.setAction(FIEService.FIE_URL);
 		
-		userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
-		domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+		Hidden userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
+		Hidden domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
 		
 		msjFIEFileUpload = new MultiFileUpload();
 		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
 		msjFIEFileUpload.setVisible(false);
 		msjFIEFileUpload.setAccept(".msj");
-		msjFIEFileUpload.addChangeHandler(e -> {
-			msjFIEFormPanel.submit();
-		});
+		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
 			
 			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
 			
-			List<ITEmployee> itEmployees = new ArrayList<ITEmployee>(jsITEmployees.length());
+			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
 			
 			for (int i = 0; i < jsITEmployees.length(); i++ ) {
 				JsITEmployee jsITEmployee = jsITEmployees.get(i);			
@@ -1340,16 +1304,10 @@ public abstract class ITWidget extends ResizeComposite {
 				itEmployees.add(itEmployee); 		
 			}
 			
-			setITEmployeeList(itEmployees, s -> {
-				loadITWidget();
-			}, f -> {});
-			
-//			mainContrataITObject.setEmployeesInfo(itEmployees,
-//				s -> {
-//					loadMainContrataIT();
-//				},
-//				f -> {}
-//			);
+			setITEmployeeList(itEmployees, 
+					s -> loadITWidget(), 
+					f -> {}
+			);
 		});
 		
 		FlowPanel formFlowPanel = new FlowPanel();
@@ -1360,66 +1318,43 @@ public abstract class ITWidget extends ResizeComposite {
 		msjFIEFormPanel.add(formFlowPanel);
 		toolbar.add(msjFIEFormPanel);
 		
-		addIT = new AonToolbarButton( "Nueva IT", AON.CSS.aonIconAdd() );
-		addIT.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAddIT(event);
-			}
-		});
+		AonToolbarButton addIT = new AonToolbarButton( "Nueva IT", AON.CSS.aonIconAdd() );
+		addIT.addClickHandler(e -> onAddIT());
 		toolbar.add(addIT);
 		
-		msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgssFie() );
+		AonToolbarButton msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgssFie() );
 		msjFIE.setAccessKey('F');
-		msjFIE.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onFIE(event);
-			}
-		});
+		msjFIE.addClickHandler(e -> onFIE());
 		toolbar.add(msjFIE);
 		
-		leyend = new AonToolbarButton( "Leyenda", AON.CSS.aonIconInfo() );
-		leyend.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onLeyend(event);
-			}
-		});
+		AonToolbarButton leyend = new AonToolbarButton( "Leyenda", AON.CSS.aonIconInfo() );
+		leyend.addClickHandler(e -> onLeyend());
 		toolbar.add(leyend);
-
-		return toolbar;
 
 	}
 	
 	// --------------------------------------------------- Toolbar.Methods
 	
-	private void onAddIT(ClickEvent event) {
+	private void onAddIT() {
 		newITDialog();
 	}
 	
-	private void onFIE(ClickEvent event) {
+	private void onFIE() {
 		msjFIEFileUpload.click();
 	}
 	
-	private void onLeyend(ClickEvent event) {
+	private void onLeyend() {
 		openLeyend();
 	}
 	
 	// --------------------------------------------------- ITDialog.Methods
 	
-	private void openNewITDialog(int contractId) {
-		ITEmployee itEmployee = getITEmployee(contractId); //mainContrataITObject.getITEmployee(contractId);
-    	ITDialog itDialog = newITDialog();
-    	itDialog.setITEmployee(itEmployee);
-	}
-
 	private ITDialog newITDialog() {
 		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
 
     		@Override
 			protected void onAccept() {
-    			accept(getITEmployee());
+    			accept(getITEmployee(), true);
 			}
     		
     		@Override
@@ -1433,11 +1368,13 @@ public abstract class ITWidget extends ResizeComposite {
 			}
 
 			@Override
-			protected void onComunicateIT(IT it) {}
+			protected void onComunicateIT(IT it) {
+				// On new IT not comunicate
+			}
     		
     	};
     	
-    	itDialog.setEmployeesList(getActiveEmployeesList() /*mainContrataITObject.getActiveEmployeesList()*/);
+    	itDialog.setEmployeesList(getActiveEmployeesList());
     	itDialog.initConfirmationsTable();
 		itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
@@ -1448,14 +1385,14 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 
 	private void openITDialog(int contractId, int itId) {
-		IT itInfo = getIT(itId); //mainContrataITObject.getITs(itId);
-    	ITEmployee itEmployee = getITEmployee(contractId); //mainContrataITObject.getITEmployee(contractId);
+		IT itInfo = getIT(itId);
+    	ITEmployee itEmployee = getITEmployee(contractId);
 
     	ITDialog itDialog = new ITDialog("Edici\u00F3n") {
     		
     		@Override
 			protected void onAccept() {
-				accept(itEmployee);
+				accept(itEmployee, false);
 			}
 			
 			@Override
@@ -1481,7 +1418,7 @@ public abstract class ITWidget extends ResizeComposite {
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
     	itDialog.setITDialogObject(itDialogObject, itInfo, true);
-    	itDialog.setIsUserComunica(isUserComunica() /*mainContrataITObject.isUserComunica()*/);
+    	itDialog.setIsUserComunica(isUserComunica());
     	
     	itDialog.setModal(true);
     	itDialog.setAnimationEnabled(true);
@@ -1489,16 +1426,29 @@ public abstract class ITWidget extends ResizeComposite {
     	itDialog.center();
 	}	
 	
-	private void accept(ITEmployee itEmployee) {
-		setITEmployee(itEmployee, s -> {
-			loadITWidget();
-		}, f -> {});
-		
-//		mainContrataITObject.createUpdateITEmployee(itEmployee,
-//				s -> {
-//					loadMainContrataIT();
-//				},
-//				f -> {});
+	private void accept(ITEmployee itEmployee, boolean newIT) {
+		setITEmployee(itEmployee, 
+			s -> {
+				loadITWidget();
+				if(Boolean.TRUE.equals(newIT))
+					showCreateMessage();
+				else
+					showUpdateMessage();
+			},
+			f -> {}
+		);
+	}
+	
+	private void showCreateMessage() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	private void showUpdateMessage() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
 	private void deleteLeave(ITEmployee itEmployee, IT it) {
@@ -1509,65 +1459,52 @@ public abstract class ITWidget extends ResizeComposite {
 	}
 	
 	private void delete(IT it, ITEmployee itEmployee) {
-		
-		deleteIT(itEmployee, it, s -> {
-			loadITWidget();
-		}, f -> {});
-		
-//		mainContrataITObject.removeIT(itEmployee, it,
-//				s -> {
-//					if(it.isComunicate() && mainContrataITObject.isUserComunica())
-//						mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-//							loadMainContrataIT();
-//						}, d -> {});
-//					else
-//						loadMainContrataIT();
-//				},
-//				f -> {});
-		
+		deleteIT(itEmployee, it, 
+			s -> {
+				loadITWidget();
+				showDeleteMessage();
+			},
+			f -> {}
+		);
 	}
 
 	private void deletePaternity(IT it, ITEmployee itEmployee) {
-		
-		deletePaternityIT(itEmployee, it, s -> {
-			loadITWidget();
-		}, f -> {});
-		
-//		mainContrataITObject.deleteIT(it,
-//				s -> {
-//					if(it.isComunicate() && mainContrataITObject.isUserComunica())
-//						mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-//							loadMainContrataIT();
-//						}, d -> {});
-//					else
-//						loadMainContrataIT();
-//				},
-//				f -> {});
+		deletePaternityIT(itEmployee, it, 
+			s -> {
+				loadITWidget();
+				showDeleteMessage();
+			}, 
+			f -> {}
+		);
+	}
+	
+	private void showDeleteMessage() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Borrado IT", "El parte ha sido eliminado correctamente");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
 	private void cominicateIT(ITEmployee itEmployee, IT it) {
 		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
 		comunicateDialog.confirm(
-				"COMUNIC" + String.valueOf("\u0040"), 
-				String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+				"COMUNIC\u0040", 
+				"\u00BFDesea comunicar el parte IT?",
 				new AonConfirmDialogCallback() {
 					@Override
 					public void onAccept() {
-						
-						comunicateIT(itEmployee, it, s -> {
-							getITCertificatePDF(itEmployee, it);
-						}, f -> {});
-						
-//						mainContrataITObject.comunicateITBaja(itEmployee, it, t -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-//							
-//							getITCertificatePDF(itEmployee, it);
-//						}, d -> {});
+						comunicateIT(itEmployee, it, 
+							s -> {
+								getITCertificatePDF(itEmployee, it);
+								showComunicateMessage();
+							}, 
+							f -> {}
+						);
 					}
 
 					@Override
-					public void onCancel() {}
+					public void onCancel() {
+						// Close Panel
+					}
 				}
 		);
 	}
@@ -1575,28 +1512,32 @@ public abstract class ITWidget extends ResizeComposite {
 	private void comunicatePaternity(ITEmployee itEmployee, IT it) {
 		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
 		comunicateDialog.confirm(
-				"COMUNIC" + String.valueOf("\u0040"), 
-				String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+				"COMUNIC\u0040", 
+				"\u00BFDesea comunicar el parte IT?",
 				new AonConfirmDialogCallback() {
 					@Override
 					public void onAccept() {
-						
-						comunicatePaternityIT(itEmployee, it, s -> {
-							getITCertificatePDF(itEmployee, it);
-						}, f -> {});
-						
-//						mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
-//							AonConfirmDialog dialog = new AonConfirmDialog();
-//							dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-//							
-//							getITCertificatePDF(itEmployee, it);
-//						}, d -> {});
+						comunicatePaternityIT(itEmployee, it, 
+							s -> {
+								getITCertificatePDF(itEmployee, it); 
+								showComunicateMessage();
+							},
+							f -> {}
+						);
 					}
 
 					@Override
-					public void onCancel() {}
+					public void onCancel() {
+						// Close Panel
+					}
 				}
 		);
+	}
+	
+	private void showComunicateMessage() {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put("Comunicaci\u00F3 IT", "El parte ha sido comunicado a la TGSS");
+		AonMessagePanel.showSuccess(messagePanel, successMap);
 	}
 	
 	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
@@ -1621,34 +1562,6 @@ public abstract class ITWidget extends ResizeComposite {
 			
 			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
 		}, f -> {});
-		
-//		mainContrataITObject.getNafxIpf(itEmployee, s -> {
-//			String affiliationNumber = s.getNss();
-//			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-//			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-//			String dateFromStr = formatFullDate.format(new Date());
-//			String dateToStr = formatFullDate.format(new Date());
-//			String startDateStr = formatFullDate.format(it.getStartDate());
-//			
-//			String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
-//			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
-//			 		+ "&userLogin=" + Wnd.getCurrentUser()
-//		            + "&affiliationNumber=" + affiliationNumber
-//		            + "&regime=" + regime
-//		            + "&contributionAccount=" + contributionAccount
-//		            + "&dateFromStr=" + dateFromStr
-//					+ "&dateToStr=" + dateToStr
-//					+ "&startDateStr=" + startDateStr
-//					+ "&itType=" + it.getTypeLowPart();
-//			
-//			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
-//		}, f -> {});
-	}
-	
-	// --------------------------------------------------- Setters
-	
-	public void setITEmployees(List<ITEmployee> itEmployeeList) {
-		this.itEmployeeList = itEmployeeList;
 	}
 	
 	// --------------------------------------------------- Abstract Methdos
