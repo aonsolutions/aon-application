@@ -58,6 +58,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -3395,7 +3396,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(
 				salaryDraftBuilder,
-				d -> Math.round(d * 100.00) / 100.00);
+				EmployeesServiceHelper.round(2));
 		try {
 			EmployeesServiceHelper.calculate(conn, draft, roundSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 		} catch (Exception e) {
@@ -3701,11 +3702,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 		RoundSalaryBuilder<ISalary> jooqRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-				d -> Math.round(d * 100.00) / 100.00);
+				EmployeesServiceHelper.round(2));
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		RoundSalaryBuilder<ISalary> draftRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(salaryDraftBuilder,
-				d -> Math.round(d * 100.00) / 100.00);
+				EmployeesServiceHelper.round(2));
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 				draftRoundSalaryBuilder, jooqRoundSalaryBuilder);
 		SmartContractSalaryCalculator<ISalary> salaryCalculator = new SmartContractSalaryCalculator<ISalary>();
@@ -3775,7 +3776,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-					d -> Math.round(d * 100.00) / 100.00);
+					EmployeesServiceHelper.round(2));
 			jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 			CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 					salaryDraftBuilder, roundSalaryBuilder);

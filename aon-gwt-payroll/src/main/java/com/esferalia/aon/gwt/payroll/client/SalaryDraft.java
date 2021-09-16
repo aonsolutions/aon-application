@@ -3146,7 +3146,7 @@ public class SalaryDraft extends ResizeComposite
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
 		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
-		ssCgpBaseLabel.setText(format(salaryDraftObject.getSsCgcBase()));
+		ssCgpBaseLabel.setText(format(salaryDraftObject.getSsCgpBase()));
 		setDbStyleName(ssCgpBaseLabel, cgpBaseLabel);
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()), displayChanges);

@@ -52,6 +52,7 @@ import static java.util.Calendar.YEAR;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -1472,7 +1473,7 @@ public abstract class AbstractSQLTestCase {
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-				d -> Math.round(d*100.00)/100.00);
+				d -> d.setScale(2, RoundingMode.HALF_UP));
 
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();

@@ -156,6 +156,10 @@ public class SLDSalaries {
 		Double quoteDays = periodCalcs.keySet().stream().collect(Collectors.summingDouble(p -> Optional.ofNullable(p.getQuoteDays()).orElse(0.00)));
 		salary.setSalaryDays(quoteDays.intValue());
 		
+		Double baseOtherHours = periodCalcs.values().stream().map(map -> map.get("OTRAS HORAS EXTRAS"))
+		.filter(calc -> calc != null ).collect(Collectors.summingDouble(calc -> Optional.ofNullable(calc.getBase()).orElse(0.00)));
+		salary.setNonEstructuralOvertimeBase(baseOtherHours);
+
 		return salary;
 	}
 
@@ -343,6 +347,8 @@ public class SLDSalaries {
 		case "FORMACI\u00D3N PROFESIONAL":
 		case "FORMACI\u00D3N PROFESIONAL COTIZ. EMPRESA.":
 			return Optional.of(DeductionType.JOB_TRAINING);
+		case "OTRAS HORAS EXTRAS":
+			return Optional.of(DeductionType.NON_STRUCTURAL_OVERTIME);
 		case "LIQUIDO DE TOTALES":
 		case "LIQUIDO CONTINGENCIAS COMUNES":
 		case "LIQUIDO DE OTRAS COTIZACIONES":
@@ -426,6 +432,8 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.FP_EMPLOYEE);
 		case "DESEMPLEO":
 			return Optional.of(ContextVariable.UNEMPLOY_EMPLOYEE);
+		case "OTRAS HORAS EXTRAS":
+			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_EMPLOYEE);
 		default:
 			return Optional.empty();
 		}
@@ -439,6 +447,8 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.FP_EMPLOYEE_PERCENT);
 		case "DESEMPLEO":
 			return Optional.of(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT);
+		case "OTRAS HORAS EXTRAS":
+			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT);
 		default:
 			return Optional.empty();
 		}
@@ -464,6 +474,8 @@ public class SLDSalaries {
 		case "FORMACI\u00D3N PROFESIONAL":
 		case "FORMACI\u00D3N PROFESIONAL COTIZ. EMPRESA.":
 			return Optional.of(ContextVariable.FP_ENTERPRISE);
+		case "OTRAS HORAS EXTRAS":
+			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_ENTERPRISE);
 		default:
 			return Optional.empty();
 		}
@@ -489,6 +501,8 @@ public class SLDSalaries {
 		case "FORMACI\u00D3N PROFESIONAL":
 		case "FORMACI\u00D3N PROFESIONAL COTIZ. EMPRESA.":
 			return Optional.of(ContextVariable.FP_ENTERPRISE_PERCENT);
+		case "OTRAS HORAS EXTRAS":
+			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT);
 		default:
 			return Optional.empty();
 		}

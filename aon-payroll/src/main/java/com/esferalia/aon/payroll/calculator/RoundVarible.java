@@ -1,16 +1,17 @@
 package com.esferalia.aon.payroll.calculator;
 
-import java.util.function.UnaryOperator;
+import java.math.BigDecimal;
+import java.util.function.Function;
 
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 
-public class  RoundVarible implements ITimedVariable<Double> {
+public class  RoundVarible implements ITimedVariable<BigDecimal> {
 
-	private UnaryOperator<Double> f;
 	private ITimedVariable<?> variable;
+	private Function<Object, BigDecimal> f;
 	
-	public RoundVarible(ITimedVariable<?> variable, UnaryOperator<Double> f) {
+	public RoundVarible(ITimedVariable<?> variable, Function<Object, BigDecimal> f) {
 		this.f = f;
 		this.variable = variable;
 	}
@@ -21,12 +22,12 @@ public class  RoundVarible implements ITimedVariable<Double> {
 	}
 
 	@Override
-	public Double getValue(Period period) {
+	public BigDecimal getValue(Period period) {
 		Object value = variable.getValue(period);
 		if ( value == null ) 
 			return null;
 		
-		return f.apply(((Number)value).doubleValue());
+		return f.apply(value);
 	}
 	
 	

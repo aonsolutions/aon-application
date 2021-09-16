@@ -23,6 +23,8 @@ import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
 import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -69,6 +71,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.sun.org.apache.bcel.internal.generic.IFNULL;
 
 public class SalaryDAO {
 
@@ -933,7 +936,10 @@ public class SalaryDAO {
 		.and(PERSON.SOCIAL_SECURITY_NUM.eq(salary.getEmployeeSSNumber()))
 		.and(CONTRACT.START_DATE.le(toSql(salary.getEndDate())))
 		.and(CONTRACT.END_DATE.ge(toSql(salary.getStartDate())).or(CONTRACT.END_DATE.isNull()))
-		.fetchOptionalInto(CONTRACT);
+		.orderBy(DSL.abs(DSL.dateDiff(toSql(salary.getEndDate()), DSL.ifnull(CONTRACT.END_DATE, DSL.date(getNullDate())))).asc())
+		.fetchStreamInto(CONTRACT)
+		.findFirst();
+		//.fetchOptionalInto(CONTRACT);
 	}
 	
 	private static SalaryRecord getSalaryRecord(Salary salary) {
@@ -1210,6 +1216,12 @@ public class SalaryDAO {
 				return i;
 		
 		return null;
+	}
+	
+	private static java.sql.Date getNullDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.YEAR, 100);
+		return new java.sql.Date(calendar.getTimeInMillis());
 	}
 	
 
