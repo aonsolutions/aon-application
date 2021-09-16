@@ -19,8 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.tgss.BaseCgcMin2019Fix;
-import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019FixII;
+import net.aonsolutions.db.up2date.payroll.OvertimeCostsFix;
 
 public class Up2Date {
 
@@ -170,7 +169,8 @@ public class Up2Date {
     		//CRA0062Insert.CRA0062INSERT
     		//IrpfHomeUpdate.IRPFHOMEUPDATE
     		//TrainningPercentages2019FixII.TRAINNINGPERCENTAGES2021FIXII
-    		BaseCgcMin2019Fix.BASECGCMIN2019FIX
+    		//BaseCgcMin2019Fix.BASECGCMIN2019FIX
+    		OvertimeCostsFix.OVERTIMECOSTSFIX
     };
 
 
