@@ -16,12 +16,11 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO;
 
-
 public class LocationDAO {
 
 	private static final LocationPropertiesDAO LOCATION_PROPERTIES = new LocationPropertiesDAO();
 //	 LocationFilter filter
-	public static Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter) {
+	public static Stream<Location> getStream(AONContext ctx, LocationFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select()
@@ -71,7 +70,7 @@ public class LocationDAO {
 		ctx.log().debug("DELETE LOCATION id: " + id);		
 	}
 	
-	public static Location getLocation(AONContext ctx, LocationFilter filter) {
+	public static Location get(AONContext ctx, LocationFilter filter) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 				.select()
@@ -83,7 +82,7 @@ public class LocationDAO {
 				.orElse(null);
 	}
 	
-	public static Location getLocation(AONContext ctx, Coordinates coordinates) {
+	public static Location getByCoordinates(AONContext ctx, Coordinates coordinates) {
 		ctx.checkRead();
 		Param<Double> lt = DSL.val(coordinates.getLatitude());
 		Param<Double> lg = DSL.val(coordinates.getLongitude());

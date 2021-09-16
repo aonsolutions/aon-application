@@ -71,14 +71,14 @@ public class TimeControlImpl implements ITimeControl {
 	@Override
 	public Location getLocation(AONContext ctx, LocationFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocation(ctx, filter));
+				configuration -> LocationDAO.get(ctx, filter));
 	}
 
 
 	@Override
 	public Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter) {
 		return  ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocationStream(ctx, filter));
+				configuration -> LocationDAO.getStream(ctx, filter));
 	}
 
 	@Override
@@ -89,11 +89,9 @@ public class TimeControlImpl implements ITimeControl {
 	}
 	
 	@Override
-	public Location getLocation(AONContext ctx, Coordinates c) {
+	public Location getLocationByCoordinates(AONContext ctx, Coordinates c) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocation(ctx, c));
+				configuration -> LocationDAO.getByCoordinates(ctx, c));
 	}
-
-	
 	
 }
