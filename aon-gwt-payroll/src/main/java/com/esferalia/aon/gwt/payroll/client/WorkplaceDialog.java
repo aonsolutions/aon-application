@@ -1,23 +1,24 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDialog extends AonCustomDialog {
+	
+	// ------------------------------------------------- Workplace
 
 	private class WorkplaceImplementation extends Workplace{
 
@@ -46,14 +47,24 @@ public class WorkplaceDialog extends AonCustomDialog {
 		public void onWorkplaceActivityChange(Integer activityId) {
 			workplaceDialogObject.setWorkplaceActivity(AonNumberUtils.equals(-1, activityId) ? null : activityId);
 		}
+
+		@Override
+		public void fireWarningMessage(Map<String, String> warningMap) {
+			AonMessagePanel.showWarning(messagePanel, warningMap);
+		}
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 	
 	interface WorkplaceDialogUiBinder extends UiBinder<Widget, WorkplaceDialog> {}
 	
 	private static WorkplaceDialogUiBinder binder = GWT.create(WorkplaceDialogUiBinder.class);
+	
+	// ------------------------------------------------- UiField
+	
+	@UiField
+	HTMLPanel messagePanel;
 	
 	@UiField (provided = true)
 	Workplace workplace;
@@ -61,14 +72,11 @@ public class WorkplaceDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
-	// -------------------------------------------- Variables de la clase---------------------------------------------
+	// ------------------------------------------------- Variables
 	
 	private WorkplaceDialogObject workplaceDialogObject;
 	
-	private Button closeBtnDialog;
-	private Button acceptBtnDialog;
-	
-	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
+	// ------------------------------------------------- Constructor
 
 	public WorkplaceDialog() {	
 		workplace = new WorkplaceImplementation();
@@ -81,15 +89,13 @@ public class WorkplaceDialog extends AonCustomDialog {
 		getButtonsPanel();	
 	}
 
-	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	// ------------------------------------------------- setWorkplaceDialogObject
 
 	public void setWorkplaceDialogObject(WorkplaceDialogObject workplaceDialogObject) {
 		this.workplaceDialogObject = workplaceDialogObject;
 		this.workplaceDialogObject.getAgreements(
-				s -> { 
-					initializeListBox();
-					 }
-				, f -> {}
+				s -> initializeListBox(),
+				f -> {}
 		);
 	}
 
@@ -104,41 +110,29 @@ public class WorkplaceDialog extends AonCustomDialog {
 		workplace.initializeActivityCell(workplaceDialogObject.getWorkplaceActivities());
 	}
 	
+	// ------------------------------------------------- Buttons Panel
+	
 	private void getButtonsPanel() {
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.setAccessKey('C');
-		closeBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onCloseDialog(event);
-			}
-		});
-		
-		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		closeBtnDialog.addClickHandler(e -> onCloseDialog());
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
+		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
-		acceptBtnDialog.setAccessKey('A');
-		acceptBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAcceptDialog(event);
-			}
-		});
+		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 		
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog(ClickEvent event) {
+	private void onCloseDialog() {
 		hide();
 	}
 	
-	private void onAcceptDialog(ClickEvent event) {
+	private void onAcceptDialog() {
 		if(canSaveWorkplace()) {
 			workplaceDialogObject.createWorkplace(
 					s -> {
@@ -148,16 +142,14 @@ public class WorkplaceDialog extends AonCustomDialog {
 					f -> {}
 			);
 		}else {
-			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar los campos azules obligatoriamente."));
-			dialog.info();
+			Map<String, String> warningMap = new HashMap<>();
+			warningMap.put("Campos obligatorios", "Los campos azules son obligatorios");
+			AonMessagePanel.showWarning(messagePanel, warningMap);
 		}
 	}
 	
 	private boolean canSaveWorkplace() {
-		if(AonStringUtils.isBlank(workplace.workplaceDescription.getValue()) || checkAddressWidget())
-			return false;
-		else
-			return true;
+		return !AonStringUtils.isBlank(workplace.workplaceDescription.getValue()) && !checkAddressWidget();
 	}
 
 	private boolean checkAddressWidget() {

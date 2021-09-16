@@ -15,10 +15,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class WorkplaceDraftObject extends AbstractDraftObject {
 	
 	
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------- Variables
 	
-	private DomainEnterprisesServiceAsync enterprisesService;
-	private DomainEmployeesServiceAsync employeesService;
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	
 	private Enterprise enterprise;
 	private Workplace workplace;
@@ -28,29 +27,20 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	private Map<Integer, String> activities;
 	
 	private WorkplaceInfo workplaceInfo;
-	private WorkplaceInfo workplaceInfo_Old;
+	private WorkplaceInfo workplaceInfoOld;
 		
-	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
+	// ------------------------------------------------- Constructor	
 	
-	public WorkplaceDraftObject(Enterprise enterprise, Workplace workplace, DomainEnterprisesServiceAsync enterprisesService, DomainEmployeesServiceAsync employeesService) {
-		
-		this.enterprisesService = enterprisesService;
-		this.employeesService = employeesService;
+	public WorkplaceDraftObject(Enterprise enterprise, Workplace workplace) {
 
 		this.enterprise = enterprise;
 		this.workplace = workplace;
 		this.agreements = new ArrayList<>();
 		
 		this.undoManager = new UndoManager<Undoable>();
-		
-		
 	}
 	
-	public CalendarDraftObjectData getCalendarDraftObjectData() {
-		return new CalendarDraftObjectData(workplace.getId());
-	}
-	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	// ------------------------------------------------- DataBase Methods
 	
 	public void initializeWorkplace(Consumer<WorkplaceInfo> success, Consumer<Throwable> failure) {
 	
@@ -59,17 +49,17 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			@Override
 			public void onSuccess(WorkplaceInfo result) {
 				workplaceInfo = result;
-				workplaceInfo_Old = new WorkplaceInfo(result);
+				workplaceInfoOld = new WorkplaceInfo(result);
 				
 				getAgreements(
-						r ->{success.accept(result);},
-						f->{}
+						r -> success.accept(result),
+						f -> {}
 				);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);	
 			}
 		});
 		
@@ -83,23 +73,23 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 				agreements = getActiveAgreements(result);
 				
 				getEnterpriseAddresses(
-						s -> {success.accept(result);},
-						f ->{}
+						s -> success.accept(result),
+						f -> {}
 				);
 			}
 			
 			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
 				List<Agreement> activeAgreements = new ArrayList<>();
-				for(Agreement agreement : agreements){
+				for(Agreement agreement : agreements)
 					if(agreement.getId() > 0)
 						activeAgreements.add(agreement);
-				}
+				
 				return activeAgreements;
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);
 			}
 		});	
 	}
@@ -109,7 +99,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				failure.accept(caught);
 			}
 
 			@Override
@@ -117,7 +107,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 				addresses = result;
 				
 				getEnterpriseActivities(
-						s -> {success.accept(result);},
+						s -> success.accept(result),
 						f -> {}
 					);
 			}
@@ -129,7 +119,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				failure.accept(caught);
 			}
 
 			@Override
@@ -146,7 +136,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			
 			@Override
 			public void onSuccess(WorkplaceInfo result) {
-				workplaceInfo_Old = new WorkplaceInfo(result);
+				workplaceInfoOld = new WorkplaceInfo(result);
 				success.accept(result);
 			}
 
@@ -158,7 +148,11 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		
 	}
 	
-	// ---------------------------------------------- GETTERS / SETTERS  -------------------------------------------------
+	// ------------------------------------------------- Getters Methods
+	
+	public CalendarDraftObjectData getCalendarDraftObjectData() {
+		return new CalendarDraftObjectData(workplace.getId());
+	}
 	
 	public WorkplaceInfo getWorkplaceInfo(){
 		return this.workplaceInfo;
@@ -236,8 +230,7 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	}
 
 	public boolean hasChanged() {
-		boolean changed = workplaceInfo.hasChanged(workplaceInfo_Old);
-		return changed;
+		return workplaceInfo.hasChanged(workplaceInfoOld);
 	}
 	
 }
