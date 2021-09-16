@@ -120,6 +120,14 @@ public class SistemaRED2AON {
 		.desc("Adds Calculations from SLD.")
 		.build();
 
+		Option nafsOption = Option.builder()
+		.hasArg()
+		.longOpt("nafs")
+		.argName("nafs")
+		.desc("Sync selected nafs.")
+		.build();
+		
+
 		Options options = new Options();
 		options.addOption(helpOption);
 		options.addOption(dateOption);
@@ -127,6 +135,7 @@ public class SistemaRED2AON {
 		options.addOption(databasesOption);
 		options.addOption(bonusOption);
 		options.addOption(calcsOption);
+		options.addOption(nafsOption);
 	
 		
 		CommandLine commandLine = null;
@@ -144,6 +153,7 @@ public class SistemaRED2AON {
 			boolean calcs = commandLine.hasOption(calcsOption.getLongOpt());
 			boolean bonus = commandLine.hasOption(bonusOption.getLongOpt());
 			
+			String nafs [] = Optional.ofNullable(commandLine.getOptionValues(nafsOption.getLongOpt())).orElse(new String[0]);
 			
 			for( String schema : commandLine.getOptionValues(databasesOption.getLongOpt()) ) {
 				System.out.println(schema);;
@@ -204,7 +214,8 @@ public class SistemaRED2AON {
 										regimen, 
 										ccc, 
 										startDate, 
-										endDate);
+										endDate,
+										nafs);
 							if ( bonus )
 								addBonus(
 										login, 
@@ -217,7 +228,8 @@ public class SistemaRED2AON {
 										regimen, 
 										ccc, 
 										startDate, 
-										endDate);
+										endDate,
+										nafs);
 							
 //							SistemaRED.getCosts(certificateData, certificatePassword, certificateType, regime, ccc, startDate, endDate);
 							
@@ -267,12 +279,12 @@ public class SistemaRED2AON {
 			String regimen, 
 			String ccc, 
 			java.sql.Date startDate, 
-			java.sql.Date endDate ) throws SegSocialException {
+			java.sql.Date endDate ,
+			String ...nafs) throws SegSocialException {
 		
-		Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate);
+		Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
 		
-		String nafs [] = employees.keySet().toArray(new String[employees.size()]);
-		
+		nafs = employees.keySet().toArray(new String[employees.size()]);
 		
 		Map<String, Map<String, Map<Period, Map<String, Calc>>>> allCalcs = 
 		SistemaRED.getCalcByNAF(
@@ -347,7 +359,8 @@ public class SistemaRED2AON {
 			String regimen, 
 			String ccc, 
 			java.sql.Date startDate, 
-			java.sql.Date endDate
+			java.sql.Date endDate,
+			String ...nafs
 			) throws SegSocialException {
 		
 			// TC2 : 
@@ -360,29 +373,44 @@ public class SistemaRED2AON {
 			// 189,289,389
 		   
 		
-			Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate);
+			Map<String,List<Employee>> employees = getEmployees(login, domainId, domainName, ccc, startDate, endDate, nafs);
 			
 			employees.forEach((naf, list) -> System.out.println(naf + " :" + list.stream().map(e ->e.getName().orElse("") + "," + e.getContractType()).collect(Collectors.joining(","))) );
 			
 			// TODO : all employees
-			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf, null));
+			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf, endDate));
 			
 	}
 	
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
-			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth) {
+			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth, String ...nafs) {
+		if ( nafs == null || nafs.length == 0 )
+			return 
+					PAYROLL.getEmployees(domainName, 
+					domainId, 
+					login, 
+					p -> p.getDomainProperty().eq(domainId) 
+					.and(p.getCCCProperty().eq(ccc))
+					.and(p.getStartDateProperty().le(lastDayOfMonth))
+					.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth)))
+					)
+					.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
+					;
+		
 		return 
 		PAYROLL.getEmployees(domainName, 
 		domainId, 
 		login, 
 		p -> p.getDomainProperty().eq(domainId) 
 		.and(p.getCCCProperty().eq(ccc))
+		.and(p.getNafProperty().in(nafs))
 		.and(p.getStartDateProperty().le(lastDayOfMonth))
 		.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(firstDayOfMonth)))
 		)
 		.collect(Collectors.toMap(e -> e.getNaf(), e -> Collections.singletonList(e), (l1,l2) -> List.of(l1.get(0), l2.get(0))))
 		;
 	}
+
 
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
 			java.sql.Date firstDayOfMonth, java.sql.Date lastDayOfMonth, EmployeeFilter filter) {
@@ -537,9 +565,11 @@ public class SistemaRED2AON {
 			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
 			.map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
 			.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+
+			System.out.println("\tSUCCESS: " + naf );
 		
 		} catch (SegSocialException e) {
-			
+			e.printStackTrace();
 		}
 	}
 	
