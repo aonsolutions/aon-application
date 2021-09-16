@@ -56,6 +56,11 @@ public abstract class Activity extends ResizeComposite {
 		protected Set<Entry<Integer, String>> getActivities() {
 			return Activity.this.getActivities();
 		}
+
+		@Override
+		protected void fireWarningMessage(Map<String, String> warningMap) {
+			Activity.this.fireWarningMessage(warningMap);
+		}
 		
 	}
 	

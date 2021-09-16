@@ -1625,7 +1625,7 @@ public class EmployeesServiceHelper {
 
 
 	public static UnaryOperator<BigDecimal> round(int scale) {
-		return d -> d.setScale(2, RoundingMode.HALF_UP);
+		return d -> d.setScale(scale, RoundingMode.HALF_UP);
 	}
 
 	

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -258,6 +260,9 @@ public abstract class CCC extends ResizeComposite {
 					geozone.addStyleName(style.warningColor());
 					accountStatus.removeStyleName(AON.CSS.aonIconValid());
 					accountStatus.addStyleName(AON.CSS.aonIconInvalid());
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor");
+					fireWarningMessage(warningMap);
 				}
 				
 				onInsertCCC(
@@ -384,6 +389,9 @@ public abstract class CCC extends ResizeComposite {
 					geozone.addStyleName(style.warningColor());
 					accountStatus.removeStyleName(AON.CSS.aonIconValid());
 					accountStatus.addStyleName(AON.CSS.aonIconInvalid());
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor");
+					fireWarningMessage(warningMap);
 				}
 				onInsertCCC(
 						newId, 
@@ -575,7 +583,9 @@ public abstract class CCC extends ResizeComposite {
 
 	protected abstract void onInsertCCC(Integer cccId, int parseInt, byte parseByte, String cccRegimeCode, String value, String province, String provinceCode);
 
-	protected abstract Set<Entry<Integer, String>> getActivities();	
+	protected abstract Set<Entry<Integer, String>> getActivities();
+	
+	protected abstract void fireWarningMessage(Map<String, String> warningMap);
 
 	// -------------------------------------------- Footer Panel
 	
