@@ -41,4 +41,9 @@ public class Workgroup implements Serializable {
 		this.id = id;
 		return this;
 	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+			&& getDescription() == null;
+	}
 }

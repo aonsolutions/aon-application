@@ -268,6 +268,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON {
 
+	private AON() {
+		throw new IllegalStateException("Utility class");
+	}
+	
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
 	}
@@ -432,14 +436,21 @@ public class AON {
 		} 
 	}
 	
+	public static void saveUserWorkgroups(Domain domain, String login, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getSecurity().saveUserWorkgroups(ctx, user);
+		} 
+	}
+	
+	public static void deleteUserWorkgroup(Domain domain, String login, User user, Workgroup workgroup) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getSecurity().deleteUserWorkgroup(ctx, user, workgroup);
+		} 
+	}
+	
 	public static User insertUser(String domainName, int domainId, String login, User user) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().insertUser(ctx, user);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -2430,6 +2441,12 @@ public class AON {
 	// ********************************************
 	// ****************************** GWT-OFFICE **
 	// ********************************************
+
+	public static User getUser(Domain domain, String login, UserFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)){
+			return getSecurity().getUser(ctx, filter);
+		} 
+	}
 	
 	public static User getUser(String domainName, Integer domainId, String userName, UserFilter filter) {
 		return getUserStream(domainName, domainId, userName, filter).findFirst().orElse(new User());

@@ -392,12 +392,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	    Domain domain = api.getDomain();
 		LinkedList<String> toList = new LinkedList<>();
 		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
-		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth());
+		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		toList.add(auth.getEmail());
 		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
     		if(dur.isComunicaManager()) {
-				toList.add(AON_SOLUTIONS.getAuth(usr.getAuth()).getEmail());
+				toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
     		}
     	});
 		return toList;
@@ -413,7 +413,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
 				DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());
 	    		if(dur.isComunicaManager()) {
-					Auth auth = new Auth().setAuth(usr.getAuth());
+					Auth auth = new Auth().setAuth(usr.getAuth().getAuth());
 					if(auth.getAuth()!=null) auths.add(auth);
 	    		}
 			});
@@ -423,7 +423,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    	NotificationRequest notification = new NotificationRequest();
 		    	notification.setTitle(title);
 		    	notification.setBody(body);
-		    	notification.setSender(user.getAuth());
+		    	notification.setSender(user.getAuth().getAuth());
 		    	notification.setDomain(api.getDomain());
 		    	notification.setUser(api.getUser());
 		    	notification.setAuths(auths);
@@ -446,7 +446,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				Date fecha = employee.getFra();
 				String from = "no-reply@aon.solutions"; 
 				String subject = "COMUNIC@ | AON SOLUTIONS"; 
-				LinkedList<File> files = new LinkedList<File>();
+				LinkedList<File> files = new LinkedList<>();
 				
 				try {
 					byte[] fileByte = SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);

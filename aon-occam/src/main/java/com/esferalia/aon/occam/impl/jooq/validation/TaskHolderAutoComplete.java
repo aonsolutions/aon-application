@@ -44,7 +44,7 @@ public class TaskHolderAutoComplete {
 			}
 			
 			if(taskHolder.getId() == null && AonStringUtils.isBlank(taskHolder.getDocument()) && user.getAuth() != null) {
-				Auth a = AON_SOLUTIONS.getAuth(user.getAuth());
+				Auth a = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 				taskHolder.setDocument(a.getDocument())
 						.setName(a.getName()+ " "+ a.getSurname())
 						.setAlias(a.getName());

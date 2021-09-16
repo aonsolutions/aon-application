@@ -206,6 +206,7 @@ public enum AonError implements Serializable{
 	,EMPTY_RAWDOC_NATURE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_RAWDOC_TYPE("El tipo del documento es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_RAWDOC_STATUS("El estado del documento es un dato obligatorio, no puede estar vac\u00EDo") 
+	,EXIST_USER_WORKGROUP("El usuario ya pertenece al grupo.")
 	;
 	
 	

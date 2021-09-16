@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 
 
@@ -20,7 +23,9 @@ public class User implements Serializable {
 	private AonRole[] userRoles;
 	UserToolbar toolbar;
 	
-	private byte[] auth;
+	private List<Workgroup> workgroups;
+	
+	private Auth auth;
 	
 	public Integer getId() {
 		return id;
@@ -91,10 +96,14 @@ public class User implements Serializable {
 		return this;
 	}
 	
-	public byte[] getAuth() {
+	public Auth getAuth() {
+		if(auth == null) {
+			auth = new Auth();
+		}
 		return auth;
 	}
-	public User setAuth(byte[] auth) {
+
+	public User setAuth(Auth auth) {
 		this.auth = auth;
 		return this;
 	}
@@ -105,6 +114,23 @@ public class User implements Serializable {
 	
 	public User setToolbar(UserToolbar toolbar) {
 		this.toolbar = toolbar;
+		return this;
+	}
+	
+	public List<Workgroup> getWorkgroups() {
+		if(workgroups == null) {
+			workgroups = new LinkedList<>();
+		}
+		return workgroups;
+	}
+	
+	public User setWorkgroups(List<Workgroup> workgroups) {
+		this.workgroups = workgroups;
+		return this;
+	}
+	
+	public User addWorkgroup(Workgroup workgroup) {
+		getWorkgroups().add(workgroup);
 		return this;
 	}
 

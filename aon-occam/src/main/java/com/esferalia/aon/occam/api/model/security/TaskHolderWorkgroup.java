@@ -5,18 +5,18 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.Workgroup;
 
 @SuppressWarnings("serial")
-public class UserWorkgroup implements Serializable {
+public class TaskHolderWorkgroup implements Serializable {
 	
 	Integer id;
 	Integer domain;
-	Integer userId;
+	Integer taskHolder;
 	Workgroup workgroup;
 
 	public Integer getDomain() {
 		return domain;
 	}
 
-	public UserWorkgroup setDomain(Integer domain) {
+	public TaskHolderWorkgroup setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -25,17 +25,17 @@ public class UserWorkgroup implements Serializable {
 		return id;
 	}
 
-	public UserWorkgroup setId(Integer id) {
+	public TaskHolderWorkgroup setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 
-	public Integer getUserId() {
-		return userId;
+	public Integer getTaskHolder() {
+		return taskHolder;
 	}
 
-	public UserWorkgroup setUserId(Integer userId) {
-		this.userId = userId;
+	public TaskHolderWorkgroup setTaskHolder(Integer taskHolder) {
+		this.taskHolder = taskHolder;
 		return this;
 	}
 
@@ -46,14 +46,14 @@ public class UserWorkgroup implements Serializable {
 		return workgroup;
 	}
 
-	public UserWorkgroup setWorkgroup(Workgroup workgroup) {
+	public TaskHolderWorkgroup setWorkgroup(Workgroup workgroup) {
 		this.workgroup = workgroup;
 		return this;
 	}
 	
 	public boolean isEmpty() {
 		return getId() == null && getDomain() == null
-			&& getUserId() == null && getWorkgroup().isEmpty();
+			&& getTaskHolder() == null && getWorkgroup().isEmpty();
 	}
 	
 	

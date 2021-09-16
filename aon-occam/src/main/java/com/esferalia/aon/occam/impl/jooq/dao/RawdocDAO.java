@@ -350,7 +350,7 @@ public class RawdocDAO {
 			.where(domain.ID.in(domains)
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
-			.groupBy(RAWDOC.DOMAIN,RAWDOC.NATURE, RAWDOC.STATUS)
+			.groupBy(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS)
 			.fetch()
 			.stream()
 			.forEach(record -> {
