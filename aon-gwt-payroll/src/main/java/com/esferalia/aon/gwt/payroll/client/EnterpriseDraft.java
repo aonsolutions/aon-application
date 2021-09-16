@@ -45,7 +45,7 @@ public abstract class EnterpriseDraft extends Composite {
 		@Override
 		public void onEnterpriseDocumentChange() {
 			String value = this.document.getValue();
-			enterprise.checkDocument();
+			enterprise.checkDocument(true);
 			enterpriseDraftObject.setDocument(value);
 		}
 
@@ -304,7 +304,7 @@ public abstract class EnterpriseDraft extends Composite {
 		enterprise.enterpriseName.setValue(enterpriseDraftObject.getName());
 		enterprise.enterpriseAlias.setValue(enterpriseDraftObject.getAlias());
 		enterprise.document.setValue(enterpriseDraftObject.getDocument());
-		enterprise.checkDocument();
+		enterprise.checkDocument(false);
 		enterprise.nationality.setValue(enterpriseDraftObject.getDocumentCountry());
 		setSelectedValueLB(enterprise.streetType, enterpriseDraftObject.getSteetType());
 		enterprise.address.setValue(enterpriseDraftObject.getAddress());
