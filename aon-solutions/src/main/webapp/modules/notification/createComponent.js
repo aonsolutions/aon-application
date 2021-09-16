@@ -40,12 +40,11 @@ export const createLi = (dataset) => newComponent({
   });
 
 export const createContent = (text) => createSpan({
-  text,
-  styles:{
-    fontSize: "14px",
-    fontFamily: "Times New Roman, Times, serif",
-    wordWrap: "break-word"
-  }
+    text,
+    styles:{
+      fontSize: "14px",
+      wordWrap: "break-word"
+    }
 }); 
 
 export const createTitle = (text) => createSpan({

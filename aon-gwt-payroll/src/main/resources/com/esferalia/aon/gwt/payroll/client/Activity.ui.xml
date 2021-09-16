@@ -14,8 +14,6 @@
 			max-width: 700px;
 			padding: 10px;
 			margin: auto;
-			margin-top: 20px;
-			
 		}
 		
 		.widthAll{

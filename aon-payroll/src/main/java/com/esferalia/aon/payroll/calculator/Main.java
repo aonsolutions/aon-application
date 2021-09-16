@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -440,7 +441,7 @@ public class Main {
 					new PrettyMainSalaryBuilder(connection) : new  MainSalaryBuilder(connection);
 			
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = 
-					new RoundSalaryBuilder<ISalary>(salaryBuilder, d->Math.round(d*100.00)/100.00 );		
+					new RoundSalaryBuilder<ISalary>(salaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP) );		
 					
 			Criteria criteria = new Criteria();
 			if (cmd.hasOption(ccc.getLongOpt()))

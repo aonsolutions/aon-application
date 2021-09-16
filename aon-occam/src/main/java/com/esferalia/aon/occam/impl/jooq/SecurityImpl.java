@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class SecurityImpl implements ISecurity {
 
@@ -261,7 +263,19 @@ public class SecurityImpl implements ISecurity {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getUserWorkgroupStream(ctx, filter));
 	}
-
+	
+	@Override
+	public void saveUserWorkgroups(AONContext ctx, User user) {
+		ctx.getDslContext().transaction( 
+			configuration -> UserDAO.saveUserWorkgroups(ctx, user));
+	}
+	
+	@Override
+	public void deleteUserWorkgroup(AONContext ctx, User user, Workgroup workgroup) {
+		ctx.getDslContext().transaction( 
+			configuration -> UserDAO.deleteUserWorkgroup(ctx, user, workgroup));
+	}
+	
 	@Override
 	public Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter) {
 		return ctx.getDslContext().transactionResult( 

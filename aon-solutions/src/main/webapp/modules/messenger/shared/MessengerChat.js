@@ -121,8 +121,6 @@ const buildSectionHistoric = (secondDiv) => {
     addTextAreaChat(wrapper); //
 
     addChatButtonsUpDown(secondDiv); //BUTTONS DOWN UP CHAT
-
-    downChat();
 }
 
 const addTextAreaChat = (wrapper) => {

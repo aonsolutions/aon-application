@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.api.model.security.AuthAttachType;
@@ -44,7 +43,7 @@ public class AuthServlet extends AonApiHttpServlet{
 			} else if(api.getParams().opt("task_holder") != null){
 				TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f-> f.getIdProperty().eq(api.getParams().optInt("task_holder")));
 				User user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
-				auth = AON_SOLUTIONS.getAuth(user.getAuth());	
+				auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());	
 			} else {
 				aonToken = SECURITY.getAonToken(api.getToken());
 				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());

@@ -843,7 +843,7 @@ public class Salary implements Serializable {
 		} catch (Exception e) {
 		}
 		if ( cost == null )
-			cost = new Cost(amount, code, description, costType);
+			cost = new Cost(amount, description, code, costType);
 		
 		costs.add(cost);
 	}

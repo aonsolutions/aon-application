@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
-import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -126,17 +126,22 @@ public class TaskWorkflowDAO {
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
+		ctx.log().debug("INSERT TASK_WORKFLOW id: " + id);			
 		return taskWorkflow.setId(id);
 	}	
-
+	
 	public static void delete(AONContext ctx, Integer id){
-		delete(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getIdProperty().eq(id)));
+		ctx.getDslContext().delete(TASK_WORKFLOW)
+		.where(TASK_WORKFLOW.ID.eq(id))
+		.execute();
+		ctx.log().debug("DELETE TASK_WORKFLOW id:" + id);
 	}
 	
-	public static void delete(AONContext ctx, TaskWorkflowFilter filter){
+	public static void deleteByTask(AONContext ctx, Integer id){
 		ctx.getDslContext().delete(TASK_WORKFLOW)
-		.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
+		.where(TASK_WORKFLOW.TASK.eq(id))
 		.execute();
+		ctx.log().debug("DELETE TASK_WORKFLOW task:" + id);
 	}
 	
 	public static class TaskWorkflowFiller implements Function<Record, TaskWorkflow> {

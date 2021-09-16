@@ -1509,25 +1509,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
 	}
 	
-	protected static class UserWorkgroupPropertiesDAO implements UserWorkgroupProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, UserWorkgroupFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(UserWorkgroupFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.DOMAIN);}
-		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.USER_ID);}
-		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
-	}
+	
 	
 	protected static class DomainAppPropertiesDAO implements DomainAppProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, DomainAppFilter filter) {

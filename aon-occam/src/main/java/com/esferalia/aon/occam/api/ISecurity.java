@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -80,6 +81,9 @@ public interface ISecurity {
 	// USER WORKGROUP
 	
 	public Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter); 
+	public void saveUserWorkgroups(AONContext ctx, User user);
+	public void deleteUserWorkgroup(AONContext ctx, User user, Workgroup workgroup);
+
 	
 	// DOMAIN APP
 	

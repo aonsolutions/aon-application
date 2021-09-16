@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
+import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -106,6 +108,24 @@ public class UserServlet extends AonApiHttpServlet {
 			error(req, resp, e);
 		}
 	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - PUT METHOD");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+			case "/workgroup":
+				response(req, resp, insertUserWorkgroup(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
@@ -116,6 +136,9 @@ public class UserServlet extends AonApiHttpServlet {
 				deleteUser(api);
 				response(req, resp);
 				break;
+			case "/workgroup":
+				response(req, resp, removeUserWorkgroup(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -124,15 +147,41 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
+	// USER WORKGROUP
+	
+	private JSONObject insertUserWorkgroup(AonApiData api) {
+		Integer wId = api.getData().getInt(IJsonNames.WORKGROUP);
+		Integer uId = api.getData().getInt(IJsonNames.USER);
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(uId))
+			.addWorkgroup(new Workgroup().setId(wId).setDomain(api.getDomain().getId()));
+		AON.saveUserWorkgroups(api.getDomain(), api.getUser().getLogin(), user);
+		return new JSONObject();
+	}
+		
+	private JSONObject removeUserWorkgroup(AonApiData api) {
+		Integer wId = api.getData().getInt(IJsonNames.WORKGROUP);
+		Integer uId = api.getData().getInt(IJsonNames.USER);
+		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(uId));
+		AON.deleteUserWorkgroup(api.getDomain(), api.getUser().getLogin(), user, new Workgroup().setId(wId).setDomain(api.getDomain().getId()));
+		return new JSONObject();
+	}
+	
 	private JSONArray getDomainUsers(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
+		.map(user -> {
+			AON.getWorkgroupList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f-> f.getDomainProperty().eq(api.getDomain().getId()));
+			user.setWorkgroups(AON.getUserWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getUserIdProperty().eq(user.getId()))
+					.map(uw -> uw.getWorkgroup()).collect(Collectors.toCollection(LinkedList::new)));
+			return user;
+		})
 		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			if(r.getAuth() != null) {
-				Auth auth = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), r.getAuth());
+				Auth auth = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), r.getAuth().getAuth());
 				if(auth.getEmail() == null) {
-					auth = AON_SOLUTIONS.getAuth(r.getAuth());
+					auth = AON_SOLUTIONS.getAuth(r.getAuth().getAuth());
 				}
 				json.put(IJsonNames.ID, r.getId());
 				json.put(IJsonNames.EMAIL, auth.getEmail());
@@ -145,6 +194,7 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put(IJsonNames.PORTAL, r.isPortal());
 				json.put(IJsonNames.SHARED, r.isShared());
 				json.put(IJsonNames.LOGIN, r.getLogin());
+				json.put(IJsonNames.WORKGROUPS, WorkgroupJSON.toJSON(r.getWorkgroups()));
 				jsArray.put(json);
 			} else jsArray.put(userToJSON(r, json));
 		});
@@ -439,7 +489,7 @@ public class UserServlet extends AonApiHttpServlet {
 		TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getUserIdProperty().eq(userId)));
 		if(th == null || th.getId() == null) {
 			User u = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
-			Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth());
+			Auth a = AON_SOLUTIONS.getAuth(api.getDomain().getName(), api.getDomain().getId(), u.getAuth().getAuth());
 
 			Registry r = null;
 			if(!AonStringUtils.isBlank(a.getDocument())) {
@@ -466,7 +516,11 @@ public class UserServlet extends AonApiHttpServlet {
 		} else if(!th.isActive()) {
 			th.setActive(true);
 		}
-		AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
+		if(user != null && th != null && th.getId() != null) {
+			user.setRegistry(th.getId());
+			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), user);
+		}
 	}
 	
 //	private JSONObject setUserAppRole2(AonApiData api){
@@ -686,7 +740,7 @@ public class UserServlet extends AonApiHttpServlet {
 		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		
 		User user = new User()
-			.setAuth(auth.getAuth())
+			.setAuth(auth)
 			.setActive(true)
 			.setDomain(domain.getId())
 			.setLogin(login)

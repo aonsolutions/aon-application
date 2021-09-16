@@ -34,7 +34,12 @@ export class Task {
       this.workflow    = [];
       this.workflowTmp = {};
       this.files = [];
+      // this._onPropertyChanged = (propName, val) => {};
   }
+
+  // task._onPropertyChanged = ("source", val) => {
+  //   console.log(s);
+  // }
 
   createTask(task) {
     if(task) {
@@ -84,7 +89,6 @@ export class Task {
       this.task_holder = {};
       this.title       = "";
       this.description = "";
-      this.gtask_id    = "";
       this.source_id   = undefined;
       this.workflow    = [];
       this.setFiles([]);
@@ -135,8 +139,9 @@ export class Task {
     return this.source;
   }
 
-  setSource(source) {
-    this.source = source;
+  setSource(v) {
+    this.source = v;
+    // this._onPropertyChanged('source', v);
   }
 
   getSourceId() {

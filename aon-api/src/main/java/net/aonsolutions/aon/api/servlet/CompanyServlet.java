@@ -206,7 +206,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		if(user.getId() == null) {
 			String pass = Utils.createPasswordHash(auth.getEmail(), company.getDocument());
 			user = new User()
-				.setAuth(auth.getAuth())
+				.setAuth(auth)
 				.setActive(true)
 				.setDomain(domain.getId())
 				.setLogin(company.getDocument())

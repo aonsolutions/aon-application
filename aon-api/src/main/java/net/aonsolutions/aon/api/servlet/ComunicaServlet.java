@@ -37,6 +37,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.object.Employee;
@@ -221,7 +222,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss = api.getData().optString("nss");
 		
 		String ipf = api.getData().optString("ipf");
-		String name = api.getData().optString("nombre");
+		String name = api.getData().optString("name");
 		String situation = api.getData().optString("situation");
 		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), "yyyy-MM-dd");
 
@@ -235,13 +236,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setName(name)
 		.setSituation(situation)
 		.build();
-		employee =  SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
+		employee = SistemaRED.sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
 		if(employee.getName().isPresent()) {
 			String body = "Te informamos que se ha realizado una <b>Baja</b> en la Seguridad Social de <b>"+ employee.getName().get()+"</b> en la Cuenta de Cotización <b>"+ 
 		employee.getRegime()+"-"+employee.getCtaCti().get()+"</b> con fecha <b>"+Toolkit.formatDate(fecha, "dd-MM-yyyy").get()+"</b>";
 			sendEmail(api, body); // send mov mail
 			sendNotification(api, body);
 		}
+		System.out.println(employee.getName().isPresent());
 		return employee;
 	}
 	
@@ -307,7 +309,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		updateOccupation(api, new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, map, errors);
 		
 		updateGrupCtz(api, new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, map, errors);
-
 		
 		return map;
 	}
@@ -391,12 +392,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	    Domain domain = api.getDomain();
 		LinkedList<String> toList = new LinkedList<>();
 		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
-		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth());
+		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		toList.add(auth.getEmail());
 		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
     		if(dur.isComunicaManager()) {
-				toList.add(AON_SOLUTIONS.getAuth(usr.getAuth()).getEmail());
+				toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
     		}
     	});
 		return toList;
@@ -412,7 +413,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
 				DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());
 	    		if(dur.isComunicaManager()) {
-					Auth auth = new Auth().setAuth(usr.getAuth());
+					Auth auth = new Auth().setAuth(usr.getAuth().getAuth());
 					if(auth.getAuth()!=null) auths.add(auth);
 	    		}
 			});
@@ -422,7 +423,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    	NotificationRequest notification = new NotificationRequest();
 		    	notification.setTitle(title);
 		    	notification.setBody(body);
-		    	notification.setSender(user.getAuth());
+		    	notification.setSender(user.getAuth().getAuth());
 		    	notification.setDomain(api.getDomain());
 		    	notification.setUser(api.getUser());
 		    	notification.setAuths(auths);
@@ -445,14 +446,27 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				Date fecha = employee.getFra();
 				String from = "no-reply@aon.solutions"; 
 				String subject = "COMUNIC@ | AON SOLUTIONS"; 
-				LinkedList<File> files = new LinkedList<File>();
-				byte[] fileByte = SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);
-				File file = File.createTempFile("duplicado_alta", ".pdf");
-				FileOutputStream os = new FileOutputStream(file);
-	            os.write(fileByte);
-	            os.close();
-				files.add(file);
-				SES.sendEmailWithAttachment(from, getEmails(api, user), subject, body, files);
+				LinkedList<File> files = new LinkedList<>();
+				
+				try {
+					byte[] fileByte = SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);
+					File file = File.createTempFile("duplicado_alta", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(fileByte);
+		            os.close();
+					files.add(file);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				SESMessage msg = new SESMessage()
+				.setAlias(from)
+				.setSubject(subject)
+				.setBody(body)
+				.setTo(getEmails(api, user))
+				.setFiles(files);
+				
+			    SES.sendEmail(msg);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -467,7 +481,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 				String from = "no-reply@aon.solutions"; 
 				String subject = "COMUNIC@ | AON SOLUTIONS"; 
-				SES.sendEmailToList(from, getEmails(api, user), subject, body);
+	
+				SESMessage msg = new SESMessage()
+				.setAlias(from)
+				.setSubject(subject)
+				.setBody(body)
+				.setTo(getEmails(api, user));
+				SES.sendEmail(msg);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

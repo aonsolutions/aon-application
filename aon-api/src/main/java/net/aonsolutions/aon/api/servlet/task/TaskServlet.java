@@ -480,7 +480,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(title);
 	    	notification.setBody(body);
-	    	notification.setSender(myUser.getAuth());
+	    	notification.setSender(myUser.getAuth().getAuth());
 	    	notification.setDomain(api.getDomain());
 	    	notification.setUser(api.getUser());
 	    	notification.setSource(NotificationSource.MESSENGER);

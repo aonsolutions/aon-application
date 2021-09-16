@@ -12,8 +12,6 @@ public class UserWorkgroup implements Serializable {
 	Integer userId;
 	Workgroup workgroup;
 
-	public UserWorkgroup() { }
-
 	public Integer getDomain() {
 		return domain;
 	}
@@ -42,12 +40,20 @@ public class UserWorkgroup implements Serializable {
 	}
 
 	public Workgroup getWorkgroup() {
+		if(workgroup == null) {
+			workgroup = new Workgroup();
+		}
 		return workgroup;
 	}
 
 	public UserWorkgroup setWorkgroup(Workgroup workgroup) {
 		this.workgroup = workgroup;
 		return this;
+	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+			&& getUserId() == null && getWorkgroup().isEmpty();
 	}
 	
 	

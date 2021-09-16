@@ -1,0 +1,119 @@
+package com.esferalia.aon.occam.impl.jooq.dao;
+
+import static com.esferalia.aon.jooq.tables.Auth.AUTH;
+import static com.esferalia.aon.jooq.tables.User.USER;
+
+import java.util.function.Function;
+
+import org.jooq.Record;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
+import com.esferalia.aon.watson.server.AonEnumUtils;
+
+public class UserDAO {
+
+	private UserDAO() {
+		throw new IllegalStateException("Utility class");
+	}
+	
+	public static User save(AONContext ctx, User user) {
+		user = user.getId() != null 
+				? update(ctx, user) 
+				: insert(ctx, user);
+				
+		saveUserWorkgroups(ctx, user);
+		return user;
+	}
+	
+	public static User insert(AONContext ctx, User user) {
+		Integer id = ctx.getDslContext().insertInto(USER)
+			.set(USER.NAME, user.getName())
+			.set(USER.LOGIN, user.getLogin())
+			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
+			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
+			.set(USER.ENTERPRISE, user.getEnterprise())
+			.set(USER.TOOLBAR, user.getToolbar().value())
+			.returning(USER.ID).fetchOne().getId();
+		
+		return user.setId(id);
+	}
+	
+	public static User update(AONContext ctx, User user) {
+		ctx.getDslContext().update(USER)
+			.set(USER.NAME, user.getName())
+			.set(USER.LOGIN, user.getLogin())
+			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
+			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
+			.set(USER.ENTERPRISE, user.getEnterprise())
+			.set(USER.TOOLBAR, user.getToolbar().value())
+			.where(USER.ID.eq(user.getId()))
+			.execute();	
+		return user;
+	}
+	
+	public static void saveUserWorkgroups(AONContext ctx, User user){
+		user.getWorkgroups().stream().forEach(workgroup -> {
+			UserWorkgroupDAO.save(ctx, new UserWorkgroup()
+					.setDomain(workgroup.getDomain())
+					.setUserId(user.getId())
+					.setWorkgroup(workgroup));
+
+			TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+			if(!th.isEmpty()) {
+				TaskHolderWorkgroupDAO.save(ctx, new TaskHolderWorkgroup()
+					.setDomain(workgroup.getDomain())
+					.setTaskHolder(th.getId())
+					.setWorkgroup(workgroup));
+			}
+			
+		});
+	}
+	
+	public static void deleteUserWorkgroup(AONContext ctx, User user, Workgroup workgroup) {
+		UserWorkgroupDAO.delete(ctx, f -> f.getUserIdProperty().eq(user.getId())
+			.and(f.getWorkgroupProperty().eq(workgroup.getId())));
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+		if(!th.isEmpty()) {
+			TaskHolderWorkgroupDAO.delete(ctx, f -> f.getTaskHolderProperty().eq(th.getId())
+				.and(f.getWorkgroupProperty().eq(workgroup.getId())));
+		}
+	}
+	
+	public static class UserFiller extends Filler implements Function<Record,User> {
+		
+		@Override
+		public User apply(Record r) {
+			return build(r);
+		}
+		
+		public static User build(Record r) {
+			return new User()
+				.setId(r.getValue(USER.ID))
+				.setDomain(r.getValue(USER.DOMAIN))
+				.setName(r.getValue(USER.NAME))
+				.setLogin(r.getValue(USER.LOGIN))
+				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
+				.setRegistry(r.getValue(USER.REGISTRY))
+				.setAuth(checkField(r, AUTH.ID)
+						? AuthFiller.build(r)
+						: new Auth().setAuth(r.getValue(USER.AUTH)))
+				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
+				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
+				.setEnterprise(r.getValue(USER.ENTERPRISE));
+		}		
+	}
+
+	
+}

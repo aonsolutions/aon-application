@@ -12,8 +12,6 @@ public class Project implements Serializable {
 	private Integer id;
 	private int domain;
 	private ProjectType type;
-	private Integer projectTypeId;
-	private String projectTypeName;
 	
 	private Registry registry;
 	private String name;
@@ -42,21 +40,25 @@ public class Project implements Serializable {
 		return this;
 	}
 	
+	@Deprecated
 	public Integer getProjectTypeId() {
-		return projectTypeId;
+		return getType().getId();
 	}
-	
+
+	@Deprecated
 	public Project setProjectTypeId(Integer projectTypeId) {
-		this.projectTypeId = projectTypeId;
+		getType().setId(projectTypeId);
 		return this;
 	}
 	
+	@Deprecated
 	public String getProjectTypeName() {
-		return projectTypeName;
+		return getType().getDescription();
 	}
 	
+	@Deprecated
 	public Project setProjectTypeName(String projectTypeName) {
-		this.projectTypeName = projectTypeName;
+		getType().setDescription(projectTypeName);
 		return this;
 	}
 	
@@ -136,6 +138,9 @@ public class Project implements Serializable {
 	}
 	
 	public ProjectType getType() {
+		if(type == null) {
+			type = new ProjectType();
+		}
 		return type;
 	}
 	

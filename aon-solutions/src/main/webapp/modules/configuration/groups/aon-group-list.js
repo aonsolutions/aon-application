@@ -1,10 +1,12 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
-import {getWorkgroups} from '../../../services/workgroupService.js';
+import {getWorkgroups, saveWorkgroup} from '../../../services/workgroupService.js';
 import * as ACTION from '../../actions.js';
 import { AonGroupAdd } from "./aon-group-add.js";
+import { AonInput } from "../../../components/aon-input.js";
+import * as LS from '../../../services/localStorageService.js';
 
 
 export class AonGroupList extends AonElement {
@@ -35,18 +37,22 @@ export class AonGroupList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonGroupList";
-    this.applicationEl = this.getApplication();
-    this.aonSigninToolbar = this.getElement(`${this.applicationEl.id}Toolbar`);
-    this.TABLE_ID = this.id + "Table";
   }
 
   connectedCallback() {
+    this.initialize();
     this.build();
   }
 
   disconnectedCallback() {
     if (this.applicationEl) this.applicationEl.removeFloatOption();
+  }
+
+  initialize() {
+    this.id = this.id || "aonGroupList";
+    this.applicationEl = this.getApplication();
+    this.aonSigninToolbar = this.getElement(`${this.applicationEl.id}Toolbar`);
+    this.TABLE_ID = this.id + "Table";
   }
 
   paintView() {
@@ -92,7 +98,7 @@ export class AonGroupList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          aonTable.addRow({ ...res }, () => this.add(res));
+          aonTable.addRow({ ...res }, () => this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: res})));
         });
       } catch (e) {
         console.log(e);
@@ -138,10 +144,36 @@ export class AonGroupList extends AonElement {
     return data;
   }
 
-  add(res) {
-    let aonGroupAdd = new AonGroupAdd();
-    if(res) aonGroupAdd.data = res;
-    this.applicationEl.setContent(aonGroupAdd);
+  add() {
+    let input = new AonInput();
+    input.id = this.id + 'AddWorkgroup';
+    input.title = MSG.NAME;
+    input.description = MSG.NAME;
+    let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ADD_WORKGROUP);
+    d.setContent(input);
+		d.addAcceptAction(() => {
+      let data = {
+        domain: LS.getDomainId(),
+        description: input.value,
+        status: 0
+      }
+      this.save(data);
+		});
+		d.open();
+  }
+
+  save(data) {
+    saveWorkgroup(data)
+    .then(r => {
+			this.getApplication().getToast().start({
+				type: CONSTANT.SUCCESS,
+				message: MSG.SAVED_DATA
+			});
+      this.getTableDesk();
+		}).catch(e => this.showError(e));
   }
 }
 window.customElements.define("aon-group-list", AonGroupList);

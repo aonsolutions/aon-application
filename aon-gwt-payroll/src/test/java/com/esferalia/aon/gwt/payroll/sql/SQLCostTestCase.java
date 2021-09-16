@@ -12,6 +12,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -416,7 +417,7 @@ public class SQLCostTestCase extends AbstractSQLTestCase {
 		
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
 		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
-				d -> Math.round(d*100.00)/100.00);
+				d -> d.setScale(2, RoundingMode.HALF_UP));
 		
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();

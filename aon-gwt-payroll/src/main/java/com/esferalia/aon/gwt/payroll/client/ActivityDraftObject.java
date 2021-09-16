@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -16,15 +16,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ActivityDraftObject extends AbstractDraftObject {
 	
+	// ------------------------------------------- Variables
+	
 	private ActivityInfo activityInfo;
 	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	private Integer activityId;
 		
-	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
+	// ------------------------------------------- Constructor	
 	
 	public ActivityDraftObject(Activity activity) {
 		this.activityId = activity.getId();
 	}
+	
+	// ------------------------------------------- Getter Methods
 	
 	public String getActivityDescription() {
 		return this.activityInfo.getDescription();
@@ -74,11 +78,8 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode);
 	}
 	
-	
+	// ------------------------------------------- DataBase Methods
 
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
-	//Consumer<ActivityInfo> success, Consumer<Throwable> failure
 	public void initializeActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure) {
 		enterprisesService.getActivityInfoDataBase(this.activityId, new AsyncCallback<ActivityInfo>() {
 			
@@ -111,7 +112,7 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	}
 	
 	public void getDeleteCCCMessage(Set<Integer> cccIdSet, Consumer<String> success, Consumer<Throwable> failure) {
-		ArrayList<Integer> cccIds = new ArrayList<Integer>();
+		ArrayList<Integer> cccIds = new ArrayList<>();
 		cccIds.addAll(cccIdSet);
 		
 		enterprisesService.getDeleteCCCMessage(cccIds, new AsyncCallback<String>() {
@@ -158,22 +159,22 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		Pair<String, String> completeCCC = null;
 		for(CCCInfo cccInfo : activityInfo.getCccs().values()) {
 			if(cccInfo.getType() == (byte)0) {
-				completeCCC = new Pair<String, String>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
+				completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
 			}
 		}
 		
 		// If null, get first
 		if(null == completeCCC) {
-			ArrayList<CCCInfo> cccInfoList = new ArrayList<CCCInfo>(activityInfo.getCccs().values());
+			ArrayList<CCCInfo> cccInfoList = new ArrayList<>(activityInfo.getCccs().values());
 			CCCInfo cccInfo = cccInfoList.get(0);
-			completeCCC = new Pair<String, String>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
+			completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
 		}
 			
 		return completeCCC;
 	}
 	
 	public Set<Entry<Integer, String>> getActivities(){
-		HashMap<Integer, String> activities = new HashMap<Integer, String>();
+		HashMap<Integer, String> activities = new HashMap<>();
 		activities.put(activityInfo.getId(), activityInfo.getDescription());
 		return activities.entrySet();
 	}

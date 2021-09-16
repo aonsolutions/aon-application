@@ -109,4 +109,12 @@ public class Auth implements Serializable {
 		this.schema = schema;
 		return this;
 	}
+	
+	public boolean isEmpty() {
+		return getAuth() == null && getUuid() == null
+			&& getEmail() == null && getPassword() == null
+			&& getName() == null && getSurname() == null
+			&& getDocument() == null && getPhone() == null
+			&& getSchema() == null;
+	}
 }

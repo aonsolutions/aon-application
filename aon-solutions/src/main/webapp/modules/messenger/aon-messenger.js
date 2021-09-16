@@ -55,8 +55,8 @@ export class AonMessenger extends AonElement {
 	}
 
  	async build() {
-		if(this.cau)
-			this.cauData = await getCauInfo();
+
+		this.cauData = await getCauInfo();
 			
 		localStorage.setItem("taskCau", this.cau ? 1 : 0);
 
@@ -96,10 +96,10 @@ export class AonMessenger extends AonElement {
 
 		this.taskNavBar();
 		this.statusNavBar();
-		if(!this.cau)
+		if(!this.cau){
 			this.groupNavBar();
-
-		this.tagNavBar();
+			this.tagNavBar();
+		}
 	}
 
 	taskNavBar(){
@@ -291,7 +291,7 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if(this.cauData)
+		if(this.cau && this.cauData)
 			filterCount.email = this.cauData.auth.email;
 		else 
 			filterCount.task_holder = this.TASK_HOLDER.id;
@@ -304,7 +304,7 @@ export class AonMessenger extends AonElement {
 		});
 
 		let filter = {};
-		if(this.cauData){
+		if(this.cau && this.cauData){
 			filter.email = this.cauData.auth.email;
 		}
 		if(this._filter.source) filter.source = this._filter.source;

@@ -51,49 +51,47 @@ public class TimeControlImpl implements ITimeControl {
 	@Override
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TimeControlDAO.saveTimeControlDetail(ctx, tcd));
+				configuration -> TimeControlDAO.save(ctx, tcd));
 	}
 	
 	@Override
-	public void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+	public void deleteTimeControlDetail(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(
-				configuration -> TimeControlDAO.deleteTimeControlDetail(ctx, filter)
+				configuration -> TimeControlDAO.delete(ctx, id)
 		);
 	}
 	
 	@Override
 	public Location saveLocation(AONContext ctx, Location lc) {
 		return  ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.saveLocation(ctx, lc));
+				configuration -> LocationDAO.save(ctx, lc));
 	}
 	
 	
 	@Override
 	public Location getLocation(AONContext ctx, LocationFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocation(ctx, filter));
+				configuration -> LocationDAO.get(ctx, filter));
 	}
 
 
 	@Override
 	public Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter) {
 		return  ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocationStream(ctx, filter));
+				configuration -> LocationDAO.getStream(ctx, filter));
 	}
 
 	@Override
-	public void deleteLocation(AONContext ctx, Location lc) {
+	public void deleteLocation(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(
-				configuration -> LocationDAO.deleteLocation(ctx, lc)
+				configuration -> LocationDAO.delete(ctx, id)
 		);
 	}
 	
 	@Override
-	public Location getLocation(AONContext ctx, Coordinates c) {
+	public Location getLocationByCoordinates(AONContext ctx, Coordinates c) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocation(ctx, c));
+				configuration -> LocationDAO.getByCoordinates(ctx, c));
 	}
-
-	
 	
 }

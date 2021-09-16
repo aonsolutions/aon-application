@@ -86,11 +86,11 @@ public class NotificationServlet extends AonApiHttpServlet{
 			if(api.getData().opt("task_holder") != null) {
 				TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(api.getData().optInt("task_holder")));
 				User user = AON.getUser(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(th.getUserId()));
-				Auth auth = new Auth().setAuth(user.getAuth());
+				Auth auth = user.getAuth();
 				if(auth.getAuth()!=null) auths.add(auth);
 			} else {
 				AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull()).forEach(user -> {
-					Auth auth = new Auth().setAuth(user.getAuth());
+					Auth auth = user.getAuth();
 					if(auth.getAuth()!=null) auths.add(auth);
 				});
 			}

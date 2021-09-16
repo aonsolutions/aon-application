@@ -1658,8 +1658,8 @@ public class SalaryDraftBuilder
 			switch (deduction.getName()) {
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
-			case "ATEP_E" :
-				return "Accidentes de Trabajo";
+//			case "ATEP_E" :
+//				return "Accidentes de Trabajo";
 			case "IT_E" :
 				return "IT de Accidentes de Trabajo";
 			case "IMS_E" :

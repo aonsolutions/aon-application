@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,7 +27,7 @@ public class WorkgroupJSON {
 				.setStatus(status!=null ? WorkgroupStatus.safeValueOf(status.byteValue()) : WorkgroupStatus.ACTIVE);
 	}
 	
-	public static JSONArray toJSON(LinkedList<Workgroup> workgroups) {
+	public static JSONArray toJSON(List<Workgroup> workgroups) {
 		return toJSON(workgroups.stream());
 	}
 	

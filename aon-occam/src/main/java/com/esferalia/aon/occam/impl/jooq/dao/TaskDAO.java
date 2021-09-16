@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
-import com.esferalia.aon.occam.api.model.project.Project;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
@@ -163,6 +163,7 @@ public class TaskDAO {
 			.set(TASK.MODIFICATION_USER, ctx.getUser())
 			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 			.where(TASK.ID.eq(task.getId())).execute();
+		ctx.log().debug("UPDATE TASK id: " + task.getId());		
 		return task;
 	}
 	
@@ -199,19 +200,16 @@ public class TaskDAO {
 		task.setId(r.getValue(TASK.ID));
 		task.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)));
 		task.setNumber(r.getValue(TASK.NUMBER));
+		
+		ctx.log().debug("INSERT TASK id: " + task.getId());	
 		return task;
 	}	
 
 	public static void delete(AONContext ctx, Integer id){
-		TaskAttachDAO.delete(ctx, f->f.getTaskProperty().eq(id));
-		TaskWorkflowDAO.delete(ctx, f->f.getTaskProperty().eq(id));
-		delete(ctx, f->f.getIdProperty().eq(id));
-	}
-	
-	public static void delete(AONContext ctx, TaskFilter filter){
-		ctx.getDslContext().delete(TASK)
-		.where(TASK_PROPERTIES.getConditions(filter))
-		.execute();
+		TaskAttachDAO.deleteByTask(ctx, id);
+		TaskWorkflowDAO.deleteByTask(ctx, id);
+		ctx.getDslContext().delete(TASK).where(TASK.ID.eq(id)).execute();
+		ctx.log().debug("DELETE TASK id:" + id);
 	}
 	
 	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){

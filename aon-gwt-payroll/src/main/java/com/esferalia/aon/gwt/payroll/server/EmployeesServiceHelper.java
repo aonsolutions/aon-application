@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.mvel2.CompileException;
@@ -124,7 +127,11 @@ import solutions.aon.seg.social.object.Idc;
 
 public class EmployeesServiceHelper {
 
+	private static final BigDecimal TEN = new BigDecimal(10);
+
+	
 	public static final String REMOVE = "REMOVE()";
+	
 	
 	public static String getTA(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId) throws SQLException, IOException, SegSocialException{
 		
@@ -1433,12 +1440,12 @@ public class EmployeesServiceHelper {
 			
 			@Override
 			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
-				return new RoundSalaryBuilder<T>(salaryBuilder, d -> Math.round(d*1000.00)/1000.00) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, round(3)) {
 					@Override
 					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 							Map<String, ITimedVariable<?>> context) {
-						tax = f.apply(tax);
-						quote = f.apply(quote);
+						tax = round(tax);
+						quote = round(quote);
 						super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 					}
 				};
@@ -1614,6 +1621,12 @@ public class EmployeesServiceHelper {
 				salary.getSocialSecurityContributions() + salary.getTotalEnterprise(),0.00);
 	}
 
+
+
+
+	public static UnaryOperator<BigDecimal> round(int scale) {
+		return d -> d.setScale(2, RoundingMode.HALF_UP);
+	}
 
 	
 }
