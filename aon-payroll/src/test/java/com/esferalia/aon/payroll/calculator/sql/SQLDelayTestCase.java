@@ -18,6 +18,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -2509,7 +2510,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> Math.round(d*1000.00)/1000.00));
+			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
 			calculator.calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(endDate, DAY_OF_MONTH, 1);
@@ -2535,7 +2536,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> Math.round(d*1000.00)/1000.00));
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
 		delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
