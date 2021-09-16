@@ -46,8 +46,7 @@ public class AonMessagePanel extends FlowPanel {
 	// ------------------------------------------------ AonMessagePanel static
 	
 	private static AonMessagePanel getMainPanel() {
-		AonMessagePanel aonMessagePanel = new AonMessagePanel();
-		return aonMessagePanel;
+		return new AonMessagePanel();
 	}
 	
 	// ------------------------------------------------ Show Error
@@ -226,7 +225,7 @@ public class AonMessagePanel extends FlowPanel {
 		    	 aonMessagePanel.setVisible(false);
 		     }
 		};
-		timer.schedule(3000);
+		timer.schedule(4500);
 	}
 	
 	// ------------------------------------------------ Fill Messages List
