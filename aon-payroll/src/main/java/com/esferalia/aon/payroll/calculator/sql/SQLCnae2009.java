@@ -71,8 +71,8 @@ public class SQLCnae2009 {
 					+" WHERE start_date <= ? "					 
 					+" AND ( end_date  IS NULL"
 					+" OR end_date >= ? )" );
-			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-			stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			stmt.setDate(1, new java.sql.Date(endDate.getTime()));
+			stmt.setDate(2, new java.sql.Date(startDate.getTime()));
 			rs = stmt.executeQuery();
 			ratesMap = new HashMap<Integer, Rates>();
 			while ( rs.next() ) {
