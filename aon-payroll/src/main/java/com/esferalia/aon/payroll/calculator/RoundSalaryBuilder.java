@@ -1,7 +1,15 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -18,35 +26,40 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 	
+	private static final BigDecimal ZERO = new BigDecimal(0); 
+	
 
 	private static class Deductions {
 		
 		private static class Deduction{
 			private String code;
-			private double amount;
 			private Date endDate;
 			private Date startDate;
+			private BigDecimal amount;
 			private DeductionType type;
 		}
 		
 		private ArrayList<Deduction> deductions = new ArrayList<>();
 		
-		private double getTotalSS(UnaryOperator<Double> f) {
+		private BigDecimal getTotalSS(UnaryOperator<BigDecimal> f) {
 			return deductions.stream()
 			.filter(d -> d.type != null && d.type.isSsDeduction())
-			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
+			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
+			//.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
 		}
 
 		private void addDeduction(String code, DeductionType type, Date startDate, Date endDate, double amount) {
 			getDeduction(code, type, startDate, endDate)
 			.ifPresentOrElse( 
-			deduction -> deduction.amount += amount, 
+			deduction -> deduction.amount = deduction.amount.add(bigDecimalValue(amount)), 
 			() -> deductions.add(newDeduction(code, type, startDate, endDate, amount))
 			);
 		}
@@ -56,9 +69,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			Deduction deduction = new Deduction();
 			deduction.type = type;
 			deduction.code = code;
-			deduction.amount = amount;
 			deduction.endDate = endDate;
 			deduction.startDate = startDate;
+			deduction.amount = bigDecimalValue(amount);
 			return deduction;
 		}
 
@@ -78,15 +91,16 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private static class Costs extends Deductions {
 		
-		private double getTotalEnterprise(UnaryOperator<Double> f) {
-			return super.getTotalSS(f) + getTotalECSS(f);
+		private BigDecimal getTotalEnterprise(UnaryOperator<BigDecimal> f) {
+			return add(super.getTotalSS(f),getTotalECSS(f));
 		}
 		
 
-		private double getTotalECSS(UnaryOperator<Double> f) {
+		private BigDecimal getTotalECSS(UnaryOperator<BigDecimal> f) {
 			return super.deductions.stream()
-			.filter(d -> AonStringUtils.equalsIgnoreCase(d.code, "ECSS_E"))
-			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
+			.filter(d -> AonStringUtils.equalsIgnoreCase(d.code, "ATEP_E") 
+					|| AonStringUtils.equalsIgnoreCase(d.code, "ECSS_E") )
+			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
 		}		
 
 		private void addCost(String code, DeductionType type, Date startDate, Date endDate, double amount) {
@@ -97,28 +111,28 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private static class Bonuses {
 		
 		private static class Bonus{
-			private double amount;
+			private BigDecimal amount;
 			private Date endDate;
 			private Date startDate;
 		}
 		
 		private ArrayList<Bonus> bonuses = new ArrayList<>();
 		
-		private double getTotal(UnaryOperator<Double> f) {
+		private BigDecimal getTotal(UnaryOperator<BigDecimal> f) {
 			return bonuses.stream()
-			.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
+			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
 		}
 
-		private void addBonus(Date startDate, Date endDate, double amount) {
+		private void addBonus(Date startDate, Date endDate, BigDecimal amount) {
 			getBonus(startDate, endDate)
 			.ifPresentOrElse( 
-			bonus -> bonus.amount += amount, 
+			bonus -> bonus.amount = add(bonus.amount,amount), 
 			() -> bonuses.add(newBonus(startDate, endDate, amount))
 			)
 			;
 		}
 		
-		private Bonus newBonus(Date startDate, Date endDate, double amount) {
+		private Bonus newBonus(Date startDate, Date endDate, BigDecimal amount) {
 			
 			Bonus bonus = new Bonus();
 			bonus.amount = amount;
@@ -126,6 +140,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			bonus.startDate = startDate;
 			return bonus;
 		}
+
 
 		private Optional<Bonus> getBonus(Date startDate, Date endDate) {
 			for (Bonus bonus : bonuses) {
@@ -139,10 +154,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 	}
 
-	protected UnaryOperator<Double> f;
+	protected UnaryOperator<BigDecimal> f;
 	protected ISalaryBuilder<T> salaryBuilder;
 
-	public RoundSalaryBuilder(ISalaryBuilder<T> salaryBuilder, UnaryOperator<Double> f) {
+	public RoundSalaryBuilder(ISalaryBuilder<T> salaryBuilder, UnaryOperator<BigDecimal> f) {
 		this.f = f;
 		this.salaryBuilder = salaryBuilder;
 	}
@@ -247,7 +262,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
 		try {
-			salaryBuilder.setRawCgcBase(f.apply(rawCgcBase));
+			salaryBuilder.setRawCgcBase(doubleValue(f.apply(bigDecimalValue(rawCgcBase))));
 		} catch ( NullPointerException e) {
 			salaryBuilder.setRawCgcBase(0.00);
 		}
@@ -255,22 +270,22 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	// ------------------------------------------------------------------------
 
-	private double remuneration;
-	private double proExtBase;
-	private double cgpBase;
-	private double cgcBase;
-	private double itBase;
-	private double irpfBase;
-	private double moneyIrpfBase;
-	private double inkindIrpfBase;
-	private double hExtraBase;
-	private double nonHExtraBase;
-	private double totalLiquid;
-	private double totalPayment;
-	private double totalDeduction;
-	private double totalIrpf;
-	private double totalSS;
-	private double totalEnterprise;
+	private BigDecimal remuneration;
+	private BigDecimal proExtBase;
+	private BigDecimal cgpBase;
+	private BigDecimal cgcBase;
+	private BigDecimal itBase;
+	private BigDecimal irpfBase;
+	private BigDecimal moneyIrpfBase;
+	private BigDecimal inkindIrpfBase;
+	private BigDecimal hExtraBase;
+	private BigDecimal nonHExtraBase;
+	private BigDecimal totalLiquid;
+	private BigDecimal totalPayment;
+	private BigDecimal totalDeduction;
+	private BigDecimal totalIrpf;
+	private BigDecimal totalSS;
+	private BigDecimal totalEnterprise;
 	
 	private Costs costs;
 	private Bonuses bonuses;
@@ -281,22 +296,22 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void createNewSalary() {
 
-		this.remuneration = 0;
-		this.proExtBase = 0;
-		this.cgcBase = 0;
-		this.cgpBase = 0;
-		this.itBase = 0;
-		this.irpfBase = 0;
-		this.moneyIrpfBase = 0;
-		this.inkindIrpfBase = 0;
-		this.hExtraBase = 0;
-		this.nonHExtraBase = 0;
-		this.totalLiquid = 0;
-		this.totalPayment = 0;
-		this.totalDeduction = 0;
-		this.totalIrpf = 0;
-		this.totalSS = 0;
-		this.totalEnterprise = 0;
+		this.remuneration = ZERO;
+		this.proExtBase = ZERO;
+		this.cgcBase = ZERO;
+		this.cgpBase = ZERO;
+		this.itBase = ZERO;
+		this.irpfBase = ZERO;
+		this.moneyIrpfBase = ZERO;
+		this.inkindIrpfBase = ZERO;
+		this.hExtraBase = ZERO;
+		this.nonHExtraBase = ZERO;
+		this.totalLiquid = ZERO;
+		this.totalPayment = ZERO;
+		this.totalDeduction = ZERO;
+		this.totalIrpf = ZERO;
+		this.totalSS = ZERO;
+		this.totalEnterprise = ZERO;
 		
 		this.costs = new Costs();
 		this.bonuses = new Bonuses();
@@ -314,7 +329,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setCgcBase(Double cgcBase) {
 		try {
-			this.cgcBase = cgcBase;
+			this.cgcBase = bigDecimalValue(cgcBase);
 		} catch (NullPointerException e) {
 			// cgcBase parameter is null
 		}
@@ -327,13 +342,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		for ( ContextVariable v : ContextVariable.ERE_BASES ) { 
 			try {
-				this.cgcBase += round(v);			
+				this.cgcBase = add(this.cgcBase, round(v));			
 			} catch ( Exception e ) {
 				// wrong ERE_BASE
 			}
 		}
 		try {
-			this.cgcBase += round(ContextVariable.MATERNITY_BASE);			
+			this.cgcBase = add(this.cgcBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {
 			// wrong MATERNITY_BASE
 		}
@@ -343,12 +358,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		} catch ( Exception e ) {
 			// wrong CGC_BASE_ENTERPRISE
 		}
+		
 	}
 
 	@Override
 	public void setCgpBase(Double cgpBase) {
 		try {
-			this.cgpBase = cgpBase;
+			this.cgpBase = bigDecimalValue(cgpBase);
 		} catch (NullPointerException e) {
 			// cgcBase parameter is null
 		}
@@ -356,17 +372,18 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			this.cgpBase = round(ContextVariable.CGP_BASE);			
 		} catch ( Exception e ) {
 			// wrong CGP_BASE
+			e.printStackTrace();
 		}
 		// sum ERE & MATERNIDAD
 		for ( ContextVariable v : ContextVariable.ERE_BASES ) { 
 			try {
-				this.cgpBase += round(v);			
+				this.cgpBase = add(this.cgpBase,round(v));			
 			} catch ( Exception e ) {
 				// wrong ERE_BASE
 			}
 		}
 		try {
-			this.cgpBase += round(ContextVariable.MATERNITY_BASE);			
+			this.cgpBase = add(this.cgpBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {
 			// wrong MATERNITY_BASE
 		}
@@ -381,7 +398,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setItBase(Double itBase) {
 		try {
-			this.itBase = itBase;
+			this.itBase = bigDecimalValue(itBase);
 		} catch (NullPointerException e) {
 			// itBase parameter is null
 		}
@@ -390,7 +407,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setRemuneration(Double remuneration) {
 		try {
-			this.remuneration = remuneration;
+			this.remuneration = bigDecimalValue(remuneration);
 		} catch (NullPointerException e) {
 			// remuneration parameter is null
 		}
@@ -399,7 +416,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setProExtBase(Double proExtBase) {
 		try {
-			this.proExtBase = proExtBase;
+			this.proExtBase = bigDecimalValue(proExtBase);
 		} catch (NullPointerException e) {
 			// proExtBase parameter is null
 		}
@@ -408,7 +425,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setIrpfBase(Double irpfBase) {
 		try {
-			this.irpfBase = irpfBase;
+			this.irpfBase = bigDecimalValue(irpfBase);
 		} catch (NullPointerException e) {
 			// irpfBase parameter is null
 		}
@@ -417,7 +434,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
 		try {
-			this.moneyIrpfBase = moneyIrpfBase;
+			this.moneyIrpfBase = bigDecimalValue(moneyIrpfBase);
 		} catch (NullPointerException e) {
 			// moneyIrpfBase parameter is null
 		}
@@ -426,7 +443,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
 		try {
-			this.inkindIrpfBase = inkindIrpfBase;
+			this.inkindIrpfBase = bigDecimalValue(inkindIrpfBase);
 		} catch (NullPointerException e) {
 			// inkindIrpfBase parameter is null 
 		}
@@ -435,7 +452,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
 		try {
-			this.hExtraBase = hExtraBase;
+			this.hExtraBase = bigDecimalValue(hExtraBase);
 		} catch (NullPointerException e) {
 			// hExtraBase parameter is null
 		}
@@ -444,16 +461,21 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setNonHExtraBase(Double nonHExtraBase) {
 		try {
-			this.nonHExtraBase = nonHExtraBase;
+			this.nonHExtraBase = bigDecimalValue(nonHExtraBase);
 		} catch (NullPointerException e) {
 			// nonHExtraBase parameter is null
+		}
+		try {
+			round(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE);			
+		} catch ( Exception e ) {
+			// wrong CGP_BASE_ENTERPRISE 
 		}
 	}
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
 		try {
-			this.totalLiquid = totalLiquid;
+			this.totalLiquid = bigDecimalValue(totalLiquid);
 		} catch (NullPointerException e) {
 			// totalLiquid parameter is null
 		}
@@ -462,7 +484,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setTotalPayment(Double totalPayment) {
 		try {
-			this.totalPayment = totalPayment;
+			this.totalPayment = bigDecimalValue(totalPayment);
 		} catch (NullPointerException e) {
 			// totalPayment parameter is null
 		}
@@ -471,7 +493,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setTotalDeduction(Double totalDeduction) {
 		try {
-			this.totalDeduction = totalDeduction;
+			this.totalDeduction = bigDecimalValue(totalDeduction);
 		} catch (NullPointerException e) {
 			// totalDeduction parameter is null
 		}
@@ -480,7 +502,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
 		try {
-			this.totalIrpf = totalIrpf;
+			this.totalIrpf = bigDecimalValue(totalIrpf);
 		} catch (NullPointerException e) {
 			// totalIrpf parameter is null
 		}
@@ -489,7 +511,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setTotalSS(Double socialSecurityContributions) {
 		try {
-			this.totalSS = socialSecurityContributions;
+			this.totalSS = bigDecimalValue(socialSecurityContributions);
 		} catch (NullPointerException e) {
 			// socialSecurityContributions parameter is null
 		}
@@ -498,7 +520,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void setTotalEnterprise(Double totalEnterprise) {
 		try {
-			this.totalEnterprise = totalEnterprise;
+			this.totalEnterprise = bigDecimalValue(totalEnterprise);
 		} catch (NullPointerException e) {
 			// totalEnterprise parameter is null
 		}
@@ -518,17 +540,19 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	@Override
 	public void addCost(Double amount, String description, Date startDate, Date endDate, IDeduction cost, Map<String, ITimedVariable<?>> context) {
-		double deduction = getDeductionAmount(cost.getName(), cost.getType(), startDate, endDate);
-		amount = f.apply(f.apply( deduction + amount ) - f.apply(deduction));
+		BigDecimal deduction = getDeductionAmount(cost.getName(), cost.getType(), startDate, endDate);
+		amount = doubleValue(f.apply(f.apply( add(deduction,bigDecimalValue(amount)) ).subtract(f.apply(deduction))));
 		costs.addCost(cost.getName(), cost.getType(), startDate, endDate, amount);
 		salaryBuilder.addCost(amount, description, startDate, endDate, cost, context);
+		
+		round(ContextVariable.ENTERPRISE_QUOTA);
 	}
 
 	@Override
 	public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
-		Double rounded = f.apply(amount);
-		bonuses.addBonus(startDate, endDate, amount);
-		salaryBuilder.addBonus(rounded, description, startDate, endDate, bonus, context);
+		bonuses.addBonus(startDate, endDate, bigDecimalValue(amount));
+		BigDecimal rounded = f.apply(bigDecimalValue(amount));
+		salaryBuilder.addBonus(doubleValue(rounded), description, startDate, endDate, bonus, context);
 	}
 
 	@Override
@@ -547,7 +571,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	public void addDeduction(Double amount, String description, Date start, Date end, IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 		deductions.addDeduction(deduction.getName(), deduction.getType(), start, end, amount);
-		salaryBuilder.addDeduction(f.apply(amount), description, start, end, deduction, context);
+		salaryBuilder.addDeduction(doubleValue(f.apply(bigDecimalValue(amount))), description, start, end, deduction, context);
 	}
 
 	@Override
@@ -568,86 +592,175 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	// ------------------------------------------------------------------------
 	
-	private double getTotalSS() {
+	private BigDecimal getTotalSS() {
 		return deductions.getTotalSS(f);
 	}
 	
-	private double getTotalEnterprise() {
+	private BigDecimal getTotalEnterprise() {
 		return costs.getTotalEnterprise(f);
 	}
 	
-	private double getTotalBonuses() {
+	private BigDecimal getTotalBonuses() {
 		return bonuses.getTotal(f);
 	}
 
 	
-	private double getDeductionAmount(String code, DeductionType type, Date startDate, Date endDate) {
+	private BigDecimal getDeductionAmount(String code, DeductionType type, Date startDate, Date endDate) {
 		if ( AonStringUtils.endsWith(code, "_E"))
 			code = AonStringUtils.removeEnd(code, "_E");
-		return deductions.getDeduction(code, type, startDate, endDate).map(d -> d.amount).orElse(0.00);
+		return deductions.getDeduction(code, type, startDate, endDate).map(d -> d.amount).orElse(ZERO);
 	}
 
 	private void round() {
 		
 		totalSS = getTotalSS();
-		totalEnterprise = getTotalEnterprise();
-		totalEnterprise -= getTotalBonuses();
+		totalEnterprise = add(getTotalEnterprise(), getTotalBonuses().negate());
 		
-		double totalOther = totalDeduction - (totalIrpf + totalSS);
+		BigDecimal totalOther = add(totalDeduction, totalIrpf.negate(),totalSS.negate() );
 		totalSS = f.apply(totalSS);
 		totalIrpf = f.apply(totalIrpf);
 		totalOther = f.apply(totalOther);
-		totalDeduction = totalIrpf + totalSS + totalOther;
-		salaryBuilder.setTotalIrpf(totalIrpf);
-		salaryBuilder.setTotalSS(totalSS);
-		salaryBuilder.setTotalDeduction(totalDeduction);
+		totalDeduction = add( totalIrpf, totalSS, totalOther);
+		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
+		salaryBuilder.setTotalSS(doubleValue(totalSS));
+		salaryBuilder.setTotalDeduction(doubleValue(totalDeduction));
 
-		double totalEmbargo = totalPayment - totalLiquid - totalDeduction;
+		BigDecimal totalEmbargo = add(totalPayment, totalLiquid.negate(), totalDeduction.negate());
 		totalEmbargo = f.apply(totalEmbargo);
 		totalPayment = f.apply(totalPayment);
-		totalLiquid = totalPayment - totalDeduction - totalEmbargo;
-		salaryBuilder.setTotalPayment(totalPayment);
-		salaryBuilder.setTotalLiquid(totalLiquid);
+		totalLiquid = add(totalPayment, totalDeduction.negate(),totalEmbargo.negate());
+		salaryBuilder.setTotalPayment(doubleValue(totalPayment));
+		salaryBuilder.setTotalLiquid(doubleValue(totalLiquid));
 
 		moneyIrpfBase = f.apply(moneyIrpfBase);
 		inkindIrpfBase = f.apply(inkindIrpfBase);
 		remuneration = f.apply(remuneration);
-		irpfBase = moneyIrpfBase + inkindIrpfBase;
-		salaryBuilder.setIrpfBase(irpfBase);
-		salaryBuilder.setMoneyIrpfBase(moneyIrpfBase);
-		salaryBuilder.setInkindIrpfBase(inkindIrpfBase);
-		salaryBuilder.setRemuneration(remuneration);
+		irpfBase = add(moneyIrpfBase, inkindIrpfBase);
+		salaryBuilder.setIrpfBase(doubleValue(irpfBase));
+		salaryBuilder.setMoneyIrpfBase(doubleValue(moneyIrpfBase));
+		salaryBuilder.setInkindIrpfBase(doubleValue(inkindIrpfBase));
+		salaryBuilder.setRemuneration(doubleValue(remuneration));
 
 		// ---
 		itBase = f.apply(itBase);
 		proExtBase = f.apply(proExtBase);
-		salaryBuilder.setItBase(itBase);
-		salaryBuilder.setProExtBase(proExtBase);
+		salaryBuilder.setItBase(doubleValue(itBase));
+		salaryBuilder.setProExtBase(doubleValue(proExtBase));
 
 		cgcBase = f.apply(cgcBase);
 		hExtraBase = f.apply(hExtraBase);
 		nonHExtraBase = f.apply(nonHExtraBase);
-		salaryBuilder.setHExtraBase(hExtraBase);
-		salaryBuilder.setCgcBase(cgcBase);
-		salaryBuilder.setNonHExtraBase(nonHExtraBase);
+		salaryBuilder.setHExtraBase(doubleValue(hExtraBase));
+		salaryBuilder.setCgcBase(doubleValue(cgcBase));
+		salaryBuilder.setNonHExtraBase(doubleValue(nonHExtraBase));
 
-		cgpBase = Math.min(cgcBase + nonHExtraBase + hExtraBase, f.apply(cgpBase));
-		salaryBuilder.setCgpBase(cgpBase);
+		cgpBase = add(cgcBase,nonHExtraBase,hExtraBase).min(f.apply(cgpBase));
+		salaryBuilder.setCgpBase(doubleValue(cgpBase));
 
 		totalEnterprise = f.apply(totalEnterprise);
-		salaryBuilder.setTotalEnterprise(totalEnterprise);
+		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
 
 	}
 	
-	private double round(ContextVariable contextVariable ) {
-		double sum = 0.00;
-		for (ITimedVariable<Object> v : expressionContext.getVariables(contextVariable.getName())) {
-			RoundVarible roundVarible = new RoundVarible(v, f);
-			sum += roundVarible.getValue(roundVarible.getPeriod());
+	protected double round(double d) {
+		return doubleValue(f.apply(bigDecimalValue(d)));
+	}
+	
+	private BigDecimal round(ContextVariable contextVariable ) {
+		BigDecimal sum = ZERO;
+		for (ITimedVariable<Object> v : /*expressionContext.*/getVariables(contextVariable)) {
+			RoundVarible roundVarible = new RoundVarible(v, d -> f.apply(bigDecimalValue(d)));
+			sum = add( sum, roundVarible.getValue(roundVarible.getPeriod()));
 			expressionContext.putVariable(contextVariable.getName(), roundVarible);
 		}
 		return sum;
 	}
+	
+	private List<ITimedVariable<Object>> getVariables(ContextVariable contextVariable){
+		LinkedList<ITimedVariable<Object>> variables = new LinkedList<>();
+		
+		List<ITimedVariable<Object>> expanded = expressionContext.getVariables(contextVariable.getName());
+		Collections.sort(expanded, (v1,v2) -> Period.compare(v1.getPeriod().getStart(), v2.getPeriod().getStart()));
+		
+		for (ITimedVariable<Object> variable : expanded) {
+			if ( variables.isEmpty() ) {
+				variables.addLast(variable);
+				continue;
+			}
+			
+			ITimedVariable<Object> previous = variables.peekLast();
+			
+			if ( isITFirst15Days(variable.getPeriod())) {
+				if (isITFirst15Days(previous.getPeriod())) {
+					variable = join(variable, variables.removeLast());
+				} 
+			} else if ( isDropDays(variable.getPeriod()) 
+					&& isWorkedOrDropDays(previous.getPeriod()) ) {
+					variable = join(variable, variables.removeLast());
+			} else if ( isDropDays(previous.getPeriod()) 
+					&& isWorkedOrDropDays(variable.getPeriod()) ) {
+					variable = join(variable, variables.removeLast());
+			}
+
+			
+			variables.addLast(variable);
+		}
+		
+		return variables;
+	}
+
+	private ITimedVariable<Object> join(ITimedVariable<Object> current, ITimedVariable<Object> prev) {
+		double value = add(current.getValue(current.getPeriod()) ,prev.getValue(prev.getPeriod()));
+		current = new TimedObject<>(value, prev.getPeriod().getStart(), current.getPeriod().getEnd());
+		return current;
+	}
+	
+	private boolean isDropDays(Period p) {
+		return contains(p, ContextVariable.DROP_DAYS);
+	}
+
+	private boolean isWorkedOrDropDays(Period p) {
+		return contains(p, ContextVariable.WORKED_DAYS, ContextVariable.DROP_DAYS);
+	}
+
+	private boolean isITFirst15Days(Period p) {
+		return contains(p, COMMON_DISEASE_DAYS_4_15, COMMON_DISEASE_DAYS_1_3);
+	}
+
+	private boolean contains(Period p, ContextVariable ...vars) {
+		for ( ContextVariable var : vars ) {
+			if ( expressionContext.containsVariable(var.getName(),p.getStart(),p.getEnd()) ) 
+				return true;
+		}
+		return false;
+	}
+	
+	private static double doubleValue(BigDecimal val) {
+		return val.doubleValue();
+	}
+
+	private static BigDecimal bigDecimalValue(double val) {
+		return BigDecimal.valueOf(val);
+	}
+
+	private static BigDecimal bigDecimalValue(Object val) {
+		return BigDecimal.valueOf(((Number)val).doubleValue()).setScale(10, RoundingMode.HALF_UP);
+	}
+
+	private static BigDecimal add(BigDecimal ...vals) {
+		BigDecimal add = ZERO;
+		for (BigDecimal val : vals)
+			add = add.add(val);
+		return add;
+	}
+	
+	private static double add(Object ...vals) {
+		BigDecimal decimals [] = new BigDecimal[vals.length];
+		for (int i = 0; i < vals.length; i++ )
+			decimals[i] = bigDecimalValue(vals[i]);
+		return doubleValue(add(decimals));
+	}
+	
 	
 
 }

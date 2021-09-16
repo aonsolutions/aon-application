@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.project.Project;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Priority;
 

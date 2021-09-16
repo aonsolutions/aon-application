@@ -82,7 +82,15 @@ public class TaskHolderDAO {
 	}
 
 	public static TaskHolder get(AONContext ctx, Integer id){
-		return getStream(ctx, p -> p.getIdProperty().eq(id))
+		return get(ctx, p -> p.getIdProperty().eq(id));
+	}
+	
+	public static TaskHolder get(AONContext ctx, TaskHolderFilter filter){
+		return select(ctx,filter)
+			.limit(1)
+			.fetch()
+			.stream()
+			.map(new TaskHolderFiller())
 			.findFirst()
 			.orElse(new TaskHolder());
 	}

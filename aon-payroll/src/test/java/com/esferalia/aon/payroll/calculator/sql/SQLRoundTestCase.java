@@ -17,6 +17,7 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -316,7 +317,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		ExpressionContext expressionContext = contractSalaryCalculatorContext.getExpressionContext();
 		
 		Salary salary = 
-		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> Math.round(d * 100.00) / 100.00 ))
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
 		.calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract))
 		;
 		return salary;

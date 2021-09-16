@@ -58,7 +58,7 @@ export class AonGroupAdd extends AonElement {
   paintView() {
     createToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY}, this);
 
-    const form = createForm(this.id+"Form");
+    const form = createForm(this.id + "Form");
     this.appendChild(form.element);
 
     let div = this.createElement(TAG.DIV);
@@ -71,7 +71,7 @@ export class AonGroupAdd extends AonElement {
     div2.className = CSS.AON_COL_SM_6;
     div.appendChild(div2);
     
-    const aonCard = createCard({id: this.id+"Card", title:"Datos del " +MSG.GROUP, flex:"true"}, div2).getContent();
+    const aonCard = createCard({id: this.id + "Card", title: MSG.GROUP_DATA, flex: CONSTANT.TRUE}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
     divG.className = CSS.AON_COL_XS_9;

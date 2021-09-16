@@ -86,6 +86,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -1047,7 +1048,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							}
 							salaryBuilder.addCost(value, description, period.getStart(), period.getEnd(), contractCost, amount.getContext());
 							cost += value;
-							addResult(expressionContext, ENTERPRISE_QUOTA.getName(), period.getStart(), period.getEnd(), value);
+							addCost(contractCost, amount, expressionContext);
 						}
 					}
 					total += cost;
@@ -2078,6 +2079,83 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				listener.onUndefinedData(payment, variableNames[i], message);
 			}
 		}
+	}
+	
+	protected void addCost(IContractCost contractCost, ITimedResult<Double> result, ExpressionContext expressionContext) {
+		Double value = result.getValue();
+		if ( value  == null)
+			return;
+		DeductionType type = contractCost.getType();
+		if ( type == null )
+			return;
+		Period period = result.getPeriod();
+		
+		type.accept(new DeductionTypeVisitor() {
+			
+			private void add() {
+				addResult(expressionContext, ENTERPRISE_QUOTA.getName(), period.getStart(), period.getEnd(), value);
+			}
+			
+			@Override
+			public void visitBonus(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitFogasa(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitUnemployent(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitJobTraining(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitCommonContigency(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitProfessionalContigency(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
+			public void visitIrpf(DeductionType deductionType) {
+			}
+			
+			@Override
+			public void visitOther(DeductionType deductionType) {
+			}
+			
+			@Override
+			public void visitInkind(DeductionType deductionType) {
+			}	
+			
+			@Override
+			public void visitEmbargo(DeductionType deductionType) {
+			}
+			
+			@Override
+			public void visitAdvancePayment(DeductionType deductionType) {
+			}
+
+			@Override
+			public void visitStructuralOvertime(DeductionType deductionType) {
+			}
+			
+			@Override
+			public void visitNonStructuralOvertime(DeductionType deductionType) {
+			}
+			
+		});
+
 	}
 	
 

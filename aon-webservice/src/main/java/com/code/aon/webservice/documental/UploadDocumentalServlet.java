@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -70,11 +71,11 @@ public class UploadDocumentalServlet extends HttpServlet{
 		Long size = json.optLong("contenSize");
 		byte[] fileData = Base64.getDecoder().decode(base64);
 		Company cp = AON.getCompany(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
-		Integer scopeId = json.opt("scope") != null && !AonStringUtils.isEmpty(json.optString("scope"))? json.optInt("scope") : null;
-		Integer categoryId = json.opt("category") != null && !AonStringUtils.isEmpty(json.optString("category"))? json.optInt("category") : null;
+		Integer scopeId = json.opt(IJsonNames.SCOPE) != null && !AonStringUtils.isEmpty(json.optString(IJsonNames.SCOPE))? json.optInt(IJsonNames.SCOPE) : null;
+		Integer categoryId = json.opt(IJsonNames.CATEGORY) != null && !AonStringUtils.isEmpty(json.optString(IJsonNames.CATEGORY))? json.optInt(IJsonNames.CATEGORY) : null;
 
 		Attach attach = new Attach()
-    			.setAttachModule(cp.getId()) // TODO
+    			.setAttachModule(cp.getId())
     			.setAttachType(AttachType.REGISTRY)
     			.setData(fileData)
     			.setDescription(name)
@@ -105,22 +106,12 @@ public class UploadDocumentalServlet extends HttpServlet{
     	LinkedList<Auth> auths = new LinkedList<>();
     	AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull()).forEach(user -> {
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, login, user.getId());
-    		if(RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType().byteValue()) {
-    			if(dur.isDocumentalManager()) {
-    				Auth auth = new Auth().setAuth(user.getAuth());
-    				if(auth.getAuth()!=null) auths.add(auth);
-    			}
-    		} else if(RegistryAttachmentType.CORPORATE_IDENTITY.value() == attach.getType().byteValue()) {
-    			if(dur.isDocumentalPortal()) {
-    				Auth auth = new Auth().setAuth(user.getAuth());
-    				if(auth.getAuth()!=null) auths.add(auth);
-    			}
-    		} else if(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType().byteValue()) {
-    			if(dur.isDocumental()) {
-    				Auth auth = new Auth().setAuth(user.getAuth());
-    				if(auth.getAuth()!=null) auths.add(auth);
-    			}
-    		}
+    		if(!user.getAuth().isEmpty() &&
+    			((dur.isDocumentalManager() && RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType().byteValue())
+    				|| (dur.isDocumentalPortal() && RegistryAttachmentType.CORPORATE_IDENTITY.value() == attach.getType().byteValue())
+    				|| (dur.isDocumental() && RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType().byteValue()))) {
+    			auths.add(user.getAuth());
+   			}
     	});
 
   

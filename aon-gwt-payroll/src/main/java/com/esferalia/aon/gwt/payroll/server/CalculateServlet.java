@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculat
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import javax.servlet.ServletException;
@@ -166,7 +166,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		static class RoundSalaryBuilderExtended<T extends ISalary> extends RoundSalaryBuilder<T>
 				implements ISalaryBuilderExtended<T> {
 
-			public RoundSalaryBuilderExtended(ISalaryBuilderExtended<T> salaryBuilder, UnaryOperator<Double> f) {
+			public RoundSalaryBuilderExtended(ISalaryBuilderExtended<T> salaryBuilder, UnaryOperator<BigDecimal> f) {
 				super(salaryBuilder, f);
 			}
 
@@ -297,13 +297,13 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			if (overwrite) {
 				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalaryOverwriter(connection),
-						d -> Math.round(d * 100.00) / 100.00));
+						EmployeesServiceHelper.round(2)));
 			} else if (duplicate) {
 				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalaryDuplicator(connection),
-						d -> Math.round(d * 100.00) / 100.00));
+						EmployeesServiceHelper.round(2)));
 			} else if (save) {
 				builders.add(new RoundSalaryBuilderExtended<Salary>(new JooqSalarySaver<Salary>(connection),
-						d -> Math.round(d * 100.00) / 100.00));
+						EmployeesServiceHelper.round(2)));
 			}
 
 			return new CompositeSalaryBuilderExtended(builders.toArray(new ISalaryBuilderExtended[builders.size()]));

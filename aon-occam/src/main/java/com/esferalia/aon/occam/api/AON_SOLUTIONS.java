@@ -467,9 +467,9 @@ public class AON_SOLUTIONS {
 			return getTimeControl().getLocation(ctx, filter);
 		}
 	}
-	public static Location getLocation(Domain domain, String login, Coordinates c) {
+	public static Location getLocationByCoordinates(Domain domain, String login, Coordinates c) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getTimeControl().getLocation(ctx, c);
+			return getTimeControl().getLocationByCoordinates(ctx, c);
 		}
 	}
 	

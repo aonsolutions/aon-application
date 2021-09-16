@@ -258,6 +258,7 @@ class Calculations {
 					htmlPage = htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
 					
 					for(String naf : nafs) {
+						System.out.println("Try NAF:" + naf);
 						DomNodeList<DomNode> rowNodes = htmlPage.querySelectorAll("tbody tr:not([class='cabecera'])");
 						if(!rowNodes.isEmpty()) {
 							Optional<DomNode> row = rowNodes.stream().filter(node -> (Toolkit.removeWeirdCharacters(((HtmlTableRow)node).getCell(1).getVisibleText()).equalsIgnoreCase(naf))).findFirst();
@@ -279,6 +280,12 @@ class Calculations {
 
 							HtmlTableBody firstTable = htmlPage.querySelector("table>tbody");
 							
+							if ( firstTable == null ) {
+								htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+								formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+								continue; //CR61(7106) .
+							}
+							 
 							DomNodeList<DomNode> trList = firstTable.querySelectorAll("tr:not(.cabecera)");
 							
 							LinkedHashMap<String, Calc> employeeCalcs = new LinkedHashMap<String, Calc>();

@@ -18,6 +18,7 @@ import * as ACTION from '../actions.js';
 import { CONFIGURATION} from "../../services/app.js";
 import { AonGroupList } from "./groups/aon-group-list.js";
 import { AonUser } from "../user/aon-user.js";
+import { AonWorkgroup } from "./groups/aon-workgroup.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -295,7 +296,7 @@ export class AonConfiguration extends AonElement {
   }
 
   buildGroups(){
-    this.getApplication().setContent(new AonGroupList());
+    this.getApplication().setContent(new AonWorkgroup());
   }
 
   hiddenGeneral() {

@@ -319,7 +319,14 @@ public class Bases {
 						new Period(data.getStartDate(), data.getEndDate()));
 				if (intersect == null)
 					continue;
-				return Integer.parseInt(data.getExpression());
+				try {
+					String expression = data.getExpression();
+					// Fix "09" expression. 
+					expression = expression.replaceAll("\"", "");
+					return Integer.parseInt(expression);
+				} catch ( Exception e ) {
+					
+				}
 			}
 
 			return -1;

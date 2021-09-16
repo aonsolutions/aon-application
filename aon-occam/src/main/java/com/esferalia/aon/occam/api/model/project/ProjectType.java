@@ -12,7 +12,7 @@ public class ProjectType  implements Serializable{
 	private Integer id;
 	private Integer domain;
 	private String description;
-	private Boolean active;
+	private boolean active;
 	
 	public ProjectType() {
 	
@@ -45,15 +45,18 @@ public class ProjectType  implements Serializable{
 		return this;
 	}
 
-	public Boolean getActive() {
+	public boolean getActive() {
 		return active;
 	}
 
-	public ProjectType setActive(Boolean active) {
+	public ProjectType setActive(boolean active) {
 		this.active = active;
 		return this;
 	}
 	
-	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+			&& getDescription() == null;
+	}
 
 }

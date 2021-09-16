@@ -31,6 +31,6 @@ public interface ITimeControl {
 	
 	public Location getLocation(AONContext ctx, LocationFilter filter);
 	
-	public Location getLocation(AONContext ctx, Coordinates c);
+	public Location getLocationByCoordinates(AONContext ctx, Coordinates c);
 	
 }

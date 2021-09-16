@@ -154,6 +154,8 @@ export const NOTIFICATIONS = "notifications";
 
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
+export const PERSON_ADD = 'person_add';
+export const PERSON_ADD_ALT = 'person_add_alt';
 export const PHONE = 'phone';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';

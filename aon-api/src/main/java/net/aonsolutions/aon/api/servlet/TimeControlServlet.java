@@ -287,7 +287,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		if(!coordinates.isEmpty()) {
 			  lc = !api.getData().optString("location").isEmpty() 
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(api.getData().optInt("location")) )
-				: AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  coordinates);
+				: AON_SOLUTIONS.getLocationByCoordinates(taskHolder.getDomain(), "",  coordinates);
 		}
 		TimeControlDetail tcd = new TimeControlDetail()
 				.setId(api.getData().opt("id") != null ? api.getData().optInt("id") : null)

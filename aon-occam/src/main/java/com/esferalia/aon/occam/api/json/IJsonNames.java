@@ -28,6 +28,7 @@ public interface IJsonNames {
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String AUTH = "auth";
 	// ---------------------------------------------------------------------------------------------	[B] 
 	String BACKGROUND = "background";
 	String BALANCE_TYPE = "balanceType";
@@ -321,6 +322,7 @@ public interface IJsonNames {
 	String WITHHOLDING_TYPE = "withholding_type";
 	String WORKFLOW = "workflow";
 	String WORKGROUP = "workgroup";
+	String WORKGROUPS = "workgroups";
 	String WORKPLACE = "workplace";
 	String WORKPLACE_IDS = "workplaceIds";
 	// ---------------------------------------------------------------------------------------------	[Y]
